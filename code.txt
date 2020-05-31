@@ -1,0 +1,47 @@
+special symbols/notations:
+
+\_ - literal value of special symbol or special value of literal symbol in place of '_'
+\0 - empty symbol/word
+| - 'or' operator
+{ a: b } - set of values generally named 'a' that are of 'type b'/subset of 'b'
+a: b - value generally named 'a' that are of 'type b'/in set 'b'
+{ a } - set of values that are of 'type a' or, if no such type, generally named 'a'
+a -> b - 'b' can be substituted in place of 'a'
+
+a = _ - declaration of 'symbol/type a' with formal definition in place of '_'
+() - grouping/structure
+
+Literals = { ASCII characters }
+
+words are any string of literals
+
+Alphabet = { symbols }
+
+symbols are all explicitly (in a formal way with declaration) defined to mean something words or literals itself
+
+Grammar = ({terminal_symbols: Alphabet}, {non_terminal_symbols}, {rules}, starting_symbol: non_terminal_symbols)
+
+generates some language and helps to check if some string is in that language
+or more informally answers if given string make sense in that grammar
+
+Ex:
+
+ArithmeticExpression = ( { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, +, -, /, *, (, ) },
+                         { Literal, Expression, Operation },
+                         { Literal    -> Literal Literal| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | \0,
+                           Operation  -> + | - | * | /},
+                           Expression -> Expression Operation Expression | (Expression) | Literal }, Literal)
+
+///
+
+TypeLiterals = { type: Grammar }
+
+grammar (may be in form of regular expression) for identifying literals of some "primitive" type
+
+Type = literal: TypeLiterals | { fields: Type }
+
+type is either expressed as description of its literal (primitive types) or set of types
+
+///
+
+Formal definition of syntax above:
