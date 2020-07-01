@@ -1,172 +1,162 @@
-import * as fs from 'fs'
+// import * as fs from 'fs'
+const fs = require("fs");
 
-const isLetter = (char: string) => char.match(/\p{L}/);
-const isDigit = (char: string) => char.match(/\d/);
+const isLetter = (char: string) => /\p{L}/u.test(char);//char.match(/\p{L}/);
+const isDigit = (char: string) => /\p{Nd}/u.test(char);//char.match(/\p{Nd}/);
 
-const isLetterOrDigit = (char: string) => isLetter(char) || isDigit(char);
+const isAlphanumeric = (char: string) => isLetter(char) || isDigit(char);
 
 class Rule {
-    lhs: string[];
-    rhs: string[];
+    lhs: string[] = [];
+    rhs: string[] = [];
 }
 
 class Grammar {
-    terminals: string[];
-    nonTerminals: string[];
-    rules: Rule[];
-    startingTerminal: string;
+    terminals: string[] = [];
+    nonTerminals: string[] = [];
+    rules: Rule[] = [];
+    startingTerminal: string = "";
 }
 
-class FileData {
-    data: string;
-    currentCharPos: number = 0;
-    // currentCharLine: number = 0;
+let currentCharPos = 0;
 
-    constructor(data: Buffer) {
-        this.data = data.toString("utf-8");
-    }
+let currentChar;
 
-    get currentChar() {
-        return this.data.charAt(this.currentCharPos);
-    }
-
-    nextChar(step: number = 1): string {
-        this.currentCharPos += step;
-        const tmp = this.data.substring(this.currentCharPos - step, this.currentCharPos);
-        // if (tmp.includes("\n")) ++this.currentCharLine;
-        return tmp;
-    }
-
-    assertCurrChar(predicate: (char: string) => boolean, errMsg: string, cb: () =>  void) {
-        if (predicate(this.currentChar))
-            cb();
-        else
-            throw new Error(errMsg);
-    }
-
-    assertCurrCharAndMove(predicate: (char: string) => boolean, errMsg: string, cb?: () => void): void {
-        this.assertCurrChar(predicate, errMsg, () => {
-            this.nextChar();
-            cb();
-        });
-    }
-
-    assertChar(char: string): (errMsg: string, cb?: () => any) => void {
-        return (errMsg: string, cb = () => { }) => {
-            this.assertCurrChar(c => c === char, errMsg, cb);
-        };
-    }
-
-    assertCharAndMove(char: string): (errMsg: string, cb?: () => any) => void {
-        return (errMsg: string, cb = () => { }) => {
-            this.assertCurrCharAndMove(c => c === char, errMsg, cb);
-        };
-    }
-
-    readOneOrMoreElement(predicate: (char: string) => boolean, readElement) {
-        readElement();
-
-        while (predicate(this.currentChar)) {
-            readElement();
-        }
-    }
-
-    oneOrMoreElementReaderWithSeparator(separator: string) {
-        return (readElement) =>
-            this.readOneOrMoreElement(c => c == separator, () => (this.nextChar(), readElement()));
-    }
-
-    wrapped(open: string, close: string, readElement) {
-        this.assertChar(open)(`expected opening char '${open}'`);
-
-        readElement();
-
-        this.assertChar(close)(`expected closing char '${close}'`);
-    }
-
-    readIdentifier(): string {
-        let id: string = "";
-
-        let onceCalled = false;
-        this.readOneOrMoreElement(c => isLetterOrDigit(c), () => {
-            id += this.currentChar;
-
-            if (onceCalled) this.nextChar();
-            else this.assertCurrCharAndMove(c => isLetter(c), "expected identifier");
-
-            onceCalled = true;
-        });
-
-        return id;
-    }
-
-    readArray<T>(readElement: () => T): T[] {
-        let elements: T[] = [];
-
-        this.wrapped("(", ")",
-            () => this.oneOrMoreElementReaderWithSeparator(",")(() => elements.push(readElement())));
-
-        return elements;
-    }
-
-    readRule(): Rule {
-        const rule: Rule = new Rule();
-        const transformSymbol = "=>";
-        const reader = this.oneOrMoreElementReaderWithSeparator("-");
-
-        reader(() => rule.lhs.push(this.readIdentifier()));
-
-        transformSymbol.split("").forEach(char => {
-            this.assertCharAndMove(char)("incorrect syntax of rule");
-        });
-
-        reader(() => rule.rhs.push(this.readIdentifier()));
-    }
-
-    readGrammar(): [string, Grammar] {
-        // while (this.currentChar !== undefined) {
-        //     //if ("grammar") break;
-        //     this.nextChar();
-        // }
-
-        if (this.currentChar === undefined) return;
-
-        const assertComma = this.assertChar(",");
-
-        const grammarName = this.readIdentifier();
-        const grammar = new Grammar();
-
-        this.wrapped("(", ")", () => {
-            grammar.terminals = this.readArray(this.readIdentifier);
-
-            assertComma("expected set of identifiers", () => grammar.nonTerminals = this.readArray(this.readIdentifier));
-
-            assertComma("expected set of rules", () => grammar.rules = this.readArray(this.readRule));
-
-            assertComma("expected an identifier", () => grammar.startingTerminal = this.readIdentifier());
-        });
-
-        return [grammarName, grammar];
-    };
+function nextChar()
+{
+    ++currentCharPos
+    currentChar = src.charAt(currentCharPos);
 }
 
-const files = new Map<string, FileData>();
+function identifier(): string {
+    let id = currentChar;
 
-if (process.argv.length <= 1)
+    if (isLetter(currentChar)) //check if char is a letter
+        nextChar();
+    else
+        throw new Error("expected identifier\n");
+
+    while (isAlphanumeric(currentChar)) { //check if char is a letter or a digit
+        id += currentChar;
+        nextChar();
+    }
+
+    return id;
+}
+
+function Arr(): string[] {
+    const ids: string[] = [];
+
+    if (currentChar == '(')
+        nextChar();
+    else
+        throw new Error("expected opening bracket\n");
+
+    ids.push(identifier());
+    while (currentChar == ',') {
+        nextChar();
+        ids.push(identifier());
+    }
+
+    if (currentChar == ')')
+        nextChar();
+    else
+        throw new Error("expected closing bracket\n");
+
+    return [];
+}
+
+function ArR() {
+    if (currentChar == '(')
+        nextChar();
+    else
+        throw new Error("expected opening bracket\n");
+
+    rule();
+    while (currentChar == ',') {
+        nextChar();
+        rule();
+    }
+
+    if (currentChar == ')')
+        nextChar();
+    else
+        throw new Error("expected closing bracket\n");
+}
+
+function rule() {
+    identifier();
+    while (currentChar == '-') {
+        nextChar();
+        identifier();
+    }
+
+    if (currentChar == '=')
+        nextChar();
+    else
+        throw new Error("incorrect syntax of rule\n");
+    if (currentChar == '>')
+        nextChar();
+    else
+        throw new Error("incorrect syntax of rule\n");
+
+    identifier();
+    while (currentChar == '-') {
+        nextChar();
+        identifier();
+    }
+}
+
+function grammar() {
+    let name = identifier();
+
+    if (currentChar == '(')
+        nextChar();
+    else
+        throw new Error("expected opening bracket\n");
+
+    let arr = Arr();
+
+    if (currentChar == ',') {
+        nextChar();
+        Arr();
+    } else throw new Error("expected set of identifiers\n");
+
+    if (currentChar == ',') {
+        nextChar();
+        ArR();
+    } else throw new Error("expected set of rules\n");
+
+    if (currentChar == ',') {
+        nextChar();
+        identifier();
+    } else throw new Error("expected an identifier\n");
+
+    if (currentChar == ')')
+        nextChar();
+    else
+        throw new Error("expected closing bracket\n");
+}
+
+// const files = new Map<string, FileData>();
+
+if (process.argv.length <= 2)
     throw new Error("Enter filepath, pleeeease.");
-process.argv.filter((v, i) => i !== 0).forEach(file => fs.readFile(file, (err, data) => {
-    if (err) throw new Error("Failed to open " + file);
-    files.set(file, new FileData(data));
-}));
+const src = fs.readFileSync(process.argv[2]).toString();
+// process.argv.filter((v, i) => ![0, 1].includes(i)).
+//     forEach(file => files.set(file, new FileData(fs.readFileSync(file))));
 
-console.log("Starting to parse...");
+console.log("Starting parsing...");
 
-const grammars = new Map<string, Grammar>();
-for (const file of files.values()) {
-    file.readOneOrMoreElement(c => c !== undefined,
-        () => { const g = file.readGrammar(); grammars.set(g[0], g[1]); });
-}
+nextChar();
 
-console.log(grammars);
+grammar();
+
+// const grammars = new Map<string, Grammar>();
+// for (const file of files.values()) {
+//     const g = file.readGrammar(); grammars.set(g[0], g[1]);
+// }
+
+// console.log(grammars);
 
 console.log("Done!");
