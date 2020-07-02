@@ -1,0 +1,17 @@
+{
+  "name": "meta-lang",
+  "version": "1.0.0",
+  "description": "some stuff here",
+  "main": "src.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "meta"
+  ],
+  "author": "Roman Khranovskiy",
+  "license": "MIT",
+  "dependencies": {
+    "tsc": "^1.20150623.0"
+  }
+}

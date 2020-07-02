@@ -1,9 +1,18 @@
-// import * as fs from 'fs'
-const fs = require("fs");
+import * as fs from 'fs'
 
-const isLetter = (char: string) => /\p{L}/u.test(char);//char.match(/\p{L}/);
-const isDigit = (char: string) => /\p{Nd}/u.test(char);//char.match(/\p{Nd}/);
+// const files = new Map<string, FileData>();
 
+if (process.argv.length <= 2)
+    throw new Error("Enter filepath, pleeeease.");
+const src = fs.readFileSync(process.argv[2]).toString();
+// process.argv.filter((v, i) => ![0, 1].includes(i)).
+//     forEach(file => files.set(file, new FileData(fs.readFileSync(file))));
+
+let currentCharPos = 0;
+let currentChar = src.charAt(currentCharPos);
+
+const isLetter = (char: string) => /\p{L}/u.test(char);
+const isDigit = (char: string) => /\p{Nd}/u.test(char);
 const isAlphanumeric = (char: string) => isLetter(char) || isDigit(char);
 
 class Rule {
@@ -18,23 +27,21 @@ class Grammar {
     startingTerminal: string = "";
 }
 
-let currentCharPos = 0;
-
-let currentChar;
-
-function nextChar()
-{
-    ++currentCharPos
+function nextChar(step: number = 1) {
+    currentCharPos += step;
     currentChar = src.charAt(currentCharPos);
 }
 
-function identifier(): string {
+function nextString(length: number) {
+    return src.substring(currentCharPos, currentCharPos + length);
+}
+
+function token(): string {
     let id = currentChar;
 
-    if (isLetter(currentChar)) //check if char is a letter
-        nextChar();
-    else
-        throw new Error("expected identifier\n");
+    if (!isLetter(currentChar)) //check if char is a letter
+        throw new Error("expected a token");
+    nextChar();
 
     while (isAlphanumeric(currentChar)) { //check if char is a letter or a digit
         id += currentChar;
@@ -44,119 +51,101 @@ function identifier(): string {
     return id;
 }
 
-function Arr(): string[] {
-    const ids: string[] = [];
+function Arr<T>(element: () => T): T[] {
+    const elements: T[] = [];
 
-    if (currentChar == '(')
-        nextChar();
-    else
-        throw new Error("expected opening bracket\n");
+    if (currentChar !== "(") throw new Error("expected opening bracket");
+    nextChar();
 
-    ids.push(identifier());
+    elements.push(element());
     while (currentChar == ',') {
         nextChar();
-        ids.push(identifier());
+        elements.push(element());
     }
 
-    if (currentChar == ')')
-        nextChar();
-    else
-        throw new Error("expected closing bracket\n");
+    if (currentChar !== ")") throw new Error("expected closing bracket");
+    nextChar();
 
-    return [];
+    return elements;
 }
 
-function ArR() {
-    if (currentChar == '(')
-        nextChar();
-    else
-        throw new Error("expected opening bracket\n");
+function rule(): Rule {
+    const rule: Rule = new Rule();
 
-    rule();
-    while (currentChar == ',') {
-        nextChar();
-        rule();
-    }
-
-    if (currentChar == ')')
-        nextChar();
-    else
-        throw new Error("expected closing bracket\n");
-}
-
-function rule() {
-    identifier();
+    rule.lhs.push(token());
     while (currentChar == '-') {
         nextChar();
-        identifier();
+        rule.lhs.push(token());
     }
 
-    if (currentChar == '=')
-        nextChar();
-    else
-        throw new Error("incorrect syntax of rule\n");
-    if (currentChar == '>')
-        nextChar();
-    else
-        throw new Error("incorrect syntax of rule\n");
+    if (nextString(2) !== "=>")
+        throw new Error("incorrect syntax of rule");
+    nextChar(2);
 
-    identifier();
+    try {
+        rule.rhs.push(token());
+    } catch (e) { }
     while (currentChar == '-') {
         nextChar();
-        identifier();
+        rule.rhs.push(token());
+    }
+
+    return rule;
+}
+
+function grammar(): [string, Grammar] | null{
+    while (nextString(2) !== "g ") {
+        nextChar();
+
+        if(currentChar === "")
+            return null;
+    }
+    nextChar(2);
+    try {
+        const name = token();
+        const grammar = new Grammar();
+
+        if (currentChar !== '(')
+            throw new Error("expected opening bracket");
+        nextChar();
+        grammar.terminals =  Arr(token);
+
+        if (currentChar !== ',')
+            throw new Error("expected set of identifiers");
+        nextChar();
+        grammar.nonTerminals = Arr(token);
+
+        if (currentChar !== ',')
+            throw new Error("expected set of rules");
+        nextChar();
+        grammar.rules = Arr(rule);
+
+        if (currentChar !== ',')
+            throw new Error("expected an token");
+        nextChar();
+        grammar.startingTerminal = token();
+
+        if (currentChar !== ')')
+            throw new Error("expected closing bracket");
+        nextChar();
+
+        return [name, grammar];
+    } catch (e) {
+        return grammar();
     }
 }
-
-function grammar() {
-    let name = identifier();
-
-    if (currentChar == '(')
-        nextChar();
-    else
-        throw new Error("expected opening bracket\n");
-
-    let arr = Arr();
-
-    if (currentChar == ',') {
-        nextChar();
-        Arr();
-    } else throw new Error("expected set of identifiers\n");
-
-    if (currentChar == ',') {
-        nextChar();
-        ArR();
-    } else throw new Error("expected set of rules\n");
-
-    if (currentChar == ',') {
-        nextChar();
-        identifier();
-    } else throw new Error("expected an identifier\n");
-
-    if (currentChar == ')')
-        nextChar();
-    else
-        throw new Error("expected closing bracket\n");
-}
-
-// const files = new Map<string, FileData>();
-
-if (process.argv.length <= 2)
-    throw new Error("Enter filepath, pleeeease.");
-const src = fs.readFileSync(process.argv[2]).toString();
-// process.argv.filter((v, i) => ![0, 1].includes(i)).
-//     forEach(file => files.set(file, new FileData(fs.readFileSync(file))));
 
 console.log("Starting parsing...");
 
-nextChar();
+const grammars = new Map<string, Grammar>();
 
-grammar();
+let g = grammar();
+while (g) {
+    grammars.set(g[0], g[1]);
 
-// const grammars = new Map<string, Grammar>();
-// for (const file of files.values()) {
-//     const g = file.readGrammar(); grammars.set(g[0], g[1]);
-// }
+    g = grammar();
+}
 
-// console.log(grammars);
+console.log(grammars);
 
 console.log("Done!");
