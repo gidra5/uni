@@ -1,9 +1,0 @@
-g grammar1((a,b,c),(A,B,C),(A=>a-A,B=>b-B),A)
-g grammar2((a,b,c),(A,B,C),(A=>a-A,A=>,B=>b-B),A)
-g grammar3((a,b,c),(A,B,C),(b-A=>a-B,B=>b-B),A)
-g l
-g ArithmeticExpression((0,1,2,3,4,5,6,7,8,9,+,-,/,*,\(,\)),(Literal,Expression,Operation),(Literal=>Literal-Literal|0|1|2|3|4|5|6|7|8|9|,Operation=>+|-|*|/,Expression=>Expression-Operation-Expression|(-Expression-)|Literal),Literal)
-
-a
-
-k
