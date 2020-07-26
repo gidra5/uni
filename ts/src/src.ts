@@ -1,38 +1,29 @@
 import { writeFileSync } from 'fs';
 import { TokenDriver } from './TokenDriver';
-import { syntaxParser } from './SyntaxParser';
-import { assembleFromParsed } from './SemanticAnalyzer';
-import { TextDriver } from './TextDriver';
+import { translate, textDrivers, srcOutFiles } from './ArgsTranslator';
 // import * as scanner from "./Scanner";
 // import * as parser from "./SyntaxParser";
 // import * as contextAnalizer from "./ContextAnalizer";
 
-if (process.argv.length < 3) {
-    console.log("Enter filepath, pleeeease.");
-    process.exit();
-}
+console.log("Starting...");
 
-function setupSource(...files: string[]) {
-    return files.map(file => new TextDriver(file));
-}
+translate(process.argv.slice(2));
 
-const textDrivers = setupSource(process.argv[2]);
-const srcOutFiles = [process.argv[3]] || textDrivers.forEach(td => td.src.split(".")[0] + ".code");
-
-console.log("Starting parsing...");
-
-console.log("Lexical analize...");
+console.log("Lexical analysis...");
 const scannedTexts = textDrivers.map(td => new TokenDriver(td));
-console.log(scannedTexts);
+console.log(scannedTexts.map(td => td.tokenized));
 
-console.log("Syntax parsing...")
-const parsedTexts = scannedTexts.map(t => syntaxParser(t));
-console.log(parsedTexts);
+// console.log("Parsing...")
+// const parsedTexts = scannedTexts.map(t => parse(t));
+// console.log(parsedTexts);
 
-console.log("Assembling code...");
-const out = parsedTexts.map(t => assembleFromParsed(t));
+// console.log("Semantic analysis...");
+// const analyzed = parsedTexts.map(t => semanticAnalysis(t));
 
-console.log("Saving...");
-srcOutFiles.forEach((f, i) => writeFileSync(f, out[i]));
+// console.log("Compiling...");
+// const out = analyzed.map(t => compile(t));
+
+// console.log("Saving...");
+// srcOutFiles.forEach((f, i) => writeFileSync(f, out[i]));
 
 console.log("Done!");

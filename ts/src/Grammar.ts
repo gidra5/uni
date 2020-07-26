@@ -5,13 +5,12 @@ rules: [...(terminals | nonTerminals)[], terminal, ...(terminals | nonTerminals)
 sTerminals extends terminals;
 */
 
-import { AST } from "./AST";
-import { specialChars, TextDriver } from "./TextDriver";
-import { Token, EOTToken, TokenTypes } from "./TokenDriver";
+import { TextDriver } from "./TextDriver";
+import { Token, EOTToken, TokenTypes, TokenDriver } from "./TokenDriver";
 
 const enum GrammarTypes { Unrestricted, ContextSensitive, ContextFree, Regular };
 
-export type Rule = [ lhs: Token[], rhs: Token[] ];
+export type Rule = [lhs: Token[], rhs: Token[]];
 
 export class Grammar {
     terminals: Set<Token> = new Set([EOTToken]);
@@ -40,50 +39,64 @@ export class Grammar {
                 } else this.type = GrammarTypes.ContextSensitive;
             }
             if (this.type > GrammarTypes.Unrestricted) {
-                const context: [left: Token[], right: Token[]] = [[], []];
-                let subject: Token | undefined = undefined;
-                const reversedRule = [rule[0].reverse(), rule[1].reverse()];
+                // const context: [left: Token[], right: Token[]] = [[], []];
+                // const reversedRule = [rule[0].reverse(), rule[1].reverse()];
 
-                for (let i = context[0].length; this.terminals.has(rule[0][i]); ++i)
-                    context[0].push(rule[0][i]);
+                // while (context[0].length + context[1].length + 1 === rule[0].length) {
+                //     for (let i = context[0].length; this.terminals.has(rule[0][i]); ++i)
+                //         context[0].push(rule[0][i]);
 
-                for (let i = context[1].length; this.terminals.has(reversedRule[0][i]); ++i)
-                    context[1].push(reversedRule[0][i]);
+                //     for (let i = context[1].length; this.terminals.has(reversedRule[0][i]); ++i)
+                //         context[1].push(reversedRule[0][i]);
 
-                if (context[0].length + context[1].length + 1 === rule[0].length) {
-                    let i = 0;
-                    for (; i < context[0].length; ++i)
-                        if (context[0][i] !== rule[1][i]) break;
+                //     if (context[0].length + context[1].length + 1 === rule[0].length) {
+                //         let i = 0;
+                //         for (; i < context[0].length; ++i)
+                //             if (context[0][i] !== rule[1][i]) break;
 
-                    if (context[0].length !== i) this.type = GrammarTypes.Unrestricted;
+                //         if (context[0].length !== i) this.type = GrammarTypes.Unrestricted;
 
-                    i = 0;
-                    for (; i < context[1].length; ++i)
-                        if (context[1][i] !== reversedRule[1][i]) break;
+                //         i = 0;
+                //         for (; i < context[1].length; ++i)
+                //             if (context[1][i] !== reversedRule[1][i]) break;
 
-                    if (context[1].length !== i) this.type = GrammarTypes.Unrestricted;
-                } else {
+                //         if (context[1].length !== i) this.type = GrammarTypes.Unrestricted;
+                //     } else {
+                //         for (let i = context[0].length; this.nonTerminals.has(rule[0][i]); ++i)
+                //             context[0].push(rule[0][i]);
 
-                }
+                //         for (let i = context[1].length; this.nonTerminals.has(reversedRule[0][i]); ++i)
+                //             context[1].push(reversedRule[0][i]);
+                //     }
+                // }
+
                 if (this.type === GrammarTypes.Unrestricted)
                     break;
             }
         }
     }
 
-    parser(): (driver: TextDriver) => AST | Rule[] {
+    parser(): (driver: TextDriver | TokenDriver) => Rule[] {
         switch (this.type) {
             case GrammarTypes.Regular:
-                return (driver: TextDriver) => {
+                return (driver: TextDriver | TokenDriver) => {
+                    //todo
+                    return [];
                 };
             case GrammarTypes.ContextFree:
-                return (driver: TextDriver) => {
+                return (driver: TextDriver | TokenDriver) => {
+                    //todo
+                    return [];
                 };
             case GrammarTypes.ContextSensitive:
-                return (driver: TextDriver) => {
+                return (driver: TextDriver | TokenDriver) => {
+                    //todo
+                    return [];
                 };
             case GrammarTypes.Unrestricted:
-                return (driver: TextDriver) => {
+                return (driver: TextDriver | TokenDriver) => {
+                    //todo
+                    return [];
                 };
         }
     }

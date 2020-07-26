@@ -1,47 +1,22 @@
-special symbols/notations:
+MetaLanguage
 
-\_ - literal value of special symbol or special value of literal symbol in place of '_'
-\0 - empty symbol/word
-| - 'or' operator
-{ a: b } - set of values generally named 'a' that are of 'type b'/subset of 'b'
-a: b - value generally named 'a' that are of 'type b'/in set 'b'
-{ a } - set of values that are of 'type a' or, if no such type, generally named 'a'
-a -> b - 'b' can be substituted in place of 'a'
+General process of generationg code
 
-a = _ - declaration of 'symbol/type a' with formal definition in place of '_'
-() - grouping/structure
+1. Separate grammar definitions, semantic definitions, etc. out of src. Unrecognised code is left for next passes
+    1. Tokenize src code based on given classification of symbols:
+        Keyword - a predetermined string, separated from other code with non-alphanumeric character
+        Grouping - a predetermined character used to group others
+        Separator - a predetermined character used to separate others
+        Operator - a special characters that have associated with it procedure
+        Name - sequence of alphanumeric characters
+        None - unclassified character
+    Sets of keywords, groupings, separators and operators can be modified through dictionary
+    New classes can be added and given symbols in dictionary or regexp to classify strings.
+    Tokenization ignores a set of characters, that can be modified through code and c-style comments.
+    2. Find...?
+    3. PROFIT!!!
 
-Literals = { ASCII characters }
+2. Generate from separated grammar definitions, semantic definitions, etc. needed data structures.
+3. Using those data structures modify existing pipeline to compile earlier unrecognised code.
 
-words are any string of literals
-
-Alphabet = { symbols }
-
-symbols are all explicitly (in a formal way with declaration) defined to mean something words or literals itself
-
-Grammar = ({terminal_symbols: Alphabet}, {non_terminal_symbols}, {rules}, starting_symbol: non_terminal_symbols)
-
-generates some language and helps to check if some string is in that language
-or more informally answers if given string make sense in that grammar
-
-Ex:
-
-ArithmeticExpression = ( { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, +, -, /, *, (, ) },
-                         { Literal, Expression, Operation },
-                         { Literal    -> Literal Literal| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | \0,
-                           Operation  -> + | - | * | /},
-                           Expression -> Expression Operation Expression | (Expression) | Literal }, Literal)
-
-///
-
-TypeLiterals = { type: Grammar }
-
-grammar (may be in form of regular expression) for identifying literals of some "primitive" type
-
-Type = literal: TypeLiterals | { fields: Type }
-
-type is either expressed as description of its literal (primitive types) or set of types
-
-///
-
-Formal definition of syntax above:
+Program is told to be correct if there is no unrecognised code left after compiling.

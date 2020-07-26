@@ -1,27 +1,12 @@
 import { TextDriver } from "./TextDriver";
-import { Error, Warning } from "./Error";
-import { TokenDriver, Token } from "./TokenDriver";
+import { TokenDriver } from "./TokenDriver";
 
-export function or(el1: (driver: TextDriver) => any, el2: (driver: TextDriver) => any): (driver: TextDriver) => any {
-    return (driver: TextDriver) => {
+export function or(el1: (driver: TextDriver | TokenDriver) => any, el2: (driver: TextDriver | TokenDriver) => any): (driver: TextDriver | TokenDriver) => any {
+    return (driver: TextDriver | TokenDriver) => {
         try {
             return el1(driver);
         } catch (e) {
             return el2(driver);
         }
     };
-}
-
-export function assertStringAndMove(driver: TextDriver, str: string, err: string) {
-    if (driver.nextString(str.length) !== str) Error(driver, err);
-    driver.nextChar(str.length);
-}
-
-export function checkCurrToken(driver: TokenDriver, expected: Token, err: string): boolean {
-    if (driver.currentToken !== expected) {
-        Warning(driver, err);
-        return false;
-    }
-
-    return true;
 }

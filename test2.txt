@@ -1,0 +1,39 @@
+g smileα()
+
+/*g int(("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"),
+    (S),
+    (S => "" |
+        "0" + S |
+        "1" + S |
+        "2" + S |
+        "3" + S |
+        "4" + S |
+        "5" + S |
+        "6" + S |
+        "7" + S |
+        "8" + S |
+        "9" + S),
+    S)
+*/
+
+g grammar1((int, "akka", "b", "c", "\""),
+    (A, B, C),
+    (A => "akka" B, B => "b\"a" A, B => int "a" A, C => "c" C),
+    A) //sample grammar
+{}
+// ok
+
+/*  sample
+    multiline
+text
+*//* and more */
+/**/
+
+$
+// as
+
+a
+
+    2+2
+
+k
