@@ -1,21 +1,23 @@
-import { writeFileSync } from 'fs';
-import { TokenDriver } from './TokenDriver';
-import { translate, textDrivers, srcOutFiles } from './ArgsTranslator';
+// import { writeFileSync } from 'fs';
+import { TokenDriver } from '../Translator/TokenDriver';
+import { translateArgs, textDrivers } from './ArgumentsTranslator';
+import { parse } from '../Translator/SyntaxParser';
+import { TypesOf } from '../Translator/Tables';
 // import * as scanner from "./Scanner";
 // import * as parser from "./SyntaxParser";
 // import * as contextAnalizer from "./ContextAnalizer";
 
 console.log("Starting...");
 
-translate(process.argv.slice(2));
+translateArgs(process.argv.slice(2));
 
 console.log("Lexical analysis...");
 const scannedTexts = textDrivers.map(td => new TokenDriver(td));
-console.log(scannedTexts.map(td => td.tokenized));
+console.log(scannedTexts.map(td => td.tokenized.map(token => [TypesOf.Tokens[token[0]], ...token.slice(1)])));
 
-// console.log("Parsing...")
-// const parsedTexts = scannedTexts.map(t => parse(t));
-// console.log(parsedTexts);
+console.log("Parsing...")
+const parsedTexts = scannedTexts.map(t => parse(t));
+console.log(parsedTexts);
 
 // console.log("Semantic analysis...");
 // const analyzed = parsedTexts.map(t => semanticAnalysis(t));

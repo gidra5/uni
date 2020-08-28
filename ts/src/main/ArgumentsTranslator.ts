@@ -1,17 +1,22 @@
-import { TextDriver } from "./TextDriver";
+import { TextDriver } from "../Translator/TextDriver";
 
 export let textDrivers;
 export let srcOutFiles;
+
+let outExtension = ".code";
 
 const commands = {
     ["in"]: (files: string[] | undefined) => { textDrivers = files?.map(file => new TextDriver(file)); },
     ["out"]: (files: string[] | undefined) => {
         if (files) srcOutFiles = files;
-        else textDrivers?.forEach(td => td.src.split(".")[0] + ".code");
+        else textDrivers?.forEach(td => td.src.split(".")[0] + outExtension);
+    },
+    ["outExt"]: (ext: string) => {
+        outExtension = ext;
     }
 }
 
-export function translate(args: string[]) {
+export function translateArgs(args: string[]) {
     const keys = Object.keys(commands);
     const parametersArgs = {};
     let currKey = "in";

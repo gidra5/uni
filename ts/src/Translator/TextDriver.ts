@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { LogLevels, currLogLevel } from './Error';
+import { LogLevels, currLogLevel } from '../Utility/Error';
 
 export const specialChars = {
     space: " ",
@@ -50,7 +50,7 @@ export class TextDriver {
         this.nextChar(str.length);
     }
 
-    error(msg: string) {
+    error(msg: string): never {
         console.log(`Error in file ${this.file} at pos ${this.currentCharLinePos + 1} ` +
             `line ${this.currentCharLine + 1}:` +
             `\n\n\t${this.src.split(specialChars.EOL)[this.currentCharLine]}` +

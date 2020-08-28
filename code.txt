@@ -10,11 +10,11 @@ General process of generationg code
         Operator - a special characters that have associated with it procedure
         Name - sequence of alphanumeric characters
         None - unclassified character
+        Skip - a sequence of characters that shouldn't be included in tokenization
     Sets of keywords, groupings, separators and operators can be modified through dictionary
     New classes can be added and given symbols in dictionary or regexp to classify strings.
     Tokenization ignores a set of characters, that can be modified through code and c-style comments.
-    2. Find...?
-    3. PROFIT!!!
+    2. Create AST to easily extract data from recognised code.
 
 2. Generate from separated grammar definitions, semantic definitions, etc. needed data structures.
 3. Using those data structures modify existing pipeline to compile earlier unrecognised code.

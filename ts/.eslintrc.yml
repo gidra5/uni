@@ -29,7 +29,7 @@ rules:
     - global
   dot-location:
     - error
-    - object
+    - property
   no-lonely-if:
     - error
   operator-linebreak:

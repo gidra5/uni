@@ -1,17 +1,14 @@
-//groupings make scope trees
-export enum TokenTypes { Keyword, Grouping, Separator, Operator, Name, None };
-
-import { tokenTypeParsers, dictionary, alphanumeric } from "./Tables";
+import { tokenParsers, dictionary, alphanumeric, TypesOf } from "./Tables";
 import { specialChars, TextDriver } from "./TextDriver";
-import { currLogLevel, LogLevels } from "./Error";
+import { currLogLevel, LogLevels } from "../Utility/Error";
 
 export const ignoredChars = [specialChars.space, specialChars.tab, specialChars.EOL];
 
-export const EOTToken: Token = [TokenTypes.None, specialChars.EOT];
-
-export type Token = [type: TokenTypes, src: string];
+export type Token = [type: number, src: string];
 export type TokenInfo = [pos: number, line: number, linePos: number];
 export type TokenExtended = [...token: Token, ...info: TokenInfo];
+
+export const EOTToken: Token = [TypesOf.Tokens.None, specialChars.EOT];
 
 export class TokenDriver {
     currentTokenPos = 0;
@@ -22,31 +19,7 @@ export class TokenDriver {
 
     //goes through src-code once and generates Tokens from it
     constructor(driver: TextDriver) {
-        const comment = () => {
-            if (driver.nextString(2) === "//") {
-                driver.nextChar(2);
-                while (driver.currentChar !== specialChars.EOL) {
-                    driver.nextChar();
-                }
-            } else if (driver.nextString(2) === "/*") {
-                driver.nextChar(2);
-                while (driver.nextString(2) !== "*/") {
-                    driver.nextChar();
-                }
-                driver.nextChar(2);
-            } else return false;
-
-            return true;
-        }
-
         while (driver.currentChar !== specialChars.EOT) {
-            //evading useless chars and comments
-            comment();
-            while (ignoredChars.includes(driver.currentChar)) {
-                driver.nextChar();
-                while (comment()) { }
-            }
-
             const tokenInfo: TokenExtended = [...EOTToken,
                 driver.currentCharPos, driver.currentCharLine, driver.currentCharLinePos];
 
@@ -57,7 +30,7 @@ export class TokenDriver {
                 const substr = str.substring(0, i);
 
                 if (dictionary[substr] !== undefined) {
-                    if (dictionary[substr] === TokenTypes.Keyword &&
+                    if (dictionary[substr] === TypesOf.Tokens.Keyword &&
                         alphanumeric.test(driver.nextString(i + 1).slice(i)))
                             continue;
 
@@ -67,19 +40,17 @@ export class TokenDriver {
                     break;
                 }
             }
+            // console.log(tokenInfo);
 
-            if (tokenInfo[0] !== TokenTypes.None) {
-                this.tokenized.push(tokenInfo); continue;
-            }
+            if (tokenInfo[0] === TypesOf.Tokens.None) {
+                //if it wasn't in dictionary check other types of tokens
+                // const tokenTypes = Object.keys(TypesOf.Token)
+                //     .filter(k => typeof TypesOf.Token[k] === "number")
+                //     .map(k => TypesOf.Token[k]);
 
-            //if it wasn't in dictionary check other types of tokens
-            const tokenTypes = Object.keys(TokenTypes)
-                .filter(k => typeof TokenTypes[k] === "number")
-                .map(k => TokenTypes[k]);
-
-            for (const tokenType of tokenTypes) {
-                const parser = tokenTypeParsers.get(tokenType);
-                if (parser) {
+                for (const tokenType of TypesOf.Tokens.values) {
+                    const parser = tokenParsers[tokenType];
+                    if (!parser) continue;
                     const parsed = parser(driver);
                     if (parsed) {
                         tokenInfo[0] = tokenType;
@@ -89,8 +60,9 @@ export class TokenDriver {
                         driver.nextChar(tokenInfo[2] - driver.currentCharPos);
                 }
             }
-            
-            this.tokenized.push(tokenInfo);
+
+            if (tokenInfo[0] !== TypesOf.Tokens.Skip)
+                this.tokenized.push(tokenInfo);
         }
 
         this.currentToken = this.tokenized[this.currentTokenPos];
@@ -100,7 +72,8 @@ export class TokenDriver {
 
     nextToken(step: number = 1) {
         this.currentTokenPos += step;
-        this.currentToken = this.tokenized[this.currentTokenPos];
+        this.currentToken = this.currentTokenPos < this.tokenized.length ? this.tokenized[this.currentTokenPos] :
+            [...EOTToken, 0, 0, 0];
     };
 
     checkCurrToken(driver: TokenDriver, expected: Token, err: string): boolean {
@@ -112,14 +85,18 @@ export class TokenDriver {
         return true;
     }
 
-    error(msg: string) {
+    error(msg: string): never {
         const currToken = this.tokenized[this.currentTokenPos];
-        console.log(`Error in file ${this.file} at pos ${currToken[2]}
-            line ${currToken[3] + 1}: ${msg}\n
-            ${this.src.split(specialChars.EOL)[currToken[3]]}\n`);
-        for (let i = 0; i < currToken[1].length; ++i) {
-            console.log(`\u001b[${currToken[4] + i}C^`);
-        }
+
+        let underscore = `\u001b[${currToken[4] - 0.5}C^`;
+        for (let i = 1; i < currToken[1].length; ++i)
+            underscore += `\u001b[0.5C^`;
+
+        console.log(`Error in file ${this.file} at pos ${currToken[4] + 1} `+
+            `line ${currToken[3] + 1}:`+
+            `\n\n\t${this.src.split(specialChars.EOL)[currToken[3]]}` +
+            `\n\t${underscore}` +
+            `\n${msg}`);
 
         process.exit();
     }
@@ -128,11 +105,15 @@ export class TokenDriver {
         if (currLogLevel > LogLevels.Warn) return;
 
         const currToken = this.tokenized[this.currentTokenPos];
-        console.log(`Error in file ${this.file} at pos ${currToken[2]}
-            line ${currToken[3] + 1}: ${msg}\n
-            ${this.src.split(specialChars.EOL)[currToken[3]]}\n`);
-        for (let i = 0; i < currToken[1].length; ++i) {
-            console.log(`\u001b[${currToken[4] + i}C^`);
-        }
+
+        let underscore = `\u001b[${currToken[4] - 0.5}C^`;
+        for (let i = 1; i < currToken[1].length; ++i)
+            underscore += `\u001b[0.5C^`;
+
+        console.log(`Error in file ${this.file} at pos ${currToken[4] + 1} ` +
+            `line ${currToken[3] + 1}:` +
+            `\n\n\t${this.src.split(specialChars.EOL)[currToken[3]]}` +
+            `\n\t${underscore}` +
+            `\n${msg}`);
     }
 }

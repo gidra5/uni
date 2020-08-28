@@ -6,7 +6,8 @@ sTerminals extends terminals;
 */
 
 import { TextDriver } from "./TextDriver";
-import { Token, EOTToken, TokenTypes, TokenDriver } from "./TokenDriver";
+import { Token, EOTToken, TokenDriver } from "./TokenDriver";
+import { TypesOf } from "./Tables";
 
 const enum GrammarTypes { Unrestricted, ContextSensitive, ContextFree, Regular };
 
@@ -14,7 +15,7 @@ export type Rule = [lhs: Token[], rhs: Token[]];
 
 export class Grammar {
     terminals: Set<Token> = new Set([EOTToken]);
-    nonTerminals: Set<Token> = new Set([[TokenTypes.Name, "S"]]);
+    nonTerminals: Set<Token> = new Set([[TypesOf.Tokens.Name, "S"]]);
     rules: Rule[] = [];
     sNonTerminal: Token = this.nonTerminals.values()[0];
     type: GrammarTypes = GrammarTypes.Regular;
