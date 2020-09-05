@@ -1,7 +1,8 @@
 import { TokenDriver } from "./TokenDriver";
 import { TextDriver, specialChars } from "./TextDriver";
-import { ParseTree, parse } from "./SyntaxParser";
+import { ParseTree, parse, ParseContextInfo, ParserInput } from "./SyntaxParser";
 import { DynamicEnum } from "../Utility/Helper";
+import { textDrivers } from "../main/ArgumentsTranslator";
 
 export const letter = /\p{L}/u;
 export const digit = /\p{Nd}/u;
@@ -13,6 +14,7 @@ TypesOf.Tokens = new DynamicEnum([
     "Grouping",
     "Separator",
     "Operator",
+    "String",
     "Name",
     "Skip",
     "None",
@@ -21,21 +23,16 @@ TypesOf.Nodes = new DynamicEnum([
     "Program",
     "GrammarDecl",
     "Rule",
-    "RuleLeft",
-    "RuleRight",
-    "Literal",
     "Code",
     "Group",
 ]);
-TypesOf.Literals = new DynamicEnum([
-    "String"
-]);
+TypesOf.Literals = new DynamicEnum([]);
+type Parser = (driver: TokenDriver, params?: any[]) => ParseTree | undefined;
 
-// export const stringLiteralSpecialChars: Map<string          , (driver: TextDriver)  => any      > = new Map();
-export const nodeProcedures: { [type: number]: (...args: (ParseTree | number)[]) => void } = {};
-export const literalParsers: { [type: number]: (driver: TokenDriver) => ParseTree | undefined } = {};
-export const nodeParsers:    { [type: number]: (driver: TokenDriver) => ParseTree | undefined } = {};
-export const tokenParsers:   { [type: number]: (driver: TextDriver) => boolean } = {};
+const stringLiteralSpecialChars: { [key: string]: (driver: TextDriver) => string } = {};
+// export const nodeProcedures: { [type: number]: (...args: (ParseTree | number)[]) => void } = {};
+export const nodeParsers:    { [type: number]: Parser } = {};
+export const tokenParsers:   { [type: number]: (driver: TextDriver) => string | undefined } = {};
 export const dictionary: { maxWordLength: number, [str: string]: number } = new Proxy({
     maxWordLength: 3,
     [specialChars.space]:   TypesOf.Tokens.Skip,
@@ -46,11 +43,9 @@ export const dictionary: { maxWordLength: number, [str: string]: number } = new 
     ["|"]:                  TypesOf.Tokens.Separator,
     ["("]:                  TypesOf.Tokens.Grouping,
     [")"]:                  TypesOf.Tokens.Grouping,
-    ["\""]:                 TypesOf.Tokens.Grouping,
-    ["=>"]:                 TypesOf.Tokens.Oper,
+    ["=>"]:                 TypesOf.Tokens.Operator,
     ["+"]:                  TypesOf.Tokens.Operator,
     ["-"]:                  TypesOf.Tokens.Operator,
-    ["\\"]:                 TypesOf.Tokens.Operator
 }, {
     set(obj, prop, val) {
         obj[prop as number | string] = val;
@@ -65,44 +60,49 @@ export const dictionary: { maxWordLength: number, [str: string]: number } = new 
 // tokenTypeValues.set(TokenTypes.Operator  , new Map<string, (...operands: any) => any>());
 // tokenTypeValues.set(TokenTypes.Name      , new Map<string, any>());
 
-// literals.set(LiteralTypes.String, (driver: TokenDriver): string => {
-//     let str: string = "";
+tokenParsers[TypesOf.Tokens.String] = (driver: TextDriver): string | undefined => {
+    let str: string = "";
 
-//     driver.assertStringAndMove("\"", "expected opening bracket");
+    if (driver.currentChar !== "\"") return;
+    else driver.nextChar();
 
-//     while (driver.currentChar !== "\"") {
-//         if (driver.currentChar === "\\") {
-//             driver.nextChar();
-//             const parser = stringLiteralSpecialChars.get(driver.currentChar);
-//             if (parser === undefined) throw new Error("failed to get parser for special char " + driver.currentChar)
-//             parser(driver);
-//         }
+    while (driver.currentChar !== "\"") {
+        if (driver.currentChar === "\\") {
+            driver.nextChar();
+            const parser = stringLiteralSpecialChars[driver.currentChar]
+                || (driver => { const res = driver.currentChar; driver.nextChar(); return res; });
+            const parsed = parser(driver);
+            str += parsed;
+        } else {
+            str += driver.currentChar;
+            driver.nextChar();
+        }
+    }
+    driver.nextChar();
 
-//         str += driver.currentChar;
-//         driver.nextChar();
-//     }
-//     driver.nextChar();
+    return str;
+};
 
-//     return str;
-// });
-
-tokenParsers[TypesOf.Tokens.Name] = (driver: TextDriver): boolean => {
+tokenParsers[TypesOf.Tokens.Name] = (driver: TextDriver): string | undefined => {
+    const beginPos = driver.currentCharPos;
     if (alphanumeric.test(driver.currentChar))
         driver.nextChar();
-    else return false;
+    else return;
 
     while (alphanumeric.test(driver.currentChar))
         driver.nextChar();
 
-    return true;
+    return driver.src.slice(beginPos, driver.currentCharPos);
 };
 
-tokenParsers[TypesOf.Tokens.None] = (driver: TextDriver): boolean => {
+tokenParsers[TypesOf.Tokens.None] = (driver: TextDriver): string | undefined => {
+    const beginPos = driver.currentCharPos;
     driver.nextChar();
-    return true;
+    return driver.src.slice(beginPos, driver.currentCharPos);
 };
 
-tokenParsers[TypesOf.Tokens.Skip] = (driver: TextDriver): boolean => {
+tokenParsers[TypesOf.Tokens.Skip] = (driver: TextDriver): string | undefined => {
+    const beginPos = driver.currentCharPos;
         if (driver.nextString(2) === "//") {
             driver.nextChar(2);
             while (driver.currentChar !== specialChars.EOL) {
@@ -114,96 +114,76 @@ tokenParsers[TypesOf.Tokens.Skip] = (driver: TextDriver): boolean => {
                 driver.nextChar();
             }
             driver.nextChar(2);
-        } else return false;
+        } else return;
 
-        return true;
-
+    return driver.src.slice(beginPos, driver.currentCharPos);
 };
 
 nodeParsers[TypesOf.Nodes.Program] = (driver: TokenDriver): ParseTree => {
-    const pt: ParseTree = [[TypesOf.Nodes.Program, driver.currentTokenPos, driver], undefined];
+    const pt: ParseTree = [[TypesOf.Nodes.Program, driver.currentTokenPos, driver]];
+    const parseContext: ParseContextInfo = { driver, parent: pt };
 
-    while (driver.currentToken[1] !== specialChars.EOT) {
-        parse(driver, TypesOf.Nodes.GrammarDecl, pt);
-        parse(driver, TypesOf.Nodes.Code, pt);
-    }
+    while (driver.currentToken[1] !== specialChars.EOT)
+        parse(parseContext, [TypesOf.Nodes.GrammarDecl, TypesOf.Nodes.Rule, TypesOf.Nodes.Code, TypesOf.Tokens, TypesOf.Literals]);
 
     return pt;
 };
 
 nodeParsers[TypesOf.Nodes.GrammarDecl] = (driver: TokenDriver): ParseTree | undefined => {
-    const pt: ParseTree = [[TypesOf.Nodes.GrammarDecl, driver.currentTokenPos], undefined];
+    const pt: ParseTree = [[TypesOf.Nodes.GrammarDecl, driver.currentTokenPos]];
+    const parseContext: ParseContextInfo = { driver, parent: pt };
 
-    parse(driver, TypesOf.Nodes.Group, pt);
-    parse(driver, TypesOf.Nodes.Group, pt);
-    parse(driver, TypesOf.Nodes.Group, pt);
-    parse(driver, TypesOf.Tokens.Name, pt);
+    //if at one of the points it fails return from parser (implicit undefined)
+    if (!parse({ ...parseContext, parserParams: ["g"] }, TypesOf.Tokens.Keyword)
+        || !parse({ ...parseContext, parserParams: [[TypesOf.Tokens.Name, TypesOf.Literals.String], "(,)"] },
+            TypesOf.Nodes.Group)
+        || !parse({ ...parseContext, parserParams: [TypesOf.Tokens.Name, "(,)"] }, TypesOf.Nodes.Group)
+        || !parse({ ...parseContext, parserParams: [TypesOf.Nodes.Rule, "(,)"] }, TypesOf.Nodes.Group)
+        || !parse(parseContext, TypesOf.Tokens.Name)
+    ) return;
+
+    return pt;
+}
+
+//grouping string format - (left brace)(separator)(right brace)
+nodeParsers[TypesOf.Nodes.Group] = (driver: TokenDriver,
+    params?: [groupElementsType?: ParserInput, groupingString?: string, ...rest: any[]]): ParseTree | undefined => {
+    if (!params) return;
+
+    const pt: ParseTree = [[TypesOf.Nodes.Group, driver.currentTokenPos]];
+    const parseContext: ParseContextInfo = { driver, parent: pt };
+
+    if (!parse({ ...parseContext, parserParams: [params[1]?.charAt(0)] }, TypesOf.Tokens.Grouping)) return;
+
+    if (parse(parseContext, params[0])) {
+        while (parse({ ...parseContext, parserParams: [params[1]?.charAt(1)] }, TypesOf.Tokens.Separator))
+            parse(parseContext, TypesOf.Nodes.values.filter(v => ![TypesOf.Nodes.Program].includes(v)));
+    }
+
+    if (!parse({ ...parseContext, parserParams: [params[1]?.charAt(2)] }, TypesOf.Tokens.Grouping)) return;
 
     return pt;
 }
 
-nodeParsers[TypesOf.Nodes.Group] = (driver: TokenDriver): ParseTree => {
-    const pt: ParseTree = [[TypesOf.Nodes.Group, driver.currentTokenPos], undefined];
-
-    parse(driver, TypesOf.Tokens.Grouping, pt);
-    parse(driver, TypesOf.Nodes.values.filter(v => ![
-        TypesOf.Nodes.Program, TypesOf.Nodes.RuleLeft, TypesOf.Nodes.RuleRight].includes(v)), pt);
-
-    while (parse(driver, TypesOf.Tokens.Separator, pt))
-        parse(driver, TypesOf.Nodes.values.filter(v => ![
-            TypesOf.Nodes.Program, TypesOf.Nodes.RuleLeft, TypesOf.Nodes.RuleRight].includes(v)), pt);
-
-    parse(driver, TypesOf.Tokens.Grouping, pt);
-
-    return pt;
-}
 nodeParsers[TypesOf.Nodes.Rule] = (driver: TokenDriver): ParseTree => {
-    const pt: ParseTree = [[TypesOf.Nodes.Rule, driver.currentTokenPos], undefined];
+    const pt: ParseTree = [[TypesOf.Nodes.Rule, driver.currentTokenPos]];
+    const parseContext: ParseContextInfo = { driver, parent: pt };
 
-    parse(driver, TypesOf.Nodes.RuleLeft, pt);
-    parse(driver, TypesOf.Tokens.Separator, pt);
-    parse(driver, TypesOf.Nodes.RuleRight, pt);
-
-    return pt;
-}
-nodeParsers[TypesOf.Nodes.RuleLeft] = (driver: TokenDriver): ParseTree => {
-    const pt: ParseTree = [[TypesOf.Nodes.RuleLeft, driver.currentTokenPos], undefined];
-
-    while (parse(driver, TypesOf.Tokens.Name, pt))
+    while (parse(parseContext, TypesOf.Tokens.Name))
         continue;
 
-    parse(driver, TypesOf.Tokens.Name, pt);
+    parse(parseContext, TypesOf.Tokens.Name);
 
-    while (parse(driver, TypesOf.Tokens.Name, pt))
+    while (parse(parseContext, TypesOf.Tokens.Name))
         continue;
 
-    return pt;
-}
-nodeParsers[TypesOf.Nodes.RuleRight] = (driver: TokenDriver): ParseTree => {
-    const pt: ParseTree = [[TypesOf.Nodes.RuleRight, driver.currentTokenPos], undefined];
+    parse({ ...parseContext, parserParams: ["=>"]}, TypesOf.Tokens.Operator);
 
-    while (parse(driver, TypesOf.Tokens.Name, pt))
+    while (parse(parseContext, TypesOf.Tokens.Name))
         continue;
 
     return pt;
 }
 // nodeParsers[TypesOf.Nodes.Code] = (driver: TokenDriver): ParseTree => {
 //     return
-// }
-// nodeParsers[TypesOf.Nodes.Literal] = (driver: TokenDriver): AbstractSyntaxTree | undefined => {
-//     const pt: AbstractSyntaxTree = [[TypesOf.Nodes.Literal, driver.currentTokenPos], undefined];
-
-//     for (const literalType of TypesOf.Literals.values) {
-//         const literal = literalParsers[literalType](driver);
-//     }
-
-//     return pt;
-// }
-
-// literalParsers[TypesOf.Literals.String] = (driver: TokenDriver): AbstractSyntaxTree => {
-//     const pt: AbstractSyntaxTree = [[TypesOf.Nodes.Literal, driver.currentTokenPos], undefined];
-
-//     parse(driver, pt, TypesOf.Nodes.Group);
-
-//     return pt;
 // }

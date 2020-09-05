@@ -51,11 +51,15 @@ export class TextDriver {
     }
 
     error(msg: string): never {
-        console.log(`Error in file ${this.file} at pos ${this.currentCharLinePos + 1} ` +
+        const red = text => '\u001b[31m' + text + '\u001b[39m';
+        
+        console.log(
+            red('Error') + ` in file ${this.file} at pos ${this.currentCharLinePos + 1} ` +
             `line ${this.currentCharLine + 1}:` +
             `\n\n\t${this.src.split(specialChars.EOL)[this.currentCharLine]}` +
             `\n\t\u001b[${this.currentCharLinePos}C^` +
-            `\n${msg}`);
+            `\n${msg}`
+        );
 
         process.exit();
     }
@@ -63,10 +67,14 @@ export class TextDriver {
     warning(msg: string) {
         if (currLogLevel > LogLevels.Warn) return;
 
-        console.log(`Warning in file ${this.file} at pos ${this.currentCharLinePos + 1} ` +
+        const yellow = text => '\u001b[33m' + text + '\u001b[39m';
+
+        console.log(
+            yellow('Warning') + `in file ${this.file} at pos ${this.currentCharLinePos + 1} ` +
             `line ${this.currentCharLine + 1}:` +
             `\n\n\t${this.src.split(specialChars.EOL)[this.currentCharLine]}` +
             `\n\t\u001b[${this.currentCharLinePos}C^` +
-            `\n${msg}`);
+            `\n${msg}`
+        );
     }
 }

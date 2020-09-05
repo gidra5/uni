@@ -27,14 +27,14 @@ export class DynamicEnum {
                     items.forEach(v => this.set(v));
 
                 if (obj[prop] === undefined) {
-                    let subEnums = Object.keys(obj)
-                        .filter(v => v !== "parent")
-                        .map(k => obj[k])
-                        .filter(v => v instanceof DynamicEnum);
+                    let subEnums = obj.values.filter(v => v instanceof DynamicEnum);
                     const checkEnumsFromList = enumList => {
                         for (const v of enumList) {
                             if (Object.keys(v).includes(prop as string)) return v[prop];
-                            else return checkEnumsFromList(v.values.filter(v => v instanceof DynamicEnum))
+                            else {
+                                let res = checkEnumsFromList(v.values.filter(v => v instanceof DynamicEnum));
+                                if(res) return res;
+                            }
                         }
                     }
                     if (subEnums.length > 0) {
@@ -77,7 +77,8 @@ export class DynamicEnum {
 
     get keys() {
         return Object.keys(this)
-            .filter(k => typeof this[k] === "number" && k !== "nextValue");
+            .filter(k => typeof this[k] === "number" && k !== "nextValue"
+                || this[k] instanceof DynamicEnum && k !== "parent");
     }
 
     get values() {

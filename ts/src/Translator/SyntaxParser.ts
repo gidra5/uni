@@ -1,59 +1,71 @@
 import { TokenDriver } from "./TokenDriver";
 import { nodeParsers, TypesOf } from "./Tables";
+import { DynamicEnum } from "../Utility/Helper";
 
-// export type Literal = [type: number, val: any];
 export type Node = [type: number, tokenPos: number, ...extraInfo: any[]];
-export type ParseTree = [node: Node, parent: ParseTree | undefined, ...children: ParseTree[]];
+export type ParseTree = [node: Node, ...children: ParseTree[]];
+export type ParseContextInfo = { driver: TokenDriver, parent?: ParseTree, parserParams?: any[] };
+export type ParserInput = number | number[] | DynamicEnum;
 
-export function parse(driver: TokenDriver, type: number | number[] = TypesOf.Nodes.Program, parent?: ParseTree,
-    failIfNotParsed = true, failIfNoParser = true): boolean {
+export function parse(parseContext: ParseContextInfo, input: ParserInput = TypesOf.Nodes.Program):
+    ParseTree | undefined {
+    const failIfNoParser = true;
+    const failIfNotParsed = true;
+    const { driver, parent, parserParams } = parseContext;
 
-    let parsed;
-    if (typeof type === "number") {
-        console.log(TypesOf[type], TypesOf);
-
-        if (TypesOf.Tokens.values.includes(type)) {
-            if (driver.currentToken[0] === type) {
-                parent?.push([[type, driver.currentTokenPos], parent])
+    let parsed: ParseTree | undefined;
+    if (typeof input === "number") {
+        if (TypesOf.Tokens.values.includes(input)) {
+            if (driver.currentToken[0] === input) {
+                if (parserParams && driver.currentToken[1] !== parserParams[0]) {
+                    if (failIfNotParsed) driver.error(`expected ${TypesOf[input]}[${parserParams[0]}]`);
+                    return;
+                }
+                parsed = [[input, driver.currentTokenPos]];
                 driver.nextToken();
-
-                return true;
             }
-            return false;
+        } else {
+            const parser = nodeParsers[input];
+
+            if (!parser) {
+                if (failIfNoParser) driver.error(`No parser for ${TypesOf[input]}`);
+                else return parsed;
+            }
+
+            // const beginPos = driver.currentTokenPos;
+            parsed = parser(driver, parserParams);
+
+            if (!parsed) {
+                if (failIfNotParsed) driver.error(`Incorrect syntax for ${TypesOf[input]}`);
+                else parsed = [[TypesOf.Nodes.Code, driver.currentTokenPos]];
+
+                //if failed return back tokenPos
+                // driver.nextToken(beginPos - driver.currentTokenPos);
+            }
         }
-
-        const parser = nodeParsers[type];
-
-        if (!parser) {
-            console.log(type, parent);
-            if (failIfNoParser) driver.error(`No parser for ${TypesOf.Nodes[type]}`);
-            else return false;
-        }
-
-        const beginPos = driver.currentTokenPos;
-        parsed = parser(driver);
-
+    } else if (input instanceof DynamicEnum) {
+        parsed = parse(parseContext, input.values);
         if (!parsed) {
-            if (failIfNotParsed) driver.error(`Incorrect syntax for ${TypesOf.Nodes[type]}`);
-            else parsed = [[TypesOf.Nodes.Code, driver.currentTokenPos], parent];
-
-            //if failed return back tokenPos
-            driver.nextToken(beginPos - driver.currentTokenPos);
+            const children = input.values.filter(v => v instanceof DynamicEnum);
+            for (const child of children) {
+                parsed = parse(parseContext, child);
+                if (parsed) break;
+            }
         }
     } else {
-        console.log(type.map(v => TypesOf[v]));
-
-        if (type.length > 1) {
+        if (input.length > 1) {
             try {
-                return parse(driver, type.shift()!, parent, failIfNotParsed, failIfNoParser);
+                return parse(parseContext, input.shift()!);
             } catch (err) {
-                return parse(driver, type, parent, failIfNotParsed, failIfNoParser);
+                return parse(parseContext, input);
             }
-        } else return parse(driver, type[0], parent, failIfNotParsed, failIfNoParser);
+        } else return parse(parseContext, input[0]);
     }
 
-    parsed[1] = parent;
-    parent?.push(parsed);
+    if (parsed) {
+        // parsed[1] = parent;
+        parent?.push(parsed);
+    }
 
-    return !!parsed;
+    return parsed;
 };

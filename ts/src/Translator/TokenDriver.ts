@@ -13,8 +13,7 @@ export const EOTToken: Token = [TypesOf.Tokens.None, specialChars.EOT];
 export class TokenDriver {
     currentTokenPos = 0;
     currentToken: TokenExtended = [...EOTToken, 0, 0, 0];
-    file: string;
-    src: string;
+    textDriver: TextDriver;
     tokenized: TokenExtended[] = [];
 
     //goes through src-code once and generates Tokens from it
@@ -40,24 +39,23 @@ export class TokenDriver {
                     break;
                 }
             }
-            // console.log(tokenInfo);
 
+            //if it wasn't in dictionary check other types of tokens
             if (tokenInfo[0] === TypesOf.Tokens.None) {
-                //if it wasn't in dictionary check other types of tokens
-                // const tokenTypes = Object.keys(TypesOf.Token)
-                //     .filter(k => typeof TypesOf.Token[k] === "number")
-                //     .map(k => TypesOf.Token[k]);
-
                 for (const tokenType of TypesOf.Tokens.values) {
                     const parser = tokenParsers[tokenType];
                     if (!parser) continue;
+
                     const parsed = parser(driver);
-                    if (parsed) {
-                        tokenInfo[0] = tokenType;
-                        tokenInfo[1] = driver.src.slice(tokenInfo[2], driver.currentCharPos);
-                        break;
-                    } else //if failed return back charPos
+                    if (!parsed) {
+                        //if failed return back charPos
                         driver.nextChar(tokenInfo[2] - driver.currentCharPos);
+                        continue;
+                    }
+
+                    tokenInfo[0] = tokenType;
+                    tokenInfo[1] = parsed;
+                    break;
                 }
             }
 
@@ -66,8 +64,7 @@ export class TokenDriver {
         }
 
         this.currentToken = this.tokenized[this.currentTokenPos];
-        this.file = driver.file;
-        this.src = driver.src;
+        this.textDriver = driver;
     }
 
     nextToken(step: number = 1) {
@@ -87,22 +84,28 @@ export class TokenDriver {
 
     error(msg: string): never {
         const currToken = this.tokenized[this.currentTokenPos];
+        const red = text => '\u001b[31m' + text + '\u001b[39m';
+        const { src, file } = this.textDriver;
 
         let underscore = `\u001b[${currToken[4] - 0.5}C^`;
         for (let i = 1; i < currToken[1].length; ++i)
             underscore += `\u001b[0.5C^`;
 
-        console.log(`Error in file ${this.file} at pos ${currToken[4] + 1} `+
+        console.log(
+            red('Error') + ` in file ${file} at pos ${currToken[4] + 1} ` +
             `line ${currToken[3] + 1}:`+
-            `\n\n\t${this.src.split(specialChars.EOL)[currToken[3]]}` +
+            `\n\n\t${src.split(specialChars.EOL)[currToken[3]]}` +
             `\n\t${underscore}` +
-            `\n${msg}`);
+            `\n${msg}`
+        );
 
         process.exit();
     }
 
     warning(msg: string) {
         if (currLogLevel > LogLevels.Warn) return;
+        const yellow = text => '\u001b[33m' + text + '\u001b[39m';
+        const { src, file } = this.textDriver;
 
         const currToken = this.tokenized[this.currentTokenPos];
 
@@ -110,10 +113,12 @@ export class TokenDriver {
         for (let i = 1; i < currToken[1].length; ++i)
             underscore += `\u001b[0.5C^`;
 
-        console.log(`Error in file ${this.file} at pos ${currToken[4] + 1} ` +
+        console.log(
+            yellow('Warning') + ` in file ${file} at pos ${currToken[4] + 1} ` +
             `line ${currToken[3] + 1}:` +
-            `\n\n\t${this.src.split(specialChars.EOL)[currToken[3]]}` +
+            `\n\n\t${src.split(specialChars.EOL)[currToken[3]]}` +
             `\n\t${underscore}` +
-            `\n${msg}`);
+            `\n${msg}`
+        );
     }
 }

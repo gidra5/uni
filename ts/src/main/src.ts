@@ -13,11 +13,9 @@ translateArgs(process.argv.slice(2));
 
 console.log("Lexical analysis...");
 const scannedTexts = textDrivers.map(td => new TokenDriver(td));
-console.log(scannedTexts.map(td => td.tokenized.map(token => [TypesOf.Tokens[token[0]], ...token.slice(1)])));
 
 console.log("Parsing...")
-const parsedTexts = scannedTexts.map(t => parse(t));
-console.log(parsedTexts);
+// const parsedTexts = scannedTexts.map(t => parse(t));
 
 // console.log("Semantic analysis...");
 // const analyzed = parsedTexts.map(t => semanticAnalysis(t));
@@ -29,3 +27,6 @@ console.log(parsedTexts);
 // srcOutFiles.forEach((f, i) => writeFileSync(f, out[i]));
 
 console.log("Done!");
+
+console.log(scannedTexts.map(td => td.tokenized.map(token => [TypesOf.Tokens[token[0]], ...token.slice(1)])));
+// console.log(parsedTexts);

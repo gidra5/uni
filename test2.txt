@@ -1,4 +1,4 @@
-g smileα ()
+// g smileα
 
 /*g int ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
     (S)
@@ -18,9 +18,12 @@ g smileα ()
 
 g grammar1 (int, "akka", "b", "c", "\"")
     (A, B, C)
-    (A => "akka" B, B => "b\"a" A, B => int "a" A, C => "c" C)
+    (A => "akka" B,
+        //B => "b\"a" A,
+        B C => int "a" A,
+        C => "c" C)
     A //sample grammar
-{}
+// {}
 // ok
 
 /*  sample
@@ -29,7 +32,7 @@ text
 *//* and more */
 /**/
 
-$
+// $
 // as
 
 a
