@@ -24,20 +24,7 @@ rl.on("line", (line) => {
       rl.close();
       break;
     default:
-      const [tokens, spans, errors] = parser.tokenize(line).reduce(
-        (acc, { item, ...rest }) => {
-          if (item.type === "ok") {
-            acc[0].push(item.value);
-            acc[1].push(rest);
-          } else acc[2].push({ item: item.err, ...rest });
-          return acc;
-        },
-        [
-          [] as parser.Token[],
-          [] as parser.Span[],
-          [] as (parser.Span & { item: parser.Error })[],
-        ]
-      );
+      const [tokens, spans, errors] = parser.tokenize(line);
 
       console.log(tokens);
       console.log(errors);

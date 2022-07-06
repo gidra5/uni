@@ -10,15 +10,12 @@ import {
 export type Span = { start: number; end: number };
 export type FileSpan = Span & { index: number };
 export class Registry<T> {
-  constructor(
-    private registry: Record<number, T> = {},
-    private nextIndex: number = 0
-  ) {}
+  constructor(private registry: T[] = [], private nextIndex: number = 0) {}
 
   entries() {
-    return Object.entries(this.registry);
+    return this.registry.map((item, i) => [item, i] as const);
   }
-  get(index: number | string) {
+  get(index: number) {
     return this.registry[index];
   }
   register(item: T) {
@@ -45,18 +42,10 @@ export const KEYWORDS = [
   "_",
   "true",
   "false",
-  "fn"
+  "fn",
 ] as const;
 export type Keyword = typeof KEYWORDS[number];
-export type Token =
-  | Keyword
-  | Literal
-  | "\n"
-  | ","
-  | "."
-  | "..."
-  | ":"
-  | ";";
+export type Token = Keyword | Literal | "\n" | "," | "." | "..." | ":" | ";";
 export type Precedence = [Option<number>, Option<number>];
 export type OperatorSeparator = { ident: string; optional?: boolean };
 export type OperatorDefinition = {
@@ -66,7 +55,7 @@ export type OperatorDefinition = {
 export type OperatorRegistry = Registry<OperatorDefinition>;
 
 export type Operator =
-  | { type: 'operator'; operands: Operator[][]; /* id */ operator: number }
+  | { type: "operator"; operands: Operator[][]; /* id */ operator: number }
   | Token;
 export type Expression =
   | TaggedItemUnion<{
@@ -135,7 +124,7 @@ export class ParsingHandler<T, U> {
   ) {
     this.index = options?.index ?? 0;
     this.resetIndex = options?.resetIndex ?? this.index;
-    this.context = options?.context ?? { operators: new Registry()};
+    this.context = options?.context ?? { operators: new Registry() };
   }
 
   skip<A extends T[]>(values: A) {
@@ -151,11 +140,11 @@ export class ParsingHandler<T, U> {
     return values.includes(this.peek() as T);
   }
 
-  peek(step = 0): T|undefined {
+  peek(step = 0): T | undefined {
     return this.src[this.index + step];
   }
 
-  next(step = 1): T|undefined {
+  next(step = 1): T | undefined {
     const item = this.src[this.index];
     this.advance(step);
     return item;
@@ -215,7 +204,7 @@ const parseMultilineComment = <U,>(parser: ParsingHandler<string, U>) => {
 export const parseToken: Parser<string, Token, Error> = (parser) => {
   if (parser.peek() === ":" && parser.peek(1) === "=") {
     parser.advance(2);
-    return ok({type:'ident', item: ":="});
+    return ok({ type: "ident", item: ":=" });
   }
   if (parser.skip([":"])) return ok(":");
   if (parser.skip([";"])) return ok(";");
@@ -303,7 +292,8 @@ export const parseToken: Parser<string, Token, Error> = (parser) => {
   // identifier
   if (parser.peek()?.match(IDENTIFIER_SYMBOL_REGEXP)) {
     let src = parser.next()!;
-    while (parser.peek()?.match(IDENTIFIER_SYMBOL_REGEXP)) src += parser.next()!;
+    while (parser.peek()?.match(IDENTIFIER_SYMBOL_REGEXP))
+      src += parser.next()!;
 
     if (KEYWORDS.includes(src as Keyword)) return ok(src as Keyword);
     return ok({ type: "ident", item: src });
@@ -319,60 +309,92 @@ export const parseToken: Parser<string, Token, Error> = (parser) => {
 
 export const tokenize = (source: string) => {
   const parser = new ParsingHandler<string, Token>([...source]);
-  return [...parser.parse(parseToken)];
+  const info = [...parser.parse(parseToken)].reduce(
+    (acc, { item, ...rest }) => {
+      if (item.type === "ok") {
+        acc[0].push(item.value);
+        acc[1].push(rest);
+      } else acc[2].push({ item: item.err, ...rest });
+      return acc;
+    },
+    [
+      [],
+      [],
+      [],
+    ] as [Token[], Span[], (Span & { item: Error })[]]
+  );
+  return info;
 };
 
-export const parseOperator: Parser<Token, Operator, Error[]> = (parser) => {
-  const next = parser.peek();
-  if (!next) return err([Error.UNEXPECTED_END]);
-  if (!(typeof next === 'object' && next.type === 'ident')) 
-    return ok(next);
+type OperatorError =
+  | Error
+  | { operator: number; separator: OperatorSeparator; error: OperatorError[] };
 
-  for (const [operator, { separators }] of parser.context.operators.entries()) {
-    const separatorsPatitionedByRequired = separators.reduce((acc, sep) => {
-      acc[acc.length - 1] = [...acc[acc.length - 1], sep];
-      if (!sep.optional)
-        acc.push([]);
-      return acc;
-    }, [[]] as OperatorSeparator[][]);
+export const parseOperator: Parser<Token, Operator, OperatorError[]> = (
+  parser
+) => {
+  const peeked = parser.peek();
+  if (!peeked) return err([Error.UNEXPECTED_END]);
+  if (!(typeof peeked === "object" && peeked.type === "ident")) {
+    parser.advance();
+    return ok(peeked);
+  }
+  const errors = [] as OperatorError[];
 
+  _operators: for (const [
+    { separators: [leadingSeparator, ...separators] },
+    operator,
+  ] of parser.context.operators.entries()) {
     const operands: Operator[][] = [];
-    let partitionIndex = 0;
-    let separatorIndex = 0;
+    if (leadingSeparator.ident === peeked.item) {
+      for (const separator of separators) {
+        operands.push([]);
 
-    _partitions: while (separatorsPatitionedByRequired[partitionIndex]) {
-      const partition = separatorsPatitionedByRequired[partitionIndex++];
+        while (true) {
+          const nextOperator = parseOperator(parser);
 
-      while (partition[separatorIndex]) {
-        const separator = partition[separatorIndex];
-        parser.reset();
-        let found = false;
+          if (nextOperator.type === "err") {
+            errors.push({ operator, separator, error: nextOperator.err });
+            parser.reset();
+            continue _operators;
+          }
+          const { value } = nextOperator;
 
-        while (parser.peek()) {
-          const peeked = parser.peek();
-          if (!peeked) break;
-          if (!(typeof peeked === 'object' && peeked.type === 'ident')) {
-            if (operands.length !== 0) 
-              operands[operands.length - 1] = [...operands[operands.length - 1], peeked];
-            
-            parser.advance();
+          if (!(typeof value === "object" && value.type === "ident")) {
+            operands[operands.length - 1] = [
+              ...operands[operands.length - 1],
+              value,
+            ];
             continue;
           }
-          if (peeked.item === separator.ident) {
+          if (value.item === separator.ident) {
             parser.advance();
-            parser.setIndex();
-            operands.push([]);
-            found = true;
             break;
           }
         }
-
-        if (!found && !separator.optional) break _partitions; 
       }
+      return ok({ type: "operator", operands, operator });
     }
-
-    if (partitionIndex === separatorsPatitionedByRequired.length && separatorIndex === separatorsPatitionedByRequired[partitionIndex - 1].length)
-      return ok({ type: 'operator', operator: Number(operator), operands })
   }
-  return ok(next); 
+  return err(errors);
+};
+
+export const operands = (source: string) => {
+  const [tokens, spans, errors] = tokenize(source);
+  const parser = new ParsingHandler<Token, Operator>([...tokens]);
+  const [operators, tokenSpans, operatorErrors] = [...parser.parse(parseOperator, () => Error.UNEXPECTED_END)].reduce(
+    (acc, { item, ...rest }) => {
+      if (item.type === "ok") {
+        acc[0].push(item.value);
+        acc[1].push(rest);
+      } else acc[2].push({ item: item.err, ...rest });
+      return acc;
+    },
+    [
+      [],
+      [],
+      [],
+    ] as [Operator[], Span[], (Span & { item: Error })[]]
+  );
+  return [operators, tokenSpans, spans, operatorErrors, errors];
 };
