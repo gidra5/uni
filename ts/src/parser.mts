@@ -6,28 +6,31 @@ import {
   ok,
   err,
 } from "./types.mjs";
+import crypto from 'crypto';
 
 export type Span = { start: number; end: number };
 export type FileSpan = Span & { index: number };
+export type RegistryKey = string;
 export class Registry<T> {
-  constructor(private registry: T[] = [], private nextIndex: number = 0) {}
+  constructor(private registry: { [k in RegistryKey]: T } = {}) {}
 
   entries() {
-    return this.registry.map((item, i) => [item, i] as const);
+    return Object.entries(this.registry);
   }
-  get(index: number) {
+  get(index: RegistryKey) {
     return this.registry[index];
   }
   register(item: T) {
-    const index = this.nextIndex++;
-    this.registry[index] = item;
-    return index;
+    const key = crypto.randomUUID().slice(0, 8);
+    this.registry[key] = item;
+    return key;
   }
 }
 
 export type Literal = TaggedItemUnion<{
   ident: string;
   string: string;
+  multilineString: string;
   char: string;
   number: number;
 }>;
@@ -55,7 +58,7 @@ export type OperatorDefinition = {
 export type OperatorRegistry = Registry<OperatorDefinition>;
 
 export type Operator =
-  | { type: "operator"; operands: Operator[][]; /* id */ operator: number }
+  | { type: "operator"; operands: Operator[][]; /* id */ operator: RegistryKey }
   | Token;
 export type Expression =
   | TaggedItemUnion<{
@@ -98,6 +101,7 @@ export type Script = (Expression | ModuleItem)[];
 export enum Error {
   UNEXPECTED_END,
   UNRECOGNIZED_INPUT,
+  UNRECOGNIZED_OPERATOR,
   MISSING_CLOSING_APOSTROPHE,
   SKIP,
 }
@@ -216,13 +220,14 @@ export const parseToken: Parser<string, Token, Error> = (parser) => {
 
   // whitespace characters
   if (parser.peek()?.match(/\s/)) {
-    while (parser.peek()?.match(/\s/)) parser.advance();
+    parser.advance();
     return err(Error.SKIP);
   }
 
   // comments
   if (parser.peek() === "/" && parser.peek(1) === "/") {
     while (parser.peek() && parser.peek() !== "\n") parser.advance();
+    parser.advance();
     return err(Error.SKIP);
   }
 
@@ -289,6 +294,15 @@ export const parseToken: Parser<string, Token, Error> = (parser) => {
     return ok({ type: "string", item: src });
   }
 
+  // multiline strings
+  if (parser.peek() === "\\" && parser.peek(1) === "\\") {
+    parser.advance(2);
+    let src = "";
+    while (parser.peek() && parser.peek() !== "\n") src += parser.next();
+    parser.advance();
+    return ok({ type: 'multilineString', item: src });
+  }
+
   // identifier
   if (parser.peek()?.match(IDENTIFIER_SYMBOL_REGEXP)) {
     let src = parser.next()!;
@@ -328,29 +342,31 @@ export const tokenize = (source: string) => {
 
 type OperatorError =
   | Error
-  | { operator: number; separator: OperatorSeparator; error: OperatorError[] };
+  | { operator: RegistryKey; separator: OperatorSeparator; error: OperatorError[] };
 
 export const parseOperator: Parser<Token, Operator, OperatorError[]> = (
   parser
 ) => {
   const peeked = parser.peek();
+  
   if (!peeked) return err([Error.UNEXPECTED_END]);
-  if (!(typeof peeked === "object" && peeked.type === "ident")) {
-    parser.advance();
+  parser.advance();
+
+  if (!(typeof peeked === "object" && peeked.type === "ident"))
     return ok(peeked);
-  }
+  
   const errors = [] as OperatorError[];
 
   _operators: for (const [
-    { separators: [leadingSeparator, ...separators] },
     operator,
+    { separators: [leadingSeparator, ...separators] },
   ] of parser.context.operators.entries()) {
     const operands: Operator[][] = [];
     if (leadingSeparator.ident === peeked.item) {
       for (const separator of separators) {
         operands.push([]);
 
-        while (true) {
+        while (parser.peek()) {
           const nextOperator = parseOperator(parser);
 
           if (nextOperator.type === "err") {
@@ -376,13 +392,14 @@ export const parseOperator: Parser<Token, Operator, OperatorError[]> = (
       return ok({ type: "operator", operands, operator });
     }
   }
-  return err(errors);
+  // return err([...errors, Error.UNRECOGNIZED_OPERATOR]);
+  return ok(peeked);
 };
 
-export const operands = (source: string) => {
+export const operands = (source: string, operatorRegistry: OperatorRegistry) => {
   const [tokens, spans, errors] = tokenize(source);
-  const parser = new ParsingHandler<Token, Operator>([...tokens]);
-  const [operators, tokenSpans, operatorErrors] = [...parser.parse(parseOperator, () => Error.UNEXPECTED_END)].reduce(
+  const parser = new ParsingHandler<Token, Operator>([...tokens], { context: {operators:operatorRegistry}});
+  const [operators, tokenSpans, operatorErrors] = [...parser.parse(parseOperator, (parser, error) => Error.UNRECOGNIZED_OPERATOR)].reduce(
     (acc, { item, ...rest }) => {
       if (item.type === "ok") {
         acc[0].push(item.value);
