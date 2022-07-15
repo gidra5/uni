@@ -5,6 +5,8 @@ import {
   Result,
   ok,
   err,
+  none,
+  some,
 } from "./types.mjs";
 import crypto from 'crypto';
 
@@ -50,10 +52,12 @@ export const KEYWORDS = [
 export type Keyword = typeof KEYWORDS[number];
 export type Token = Keyword | Literal | "\n" | "," | "." | "..." | ":" | ";";
 export type Precedence = [Option<number>, Option<number>];
+export const MAX_PRECEDENCE = 256;
 export type OperatorSeparator = { ident: string; optional?: boolean };
 export type OperatorDefinition = {
   separators: OperatorSeparator[];
   precedence: Precedence;
+  skipNewLine?: boolean;
 };
 export type OperatorRegistry = Registry<OperatorDefinition>;
 
@@ -77,7 +81,7 @@ export type Expression =
         value: Expression;
       }[];
     }>
-  | Token;
+  | Operator;
 export type Pattern = TaggedItemUnion<{
   bind: string;
   value: Literal;
@@ -112,7 +116,7 @@ export type ParserRecovery<T, U, E> = (
   error: E
 ) => Error;
 
-export type ParsingContext = { operators: OperatorRegistry };
+export type ParsingContext = { operators: OperatorRegistry, };
 
 export class ParsingHandler<T, U> {
   private resetIndex: number;
@@ -359,7 +363,7 @@ export const parseOperator: Parser<Token, Operator, OperatorError[]> = (
 
   _operators: for (const [
     operator,
-    { separators: [leadingSeparator, ...separators] },
+    { separators: [leadingSeparator, ...separators], skipNewLine },
   ] of parser.context.operators.entries()) {
     const operands: Operator[][] = [];
     if (leadingSeparator.ident === peeked.item) {
@@ -367,6 +371,7 @@ export const parseOperator: Parser<Token, Operator, OperatorError[]> = (
         operands.push([]);
 
         while (parser.peek()) {
+          if (parser.peek() === '\n' && skipNewLine) continue;
           const nextOperator = parseOperator(parser);
 
           if (nextOperator.type === "err") {
@@ -414,4 +419,86 @@ export const operands = (source: string, operatorRegistry: OperatorRegistry) => 
     ] as [Operator[], Span[], (Span & { item: Error })[]]
   );
   return [operators, tokenSpans, spans, operatorErrors, errors];
+};
+
+/**
+ * 
+ * @param operatorRegistry 
+ * @returns left is `less`\\`greater`\\`equal` to right, or can't be compared
+ */
+export const compareOperators = (operatorRegistry: OperatorRegistry) => (left?: Operator, right?: Operator): Option<'less' | 'greater' | 'equal'> => {
+  if (typeof left !== 'object' || left.type !== 'operator') return none();
+  if (typeof right !== 'object' || right.type !== 'operator') return none();
+  const [, _leftBP] = operatorRegistry.get(left.operator).precedence;
+  const [_rightBP] = operatorRegistry.get(right.operator).precedence;
+  
+  if (_leftBP.type === 'none') {
+    if (_rightBP.type === 'none') return some('equal');
+    return some('greater');
+  }
+  if (_rightBP.type === 'none') return some('less');
+
+  if (_leftBP.value < _rightBP.value) return some('less');
+  if (_leftBP.value === _rightBP.value) return some('equal');
+  if (_leftBP.value > _rightBP.value) return some('greater');
+
+  return none();
+}
+
+export const parseExpr  = (minPrecedenceOperator?: Operator): Parser<Operator, Expression, Error> => (parser) => {
+  let lhs: Expression | undefined = parser.next();
+  if (!lhs) return err(Error.UNEXPECTED_END);
+  if (typeof lhs === 'object' && lhs.type === 'operator' && parser.context.operators.get(lhs.operator as RegistryKey).precedence[0].type === 'none') {
+    const rhs = parseExpr(lhs)(parser);
+    if (rhs.type == 'err') return err(rhs.err);
+    
+    lhs = { type: 'prefix', item: { operator: lhs, right: rhs.value } };
+  }
+  const comparator = compareOperators(parser.context.operators);
+
+  while (true) {
+    const peeked = parser.peek();
+    if (!peeked) break;
+
+    const cmpRes =
+      comparator(peeked, minPrecedenceOperator);
+    if (cmpRes.type === 'some' && cmpRes.value === 'less') break;
+    parser.advance();
+
+    if (typeof peeked === 'object' && peeked.type === 'operator' && parser.context.operators.get(peeked.operator as RegistryKey).precedence[1].type === 'none') {
+      lhs = { type: 'postfix', item: { left: lhs as Expression, operator: peeked } };  
+      continue;
+    }
+
+    const rhs = parseExpr(peeked)(parser);
+    if (rhs.type == 'err') return err(rhs.err);    
+    
+    lhs = { type: 'infix', item: { left: lhs as Expression, operator: peeked, right: rhs.value } };
+  }
+
+  return ok(lhs);
+  /*     let mut lhs = match lexer.next() {
+        Token::Atom(it) => S::Atom(it),
+        t => panic!("bad token: {:?}", t),
+    };
+
+    loop {
+        let op = match lexer.peek() {
+            Token::Eof => break,
+            Token::Op(op) => op,
+            t => panic!("bad token: {:?}", t),
+        };
+
+        let (l_bp, r_bp) = infix_binding_power(op);
+        if l_bp < min_bp { 
+            break;
+        }
+
+        lexer.next(); 
+        let rhs = expr_bp(lexer, r_bp);
+
+        lhs = S::Cons(op, vec![lhs, rhs]); 
+    }
+
+    lhs */
 };

@@ -3,7 +3,7 @@ import readline from "readline";
 import { promises as fs } from "fs";
 import { stdin as input, stdout as output } from "process";
 import * as parser from "./parser.mjs";
-import { none } from "./types.mjs";
+import { none, some } from "./types.mjs";
 
 program.option("-i, --interactive");
 
@@ -29,11 +29,17 @@ rl.on("line", (line) => {
 
       // console.log(info);
       const registry = new parser.Registry<parser.OperatorDefinition>();
-      registry.register({ precedence: [none(), none()], separators: [{ ident: '(' }, { ident: ')' }] });
-      registry.register({ precedence: [none(), none()], separators: [{ ident: 'abc' }] });
+      registry.register({ precedence: [none(), none()], separators: [{ ident: '(' }, { ident: ')' }], skipNewLine: true });
+      registry.register({ precedence: [some(parser.MAX_PRECEDENCE), none()], separators: [{ ident: '[' }, { ident: ']' }], skipNewLine: true });
+      registry.register({ precedence: [none(), none()], separators: [{ ident: '{' }, { ident: '}' }] });
+      registry.register({ precedence: [some(parser.MAX_PRECEDENCE), some(0)], separators: [{ ident: '=' }] });
+      registry.register({ precedence: [some(parser.MAX_PRECEDENCE - 1), some(parser.MAX_PRECEDENCE)], separators: [{ ident: '.' }] });
+      registry.register({ precedence: [some(1), some(2)], separators: [{ ident: '+' }] });
+      registry.register({ precedence: [some(parser.MAX_PRECEDENCE), some(0)], separators: [{ ident: '->' }] });
+      registry.register({ precedence: [none(), some(0)], separators: [{ ident: '[' }, { ident: ']' }, { ident: '->' }], skipNewLine: true });
       const info = parser.operands(line, registry);
 
-      console.dir({info, registry}, { depth: 6 });
+      console.dir({info, registry}, { depth: 12 });
 
       break;
   }
