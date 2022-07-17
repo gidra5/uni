@@ -25,24 +25,52 @@ rl.on("line", (line) => {
       rl.close();
       break;
     default:
-      // const info = parser.tokenize(line);
-
-      // console.log(info);
       const registry = new parser.Registry<parser.OperatorDefinition>();
-      registry.register({ precedence: [none(), none()], separators: [{ ident: '(' }, { ident: ')' }], skipNewLine: true });
-      registry.register({ precedence: [none(), none()], separators: [{ ident: '{' }, { ident: '}' }] });
-      registry.register({ precedence: [some(parser.MAX_PRECEDENCE), some(0)], separators: [{ ident: '=' }] });
-      registry.register({ precedence: [some(parser.MAX_PRECEDENCE), some(0)], separators: [{ ident: ':=' }] });
-      registry.register({ precedence: [some(parser.MAX_PRECEDENCE - 1), some(parser.MAX_PRECEDENCE)], separators: [{ ident: '.' }] });
-      registry.register({ precedence: [some(1), some(2)], separators: [{ ident: '+' }] });
-      registry.register({ precedence: [some(parser.MAX_PRECEDENCE), none()], separators: [{ ident: '[' }, { ident: ']' }], skipNewLine: true });
-      registry.register({ precedence: [some(parser.MAX_PRECEDENCE), some(0)], separators: [{ ident: '->' }] });
-      registry.register({ precedence: [none(), some(0)], separators: [{ ident: '[[' }, { ident: ']]' }, { ident: '=>' }], skipNewLine: true });
+      registry.register({
+        precedence: [none(), none()],
+        separators: [{ ident: "(" }, { token: ",", optional: true, repeat: true }, { ident: ")" }],
+      });
+      registry.register({
+        precedence: [none(), none()],
+        separators: [{ ident: "{" }, { token: ["\n", ";"], optional: true, repeat: true }, { ident: "}" }],
+        keepNewLine: true,
+      });
+      registry.register({
+        precedence: [some(parser.MAX_PRECEDENCE), some(0)],
+        separators: [{ ident: "=" }],
+      });
+      registry.register({
+        precedence: [some(parser.MAX_PRECEDENCE), some(0)],
+        separators: [{ ident: ":=" }],
+      });
+      registry.register({
+        precedence: [
+          some(parser.MAX_PRECEDENCE - 1),
+          some(parser.MAX_PRECEDENCE),
+        ],
+        separators: [{ ident: "." }],
+      });
+      registry.register({
+        precedence: [some(1), some(2)],
+        separators: [{ ident: "+" }],
+      });
+      registry.register({
+        precedence: [some(parser.MAX_PRECEDENCE), none()],
+        separators: [{ ident: "[" }, { ident: "]" }],
+      });
+      registry.register({
+        precedence: [some(parser.MAX_PRECEDENCE), some(0)],
+        separators: [{ ident: "->" }],
+      });
+      registry.register({
+        precedence: [none(), some(0)],
+        separators: [{ ident: "[[" }, { ident: "]]" }, { ident: "=>" }],
+      });
       // const info = parser.operands(registry)(line);
       const info = parser.expr(registry)(line);
 
       // console.dir({info, registry}, { depth: 12 });
-      console.dir({info: parser.transpose(info)[0]}, { depth: 12 });
+      console.dir({ info: parser.transpose(info)[0] }, { depth: 12 });
 
       break;
   }
