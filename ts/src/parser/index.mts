@@ -1,194 +1,14 @@
-import { TaggedItemUnion, Option, TaggedUnion, Result, ok, err, none, some, unwrapOk } from "./types.mjs";
-import crypto from "crypto";
-import { assert, groupBy } from "./utils.mjs";
+import { ok, err, Result, unwrapOk } from "../types.mjs";
+import { assert } from "../utils.mjs";
+import { Parser, KEYWORDS, Keyword, isLiteral, RegistryKey, OperatorSeparator, OperatorRegistry, Operator, isOperator, ParserRecovery, Token, Expression , Error} from "./types.mjs";
+import {
+  ParsingHandler, transpose, compareOperators
+} from "./utils.mjs";
 
-export type Span = { start: number; end: number };
-export type FileSpan = Span & { index: number };
-export type RegistryKey = string;
-export class Registry<T> {
-  constructor(private registry: { [k in RegistryKey]: T } = {}) {}
 
-  entries() {
-    return Object.entries(this.registry);
-  }
-  get(index: RegistryKey) {
-    return this.registry[index];
-  }
-  register(item: T) {
-    const key = crypto.randomUUID().slice(0, 8);
-    this.registry[key] = item;
-    return key;
-  }
-}
-
-export type Literal = TaggedItemUnion<{
-  ident: string;
-  string: string;
-  multilineString: string;
-  char: string;
-  number: number;
-}>;
-export const LITERAL_TYPES: Literal["type"][] = ["ident", "char", "multilineString", "number", "string"];
 export const IDENTIFIER_SYMBOL_REGEXP = /[_a-zA-Z0-9]/;
 export const OPERATOR_SYMBOL_REGEXP = /[~|^\(\)\{\}\[\]<-@/\-+*#-&!\.]/;
-export const KEYWORDS = ["for", "in", "if", "is", "as", "_", "true", "false", "fn"] as const;
-export type Keyword = typeof KEYWORDS[number];
-export type Token = Keyword | Literal | "\n" | "," | ":" | ";";
-export type Precedence = [Option<number>, Option<number>];
-export const MAX_PRECEDENCE = 256;
-export type OperatorSeparator = ({ ident: string | string[] } | { token: string | string[] }) & {
-  optional?: boolean;
-  repeat?: boolean;
-};
-export type OperatorDefinition = {
-  separators: [
-    OperatorSeparator & {
-      ident: string | string[];
-      optional?: never;
-      repeat?: never;
-    },
-    ...OperatorSeparator[]
-  ];
-  precedence: Precedence;
-  keepNewLine?: boolean;
-};
-export type OperatorRegistry = Registry<OperatorDefinition>;
 
-export type OperatorType = {
-  type: "operator";
-  /**
-   * for each non-leading separator, for each repetition of separator, collect all tokens and nested operators
-   */
-  operands: Operator[][][];
-  /* id */ operator: RegistryKey;
-};
-export type Operator = OperatorType | Token;
-export const isOperator = (x?: Expression): x is OperatorType => !!x && typeof x === "object" && x.type === "operator";
-export const isLiteral = (x?: Expression): x is Literal =>
-  !!x && typeof x === "object" && LITERAL_TYPES.includes(x.type as Literal["type"]);
-export type ExpressionType = TaggedItemUnion<{
-  prefix: { operator: Expression; right: Expression };
-  postfix: { operator: Expression; left: Expression };
-  infix: { operator: Expression; left: Expression; right: Expression };
-  mixfix: { operator: RegistryKey; operands: Expression[][] };
-
-  record: {
-    key?: TaggedUnion<{
-      name: { name: string };
-      value: { value: Expression };
-      rest: {};
-    }>;
-    value: Expression;
-  }[];
-}>;
-export const EXPRESSION_TYPES: ExpressionType["type"][] = ["infix", "mixfix", "postfix", "prefix", "record"];
-export type Expression = ExpressionType | Operator;
-export const isExpr = (x?: Expression): x is ExpressionType =>
-  !!x && typeof x === "object" && EXPRESSION_TYPES.includes(x.type as ExpressionType["type"]);
-export type Pattern = TaggedItemUnion<{
-  bind: string;
-  value: Literal;
-  record: {
-    key?: TaggedUnion<{
-      name: { name: string };
-      value: { value: Pattern };
-      rest: {};
-    }>;
-    value: Pattern;
-  }[];
-}> & { defaultValue?: Expression; alias?: string };
-
-export type ModuleRegistry = Registry<ModuleItem[]>;
-export type ModuleItem = TaggedItemUnion<{
-  import: { module: number; pattern?: Pattern };
-}> & { public?: boolean };
-export type Script = [ModuleItem[], Expression[]];
-
-export enum Error {
-  UNEXPECTED_END,
-  UNRECOGNIZED_INPUT,
-  UNRECOGNIZED_OPERATOR,
-  MISSING_CLOSING_APOSTROPHE,
-  SKIP,
-}
-
-export type Parser<T, U, E> = (state: ParsingHandler<T, U>) => Result<U, E>;
-export type ParserRecovery<T, U, E> = (state: ParsingHandler<T, U>, error: E) => Error;
-
-export class ParsingHandler<T, U> {
-  private resetIndex: number;
-  private index: number;
-  constructor(
-    private src: T[],
-    options?: {
-      index?: number;
-      resetIndex?: number;
-    }
-  ) {
-    this.index = options?.index ?? 0;
-    this.resetIndex = options?.resetIndex ?? this.index;
-  }
-
-  skip<A extends T[]>(values: A) {
-    const isNext = this.peekIs(values);
-    if (isNext) this.advance();
-    return isNext;
-  }
-  skipAll<A extends T[]>(values: A) {
-    while (this.skip(values)) {}
-  }
-
-  peekIs<A extends T[]>(values: A) {
-    return values.includes(this.peek() as T);
-  }
-
-  peek(step = 0): T | undefined {
-    return this.src[this.index + step];
-  }
-
-  next(step = 1): T | undefined {
-    const item = this.src[this.index];
-    this.advance(step);
-    return item;
-  }
-
-  advance(step = 1) {
-    this.index += step;
-  }
-
-  setIndex() {
-    this.resetIndex = this.index;
-  }
-
-  reset() {
-    this.index = this.resetIndex;
-  }
-
-  *parse<E>(...args: [handler: Parser<T, U, Error>] | [handler: Parser<T, U, E>, recover: ParserRecovery<T, U, E>]) {
-    const [handler, recover] = args;
-    while (this.peek()) {
-      // const start = this.index;
-      const item = handler(this);
-
-      if (item.type === "err") {
-        let error = item.err;
-
-        if (recover) {
-          error = recover(this, item.err as E);
-          this.setIndex();
-        }
-
-        if (error === Error.SKIP) continue;
-        // yield { start, end: this.index, item: err<U, Error>(error as Error) };
-        yield err<U, Error>(error as Error);
-      } else {
-        this.setIndex();
-        // yield { start, end: this.index, item: ok<U, Error>(item.value) };
-        yield ok<U, Error>(item.value);
-      }
-    }
-  }
-}
 
 const parseMultilineComment = <U,>(parser: ParsingHandler<string, U>) => {
   while (parser.peek() && !(parser.peek() === "*" && parser.peek(1) === "/")) {
@@ -295,6 +115,7 @@ export const parseToken: Parser<string, Token, Error> = (parser) => {
     while (parser.peek()?.match(IDENTIFIER_SYMBOL_REGEXP)) src += parser.next()!;
 
     if (KEYWORDS.includes(src as Keyword)) return ok(src as Keyword);
+    if (['true', 'false'].includes(src)) return ok({ type: 'boolean', item: src as 'true' | 'false'})
     return ok({ type: "ident", item: src });
   }
   if (parser.peek()?.match(OPERATOR_SYMBOL_REGEXP)) {
@@ -352,17 +173,6 @@ type OperatorError =
       error: OperatorError[];
     };
 
-export const transpose = <T,>(x: Result<T, Error>[]): [T[], Error[]] => {
-  const operands = [] as T[];
-  const errors = [] as Error[];
-
-  for (const it of x) {
-    if (it.type === "err") errors.push(it.err);
-    else operands.push(it.value);
-  }
-
-  return [operands, errors];
-};
 
 export const parseOperator =
   (operatorRegistry: OperatorRegistry): Parser<Operator, Operator, OperatorError[]> =>
@@ -491,30 +301,6 @@ export const operands = (operatorRegistry: OperatorRegistry) => (source: string)
   // );
   // return [operators, tokenSpans, spans, operatorErrors, errors];
 };
-
-/**
- *
- * @param operatorRegistry
- * @returns left is `less`\\`greater`\\`equal` to right, or can't be compared
- */
-export const compareOperators =
-  (operatorRegistry: OperatorRegistry) =>
-  (left?: Operator, right?: Operator): boolean => {
-    if (isOperator(left)) console.log("c3", operatorRegistry.get(left.operator));
-    if (isOperator(right)) console.log("c4", operatorRegistry.get(right.operator));
-
-    const [, _leftBP] = isOperator(left)
-      ? operatorRegistry.get(left.operator).precedence
-      : ([none(), none()] as Precedence);
-    const [_rightBP] = isOperator(right)
-      ? operatorRegistry.get(right.operator).precedence
-      : ([none(), none()] as Precedence);
-
-    if (_rightBP.type === "none") return false;
-    if (_leftBP.type === "none") return true;
-
-    return _leftBP.value < _rightBP.value;
-  };
 
 export const parseExpr =
   ({

@@ -2,8 +2,9 @@ import { program } from "commander";
 import readline from "readline";
 import { promises as fs } from "fs";
 import { stdin as input, stdout as output } from "process";
-import * as parser from "./parser.mjs";
-import { none, some } from "./types.mjs";
+import { operators } from "./evaluator.mjs";
+import { expr } from "./parser/index.mjs";
+import { transpose } from "./parser/utils.mjs";
 
 program.option("-i, --interactive");
 
@@ -25,52 +26,11 @@ rl.on("line", (line) => {
       rl.close();
       break;
     default:
-      const registry = new parser.Registry<parser.OperatorDefinition>();
-      registry.register({
-        precedence: [none(), none()],
-        separators: [{ ident: "(" }, { token: ",", optional: true, repeat: true }, { ident: ")" }],
-      });
-      registry.register({
-        precedence: [none(), none()],
-        separators: [{ ident: "{" }, { token: ["\n", ";"], optional: true, repeat: true }, { ident: "}" }],
-        keepNewLine: true,
-      });
-      registry.register({
-        precedence: [some(parser.MAX_PRECEDENCE), some(0)],
-        separators: [{ ident: "=" }],
-      });
-      registry.register({
-        precedence: [some(parser.MAX_PRECEDENCE), some(0)],
-        separators: [{ ident: ":=" }],
-      });
-      registry.register({
-        precedence: [
-          some(parser.MAX_PRECEDENCE - 1),
-          some(parser.MAX_PRECEDENCE),
-        ],
-        separators: [{ ident: "." }],
-      });
-      registry.register({
-        precedence: [some(1), some(2)],
-        separators: [{ ident: "+" }],
-      });
-      registry.register({
-        precedence: [some(parser.MAX_PRECEDENCE), none()],
-        separators: [{ ident: "[" }, { ident: "]" }],
-      });
-      registry.register({
-        precedence: [some(parser.MAX_PRECEDENCE), some(0)],
-        separators: [{ ident: "->" }],
-      });
-      registry.register({
-        precedence: [none(), some(0)],
-        separators: [{ ident: "[[" }, { ident: "]]" }, { ident: "=>" }],
-      });
-      // const info = parser.operands(registry)(line);
-      const info = parser.expr(registry)(line);
+      // const info = operands(operators)(line);
+      const info = expr(operators)(line);
 
-      // console.dir({info, registry}, { depth: 12 });
-      console.dir({ info: parser.transpose(info)[0] }, { depth: 12 });
+      // console.dir({info, registry: operators}, { depth: 12 });
+      console.dir({ info: transpose(info)[0] }, { depth: 12 });
 
       break;
   }
