@@ -1,6 +1,13 @@
 import { err, ok, Result, none } from "../types.mjs";
-import { isOperator, Operator, OperatorRegistry, Parser, ParserRecovery, Precedence ,Error} from "./types.mjs";
-
+import {
+  isOperator,
+  Operator,
+  OperatorRegistry,
+  Parser,
+  ParserRecovery,
+  Precedence,
+  Error,
+} from "./types.mjs";
 
 export class ParsingHandler<T, U> {
   private resetIndex: number;
@@ -51,7 +58,11 @@ export class ParsingHandler<T, U> {
     this.index = this.resetIndex;
   }
 
-  *parse<E>(...args: [handler: Parser<T, U, Error>] | [handler: Parser<T, U, E>, recover: ParserRecovery<T, U, E>]) {
+  *parse<E>(
+    ...args:
+      | [handler: Parser<T, U, Error>]
+      | [handler: Parser<T, U, E>, recover: ParserRecovery<T, U, E>]
+  ) {
     const [handler, recover] = args;
     while (this.peek()) {
       // const start = this.index;
@@ -89,6 +100,7 @@ export const transpose = <T,>(x: Result<T, Error>[]): [T[], Error[]] => {
   return [operands, errors];
 };
 
+export const DEFAULT_PRECEDENCE = [none(), none()] as Precedence;
 /**
  *
  * @param operatorRegistry
@@ -97,15 +109,15 @@ export const transpose = <T,>(x: Result<T, Error>[]): [T[], Error[]] => {
 export const compareOperators =
   (operatorRegistry: OperatorRegistry) =>
   (left?: Operator, right?: Operator): boolean => {
-    if (isOperator(left)) console.log("c3", operatorRegistry.get(left.operator));
-    if (isOperator(right)) console.log("c4", operatorRegistry.get(right.operator));
+    if (isOperator(left)) console.log("c3", operatorRegistry.get(left.item));
+    if (isOperator(right)) console.log("c4", operatorRegistry.get(right.item));
 
     const [, _leftBP] = isOperator(left)
-      ? operatorRegistry.get(left.operator).precedence
-      : ([none(), none()] as Precedence);
+      ? operatorRegistry.get(left.item).precedence ?? DEFAULT_PRECEDENCE
+      : DEFAULT_PRECEDENCE;
     const [_rightBP] = isOperator(right)
-      ? operatorRegistry.get(right.operator).precedence
-      : ([none(), none()] as Precedence);
+      ? operatorRegistry.get(right.item).precedence ?? DEFAULT_PRECEDENCE
+      : DEFAULT_PRECEDENCE;
 
     if (_rightBP.type === "none") return false;
     if (_leftBP.type === "none") return true;
