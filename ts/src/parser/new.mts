@@ -6,20 +6,29 @@ type SeparatorDef = {
 };
 type OperatorDef = SeparatorDef[];
 type OperatorDefs = Record<string, OperatorDef>;
+type OperatorsValue = (({ id: string } & OperatorValue));
+type OperatorValue = {
+  separatorValues: SeparatorValue[];
+};
+type SeparatorValue = {
+  operands: (OperatorValues | string)[];
+}[];
 
 const parseNext = (src: string, i: number, token: string) => {
   if (src.slice(i, token.length) === token) return i + token.length;
   return i;
 };
 
-const parseUntil = (src: string, i: number, tokens: string[], parse: (src: string, i: number) => number) => {
+const parseUntil = (src: string, i: number, tokens: string[][], parse: (src: string, i: number) => number) => {
   let index = i;
 
   while (src.charAt(index)) {
-    for (const [token, i] of enumerate(iter(tokens))) {
-      const nextIndex = parseNext(src, index, token);
-      if (nextIndex !== index) {
-        return [nextIndex, i] as const;
+    for (const [tokens, i] of enumerate(iter(tokens))) {
+      for (const token of tokens) {
+        const nextIndex = parseNext(src, index, token);
+        if (nextIndex !== index) {
+          return [nextIndex, i] as const;
+        }
       }
     }
     index = parse(src, index);
@@ -39,31 +48,32 @@ const terminalTokens = (operator: OperatorDef) => {
 
 const parseOperator = (operator: OperatorDef, src: string, i: number) => {
   let index = i;
-  let values = [] as {}[][];
+  let values: OperatorValue = { separatorValues: [] };
   let separators = operator;
 
   while (src.charAt(index)) {
-    const sepValues = [] as {}[];
+    const sepValues: SeparatorValue = { operands: [] };
     const [i, sepIndex] = parseUntil(src, index, terminalTokens(separators), (src, i) => {
-      const parsedOp = parseOperators(operator.scope, src, i);
-      if (parseOp[0] !== i) {
-        sepValues.push(parsedOp[1]);
-        return parseOp[0];
+      const [index, value] = parseOperators(operator.scope, src, i);
+      if (value) {
+        sepValues.operands.push(value);
+        return index;
       }
-      sepValues.push(src[i]);
+      sepValues.operands.push(src[i]);
       return i + 1;
     });
 
-    values.push(sepValues);
-    if (sepIndex && sepIndex > 0) values.push(...repeat([], sepIndex));
+    values.separatorValues.push(sepValues);
+    if (sepIndex && sepIndex > 0) values.separatorValues.push(...repeat([], sepIndex));
     separators = separators.slice(sepIndex + 1);
   }
+  return [index, values];
 };
 
 const parseOperators = (operators: OperatorDefs, src: string, i: number) => {
   for (const operator in operators) {
-    const parsed = parseOperator(operators[operator], src, i);
-    if (parsed[0] !== i) return [...parsed, operator];
+    const [index, value] = parseOperator(operators[operator], src, i);
+    if (index !== i) return [index, { ...value, id: operator }] as const;
   }
-  return [i, null];
+  return [i, null] as const;
 };
