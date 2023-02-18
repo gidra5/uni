@@ -1,5 +1,6 @@
 import { enumerate, iter, repeat } from "../utils.mjs";
 
+type Tokens
 type SeparatorDef = {
   tokens: string[];
   repeat: [from: number, to: number];
@@ -46,15 +47,16 @@ const terminalTokens = (operator: OperatorDef) => {
   return tokens;
 };
 
-const parseOperator = (operator: OperatorDef, src: string, i: number) => {
+const parseOperator = (scope: OperatorDefs, operator: OperatorDef, src: string, i: number) => {
   let index = i;
   let values: OperatorValue = { separatorValues: [] };
   let separators = operator;
 
   while (src.charAt(index)) {
     const sepValues: SeparatorValue = { operands: [] };
-    const [i, sepIndex] = parseUntil(src, index, terminalTokens(separators), (src, i) => {
-      const [index, value] = parseOperators(operator.scope, src, i);
+    const [_i, sepIndex] = parseUntil(src, index, terminalTokens(separators), (src, i) => {
+      const operators = operator.scope?.(scope) ?? scope;
+      const [index, value] = parseOperators(operators, src, i);
       if (value) {
         sepValues.operands.push(value);
         return index;
@@ -62,6 +64,11 @@ const parseOperator = (operator: OperatorDef, src: string, i: number) => {
       sepValues.operands.push(src[i]);
       return i + 1;
     });
+    
+    const optional = separators.every((sep) => sep.repeat[0] === 0);
+    if (sepIndex === null && optional) sepIndex = separators.length - 1;
+    if (sepIndex === null) return [i, null];
+    index = _i;
 
     values.separatorValues.push(sepValues);
     if (sepIndex && sepIndex > 0) values.separatorValues.push(...repeat([], sepIndex));
@@ -72,8 +79,8 @@ const parseOperator = (operator: OperatorDef, src: string, i: number) => {
 
 const parseOperators = (operators: OperatorDefs, src: string, i: number) => {
   for (const operator in operators) {
-    const [index, value] = parseOperator(operators[operator], src, i);
-    if (index !== i) return [index, { ...value, id: operator }] as const;
+    const [index, value] = parseOperator(operators, operators[operator], src, i);
+    if (value) return [index, { ...value, id: operator }] as const;
   }
   return [i, null] as const;
 };
