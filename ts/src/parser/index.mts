@@ -1,7 +1,6 @@
 import { ok, err, Result, unwrapOk } from "../types.mjs";
 import { repeat } from "../utils.mjs";
 import {
-  Parser,
   KEYWORDS,
   Keyword,
   isLiteral,
@@ -9,23 +8,67 @@ import {
   OperatorRegistry,
   Operator,
   isOperator,
-  ParserRecovery,
   Token,
   Expression,
   Error,
   isIdentifier,
 } from "./types.mjs";
-import {
-  ParsingHandler,
-  transpose,
-  compareOperators,
-  DEFAULT_PRECEDENCE,
-} from "./utils.mjs";
+import { transpose, compareOperators, DEFAULT_PRECEDENCE } from "./utils.mjs";
 
 export const IDENTIFIER_SYMBOL_REGEXP = /[_a-zA-Z0-9]/;
 export const OPERATOR_SYMBOL_REGEXP = /[~|^\(\)\{\}\[\]<-@/\-+*#-&!\.]/;
 
-const parseMultilineComment = <U,>(parser: ParsingHandler<string, U>) => {
+export class ParsingHandler<T> {
+  private resetIndex: number;
+  private index: number;
+  constructor(
+    private src: T[],
+    options?: {
+      index?: number;
+      resetIndex?: number;
+    }
+  ) {
+    this.index = options?.index ?? 0;
+    this.resetIndex = options?.resetIndex ?? this.index;
+  }
+
+  skip<A extends T[]>(values: A) {
+    const isNext = this.peekIs(values);
+    if (isNext) this.advance();
+    return isNext;
+  }
+  skipAll<A extends T[]>(values: A) {
+    while (this.skip(values)) {}
+  }
+
+  peekIs<A extends T[]>(values: A) {
+    return values.includes(this.peek() as T);
+  }
+
+  peek(step = 0): T | undefined {
+    return this.src[this.index + step];
+  }
+
+  next(step = 1): T | undefined {
+    const item = this.src[this.index];
+    this.advance(step);
+    return item;
+  }
+
+  advance(step = 1) {
+    this.index += step;
+  }
+
+  setIndex() {
+    this.resetIndex = this.index;
+  }
+
+  reset() {
+    this.index = this.resetIndex;
+  }
+}
+
+const parseMultilineComment = <U>(parser: ParsingHandler<string, U>) => {
   while (parser.peek() && !(parser.peek() === "*" && parser.peek(1) === "/")) {
     if (parser.peek() === "/" && parser.peek(1) === "*") {
       parser.advance(2);

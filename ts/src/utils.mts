@@ -71,3 +71,20 @@ export function assert(condition: any, msg?: string): asserts condition {
     throw new Error(msg);
   }
 }
+
+export type RegistryKey = string;
+export class Registry<T> {
+  constructor(public table: { [k in RegistryKey]: T } = {}) {}
+
+  get(index: RegistryKey) {
+    return this.table[index];
+  }
+  register(item: T) {
+    const key = crypto.randomUUID().slice(0, 8);
+    this.registerKey(key, item);
+    return key;
+  }
+  registerKey(key: string, item: T) {
+    this.table[key] = item;
+  }
+}

@@ -6,6 +6,7 @@ import {
   none,
   some,
 } from "../types.mjs";
+import { Registry, RegistryKey } from "../utils.mjs";
 import { ParsingHandler } from "./utils.mjs";
 
 export enum Error {
@@ -17,11 +18,11 @@ export enum Error {
 }
 export const LITERAL_TYPES: Literal["type"][] = [
   "ident",
-  "char",
-  "multilineString",
+  // "char",
+  // "multilineString",
   "number",
-  "string",
-  "boolean",
+  // "string",
+  // "boolean",
 ];
 export const EXPRESSION_TYPES: ExpressionType["type"][] = [
   "infix",
@@ -33,85 +34,16 @@ export const EXPRESSION_TYPES: ExpressionType["type"][] = [
 export const KEYWORDS = ["_"] as const;
 export const MAX_PRECEDENCE = 256;
 
-export class Record {
-  constructor(private values: { name: Value; value: Value }[] = []) {}
-
-  static fromArray(values: Value[]) {
-    return new Record(
-      values.map((value, index) => ({
-        value,
-        name: { type: "number", item: index },
-      }))
-    );
-  }
-
-  append(value: Value, _name?: Value) {
-    if (_name) this.values = this.values.filter(({ name }) => name === _name);
-    this.values.push({
-      value,
-      name: _name ?? { type: "number", item: this.values.length },
-    });
-  }
-  set(_value: Value, _name: Value) {
-    this.values = this.values.map(({ name, value }) => ({
-      name,
-      value: name === _name ? _value : value,
-    }));
-  }
-}
-
-export type Value = TaggedItemUnion<{
-  string: string;
-  char: string;
-  number: number;
-  boolean: boolean;
-  record: Record;
-  function: {
-    env: Environment;
-    registry: OperatorRegistry;
-    body: Expression;
-    pattern: Pattern;
-  };
-}>;
-
-export type Environment = { [x in string]: Value };
-
-export type Type = TaggedUnion<{
-  void: {};
-  unknown: {};
-  nominal: {};
-}>;
-
 export type Span = { start: number; end: number };
 export type FileSpan = Span & { index: number };
-export type RegistryKey = string;
-
-export class Registry<T> {
-  constructor(private registry: { [k in RegistryKey]: T } = {}) {}
-
-  entries() {
-    return Object.entries(this.registry);
-  }
-  get(index: RegistryKey) {
-    return this.registry[index];
-  }
-  register(item: T) {
-    const key = crypto.randomUUID().slice(0, 8);
-    this.registry[key] = item;
-    return key;
-  }
-  registerWithKey(key: string, item: T) {
-    this.registry[key] = item;
-  }
-}
 
 export type Literal = TaggedItemUnion<{
   ident: string;
-  string: string;
-  multilineString: string;
-  char: string;
+  // string: string;
+  // multilineString: string;
+  // char: string;
   number: number;
-  boolean: "true" | "false";
+  // boolean: "true" | "false";
 }>;
 export type Keyword = typeof KEYWORDS[number];
 export type Token = Keyword | Literal | "\n" | "," | ":" | ";";
@@ -124,11 +56,6 @@ export type OperatorSeparator<T = Token> = {
 export type OperatorDefinition = {
   separators: OperatorSeparator[];
   precedence?: Precedence;
-  type?: (...args: Operator[]) => Expression;
-  evaluate?: (
-    env: Environment,
-    registry: OperatorRegistry
-  ) => (...args: Expression[]) => Value;
   keepNewLine?: boolean;
 };
 export type OperatorRegistry = Registry<OperatorDefinition>;
@@ -139,7 +66,7 @@ export type OperatorType = {
    * for each non-leading separator, for each repetition of separator, collect all tokens and nested operators
    */
   operands: Operator[][][];
-  /* id */ item: RegistryKey;
+  item: RegistryKey;
 };
 export type Operator = OperatorType | Token;
 export type ExpressionType = TaggedItemUnion<{
@@ -148,40 +75,52 @@ export type ExpressionType = TaggedItemUnion<{
   infix: { operator: Expression; left: Expression; right: Expression };
   mixfix: { operator: RegistryKey; operands: Expression[][] };
 
-  record: {
-    key?: TaggedUnion<{
-      name: { item: string };
-      value: { item: Expression };
-      rest: {};
-    }>;
-    value: Expression;
-  }[];
+  record: TaggedItemUnion<{
+    list: {
+      rest?: boolean;
+      value: Expression;
+    }[];
+    map: {
+      key?: TaggedUnion<{
+        name: { item: string };
+        value: { item: Expression };
+        rest: {};
+      }>;
+      value: Expression;
+    }[];
+  }>;
+
+  block: { program: Program };
 }>;
 export type Expression = ExpressionType | Operator;
 export type Pattern = TaggedItemUnion<{
   bind: string;
   value: Literal | Boolean | "_";
-  record: {
-    key?: TaggedUnion<{
-      name: { item: string };
-      value: { item: Pattern };
-      rest: {};
-    }>;
-    value: Pattern;
-  }[];
-}> & { defaultValue?: Expression; alias?: string; valueType?: Type };
+  record: TaggedItemUnion<{
+    list: {
+      rest?: boolean;
+      value: Pattern;
+    }[];
+    map: {
+      key?: TaggedUnion<{
+        name: { item: string };
+        value: { item: Pattern };
+        rest: {};
+      }>;
+      value: Pattern;
+    }[];
+  }>;
+}> & { defaultValue?: Expression; alias?: string };
 
-export type ModuleRegistry = Registry<ModuleItem[]>;
 export type ModuleItem = TaggedItemUnion<{
-  import: { module: number; pattern?: Pattern };
+  import: { module: RegistryKey; pattern?: Pattern };
+  value: { expr: Expression; pattern?: Pattern };
+  external: { pattern: Pattern };
 }> & { public?: boolean };
-export type Script = [ModuleItem[], Expression[]];
-
-export type Parser<T, U, E> = (state: ParsingHandler<T, U>) => Result<U, E>;
-export type ParserRecovery<T, U, E> = (
-  state: ParsingHandler<T, U>,
-  error: E
-) => Error;
+export type Program = TaggedItemUnion<{
+  script: Expression[];
+  module: ModuleItem[];
+}>;
 
 export const isOperator = (x?: Expression): x is OperatorType =>
   !!x && typeof x === "object" && x.type === "operator";
