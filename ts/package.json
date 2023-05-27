@@ -2,10 +2,11 @@
   "name": "meta-lang",
   "version": "1.0.0",
   "description": "some stuff here",
-  "main": "src.ts",
+  "main": "build/index.js",
+  "type": "module",
   "scripts": {
     "run": "tsc && node ./build/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsc && node --test ./build/tests/"
   },
   "keywords": [
     "meta"
@@ -14,10 +15,11 @@
   "license": "MIT",
   "dependencies": {
     "codespan-napi": "^0.4.0",
-    "commander": "^9.3.0",
-    "typescript": "^4.9.4"
+    "commander": "^9.3.0"
   },
   "devDependencies": {
-    "@types/node": "^18.0.0"
+    "@types/node": "^20.2.5",
+    "fast-check": "^3.9.0",
+    "typescript": "^5.0.4"
   }
 }

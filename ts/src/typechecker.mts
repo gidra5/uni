@@ -1,4 +1,4 @@
-import { TaggedUnion } from "./types.mjs";
+import { TaggedUnion } from "./types.js";
 
 export type Type = TaggedUnion<{
   void: {};

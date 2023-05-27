@@ -1,4 +1,4 @@
-import { assert } from "./utils.mjs";
+import { assert } from "./utils.js";
 
 export type Tagged<Type, T, TypeKey extends string = "type"> = {
   [k in TypeKey]: Type;
@@ -44,9 +44,9 @@ export type ExpandRecursively<T> = T extends (...args: infer A) => infer R
   : T;
 
 export type Option<T> = TaggedUnion<{ some: { value: T }; none: {} }>;
-export const some = <T,>(value: T): Option<T> => ({ type: "some", value });
-export const none = <T,>(): Option<T> => ({ type: "none" });
-export const unwrapSome = <T,>(x: Option<T>): T => {
+export const some = <T>(value: T): Option<T> => ({ type: "some", value });
+export const none = <T>(): Option<T> => ({ type: "none" });
+export const unwrapSome = <T>(x: Option<T>): T => {
   assert(x.type === "some", 'Option was not "some" variant');
   return x.value;
 };
