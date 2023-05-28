@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import fc from "fast-check";
 import {
   parseOperator,
-  OperatorDef,
+  OperatorDefinition,
   ScopeGenerator,
 } from "../src/parser/new.js";
 import { assert } from "../src/utils.js";
@@ -16,7 +16,7 @@ fc.configureGlobal({
 // Properties
 describe("parseOperator", () => {
   const operatorDefArb = fc.letrec<{
-    def: OperatorDef;
+    def: OperatorDefinition;
     scope: ScopeGenerator;
   }>((tie) => ({
     def: fc.record({
@@ -27,22 +27,25 @@ describe("parseOperator", () => {
               minLength: 1,
               size: "xsmall",
             }),
-            repeat: fc
+            repeats: fc
               .tuple(fc.nat(), fc.nat())
               .filter(([min, max]) => 0 < min && min <= max),
             scope: tie("scope"),
           }),
           { minLength: 1, size: "xsmall" }
         )
-        .filter((separators) => separators[0].repeat[0] > 0),
+        .filter((separators) => separators[0].repeats[0] > 0),
       scope: tie("scope"),
     }),
-    scope: fc.func(
-      fc.oneof(
-        { maxDepth: 1, withCrossShrink: true },
-        fc.constant({}),
-        fc.dictionary(fc.uuid(), tie("def"), { size: "xsmall" })
-      )
+    scope: fc.option(
+      fc.func(
+        fc.oneof(
+          { maxDepth: 1, withCrossShrink: true },
+          fc.constant({}),
+          fc.dictionary(fc.uuid(), tie("def"), { size: "xsmall" })
+        )
+      ),
+      { maxDepth: 1, freq: 1.5 }
     ),
   })).def;
 
@@ -80,11 +83,11 @@ describe("parseOperator", () => {
             );
             fc.pre(errors.length === 0);
             const min = op.separators.reduce(
-              (acc, { repeat: [min] }) => acc + min,
+              (acc, { repeats: [min] }) => acc + min,
               0
             );
             const max = op.separators.reduce(
-              (acc, { repeat: [max] }) => acc + max,
+              (acc, { repeats: [_, max] }) => acc + max,
               0
             );
             const count = result.children.length;
@@ -171,11 +174,11 @@ describe("parseOperator", () => {
             const { children } = result;
 
             assert(
-              op.separators.every(({ repeat }, i) => {
-                const repeats = children.filter(
+              op.separators.every(({ repeats }, i) => {
+                const sepRepeats = children.filter(
                   ({ separatorIndex }) => separatorIndex === i
                 ).length;
-                return repeat[0] <= repeats && repeats <= repeat[1];
+                return repeats[0] <= sepRepeats && sepRepeats <= repeats[1];
               })
             );
           }

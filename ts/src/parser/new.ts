@@ -2,210 +2,199 @@ import { Iterator } from "../utils.js";
 
 type Token = string;
 
-export type ScopeGenerator = (enclosing: OperatorDefs) => OperatorDefs;
-type SeparatorDef = {
+export type ScopeGenerator = (enclosing: Scope) => Scope;
+type SeparatorDefinition = {
   tokens: Token[];
-  repeat: [from: number, to: number];
-  scope: ScopeGenerator;
+  repeats: [min: number, max: number];
+  scope?: ScopeGenerator;
 };
-export type OperatorDef = {
-  separators: SeparatorDef[];
-  scope: ScopeGenerator;
+export type OperatorDefinition = {
+  separators: SeparatorDefinition[];
 };
-export type OperatorDefs = Record<string, OperatorDef>;
-type OperatorsValue = { id: string } & OperatorValue;
-type OperatorValue = { children: SeparatorValue[] };
-type SeparatorValue = {
-  children: (OperatorsValue | Token)[];
+export type Scope = Record<string, OperatorDefinition>;
+type OperatorInstance = { token: string; children: SeparatorInstance[] };
+type SeparatorInstance = {
+  children: (({ id: string } & OperatorInstance) | Token)[];
   separatorIndex: number;
   separatorToken: Token;
 };
 
 type ParsingError = { message: string };
 type ParsingResult<T> = [index: number, result: T, errors: ParsingError[]];
-type Parser<T> = (src: string, i: number) => ParsingResult<T>;
-
-const parseNext = (
-  src: string,
-  i: number,
-  token: string
-): ParsingResult<boolean> => {
-  if (src.slice(i, token.length) === token) return [i + token.length, true, []];
-  return [i, false, [{ message: `expected token: "${token}"` }]];
-};
-
-const parseUntil = <T>(
-  src: string,
-  i: number,
-  tokens: string[],
-  parse: Parser<T>
-): ParsingResult<T[]> => {
-  let index = i;
-  const values: T[] = [];
-  const errors: ParsingError[] = [];
-
-  while (src.charAt(index)) {
-    for (const token of tokens) {
-      const [_, isNext] = parseNext(src, index, token);
-      if (isNext) return [index, values, errors];
-    }
-    const [nextIndex, result, _errors] = parse(src, index);
-    index = nextIndex;
-    values.push(result);
-    errors.push(..._errors);
-  }
-  return [index, values, errors];
-};
-
-const parseUntilEnd = <T>(
-  src: string,
-  i: number,
-  parse: Parser<T>
-): ParsingResult<T[] | null> => {
-  let index = i;
-  const parsed: T[] = [];
-  const errors: ParsingError[] = [];
-
-  while (src.charAt(index)) {
-    const [nextIndex, result, _errors] = parse(src, index);
-    index = nextIndex;
-    parsed.push(result);
-    errors.push(..._errors);
-  }
-  return [index, parsed, errors];
-};
-
-const parseOneOf = <T>(
-  src: string,
-  i: number,
-  parsers: Record<string, Parser<T>>
-): ParsingResult<[id: string, value: T] | null> => {
-  const errors: ParsingError[] = [];
-  for (const parserId in parsers) {
-    const [index, value, _errors] = parsers[parserId](src, i);
-    if (_errors.length === 0) return [index, [parserId, value], []];
-    else
-      errors.push(
-        ..._errors.map(({ message }) => ({
-          message: `Error while trying option "${parserId}": ${message}`,
-        }))
-      );
-  }
-  return [i, null, errors];
-};
-
-const terminalTokens = (operator: SeparatorDef[]) => {
-  const tokens: string[][] = [];
-
-  for (const sep of operator) {
-    tokens.push(sep.tokens);
-    if (sep.repeat[0] > 0) return tokens;
-  }
-
-  return tokens;
-};
-
-// const parseSeparator = (
-//   src: string,
-//   i: number,
-//   operator: SeparatorDef,
-//   scope: OperatorDefs
-// ): ParsingResult<SeparatorValue> => {
-//   let { tokens, repeat } = operator;
-
-//   return [index, { separatorValues }] as const;
-// };
-
-export const parseOperator = (
-  src: string,
-  i: number,
-  operator: OperatorDef,
-  scope: OperatorDefs
-): ParsingResult<OperatorValue> => {
-  let index = i;
-  let { separators } = operator;
-  const separatorValues: SeparatorValue[] = [];
-  const errors: ParsingError[] = [];
-
-  for (const [separator, i] of separators.map((x, i) => [x, i] as const)) {
-    const _scope = separator.scope(scope);
-    const parsers = Object.fromEntries(
-      Object.entries(_scope).map(([id, op]) => [
-        id,
-        (src: string, i: number) => parseOperator(src, i, op, _scope),
-      ])
-    );
-    const [nextIndex, value, _errors] = parseUntil<OperatorsValue | string>(
-      src,
-      index,
-      separator.tokens,
-      (src, i) => {
-        const [nextIndex, value, errors] = parseOneOf(src, i, parsers);
-        if (!value) return [i + 1, src.charAt(i), []];
-        const [id, operatorValue] = value;
-        return [nextIndex, { id, ...operatorValue }, errors];
-      }
-    );
-
-    if (!src.charAt(nextIndex)) {
-      if (separator.repeat[0] === 0) {
-      }
-    } else {
-      index = nextIndex;
-      separatorValues.push({
-        children: value,
-        separatorIndex: i,
-        separatorToken: separator.tokens.find((token) =>
-          src.slice(index).startsWith(token)
-        ) as string,
-      });
-      errors.push(
-        ..._errors.map(({ message }) => ({
-          message: `Error while parsing separator "${separator}", ${separatorValues.length} repeat: ${message}`,
-        }))
-      );
-    }
-  }
-
-  return [index, { children: separatorValues }, errors];
-};
+// type Parser<T> = (src: string, i: number) => ParsingResult<T>;
 
 /* 
 "Operator" Parsing algorithm:
 
 Input: 
-1. string to be parsed
-2. iterator over characters (for example integer index into string)
-3. list of possible "operators"
-4. "operator"'s definition to be parsed, which includes:
-  4.1. sequence of "separators", which include:
-    4.1.1. list of separator's definition tokens
-    4.1.2. number of repeats allowed for that separator
+1. source string to be parsed
+2. starting index in source
+3. "operator"'s definition to be parsed, which includes:
+  1. sequence of "separators", which include:
+    1. list of separator's definition tokens
+    2. number of repeats allowed for that separator
+    3. optional "scope" generator, that accepts enclosing scope 
+       and returns new scope to use while parsing its children, identity by default. Only used if min repeats > 0
+4. scope of "operator", that is being parsed - dictionary of possible "operators"
 
 
 Output:
 1. Final index after parsing the whole "operator"
 2. parsed "operator", that is a sequence of "separator instances", where "separator instance" includes:
-  2.1. sequence of chidren (nested operators and characters before respective separator)
-  2.2. separator's index in definition
-  2.2. separator's token
+  1. sequence of children (nested operators and characters before respective separator)
+  2. separator's index in definition
+  2. separator's token
 3. List of errors that occured during parsing
 
 Instructions: 
 
-1. While list of separators is not empty, do:
+1. Match leading separator.
+2. if no match - return error
+3. update cursor
+4. Increment current separator's repeats
+5. if current separator's repeats is equal to max repeats - drop leading separator
+6. While list of separators is not empty, do:
   1. Take a leading sublist of separators that has exactly one non-optional separator
   2. Check if current position in string matches one of separators' tokens
   3. If matches:
-    3.1. move cursor past separator's token
-    3.2. if not first separator in list - reset current separator's repeats to 0
-    3.2. remove all preceding separators from list
-    3.3. Add current separator instance to operator's children. 
-    3.4. Increment current separator's repeats
-    3.5. If current separator's repeats is below min count - go to 2.
-    3.6. if current separator's repeats is equal to max count - drop leading separator
-    3.8. go to 1
-  4. if does not match - try parsing one of possible operators
-  5. If none of operators are successfully parsed - add current character to the children
-  6. Otherwise add successfully parsed operator to the separator instance's children
+    1. move cursor past separator's token
+    2. if not first separator in list - reset current separator's repeats to 0
+    3. remove all preceding separators from list
+    4. Add current separator instance to operator's children. 
+    5. Increment current separator's repeats
+    7. If current separator's repeats is below min repeats - go to 1.2.
+    8. if current separator's repeats is equal to max repeats - drop leading separator
+    9. go to 1.1
+  4. if does not match - try parsing one of operators, use scope generated based on next required separator.
+  5. If none of operators are matched\parsed - append current character to the separator's children, then go to 1.2.
+  6. if current character is not available - reached end of string, emit error
+  7. Otherwise add parsed operator to the separator instance's children
+7. return resulting operator
 */
+
+export const getLeadingSeparators = (
+  separators: [item: SeparatorDefinition, i: number][]
+) => {
+  const list: [item: SeparatorDefinition, i: number][] = [];
+
+  for (const sep of separators) {
+    list.push(sep);
+    const [{ repeats }] = sep;
+    const [min] = repeats;
+    if (min > 0) return list;
+  }
+  return list;
+};
+
+const identity = <T>(x: T) => x;
+
+export const parseOperator = (
+  src: string,
+  i: number,
+  operator: OperatorDefinition,
+  scope: Scope
+): ParsingResult<OperatorInstance> => {
+  let index = i;
+  const separatorList = Iterator.iter(operator.separators)
+    .enumerate()
+    .toArray();
+  let separatorRepeats = 0;
+  const children: SeparatorInstance[] = [];
+  const errors: ParsingError[] = [];
+  const tokens = operator.separators[0].tokens;
+  const token = tokens.find((token) => src.startsWith(token, index));
+
+  if (!token) {
+    return [
+      index,
+      { token: "", children: [] },
+      [{ message: "Does not match leading token" }],
+    ];
+  }
+
+  index += token.length;
+  separatorRepeats++;
+
+  const [{ repeats }] = separatorList[0];
+  if (separatorRepeats === repeats[1]) separatorList.splice(0, 1);
+
+  while (separatorList.length > 0) {
+    const leadingSeparators = getLeadingSeparators(separatorList);
+    const separatorChildren: SeparatorInstance["children"] = [];
+
+    while (true) {
+      const [matchedSeparator] = Iterator.iter(leadingSeparators)
+        .enumerate()
+        .flatMap(([[sep], i]) =>
+          Iterator.iter(sep.tokens).map(
+            (token) => [i, token] as [number, string]
+          )
+        )
+        .filter(([_, token]) => src.startsWith(token, index));
+
+      if (matchedSeparator) {
+        const [matchedIndex, separatorToken] = matchedSeparator;
+        const [{ repeats }, separatorIndex] = separatorList[matchedIndex];
+
+        index += separatorToken.length;
+        if (matchedIndex !== 0) separatorRepeats = 0;
+        separatorList.splice(0, matchedIndex);
+        children.push({
+          separatorIndex,
+          separatorToken,
+          children: separatorChildren,
+        });
+        separatorRepeats++;
+
+        if (separatorRepeats < repeats[0]) continue;
+        if (separatorRepeats === repeats[1]) separatorList.splice(0, 1);
+        break;
+      } else {
+        const [matchedToken] = Iterator.iterEntries(scope).filterMap(
+          ([id, operatorDefinition]) => {
+            const [top] = leadingSeparators[leadingSeparators.length - 1];
+            const scopeGen = top.scope ?? identity;
+            const [nextIndex, operator, errors] = parseOperator(
+              src,
+              index,
+              operatorDefinition,
+              scopeGen(scope)
+            );
+            if (errors.length > 0) return { pred: false };
+            else {
+              return {
+                pred: true,
+                value: [nextIndex, { ...operator, id }] as const,
+              };
+            }
+          }
+        );
+
+        if (!matchedToken) {
+          if (!src.charAt(index)) {
+            return [
+              index,
+              { token: "", children: [] },
+              [{ message: "Reached end of source" }],
+            ];
+          }
+
+          const top = separatorChildren[separatorChildren.length - 1];
+          if (typeof top === "string") {
+            separatorChildren[separatorChildren.length - 1] =
+              top + src.charAt(index);
+          } else separatorChildren.push(src.charAt(index));
+          index++;
+          continue;
+        }
+
+        const [nextIndex, operator] = matchedToken;
+
+        index = nextIndex;
+        separatorChildren.push(operator);
+      }
+    }
+  }
+
+  return [index, { token, children }, errors];
+};

@@ -20,10 +20,17 @@ export class Iterator<T> {
     const it = this;
     const gen = function* () {
       for (const item1 of it.generator) {
-        for (const item2 of gen2) {
-          yield [item1, item2] as [first: T, second: U];
-        }
+        for (const item2 of gen2) yield [item1, item2] as [first: T, second: U];
       }
+    };
+    return new Iterator(gen());
+  }
+
+  filter(pred: (x: T) => boolean): Iterator<T>;
+  filter<U extends T>(pred: (x: T) => x is U) {
+    const it = this;
+    const gen = function* () {
+      for (const item of it.generator) if (pred(item)) yield item;
     };
     return new Iterator(gen());
   }
@@ -31,9 +38,26 @@ export class Iterator<T> {
   map<U>(map: (x: T) => U) {
     const it = this;
     const gen = function* () {
+      for (const item of it.generator) yield map(item);
+    };
+    return new Iterator(gen());
+  }
+
+  filterMap<U>(map: (x: T) => { pred: false } | { pred: true; value: U }) {
+    const it = this;
+    const gen = function* () {
       for (const item of it.generator) {
-        yield map(item);
+        const result = map(item);
+        if (result.pred) yield result.value;
       }
+    };
+    return new Iterator(gen());
+  }
+
+  flatMap<U>(map: (x: T) => Iterable<U>) {
+    const it = this;
+    const gen = function* () {
+      for (const item of it.generator) yield* map(item);
     };
     return new Iterator(gen());
   }
@@ -81,9 +105,7 @@ export class Iterator<T> {
       }
 
       while (true) {
-        for (const x of buffer) {
-          yield x;
-        }
+        for (const x of buffer) yield x;
       }
     };
     return new Iterator(gen());
@@ -98,9 +120,7 @@ export class Iterator<T> {
 
   static range(start: number, end: number) {
     const gen = function* () {
-      while (start < end) {
-        yield start++;
-      }
+      while (start < end) yield start++;
     };
     return new Iterator(gen());
   }
@@ -111,18 +131,21 @@ export class Iterator<T> {
 
   static iter<T>(x: Iterable<T>) {
     const gen = function* () {
-      for (const item of x) {
-        yield item;
-      }
+      for (const item of x) yield item;
     };
     return new Iterator(gen());
   }
 
   static iterEntries<K extends string | number | symbol, T>(x: Record<K, T>) {
     const gen = function* () {
-      for (const key in x) {
-        yield [key, x[key]] as [key: K, value: T];
-      }
+      for (const key in x) yield [key, x[key]] as [key: K, value: T];
+    };
+    return new Iterator(gen());
+  }
+
+  static iterKeys<K extends string | number | symbol>(x: Record<K, unknown>) {
+    const gen = function* () {
+      for (const key in x) yield key;
     };
     return new Iterator(gen());
   }
