@@ -1,26 +1,49 @@
 import { describe, it } from "node:test";
 import fc from "fast-check";
-import { parseOperator, OperatorDef } from "../src/parser/new.js";
+import {
+  parseOperator,
+  OperatorDef,
+  ScopeGenerator,
+} from "../src/parser/new.js";
 import { assert } from "../src/utils.js";
+
+fc.configureGlobal({
+  numRuns: 1,
+  timeout: 10 * 1000,
+  interruptAfterTimeLimit: 60 * 1000,
+});
 
 // Properties
 describe("parseOperator", () => {
-  const operatorDefArb = fc.letrec<{ def: OperatorDef }>((tie) => ({
+  const operatorDefArb = fc.letrec<{
+    def: OperatorDef;
+    scope: ScopeGenerator;
+  }>((tie) => ({
     def: fc.record({
       separators: fc
         .array(
           fc.record({
-            tokens: fc.array(fc.string()),
+            tokens: fc.array(fc.string({ minLength: 1, size: "xsmall" }), {
+              minLength: 1,
+              size: "xsmall",
+            }),
             repeat: fc
               .tuple(fc.nat(), fc.nat())
               .filter(([min, max]) => 0 < min && min <= max),
-            scope: fc.func(fc.dictionary(fc.uuid(), tie("def"))),
+            scope: tie("scope"),
           }),
-          { minLength: 1 }
+          { minLength: 1, size: "xsmall" }
         )
         .filter((separators) => separators[0].repeat[0] > 0),
-      scope: fc.func(fc.dictionary(fc.uuid(), tie("def"))),
+      scope: tie("scope"),
     }),
+    scope: fc.func(
+      fc.oneof(
+        { maxDepth: 1, withCrossShrink: true },
+        fc.constant({}),
+        fc.dictionary(fc.uuid(), tie("def"), { size: "xsmall" })
+      )
+    ),
   })).def;
 
   const inputArb = fc

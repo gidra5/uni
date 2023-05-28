@@ -2,14 +2,15 @@ import { Iterator } from "../utils.js";
 
 type Token = string;
 
+export type ScopeGenerator = (enclosing: OperatorDefs) => OperatorDefs;
 type SeparatorDef = {
   tokens: Token[];
   repeat: [from: number, to: number];
-  scope: (enclosing: OperatorDefs) => OperatorDefs;
+  scope: ScopeGenerator;
 };
 export type OperatorDef = {
   separators: SeparatorDef[];
-  scope: (enclosing: OperatorDefs) => OperatorDefs;
+  scope: ScopeGenerator;
 };
 export type OperatorDefs = Record<string, OperatorDef>;
 type OperatorsValue = { id: string } & OperatorValue;
@@ -126,7 +127,7 @@ export const parseOperator = (
   const separatorValues: SeparatorValue[] = [];
   const errors: ParsingError[] = [];
 
-  for (const [separator, i] of Iterator.iter(separators).enumerate()) {
+  for (const [separator, i] of separators.map((x, i) => [x, i] as const)) {
     const _scope = separator.scope(scope);
     const parsers = Object.fromEntries(
       Object.entries(_scope).map(([id, op]) => [
@@ -192,18 +193,19 @@ Output:
 
 Instructions: 
 
-1. Take next separator from definition
-2. Check if current position in string matches one of separator's tokens
-3. If matches:
-  3.1. Add current sequence of children of separator's instance, 
-  separator's token and separator's index to operator's children. 
-  3.2. Increment current separator's repeats
-  3.2. Check if current separator's repeats is below min count
-  3.3. If true - move cursor past separator's token then go to 2.
-  3.4. Check if current separator's repeats is equal to max count
-  3.5. If true - go to 1
-4. if does not match - try parsing one of possible operators
-5. If none of operators are successfully parsed - add current character to the children
-6. Otherwise add successfully parsed operator to the children
-
+1. While list of separators is not empty, do:
+  1. Take a leading sublist of separators that has exactly one non-optional separator
+  2. Check if current position in string matches one of separators' tokens
+  3. If matches:
+    3.1. move cursor past separator's token
+    3.2. if not first separator in list - reset current separator's repeats to 0
+    3.2. remove all preceding separators from list
+    3.3. Add current separator instance to operator's children. 
+    3.4. Increment current separator's repeats
+    3.5. If current separator's repeats is below min count - go to 2.
+    3.6. if current separator's repeats is equal to max count - drop leading separator
+    3.8. go to 1
+  4. if does not match - try parsing one of possible operators
+  5. If none of operators are successfully parsed - add current character to the children
+  6. Otherwise add successfully parsed operator to the separator instance's children
 */
