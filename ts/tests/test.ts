@@ -35,7 +35,6 @@ describe("parseOperator", () => {
           { minLength: 1, size: "xsmall" }
         )
         .filter((separators) => separators[0].repeats[0] > 0),
-      scope: tie("scope"),
     }),
     scope: fc.option(
       fc.func(
@@ -45,7 +44,7 @@ describe("parseOperator", () => {
           fc.dictionary(fc.uuid(), tie("def"), { size: "xsmall" })
         )
       ),
-      { maxDepth: 1, freq: 1.5 }
+      { maxDepth: 1 }
     ),
   })).def;
 
