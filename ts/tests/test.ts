@@ -67,121 +67,83 @@ describe("parseOperator", () => {
     ));
 
   describe("when no errors", () => {
+    const argsArbNoError = fc
+      .tuple(inputArb, operatorDefArb, fc.dictionary(fc.uuid(), operatorDefArb))
+      .map(
+        ([[src, index], op, scope]) =>
+          [
+            parseOperator(src, index, op, scope),
+            [src, index, op, scope] as const,
+          ] as const
+      )
+      .filter(([[, , errors]]) => errors.length === 0);
     it("should always have children within bounds of separators repetition sum", () => {
       fc.assert(
-        fc.property(
-          inputArb,
-          operatorDefArb,
-          fc.dictionary(fc.uuid(), operatorDefArb),
-          ([src, index], op, scope) => {
-            const [_index, result, errors] = parseOperator(
-              src,
-              index,
-              op,
-              scope
-            );
-            fc.pre(errors.length === 0);
-            const min = op.separators.reduce(
-              (acc, { repeats: [min] }) => acc + min,
-              0
-            );
-            const max = op.separators.reduce(
-              (acc, { repeats: [_, max] }) => acc + max,
-              0
-            );
-            const count = result.children.length;
+        fc.property(argsArbNoError, ([[, result], [, , op]]) => {
+          const min = op.separators.reduce(
+            (acc, { repeats: [min] }) => acc + min,
+            0
+          );
+          const max = op.separators.reduce(
+            (acc, { repeats: [, max] }) => acc + max,
+            0
+          );
+          const count = result.children.length;
 
-            assert(count >= min);
-            assert(count <= max);
-          }
-        )
+          assert(count >= min);
+          assert(count <= max);
+        })
       );
     });
 
     it("should always have children ordered in ascending order of separator index", () => {
       fc.assert(
-        fc.property(
-          inputArb,
-          operatorDefArb,
-          fc.dictionary(fc.uuid(), operatorDefArb),
-          ([src, index], op, scope) => {
-            const [_index, result, errors] = parseOperator(
-              src,
-              index,
-              op,
-              scope
-            );
-            fc.pre(errors.length === 0);
-            const { children } = result;
+        fc.property(argsArbNoError, ([[, result]]) => {
+          const { children } = result;
 
-            assert(
-              children.every(({ separatorIndex: index1 }, i, array) => {
-                const rest = array.slice(i + 1);
-                return rest.every(
-                  ({ separatorIndex: index2 }) => index1 <= index2
-                );
-              })
-            );
-          }
-        )
+          assert(
+            children.every(({ separatorIndex: index1 }, i, array) => {
+              const rest = array.slice(i + 1);
+              return rest.every(
+                ({ separatorIndex: index2 }) => index1 <= index2
+              );
+            })
+          );
+        })
       );
     });
 
     it("sep-index and sep-token should match with sep-definition", () => {
       fc.assert(
-        fc.property(
-          inputArb,
-          operatorDefArb,
-          fc.dictionary(fc.uuid(), operatorDefArb),
-          ([src, index], op, scope) => {
-            const [_index, result, errors] = parseOperator(
-              src,
-              index,
-              op,
-              scope
-            );
-            fc.pre(errors.length === 0);
-            const { children } = result;
+        fc.property(argsArbNoError, ([[, result], [, , op]]) => {
+          const { children } = result;
 
-            assert(
-              children.every(
-                ({ separatorIndex: index, separatorToken: token }) => {
-                  const sepDef = op.separators[index];
-                  return sepDef.tokens.includes(token);
-                }
-              )
-            );
-          }
-        )
+          assert(
+            children.every(
+              ({ separatorIndex: index, separatorToken: token }) => {
+                const sepDef = op.separators[index];
+                return sepDef.tokens.includes(token);
+              }
+            )
+          );
+        })
       );
     });
 
     it("sep-repeat is within bounds of sep-definition-repeat", () => {
       fc.assert(
-        fc.property(
-          inputArb,
-          operatorDefArb,
-          fc.dictionary(fc.uuid(), operatorDefArb),
-          ([src, index], op, scope) => {
-            const [_index, result, errors] = parseOperator(
-              src,
-              index,
-              op,
-              scope
-            );
-            fc.pre(errors.length === 0);
-            const { children } = result;
+        fc.property(argsArbNoError, ([[, result], [, , op]]) => {
+          const { children } = result;
 
-            assert(
-              op.separators.every(({ repeats }, i) => {
-                const sepRepeats = children.filter(
-                  ({ separatorIndex }) => separatorIndex === i
-                ).length;
-                return repeats[0] <= sepRepeats && sepRepeats <= repeats[1];
-              })
-            );
-          }
-        )
+          assert(
+            op.separators.every(({ repeats }, i) => {
+              const sepRepeats = children.filter(
+                ({ separatorIndex }) => separatorIndex === i
+              ).length;
+              return repeats[0] <= sepRepeats && sepRepeats <= repeats[1];
+            })
+          );
+        })
       );
     });
   });
