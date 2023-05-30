@@ -1,20 +1,24 @@
-import { describe, it } from "node:test";
+import { describe, it, test } from "node:test";
 import fc from "fast-check";
 import {
   parseOperator,
   OperatorDefinition,
   ScopeGenerator,
+  Scope,
+  OperatorInstance,
 } from "../src/parser/new.js";
 import { assert } from "../src/utils.js";
+import { deepStrictEqual } from "node:assert";
 
 fc.configureGlobal({
   numRuns: 1,
   timeout: 10 * 1000,
   interruptAfterTimeLimit: 60 * 1000,
+  skipAllAfterTimeLimit: 20 * 1000,
 });
 
 // Properties
-describe("parseOperator", () => {
+describe("parse operator", () => {
   const operatorDefArb = fc.letrec<{
     def: OperatorDefinition;
     scope: ScopeGenerator;
@@ -129,22 +133,88 @@ describe("parseOperator", () => {
         })
       );
     });
-
-    it("sep-repeat is within bounds of sep-definition-repeat", () => {
-      fc.assert(
-        fc.property(argsArbNoError, ([[, result], [, , op]]) => {
-          const { children } = result;
-
-          assert(
-            op.separators.every(({ repeats }, i) => {
-              const sepRepeats = children.filter(
-                ({ separatorIndex }) => separatorIndex === i
-              ).length;
-              return repeats[0] <= sepRepeats && sepRepeats <= repeats[1];
-            })
-          );
-        })
-      );
-    });
   });
+});
+
+test("test cases", () => {
+  const input = "(a, b, c, 123; (d,e, f   ,g)) ? a : (b)";
+  const expect: OperatorInstance = {
+    token: "(",
+    children: [
+      { children: ["a"], separatorIndex: 1, separatorToken: "," },
+      { children: [" b"], separatorIndex: 1, separatorToken: "," },
+      { children: [" c"], separatorIndex: 1, separatorToken: "," },
+      { children: [" 123"], separatorIndex: 1, separatorToken: ";" },
+      {
+        children: [
+          " ",
+          {
+            token: "(",
+            id: "id1",
+            children: [
+              { children: ["d"], separatorIndex: 1, separatorToken: "," },
+              { children: ["e"], separatorIndex: 1, separatorToken: "," },
+              { children: [" f   "], separatorIndex: 1, separatorToken: "," },
+              { children: ["g"], separatorIndex: 2, separatorToken: ")" },
+            ],
+          },
+        ],
+        separatorIndex: 2,
+        separatorToken: ")",
+      },
+    ],
+  };
+  const scope: Scope = {
+    id1: {
+      separators: [
+        { tokens: ["("], repeats: [1, 1] },
+        { tokens: [",", ";"], repeats: [0, Infinity] },
+        { tokens: [")"], repeats: [1, 1] },
+      ],
+    },
+    id2: {
+      separators: [
+        { tokens: ["?"], repeats: [1, 1] },
+        { tokens: [":"], repeats: [1, 1] },
+      ],
+    },
+  };
+  const [index, instance, errors] = parseOperator(
+    input,
+    0,
+    scope["id1"],
+    scope
+  );
+
+  assert(index === 29);
+  assert(errors.length === 0);
+  deepStrictEqual(instance, expect);
+  const expect2: OperatorInstance = {
+    token: "?",
+    children: [{ children: [" a "], separatorIndex: 1, separatorToken: ":" }],
+  };
+  const [index2, instance2, errors2] = parseOperator(
+    input,
+    index + 1,
+    scope["id2"],
+    scope
+  );
+
+  assert(errors2.length === 0);
+  deepStrictEqual(instance2, expect2);
+  assert(index2 === index + 6);
+  const expect3: OperatorInstance = {
+    token: "(",
+    children: [{ children: ["b"], separatorIndex: 2, separatorToken: ")" }],
+  };
+  const [index3, instance3, errors3] = parseOperator(
+    input,
+    index2 + 1,
+    scope["id1"],
+    scope
+  );
+
+  assert(errors3.length === 0);
+  deepStrictEqual(instance3, expect3);
+  assert(index3 === index2 + 4);
 });

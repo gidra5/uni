@@ -3,7 +3,7 @@ import { Iterator } from "../utils.js";
 type Token = string;
 
 export type ScopeGenerator = (enclosing: Scope) => Scope;
-type SeparatorDefinition = {
+export type SeparatorDefinition = {
   tokens: Token[];
   repeats: [min: number, max: number];
   scope?: ScopeGenerator;
@@ -12,8 +12,8 @@ export type OperatorDefinition = {
   separators: SeparatorDefinition[];
 };
 export type Scope = Record<string, OperatorDefinition>;
-type OperatorInstance = { token: string; children: SeparatorInstance[] };
-type SeparatorInstance = {
+export type OperatorInstance = { token: string; children: SeparatorInstance[] };
+export type SeparatorInstance = {
   children: (({ id: string } & OperatorInstance) | Token)[];
   separatorIndex: number;
   separatorToken: Token;
@@ -52,23 +52,24 @@ Instructions:
 2. if no match - return error
 3. update cursor
 4. Increment current separator's repeats
-5. if current separator's repeats is equal to max repeats - drop leading separator
+5. if current separator's repeats is equal to max repeats - drop leading separator, reset current separator's repeats to 0
 6. While list of separators is not empty, do:
   1. Take a leading sublist of separators that has exactly one non-optional separator
   2. Check if current position in string matches one of separators' tokens
   3. If matches:
     1. move cursor past separator's token
-    2. if not first separator in list - reset current separator's repeats to 0
+    2. if not first separator in list - reset current separator's repeats
     3. remove all preceding separators from list
     4. Add current separator instance to operator's children. 
     5. Increment current separator's repeats
     7. If current separator's repeats is below min repeats - go to 1.2.
-    8. if current separator's repeats is equal to max repeats - drop leading separator
+    8. if current separator's repeats is equal to max repeats - drop leading separator, reset current separator's repeats
     9. go to 1.1
   4. if does not match - try parsing one of operators, use scope generated based on next required separator.
   5. If none of operators are matched\parsed - append current character to the separator's children, then go to 1.2.
-  6. if current character is not available - reached end of string, emit error
-  7. Otherwise add parsed operator to the separator instance's children
+  6. if current character is not available and some separators are required - reached end of string, emit error
+  7. if current character is not available and all separators are not required - return resulting operator
+  8. Otherwise add parsed operator to the separator instance's children
 7. return resulting operator
 */
 
@@ -101,7 +102,8 @@ export const parseOperator = (
   let separatorRepeats = 0;
   const children: SeparatorInstance[] = [];
   const errors: ParsingError[] = [];
-  const tokens = operator.separators[0].tokens;
+
+  const [{ tokens }] = separatorList[0];
   const token = tokens.find((token) => src.startsWith(token, index));
 
   if (!token) {
@@ -116,7 +118,10 @@ export const parseOperator = (
   separatorRepeats++;
 
   const [{ repeats }] = separatorList[0];
-  if (separatorRepeats === repeats[1]) separatorList.splice(0, 1);
+  if (separatorRepeats === repeats[1]) {
+    separatorRepeats = 0;
+    separatorList.splice(0, 1);
+  }
 
   while (separatorList.length > 0) {
     const leadingSeparators = getLeadingSeparators(separatorList);
@@ -147,7 +152,10 @@ export const parseOperator = (
         separatorRepeats++;
 
         if (separatorRepeats < repeats[0]) continue;
-        if (separatorRepeats === repeats[1]) separatorList.splice(0, 1);
+        if (separatorRepeats === repeats[1]) {
+          separatorRepeats = 0;
+          separatorList.splice(0, 1);
+        }
         break;
       } else {
         const [matchedToken] = Iterator.iterEntries(scope).filterMap(
@@ -172,6 +180,12 @@ export const parseOperator = (
 
         if (!matchedToken) {
           if (!src.charAt(index)) {
+            const [head, ...rest] = separatorList;
+            if (
+              head[0].repeats[0] <= separatorRepeats &&
+              rest.every(([{ repeats }]) => repeats[0] === 0)
+            )
+              return [index, { token, children }, errors];
             return [
               index,
               { token: "", children: [] },
