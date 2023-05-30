@@ -1,7 +1,7 @@
 import { describe, it, test } from "node:test";
 import fc from "fast-check";
 import {
-  parseOperator,
+  parseTokensToOperator,
   OperatorDefinition,
   ScopeGenerator,
   Scope,
@@ -63,7 +63,7 @@ describe("parse operator", () => {
         operatorDefArb,
         fc.dictionary(fc.uuid(), operatorDefArb),
         ([src, index], op, scope) => {
-          const [_index] = parseOperator(src, index, op, scope);
+          const [_index] = parseTokensToOperator(src, index, op, scope);
           assert(_index >= index);
           assert(_index <= src.length);
         }
@@ -76,7 +76,7 @@ describe("parse operator", () => {
       .map(
         ([[src, index], op, scope]) =>
           [
-            parseOperator(src, index, op, scope),
+            parseTokensToOperator(src, index, op, scope),
             [src, index, op, scope] as const,
           ] as const
       )
@@ -179,7 +179,7 @@ test("test cases", () => {
       ],
     },
   };
-  const [index, instance, errors] = parseOperator(
+  const [index, instance, errors] = parseTokensToOperator(
     input,
     0,
     scope["id1"],
@@ -193,7 +193,7 @@ test("test cases", () => {
     token: "?",
     children: [{ children: [" a "], separatorIndex: 1, separatorToken: ":" }],
   };
-  const [index2, instance2, errors2] = parseOperator(
+  const [index2, instance2, errors2] = parseTokensToOperator(
     input,
     index + 1,
     scope["id2"],
@@ -207,7 +207,7 @@ test("test cases", () => {
     token: "(",
     children: [{ children: ["b"], separatorIndex: 2, separatorToken: ")" }],
   };
-  const [index3, instance3, errors3] = parseOperator(
+  const [index3, instance3, errors3] = parseTokensToOperator(
     input,
     index2 + 1,
     scope["id1"],

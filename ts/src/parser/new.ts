@@ -25,13 +25,13 @@ export type SeparatorInstance = {
 
 type ParsingError = { message: string };
 type ParsingResult<T> = [index: number, result: T, errors: ParsingError[]];
-// type Parser<T> = (src: string, i: number) => ParsingResult<T>;
+type Parser<T> = (src: string, i: number) => ParsingResult<T>;
 
 /* 
 "Operator" Parsing algorithm:
 
 Input: 
-1. source string to be parsed
+1. source tokens to be parsed
 2. starting index in source
 3. "operator"'s definition to be parsed, which includes:
   1. sequence of "separators", which include:
@@ -93,8 +93,8 @@ export const getLeadingSeparators = (
 
 const identity = <T>(x: T) => x;
 
-export const parseOperator = (
-  src: string,
+export const parseTokensToOperator = (
+  src: Token[],
   i: number,
   operator: OperatorDefinition,
   scope: Scope
@@ -106,19 +106,21 @@ export const parseOperator = (
   let separatorRepeats = 0;
   const children: SeparatorInstance[] = [];
   const errors: ParsingError[] = [];
-
+  const matchToken = (sourceToken: Token) => (token: string) =>
+    (sourceToken.type === "identifier" && sourceToken.src === token) ||
+    sourceToken.type === token;
   const [{ tokens }] = separatorList[0];
-  const token = tokens.find((token) => src.startsWith(token, index));
+  const token = src[index];
 
-  if (!token) {
+  if (!tokens.find(matchToken(token))) {
     return [
       index,
-      { token: "", children: [] },
+      { token: { type: "whitespace", src: "" }, children: [] },
       [{ message: "Does not match leading token" }],
     ];
   }
 
-  index += token.length;
+  index++;
   separatorRepeats++;
 
   const [{ repeats }] = separatorList[0];
@@ -139,13 +141,14 @@ export const parseOperator = (
             (token) => [i, token] as [number, string]
           )
         )
-        .filter(([_, token]) => src.startsWith(token, index));
+        .filter(([_, token]) => matchToken(src[index])(token));
 
       if (matchedSeparator) {
-        const [matchedIndex, separatorToken] = matchedSeparator;
+        const [matchedIndex] = matchedSeparator;
+        const separatorToken = src[index];
         const [{ repeats }, separatorIndex] = separatorList[matchedIndex];
 
-        index += separatorToken.length;
+        index++;
         if (matchedIndex !== 0) separatorRepeats = 0;
         separatorList.splice(0, matchedIndex);
         children.push({
@@ -166,7 +169,7 @@ export const parseOperator = (
           ([id, operatorDefinition]) => {
             const [top] = leadingSeparators[leadingSeparators.length - 1];
             const scopeGen = top.scope ?? identity;
-            const [nextIndex, operator, errors] = parseOperator(
+            const [nextIndex, operator, errors] = parseTokensToOperator(
               src,
               index,
               operatorDefinition,
@@ -183,7 +186,7 @@ export const parseOperator = (
         );
 
         if (!matchedToken) {
-          if (!src.charAt(index)) {
+          if (!src[index]) {
             const [head, ...rest] = separatorList;
             if (
               head[0].repeats[0] <= separatorRepeats &&
@@ -192,16 +195,12 @@ export const parseOperator = (
               return [index, { token, children }, errors];
             return [
               index,
-              { token: "", children: [] },
+              { token: { type: "whitespace", src: "" }, children: [] },
               [{ message: "Reached end of source" }],
             ];
           }
 
-          const top = separatorChildren[separatorChildren.length - 1];
-          if (typeof top === "string") {
-            separatorChildren[separatorChildren.length - 1] =
-              top + src.charAt(index);
-          } else separatorChildren.push(src.charAt(index));
+          separatorChildren.push(src[index]);
           index++;
           continue;
         }
@@ -215,6 +214,48 @@ export const parseOperator = (
   }
 
   return [index, { token, children }, errors];
+};
+
+export const parseStringToOperators = (
+  src: string,
+  i: number,
+  scope: Scope
+): ParsingResult<SeparatorChildren> => {
+  const [index, tokens, errors] = parseTokens(src, i);
+  let tokensIndex = 0;
+  const children: SeparatorChildren = [];
+
+  while (tokens[tokensIndex]) {
+    const [matchedToken] = Iterator.iterEntries(scope).filterMap(
+      ([id, operatorDefinition]) => {
+        const [nextIndex, operator, errors] = parseTokensToOperator(
+          tokens,
+          tokensIndex,
+          operatorDefinition,
+          scope
+        );
+        if (errors.length > 0) return { pred: false };
+        else {
+          return {
+            pred: true,
+            value: [nextIndex, { ...operator, id }] as const,
+          };
+        }
+      }
+    );
+
+    if (!matchedToken) {
+      children.push(tokens[tokensIndex]);
+      tokensIndex++;
+    } else {
+      const [nextIndex, instance] = matchedToken;
+
+      tokensIndex = nextIndex;
+      children.push(instance);
+    }
+  }
+
+  return [index, children, errors];
 };
 
 /* 
@@ -231,10 +272,58 @@ Output:
 3. List of errors that occured during parsing
 
 Instructions: 
-1.
+1. if current char is `"` - parse string
+  1. save current index
+  2. increment current index
+  3. while current char is not `"` do:
+    1. if current char is `\` - increment curr index
+    2. if there is no char - emit error, break loop
+    3. append current char to string's value
+    4. inc curr index
+  4. return resulting token
+2. if current char is a digit - parse number
+  1. save current index
+  3. while current char is a digit or `_` do:
+    1. if current char is `_` followed by digit - increment curr index
+    2. else if it is not followed by digit - break loop
+    3. append current char to number's value
+    4. inc curr index
+  4. if current char is `.` followed by digit then:
+    1. append current char to number's value
+    2. inc curr index
+    3. while current char is a digit or `_` do:
+      1. if current char is `_` followed by digit - increment curr index
+      2. else if it is not followed by digit - break loop
+      3. append current char to number's value
+      4. inc curr index
+  4. return resulting token
+3. if current char is whitespace char then:
+  1. save current index
+  2. while current char is whitespace char - inc curr index
+  3. if token's source includes new line char - return "newline" token
+  4. else return "whitespace" token
+4. if current char is `_` or a letter then
+  1. save current index
+  2. while current char is `_` or alphanumeric - inc curr index
+  4. return "identifier" token
+5. if current char is `.` followed by digit - parse number
+  1. save current index
+  2. inc current index
+  3. set number's value to "0."
+  4. while current char is a digit or `_` do:
+    1. if current char is `_` followed by digit - increment curr index
+    2. else if it is not followed by digit - break loop
+    3. append current char to number's value
+    4. inc curr index
+  4. return resulting token
+6. otherwise:
+  1. save current index
+  2. increment current index
+  3. while current char is not any of the above cases - inc curr index
+  4. return "identifier" token
 */
 
-export const parseToken = (src: string, i: number): ParsingResult<Token> => {
+export const parseToken: Parser<Token> = (src: string, i: number) => {
   let index = i;
   const errors: ParsingError[] = [];
 
@@ -317,21 +406,55 @@ export const parseToken = (src: string, i: number): ParsingResult<Token> => {
     ];
   }
 
-  if (/[^_\w\s\d"]/.test(src.charAt(index))) {
+  if (src.charAt(index) === "." && /\d/.test(src.charAt(index))) {
     const start = index;
-    while (/[^_\w\s\d"]/.test(src.charAt(index))) index++;
+    index++;
+    let value = "0.";
+    while (/[_\d]/.test(src.charAt(index))) {
+      if (src.charAt(index) === "_" && /\d/.test(src.charAt(index + 1))) {
+        index++;
+      } else if (src.charAt(index) === "_") break;
+      value += src.charAt(index);
+      index++;
+    }
 
     return [
       index,
-      { type: "identifier", src: src.substring(start, index) },
+      {
+        type: "number",
+        src: src.substring(start, index),
+        value: Number(value),
+      },
       errors,
     ];
   }
 
-  errors.push({ message: "unexpected character" });
-  return [index, { type: "whitespace", src: "" }, errors];
+  const start = index;
+  index++;
+  while (/[^_\w\s\d."]/.test(src.charAt(index))) index++;
+
+  return [
+    index,
+    { type: "identifier", src: src.substring(start, index) },
+    errors,
+  ];
 };
 
+export const parseTokens: Parser<Token[]> = (src: string, i: number) => {
+  let index = i;
+  const errors: ParsingError[] = [];
+  const tokens: Token[] = [];
+
+  while (src.charAt(index)) {
+    const [nextIndex, token, _errors] = parseToken(src, index);
+
+    index = nextIndex;
+    tokens.push(token);
+    errors.push(..._errors);
+  }
+
+  return [index, tokens, errors];
+};
 /* 
 Pratt's Parsing algorithm:
 
@@ -355,12 +478,12 @@ Output:
 Instructions: 
 1.
 */
-const prattParser = (
-  src: string,
+export const parseOperatorsToAST = (
+  src: SeparatorChildren,
   i: number,
   precedence: number,
   scope: Scope
-) => {
+): ParsingResult<unknown[]> => {
   // ExprNode left = switch (it.peek().type()) {
   //   case Identifier -> {
   //     var tokenNode = it.next();
@@ -383,4 +506,30 @@ const prattParser = (
   //   };
   // }
   // return left;
+  return [i, [], []];
+};
+
+export const parseStringToAST = (
+  src: string,
+  i: number,
+  scope: Scope
+): ParsingResult<unknown[]> => {
+  const [index, children, errors] = parseStringToOperators(src, i, scope);
+  const ast: unknown[] = [];
+  let childrenIndex = 0;
+
+  while (children[childrenIndex]) {
+    const [index, astNode, _errors] = parseOperatorsToAST(
+      children,
+      childrenIndex,
+      0,
+      scope
+    );
+
+    childrenIndex = index;
+    ast.push(astNode);
+    errors.push(..._errors);
+  }
+
+  return [index, ast, errors];
 };
