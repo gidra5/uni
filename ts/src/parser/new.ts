@@ -1,4 +1,4 @@
-import { Iterator } from "../utils.js";
+import { Iterator, assert } from "../utils.js";
 
 export type ScopeGenerator = (enclosing: Scope) => Scope;
 export type SeparatorDefinition = {
@@ -6,8 +6,10 @@ export type SeparatorDefinition = {
   repeats: [min: number, max: number];
   scope?: ScopeGenerator;
 };
+export type Precedence = [prefix: number | null, postfix: number | null];
 export type OperatorDefinition = {
   separators: SeparatorDefinition[];
+  precedence: Precedence;
 };
 export type Scope = Record<string, OperatorDefinition>;
 
@@ -16,11 +18,19 @@ export type Token =
   | { type: "number"; src: string; value: number }
   | { type: "string"; src: string; value: string };
 export type OperatorInstance = { token: Token; children: SeparatorInstance[] };
-export type SeparatorChildren = (({ id: string } & OperatorInstance) | Token)[];
+export type SeparatorChildren = (
+  | ({ id: string; type: "operator" } & OperatorInstance)
+  | Token
+)[];
 export type SeparatorInstance = {
   children: SeparatorChildren;
   separatorIndex: number;
   separatorToken: Token;
+};
+export type SyntaxTree = {
+  item: SeparatorChildren[number];
+  lhs?: SyntaxTree;
+  rhs?: SyntaxTree;
 };
 
 type ParsingError = { message: string };
@@ -107,8 +117,9 @@ export const parseTokensToOperator = (
   const children: SeparatorInstance[] = [];
   const errors: ParsingError[] = [];
   const matchToken = (sourceToken: Token) => (token: string) =>
-    (sourceToken.type === "identifier" && sourceToken.src === token) ||
-    sourceToken.type === token;
+    (sourceToken.type === "whitespace" && " " === token) ||
+    (sourceToken.type === "newline" && "\n" === token) ||
+    (sourceToken.type === "identifier" && sourceToken.src === token);
   const [{ tokens }] = separatorList[0];
   const token = src[index];
 
@@ -151,6 +162,12 @@ export const parseTokensToOperator = (
         index++;
         if (matchedIndex !== 0) separatorRepeats = 0;
         separatorList.splice(0, matchedIndex);
+
+        const token = separatorChildren.pop();
+        if (token && token.type !== "newline" && token.type !== "whitespace") {
+          separatorChildren.push(token);
+        }
+
         children.push({
           separatorIndex,
           separatorToken,
@@ -179,13 +196,18 @@ export const parseTokensToOperator = (
             else {
               return {
                 pred: true,
-                value: [nextIndex, { ...operator, id }] as const,
+                value: [
+                  nextIndex,
+                  { ...operator, id, type: "operator" },
+                ] as const,
               };
             }
           }
         );
 
         if (!matchedToken) {
+          if (token.type === "newline" || token.type === "whitespace") index++;
+
           if (!src[index]) {
             const [head, ...rest] = separatorList;
             if (
@@ -238,7 +260,7 @@ export const parseStringToOperators = (
         else {
           return {
             pred: true,
-            value: [nextIndex, { ...operator, id }] as const,
+            value: [nextIndex, { ...operator, id, type: "operator" }] as const,
           };
         }
       }
@@ -455,6 +477,7 @@ export const parseTokens: Parser<Token[]> = (src: string, i: number) => {
 
   return [index, tokens, errors];
 };
+
 /* 
 Pratt's Parsing algorithm:
 
@@ -476,46 +499,125 @@ Output:
 3. List of errors that occured during parsing
 
 Instructions: 
-1.
+1. check if next token is a prefix or none-fix operator:
+  1. if its operator, and 
 */
+
 export const parseOperatorsToAST = (
   src: SeparatorChildren,
   i: number,
   precedence: number,
   scope: Scope
-): ParsingResult<unknown[]> => {
-  // ExprNode left = switch (it.peek().type()) {
-  //   case Identifier -> {
-  //     var tokenNode = it.next();
-  //     yield switch (it.peek().type()) {
-  //       case Sub, Add, Mult, Div, Pow, Mod, Factorial, RParenthesis, EOT -> tokenNode;
-  //       default -> new FnCallExprNode(tokenNode, ExprNode.parse(it, 6, nodes));
-  //     };
-  //   }
-  //   case Number -> it.next();
-  //   case Sub -> new UnaryPrefixExprNode(it.next(), ExprNode.parse(it, 4, nodes));
-  //   case LParenthesis -> ExprNode.parseInParenthesis(it, nodes);
-  //   case Derivative -> DerivativeExprNode.parse(it, nodes);
-  //   default -> throw new FailedToParseException("Not expr");
-  // };
-  // while (precedence < it.peek().precedence()) {
-  //   left = switch (it.peek().type()) {
-  //     case Sub, Add, Mult, Div, Pow, Mod -> BinaryInfixExprNode.parse(it, left, nodes);
-  //     case Factorial -> new UnaryPostfixExprNode(left, it.next());
-  //     default -> left;
-  //   };
-  // }
-  // return left;
-  return [i, [], []];
+): ParsingResult<SyntaxTree> => {
+  let index = i;
+  let token = src[index];
+  const errors: ParsingError[] = [];
+  let lhs: SyntaxTree;
+
+  //skip possible whitespaces
+  if (token.type === "newline" || token.type === "whitespace") {
+    index++;
+    token = src[index];
+  }
+
+  if (!token)
+    return [
+      index,
+      { item: { type: "whitespace", src: "" } },
+      [...errors, { message: "end of stream" }],
+    ];
+
+  if (
+    token.type === "identifier" ||
+    token.type === "number" ||
+    token.type === "string"
+  ) {
+    index++;
+    lhs = { item: token };
+  } else {
+    assert(token.type === "operator");
+    const { precedence } = scope[token.id];
+    const [left, right] = precedence;
+
+    if (left === null && right !== null) {
+      const [nextIndex, rhs, _errors] = parseOperatorsToAST(
+        src,
+        index,
+        right,
+        scope
+      );
+
+      index = nextIndex;
+      errors.push(..._errors);
+      lhs = { item: token, rhs };
+    } else if (left === null && right === null) {
+      index++;
+
+      lhs = { item: token };
+    } else if (left !== null && right === null) {
+      return [
+        index,
+        { item: { type: "whitespace", src: "" } },
+        [...errors, { message: "postfix operator without left operand" }],
+      ];
+    } else {
+      return [
+        index,
+        { item: { type: "whitespace", src: "" } },
+        [...errors, { message: "infix operator without left operand" }],
+      ];
+    }
+  }
+
+  while (true) {
+    token = src[index];
+
+    if (token.type === "newline" || token.type === "whitespace") {
+      index++;
+      token = src[index];
+    }
+
+    if (!token) break;
+    if (token.type !== "operator") {
+      return [
+        index,
+        { item: { type: "whitespace", src: "" } },
+        [...errors, { message: "no operator" }],
+      ];
+    }
+
+    const {
+      precedence: [left, right],
+    } = scope[token.id];
+
+    if (left === null || left < precedence) break;
+    index++;
+
+    if (right === null) {
+      lhs = { item: token, lhs };
+    } else {
+      const [nextIndex, rhs, _errors] = parseOperatorsToAST(
+        src,
+        index,
+        right,
+        scope
+      );
+
+      index = nextIndex;
+      errors.push(..._errors);
+      lhs = { item: token, lhs, rhs };
+    }
+  }
+  return [index, lhs, errors];
 };
 
 export const parseStringToAST = (
   src: string,
   i: number,
   scope: Scope
-): ParsingResult<unknown[]> => {
+): ParsingResult<SyntaxTree[]> => {
   const [index, children, errors] = parseStringToOperators(src, i, scope);
-  const ast: unknown[] = [];
+  const ast: SyntaxTree[] = [];
   let childrenIndex = 0;
 
   while (children[childrenIndex]) {
