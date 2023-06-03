@@ -6,6 +6,7 @@ import {
   ScopeGenerator,
   Scope,
   OperatorInstance,
+  parseStringToOperators,
 } from "../src/parser/new.js";
 import { assert } from "../src/utils.js";
 import { deepStrictEqual } from "node:assert";
@@ -39,6 +40,10 @@ describe("parse operator", () => {
           { minLength: 1, size: "xsmall" }
         )
         .filter((separators) => separators[0].repeats[0] > 0),
+      precedence: fc.tuple(
+        fc.oneof(fc.nat(), fc.constant(null)),
+        fc.oneof(fc.nat(), fc.constant(null))
+      ),
     }),
     scope: fc.option(
       fc.func(
@@ -63,7 +68,7 @@ describe("parse operator", () => {
         operatorDefArb,
         fc.dictionary(fc.uuid(), operatorDefArb),
         ([src, index], op, scope) => {
-          const [_index] = parseTokensToOperator(src, index, op, scope);
+          const [_index] = parseStringToOperators(src, index, op, scope);
           assert(_index >= index);
           assert(_index <= src.length);
         }
@@ -139,28 +144,60 @@ describe("parse operator", () => {
 test("test cases", () => {
   const input = "(a, b, c, 123; (d,e, f   ,g)) ? a : (b)";
   const expect: OperatorInstance = {
-    token: "(",
+    token: { type: "identifier", src: "(" },
     children: [
-      { children: ["a"], separatorIndex: 1, separatorToken: "," },
-      { children: [" b"], separatorIndex: 1, separatorToken: "," },
-      { children: [" c"], separatorIndex: 1, separatorToken: "," },
-      { children: [" 123"], separatorIndex: 1, separatorToken: ";" },
+      {
+        children: [{ type: "identifier", src: "a" }],
+        separatorIndex: 1,
+        separatorToken: { type: "identifier", src: "," },
+      },
+      {
+        children: [{ type: "identifier", src: "b" }],
+        separatorIndex: 1,
+        separatorToken: { type: "identifier", src: "," },
+      },
+      {
+        children: [{ type: "identifier", src: "c" }],
+        separatorIndex: 1,
+        separatorToken: { type: "identifier", src: "," },
+      },
+      {
+        children: [{ type: "number", src: "123" }],
+        separatorIndex: 1,
+        separatorToken: { type: "identifier", src: ";" },
+      },
       {
         children: [
-          " ",
           {
-            token: "(",
+            token: { type: "identifier", src: "(" },
             id: "id1",
+            type: "operator",
             children: [
-              { children: ["d"], separatorIndex: 1, separatorToken: "," },
-              { children: ["e"], separatorIndex: 1, separatorToken: "," },
-              { children: [" f   "], separatorIndex: 1, separatorToken: "," },
-              { children: ["g"], separatorIndex: 2, separatorToken: ")" },
+              {
+                children: [{ type: "identifier", src: "d" }],
+                separatorIndex: 1,
+                separatorToken: { type: "identifier", src: "," },
+              },
+              {
+                children: [{ type: "identifier", src: "e" }],
+                separatorIndex: 1,
+                separatorToken: { type: "identifier", src: "," },
+              },
+              {
+                children: [{ type: "identifier", src: "f" }],
+                separatorIndex: 1,
+                separatorToken: { type: "identifier", src: "," },
+              },
+              {
+                children: [{ type: "identifier", src: "g" }],
+                separatorIndex: 2,
+                separatorToken: { type: "identifier", src: ")" },
+              },
             ],
           },
         ],
         separatorIndex: 2,
-        separatorToken: ")",
+        separatorToken: { type: "identifier", src: ")" },
       },
     ],
   };

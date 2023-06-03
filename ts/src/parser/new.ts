@@ -15,7 +15,7 @@ export type Scope = Record<string, OperatorDefinition>;
 
 export type Token =
   | { type: "identifier" | "whitespace" | "newline"; src: string }
-  | { type: "number"; src: string; value: number }
+  | { type: "number"; src: string }
   | { type: "string"; src: string; value: string };
 export type OperatorInstance = { token: Token; children: SeparatorInstance[] };
 export type SeparatorChildren = (
@@ -396,11 +396,7 @@ export const parseToken: Parser<Token> = (src: string, i: number) => {
 
     return [
       index,
-      {
-        type: "number",
-        src: src.substring(start, index),
-        value: Number(value),
-      },
+      { type: "number", src: src.substring(start, index) },
       errors,
     ];
   }
@@ -499,8 +495,33 @@ Output:
 3. List of errors that occured during parsing
 
 Instructions: 
-1. check if next token is a prefix or none-fix operator:
-  1. if its operator, and 
+
+1. Initialize variables:
+  1. index as the starting index i.
+  2. token as the current token at src[index].
+  3. errors as an empty array.
+  4. lhs as null (to be assigned later).
+2. if token is whitespace token - skip it.
+3. if it is the end of stream - return an error.
+4. Check the type of token:
+  1. If it is an "identifier", "number", or "string", increment index and assign lhs as a syntax tree node with token as its item.
+  2. If it is an "operator", check its precedence level in the scope:
+    If the operator is prefix operator - parse operand with operator's precedence as min precedence. Assign the result to rhs and update index.
+    If the operator is none-fix operator - increment index and assign lhs as a syntax tree node with token as its item.
+    If the operator is postfix operator - return an error
+    If the operator is infix operator - return an error
+5. Enter a loop:
+  1. Update token with the current token at src[index].
+  2. if token is whitespace token - skip it.
+  3. If token is null, break the loop.
+  4. If token is not an operator - return an error.
+  5. Check the precedence of token in the scope:
+    1. If the left precedence is null or less than min precedence, break the loop.
+    2. Increment index.
+    3. If the right precedence is null, assign lhs as a syntax tree node with token as its item and lhs as its lhs.
+    4. If the right precedence is not null - parse operand with operator's precedence as min precedence. Assign the result to rhs and update index.
+    5. Assign lhs as a syntax tree node with token as its item, lhs as its lhs, and rhs as its rhs.
+6.Return [index, lhs, errors] as the final result of parsing the separator children.
 */
 
 export const parseOperatorsToAST = (
