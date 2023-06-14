@@ -18,10 +18,7 @@ export type Token =
   | { type: "number"; src: string }
   | { type: "string"; src: string; value: string };
 export type OperatorInstance = { token: Token; children: SeparatorInstance[] };
-export type SeparatorChildren = (
-  | ({ id: string; type: "operator" } & OperatorInstance)
-  | Token
-)[];
+export type SeparatorChildren = (({ id: string; type: "operator" } & OperatorInstance) | Token)[];
 export type SeparatorInstance = {
   children: SeparatorChildren;
   separatorIndex: number;
@@ -87,9 +84,7 @@ Instructions:
 7. return resulting operator
 */
 
-export const getLeadingSeparators = (
-  separators: [item: SeparatorDefinition, i: number][]
-) => {
+export const getLeadingSeparators = (separators: [item: SeparatorDefinition, i: number][]) => {
   const list: [item: SeparatorDefinition, i: number][] = [];
 
   for (const sep of separators) {
@@ -110,9 +105,7 @@ export const parseTokensToOperator = (
   scope: Scope
 ): ParsingResult<OperatorInstance> => {
   let index = i;
-  const separatorList = Iterator.iter(operator.separators)
-    .enumerate()
-    .toArray();
+  const separatorList = Iterator.iter(operator.separators).enumerate().toArray();
   let separatorRepeats = 0;
   const children: SeparatorInstance[] = [];
   const errors: ParsingError[] = [];
@@ -147,11 +140,7 @@ export const parseTokensToOperator = (
     while (true) {
       const [matchedSeparator] = Iterator.iter(leadingSeparators)
         .enumerate()
-        .flatMap(([[sep], i]) =>
-          Iterator.iter(sep.tokens).map(
-            (token) => [i, token] as [number, string]
-          )
-        )
+        .flatMap(([[sep], i]) => Iterator.iter(sep.tokens).map((token) => [i, token] as [number, string]))
         .filter(([_, token]) => matchToken(src[index])(token));
 
       if (matchedSeparator) {
@@ -182,38 +171,25 @@ export const parseTokensToOperator = (
         }
         break;
       } else {
-        const [matchedToken] = Iterator.iterEntries(scope).filterMap(
-          ([id, operatorDefinition]) => {
-            const [top] = leadingSeparators[leadingSeparators.length - 1];
-            const scopeGen = top.scope ?? identity;
-            const [nextIndex, operator, errors] = parseTokensToOperator(
-              src,
-              index,
-              operatorDefinition,
-              scopeGen(scope)
-            );
-            if (errors.length > 0) return { pred: false };
-            else {
-              return {
-                pred: true,
-                value: [
-                  nextIndex,
-                  { ...operator, id, type: "operator" },
-                ] as const,
-              };
-            }
+        const [matchedToken] = Iterator.iterEntries(scope).filterMap(([id, operatorDefinition]) => {
+          const [top] = leadingSeparators[leadingSeparators.length - 1];
+          const scopeGen = top.scope ?? identity;
+          const [nextIndex, operator, errors] = parseTokensToOperator(src, index, operatorDefinition, scopeGen(scope));
+          if (errors.length > 0) return { pred: false };
+          else {
+            return {
+              pred: true,
+              value: [nextIndex, { ...operator, id, type: "operator" }] as const,
+            };
           }
-        );
+        });
 
         if (!matchedToken) {
           if (token.type === "newline" || token.type === "whitespace") index++;
 
           if (!src[index]) {
             const [head, ...rest] = separatorList;
-            if (
-              head[0].repeats[0] <= separatorRepeats &&
-              rest.every(([{ repeats }]) => repeats[0] === 0)
-            )
+            if (head[0].repeats[0] <= separatorRepeats && rest.every(([{ repeats }]) => repeats[0] === 0))
               return [index, { token, children }, errors];
             return [
               index,
@@ -238,33 +214,22 @@ export const parseTokensToOperator = (
   return [index, { token, children }, errors];
 };
 
-export const parseStringToOperators = (
-  src: string,
-  i: number,
-  scope: Scope
-): ParsingResult<SeparatorChildren> => {
+export const parseStringToOperators = (src: string, i: number, scope: Scope): ParsingResult<SeparatorChildren> => {
   const [index, tokens, errors] = parseTokens(src, i);
   let tokensIndex = 0;
   const children: SeparatorChildren = [];
 
   while (tokens[tokensIndex]) {
-    const [matchedToken] = Iterator.iterEntries(scope).filterMap(
-      ([id, operatorDefinition]) => {
-        const [nextIndex, operator, errors] = parseTokensToOperator(
-          tokens,
-          tokensIndex,
-          operatorDefinition,
-          scope
-        );
-        if (errors.length > 0) return { pred: false };
-        else {
-          return {
-            pred: true,
-            value: [nextIndex, { ...operator, id, type: "operator" }] as const,
-          };
-        }
+    const [matchedToken] = Iterator.iterEntries(scope).filterMap(([id, operatorDefinition]) => {
+      const [nextIndex, operator, errors] = parseTokensToOperator(tokens, tokensIndex, operatorDefinition, scope);
+      if (errors.length > 0) return { pred: false };
+      else {
+        return {
+          pred: true,
+          value: [nextIndex, { ...operator, id, type: "operator" }] as const,
+        };
       }
-    );
+    });
 
     if (!matchedToken) {
       children.push(tokens[tokensIndex]);
@@ -363,12 +328,9 @@ export const parseToken: Parser<Token> = (src: string, i: number) => {
       value += src.charAt(index);
       index++;
     }
+    index++;
 
-    return [
-      index,
-      { type: "string", src: src.substring(start, index), value },
-      errors,
-    ];
+    return [index, { type: "string", src: src.substring(start, index), value }, errors];
   }
 
   if (/\d/.test(src.charAt(index))) {
@@ -394,11 +356,7 @@ export const parseToken: Parser<Token> = (src: string, i: number) => {
       }
     }
 
-    return [
-      index,
-      { type: "number", src: src.substring(start, index) },
-      errors,
-    ];
+    return [index, { type: "number", src: src.substring(start, index) }, errors];
   }
 
   if (/\s/.test(src.charAt(index))) {
@@ -406,22 +364,14 @@ export const parseToken: Parser<Token> = (src: string, i: number) => {
     while (/\s/.test(src.charAt(index))) index++;
     const _src = src.substring(start, index);
 
-    return [
-      index,
-      { type: _src.includes("\n") ? "newline" : "whitespace", src: _src },
-      errors,
-    ];
+    return [index, { type: _src.includes("\n") ? "newline" : "whitespace", src: _src }, errors];
   }
 
   if (/_\w/.test(src.charAt(index))) {
     const start = index;
     while (/[_\w\d]/.test(src.charAt(index))) index++;
 
-    return [
-      index,
-      { type: "identifier", src: src.substring(start, index) },
-      errors,
-    ];
+    return [index, { type: "identifier", src: src.substring(start, index) }, errors];
   }
 
   if (src.charAt(index) === "." && /\d/.test(src.charAt(index))) {
@@ -451,11 +401,7 @@ export const parseToken: Parser<Token> = (src: string, i: number) => {
   index++;
   while (/[^_\w\s\d."]/.test(src.charAt(index))) index++;
 
-  return [
-    index,
-    { type: "identifier", src: src.substring(start, index) },
-    errors,
-  ];
+  return [index, { type: "identifier", src: src.substring(start, index) }, errors];
 };
 
 export const parseTokens: Parser<Token[]> = (src: string, i: number) => {
@@ -541,18 +487,9 @@ export const parseOperatorsToAST = (
     token = src[index];
   }
 
-  if (!token)
-    return [
-      index,
-      { item: { type: "whitespace", src: "" } },
-      [...errors, { message: "end of stream" }],
-    ];
+  if (!token) return [index, { item: { type: "whitespace", src: "" } }, [...errors, { message: "end of stream" }]];
 
-  if (
-    token.type === "identifier" ||
-    token.type === "number" ||
-    token.type === "string"
-  ) {
+  if (token.type === "identifier" || token.type === "number" || token.type === "string") {
     index++;
     lhs = { item: token };
   } else {
@@ -561,12 +498,7 @@ export const parseOperatorsToAST = (
     const [left, right] = precedence;
 
     if (left === null && right !== null) {
-      const [nextIndex, rhs, _errors] = parseOperatorsToAST(
-        src,
-        index,
-        right,
-        scope
-      );
+      const [nextIndex, rhs, _errors] = parseOperatorsToAST(src, index, right, scope);
 
       index = nextIndex;
       errors.push(..._errors);
@@ -600,11 +532,7 @@ export const parseOperatorsToAST = (
 
     if (!token) break;
     if (token.type !== "operator") {
-      return [
-        index,
-        { item: { type: "whitespace", src: "" } },
-        [...errors, { message: "no operator" }],
-      ];
+      return [index, { item: { type: "whitespace", src: "" } }, [...errors, { message: "no operator" }]];
     }
 
     const {
@@ -617,12 +545,7 @@ export const parseOperatorsToAST = (
     if (right === null) {
       lhs = { item: token, lhs };
     } else {
-      const [nextIndex, rhs, _errors] = parseOperatorsToAST(
-        src,
-        index,
-        right,
-        scope
-      );
+      const [nextIndex, rhs, _errors] = parseOperatorsToAST(src, index, right, scope);
 
       index = nextIndex;
       errors.push(..._errors);
@@ -632,22 +555,13 @@ export const parseOperatorsToAST = (
   return [index, lhs, errors];
 };
 
-export const parseStringToAST = (
-  src: string,
-  i: number,
-  scope: Scope
-): ParsingResult<SyntaxTree[]> => {
+export const parseStringToAST = (src: string, i: number, scope: Scope): ParsingResult<SyntaxTree[]> => {
   const [index, children, errors] = parseStringToOperators(src, i, scope);
   const ast: SyntaxTree[] = [];
   let childrenIndex = 0;
 
   while (children[childrenIndex]) {
-    const [index, astNode, _errors] = parseOperatorsToAST(
-      children,
-      childrenIndex,
-      0,
-      scope
-    );
+    const [index, astNode, _errors] = parseOperatorsToAST(children, childrenIndex, 0, scope);
 
     childrenIndex = index;
     ast.push(astNode);
