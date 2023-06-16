@@ -79,7 +79,7 @@ export const parseToken: Parser<Token> = (src: string, i: number) => {
     while (src.charAt(index) !== '"') {
       if (src.charAt(index) === "\\") index++;
       if (!src.charAt(index)) {
-        errors.push({ message: "end of source" });
+        errors.push({ message: "unterminated string: end of text" });
         break;
       }
       value += src.charAt(index);

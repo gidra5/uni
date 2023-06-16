@@ -22,10 +22,15 @@ export type TokenGroupSeparator = {
   separatorIndex: number;
   separatorToken: Token;
 };
-export type SyntaxTree = {
-  item: TokenGroupSeparatorChildren[number];
-  lhs?: SyntaxTree;
-  rhs?: SyntaxTree;
+export type SyntaxTree = { item: TokenGroupSeparatorChildren[number]; lhs?: SyntaxTree; rhs?: SyntaxTree };
+export type FullSyntaxTreeItemChildren = { children: FullSyntaxTree; separatorIndex: number; separatorToken: Token };
+export type FullSyntaxTreeItem =
+  | Token
+  | { id: string; type: "operator"; token: Token; children: FullSyntaxTreeItemChildren[] };
+export type FullSyntaxTree = {
+  item: FullSyntaxTreeItem;
+  lhs?: FullSyntaxTree;
+  rhs?: FullSyntaxTree;
 };
 
 export type ParsingError = { message: string };
