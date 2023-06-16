@@ -1,6 +1,7 @@
 import { test } from "@fast-check/vitest";
-import { OperatorDefinition, Scope, Token, parseTokensToOperator } from "../src/parser/new";
 import { expect } from "vitest";
+import { Token, TokenGroupDefinition } from "../src/parser/types";
+import { parseTokensToOperator } from "../src/parser/tokenGroups";
 
 test("should parse tokens to operator with correct structure", () => {
   const sourceTokens: Token[] = [
@@ -9,7 +10,7 @@ test("should parse tokens to operator with correct structure", () => {
     { type: "newline", src: "\n" },
   ];
 
-  const operatorDefinition: OperatorDefinition = {
+  const operatorDefinition: TokenGroupDefinition = {
     separators: [
       { tokens: [" "], repeats: [1, 1] },
       { tokens: ["\n"], repeats: [0, 1] },
@@ -46,7 +47,7 @@ test("should parse tokens to operator with correct structure", () => {
     { type: "newline", src: "\n" },
   ];
 
-  const operatorDefinition: OperatorDefinition = {
+  const operatorDefinition: TokenGroupDefinition = {
     separators: [
       { tokens: [" "], repeats: [1, 1] },
       { tokens: ["\n"], repeats: [0, 1] },
@@ -91,7 +92,7 @@ test("parses if", () => {
     { type: "identifier", src: "else" },
   ];
 
-  const operatorDefinition: OperatorDefinition = {
+  const operatorDefinition: TokenGroupDefinition = {
     separators: [
       { tokens: ["if"], repeats: [1, 1] },
       { tokens: [":"], repeats: [1, 1] },
@@ -152,7 +153,7 @@ test("parses if 2", () => {
     { type: "identifier", src: "else" },
   ];
 
-  const operatorDefinition: OperatorDefinition = {
+  const operatorDefinition: TokenGroupDefinition = {
     separators: [
       { tokens: ["if"], repeats: [1, 1] },
       { tokens: [":"], repeats: [1, 1] },
@@ -161,7 +162,7 @@ test("parses if 2", () => {
     precedence: [null, 2],
   };
 
-  const scope: Scope = {};
+  const scope = {};
   const expectedOperator = {
     token: { type: "identifier", src: "if" },
     children: [

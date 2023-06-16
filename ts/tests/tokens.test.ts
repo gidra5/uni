@@ -1,16 +1,7 @@
-import {
-  parseTokensToOperator,
-  OperatorDefinition,
-  ScopeGenerator,
-  Scope,
-  OperatorInstance,
-  parseStringToOperators,
-  parseToken,
-  parseTokens,
-  Token,
-} from "../src/parser/new.js";
+import { parseToken, parseTokens } from "../src/parser/tokens.js";
 import { assert, beforeEach, describe, expect, vi } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
+import { Token } from "../src/parser/types.js";
 
 // fc.configureGlobal({
 //   numRuns: 1,

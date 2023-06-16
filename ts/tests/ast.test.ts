@@ -1,6 +1,7 @@
 import { describe, expect } from "vitest";
-import { Scope, SeparatorChildren, SyntaxTree, parseOperatorsToAST, parseStringToAST } from "../src/parser/new";
 import { it } from "@fast-check/vitest";
+import { Scope, SyntaxTree, TokenGroupSeparatorChildren } from "../src/parser/types";
+import { parseOperatorsToAST, parseStringToAST } from "../src/parser/ast";
 
 describe("parseOperatorsToAST", () => {
   it("should parse a simple expression", () => {
@@ -15,7 +16,7 @@ describe("parseOperatorsToAST", () => {
       },
     };
 
-    const src: SeparatorChildren = [
+    const src: TokenGroupSeparatorChildren = [
       { type: "number", src: "2" },
       { type: "operator", id: "+", token: { type: "identifier", src: "+" }, children: [] },
       { type: "number", src: "3" },
@@ -44,7 +45,7 @@ describe("parseOperatorsToAST", () => {
       },
     };
 
-    const src: SeparatorChildren = [
+    const src: TokenGroupSeparatorChildren = [
       { type: "number", src: "2" },
       { type: "operator", id: "+", token: { type: "identifier", src: "+" }, children: [] },
       { type: "number", src: "3" },
@@ -79,7 +80,7 @@ describe("parseOperatorsToAST", () => {
       },
     };
 
-    const src: SeparatorChildren = [
+    const src: TokenGroupSeparatorChildren = [
       { type: "operator", id: "*", token: { type: "identifier", src: "*" }, children: [] },
       { type: "number", src: "2" },
       { type: "operator", id: "+", token: { type: "identifier", src: "+" }, children: [] },
