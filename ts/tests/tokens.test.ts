@@ -260,7 +260,7 @@ import { it, fc, test } from "@fast-check/vitest";
 // pass fixed seed, so that it are deterministic
 // describe("generic query storage", function () {
 // const { GenericQueryStorage } = cachejs;
-// it.concurrent.prop([fc.string(), fc.anything(), fc.anything()])(
+// it.prop([fc.string(), fc.anything(), fc.anything()])(
 //   "should store and retrieve values correctly",
 //   (key, params, value) => {
 //     const queryStorage = new GenericQueryStorage();
@@ -269,7 +269,7 @@ import { it, fc, test } from "@fast-check/vitest";
 //     expect(retrievedValue).to.equal(value);
 //   }
 // );
-// it.concurrent.prop([fc.string(), fc.clone(fc.anything(), 2)])(
+// it.prop([fc.string(), fc.clone(fc.anything(), 2)])(
 //   "should compare params structurally",
 //   (key, [params, paramsClone]) => {
 //     const queryStorage = new GenericQueryStorage();
@@ -279,7 +279,7 @@ import { it, fc, test } from "@fast-check/vitest";
 //     expect(retrievedValue).to.equal(retrievedValue2);
 //   }
 // );
-// it.concurrent.prop([fc.string(), fc.anything(), fc.anything()], {
+// it.prop([fc.string(), fc.anything(), fc.anything()], {
 //   examples: [
 //     ["", [], ""],
 //     ["", {}, false],
@@ -291,7 +291,7 @@ import { it, fc, test } from "@fast-check/vitest";
 //   queryStorage.set(key, params, value);
 //   expect(queryStorage.has(key, params)).to.be.true;
 // });
-// it.concurrent.prop([fc.string(), fc.anything(), fc.anything()], {
+// it.prop([fc.string(), fc.anything(), fc.anything()], {
 //   examples: [["toString", {}, ""]],
 // })("should clear values correctly", (key, params, value) => {
 //   const queryStorage = new GenericQueryStorage();
@@ -300,7 +300,7 @@ import { it, fc, test } from "@fast-check/vitest";
 //   queryStorage.clear(key, params);
 //   expect(queryStorage.has(key, params)).to.be.false;
 // });
-// it.concurrent.prop([fc.string(), fc.anything(), fc.anything(), fc.anything()], {
+// it.prop([fc.string(), fc.anything(), fc.anything(), fc.anything()], {
 //   examples: [["toString", false, [], []]],
 // })("should always return the last set value for a key", (key, params, value1, value2) => {
 //   const queryStorage = new GenericQueryStorage();
@@ -315,24 +315,21 @@ import { it, fc, test } from "@fast-check/vitest";
 // Test parseToken function
 
 // Test case: Parsing a string token
-test.concurrent.prop([fc.string().filter((s) => !s.includes("\\") && !s.includes('"'))])(
-  "parseToken - string token",
-  (value) => {
-    const src = `"${value}"`;
-    const startIndex = 0;
-    const expectedToken = { type: "string", src, value };
-    const expectedIndex = value.length + 2;
-    const expectedErrors = [];
+test.prop([fc.string().filter((s) => !s.includes("\\") && !s.includes('"'))])("parseToken - string token", (value) => {
+  const src = `"${value}"`;
+  const startIndex = 0;
+  const expectedToken = { type: "string", src, value };
+  const expectedIndex = value.length + 2;
+  const expectedErrors = [];
 
-    const [index, token, errors] = parseToken(src, startIndex);
+  const [index, token, errors] = parseToken(src, startIndex);
 
-    expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
-    expect(errors).toEqual(expectedErrors);
-  }
-);
+  expect(index).toBe(expectedIndex);
+  expect(token).toEqual(expectedToken);
+  expect(errors).toEqual(expectedErrors);
+});
 
-test.concurrent.prop([fc.string({ maxLength: 1, minLength: 1 })])("parseToken - string token escape", (value) => {
+test.prop([fc.string({ maxLength: 1, minLength: 1 })])("parseToken - string token escape", (value) => {
   const src = `"\\${value}"`;
   const startIndex = 0;
   const expectedToken = { type: "string", src, value };
@@ -347,25 +344,90 @@ test.concurrent.prop([fc.string({ maxLength: 1, minLength: 1 })])("parseToken - 
 });
 
 // Test case: Parsing a number token
-test("parseToken - number token", () => {
-  const src = "123.45";
-  const startIndex = 0;
-  const expectedToken = {
-    type: "number",
-    src: "123.45",
-  };
-  const expectedIndex = 6;
-  const expectedErrors = [];
+describe("parseToken - number token", () => {
+  it.prop([fc.stringMatching(/^\d+\.\d+$/)])("float literals", (src) => {
+    const startIndex = 0;
+    const expectedToken = {
+      type: "number",
+      src,
+    };
+    const expectedIndex = src.length;
+    const expectedErrors = [];
 
-  const [index, token, errors] = parseToken(src, startIndex);
+    const [index, token, errors] = parseToken(src, startIndex);
 
-  expect(index).toBe(expectedIndex);
-  expect(token).toEqual(expectedToken);
-  expect(errors).toEqual(expectedErrors);
+    expect(token).toEqual(expectedToken);
+    expect(errors).toEqual(expectedErrors);
+    expect(index).toBe(expectedIndex);
+  });
+
+  it.prop([fc.stringMatching(/^\d+$/)])("int literals", (src) => {
+    const startIndex = 0;
+    const expectedToken = {
+      type: "number",
+      src,
+    };
+    const expectedIndex = src.length;
+    const expectedErrors = [];
+
+    const [index, token, errors] = parseToken(src, startIndex);
+
+    expect(token).toEqual(expectedToken);
+    expect(errors).toEqual(expectedErrors);
+    expect(index).toBe(expectedIndex);
+  });
+
+  it.prop([fc.stringMatching(/^\d+\.$/)])("trailing dot literals", (src) => {
+    const startIndex = 0;
+    const expectedToken = {
+      type: "number",
+      src,
+    };
+    const expectedIndex = src.length;
+    const expectedErrors = [];
+
+    const [index, token, errors] = parseToken(src, startIndex);
+
+    expect(token).toEqual(expectedToken);
+    expect(errors).toEqual(expectedErrors);
+    expect(index).toBe(expectedIndex);
+  });
+
+  it.prop([fc.stringMatching(/^\.\d+$/)])("prefix dot literals", (src) => {
+    const startIndex = 0;
+    const expectedToken = {
+      type: "number",
+      src,
+    };
+    const expectedIndex = src.length;
+    const expectedErrors = [];
+
+    const [index, token, errors] = parseToken(src, startIndex);
+
+    expect(token).toEqual(expectedToken);
+    expect(errors).toEqual(expectedErrors);
+    expect(index).toBe(expectedIndex);
+  });
+
+  it.prop([fc.stringMatching(/^(\d+_*)*\d+\.(\d+_*)*\d+$/)])("literals with spacers", (src) => {
+    const startIndex = 0;
+    const expectedToken = {
+      type: "number",
+      src,
+    };
+    const expectedIndex = src.length;
+    const expectedErrors = [];
+
+    const [index, token, errors] = parseToken(src, startIndex);
+
+    expect(token).toEqual(expectedToken);
+    expect(errors).toEqual(expectedErrors);
+    expect(index).toBe(expectedIndex);
+  });
 });
 
 // Test case: Parsing a whitespace token
-test.concurrent.prop([fc.string({ minLength: 1 }).filter((s) => !s.match(/[^\s]/))])(
+test.prop([fc.string({ minLength: 1 }).filter((s) => !s.match(/[^\s]/))])(
   "parseToken - whitespace and newline token",
   (src) => {
     const startIndex = 0;
@@ -406,15 +468,23 @@ test("parseToken - identifier token", () => {
 test("parseTokens", () => {
   const src = '42 "Hello" variable';
   const startIndex = 0;
-  const expectedTokens = [
+  const expectedTokens: Token[] = [
     {
       type: "number",
       src: "42",
     },
     {
+      type: "whitespace",
+      src: " ",
+    },
+    {
       type: "string",
       src: '"Hello"',
       value: "Hello",
+    },
+    {
+      type: "whitespace",
+      src: " ",
     },
     {
       type: "identifier",
@@ -430,5 +500,3 @@ test("parseTokens", () => {
   expect(tokens).toEqual(expectedTokens);
   expect(errors).toEqual(expectedErrors);
 });
-
-// Add more test cases to cover different scenarios and edge cases

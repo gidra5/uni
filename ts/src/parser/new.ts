@@ -105,32 +105,37 @@ export const parseTokensToOperator = (
   scope: Scope
 ): ParsingResult<OperatorInstance> => {
   let index = i;
+  const leadingToken = src[index];
   const separatorList = Iterator.iter(operator.separators).enumerate().toArray();
   let separatorRepeats = 0;
   const children: SeparatorInstance[] = [];
   const errors: ParsingError[] = [];
-  const matchToken = (sourceToken: Token) => (token: string) =>
-    (sourceToken.type === "whitespace" && " " === token) ||
-    (sourceToken.type === "newline" && "\n" === token) ||
-    (sourceToken.type === "identifier" && sourceToken.src === token);
-  const [{ tokens }] = separatorList[0];
-  const token = src[index];
+  const matchToken = (sourceToken?: Token) => (token: string) =>
+    !!sourceToken &&
+    ((sourceToken.type === "whitespace" && " " === token) ||
+      (sourceToken.type === "newline" && "\n" === token) ||
+      (sourceToken.type === "identifier" && sourceToken.src === token));
 
-  if (!tokens.find(matchToken(token))) {
-    return [
-      index,
-      { token: { type: "whitespace", src: "" }, children: [] },
-      [{ message: "Does not match leading token" }],
-    ];
-  }
+  {
+    const [{ tokens }] = separatorList[0];
+    const token = src[index];
 
-  index++;
-  separatorRepeats++;
+    if (!tokens.find(matchToken(token))) {
+      return [
+        index,
+        { token: { type: "whitespace", src: "" }, children: [] },
+        [{ message: "Does not match leading token" }],
+      ];
+    }
 
-  const [{ repeats }] = separatorList[0];
-  if (separatorRepeats === repeats[1]) {
-    separatorRepeats = 0;
-    separatorList.splice(0, 1);
+    index++;
+    separatorRepeats++;
+
+    const [{ repeats }] = separatorList[0];
+    if (separatorRepeats === repeats[1]) {
+      separatorRepeats = 0;
+      separatorList.splice(0, 1);
+    }
   }
 
   while (separatorList.length > 0) {
@@ -138,6 +143,28 @@ export const parseTokensToOperator = (
     const separatorChildren: SeparatorInstance["children"] = [];
 
     while (true) {
+      console.dir(
+        {
+          index,
+          token: src[index],
+          separatorList,
+          separatorRepeats,
+          children,
+          errors,
+          leadingSeparators,
+          separatorChildren,
+        },
+        { depth: null }
+      );
+
+      if (!src[index]) {
+        return [
+          index,
+          { token: { type: "whitespace", src: "" }, children: [] },
+          [{ message: `Can't match separators ${JSON.stringify(leadingSeparators)}, End of tokens` }],
+        ];
+      }
+
       const [matchedSeparator] = Iterator.iter(leadingSeparators)
         .enumerate()
         .flatMap(([[sep], i]) => Iterator.iter(sep.tokens).map((token) => [i, token] as [number, string]))
@@ -185,6 +212,7 @@ export const parseTokensToOperator = (
         });
 
         if (!matchedToken) {
+          const token = src[index];
           if (token.type === "newline" || token.type === "whitespace") index++;
 
           if (!src[index]) {
@@ -211,7 +239,7 @@ export const parseTokensToOperator = (
     }
   }
 
-  return [index, { token, children }, errors];
+  return [index, { token: leadingToken, children }, errors];
 };
 
 export const parseStringToOperators = (src: string, i: number, scope: Scope): ParsingResult<SeparatorChildren> => {
@@ -338,19 +366,20 @@ export const parseToken: Parser<Token> = (src: string, i: number) => {
 
     let value = "";
     while (/[_\d]/.test(src.charAt(index))) {
-      if (src.charAt(index) === "_" && /\d/.test(src.charAt(index + 1))) {
+      while (src.charAt(index) === "_") {
         index++;
-      } else if (src.charAt(index) === "_") break;
+      }
       value += src.charAt(index);
       index++;
     }
-    if (src.charAt(index) === "." && /\d/.test(src.charAt(index + 1))) {
+    if (src.charAt(index) === ".") value += src.charAt(index++);
+    if (/\d/.test(src.charAt(index))) {
       value += src.charAt(index);
       index++;
       while (/[_\d]/.test(src.charAt(index))) {
-        if (src.charAt(index) === "_" && /\d/.test(src.charAt(index + 1))) {
+        while (src.charAt(index) === "_") {
           index++;
-        } else if (src.charAt(index) === "_") break;
+        }
         value += src.charAt(index);
         index++;
       }
@@ -367,34 +396,26 @@ export const parseToken: Parser<Token> = (src: string, i: number) => {
     return [index, { type: _src.includes("\n") ? "newline" : "whitespace", src: _src }, errors];
   }
 
-  if (/_\w/.test(src.charAt(index))) {
+  if (/[_\w]/.test(src.charAt(index))) {
     const start = index;
     while (/[_\w\d]/.test(src.charAt(index))) index++;
 
     return [index, { type: "identifier", src: src.substring(start, index) }, errors];
   }
 
-  if (src.charAt(index) === "." && /\d/.test(src.charAt(index))) {
+  if (src.charAt(index) === "." && /\d/.test(src.charAt(index + 1))) {
     const start = index;
     index++;
     let value = "0.";
     while (/[_\d]/.test(src.charAt(index))) {
-      if (src.charAt(index) === "_" && /\d/.test(src.charAt(index + 1))) {
+      while (src.charAt(index) === "_") {
         index++;
-      } else if (src.charAt(index) === "_") break;
+      }
       value += src.charAt(index);
       index++;
     }
 
-    return [
-      index,
-      {
-        type: "number",
-        src: src.substring(start, index),
-        value: Number(value),
-      },
-      errors,
-    ];
+    return [index, { type: "number", src: src.substring(start, index) }, errors];
   }
 
   const start = index;
