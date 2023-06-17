@@ -1,6 +1,15 @@
-import { assert } from "../utils.js";
-import { parseStringToOperators } from "./tokenGroups.js";
-import { ParsingError, ParsingResult, Scope, SyntaxTree, TokenGroupSeparatorChildren } from "./types.js";
+import { Iterator, assert } from "../utils.js";
+import { parseTokensToGroupScope } from "./tokenGroups.js";
+import { parseTokens } from "./tokens.js";
+import {
+  ParsingError,
+  ParsingResult,
+  Scope,
+  FlatSyntaxTree,
+  TokenGroupSeparatorChildren,
+  ConsumeParsingResult,
+  TokenGroupDefinition,
+} from "./types.js";
 
 /* 
 Pratt's Parsing algorithm:
@@ -52,15 +61,131 @@ Instructions:
 6.Return [index, lhs, errors] as the final result of parsing the separator children.
 */
 
-export const parseOperatorsToAST = (
+export const parseTokensToAST = (
   src: TokenGroupSeparatorChildren,
   i: number,
   precedence: number,
   scope: Scope
-): ParsingResult<SyntaxTree> => {
+): ParsingResult<FlatSyntaxTree> => {
+  const reducedScope = Iterator.iterEntries(scope)
+    .filter(([_, operatorDefinition]) => operatorDefinition.precedence[0] !== null)
+    .toObject();
   let index = i;
   const errors: ParsingError[] = [];
-  let lhs: SyntaxTree;
+  let lhs: FlatSyntaxTree;
+
+  //skip possible whitespace prefix
+  {
+    const token = src[index];
+    if (token.type === "newline" || token.type === "whitespace") {
+      index++;
+    }
+  }
+
+  {
+    // no postfix/infix operators
+    const reducedScope = Iterator.iterEntries(scope)
+      .filter(([_, operatorDefinition]) => operatorDefinition.precedence[0] === null)
+      .map<[string, TokenGroupDefinition]>(([id, def]) => [
+        id,
+        { ...def, separators: def.separators.map((sep) => ({ scope: () => scope, ...sep })) },
+      ])
+      .toObject();
+    const [nextIndex, token] = parseTokensToGroupScope(src, index, reducedScope) ?? [index + 1, src[index]];
+
+    if (!token) return [index, { item: { type: "whitespace", src: "" } }, [...errors, { message: "end of stream" }]];
+    index = nextIndex;
+
+    if (token.type === "identifier" || token.type === "number" || token.type === "string") {
+      lhs = { item: token };
+    } else {
+      assert(token.type === "operator");
+      const { precedence } = scope[token.id];
+      const [, right] = precedence;
+
+      if (right !== null) {
+        const [nextIndex, rhs, _errors] = parseTokensToAST(src, index, right, scope);
+
+        index = nextIndex;
+        errors.push(..._errors);
+        lhs = { item: token, rhs };
+      } else {
+        index++;
+        lhs = { item: token };
+      }
+    }
+  }
+
+  while (true) {
+    //skip possible whitespace prefix
+    {
+      if (!src[index]) break;
+
+      const token = src[index];
+      if (token && (token.type === "newline" || token.type === "whitespace")) {
+        index++;
+      }
+
+      if (!src[index]) break;
+    }
+
+    const [nextIndex, token] = parseTokensToGroupScope(src, index, reducedScope) ?? [index + 1, src[index]];
+
+    if (token.type !== "operator") break;
+
+    const {
+      precedence: [left, right],
+    } = scope[token.id];
+
+    if (left === null || left < precedence) break;
+    index = nextIndex;
+
+    if (right === null) {
+      lhs = { item: token, lhs };
+    } else {
+      const [nextIndex, rhs, _errors] = parseTokensToAST(src, index, right, scope);
+
+      index = nextIndex;
+      errors.push(..._errors);
+      lhs = { item: token, lhs, rhs };
+    }
+  }
+  return [index, lhs, errors];
+};
+
+export const parseTokensToASTs = (
+  src: TokenGroupSeparatorChildren,
+  i: number,
+  scope: Scope
+): ConsumeParsingResult<FlatSyntaxTree[]> => {
+  const ast: FlatSyntaxTree[] = [];
+  const errors: ParsingError[] = [];
+  let index = i;
+
+  while (src[index]) {
+    const [_index, astNode, _errors] = parseTokensToAST(src, index, 0, scope);
+
+    if (_errors.length > 0) {
+      ast.push({ item: src[index++] });
+      continue;
+    }
+
+    index = _index;
+    ast.push(astNode);
+    errors.push(..._errors);
+  }
+
+  return [ast, errors];
+};
+export const parseGroupsToAST = (
+  src: TokenGroupSeparatorChildren,
+  i: number,
+  precedence: number,
+  scope: Scope
+): ParsingResult<FlatSyntaxTree> => {
+  let index = i;
+  const errors: ParsingError[] = [];
+  let lhs: FlatSyntaxTree;
 
   {
     const token = src[index];
@@ -83,7 +208,7 @@ export const parseOperatorsToAST = (
       const [left, right] = precedence;
 
       if (left === null && right !== null) {
-        const [nextIndex, rhs, _errors] = parseOperatorsToAST(src, index + 1, right, scope);
+        const [nextIndex, rhs, _errors] = parseGroupsToAST(src, index + 1, right, scope);
 
         index = nextIndex;
         errors.push(..._errors);
@@ -132,7 +257,7 @@ export const parseOperatorsToAST = (
     if (right === null) {
       lhs = { item: token, lhs };
     } else {
-      const [nextIndex, rhs, _errors] = parseOperatorsToAST(src, index, right, scope);
+      const [nextIndex, rhs, _errors] = parseGroupsToAST(src, index, right, scope);
 
       index = nextIndex;
       errors.push(..._errors);
@@ -142,23 +267,34 @@ export const parseOperatorsToAST = (
   return [index, lhs, errors];
 };
 
-export const parseStringToAST = (src: string, i: number, scope: Scope): ParsingResult<SyntaxTree[]> => {
-  const [index, children, errors] = parseStringToOperators(src, i, scope);
-  const ast: SyntaxTree[] = [];
-  let childrenIndex = 0;
+export const parseGroupsToASTs = (
+  src: TokenGroupSeparatorChildren,
+  i: number,
+  scope: Scope
+): ConsumeParsingResult<FlatSyntaxTree[]> => {
+  const ast: FlatSyntaxTree[] = [];
+  const errors: ParsingError[] = [];
+  let index = i;
 
-  while (children[childrenIndex]) {
-    const [index, astNode, _errors] = parseOperatorsToAST(children, childrenIndex, 0, scope);
+  while (src[index]) {
+    const [_index, astNode, _errors] = parseGroupsToAST(src, index, 0, scope);
 
     if (_errors.length > 0) {
-      ast.push({ item: children[childrenIndex++] });
+      ast.push({ item: src[index++] });
       continue;
     }
 
-    childrenIndex = index;
+    index = _index;
     ast.push(astNode);
     errors.push(..._errors);
   }
 
-  return [index, ast, errors];
+  return [ast, errors];
+};
+
+export const parseStringToAST = (src: string, i: number, scope: Scope): ConsumeParsingResult<FlatSyntaxTree[]> => {
+  const [children, errors] = parseTokens(src, i);
+  const [ast, _errors] = parseTokensToASTs(children, 0, scope);
+
+  return [ast, [...errors, ..._errors]];
 };

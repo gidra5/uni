@@ -13,8 +13,8 @@ export type Scope = Record<string, TokenGroupDefinition>;
 
 export type Token =
   | { type: "identifier" | "whitespace" | "newline"; src: string }
-  | { type: "number"; src: string }
-  | { type: "string"; src: string; value: string };
+  | { type: "number"; src: string; value?: number }
+  | { type: "string"; src: string; value?: string };
 export type TokenGroup = { token: Token; children: TokenGroupSeparator[] };
 export type TokenGroupSeparatorChildren = (({ id: string; type: "operator" } & TokenGroup) | Token)[];
 export type TokenGroupSeparator = {
@@ -22,17 +22,22 @@ export type TokenGroupSeparator = {
   separatorIndex: number;
   separatorToken: Token;
 };
-export type SyntaxTree = { item: TokenGroupSeparatorChildren[number]; lhs?: SyntaxTree; rhs?: SyntaxTree };
-export type FullSyntaxTreeItemChildren = { children: FullSyntaxTree; separatorIndex: number; separatorToken: Token };
-export type FullSyntaxTreeItem =
+export type FlatSyntaxTree = { item: TokenGroupSeparatorChildren[number]; lhs?: FlatSyntaxTree; rhs?: FlatSyntaxTree };
+export type AbstractSyntaxTreeChildren = {
+  children: AbstractSyntaxTree[];
+  separatorIndex: number;
+  separatorToken: Token;
+};
+export type AbstractSyntaxTreeItem =
   | Token
-  | { id: string; type: "operator"; token: Token; children: FullSyntaxTreeItemChildren[] };
-export type FullSyntaxTree = {
-  item: FullSyntaxTreeItem;
-  lhs?: FullSyntaxTree;
-  rhs?: FullSyntaxTree;
+  | { id: string; type: "operator"; token: Token; children: AbstractSyntaxTreeChildren[] };
+export type AbstractSyntaxTree = {
+  item: AbstractSyntaxTreeItem;
+  lhs?: AbstractSyntaxTree;
+  rhs?: AbstractSyntaxTree;
 };
 
 export type ParsingError = { message: string };
-export type ParsingResult<T> = [index: number, result: T, errors: ParsingError[]];
+export type ConsumeParsingResult<T> = [result: T, errors: ParsingError[]];
+export type ParsingResult<T> = [index: number, ...result: ConsumeParsingResult<T>];
 export type Parser<T> = (src: string, i: number) => ParsingResult<T>;

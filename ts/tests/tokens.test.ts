@@ -36,10 +36,7 @@ test.prop([fc.string({ maxLength: 1, minLength: 1 })])("parseToken - string toke
 describe("parseToken - number token", () => {
   it.prop([fc.stringMatching(/^\d+\.\d+$/)])("float literals", (src) => {
     const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-    };
+    const expectedToken = { type: "number", src, value: Number(src) };
     const expectedIndex = src.length;
     const expectedErrors = [];
 
@@ -52,10 +49,7 @@ describe("parseToken - number token", () => {
 
   it.prop([fc.stringMatching(/^\d+$/)])("int literals", (src) => {
     const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-    };
+    const expectedToken = { type: "number", src, value: Number(src) };
     const expectedIndex = src.length;
     const expectedErrors = [];
 
@@ -68,10 +62,7 @@ describe("parseToken - number token", () => {
 
   it.prop([fc.stringMatching(/^\d+\.$/)])("trailing dot literals", (src) => {
     const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-    };
+    const expectedToken = { type: "number", src, value: Number(src + "0") };
     const expectedIndex = src.length;
     const expectedErrors = [];
 
@@ -84,10 +75,7 @@ describe("parseToken - number token", () => {
 
   it.prop([fc.stringMatching(/^\.\d+$/)])("prefix dot literals", (src) => {
     const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-    };
+    const expectedToken = { type: "number", src, value: Number("0" + src) };
     const expectedIndex = src.length;
     const expectedErrors = [];
 
@@ -100,10 +88,7 @@ describe("parseToken - number token", () => {
 
   it.prop([fc.stringMatching(/^(\d+_*)*\d+\.(\d+_*)*\d+$/)])("literals with spacers", (src) => {
     const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-    };
+    const expectedToken = { type: "number", src, value: Number(src.replace(/_/g, "")) };
     const expectedIndex = src.length;
     const expectedErrors = [];
 
@@ -158,34 +143,16 @@ test("parseTokens", () => {
   const src = '42 "Hello" variable';
   const startIndex = 0;
   const expectedTokens: Token[] = [
-    {
-      type: "number",
-      src: "42",
-    },
-    {
-      type: "whitespace",
-      src: " ",
-    },
-    {
-      type: "string",
-      src: '"Hello"',
-      value: "Hello",
-    },
-    {
-      type: "whitespace",
-      src: " ",
-    },
-    {
-      type: "identifier",
-      src: "variable",
-    },
+    { type: "number", src: "42", value: 42 },
+    { type: "whitespace", src: " " },
+    { type: "string", src: '"Hello"', value: "Hello" },
+    { type: "whitespace", src: " " },
+    { type: "identifier", src: "variable" },
   ];
-  const expectedIndex = src.length;
   const expectedErrors = [];
 
-  const [index, tokens, errors] = parseTokens(src, startIndex);
+  const [tokens, errors] = parseTokens(src, startIndex);
 
-  expect(index).toBe(expectedIndex);
   expect(tokens).toEqual(expectedTokens);
   expect(errors).toEqual(expectedErrors);
 });

@@ -1,7 +1,7 @@
 import { test } from "@fast-check/vitest";
-import { expect } from "vitest";
+import { assert, expect } from "vitest";
 import { Token, TokenGroupDefinition } from "../src/parser/types";
-import { parseTokensToOperator } from "../src/parser/tokenGroups";
+import { parseTokensToGroup } from "../src/parser/tokenGroups";
 
 test("should parse tokens to operator with correct structure", () => {
   const sourceTokens: Token[] = [
@@ -30,8 +30,7 @@ test("should parse tokens to operator with correct structure", () => {
     ],
   };
 
-  const [index, operator, errors] = parseTokensToOperator(sourceTokens, 0, operatorDefinition, scope);
-  console.dir({ operator, index, errors }, { depth: null });
+  const [index, operator, errors] = parseTokensToGroup(sourceTokens, 0, operatorDefinition, scope);
 
   expect(index).toBe(3);
   expect(operator).toEqual(expectedOperator);
@@ -71,8 +70,7 @@ test("should parse tokens to operator with correct structure", () => {
     ],
   };
 
-  const [index, operator, errors] = parseTokensToOperator(sourceTokens, 0, operatorDefinition, scope);
-  console.dir({ operator, index, errors }, { depth: null });
+  const [index, operator, errors] = parseTokensToGroup(sourceTokens, 0, operatorDefinition, scope);
 
   expect(operator).toEqual(expectedOperator);
   expect(errors).toEqual([]);
@@ -126,15 +124,14 @@ test("parses if", () => {
     ],
   };
 
-  const [index, operator, errors] = parseTokensToOperator(sourceTokens, 0, operatorDefinition, scope);
-  console.dir({ operator, expectedOperator, index, errors }, { depth: null });
+  const [index, operator, errors] = parseTokensToGroup(sourceTokens, 0, operatorDefinition, scope);
 
   expect(operator).toEqual(expectedOperator);
   expect(errors).toEqual([]);
   expect(index).toBe(9);
 });
 
-test("parses if 2", () => {
+test("parses if with spaces", () => {
   const sourceTokens: Token[] = [
     { type: "identifier", src: "if" },
     { type: "whitespace", src: " " },
@@ -190,10 +187,48 @@ test("parses if 2", () => {
     ],
   };
 
-  const [index, operator, errors] = parseTokensToOperator(sourceTokens, 0, operatorDefinition, scope);
-  console.dir({ operator, expectedOperator, index, errors }, { depth: null });
+  const [index, operator, errors] = parseTokensToGroup(sourceTokens, 0, operatorDefinition, scope);
 
   expect(operator).toEqual(expectedOperator);
   expect(errors).toEqual([]);
   expect(index).toBe(15);
+});
+
+test("parses infinite max repeating", () => {
+  const sourceTokens: Token[] = [
+    { type: "identifier", src: "," },
+    { type: "identifier", src: "a" },
+    { type: "identifier", src: "," },
+    { type: "identifier", src: "a" },
+    { type: "identifier", src: "," },
+    { type: "identifier", src: "a" },
+  ];
+
+  const operatorDefinition: TokenGroupDefinition = {
+    separators: [{ tokens: [","], repeats: [1, Infinity] }],
+    precedence: [1, 2],
+  };
+
+  const scope = {};
+  const expectedOperator = {
+    token: { type: "identifier", src: "," },
+    children: [
+      {
+        separatorIndex: 0,
+        separatorToken: { type: "identifier", src: "," },
+        children: [{ type: "identifier", src: "a" }],
+      },
+      {
+        separatorIndex: 0,
+        separatorToken: { type: "identifier", src: "," },
+        children: [{ type: "identifier", src: "a" }],
+      },
+    ],
+  };
+
+  const [index, operator, errors] = parseTokensToGroup(sourceTokens, 0, operatorDefinition, scope);
+
+  expect(operator).toEqual(expectedOperator);
+  expect(errors).toEqual([]);
+  expect(index).toBe(sourceTokens.length - 1);
 });

@@ -1,6 +1,6 @@
 export function assert(condition: any, msg?: string): asserts condition {
   if (!condition) {
-    throw new Error(msg);
+    throw new Error(msg ? `Assertion failed: ${msg}` : "Assertion failed");
   }
 }
 
@@ -154,9 +154,9 @@ export class Iterator<T> {
     return [...this.generator];
   }
 
-  toObject(
-    this: T extends [string | number | symbol, unknown] ? Iterator<T> : never
-  ) {
-    return Object.fromEntries(this.toArray());
+  toObject(this: T extends [string | number | symbol, unknown] ? Iterator<T> : never) {
+    return Object.fromEntries(this.toArray()) as T extends [string | number | symbol, unknown]
+      ? Record<T[0], T[1]>
+      : never;
   }
 }

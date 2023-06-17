@@ -1,7 +1,7 @@
 import { describe, expect } from "vitest";
 import { it } from "@fast-check/vitest";
-import { Scope, SyntaxTree, TokenGroupSeparatorChildren } from "../src/parser/types";
-import { parseOperatorsToAST, parseStringToAST } from "../src/parser/ast";
+import { Scope, FlatSyntaxTree, TokenGroupSeparatorChildren } from "../src/parser/types";
+import { parseGroupsToAST, parseStringToAST } from "../src/parser/ast";
 
 describe("parseOperatorsToAST", () => {
   it("should parse a simple expression", () => {
@@ -22,13 +22,13 @@ describe("parseOperatorsToAST", () => {
       { type: "number", src: "3" },
     ];
 
-    const expected: SyntaxTree = {
+    const expected: FlatSyntaxTree = {
       item: { type: "operator", id: "+", token: { type: "identifier", src: "+" }, children: [] },
       lhs: { item: { type: "number", src: "2" } },
       rhs: { item: { type: "number", src: "3" } },
     };
 
-    const result = parseOperatorsToAST(src, 0, 0, scope);
+    const result = parseGroupsToAST(src, 0, 0, scope);
 
     expect(result).toEqual([3, expected, []]);
   });
@@ -53,7 +53,7 @@ describe("parseOperatorsToAST", () => {
       { type: "number", src: "4" },
     ];
 
-    const expected: SyntaxTree = {
+    const expected: FlatSyntaxTree = {
       item: { type: "operator", id: "+", token: { type: "identifier", src: "+" }, children: [] },
       lhs: { item: { type: "number", src: "2" } },
       rhs: {
@@ -63,7 +63,7 @@ describe("parseOperatorsToAST", () => {
       },
     };
 
-    const result = parseOperatorsToAST(src, 0, 0, scope);
+    const result = parseGroupsToAST(src, 0, 0, scope);
 
     expect(result).toEqual([5, expected, []]);
   });
@@ -87,11 +87,11 @@ describe("parseOperatorsToAST", () => {
       { type: "number", src: "3" },
     ];
 
-    const expected: SyntaxTree = { item: { type: "whitespace", src: "" } };
+    const expected: FlatSyntaxTree = { item: { type: "whitespace", src: "" } };
 
     const errors = [{ message: "infix operator without left operand" }];
 
-    const result = parseOperatorsToAST(src, 0, 0, scope);
+    const result = parseGroupsToAST(src, 0, 0, scope);
 
     expect(result).toEqual([0, expected, errors]);
   });
@@ -112,10 +112,10 @@ describe("parseOperatorsToAST", () => {
       },
     };
     const src = "2 + if not x > 4: 4! else 5";
-    const expected: SyntaxTree[] = [
+    const expected: FlatSyntaxTree[] = [
       {
         item: { type: "operator", id: "+", token: { type: "identifier", src: "+" }, children: [] },
-        lhs: { item: { type: "number", src: "2" } },
+        lhs: { item: { type: "number", src: "2", value: 2 } },
         rhs: {
           item: {
             type: "operator",
@@ -132,27 +132,28 @@ describe("parseOperatorsToAST", () => {
                   { type: "whitespace", src: " " },
                   { type: "identifier", src: ">" },
                   { type: "whitespace", src: " " },
-                  { type: "number", src: "4" },
+                  { type: "number", src: "4", value: 4 },
                 ],
               },
               {
                 separatorIndex: 2,
                 separatorToken: { type: "identifier", src: "else" },
                 children: [
-                  { type: "number", src: "4" },
+                  { type: "number", src: "4", value: 4 },
                   { type: "identifier", src: "!" },
                 ],
               },
             ],
           },
-          rhs: { item: { type: "number", src: "5" } },
+          rhs: { item: { type: "number", src: "5", value: 5 } },
         },
       },
     ];
 
-    const result = parseStringToAST(src, 0, scope);
+    const [ast, errors] = parseStringToAST(src, 0, scope);
 
-    expect(result).toEqual([27, expected, []]);
+    expect(ast).toEqual(expected);
+    expect(errors).toEqual([]);
   });
 });
 
@@ -170,7 +171,7 @@ describe("parseStringToAST", () => {
 
   it("should parse a string with a single expression", () => {
     const src = "2 + 3";
-    const expected: SyntaxTree[] = [
+    const expected: FlatSyntaxTree[] = [
       {
         item: {
           token: { type: "identifier", src: "+" },
@@ -178,33 +179,35 @@ describe("parseStringToAST", () => {
           id: "+",
           type: "operator",
         },
-        lhs: { item: { type: "number", src: "2" } },
-        rhs: { item: { type: "number", src: "3" } },
+        lhs: { item: { type: "number", src: "2", value: 2 } },
+        rhs: { item: { type: "number", src: "3", value: 3 } },
       },
     ];
 
-    const result = parseStringToAST(src, 0, scope);
+    const [ast, errors] = parseStringToAST(src, 0, scope);
 
-    expect(result).toEqual([5, expected, []]);
+    expect(ast).toEqual(expected);
+    expect(errors).toEqual([]);
   });
 
   it("should parse a string with multiple expressions", () => {
     const src = "2 + 3 3 * 4";
-    const expected: SyntaxTree[] = [
+    const expected: FlatSyntaxTree[] = [
       {
         item: { type: "operator", id: "+", token: { type: "identifier", src: "+" }, children: [] },
-        lhs: { item: { type: "number", src: "2" } },
-        rhs: { item: { type: "number", src: "3" } },
+        lhs: { item: { type: "number", src: "2", value: 2 } },
+        rhs: { item: { type: "number", src: "3", value: 3 } },
       },
       {
         item: { type: "operator", id: "*", token: { type: "identifier", src: "*" }, children: [] },
-        lhs: { item: { type: "number", src: "3" } },
-        rhs: { item: { type: "number", src: "4" } },
+        lhs: { item: { type: "number", src: "3", value: 3 } },
+        rhs: { item: { type: "number", src: "4", value: 4 } },
       },
     ];
 
-    const result = parseStringToAST(src, 0, scope);
+    const [ast, errors] = parseStringToAST(src, 0, scope);
 
-    expect(result).toEqual([11, expected, []]);
+    expect(ast).toEqual(expected);
+    expect(errors).toEqual([]);
   });
 });

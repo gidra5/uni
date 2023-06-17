@@ -1,191 +1,43 @@
-import { parseToken, parseTokens } from "../src/parser/tokens.js";
 import { describe, expect } from "vitest";
-import { it, fc, test } from "@fast-check/vitest";
-import { Token } from "../src/parser/types.js";
+import { it } from "@fast-check/vitest";
+import { parse, stringifyASTList } from "../src/parser/index.js";
 
-// Test case: Parsing a string token
-test.prop([fc.string().filter((s) => !s.includes("\\") && !s.includes('"'))])("parseToken - string token", (value) => {
-  const src = `"${value}"`;
-  const startIndex = 0;
-  const expectedToken = { type: "string", src, value };
-  const expectedIndex = value.length + 2;
-  const expectedErrors = [];
+describe("parse-stringify", () => {
+  const testCase = (src, out, expectedErrors = []) =>
+    it(`parses and stringifies "${src}"`, () => {
+      const [tree, errors] = parse(src);
 
-  const [index, token, errors] = parseToken(src, startIndex);
-
-  expect(index).toBe(expectedIndex);
-  expect(token).toEqual(expectedToken);
-  expect(errors).toEqual(expectedErrors);
-});
-
-test.prop([fc.string({ maxLength: 1, minLength: 1 })])("parseToken - string token escape", (value) => {
-  const src = `"\\${value}"`;
-  const startIndex = 0;
-  const expectedToken = { type: "string", src, value };
-  const expectedIndex = 4;
-  const expectedErrors = [];
-
-  const [index, token, errors] = parseToken(src, startIndex);
-
-  expect(index).toBe(expectedIndex);
-  expect(token).toEqual(expectedToken);
-  expect(errors).toEqual(expectedErrors);
-});
-
-// Test case: Parsing a number token
-describe("parseToken - number token", () => {
-  it.prop([fc.stringMatching(/^\d+\.\d+$/)])("float literals", (src) => {
-    const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-    };
-    const expectedIndex = src.length;
-    const expectedErrors = [];
-
-    const [index, token, errors] = parseToken(src, startIndex);
-
-    expect(token).toEqual(expectedToken);
-    expect(errors).toEqual(expectedErrors);
-    expect(index).toBe(expectedIndex);
-  });
-
-  it.prop([fc.stringMatching(/^\d+$/)])("int literals", (src) => {
-    const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-    };
-    const expectedIndex = src.length;
-    const expectedErrors = [];
-
-    const [index, token, errors] = parseToken(src, startIndex);
-
-    expect(token).toEqual(expectedToken);
-    expect(errors).toEqual(expectedErrors);
-    expect(index).toBe(expectedIndex);
-  });
-
-  it.prop([fc.stringMatching(/^\d+\.$/)])("trailing dot literals", (src) => {
-    const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-    };
-    const expectedIndex = src.length;
-    const expectedErrors = [];
-
-    const [index, token, errors] = parseToken(src, startIndex);
-
-    expect(token).toEqual(expectedToken);
-    expect(errors).toEqual(expectedErrors);
-    expect(index).toBe(expectedIndex);
-  });
-
-  it.prop([fc.stringMatching(/^\.\d+$/)])("prefix dot literals", (src) => {
-    const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-    };
-    const expectedIndex = src.length;
-    const expectedErrors = [];
-
-    const [index, token, errors] = parseToken(src, startIndex);
-
-    expect(token).toEqual(expectedToken);
-    expect(errors).toEqual(expectedErrors);
-    expect(index).toBe(expectedIndex);
-  });
-
-  it.prop([fc.stringMatching(/^(\d+_*)*\d+\.(\d+_*)*\d+$/)])("literals with spacers", (src) => {
-    const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-    };
-    const expectedIndex = src.length;
-    const expectedErrors = [];
-
-    const [index, token, errors] = parseToken(src, startIndex);
-
-    expect(token).toEqual(expectedToken);
-    expect(errors).toEqual(expectedErrors);
-    expect(index).toBe(expectedIndex);
-  });
-});
-
-// Test case: Parsing a whitespace token
-test.prop([fc.string({ minLength: 1 }).filter((s) => !s.match(/[^\s]/))])(
-  "parseToken - whitespace and newline token",
-  (src) => {
-    const startIndex = 0;
-    const expectedToken = {
-      type: src.includes("\n") ? "newline" : "whitespace",
-      src,
-    } satisfies Token;
-    const expectedIndex = src.length;
-    const expectedErrors = [];
-
-    const [index, token, errors] = parseToken(src, startIndex);
-
-    expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
-    expect(errors).toEqual(expectedErrors);
-  }
-);
-
-// Test case: Parsing an identifier token
-test("parseToken - identifier token", () => {
-  const src = "variable123";
-  const startIndex = 0;
-  const expectedToken = {
-    type: "identifier",
-    src: "variable123",
+      expect(stringifyASTList(tree)).toBe(out);
+      expect(errors).toEqual(expectedErrors);
+    });
+  const binaryOperatorsTestCase = (operators: string[]) => {
+    for (const op of operators) testCase(`2 ${op} 3`, op + " (2) (3)");
   };
-  const expectedIndex = src.length;
-  const expectedErrors = [];
+  binaryOperatorsTestCase(["+", "-", "*", "/", "^"]);
+  binaryOperatorsTestCase(["is", "==", "<", "<=", ">", ">="]);
+  binaryOperatorsTestCase(["and", "or", "%", ",", "->"]);
 
-  const [index, token, errors] = parseToken(src, startIndex);
+  it(`parses and stringifies "2 ; 3"`, () => {
+    const [tree, errors] = parse("2 ; 3");
 
-  expect(index).toBe(expectedIndex);
-  expect(token).toEqual(expectedToken);
-  expect(errors).toEqual(expectedErrors);
-});
+    expect(stringifyASTList(tree)).toBe("; (2); 3");
+    expect(errors).toEqual([]);
+  });
+  // it.only(`parses and stringifies "${`2 ${";"} 3`}"`, () => {
+  //   const [tree, errors] = parse(`1 == 2 and x`);
+  //   console.dir(tree, { depth: null });
 
-// Test case: Parsing tokens from a source string
-test("parseTokens", () => {
-  const src = '42 "Hello" variable';
-  const startIndex = 0;
-  const expectedTokens: Token[] = [
-    {
-      type: "number",
-      src: "42",
-    },
-    {
-      type: "whitespace",
-      src: " ",
-    },
-    {
-      type: "string",
-      src: '"Hello"',
-      value: "Hello",
-    },
-    {
-      type: "whitespace",
-      src: " ",
-    },
-    {
-      type: "identifier",
-      src: "variable",
-    },
-  ];
-  const expectedIndex = src.length;
-  const expectedErrors = [];
+  //   expect(stringifyASTList(tree)).toBe("and (== (1) (2)) (x)");
+  //   expect(errors).toEqual([]);
+  // });
 
-  const [index, tokens, errors] = parseTokens(src, startIndex);
-
-  expect(index).toBe(expectedIndex);
-  expect(tokens).toEqual(expectedTokens);
-  expect(errors).toEqual(expectedErrors);
+  testCase('1 == "a" and x < 4 + 5 * 6 ^ 7', 'and (== (1) ("a")) (< (x) (+ (4) (* (5) (^ (6) (7)))))');
+  testCase('1 == "a" and x < (4 + 5) * 6 ^ 7', 'and (== (1) ("a")) (< (x) (* (group (+ (4) (5)):1) (^ (6) (7))))');
+  testCase("if x: { a; b; c; d }", "if (x):1 (block (sequence (b):0 (c):0 (a) d):1)");
+  testCase("-1", "- (1)");
+  testCase("not 1", "not (1)");
+  testCase("sqrt 1", "sqrt (1)");
+  testCase("x is not 1", "is (x) (not (1))");
+  testCase("1 <= 2 and 3 <= 4", "and (<= (1) (2)) (<= (3) (4))");
+  testCase(" 1 + 2 ", "+ (1) (2)");
 });

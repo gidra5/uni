@@ -65,9 +65,9 @@ Instructions:
   4. return "identifier" token
 */
 
-import { Parser, ParsingError, Token } from "./types";
+import { ConsumeParsingResult, Parser, ParsingError, Token } from "./types";
 
-export const parseToken: Parser<Token> = (src: string, i: number) => {
+export const parseToken: Parser<Token> = (src, i) => {
   let index = i;
   const errors: ParsingError[] = [];
 
@@ -114,7 +114,7 @@ export const parseToken: Parser<Token> = (src: string, i: number) => {
       }
     }
 
-    return [index, { type: "number", src: src.substring(start, index) }, errors];
+    return [index, { type: "number", src: src.substring(start, index), value: Number(value) }, errors];
   }
 
   if (/\s/.test(src.charAt(index))) {
@@ -144,7 +144,7 @@ export const parseToken: Parser<Token> = (src: string, i: number) => {
       index++;
     }
 
-    return [index, { type: "number", src: src.substring(start, index) }, errors];
+    return [index, { type: "number", src: src.substring(start, index), value: Number(value) }, errors];
   }
 
   const start = index;
@@ -154,7 +154,7 @@ export const parseToken: Parser<Token> = (src: string, i: number) => {
   return [index, { type: "identifier", src: src.substring(start, index) }, errors];
 };
 
-export const parseTokens: Parser<Token[]> = (src: string, i: number) => {
+export const parseTokens = (src: string, i: number): ConsumeParsingResult<Token[]> => {
   let index = i;
   const errors: ParsingError[] = [];
   const tokens: Token[] = [];
@@ -167,5 +167,5 @@ export const parseTokens: Parser<Token[]> = (src: string, i: number) => {
     errors.push(..._errors);
   }
 
-  return [index, tokens, errors];
+  return [tokens, errors];
 };
