@@ -2,11 +2,13 @@ export type ScopeGenerator = (enclosing: Scope) => Scope;
 export type SeparatorDefinition = {
   tokens: string[];
   repeats: [min: number, max: number];
+  insertIfMissing?: boolean;
   scope?: ScopeGenerator;
 };
 export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {
   separators: SeparatorDefinition[];
+  leadingTokens: string[];
   precedence: Precedence;
 };
 export type Scope = Record<string, TokenGroupDefinition>;
@@ -16,13 +18,14 @@ export type Token =
   | { type: "number"; src: string; value?: number }
   | { type: "string"; src: string; value?: string };
 export type TokenGroup = { token: Token; children: TokenGroupSeparator[] };
-export type TokenGroupSeparatorChildren = (({ id: string; type: "operator" } & TokenGroup) | Token)[];
+export type TokenGroupInstance = { id: string; type: "operator" } & TokenGroup;
+export type TokenGroupSeparatorChild = TokenGroupInstance | Token;
 export type TokenGroupSeparator = {
-  children: TokenGroupSeparatorChildren;
+  children: TokenGroupSeparatorChild[];
   separatorIndex: number;
   separatorToken: Token;
 };
-export type FlatSyntaxTree = { item: TokenGroupSeparatorChildren[number]; lhs?: FlatSyntaxTree; rhs?: FlatSyntaxTree };
+export type FlatSyntaxTree = { item: TokenGroupSeparatorChild; lhs?: FlatSyntaxTree; rhs?: FlatSyntaxTree };
 export type AbstractSyntaxTreeChildren = {
   children: AbstractSyntaxTree[];
   separatorIndex: number;
@@ -37,7 +40,7 @@ export type AbstractSyntaxTree = {
   rhs?: AbstractSyntaxTree;
 };
 
-export type ParsingError = { message: string };
+export type ParsingError = { message: string; cause?: ParsingError[] };
 export type ConsumeParsingResult<T> = [result: T, errors: ParsingError[]];
 export type ParsingResult<T> = [index: number, ...result: ConsumeParsingResult<T>];
-export type Parser<T> = (src: string, i: number) => ParsingResult<T>;
+export type Parser<T, S = string> = (src: S, i: number) => ParsingResult<T>;

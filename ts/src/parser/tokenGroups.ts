@@ -1,5 +1,6 @@
 /* 
-"Operator" Parsing algorithm:
+TODO: outdated
+Group Parsing algorithm:
 
 Input: 
 1. source tokens to be parsed
@@ -56,11 +57,11 @@ import {
   ParsingError,
   ParsingResult,
   Scope,
-  TokenGroupSeparatorChildren,
   SeparatorDefinition,
   TokenGroupSeparator,
   Token,
   ConsumeParsingResult,
+  TokenGroupSeparatorChild,
 } from "./types";
 
 export const getLeadingSeparators = (separators: [item: SeparatorDefinition, i: number][]) => {
@@ -76,47 +77,47 @@ export const getLeadingSeparators = (separators: [item: SeparatorDefinition, i: 
 };
 
 const identity = <T>(x: T) => x;
+const matchingToken = (token: string): Token =>
+  " " === token
+    ? { type: "whitespace", src: token }
+    : "\n" === token
+    ? { type: "newline", src: token }
+    : { type: "identifier", src: token };
+const matchToken = (sourceToken?: TokenGroupSeparatorChild) => (token: string) =>
+  !!sourceToken &&
+  ((sourceToken.type === "whitespace" && " " === token) ||
+    (sourceToken.type === "newline" && "\n" === token) ||
+    (sourceToken.type === "identifier" && sourceToken.src === token));
+const matchTokens = (sourceToken: TokenGroupSeparatorChild, tokens: string[]): sourceToken is Token =>
+  tokens.some(matchToken(sourceToken));
 
+// todo: fill children with empty arrays to match separators
+const matchingSeparators = (separators: [item: SeparatorDefinition, i: number][]) =>
+  Iterator.iter(separators).flatMap<TokenGroupSeparator>(
+    ([
+      {
+        repeats: [count],
+        tokens: [token],
+      },
+      separatorIndex,
+    ]) => Iterator.repeat({ separatorIndex, separatorToken: matchingToken(token), children: [] }).take(count)
+  );
+
+// synchronized
 export const parseTokensToGroup = (
-  src: TokenGroupSeparatorChildren,
+  src: TokenGroupSeparatorChild[],
   i: number,
   groupDefinition: TokenGroupDefinition,
   scope: Scope
 ): ParsingResult<TokenGroup> => {
   let index = i;
-  const leadingToken = src[index];
-  assert(leadingToken.type !== "operator");
+  const leadingToken = src[index++];
+  assert(matchTokens(leadingToken, groupDefinition.leadingTokens), "Does not match leading token");
+
   const separatorList = Iterator.iter(groupDefinition.separators).enumerate().toArray();
   let separatorRepeats = 0;
   const children: TokenGroupSeparator[] = [];
   const errors: ParsingError[] = [];
-  const matchToken = (sourceToken?: TokenGroupSeparatorChildren[number]) => (token: string) =>
-    !!sourceToken &&
-    ((sourceToken.type === "whitespace" && " " === token) ||
-      (sourceToken.type === "newline" && "\n" === token) ||
-      (sourceToken.type === "identifier" && sourceToken.src === token));
-
-  {
-    const [{ tokens }] = separatorList[0];
-    const token = src[index];
-
-    if (!tokens.find(matchToken(token))) {
-      return [
-        index,
-        { token: { type: "whitespace", src: "" }, children: [] },
-        [{ message: "Does not match leading token" }],
-      ];
-    }
-
-    index++;
-    separatorRepeats++;
-
-    const [{ repeats }] = separatorList[0];
-    if (separatorRepeats === repeats[1]) {
-      separatorRepeats = 0;
-      separatorList.splice(0, 1);
-    }
-  }
 
   let lastSeparatorIndex = index;
   while (separatorList.length > 0) {
@@ -124,18 +125,38 @@ export const parseTokensToGroup = (
     const separatorChildren: TokenGroupSeparator["children"] = [];
 
     while (true) {
-      if (!src[index] && separatorRepeats >= leadingSeparators[0][0].repeats[0]) {
-        separatorRepeats = 0;
-        separatorList.splice(0, 1);
-        index = lastSeparatorIndex;
-        break;
-      }
       if (!src[index]) {
-        return [
-          index,
-          { token: { type: "whitespace", src: "" }, children: [] },
-          [{ message: `Can't match separators ${JSON.stringify(leadingSeparators)}, End of tokens` }],
-        ];
+        // reset index
+        index = lastSeparatorIndex;
+        if (separatorRepeats >= leadingSeparators[0][0].repeats[0]) {
+          separatorRepeats = 0;
+          separatorList.splice(0, 1);
+          break;
+        }
+
+        // sync
+        // fill children up to head separator
+        const matchedIndex = leadingSeparators.length - 1;
+        const separatorListHeadDefinition = separatorList[matchedIndex][0];
+        const separatorDefinition: SeparatorDefinition = {
+          ...separatorListHeadDefinition,
+          repeats: [separatorListHeadDefinition.repeats[0] - separatorRepeats, separatorListHeadDefinition.repeats[1]],
+        };
+
+        if (separatorListHeadDefinition.insertIfMissing) {
+          // pretend that we matched head separator enough times already
+          separatorList.splice(0, matchedIndex + 1);
+          separatorRepeats = 0;
+          children.push(...matchingSeparators([[separatorDefinition, separatorList[0][1]]]));
+          errors.push({ message: `Missing one of separators: ${separatorDefinition.tokens.join(", ")}` });
+          break;
+        }
+
+        // do not try to sync with next separator - just return current state
+        const { tokens } = separatorListHeadDefinition;
+        children.push(...matchingSeparators(separatorList));
+        errors.push({ message: `Missing one of separators: ${tokens.join(", ")}` });
+        return [index, { token: leadingToken, children }, errors];
       }
 
       const [matchedSeparator] = Iterator.iter(leadingSeparators)
@@ -145,8 +166,7 @@ export const parseTokensToGroup = (
 
       if (matchedSeparator) {
         const [matchedIndex] = matchedSeparator;
-        const separatorToken = src[index];
-        assert(separatorToken.type !== "operator");
+        const separatorToken = src[index] as Token;
         const [{ repeats }, separatorIndex] = separatorList[matchedIndex];
 
         index++;
@@ -168,11 +188,7 @@ export const parseTokensToGroup = (
           }
         }
 
-        children.push({
-          separatorIndex,
-          separatorToken,
-          children: separatorChildren,
-        });
+        children.push({ separatorIndex, separatorToken, children: separatorChildren });
         separatorRepeats++;
 
         if (separatorRepeats < repeats[0]) continue;
@@ -182,33 +198,18 @@ export const parseTokensToGroup = (
         }
         break;
       } else {
-        if (!src[index] && separatorRepeats >= leadingSeparators[0][0].repeats[0]) {
-          separatorRepeats = 0;
-          separatorList.splice(0, 1);
-          index = lastSeparatorIndex;
-          break;
-        }
-        if (!src[index]) {
-          return [
-            index,
-            { token: { type: "whitespace", src: "" }, children: [] },
-            [{ message: "Reached end of source" }],
-          ];
-        }
-
         const [top] = leadingSeparators[leadingSeparators.length - 1];
         const _scope = (top.scope ?? identity)(scope);
-        const matchedToken = parseTokensToGroupScope(src, index, _scope);
 
-        if (!matchedToken) {
-          separatorChildren.push(src[index]);
-          index++;
-        } else {
-          const [nextIndex, operator] = matchedToken;
+        // synchronized
+        const [nextIndex, matchedToken, _errors] = parseTokensToGroupScope(src, index, _scope);
+        index = nextIndex;
+        errors.push(..._errors);
 
-          index = nextIndex;
-          separatorChildren.push(operator);
-        }
+        // do not make decision what operator it is if it has no children
+        if (matchedToken.type === "operator" && matchedToken.children.length === 0)
+          separatorChildren.push(matchedToken.token);
+        else separatorChildren.push(matchedToken);
       }
     }
   }
@@ -216,43 +217,38 @@ export const parseTokensToGroup = (
   return [index, { token: leadingToken, children }, errors];
 };
 
-export const parseTokensToGroupScope = (src: TokenGroupSeparatorChildren, i: number, scope: Scope) => {
-  const [matchedToken] = Iterator.iterEntries(scope).filterMap(([id, operatorDefinition]) => {
-    const [nextIndex, operator, errors] = parseTokensToGroup(src, i, operatorDefinition, scope);
-    if (errors.length > 0) return { pred: false };
-    else {
-      return {
-        pred: true,
-        value: [nextIndex, { ...operator, id, type: "operator" }] as const,
-      };
-    }
-  });
+type RetType = ParsingResult<TokenGroupSeparatorChild>;
+// synchronized
+export const parseTokensToGroupScope = (src: TokenGroupSeparatorChild[], i: number, scope: Scope): RetType => {
+  const [entry] = Iterator.iterEntries(scope).filter(([, groupDefinition]) =>
+    matchTokens(src[i], groupDefinition.leadingTokens)
+  );
 
-  return matchedToken;
+  if (!entry) return [i + 1, src[i], []];
+  const [id, groupDefinition] = entry;
+  const [nextIndex, operator, _errors] = parseTokensToGroup(src, i, groupDefinition, scope);
+  const errors =
+    _errors.length === 0 ? [{ message: `Encountered errors when parsing grouping "${id}"`, cause: _errors }] : [];
+  return [nextIndex, { ...operator, id, type: "operator" }, errors];
 };
 
 export const parseTokensToGroups = (
   src: Token[],
   i: number,
   scope: Scope
-): ConsumeParsingResult<TokenGroupSeparatorChildren> => {
+): ConsumeParsingResult<TokenGroupSeparatorChild[]> => {
   let index = i;
-  const children: TokenGroupSeparatorChildren = [];
+  const children: TokenGroupSeparatorChild[] = [];
   const errors: ParsingError[] = [];
 
   while (src[index]) {
-    const matchedToken = parseTokensToGroupScope(src, index, scope);
+    const [nextIndex, matchedToken, _errors] = parseTokensToGroupScope(src, index, scope);
+    index = nextIndex;
+    errors.push(..._errors);
 
-    if (!matchedToken) {
-      children.push(src[index]);
-      index++;
-    } else {
-      const [nextIndex, instance] = matchedToken;
-
-      index = nextIndex;
-      if (instance.children.length === 0) children.push(instance.token);
-      else children.push(instance);
-    }
+    // do not make decision what operator it is if it has no children
+    if (matchedToken.type === "operator" && matchedToken.children.length === 0) children.push(matchedToken.token);
+    else children.push(matchedToken);
   }
 
   return [children, errors];
@@ -262,7 +258,7 @@ export const parseStringToGroups = (
   src: string,
   i: number,
   scope: Scope
-): ConsumeParsingResult<TokenGroupSeparatorChildren> => {
+): ConsumeParsingResult<TokenGroupSeparatorChild[]> => {
   const [tokens, errors] = parseTokens(src, i);
   const [children, _errors] = parseTokensToGroups(tokens, 0, scope);
 

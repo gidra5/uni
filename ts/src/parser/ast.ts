@@ -6,9 +6,9 @@ import {
   ParsingResult,
   Scope,
   FlatSyntaxTree,
-  TokenGroupSeparatorChildren,
   ConsumeParsingResult,
   TokenGroupDefinition,
+  TokenGroupSeparatorChild,
 } from "./types.js";
 
 /* 
@@ -61,14 +61,22 @@ Instructions:
 6.Return [index, lhs, errors] as the final result of parsing the separator children.
 */
 
+const getPrecedence = (token: TokenGroupSeparatorChild, scope: Scope) =>
+  (token.type === "operator" && scope[token.id].precedence) || [null, null];
+
 export const parseTokensToAST = (
-  src: TokenGroupSeparatorChildren,
+  src: TokenGroupSeparatorChild[],
   i: number,
   precedence: number,
   scope: Scope
 ): ParsingResult<FlatSyntaxTree> => {
+  // no prefix/none-fix operators
   const reducedScope = Iterator.iterEntries(scope)
     .filter(([_, operatorDefinition]) => operatorDefinition.precedence[0] !== null)
+    .map<[string, TokenGroupDefinition]>(([id, def]) => [
+      id,
+      { ...def, separators: def.separators.map((sep) => ({ scope: () => scope, ...sep })) },
+    ])
     .toObject();
   let index = i;
   const errors: ParsingError[] = [];
@@ -77,10 +85,12 @@ export const parseTokensToAST = (
   //skip possible whitespace prefix
   {
     const token = src[index];
-    if (token.type === "newline" || token.type === "whitespace") {
+    if (token && (token.type === "newline" || token.type === "whitespace")) {
       index++;
     }
   }
+
+  if (!src[index]) throw new Error("no tokens");
 
   {
     // no postfix/infix operators
@@ -91,53 +101,37 @@ export const parseTokensToAST = (
         { ...def, separators: def.separators.map((sep) => ({ scope: () => scope, ...sep })) },
       ])
       .toObject();
-    const [nextIndex, token] = parseTokensToGroupScope(src, index, reducedScope) ?? [index + 1, src[index]];
-
-    if (!token) return [index, { item: { type: "whitespace", src: "" } }, [...errors, { message: "end of stream" }]];
+    let [nextIndex, token, errors] = parseTokensToGroupScope(src, index, reducedScope);
     index = nextIndex;
+    const [, right] = getPrecedence(token, reducedScope);
 
-    if (token.type === "identifier" || token.type === "number" || token.type === "string") {
-      lhs = { item: token };
+    if (right !== null) {
+      const [nextIndex, rhs, _errors] = parseTokensToAST(src, index, right, scope);
+
+      index = nextIndex;
+      errors.push(..._errors);
+      lhs = { item: token, rhs };
     } else {
-      assert(token.type === "operator");
-      const { precedence } = scope[token.id];
-      const [, right] = precedence;
-
-      if (right !== null) {
-        const [nextIndex, rhs, _errors] = parseTokensToAST(src, index, right, scope);
-
-        index = nextIndex;
-        errors.push(..._errors);
-        lhs = { item: token, rhs };
-      } else {
-        index++;
-        lhs = { item: token };
-      }
+      lhs = { item: token };
     }
   }
 
-  while (true) {
+  while (src[index]) {
     //skip possible whitespace prefix
     {
-      if (!src[index]) break;
-
       const token = src[index];
       if (token && (token.type === "newline" || token.type === "whitespace")) {
         index++;
       }
-
-      if (!src[index]) break;
     }
 
-    const [nextIndex, token] = parseTokensToGroupScope(src, index, reducedScope) ?? [index + 1, src[index]];
+    if (!src[index]) break;
 
-    if (token.type !== "operator") break;
-
-    const {
-      precedence: [left, right],
-    } = scope[token.id];
-
+    const [nextIndex, token, _errors] = parseTokensToGroupScope(src, index, reducedScope);
+    errors.push(..._errors);
+    const [left, right] = getPrecedence(token, reducedScope);
     if (left === null || left < precedence) break;
+
     index = nextIndex;
 
     if (right === null) {
@@ -150,11 +144,12 @@ export const parseTokensToAST = (
       lhs = { item: token, lhs, rhs };
     }
   }
+
   return [index, lhs, errors];
 };
 
 export const parseTokensToASTs = (
-  src: TokenGroupSeparatorChildren,
+  src: TokenGroupSeparatorChild[],
   i: number,
   scope: Scope
 ): ConsumeParsingResult<FlatSyntaxTree[]> => {
@@ -164,120 +159,6 @@ export const parseTokensToASTs = (
 
   while (src[index]) {
     const [_index, astNode, _errors] = parseTokensToAST(src, index, 0, scope);
-
-    if (_errors.length > 0) {
-      ast.push({ item: src[index++] });
-      continue;
-    }
-
-    index = _index;
-    ast.push(astNode);
-    errors.push(..._errors);
-  }
-
-  return [ast, errors];
-};
-export const parseGroupsToAST = (
-  src: TokenGroupSeparatorChildren,
-  i: number,
-  precedence: number,
-  scope: Scope
-): ParsingResult<FlatSyntaxTree> => {
-  let index = i;
-  const errors: ParsingError[] = [];
-  let lhs: FlatSyntaxTree;
-
-  {
-    const token = src[index];
-    //skip possible whitespace prefix
-    if (token.type === "newline" || token.type === "whitespace") {
-      index++;
-    }
-  }
-
-  {
-    const token = src[index];
-    if (!token) return [index, { item: { type: "whitespace", src: "" } }, [...errors, { message: "end of stream" }]];
-
-    if (token.type === "identifier" || token.type === "number" || token.type === "string") {
-      index++;
-      lhs = { item: token };
-    } else {
-      assert(token.type === "operator");
-      const { precedence } = scope[token.id];
-      const [left, right] = precedence;
-
-      if (left === null && right !== null) {
-        const [nextIndex, rhs, _errors] = parseGroupsToAST(src, index + 1, right, scope);
-
-        index = nextIndex;
-        errors.push(..._errors);
-        lhs = { item: token, rhs };
-      } else if (left === null && right === null) {
-        index++;
-
-        lhs = { item: token };
-      } else if (left !== null && right === null) {
-        return [
-          index,
-          { item: { type: "whitespace", src: "" } },
-          [...errors, { message: "postfix operator without left operand" }],
-        ];
-      } else {
-        return [
-          index,
-          { item: { type: "whitespace", src: "" } },
-          [...errors, { message: "infix operator without left operand" }],
-        ];
-      }
-    }
-  }
-
-  while (true) {
-    let token = src[index];
-
-    if (!token) break;
-    if (token.type === "newline" || token.type === "whitespace") {
-      index++;
-      token = src[index];
-    }
-
-    if (!token) break;
-    if (token.type !== "operator") {
-      return [index, lhs, errors];
-    }
-
-    const {
-      precedence: [left, right],
-    } = scope[token.id];
-
-    if (left === null || left < precedence) break;
-    index++;
-
-    if (right === null) {
-      lhs = { item: token, lhs };
-    } else {
-      const [nextIndex, rhs, _errors] = parseGroupsToAST(src, index, right, scope);
-
-      index = nextIndex;
-      errors.push(..._errors);
-      lhs = { item: token, lhs, rhs };
-    }
-  }
-  return [index, lhs, errors];
-};
-
-export const parseGroupsToASTs = (
-  src: TokenGroupSeparatorChildren,
-  i: number,
-  scope: Scope
-): ConsumeParsingResult<FlatSyntaxTree[]> => {
-  const ast: FlatSyntaxTree[] = [];
-  const errors: ParsingError[] = [];
-  let index = i;
-
-  while (src[index]) {
-    const [_index, astNode, _errors] = parseGroupsToAST(src, index, 0, scope);
 
     if (_errors.length > 0) {
       ast.push({ item: src[index++] });
