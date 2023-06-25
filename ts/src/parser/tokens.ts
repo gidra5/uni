@@ -169,3 +169,8 @@ export const parseTokens = (src: string, i: number): ConsumeParsingResult<Token[
 
   return [tokens, errors];
 };
+
+export const stringifyToken = (item: Token): string => {
+  if (item.type === "newline" || item.type === "whitespace") return item.type;
+  return item.src;
+};

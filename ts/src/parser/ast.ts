@@ -1,6 +1,6 @@
 import { Iterator, assert } from "../utils.js";
 import { parseTokensToGroupScope } from "./tokenGroups.js";
-import { parseTokens } from "./tokens.js";
+import { parseTokens, stringifyToken } from "./tokens.js";
 import {
   ParsingError,
   ParsingResult,
@@ -9,6 +9,7 @@ import {
   ConsumeParsingResult,
   TokenGroupDefinition,
   TokenGroupSeparatorChild,
+  AbstractSyntaxTree,
 } from "./types.js";
 
 /* 
@@ -179,3 +180,21 @@ export const parseStringToAST = (src: string, i: number, scope: Scope): ConsumeP
 
   return [ast, [...errors, ..._errors]];
 };
+
+export const stringifyASTItem = (item: AbstractSyntaxTree["item"]): string => {
+  if (item.type === "operator" && item.children.length > 0)
+    return `${item.id} ${item.children
+      .map((child) => `(${child.children.map(stringifyAST).join(" ")}):${child.separatorIndex}`)
+      .join(" ")}`;
+  if (item.type === "operator") return `${item.token.src}`;
+  return stringifyToken(item);
+};
+
+export const stringifyAST = (ast: AbstractSyntaxTree): string => {
+  let result = stringifyASTItem(ast.item);
+  if (ast.lhs) result = `${result} (${stringifyAST(ast.lhs)})`;
+  if (ast.rhs) result = `${result} (${stringifyAST(ast.rhs)})`;
+  return result;
+};
+
+export const stringifyASTList = (list: AbstractSyntaxTree[]): string => list.map(stringifyAST).join("; ");

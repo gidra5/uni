@@ -1,13 +1,27 @@
+import path from "node:path";
 import { parseStringToAST, parseTokensToASTs } from "./ast";
-import { AbstractSyntaxTree, AbstractSyntaxTreeChildren, ParsingError, Scope, FlatSyntaxTree, Token } from "./types";
+import {
+  AbstractSyntaxTree,
+  AbstractSyntaxTreeChildren,
+  ParsingError,
+  Scope,
+  FlatSyntaxTree,
+  ConsumeParsingResult,
+} from "./types";
+import fs from "node:fs/promises";
+import { assert, omit, pick } from "../utils";
 
-const blockScope: Scope = {
+const blockScope = (inner: (outer: Scope) => Scope): Scope => ({
   sequence: {
     leadingTokens: [";", "\n"],
-    separators: [{ tokens: [";", "\n"], repeats: [0, Infinity] }],
+    separators: [{ tokens: [";", "\n"], repeats: [0, Infinity], scope: inner }],
     precedence: [1, null],
   },
-  define: { leadingTokens: ["="], separators: [], precedence: [Infinity, 1] },
+});
+
+const bindingScope: Scope = {
+  define: { leadingTokens: [":="], separators: [], precedence: [Infinity, 1] },
+  mutate: { leadingTokens: ["="], separators: [], precedence: [Infinity, 1] },
 };
 
 const exprScope: Scope = {
@@ -92,8 +106,9 @@ const topLevelScope: Scope = {
 };
 const scope: Scope = {
   ...commentsScope,
-  ...blockScope,
+  ...blockScope(() => omit(scope, ["sequence"])),
   ...topLevelScope,
+  ...pick(bindingScope, ["define"]),
 };
 
 const expand = (tree: FlatSyntaxTree): [expanded: AbstractSyntaxTree, errors: ParsingError[]] => {
@@ -134,50 +149,150 @@ const expand = (tree: FlatSyntaxTree): [expanded: AbstractSyntaxTree, errors: Pa
   return [result, errors];
 };
 
-type Module = Record<string, { type: "module"; module: Module } | { type: "item" }>;
 type Expression = unknown;
+type ModuleExports = Record<string, Expression>;
 type ModuleSyntaxTreeItem =
-  | { type: "import"; from: string; with: Record<string, Expression>; alias: string }
-  | { type: "export"; alias: string };
+  | { type: "import"; from: string; with?: Expression; alias: string }
+  | { type: "external"; alias: string }
+  | { type: "export"; alias: string; value?: Expression };
 type ModuleSyntaxTree = ModuleSyntaxTreeItem[];
-export const parse = (src: string) => {
-  const [ast, errors] = parseStringToAST(src, 0, scope);
-  const moduleSyntaxTree = parseModule(ast);
-  const module: Module = {};
-  const result: AbstractSyntaxTree[] = [];
+type Module = {
+  externals: { alias: string; type: Expression }[];
+  imports: { module: string; with: Expression }[];
+  exports: ModuleExports;
+  source: string;
+};
+// export const parse = (src: string) => {
+//   const [ast, errors] = parseStringToAST(src, 0, scope);
+//   const moduleSyntaxTree = parseModule(ast);
+//   const module: ModuleExports = {};
+//   const result: AbstractSyntaxTree[] = [];
 
-  for (const item of ast) {
-    const [expanded, _errors] = expand(item);
-    result.push(expanded);
-    errors.push(..._errors);
+//   for (const item of ast) {
+//     const [expanded, _errors] = expand(item);
+//     result.push(expanded);
+//     errors.push(..._errors);
+//   }
+
+//   return [result, errors];
+// };
+
+const parseModule = (src: string): ConsumeParsingResult<ModuleSyntaxTree> => {
+  const [ast, errors] = parseStringToAST(src, 0, scope);
+  const items: ModuleSyntaxTree = [];
+
+  for (const astItem of ast) {
+    if (astItem.item.type === "operator") {
+      switch (astItem.item.id) {
+        case "sequence": {
+          assert(astItem.lhs, "sequence item must have lhs");
+          const { item, lhs } = astItem;
+
+          if (lhs.item.type === "operator") {
+            switch (lhs.item.id) {
+              case "import":
+              case "export":
+              case "external": {
+                items.push();
+              }
+              case "multilineComment":
+              case "comment": {
+                continue;
+              }
+              default: {
+                errors.push({ message: "Unexpected operator" });
+              }
+            }
+          } else {
+            errors.push({ message: "Unexpected token" });
+          }
+          item.children[0].children;
+          for (const astItem of item.children[0].children) {
+            if (astItem.type === "operator") {
+              switch (astItem.id) {
+                case "sequence": {
+                  assert(astItem.lhs, "sequence item must have lhs");
+                  const { item, lhs } = astItem;
+
+                  if (lhs.item.type === "operator") {
+                    switch (lhs.item.id) {
+                      case "import":
+                      case "export":
+                      case "external": {
+                        items.push();
+                      }
+                      case "multilineComment":
+                      case "comment": {
+                        continue;
+                      }
+                      default: {
+                        errors.push({ message: "Unexpected operator" });
+                      }
+                    }
+                  } else {
+                    errors.push({ message: "Unexpected token" });
+                  }
+                }
+                case "import":
+                case "export":
+                case "external": {
+                  items.push();
+                }
+                case "multilineComment":
+                case "comment": {
+                  continue;
+                }
+                default: {
+                  errors.push({ message: "Unexpected operator" });
+                }
+              }
+            } else {
+              errors.push({ message: "Unexpected token" });
+            }
+          }
+        }
+        case "import":
+        case "export":
+        case "external": {
+          items.push();
+        }
+        case "multilineComment":
+        case "comment": {
+          continue;
+        }
+        default: {
+          errors.push({ message: "Unexpected operator" });
+        }
+      }
+    } else {
+      errors.push({ message: "Unexpected token" });
+    }
   }
 
-  return [result, errors];
+  return [[], errors];
 };
 
-const parseModule = (ast: FlatSyntaxTree[]) => {
-  const;
-};
+const modules: Record<string, Module> = {};
 
-export const stringifyToken = (item: Token): string => {
-  if (item.type === "newline" || item.type === "whitespace") return item.type;
-  return item.src;
+const loadModule = async (name: string): Promise<Module> => {
+  return { exports: {}, externals: [], imports: [], source: "" };
 };
+const parseFile = async (_path: string, base = "."): Promise<ConsumeParsingResult<unknown>> => {
+  const file = await fs.readFile(path.join(base, _path));
+  const src = file.toString();
+  const [moduleSyntaxTree, errors] = parseModule(src);
+  const exports: ModuleExports = {};
 
-export const stringifyASTItem = (item: AbstractSyntaxTree["item"]): string => {
-  if (item.type === "operator" && item.children.length > 0)
-    return `${item.id} ${item.children
-      .map((child) => `(${child.children.map(stringifyAST).join(" ")}):${child.separatorIndex}`)
-      .join(" ")}`;
-  if (item.type === "operator") return `${item.token.src}`;
-  return stringifyToken(item);
+  // for (const item of moduleSyntaxTree) {
+  //   if (item.type === "export") exports[item.alias] = item.value;
+  //   if (item.type === "import") {
+  //     if (item.from in modules) continue;
+  //     if (item.from.startsWith("/registry")) {
+  //       modules[item.from] = await loadModule(item.from.substring("/registry".length));
+  //     }
+
+  //     const parsed = await parseFile(path.join(base, item.from));
+  //   }
+  // }
+  return [[], errors];
 };
-
-export const stringifyAST = (ast: AbstractSyntaxTree): string => {
-  let result = stringifyASTItem(ast.item);
-  if (ast.lhs) result = `${result} (${stringifyAST(ast.lhs)})`;
-  if (ast.rhs) result = `${result} (${stringifyAST(ast.rhs)})`;
-  return result;
-};
-
-export const stringifyASTList = (list: AbstractSyntaxTree[]): string => list.map(stringifyAST).join("; ");

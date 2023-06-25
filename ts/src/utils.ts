@@ -4,6 +4,14 @@ export function assert(condition: any, msg?: string): asserts condition {
   }
 }
 
+export const omit = <T extends {}, K extends string>(obj: T, keys: K[]): Omit<T, K> => {
+  return Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as K))) as Omit<T, K>;
+};
+
+export const pick = <T extends {}, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> => {
+  return Object.fromEntries(Object.entries(obj).filter(([key]) => keys.includes(key as K))) as Pick<T, K>;
+};
+
 export class Iterator<T> {
   constructor(private generator: Generator<T>) {}
 
