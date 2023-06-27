@@ -296,3 +296,49 @@ const parseFile = async (_path: string, base = "."): Promise<ConsumeParsingResul
   // }
   return [[], errors];
 };
+
+/*
+Parse module:
+
+input:
+1. path to the module
+2. optional base of path.
+
+output: 
+1. module dictionary, where each value has:
+  1. list of imports, that are keys in the module dict
+  2. list of exported names (untyped)
+  3. list of external names (untyped)
+2. errors that occured during parsing
+
+instructions:
+1. concatenate path with base
+2. check if resulting path a folder or a file
+3. if it is a folder - return an error
+4. read file's content as string
+5. parse by calling a parseStringToAST with parameters:
+  1. source to parse (file's content)
+  2. index at which to start (0).
+  3. scope, which defines statements and operstors like "import", "export", "external":
+6. assert that result has only one top level children
+7. asseet that result's child is "sequence" operator
+8. extract "sequence"'s children as "statements".
+9. assert that "statements" only include single "import", "export", "external" statements
+10. for each statement do:
+  1. if it's import:
+    1. assert its first child is single string
+    2. assert its second child has a single single child
+    3. if there is a third child, assert it has a single child
+    4. parse imported module, using path defined by first child
+    5. merge module dictionaries.
+    6. add import to the list of imports
+  2. if it's export:
+    1. assert its first child is single identifier
+    2. if there is a second child, assert it is a single child
+    3. add export to the list of exports
+  3. if it's external:
+    1. assert its first child is single identifier
+    2. if there are second and third children, assert they have a single child
+    3. add external to the list of externals
+11. return module dictionaries and errors.
+*/
