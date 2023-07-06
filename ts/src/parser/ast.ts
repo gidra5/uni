@@ -13,6 +13,7 @@ import {
 } from "./types.js";
 
 /* 
+TODO: outdated
 Pratt's Parsing algorithm:
 
 Input: 
@@ -86,7 +87,7 @@ export const parseTokensToAST = (
   //skip possible whitespace prefix
   {
     const token = src[index];
-    if (token && (token.type === "newline" || token.type === "whitespace")) {
+    if (token && token.type === "newline") {
       index++;
     }
   }
@@ -121,7 +122,7 @@ export const parseTokensToAST = (
     //skip possible whitespace prefix
     {
       const token = src[index];
-      if (token && (token.type === "newline" || token.type === "whitespace")) {
+      if (token && token.type === "newline") {
         index++;
       }
     }
@@ -180,6 +181,17 @@ export const parseStringToAST = (src: string, i: number, scope: Scope): ConsumeP
 
   return [ast, [...errors, ..._errors]];
 };
+
+export const stringifyFST = (item: FlatSyntaxTree): string => {
+  // item.
+  if (item.type === "operator" && item.children.length > 0)
+    return `${item.id} ${item.children
+      .map((child) => `(${child.children.map(stringifyAST).join(" ")}):${child.separatorIndex}`)
+      .join(" ")}`;
+  if (item.type === "operator") return `${item.token.src}`;
+  return stringifyToken(item);
+};
+export const stringifyFSTList = (list: FlatSyntaxTree[]): string => list.map(stringifyFST).join("; ");
 
 export const stringifyASTItem = (item: AbstractSyntaxTree["item"]): string => {
   if (item.type === "operator" && item.children.length > 0)

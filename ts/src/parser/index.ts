@@ -7,20 +7,21 @@ import {
   Scope,
   FlatSyntaxTree,
   ConsumeParsingResult,
+  Token,
 } from "./types";
 import fs from "node:fs/promises";
-import { assert, omit, pick } from "../utils";
+import { omit, pick } from "../utils";
 
 const blockScope = (inner: (outer: Scope) => Scope): Scope => ({
   sequence: {
     leadingTokens: [";", "\n"],
     separators: [{ tokens: [";", "\n"], repeats: [0, Infinity], scope: inner }],
-    precedence: [1, null],
+    precedence: [null, null],
   },
 });
 
 const bindingScope: Scope = {
-  define: { leadingTokens: [":="], separators: [], precedence: [Infinity, 1] },
+  bind: { leadingTokens: [":="], separators: [], precedence: [Infinity, 1] },
   mutate: { leadingTokens: ["="], separators: [], precedence: [Infinity, 1] },
 };
 
@@ -72,7 +73,7 @@ const exprScope: Scope = {
 const commentsScope: Scope = {
   comment: {
     leadingTokens: ["//"],
-    separators: [{ tokens: ["\n"], repeats: [1, 1] }],
+    separators: [{ tokens: ["\n"], repeats: [1, 1], scope: () => ({}) }],
     precedence: [null, null],
   },
   multilineComment: {
@@ -83,40 +84,40 @@ const commentsScope: Scope = {
 };
 const topLevelScope: Scope = {
   import: {
-    leadingTokens: ["import"],
+    leadingTokens: ["import", "use"],
     separators: [
-      { tokens: ["with"], repeats: [0, 1] },
-      { tokens: ["as"], repeats: [1, 1] },
+      { tokens: ["as"], repeats: [1, 1], scope: () => pick(exprScope, ["block"]) },
+      { tokens: ["with"], repeats: [0, 1], scope: () => pick(exprScope, ["block"]) },
     ],
     precedence: [null, 1],
   },
   external: {
     leadingTokens: ["external"],
     separators: [
-      { tokens: [":"], repeats: [0, 1] },
-      { tokens: ["="], repeats: [0, 1] },
+      { tokens: [":"], repeats: [0, 1], scope: () => pick(exprScope, ["block"]) },
+      { tokens: ["as"], repeats: [0, 1], scope: () => pick(exprScope, ["block"]) },
+      { tokens: ["="], repeats: [0, 1], scope: () => pick(exprScope, ["block"]) },
     ],
     precedence: [null, 1],
   },
   export: {
-    leadingTokens: ["export"],
-    separators: [{ tokens: ["as", "="], repeats: [0, 1] }],
+    leadingTokens: ["export", "protected"],
+    separators: [{ tokens: ["="], repeats: [0, 1], scope: () => pick(exprScope, ["block"]) }],
     precedence: [null, 1],
   },
 };
 const scope: Scope = {
-  ...commentsScope,
   ...blockScope(() => omit(scope, ["sequence"])),
   ...topLevelScope,
-  ...pick(bindingScope, ["define"]),
+  ...pick(bindingScope, ["bind"]),
 };
 
-const expand = (tree: FlatSyntaxTree): [expanded: AbstractSyntaxTree, errors: ParsingError[]] => {
+const expandTree = (tree: FlatSyntaxTree): ConsumeParsingResult<AbstractSyntaxTree> => {
   const errors: ParsingError[] = [];
-  const result: AbstractSyntaxTree = { item: { type: "whitespace", src: " " } };
+  const result: AbstractSyntaxTree = { item: { type: "newline", src: "\n" } };
 
   if (tree.lhs) {
-    const [expanded, _errors] = expand(tree.lhs);
+    const [expanded, _errors] = expandTree(tree.lhs);
     result.lhs = expanded;
     errors.push(..._errors);
   }
@@ -128,7 +129,7 @@ const expand = (tree: FlatSyntaxTree): [expanded: AbstractSyntaxTree, errors: Pa
       const [asts, errors] = parseTokensToASTs(child.children, 0, scope);
       const _children: AbstractSyntaxTree[] = [];
       for (const ast of asts) {
-        const [expanded, _errors] = expand(ast);
+        const [expanded, _errors] = expandTree(ast);
         _children.push(expanded);
         errors.push(..._errors);
       }
@@ -141,7 +142,7 @@ const expand = (tree: FlatSyntaxTree): [expanded: AbstractSyntaxTree, errors: Pa
   }
 
   if (tree.rhs) {
-    const [expanded, _errors] = expand(tree.rhs);
+    const [expanded, _errors] = expandTree(tree.rhs);
     result.rhs = expanded;
     errors.push(..._errors);
   }
@@ -149,152 +150,29 @@ const expand = (tree: FlatSyntaxTree): [expanded: AbstractSyntaxTree, errors: Pa
   return [result, errors];
 };
 
-type Expression = unknown;
-type ModuleExports = Record<string, Expression>;
-type ModuleSyntaxTreeItem =
-  | { type: "import"; from: string; with?: Expression; alias: string }
-  | { type: "external"; alias: string }
-  | { type: "export"; alias: string; value?: Expression };
-type ModuleSyntaxTree = ModuleSyntaxTreeItem[];
-type Module = {
-  externals: { alias: string; type: Expression }[];
-  imports: { module: string; with: Expression }[];
-  exports: ModuleExports;
-  source: string;
-};
-// export const parse = (src: string) => {
-//   const [ast, errors] = parseStringToAST(src, 0, scope);
-//   const moduleSyntaxTree = parseModule(ast);
-//   const module: ModuleExports = {};
-//   const result: AbstractSyntaxTree[] = [];
+export const expandTrees = (ast: FlatSyntaxTree[]): ConsumeParsingResult<AbstractSyntaxTree[]> => {
+  const errors: ParsingError[] = [];
+  const result: AbstractSyntaxTree[] = [];
 
-//   for (const item of ast) {
-//     const [expanded, _errors] = expand(item);
-//     result.push(expanded);
-//     errors.push(..._errors);
-//   }
-
-//   return [result, errors];
-// };
-
-const parseModule = (src: string): ConsumeParsingResult<ModuleSyntaxTree> => {
-  const [ast, errors] = parseStringToAST(src, 0, scope);
-  const items: ModuleSyntaxTree = [];
-
-  for (const astItem of ast) {
-    if (astItem.item.type === "operator") {
-      switch (astItem.item.id) {
-        case "sequence": {
-          assert(astItem.lhs, "sequence item must have lhs");
-          const { item, lhs } = astItem;
-
-          if (lhs.item.type === "operator") {
-            switch (lhs.item.id) {
-              case "import":
-              case "export":
-              case "external": {
-                items.push();
-              }
-              case "multilineComment":
-              case "comment": {
-                continue;
-              }
-              default: {
-                errors.push({ message: "Unexpected operator" });
-              }
-            }
-          } else {
-            errors.push({ message: "Unexpected token" });
-          }
-          item.children[0].children;
-          for (const astItem of item.children[0].children) {
-            if (astItem.type === "operator") {
-              switch (astItem.id) {
-                case "sequence": {
-                  assert(astItem.lhs, "sequence item must have lhs");
-                  const { item, lhs } = astItem;
-
-                  if (lhs.item.type === "operator") {
-                    switch (lhs.item.id) {
-                      case "import":
-                      case "export":
-                      case "external": {
-                        items.push();
-                      }
-                      case "multilineComment":
-                      case "comment": {
-                        continue;
-                      }
-                      default: {
-                        errors.push({ message: "Unexpected operator" });
-                      }
-                    }
-                  } else {
-                    errors.push({ message: "Unexpected token" });
-                  }
-                }
-                case "import":
-                case "export":
-                case "external": {
-                  items.push();
-                }
-                case "multilineComment":
-                case "comment": {
-                  continue;
-                }
-                default: {
-                  errors.push({ message: "Unexpected operator" });
-                }
-              }
-            } else {
-              errors.push({ message: "Unexpected token" });
-            }
-          }
-        }
-        case "import":
-        case "export":
-        case "external": {
-          items.push();
-        }
-        case "multilineComment":
-        case "comment": {
-          continue;
-        }
-        default: {
-          errors.push({ message: "Unexpected operator" });
-        }
-      }
-    } else {
-      errors.push({ message: "Unexpected token" });
-    }
+  for (const item of ast) {
+    const [expanded, _errors] = expandTree(item);
+    result.push(expanded);
+    errors.push(..._errors);
   }
 
-  return [[], errors];
+  return [result, errors];
 };
 
-const modules: Record<string, Module> = {};
-
-const loadModule = async (name: string): Promise<Module> => {
-  return { exports: {}, externals: [], imports: [], source: "" };
-};
-const parseFile = async (_path: string, base = "."): Promise<ConsumeParsingResult<unknown>> => {
-  const file = await fs.readFile(path.join(base, _path));
-  const src = file.toString();
-  const [moduleSyntaxTree, errors] = parseModule(src);
-  const exports: ModuleExports = {};
-
-  // for (const item of moduleSyntaxTree) {
-  //   if (item.type === "export") exports[item.alias] = item.value;
-  //   if (item.type === "import") {
-  //     if (item.from in modules) continue;
-  //     if (item.from.startsWith("/registry")) {
-  //       modules[item.from] = await loadModule(item.from.substring("/registry".length));
-  //     }
-
-  //     const parsed = await parseFile(path.join(base, item.from));
-  //   }
-  // }
-  return [[], errors];
+type Expression = AbstractSyntaxTree;
+type External = { alias: string; type?: Expression; pattern?: Expression; value?: Expression };
+type Import = { module: string; dependency: boolean; with?: Expression; pattern: Expression };
+type Export = { protected: boolean } & ({ name: string } | { pattern: Expression; value: Expression });
+type Private = { pattern: Expression; value: Expression };
+type Module = {
+  externals: External[];
+  imports: Import[];
+  exports: Export[];
+  privates: Private[];
 };
 
 /*
@@ -303,42 +181,250 @@ Parse module:
 input:
 1. path to the module
 2. optional base of path.
+2. preloaded registry of modules.
 
 output: 
-1. module dictionary, where each value has:
+1. registry, where each value has:
   1. list of imports, that are keys in the module dict
-  2. list of exported names (untyped)
-  3. list of external names (untyped)
-2. errors that occured during parsing
+  2. list of exports, which include:
+    1. protected or not
+    2. name or pattern and value
+  3. list of externals, which include:
+    1. name
+    2. optional type definition tokens
+    3. optional default value tokens
+    3. optional pattern tokens
+  3. list of privates, which include:
+    1. pattern
+    2. value
+2. errors that occurred during parsing
 
 instructions:
 1. concatenate path with base
-2. check if resulting path a folder or a file
+2. check if resulting path is a folder or a file
 3. if it is a folder - return an error
 4. read file's content as string
 5. parse by calling a parseStringToAST with parameters:
   1. source to parse (file's content)
   2. index at which to start (0).
-  3. scope, which defines statements and operstors like "import", "export", "external":
+  3. scope, which defines comments
+6. filter out comments, leaving only tokens
+5. parse by calling a parseTokensToASTs with parameters:
+  1. source to parse (file's content)
+  2. index at which to start (0).
+  3. scope, which defines statements and operators like "import", "export", "external"
 6. assert that result has only one top level children
-7. asseet that result's child is "sequence" operator
+7. assert that result's child is "sequence" operator
 8. extract "sequence"'s children as "statements".
 9. assert that "statements" only include single "import", "export", "external" statements
 10. for each statement do:
-  1. if it's import:
+  1. if it's import or use:
     1. assert its first child is single string
-    2. assert its second child has a single single child
-    3. if there is a third child, assert it has a single child
     4. parse imported module, using path defined by first child
     5. merge module dictionaries.
     6. add import to the list of imports
-  2. if it's export:
-    1. assert its first child is single identifier
-    2. if there is a second child, assert it is a single child
-    3. add export to the list of exports
+  2. if it's export or protected (export):
+    1. if its first child used "as" separator - assert rhs is identifier
+    2. add to the list of exports
   3. if it's external:
-    1. assert its first child is single identifier
-    2. if there are second and third children, assert they have a single child
-    3. add external to the list of externals
+    1. assert first child is single identifier
+    2. add external to the list of externals
+  4. if it's private (regular declaration):
+    2. add external to the list of private defs
 11. return module dictionaries and errors.
 */
+
+const loadModuleByName = async (name: string): Promise<Module | null> => {
+  return { exports: [], externals: [], imports: [], privates: [] };
+};
+export const loadDependencyModule = async (name: string): Promise<ConsumeParsingResult<Module | null>> => {
+  const module = await loadModuleByName(name);
+
+  if (!module) return [null, [{ message: "could not resolve dependency" }]];
+
+  return [module, []];
+};
+
+export const expandModule = async (
+  module: Module,
+  registry: Record<string, Module> = {}
+): Promise<ConsumeParsingResult<Record<string, Module>>> => {
+  const { imports } = module;
+  const errors: ParsingError[] = [];
+  for (const { dependency, module } of imports) {
+    if (module in registry) continue;
+    if (dependency) {
+      const [_module, _errors] = await loadDependencyModule(module);
+      errors.push(..._errors);
+      if (_module) registry[module] = _module;
+    } else {
+      const [_registry, _errors] = await parseFile({ path: module, registry });
+      errors.push(..._errors);
+      registry = _registry;
+    }
+  }
+  return [registry, errors];
+};
+
+export const parseFile = async ({
+  path: _path,
+  base = ".",
+  registry = {},
+}: {
+  path: string;
+  base?: string;
+  registry?: Record<string, Module>;
+}): Promise<ConsumeParsingResult<Record<string, Module>>> => {
+  const resolvedPath = path.resolve(path.join(base, _path));
+  if (!(await fs.lstat(resolvedPath)).isFile()) return [registry, [{ message: "path does not refer to a file" }]];
+
+  const src = await fs.readFile(resolvedPath, "utf-8");
+  const [module, errors] = parseFileContent(src);
+  return [{ ...registry, [_path]: module }, errors];
+};
+
+export const parseFileContent = (src: string): ConsumeParsingResult<Module> => {
+  const module: Module = { exports: [], externals: [], imports: [], privates: [] };
+  const [_cleaned] = parseStringToAST(src, 0, commentsScope);
+  const cleaned = _cleaned
+    .filter((item): item is typeof item & { item: Token } => item.item.type !== "operator")
+    .map(({ item }) => item);
+  const [_ast, errors] = parseTokensToASTs(cleaned, 0, scope);
+  if (_ast.length < 1) return [module, [...errors, { message: "module is empty" }]];
+
+  const ast = _ast.filter(
+    (item): item is typeof item & { item: { type: "operator" } } => item.item.type === "operator"
+  );
+  if (ast.length < 1) return [module, [...errors, { message: "invalid module definition" }]];
+  if (ast.length > 3) return [module, [...errors, { message: "invalid module definition" }]];
+
+  const [expanded, _errors] = expandTrees(ast);
+  errors.push(..._errors);
+  const asts = expanded.flatMap((child) => {
+    if (child.item.type !== "operator") return [];
+    if (child.item.id === "sequence") {
+      return child.item.children.flatMap((child) => {
+        return child.children.filter(
+          (item): item is typeof item & { item: { type: "operator" } } => item.item.type === "operator"
+        );
+      });
+    }
+    return [child as typeof child & { item: { type: "operator" } }];
+  });
+
+  for (const ast of asts) {
+    const { item } = ast;
+    if (item.id === "export" && ast.rhs) {
+      const {
+        children: [child],
+        token,
+      } = item;
+      if (!child) {
+        if (ast.rhs.item.type !== "identifier") {
+          errors.push({ message: "Must export identifier" });
+          continue;
+        }
+        module.exports.push({ protected: token.src === "protected", name: ast.rhs.item.src });
+      }
+      if (child.children.length !== 1) errors.push({ message: "Must have exactly one child" });
+      module.exports.push({ protected: token.src === "protected", pattern: child.children[0], value: ast.rhs });
+    }
+    if (item.id === "bind" && ast.rhs && ast.lhs) {
+      module.privates.push({ pattern: ast.lhs, value: ast.rhs });
+    }
+    if (item.id === "import" && ast.rhs) {
+      const {
+        children: [child1, child2],
+        token,
+      } = item;
+      if (child1.children.length !== 1) errors.push({ message: "Must have exactly one child" });
+      if (child1.children[0].item.type !== "string") {
+        errors.push({ message: "Module path must be string" });
+        continue;
+      }
+      const modulePath = child1.children[0].item.value;
+      const dependency = token.src === "use";
+      if (!child2) {
+        module.imports.push({ module: modulePath, pattern: ast.rhs, dependency });
+        continue;
+      }
+      if (child2.children.length !== 1) errors.push({ message: "Must have exactly one child" });
+      module.imports.push({ module: modulePath, pattern: child2.children[0], with: ast.rhs, dependency });
+    }
+
+    if (item.id === "external" && ast.rhs) {
+      const { children } = item;
+      if (children.length === 0) {
+        if (ast.rhs.item.type !== "identifier") {
+          errors.push({ message: "External name must be identifier" });
+          continue;
+        }
+        module.externals.push({ alias: ast.rhs.item.src });
+      }
+      if (children.length === 1) {
+        const [child] = children;
+        if (child.children.length !== 1) {
+          errors.push({ message: "External name must be single child" });
+        }
+        if (child.children[0].item.type !== "identifier") {
+          errors.push({ message: "External name must be identifier" });
+          continue;
+        }
+        const alias = child.children[0].item.src;
+        if (child.separatorToken.src === ":") module.externals.push({ alias, type: ast.rhs });
+        if (child.separatorToken.src === "as") module.externals.push({ alias, pattern: ast.rhs });
+        if (child.separatorToken.src === "=") module.externals.push({ alias, value: ast.rhs });
+      }
+      if (children.length === 2) {
+        const [child1, child2] = children;
+        if (child1.children.length !== 1) {
+          errors.push({ message: "External name must be single child" });
+        }
+        if (child1.children[0].item.type !== "identifier") {
+          errors.push({ message: "External name must be identifier" });
+          continue;
+        }
+        const alias = child1.children[0].item.src;
+        const external: External = { alias };
+        if (child1.separatorToken.src === ":") {
+          if (child2.children.length !== 1) {
+            errors.push({ message: "External type must be single child" });
+          }
+          external.type = child2.children[0];
+        }
+        if (child1.separatorToken.src === "as") {
+          if (child2.children.length !== 1) {
+            errors.push({ message: "External pattern must be single child" });
+          }
+          external.pattern = child2.children[0];
+        }
+        if (child1.separatorToken.src === "=") {
+          if (child2.children.length !== 1) {
+            errors.push({ message: "External value must be single child" });
+          }
+          external.value = child2.children[0];
+        }
+        if (child2.separatorToken.src === "as") external.pattern = ast.rhs;
+        if (child2.separatorToken.src === "=") external.value = ast.rhs;
+        module.externals.push(external);
+      }
+      if (children.length === 3) {
+        const [child1, child2, child3] = children;
+        if (child1.children.length !== 1) {
+          errors.push({ message: "External name must be single child" });
+        }
+        if (child1.children[0].item.type !== "identifier") {
+          errors.push({ message: "External name must be identifier" });
+          continue;
+        }
+        const alias = child1.children[0].item.src;
+        const type = child2.children[0];
+        const pattern = child3.children[0];
+        const value = ast.rhs;
+        module.externals.push({ alias, value, pattern, type });
+      }
+    }
+  }
+
+  return [module, errors];
+};

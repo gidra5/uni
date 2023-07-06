@@ -1,6 +1,6 @@
 import { describe, expect } from "vitest";
 import { it } from "@fast-check/vitest";
-import { parse, stringifyASTList } from "../src/parser/index.js";
+import { stringifyASTList } from "../src/parser/ast";
 
 describe("parse-stringify", () => {
   const testCase = (src, out, expectedErrors = []) =>

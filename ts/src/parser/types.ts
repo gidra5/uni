@@ -4,6 +4,9 @@ export type SeparatorDefinition = {
   repeats: [min: number, max: number];
   insertIfMissing?: boolean;
   scope?: ScopeGenerator;
+
+  /** synchronized*/
+  parse?: (src: TokenGroupSeparatorChild[], i: number, scope: Scope) => ParsingResult<TokenGroupSeparatorChild>;
 };
 export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {
@@ -14,9 +17,9 @@ export type TokenGroupDefinition = {
 export type Scope = Record<string, TokenGroupDefinition>;
 
 export type Token =
-  | { type: "identifier" | "whitespace" | "newline"; src: string }
+  | { type: "identifier" | "newline"; src: string }
   | { type: "number"; src: string; value?: number }
-  | { type: "string"; src: string; value?: string };
+  | { type: "string"; src: string; value: string };
 export type TokenGroup = { token: Token; children: TokenGroupSeparator[] };
 export type TokenGroupInstance = { id: string; type: "operator" } & TokenGroup;
 export type TokenGroupSeparatorChild = TokenGroupInstance | Token;

@@ -1,17 +1,20 @@
 import { describe, expect } from "vitest";
 import { it } from "@fast-check/vitest";
-import { Scope, FlatSyntaxTree, TokenGroupSeparatorChildren } from "../src/parser/types";
-import { parseGroupsToAST, parseStringToAST } from "../src/parser/ast";
+import { Scope, FlatSyntaxTree, TokenGroupSeparatorChild } from "../src/parser/types";
+import { parseTokensToAST, parseStringToAST } from "../src/parser/ast";
+type TokenGroupSeparatorChildren = TokenGroupSeparatorChild[];
 
 describe("parseOperatorsToAST", () => {
   it("should parse a simple expression", () => {
     const scope: Scope = {
       "+": {
-        separators: [{ tokens: ["+"], repeats: [1, 1] }],
+        leadingTokens: ["+"],
+        separators: [],
         precedence: [1, 2],
       },
       "*": {
-        separators: [{ tokens: ["*"], repeats: [1, 1] }],
+        leadingTokens: ["*"],
+        separators: [],
         precedence: [3, 4],
       },
     };
@@ -28,7 +31,7 @@ describe("parseOperatorsToAST", () => {
       rhs: { item: { type: "number", src: "3" } },
     };
 
-    const result = parseGroupsToAST(src, 0, 0, scope);
+    const result = parseTokensToAST(src, 0, 0, scope);
 
     expect(result).toEqual([3, expected, []]);
   });
@@ -36,11 +39,13 @@ describe("parseOperatorsToAST", () => {
   it("should parse an expression with multiple operators", () => {
     const scope: Scope = {
       "+": {
-        separators: [{ tokens: ["+"], repeats: [1, 1] }],
+        leadingTokens: ["+"],
+        separators: [],
         precedence: [1, 2],
       },
       "*": {
-        separators: [{ tokens: ["*"], repeats: [1, 1] }],
+        leadingTokens: ["*"],
+        separators: [],
         precedence: [3, 4],
       },
     };
@@ -63,7 +68,7 @@ describe("parseOperatorsToAST", () => {
       },
     };
 
-    const result = parseGroupsToAST(src, 0, 0, scope);
+    const result = parseTokensToAST(src, 0, 0, scope);
 
     expect(result).toEqual([5, expected, []]);
   });
@@ -71,11 +76,13 @@ describe("parseOperatorsToAST", () => {
   it("should handle errors when encountering invalid operator placement", () => {
     const scope: Scope = {
       "+": {
-        separators: [{ tokens: ["+"], repeats: [1, 1] }],
+        leadingTokens: ["+"],
+        separators: [],
         precedence: [1, 2],
       },
       "*": {
-        separators: [{ tokens: ["*"], repeats: [1, 1] }],
+        leadingTokens: ["*"],
+        separators: [],
         precedence: [3, 4],
       },
     };
@@ -91,7 +98,7 @@ describe("parseOperatorsToAST", () => {
 
     const errors = [{ message: "infix operator without left operand" }];
 
-    const result = parseGroupsToAST(src, 0, 0, scope);
+    const result = parseTokensToAST(src, 0, 0, scope);
 
     expect(result).toEqual([0, expected, errors]);
   });
@@ -99,12 +106,13 @@ describe("parseOperatorsToAST", () => {
   it("should parse a string with complex expressions one level deep", () => {
     const scope: Scope = {
       "+": {
-        separators: [{ tokens: ["+"], repeats: [1, 1] }],
+        leadingTokens: ["+"],
+        separators: [],
         precedence: [1, 2],
       },
       if: {
+        leadingTokens: ["if"],
         separators: [
-          { tokens: ["if"], repeats: [1, 1] },
           { tokens: [":"], repeats: [1, 1] },
           { tokens: ["else"], repeats: [0, 1] },
         ],
@@ -127,11 +135,8 @@ describe("parseOperatorsToAST", () => {
                 separatorToken: { type: "identifier", src: ":" },
                 children: [
                   { type: "identifier", src: "not" },
-                  { type: "whitespace", src: " " },
                   { type: "identifier", src: "x" },
-                  { type: "whitespace", src: " " },
                   { type: "identifier", src: ">" },
-                  { type: "whitespace", src: " " },
                   { type: "number", src: "4", value: 4 },
                 ],
               },
@@ -160,11 +165,13 @@ describe("parseOperatorsToAST", () => {
 describe("parseStringToAST", () => {
   const scope: Scope = {
     "+": {
-      separators: [{ tokens: ["+"], repeats: [1, 1] }],
+      leadingTokens: ["+"],
+      separators: [],
       precedence: [1, 2],
     },
     "*": {
-      separators: [{ tokens: ["*"], repeats: [1, 1] }],
+      leadingTokens: ["*"],
+      separators: [],
       precedence: [3, 4],
     },
   };

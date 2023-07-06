@@ -11,7 +11,7 @@ Input:
 Output:
 1. Final index after parsing "token"
 2. parsed "token"
-3. List of errors that occured during parsing
+3. List of errors that occurred during parsing
 
 Instructions: 
 1. if current char is `"` - parse string
@@ -71,6 +71,13 @@ export const parseToken: Parser<Token> = (src, i) => {
   let index = i;
   const errors: ParsingError[] = [];
 
+  if (/\s/.test(src.charAt(index))) {
+    const start = index;
+    while (/\s/.test(src.charAt(index))) index++;
+    const _src = src.substring(start, index);
+    if (_src.includes("\n")) return [index, { type: "newline", src: _src }, errors];
+  }
+
   if (src.charAt(index) === '"') {
     const start = index;
     index++;
@@ -115,14 +122,6 @@ export const parseToken: Parser<Token> = (src, i) => {
     }
 
     return [index, { type: "number", src: src.substring(start, index), value: Number(value) }, errors];
-  }
-
-  if (/\s/.test(src.charAt(index))) {
-    const start = index;
-    while (/\s/.test(src.charAt(index))) index++;
-    const _src = src.substring(start, index);
-
-    return [index, { type: _src.includes("\n") ? "newline" : "whitespace", src: _src }, errors];
   }
 
   if (/[_\w]/.test(src.charAt(index))) {
@@ -171,6 +170,6 @@ export const parseTokens = (src: string, i: number): ConsumeParsingResult<Token[
 };
 
 export const stringifyToken = (item: Token): string => {
-  if (item.type === "newline" || item.type === "whitespace") return item.type;
+  if (item.type === "newline") return item.type;
   return item.src;
 };

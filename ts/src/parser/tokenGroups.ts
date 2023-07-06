@@ -20,7 +20,7 @@ Output:
   1. sequence of children (nested operators and characters before respective separator)
   2. separator's index in definition
   2. separator's token
-3. List of errors that occured during parsing
+3. List of errors that occurred during parsing
 
 Instructions: 
 
@@ -78,15 +78,10 @@ export const getLeadingSeparators = (separators: [item: SeparatorDefinition, i: 
 
 const identity = <T>(x: T) => x;
 const matchingToken = (token: string): Token =>
-  " " === token
-    ? { type: "whitespace", src: token }
-    : "\n" === token
-    ? { type: "newline", src: token }
-    : { type: "identifier", src: token };
+  "\n" === token ? { type: "newline", src: token } : { type: "identifier", src: token };
 const matchToken = (sourceToken?: TokenGroupSeparatorChild) => (token: string) =>
   !!sourceToken &&
-  ((sourceToken.type === "whitespace" && " " === token) ||
-    (sourceToken.type === "newline" && "\n" === token) ||
+  ((sourceToken.type === "newline" && "\n" === token) ||
     (sourceToken.type === "identifier" && sourceToken.src === token));
 const matchTokens = (sourceToken: TokenGroupSeparatorChild, tokens: string[]): sourceToken is Token =>
   tokens.some(matchToken(sourceToken));
@@ -128,7 +123,7 @@ export const parseTokensToGroup = (
       if (!src[index]) {
         // reset index
         index = lastSeparatorIndex;
-        if (separatorRepeats >= leadingSeparators[0][0].repeats[0]) {
+        if (separatorRepeats >= leadingSeparators[0][0].repeats[0] || leadingSeparators.length > 1) {
           separatorRepeats = 0;
           separatorList.splice(0, 1);
           break;
@@ -136,24 +131,24 @@ export const parseTokensToGroup = (
 
         // sync
         // fill children up to head separator
-        const matchedIndex = leadingSeparators.length - 1;
-        const separatorListHeadDefinition = separatorList[matchedIndex][0];
+        const separatorListHeadItem = separatorList[0];
+        const separatorListHeadDefinition = separatorListHeadItem[0];
         const separatorDefinition: SeparatorDefinition = {
           ...separatorListHeadDefinition,
           repeats: [separatorListHeadDefinition.repeats[0] - separatorRepeats, separatorListHeadDefinition.repeats[1]],
         };
+        const { tokens } = separatorListHeadDefinition;
 
         if (separatorListHeadDefinition.insertIfMissing) {
           // pretend that we matched head separator enough times already
-          separatorList.splice(0, matchedIndex + 1);
+          separatorList.splice(0, 1);
           separatorRepeats = 0;
-          children.push(...matchingSeparators([[separatorDefinition, separatorList[0][1]]]));
-          errors.push({ message: `Missing one of separators: ${separatorDefinition.tokens.join(", ")}` });
+          children.push(...matchingSeparators([[separatorDefinition, separatorListHeadItem[1]]]));
+          errors.push({ message: `Missing one of separators: ${tokens.join(", ")}` });
           break;
         }
 
-        // do not try to sync with next separator - just return current state
-        const { tokens } = separatorListHeadDefinition;
+        // do not try to sync with next separator - just fill children and return current state
         children.push(...matchingSeparators(separatorList));
         errors.push({ message: `Missing one of separators: ${tokens.join(", ")}` });
         return [index, { token: leadingToken, children }, errors];
@@ -171,19 +166,23 @@ export const parseTokensToGroup = (
 
         index++;
         lastSeparatorIndex = index;
-        if (matchedIndex !== 0) separatorRepeats = 0;
-        separatorList.splice(0, matchedIndex);
+        if (matchedIndex !== 0) {
+          separatorRepeats = 0;
+          separatorList.splice(0, matchedIndex);
+          index = lastSeparatorIndex;
+          break;
+        }
 
         {
           const token = separatorChildren.pop();
-          if (token && token.type !== "newline" && token.type !== "whitespace") {
+          if (token && token.type !== "newline") {
             separatorChildren.push(token);
           }
         }
 
         {
           const token = separatorChildren.shift();
-          if (token && token.type !== "newline" && token.type !== "whitespace") {
+          if (token && token.type !== "newline") {
             separatorChildren.unshift(token);
           }
         }
@@ -198,18 +197,15 @@ export const parseTokensToGroup = (
         }
         break;
       } else {
-        const [top] = leadingSeparators[leadingSeparators.length - 1];
-        const _scope = (top.scope ?? identity)(scope);
+        const [leading] = leadingSeparators[0];
+        const _scope = (leading.scope ?? identity)(scope);
 
         // synchronized
-        const [nextIndex, matchedToken, _errors] = parseTokensToGroupScope(src, index, _scope);
+        const [nextIndex, matchedToken, _errors] = (leading.parse ?? parseTokensToGroupScope)(src, index, _scope);
         index = nextIndex;
         errors.push(..._errors);
 
-        // do not make decision what operator it is if it has no children
-        if (matchedToken.type === "operator" && matchedToken.children.length === 0)
-          separatorChildren.push(matchedToken.token);
-        else separatorChildren.push(matchedToken);
+        separatorChildren.push(matchedToken);
       }
     }
   }

@@ -11,10 +11,8 @@ test("should parse tokens to operator with correct structure", () => {
   ];
 
   const operatorDefinition: TokenGroupDefinition = {
-    separators: [
-      { tokens: [" "], repeats: [1, 1] },
-      { tokens: ["\n"], repeats: [0, 1] },
-    ],
+    leadingTokens: [" "],
+    separators: [{ tokens: ["\n"], repeats: [0, 1] }],
     precedence: [null, null],
   };
 
@@ -47,10 +45,8 @@ test("should parse tokens to operator with correct structure", () => {
   ];
 
   const operatorDefinition: TokenGroupDefinition = {
-    separators: [
-      { tokens: [" "], repeats: [1, 1] },
-      { tokens: ["\n"], repeats: [0, 1] },
-    ],
+    leadingTokens: [" "],
+    separators: [{ tokens: ["\n"], repeats: [0, 1] }],
     precedence: [null, null],
   };
 
@@ -91,8 +87,8 @@ test("parses if", () => {
   ];
 
   const operatorDefinition: TokenGroupDefinition = {
+    leadingTokens: ["if"],
     separators: [
-      { tokens: ["if"], repeats: [1, 1] },
       { tokens: [":"], repeats: [1, 1] },
       { tokens: ["else"], repeats: [0, 1] },
     ],
@@ -151,8 +147,8 @@ test("parses if with spaces", () => {
   ];
 
   const operatorDefinition: TokenGroupDefinition = {
+    leadingTokens: ["if"],
     separators: [
-      { tokens: ["if"], repeats: [1, 1] },
       { tokens: [":"], repeats: [1, 1] },
       { tokens: ["else"], repeats: [0, 1] },
     ],
@@ -205,7 +201,8 @@ test("parses infinite max repeating", () => {
   ];
 
   const operatorDefinition: TokenGroupDefinition = {
-    separators: [{ tokens: [","], repeats: [1, Infinity] }],
+    leadingTokens: [","],
+    separators: [{ tokens: [","], repeats: [0, Infinity] }],
     precedence: [1, 2],
   };
 
