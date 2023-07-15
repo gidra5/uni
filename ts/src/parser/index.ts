@@ -237,10 +237,16 @@ instructions:
 const loadModuleByName = async (name: string): Promise<Module | null> => {
   return { exports: [], externals: [], imports: [], privates: [] };
 };
-export const loadDependencyModule = async (name: string): Promise<ConsumeParsingResult<Module | null>> => {
+export const loadDependencyModule = async (
+  name: string
+): Promise<ConsumeParsingResult<Module>> => {
   const module = await loadModuleByName(name);
 
-  if (!module) return [null, [{ message: "could not resolve dependency" }]];
+  if (!module)
+    return [
+      { exports: [], externals: [], imports: [], privates: [] },
+      [{ message: "could not resolve dependency" }],
+    ];
 
   return [module, []];
 };
@@ -256,11 +262,11 @@ export const expandModule = async (
     if (dependency) {
       const [_module, _errors] = await loadDependencyModule(module);
       errors.push(..._errors);
-      if (_module) registry[module] = _module;
+      registry[module] = _module;
     } else {
-      const [_registry, _errors] = await parseFile({ path: module, registry });
+      const [_module, _errors] = await parseFile({ path: module });
       errors.push(..._errors);
-      registry = _registry;
+      registry[module] = _module;
     }
   }
   return [registry, errors];
@@ -269,18 +275,20 @@ export const expandModule = async (
 export const parseFile = async ({
   path: _path,
   base = ".",
-  registry = {},
 }: {
   path: string;
   base?: string;
-  registry?: Record<string, Module>;
-}): Promise<ConsumeParsingResult<Record<string, Module>>> => {
+}): Promise<ConsumeParsingResult<Module>> => {
   const resolvedPath = path.resolve(path.join(base, _path));
-  if (!(await fs.lstat(resolvedPath)).isFile()) return [registry, [{ message: "path does not refer to a file" }]];
+  if (!(await fs.lstat(resolvedPath)).isFile())
+    return [
+      { exports: [], externals: [], imports: [], privates: [] },
+      [{ message: "path does not refer to a file" }],
+    ];
 
   const src = await fs.readFile(resolvedPath, "utf-8");
   const [module, errors] = parseFileContent(src);
-  return [{ ...registry, [_path]: module }, errors];
+  return [module, errors];
 };
 
 export const parseFileContent = (src: string): ConsumeParsingResult<Module> => {
