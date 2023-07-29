@@ -1,0 +1,217 @@
+{
+  "main": {
+    "id": "698c8ddc71151d96",
+    "type": "split",
+    "children": [
+      {
+        "id": "065e67f302e21138",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "83ea39ba5a517676",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Syntax.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "60e654a0cdbd2110",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Mar 15, 2022.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "7c59b03538c67b52",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Aug 28, 2020.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ],
+        "currentTab": 2
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "ca71d8cce737da51",
+    "type": "split",
+    "children": [
+      {
+        "id": "5f3e13ecfe2b17ae",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7f81c61054560864",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "c1bdbb4e57c4cdcd",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "deec98b075365105",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "b5b8367a9383ff56",
+    "type": "split",
+    "children": [
+      {
+        "id": "e6f013ece55da4ab",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "55cdd3a6e0c4e48a",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Aug 28, 2020.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "66c7f5c0195deb90",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Aug 28, 2020.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "ffcf2246ded521fe",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "97f85e55c13e773a",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Aug 28, 2020.md"
+              }
+            }
+          },
+          {
+            "id": "e2293c23d297e6ef",
+            "type": "leaf",
+            "state": {
+              "type": "chatbot-view",
+              "state": {}
+            }
+          }
+        ],
+        "currentTab": 4
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "obsidian42-brat:BRAT": false,
+      "bmo-chatbot:Chatbot (Clear Conversation)": false
+    }
+  },
+  "active": "7c59b03538c67b52",
+  "lastOpenFiles": [
+    "Mar 15, 2022.md",
+    "Aug 28, 2020.md",
+    "Syntax.md",
+    "Design patterns.md",
+    "Syntax Tree.md",
+    "Token Tree.md",
+    "Programming Language.md",
+    "Pattern matching.md",
+    "Parser.md",
+    "Optimizations.md",
+    "Operators.md",
+    "Literals.md",
+    "Leaky abstraction.md",
+    "Iteration model.md",
+    "Run-time.md",
+    "REPL.md",
+    "Principles.md",
+    "Types.md",
+    "Values.md",
+    "Tokenizer.md",
+    "Zero-cost abstraction.md",
+    "Interpretation.md",
+    "Runtime cost ratio.md",
+    "Standart Library.md",
+    "Code organization.md",
+    "Composites.md",
+    "Push",
+    "rest",
+    "Untitled.canvas"
+  ]
+}
