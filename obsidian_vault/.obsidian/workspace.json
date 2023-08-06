@@ -37,7 +37,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Aug 28, 2020.md",
+                "file": "Types.md",
                 "mode": "source",
                 "source": false
               }
@@ -110,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Aug 28, 2020.md",
+                "file": "Types.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Aug 28, 2020.md",
+                "file": "Types.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Aug 28, 2020.md"
+                "file": "Types.md"
               }
             }
           },
@@ -184,8 +184,8 @@
   },
   "active": "7c59b03538c67b52",
   "lastOpenFiles": [
-    "Mar 15, 2022.md",
     "Aug 28, 2020.md",
+    "Mar 15, 2022.md",
     "Syntax.md",
     "Design patterns.md",
     "Syntax Tree.md",

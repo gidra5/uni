@@ -14,7 +14,8 @@ Primitives:
 3. `boolean`
 4. `symbol`
 
-Dynamic composites:
+Generic types:
 
-1. Array type with `[type, ...]`
-2. Dictionary type with `[label: type, ...]`
+`<label: constraint, ...> -> type expression`
+
+Dependant types
