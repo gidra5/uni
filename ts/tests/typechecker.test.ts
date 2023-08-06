@@ -5,6 +5,7 @@ import {
   PiFunctionTermSymbol,
   Term,
   UnitTermSymbol,
+  UniverseTermSymbol,
   VariableTermSymbol,
   equate,
   evaluate,
@@ -43,14 +44,22 @@ function application(f: Term, args: Term[]): Term {
   );
 }
 
+function checkBetaEq(term1: Term, term2: Term, lvl = 0): boolean {
+  return equate(lvl, evaluate(term1), evaluate(term2));
+}
+
+function checkInfer(ctx: Term[], term: Term, typeTerm: Term): boolean {
+  return checkBetaEq(inferType(ctx.length, ctx, term), typeTerm, ctx.length);
+}
+
 // Jest-style test for beta-convertibility
-function assertBetaEq(m: Term, n: Term): void {
-  expect(equate(0, evaluate(m), evaluate(n))).toBe(true);
+function assertBetaEq(term1: Term, term2: Term): void {
+  expect(checkBetaEq(term1, term2)).toBe(true);
 }
 
 // Jest-style test for beta-convertibility
 function assertInfer(ctx: Term[], term: Term, typeTerm: Term): void {
-  assertBetaEq(inferType(ctx.length, ctx, term), typeTerm);
+  expect(checkInfer(ctx, term, typeTerm)).toBe(true);
 }
 
 describe("Calculus of Constructions", () => {
@@ -178,7 +187,7 @@ describe("Calculus of Constructions", () => {
     assertInfer([], pair, pairTy);
   });
 
-  it.only("typesafe vectors", () => {
+  it("typesafe vectors", () => {
     // 1, 2, 3, 4 derived from zero and the successor function.
     const one: Term = application(succ, [zero]);
     const two: Term = application(succ, [one]);
@@ -300,10 +309,12 @@ describe("Calculus of Constructions", () => {
       vectOne,
       vectFour,
     ]);
+
+    checkInfer(vectCtx, zipped, { kind: UniverseTermSymbol });
     // If we attempt to zip two vectors of different lengths, the type checker
     // will produce an appropriate error message.
-    expect(() => inferType(0, vectCtx, zipped)).toThrowError(
-      `Want type ${t1}, got ${t2}: ${t3}`
-    );
+    expect(() =>
+      checkInfer(vectCtx, zipped, { kind: UniverseTermSymbol })
+    ).toThrowError(`Want type ${t1}, got ${t2}: ${t3}`);
   });
 });

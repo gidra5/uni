@@ -64,9 +64,9 @@ export function print(lvl: number, term: Term): string {
     case VariableTermSymbol:
       return term.index.toString();
     case UnitTermSymbol:
-      return "*";
+      return "()";
     case UniverseTermSymbol:
-      return "☐";
+      return "<>";
     default:
       throw new Error("Unknown term type");
   }
@@ -103,6 +103,8 @@ export function evaluate(term: Term): Term {
 }
 
 export function equate(lvl: number, t1: Term, t2: Term): boolean {
+  if (t1.kind !== t2.kind) return false;
+
   const plunge = (f: (n: Term) => Term, g: (n: Term) => Term) =>
     equate(
       lvl + 1,
@@ -112,22 +114,22 @@ export function equate(lvl: number, t1: Term, t2: Term): boolean {
 
   switch (t1.kind) {
     case FunctionTermSymbol:
-      if (t2.kind !== FunctionTermSymbol) return false;
+      if (t2.kind !== FunctionTermSymbol) return false; // redundant
       return plunge(t1.body, t2.body);
     case PiFunctionTermSymbol:
-      if (t2.kind !== PiFunctionTermSymbol) return false;
+      if (t2.kind !== PiFunctionTermSymbol) return false; // redundant
       return (
         equate(lvl, t1.paramType, t2.paramType) &&
         plunge(t1.returnType, t2.returnType)
       );
     case ApplicationTermSymbol:
-      if (t2.kind !== ApplicationTermSymbol) return false;
+      if (t2.kind !== ApplicationTermSymbol) return false; // redundant
       return equate(lvl, t1.func, t2.func) && equate(lvl, t1.arg, t2.arg);
     case AnnotationTermSymbol:
-      if (t2.kind !== AnnotationTermSymbol) return false;
+      if (t2.kind !== AnnotationTermSymbol) return false; // redundant
       return equate(lvl, t1.term, t2.term) && equate(lvl, t1.type, t2.type);
     case VariableTermSymbol:
-      return t1.index === (t2 as VariableTerm).index;
+      return t2.kind === VariableTermSymbol && t1.index === t2.index; // redundant
     case UnitTermSymbol:
     case UniverseTermSymbol:
       return t1.kind === t2.kind;
