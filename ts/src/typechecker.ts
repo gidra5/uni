@@ -41,9 +41,10 @@ export type Value =
   | FunctionTerm
   | PiFunctionTerm
   | VariableTerm
+  | ApplicationTerm
   | UnitTerm
   | UniverseTerm;
-export type Term = Value | ApplicationTerm | AnnotationTerm;
+export type Term = Value | AnnotationTerm;
 
 export function print(lvl: number, term: Term): string {
   switch (term.kind) {
@@ -72,7 +73,7 @@ export function print(lvl: number, term: Term): string {
   }
 }
 
-export function evaluate(term: Term): Term {
+export function evaluate(term: Term): Value {
   switch (term.kind) {
     case FunctionTermSymbol:
       return {
@@ -88,9 +89,9 @@ export function evaluate(term: Term): Term {
     case ApplicationTermSymbol:
       const func = evaluate(term.func);
       const arg = evaluate(term.arg);
-      return func.kind === FunctionTermSymbol
-        ? func.body(arg)
-        : { kind: ApplicationTermSymbol, func, arg };
+      if (func.kind !== FunctionTermSymbol)
+        return { kind: ApplicationTermSymbol, func, arg };
+      return evaluate(func.body(arg));
     case AnnotationTermSymbol:
       return evaluate(term.term);
     case VariableTermSymbol:
@@ -172,7 +173,7 @@ export function inferType(lvl: number, ctx: Term[], term: Term): Term {
   }
 }
 
-export function inferSort(lvl: number, ctx: Term[], a: Term): Term {
+export function inferSort(lvl: number, ctx: Term[], a: Term): Value {
   const ty = inferType(lvl, ctx, a);
   if (ty.kind === UnitTermSymbol || ty.kind === UniverseTermSymbol) {
     return ty;
@@ -180,7 +181,7 @@ export function inferSort(lvl: number, ctx: Term[], a: Term): Term {
   panic(lvl, a, "Want a sort, got");
 }
 
-export function checkType(lvl: number, ctx: Term[], t: Term, ty: Term): Term {
+export function checkType(lvl: number, ctx: Term[], t: Term, ty: Term): Value {
   switch (t.kind) {
     case FunctionTermSymbol:
       if (ty.kind !== PiFunctionTermSymbol)
