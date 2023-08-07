@@ -64,7 +64,7 @@ export function print(lvl: number, term: Term): string {
     case VariableTermSymbol:
       return term.index.toString();
     case UnitTermSymbol:
-      return "()";
+      return "*";
     case UniverseTermSymbol:
       return "<>";
     default:
@@ -159,9 +159,8 @@ export function inferType(lvl: number, ctx: Term[], term: Term): Term {
       checkType(lvl, ctx, term.arg, funcTerm.paramType);
       return funcTerm.returnType(term.arg);
     case AnnotationTermSymbol:
-      const annTerm = term;
-      inferSort(lvl, ctx, annTerm.type);
-      return checkType(lvl, ctx, annTerm.term, evaluate(annTerm.type));
+      inferSort(lvl, ctx, term.type);
+      return checkType(lvl, ctx, term.term, evaluate(term.type));
     case VariableTermSymbol:
       return ctx[lvl - 1 - term.index];
     case UnitTermSymbol:

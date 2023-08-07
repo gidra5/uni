@@ -162,18 +162,53 @@ describe("Calculus of Constructions", () => {
     const three: Term = application(succ, [two]);
     const four: Term = application(succ, [three]);
 
+    expect(print(0, nTy)).toBe("(pi *.(pi (pi 0.0).(pi 0.0)))");
+
+    expect(print(0, zero)).toBe(
+      "((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0))))"
+    );
+    expect(print(0, one)).toBe(
+      "(((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) ((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0)))))"
+    );
+    expect(print(0, two)).toBe(
+      "(((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) (((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) ((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0))))))"
+    );
+    expect(print(0, three)).toBe(
+      "(((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) (((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) (((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) ((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0)))))))"
+    );
+    expect(print(0, four)).toBe(
+      "(((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) (((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) (((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) (((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) ((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0))))))))"
+    );
+
+    expect(print(0, evaluate(one))).toBe("(lambda (lambda (lambda (1 2))))");
+    expect(print(0, evaluate(two))).toBe(
+      "(lambda (lambda (lambda (1 (1 2)))))"
+    );
+    expect(print(0, evaluate(three))).toBe(
+      "(lambda (lambda (lambda (1 (1 (1 2))))))"
+    );
+    expect(print(0, evaluate(four))).toBe(
+      "(lambda (lambda (lambda (1 (1 (1 (1 2)))))))"
+    );
     assertInfer([], zero, nTy);
     assertInfer([], one, nTy);
     assertInfer([], two, nTy);
     assertInfer([], three, nTy);
     assertInfer([], four, nTy);
   });
+
   it("church numerals sum", () => {
     // 1, 2, 3, 4 derived from zero and the successor function.
     const one: Term = application(succ, [zero]);
     const two: Term = application(succ, [one]);
     const three: Term = application(succ, [two]);
     const four: Term = application(succ, [three]);
+    expect(print(0, add)).toBe(
+      "((lambda (lambda (lambda (lambda (lambda (((0 2) 3) (((1 2) 3) 4))))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi (pi *.(pi (pi 1.1).(pi 1.1))).(pi *.(pi (pi 2.2).(pi 2.2))))))"
+    );
+    expect(print(0, addTy)).toBe(
+      "(pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi (pi *.(pi (pi 1.1).(pi 1.1))).(pi *.(pi (pi 2.2).(pi 2.2)))))"
+    );
     assertInfer([], add, addTy);
 
     // Test addition on the derived numerals.
@@ -181,9 +216,26 @@ describe("Calculus of Constructions", () => {
     assertBetaEq(application(add, [zero, one]), one);
     assertBetaEq(application(add, [one, zero]), one);
     assertBetaEq(application(add, [three, one]), four);
+
+    expect(print(0, application(add, [zero, zero]))).toBe(
+      "((((lambda (lambda (lambda (lambda (lambda (((0 2) 3) (((1 2) 3) 4))))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi (pi *.(pi (pi 1.1).(pi 1.1))).(pi *.(pi (pi 2.2).(pi 2.2)))))) ((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0))))) ((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0)))))"
+    );
+    expect(print(0, application(add, [zero, one]))).toBe(
+      "((((lambda (lambda (lambda (lambda (lambda (((0 2) 3) (((1 2) 3) 4))))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi (pi *.(pi (pi 1.1).(pi 1.1))).(pi *.(pi (pi 2.2).(pi 2.2)))))) ((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0))))) (((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) ((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0))))))"
+    );
+    expect(print(0, application(add, [one, zero]))).toBe(
+      "((((lambda (lambda (lambda (lambda (lambda (((0 2) 3) (((1 2) 3) 4))))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi (pi *.(pi (pi 1.1).(pi 1.1))).(pi *.(pi (pi 2.2).(pi 2.2)))))) (((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) ((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0)))))) ((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0)))))"
+    );
+    expect(print(0, application(add, [three, one]))).toBe(
+      "((((lambda (lambda (lambda (lambda (lambda (((0 2) 3) (((1 2) 3) 4))))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi (pi *.(pi (pi 1.1).(pi 1.1))).(pi *.(pi (pi 2.2).(pi 2.2)))))) (((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) (((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) (((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) ((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0)))))))) (((lambda (lambda (lambda (lambda (2 (((0 1) 2) 3)))))) : (pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi (pi 1.1).(pi 1.1))))) ((lambda (lambda (lambda 2))) : (pi *.(pi (pi 0.0).(pi 0.0))))))"
+    );
   });
 
   it("pair type", () => {
+    expect(print(0, pair)).toBe(
+      "((lambda (lambda (pi *.(pi (pi 0.(pi 1.2)).2)))) : (pi *.(pi *.*)))"
+    );
+    expect(print(0, pairTy)).toBe("(pi *.(pi *.*))");
     assertInfer([], pair, pairTy);
   });
 
@@ -222,6 +274,7 @@ describe("Calculus of Constructions", () => {
         }),
       }),
     };
+
     /* The zip function that takes two vectors of the same length and returns a new zipped vector.  */
     const zip: Term = {
       kind: PiFunctionTermSymbol,
@@ -244,6 +297,7 @@ describe("Calculus of Constructions", () => {
         }),
       }),
     };
+
     const vector: Term = {
       kind: PiFunctionTermSymbol,
       paramType: nTy,
@@ -297,20 +351,63 @@ describe("Calculus of Constructions", () => {
       vectThree,
     ]);
 
-    assertInfer(vectCtx, vectOne, vectTy(one, itemTy));
-    assertInfer(vectCtx, vectThree, vectTy(three, itemTy));
-    assertInfer(vectCtx, vectFour, vectTy(four, itemTy));
+    expect(print(0, vector)).toBe(
+      "(pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.*))"
+    );
+    expect(print(0, replicate)).toBe(
+      "(pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi 1.((0 0) 1))))"
+    );
+    expect(print(0, zip)).toBe(
+      "(pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi *.(pi *.(pi ((0 0) 1).(pi ((0 0) 2).((0 0) ((((lambda (lambda (pi *.(pi (pi 5.(pi 6.7)).7)))) : (pi *.(pi *.*))) 1) 2)))))))"
+    );
+    expect(print(0, concat)).toBe(
+      "(pi (pi *.(pi (pi 0.0).(pi 0.0))).(pi (pi *.(pi (pi 1.1).(pi 1.1))).(pi *.(pi ((0 0) 2).(pi ((0 1) 2).((0 ((((lambda (lambda (lambda (lambda (lambda (((5 7) 8) (((6 7) 8) 9))))))) : (pi (pi *.(pi (pi 5.5).(pi 5.5))).(pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7)))))) 0) 1)) 2))))))"
+    );
 
-    const t1 = print(vectCtx.length, vectTy(four, itemTy));
-    const t2 = print(vectCtx.length, vectTy(one, itemTy));
+    expect(print(vectCtx.length, vectOne)).toBe(
+      "(((3 (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) ((lambda (lambda (lambda 8))) : (pi *.(pi (pi 6.6).(pi 6.6)))))) 1) 2)"
+    );
+    expect(print(vectCtx.length, evaluate(vectTy(one, itemTy)))).toBe(
+      "((0 (lambda (lambda (lambda (7 8))))) 1)"
+    );
+
+    expect(print(vectCtx.length, vectThree)).toBe(
+      "(((3 (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) ((lambda (lambda (lambda 8))) : (pi *.(pi (pi 6.6).(pi 6.6)))))))) 1) 2)"
+    );
+    expect(print(vectCtx.length, evaluate(vectTy(three, itemTy)))).toBe(
+      "((0 (lambda (lambda (lambda (7 (7 (7 8))))))) 1)"
+    );
+
+    expect(print(vectCtx.length, vectFour)).toBe(
+      "(((((4 (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) ((lambda (lambda (lambda 8))) : (pi *.(pi (pi 6.6).(pi 6.6)))))) (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) ((lambda (lambda (lambda 8))) : (pi *.(pi (pi 6.6).(pi 6.6)))))))) 1) (((3 (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) ((lambda (lambda (lambda 8))) : (pi *.(pi (pi 6.6).(pi 6.6)))))) 1) 2)) (((3 (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) ((lambda (lambda (lambda 8))) : (pi *.(pi (pi 6.6).(pi 6.6)))))))) 1) 2))"
+    );
+    expect(print(vectCtx.length, evaluate(vectTy(four, itemTy)))).toBe(
+      "((0 (lambda (lambda (lambda (7 (7 (7 (7 8)))))))) 1)"
+    );
+
+    assertInfer(vectCtx, vectOne, evaluate(vectTy(one, itemTy)));
+    assertInfer(vectCtx, vectThree, evaluate(vectTy(three, itemTy)));
+    assertInfer(vectCtx, vectFour, evaluate(vectTy(four, itemTy)));
+
+    const t1 = print(vectCtx.length, evaluate(vectTy(four, itemTy)));
+    const t2 = print(vectCtx.length, evaluate(vectTy(one, itemTy)));
     const t3 = print(vectCtx.length, vectOne);
     const zipped = application({ kind: VariableTermSymbol, index: 5 }, [
       four,
+      itemTy,
+      itemTy,
       vectOne,
       vectFour,
     ]);
 
-    checkInfer(vectCtx, zipped, { kind: UniverseTermSymbol });
+    expect(t1).toBe("((0 (lambda (lambda (lambda (7 (7 (7 (7 8)))))))) 1)");
+
+    expect(t2).toBe("((0 (lambda (lambda (lambda (7 8))))) 1)");
+
+    expect(t3).toBe(
+      "(((3 (((lambda (lambda (lambda (lambda (8 (((6 7) 8) 9)))))) : (pi (pi *.(pi (pi 6.6).(pi 6.6))).(pi *.(pi (pi 7.7).(pi 7.7))))) ((lambda (lambda (lambda 8))) : (pi *.(pi (pi 6.6).(pi 6.6)))))) 1) 2)"
+    );
+
     // If we attempt to zip two vectors of different lengths, the type checker
     // will produce an appropriate error message.
     expect(() =>
