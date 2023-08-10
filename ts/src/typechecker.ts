@@ -37,7 +37,7 @@ export type AnnotationTerm = {
 };
 export type VariableTerm = {
   kind: typeof VariableTermSymbol;
-  index: number | string | [name: string, index: number];
+  index: number;
 };
 export type UnitTerm = { kind: typeof UnitTermSymbol };
 export type UniverseTerm = { kind: typeof UniverseTermSymbol };
