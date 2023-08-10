@@ -16,10 +16,12 @@ export const UniverseTermSymbol = Symbol("type of types");
 
 export type FunctionTerm = {
   kind: typeof FunctionTermSymbol;
+  bind?: string;
   body: (n: Term) => Term;
 };
 export type PiFunctionTerm = {
   kind: typeof PiFunctionTermSymbol;
+  bind?: string;
   paramType: Term;
   returnType: (n: Term) => Term;
 };
@@ -33,7 +35,10 @@ export type AnnotationTerm = {
   term: Term;
   type: Term;
 };
-export type VariableTerm = { kind: typeof VariableTermSymbol; index: number };
+export type VariableTerm = {
+  kind: typeof VariableTermSymbol;
+  index: number | string | [name: string, index: number];
+};
 export type UnitTerm = { kind: typeof UnitTermSymbol };
 export type UniverseTerm = { kind: typeof UniverseTermSymbol };
 
