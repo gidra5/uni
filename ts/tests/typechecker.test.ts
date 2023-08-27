@@ -16,26 +16,28 @@ import {
   StrictResolvedVariableTerm,
   resolve,
 } from "../src/typechecker.js";
-import { describe, expect, it } from "vitest";
+import { describe, expect } from "vitest";
+import { it } from "@fast-check/vitest";
+import fc from "fast-check";
 
 // const AnnotationTermSymbol = TermKind.Application;
 const ApplicationTermSymbol = TermKind.Application;
 const FunctionTermSymbol = TermKind.Function;
 const PiFunctionTermSymbol = TermKind.PiFunction;
-const UnitTermSymbol = TermKind.Star;
-const UniverseTermSymbol = TermKind.Box;
+const UnitTermSymbol = TermKind.Kind;
+const UniverseTermSymbol = TermKind.Kind;
 const VariableTermSymbol = TermKind.Variable;
 
 function curry(f: (head: Term, ...terms: Term[]) => Term, depth = 1): Term {
   if (depth === 1)
     return {
       kind: FunctionTermSymbol,
-      variableType: { kind: TermKind.Star },
+      variableType: { kind: TermKind.Kind },
       body: f,
     };
   return {
     kind: FunctionTermSymbol,
-    variableType: { kind: TermKind.Star },
+    variableType: { kind: TermKind.Kind },
     body: (x) => curry((...terms) => f(x, ...terms), depth - 1),
   };
 }
@@ -96,6 +98,68 @@ function assertInfer(ctx: Context, term: Term, typeTerm: Term): void {
 function assertInfer2(ctx: Context, term: Term, typeTerm: ResolvedTerm): void {
   expect(checkInfer2(ctx, term, typeTerm)).toBe(true);
 }
+const check = (
+  term: ResolvedTerm,
+  expected: ResolvedTerm,
+  ctx: Context = []
+) => {
+  inferType(term, ctx);
+  expect(isEqualTerms(evaluate(term), evaluate(expected))).toBe(true);
+};
+
+const fn = (
+  args: [variable: string, variableType: ResolvedTerm][],
+  body: ResolvedTerm
+): ResolvedTerm =>
+  resolve(
+    args.reduceRight(
+      (body, [variable, variableType]) => ({
+        kind: TermKind.Function,
+        variable,
+        variableType,
+        body,
+      }),
+      body
+    )
+  );
+
+const piFn = (
+  args: [variable: string, variableType: ResolvedTerm][],
+  body: ResolvedTerm
+): ResolvedTerm =>
+  resolve(
+    args.reduceRight(
+      (body, [variable, variableType]) => ({
+        kind: TermKind.PiFunction,
+        variable,
+        variableType,
+        body,
+      }),
+      body
+    )
+  );
+
+const appl = (fn: ResolvedTerm, ...args: ResolvedTerm[]): ResolvedTerm =>
+  resolve(
+    args.reduce((fn, arg) => ({ kind: TermKind.Application, fn, arg }), fn)
+  );
+
+const variable = (name: string): VariableTerm => ({
+  kind: TermKind.Variable,
+  name,
+});
+
+const variable2 = (
+  index: number,
+  name?: string
+): StrictResolvedVariableTerm => ({
+  kind: TermKind.Variable,
+  index,
+  name,
+});
+
+const star: StarTerm = { kind: TermKind.Type };
+const box: BoxTerm = { kind: TermKind.Kind };
 
 describe.skip("Calculus of Constructions", () => {
   // Church numerals
@@ -354,70 +418,7 @@ describe.skip("Calculus of Constructions", () => {
   });
 });
 
-describe("Calculus of Constructions 2", () => {
-  const check = (
-    term: ResolvedTerm,
-    expected: ResolvedTerm,
-    ctx: Context = []
-  ) => {
-    inferType(term, ctx);
-    expect(isEqualTerms(evaluate(term), evaluate(expected))).toBe(true);
-  };
-
-  const fn = (
-    args: [variable: string, variableType: ResolvedTerm][],
-    body: ResolvedTerm
-  ): ResolvedTerm =>
-    resolve(
-      args.reduceRight(
-        (body, [variable, variableType]) => ({
-          kind: TermKind.Function,
-          variable,
-          variableType,
-          body,
-        }),
-        body
-      )
-    );
-
-  const piFn = (
-    args: [variable: string, variableType: ResolvedTerm][],
-    body: ResolvedTerm
-  ): ResolvedTerm =>
-    resolve(
-      args.reduceRight(
-        (body, [variable, variableType]) => ({
-          kind: TermKind.PiFunction,
-          variable,
-          variableType,
-          body,
-        }),
-        body
-      )
-    );
-
-  const appl = (fn: ResolvedTerm, ...args: ResolvedTerm[]): ResolvedTerm =>
-    resolve(
-      args.reduce((fn, arg) => ({ kind: TermKind.Application, fn, arg }), fn)
-    );
-
-  const variable = (name: string): VariableTerm => ({
-    kind: TermKind.Variable,
-    name,
-  });
-
-  const variable2 = (
-    index: number,
-    name?: string
-  ): StrictResolvedVariableTerm => ({
-    kind: TermKind.Variable,
-    index,
-    name,
-  });
-
-  const star: StarTerm = { kind: TermKind.Star };
-  const box: BoxTerm = { kind: TermKind.Box };
-
+describe.skip("Calculus of Constructions 2", () => {
   it("Church Booleans", () => {
     const _true = fn(
       [
@@ -534,5 +535,3 @@ describe("Calculus of Constructions 2", () => {
     // check(appl([my_xor, _false, _true]), _true);
   });
 });
-
-// Add tests for other sections: church_numerals, intuitionistic_logic, and classical_logic

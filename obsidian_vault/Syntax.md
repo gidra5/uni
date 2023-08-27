@@ -2,17 +2,16 @@ Syntax is defined by [[formal grammar]], which is defined using special symbols[
 
 For a list of tokens refer to [[Tokenizer]]
 
-### Module
+### [[Modules|Module]]
 
 `import` and `use` distinguish between file imports and dependency imports respectively.
 
 ```
 module -> moduleItem*
-moduleItem -> (import | export | external | private) (newline | ";")?
+moduleItem -> (import | external | definition) (newline | ";")?
 import -> ("import" | "use") string ("as" pattern)? ("with" expression)?
-export -> "export" pattern "=" expression | "export" expression
 external -> "external" pattern (":" type)? ("=" expression)?
-private -> pattern "=" expression
+private -> "export"? pattern "=" expression
 ```
 
 ### Comments

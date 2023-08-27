@@ -1,5 +1,4 @@
-import path from "node:path";
-import { parseStringToAST, parseTokensToASTs } from "./ast";
+import { parseTokensToASTs } from "./ast";
 import {
   AbstractSyntaxTree,
   AbstractSyntaxTreeChildren,
@@ -7,9 +6,7 @@ import {
   Scope,
   FlatSyntaxTree,
   ConsumeParsingResult,
-  Token,
 } from "./types";
-import fs from "node:fs/promises";
 import { omit, pick } from "../utils";
 
 const blockScope = (inner: (outer: Scope) => Scope): Scope => ({
@@ -147,7 +144,7 @@ const scope: Scope = {
 };
 
 const expandTree = (
-  tree: FlatSyntaxTree,
+  tree: FlatSyntaxTree
 ): ConsumeParsingResult<AbstractSyntaxTree> => {
   const errors: ParsingError[] = [];
   const result: AbstractSyntaxTree = { item: { type: "newline", src: "\n" } };
@@ -187,7 +184,7 @@ const expandTree = (
 };
 
 export const expandTrees = (
-  ast: FlatSyntaxTree[],
+  ast: FlatSyntaxTree[]
 ): ConsumeParsingResult<AbstractSyntaxTree[]> => {
   const errors: ParsingError[] = [];
   const result: AbstractSyntaxTree[] = [];

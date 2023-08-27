@@ -1,15 +1,15 @@
 import path from "node:path";
-import { expandTrees } from ".";
-import { Token } from "../parserEngine.mjs";
-import { parseStringToAST, parseTokensToASTs } from "./ast";
+import { parseStringToAST } from "./ast";
 import {
-  AbstractSyntaxTree,
   ConsumeParsingResult,
+  Parser,
   ParsingError,
+  ParsingResult,
   Scope,
+  Token,
 } from "./types";
 import fs from "node:fs/promises";
-import { omit, pick } from "../utils";
+import { TaggedItemUnion } from "../types";
 
 const commentsScope: Scope = {
   comment: {
@@ -19,168 +19,38 @@ const commentsScope: Scope = {
   },
   multilineComment: {
     leadingTokens: ["/*"],
-    separators: [{ tokens: ["*/"], repeats: [1, 1] }],
+    separators: [{ tokens: ["*/"], repeats: [1, 1], scope: () => ({}) }],
     precedence: [null, null],
   },
 };
 
-const blockScope = (scope: (outer: Scope) => Scope): Scope => ({
-  sequence: {
-    leadingTokens: [";", "\n"],
-    separators: [{ tokens: [";", "\n"], repeats: [0, Infinity], scope }],
-    precedence: [null, null],
-  },
-});
-
-const bindingScope: Scope = {
-  bind: { leadingTokens: [":="], separators: [], precedence: [Infinity, 1] },
-  mutate: { leadingTokens: ["="], separators: [], precedence: [Infinity, 1] },
-};
-
-const exprScope: Scope = {
-  array: {
-    leadingTokens: ["["],
-    separators: [{ tokens: ["]"], repeats: [1, 1] }],
-    precedence: [null, null],
-  },
-  index: {
-    leadingTokens: ["["],
-    separators: [{ tokens: ["]"], repeats: [1, 1] }],
-    precedence: [Infinity, null],
-  },
-  arrow: {
-    leadingTokens: ["->"],
-    separators: [],
-    precedence: [Infinity, Infinity],
-  },
-  generic: {
-    leadingTokens: ["<"],
-    separators: [{ tokens: [">"], repeats: [1, 1] }],
-    precedence: [null, null],
-  },
-  group: {
-    leadingTokens: ["("],
-    separators: [{ tokens: [")"], repeats: [1, 1] }],
-    precedence: [null, null],
-  },
-  block: {
-    leadingTokens: ["{"],
-    separators: [{ tokens: ["}"], repeats: [1, 1] }],
-    precedence: [null, null],
-  },
-  if: {
-    leadingTokens: ["if"],
-    separators: [
-      { tokens: [":"], repeats: [1, 1] },
-      { tokens: ["else"], repeats: [0, 1] },
-    ],
-    precedence: [null, Infinity],
-  },
-  tuple: {
-    leadingTokens: [","],
-    separators: [{ tokens: [","], repeats: [0, Infinity] }],
-    precedence: [1, 2],
-  },
-  logical: { leadingTokens: ["and", "or"], separators: [], precedence: [1, 2] },
-  equality: { leadingTokens: ["==", "is"], separators: [], precedence: [3, 4] },
-  comparison: {
-    leadingTokens: [">", ">=", "<", "<="],
-    separators: [],
-    precedence: [5, 6],
-  },
-  term: { leadingTokens: ["+", "-"], separators: [], precedence: [7, 8] },
-  factor: { leadingTokens: ["*", "/"], separators: [], precedence: [9, 10] },
-  exponent: { leadingTokens: ["^", "%"], separators: [], precedence: [11, 12] },
-  unary: {
-    leadingTokens: ["not", "-", "sqrt"],
-    separators: [],
-    precedence: [null, 13],
-  },
-  postfixNot: {
-    leadingTokens: ["not"],
-    separators: [],
-    precedence: [14, null],
-  },
-};
-const topLevelScope: Scope = {
-  import: {
-    leadingTokens: ["import", "use"],
-    separators: [
-      {
-        tokens: ["as"],
-        repeats: [1, 1],
-        scope: () => pick(exprScope, ["block"]),
-      },
-      {
-        tokens: ["with"],
-        repeats: [0, 1],
-        scope: () => pick(exprScope, ["block"]),
-      },
-    ],
-    precedence: [null, 1],
-  },
-  external: {
-    leadingTokens: ["external"],
-    separators: [
-      {
-        tokens: [":"],
-        repeats: [0, 1],
-        scope: () => pick(exprScope, ["block"]),
-      },
-      {
-        tokens: ["as"],
-        repeats: [0, 1],
-        scope: () => pick(exprScope, ["block"]),
-      },
-      {
-        tokens: ["="],
-        repeats: [0, 1],
-        scope: () => pick(exprScope, ["block"]),
-      },
-    ],
-    precedence: [null, 1],
-  },
-  export: {
-    leadingTokens: ["export", "protected"],
-    separators: [
-      {
-        tokens: ["="],
-        repeats: [0, 1],
-        scope: () => pick(exprScope, ["block"]),
-      },
-    ],
-    precedence: [null, 1],
-  },
-};
-const scope: Scope = {
-  ...blockScope(() => omit(scope, ["sequence"])),
-  ...topLevelScope,
-  ...pick(bindingScope, ["bind"]),
-};
-
-type Expression = AbstractSyntaxTree;
-type External = {
+type External<Pattern, Expression> = {
   alias: string;
   type?: Expression;
-  pattern?: Expression;
+  pattern?: Pattern;
   value?: Expression;
 };
-type Import = {
+type Import<Pattern, Expression> = {
   module: string;
   dependency: boolean;
-  with?: Expression;
-  pattern: Expression;
+  withExternals?: Expression;
+  pattern: Pattern;
 };
-type Export = { protected: boolean } & (
-  | { name: string }
-  | { pattern: Expression; value: Expression }
-);
-type Private = { pattern: Expression; value: Expression };
-type Module = {
-  externals: External[];
-  imports: Import[];
-  exports: Export[];
-  privates: Private[];
+type Definition<Pattern, Expression> = {
+  exported: boolean;
+  type?: Expression;
+  pattern: Pattern;
+  value: Expression;
+};
+type ModuleItem<Pattern, Expression> = TaggedItemUnion<{
+  external: External<Pattern, Expression>;
+  import: Import<Pattern, Expression>;
+  definition: Definition<Pattern, Expression>;
+}>;
+type Module<Pattern, Expression> = {
+  externals: External<Pattern, Expression>[];
+  imports: Import<Pattern, Expression>[];
+  definitions: Definition<Pattern, Expression>[];
 };
 
 /*
@@ -242,240 +112,273 @@ instructions:
 11. return module dictionaries and errors.
 */
 
-const loadModuleByName = async (name: string): Promise<Module | null> => {
-  return { exports: [], externals: [], imports: [], privates: [] };
-};
-export const loadDependencyModule = async (
-  name: string,
-): Promise<ConsumeParsingResult<Module>> => {
-  const module = await loadModuleByName(name);
+export class ModuleParser<P, E> {
+  constructor(
+    private loader: (name: string) => Promise<Module<P, E>>,
+    private parsePattern: Parser<P, Token[]>,
+    private parseExpr: Parser<E, Token[]>
+  ) {}
 
-  if (!module)
-    return [
-      { exports: [], externals: [], imports: [], privates: [] },
-      [{ message: "could not resolve dependency" }],
-    ];
+  async loadDependencyModule(
+    name: string
+  ): Promise<ConsumeParsingResult<Module<P, E>>> {
+    const module = await this.loader(name);
 
-  return [module, []];
-};
+    if (!module)
+      return [
+        { externals: [], imports: [], definitions: [] },
+        [{ message: "could not resolve dependency" }],
+      ];
 
-export const expandModule = async (
-  module: Module,
-  registry: Record<string, Module> = {},
-): Promise<ConsumeParsingResult<Record<string, Module>>> => {
-  const { imports } = module;
-  const errors: ParsingError[] = [];
-  for (const { dependency, module } of imports) {
-    if (module in registry) continue;
-    if (dependency) {
-      const [_module, _errors] = await loadDependencyModule(module);
-      errors.push(..._errors);
-      registry[module] = _module;
-    } else {
-      const [_module, _errors] = await parseFile({ path: module });
-      errors.push(..._errors);
-      registry[module] = _module;
-    }
+    return [module, []];
   }
-  return [registry, errors];
-};
 
-export const parseFile = async ({
-  path: _path,
-  base = ".",
-}: {
-  path: string;
-  base?: string;
-}): Promise<ConsumeParsingResult<Module>> => {
-  const resolvedPath = path.resolve(path.join(base, _path));
-  if (!(await fs.lstat(resolvedPath)).isFile())
-    return [
-      { exports: [], externals: [], imports: [], privates: [] },
-      [{ message: "path does not refer to a file" }],
-    ];
+  async resolveDependencies(
+    module: Module<P, E>,
+    registry: Record<string, Module<P, E>> = {}
+  ): Promise<ConsumeParsingResult<Record<string, Module<P, E>>>> {
+    const { imports } = module;
+    const errors: ParsingError[] = [];
 
-  const src = await fs.readFile(resolvedPath, "utf-8");
-  const [module, errors] = parseFileContent(src);
-  return [module, errors];
-};
+    for (const { dependency, module } of imports) {
+      if (module in registry) continue;
+      if (dependency) {
+        try {
+          const _module = await this.loader(module);
 
-export const parseFileContent = (src: string): ConsumeParsingResult<Module> => {
-  const module: Module = {
-    exports: [],
-    externals: [],
-    imports: [],
-    privates: [],
-  };
-  const [_cleaned] = parseStringToAST(src, 0, commentsScope);
-  const cleaned = _cleaned
-    .filter(
-      (item): item is typeof item & { item: Token } =>
-        item.item.type !== "operator",
-    )
-    .map(({ item }) => item);
-  const [_ast, errors] = parseTokensToASTs(cleaned, 0, scope);
-  if (_ast.length < 1)
-    return [module, [...errors, { message: "module is empty" }]];
-
-  const ast = _ast.filter(
-    (item): item is typeof item & { item: { type: "operator" } } =>
-      item.item.type === "operator",
-  );
-  if (ast.length < 1)
-    return [module, [...errors, { message: "invalid module definition" }]];
-  if (ast.length > 3)
-    return [module, [...errors, { message: "invalid module definition" }]];
-
-  const [expanded, _errors] = expandTrees(ast);
-  errors.push(..._errors);
-  const asts = expanded.flatMap((child) => {
-    if (child.item.type !== "operator") return [];
-    if (child.item.id === "sequence") {
-      return child.item.children.flatMap((child) => {
-        return child.children.filter(
-          (item): item is typeof item & { item: { type: "operator" } } =>
-            item.item.type === "operator",
-        );
-      });
-    }
-    return [child as typeof child & { item: { type: "operator" } }];
-  });
-
-  for (const ast of asts) {
-    const { item } = ast;
-    if (item.id === "export" && ast.rhs) {
-      const {
-        children: [child],
-        token,
-      } = item;
-      if (!child) {
-        if (ast.rhs.item.type !== "identifier") {
-          errors.push({ message: "Must export identifier" });
-          continue;
+          registry[module] = _module;
+        } catch (e: any) {
+          errors.push({ message: "could not resolve dependency", cause: e });
         }
-        module.exports.push({
-          protected: token.src === "protected",
-          name: ast.rhs.item.src,
-        });
+      } else {
+        const resolvedPath = path.resolve(path.join(".", module));
+        const [_module, _errors] = await this.parseFile(resolvedPath);
+
+        errors.push(..._errors);
+        registry[module] = _module;
       }
-      if (child.children.length !== 1)
-        errors.push({ message: "Must have exactly one child" });
-      module.exports.push({
-        protected: token.src === "protected",
-        pattern: child.children[0],
-        value: ast.rhs,
-      });
     }
-    if (item.id === "bind" && ast.rhs && ast.lhs) {
-      module.privates.push({ pattern: ast.lhs, value: ast.rhs });
-    }
-    if (item.id === "import" && ast.rhs) {
-      const {
-        children: [child1, child2],
-        token,
-      } = item;
-      if (child1.children.length !== 1)
-        errors.push({ message: "Must have exactly one child" });
-      if (child1.children[0].item.type !== "string") {
-        errors.push({ message: "Module path must be string" });
+
+    return [registry, errors];
+  }
+
+  async parseFile(path: string): Promise<ConsumeParsingResult<Module<P, E>>> {
+    const fileStats = await fs.lstat(path);
+    if (!fileStats.isFile())
+      return [
+        { externals: [], imports: [], definitions: [] },
+        [{ message: "path does not refer to a file" }],
+      ];
+
+    const src = await fs.readFile(path, "utf-8");
+    return this.parseModule(src);
+  }
+
+  parseModule(src: string): ConsumeParsingResult<Module<P, E>> {
+    const [_cleaned] = parseStringToAST(src, 0, commentsScope);
+    const cleaned = _cleaned
+      .filter(
+        (item): item is typeof item & { item: Token } =>
+          item.item.type !== "operator"
+      )
+      .map(({ item }) => item);
+
+    const module: Module<P, E> = {
+      externals: [],
+      imports: [],
+      definitions: [],
+    };
+
+    const errors: ParsingError[] = [];
+    let index = 0;
+
+    while (cleaned[index]) {
+      const token = cleaned[index];
+
+      if (token.type === "newline") {
+        index++;
         continue;
       }
-      const modulePath = child1.children[0].item.value;
+
+      const [nextIndex, item, _errors] = this.parseModuleItem(cleaned, index);
+      index = nextIndex;
+      errors.push(..._errors);
+
+      if (item.type === "definition") module.definitions.push(item.item);
+      if (item.type === "external") module.externals.push(item.item);
+      if (item.type === "import") module.imports.push(item.item);
+    }
+
+    return [module, errors];
+  }
+
+  parseModuleItem(src: Token[], index = 0): ParsingResult<ModuleItem<P, E>> {
+    const token = src[index];
+
+    if (token.type === "identifier" && ["use", "import"].includes(token.src)) {
       const dependency = token.src === "use";
-      if (!child2) {
-        module.imports.push({
-          module: modulePath,
-          pattern: ast.rhs,
-          dependency,
-        });
-        continue;
-      }
-      if (child2.children.length !== 1)
-        errors.push({ message: "Must have exactly one child" });
-      module.imports.push({
-        module: modulePath,
-        pattern: child2.children[0],
-        with: ast.rhs,
-        dependency,
-      });
+      index++;
+      if (src[index].type === "newline") index++;
+
+      const [nextIndex, _import, errors] = this.parseImport(src, index);
+      const item: Import<P, E> = { ..._import, dependency };
+      return [nextIndex, { type: "import", item }, errors];
     }
 
-    if (item.id === "external" && ast.rhs) {
-      const { children } = item;
-      if (children.length === 0) {
-        if (ast.rhs.item.type !== "identifier") {
-          errors.push({ message: "External name must be identifier" });
-          continue;
-        }
-        module.externals.push({ alias: ast.rhs.item.src });
-      }
-      if (children.length === 1) {
-        const [child] = children;
-        if (child.children.length !== 1) {
-          errors.push({ message: "External name must be single child" });
-        }
-        if (child.children[0].item.type !== "identifier") {
-          errors.push({ message: "External name must be identifier" });
-          continue;
-        }
-        const alias = child.children[0].item.src;
-        if (child.separatorToken.src === ":")
-          module.externals.push({ alias, type: ast.rhs });
-        if (child.separatorToken.src === "as")
-          module.externals.push({ alias, pattern: ast.rhs });
-        if (child.separatorToken.src === "=")
-          module.externals.push({ alias, value: ast.rhs });
-      }
-      if (children.length === 2) {
-        const [child1, child2] = children;
-        if (child1.children.length !== 1) {
-          errors.push({ message: "External name must be single child" });
-        }
-        if (child1.children[0].item.type !== "identifier") {
-          errors.push({ message: "External name must be identifier" });
-          continue;
-        }
-        const alias = child1.children[0].item.src;
-        const external: External = { alias };
-        if (child1.separatorToken.src === ":") {
-          if (child2.children.length !== 1) {
-            errors.push({ message: "External type must be single child" });
-          }
-          external.type = child2.children[0];
-        }
-        if (child1.separatorToken.src === "as") {
-          if (child2.children.length !== 1) {
-            errors.push({ message: "External pattern must be single child" });
-          }
-          external.pattern = child2.children[0];
-        }
-        if (child1.separatorToken.src === "=") {
-          if (child2.children.length !== 1) {
-            errors.push({ message: "External value must be single child" });
-          }
-          external.value = child2.children[0];
-        }
-        if (child2.separatorToken.src === "as") external.pattern = ast.rhs;
-        if (child2.separatorToken.src === "=") external.value = ast.rhs;
-        module.externals.push(external);
-      }
-      if (children.length === 3) {
-        const [child1, child2, child3] = children;
-        if (child1.children.length !== 1) {
-          errors.push({ message: "External name must be single child" });
-        }
-        if (child1.children[0].item.type !== "identifier") {
-          errors.push({ message: "External name must be identifier" });
-          continue;
-        }
-        const alias = child1.children[0].item.src;
-        const type = child2.children[0];
-        const pattern = child3.children[0];
-        const value = ast.rhs;
-        module.externals.push({ alias, value, pattern, type });
-      }
+    if (token.type === "identifier" && token.src === "external") {
+      index++;
+      if (src[index].type === "newline") index++;
+
+      const [nextIndex, external, errors] = this.parseExternal(src, index);
+      return [nextIndex, { type: "external", item: external }, errors];
     }
+
+    const exported = token.type === "identifier" && token.src === "export";
+    if (exported) index++;
+    if (src[index].type === "newline") index++;
+
+    const [nextIndex, definition, errors] = this.parseDefinition(src, index);
+    const item: Definition<P, E> = { ...definition, exported };
+    return [nextIndex, { type: "definition", item }, errors];
   }
 
-  return [module, errors];
-};
+  parseDefinition(src: Token[], index = 0): ParsingResult<typeof value> {
+    const errors: ParsingError[] = [];
+    const value: Omit<Definition<P, E>, "exported"> = {
+      pattern: [] as P,
+      value: [] as E,
+    };
+
+    value.pattern = (() => {
+      const [nextIndex, pattern, _errors] = this.parsePattern(src, index);
+      index = nextIndex;
+      errors.push({ message: "cant parse pattern", cause: _errors });
+      return pattern;
+    })();
+
+    if (src[index].type === "newline") index++;
+
+    if (src[index].type !== "identifier" && src[index].src !== "=") {
+      errors.push({ message: 'missing "=" sign' });
+    } else index++;
+
+    if (src[index].type === "newline") index++;
+
+    value.value = (() => {
+      const [nextIndex, value, _errors] = this.parseExpr(src, index);
+      index = nextIndex;
+      errors.push({ message: "cant parse expression", cause: _errors });
+      return value;
+    })();
+
+    return [index, value, errors];
+  }
+
+  parseImport(src: Token[], index = 0): ParsingResult<typeof value> {
+    const errors: ParsingError[] = [];
+    const value: Omit<Import<P, E>, "dependency"> = {
+      module: "",
+      pattern: [] as P,
+    };
+
+    const token = src[index];
+    if (token.type !== "string") {
+      // TODO: sync
+      errors.push({ message: "module name must be a string token" });
+      return [index, value, errors];
+    }
+
+    value.module = token.value;
+    index++;
+
+    if (src[index].type === "newline") index++;
+
+    value.pattern = (() => {
+      const [nextIndex, pattern, _errors] = this.parsePattern(src, index);
+      index = nextIndex;
+      errors.push({ message: "cant parse pattern", cause: _errors });
+      return pattern;
+    })();
+
+    if (src[index].type === "newline") index++;
+
+    if (src[index].type !== "identifier" && src[index].src !== "with")
+      return [index, value, errors];
+    index++;
+
+    if (src[index].type === "newline") index++;
+
+    value.withExternals = (() => {
+      const [nextIndex, withExternals, _errors] = this.parseExpr(src, index);
+      index = nextIndex;
+      errors.push({ message: "cant parse expression", cause: _errors });
+      return withExternals;
+    })();
+
+    return [index, value, errors];
+  }
+
+  parseExternal(src: Token[], index = 0): ParsingResult<typeof value> {
+    const errors: ParsingError[] = [];
+    const value: External<P, E> = { alias: "" };
+
+    const patternStartIndex = index;
+    value.pattern = (() => {
+      const [nextIndex, pattern, _errors] = this.parsePattern(src, index);
+      index = nextIndex;
+      errors.push({ message: "cant parse pattern", cause: _errors });
+      return pattern;
+    })();
+
+    if (patternStartIndex === index - 1 && src[index - 1].type === "identifier")
+      value.alias = src[index - 1].src;
+
+    if (src[index].type === "newline") index++;
+
+    if (src[index].type === "identifier" && src[index].src === ":") {
+      index++;
+
+      if (src[index].type === "newline") index++;
+
+      value.type = (() => {
+        const [nextIndex, type, _errors] = this.parseExpr(src, index);
+        index = nextIndex;
+        errors.push({ message: "cant parse type", cause: _errors });
+        return type;
+      })();
+    }
+
+    if (src[index].type === "identifier" && src[index].src === "as") {
+      index++;
+
+      if (src[index].type === "newline") index++;
+
+      value.alias = (() => {
+        const token = src[index];
+        index++;
+
+        if (token.type === "identifier") return token.src;
+
+        errors.push({ message: "external alias must be identifier" });
+        return "";
+      })();
+    }
+
+    if (src[index].type === "identifier" && src[index].src === "=") {
+      index++;
+
+      if (src[index].type === "newline") index++;
+
+      value.value = (() => {
+        const [nextIndex, type, _errors] = this.parseExpr(src, index);
+        index = nextIndex;
+        errors.push({ message: "cant parse value", cause: _errors });
+        return type;
+      })();
+    }
+
+    if (!value.alias) errors.push({ message: "external must have name" });
+
+    return [index, value, errors];
+  }
+}

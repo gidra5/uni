@@ -226,8 +226,8 @@ export enum TermKind {
   Application = "application",
   Function = "function",
   PiFunction = "piFunction",
-  Star = "star",
-  Box = "box",
+  Type = "type",
+  Kind = "kind",
 }
 
 export type VariableTerm = { kind: TermKind.Variable; name: string };
@@ -242,8 +242,8 @@ export type FunctionTerm = {
   variableType: Term;
   body: Term;
 };
-export type StarTerm = { kind: TermKind.Star };
-export type BoxTerm = { kind: TermKind.Box };
+export type StarTerm = { kind: TermKind.Type };
+export type BoxTerm = { kind: TermKind.Kind };
 
 export type StrictResolvedVariableTerm = {
   kind: TermKind.Variable;
@@ -257,7 +257,7 @@ export type StrictResolvedApplicationTerm = {
 };
 export type StrictResolvedFunctionTerm = {
   kind: TermKind.Function | TermKind.PiFunction;
-  variableName?: string;
+  variable?: string;
   variableType: StrictResolvedTerm;
   body: StrictResolvedTerm;
 };
@@ -287,6 +287,10 @@ export type HOASFunctionTerm = {
   variableType: HOASTerm;
   body: (arg: HOASTerm) => HOASTerm;
 };
+
+export type LTerm = VariableTerm | ApplicationTerm | FunctionTerm;
+
+export type LATerm = VariableTerm | ApplicationTerm | FunctionTerm;
 
 export type Term =
   | VariableTerm
@@ -347,10 +351,10 @@ export const resolve = (
         variableType: resolve(term.variableType, ctx),
         body: resolve(term.body, [term.variable ?? "", ...ctx]),
       };
-    case TermKind.Star:
-      return { kind: TermKind.Star };
-    case TermKind.Box:
-      return { kind: TermKind.Box };
+    case TermKind.Type:
+      return { kind: TermKind.Type };
+    case TermKind.Kind:
+      return { kind: TermKind.Kind };
   }
 };
 const HOASToTerm = (term: HOASTerm, ctx: string[] = []): ResolvedTerm => {
@@ -375,8 +379,8 @@ const HOASToTerm = (term: HOASTerm, ctx: string[] = []): ResolvedTerm => {
         arg: HOASToTerm(term.arg, ctx),
       };
     case TermKind.Variable:
-    case TermKind.Star:
-    case TermKind.Box:
+    case TermKind.Type:
+    case TermKind.Kind:
       return term;
   }
 };
@@ -397,9 +401,9 @@ export const print = (term: ResolvedTerm): string => {
       const type = print(term.variableType);
       const body = print(term.body);
       return `(${term.kind} ${name}${type}.${body})`;
-    case TermKind.Star:
+    case TermKind.Type:
       return "*";
-    case TermKind.Box:
+    case TermKind.Kind:
       return "<>";
   }
 };
@@ -427,8 +431,8 @@ export const isEqualTerms = (
         isEqualTerms(term1.variableType, term2.variableType) &&
         isEqualTerms(term1.body, term2.body)
       );
-    case TermKind.Star:
-    case TermKind.Box:
+    case TermKind.Type:
+    case TermKind.Kind:
       return term1.kind === term2.kind;
   }
 };
@@ -447,8 +451,8 @@ const freeVariables = (term: ResolvedTerm): string[] => {
           (variable) => variable !== term.variable
         ),
       ];
-    case TermKind.Star:
-    case TermKind.Box:
+    case TermKind.Type:
+    case TermKind.Kind:
       return [];
   }
 };
@@ -465,8 +469,8 @@ const boundVariables = (term: Term): string[] => {
         ...boundVariables(term.body),
       ];
     case TermKind.Variable:
-    case TermKind.Star:
-    case TermKind.Box:
+    case TermKind.Type:
+    case TermKind.Kind:
       return [];
   }
 };
@@ -499,8 +503,8 @@ export const evaluate = (term: ResolvedTerm): ResolvedTerm => {
         body: evaluate(term.body),
       };
     case TermKind.Variable:
-    case TermKind.Star:
-    case TermKind.Box:
+    case TermKind.Type:
+    case TermKind.Kind:
       return term;
   }
 };
@@ -557,8 +561,8 @@ const substituteName = (
           body: substituteName(variableName, substitution, term.body),
         };
       }
-    case TermKind.Star:
-    case TermKind.Box:
+    case TermKind.Type:
+    case TermKind.Kind:
       return term;
   }
 };
@@ -589,8 +593,8 @@ const substituteVar = (
         ),
         body: substituteVar(variableIndex + 1, substitution, term.body),
       };
-    case TermKind.Star:
-    case TermKind.Box:
+    case TermKind.Type:
+    case TermKind.Kind:
       return term;
   }
 };
@@ -628,14 +632,24 @@ export const inferType = (
       return evaluate(fnType);
     }
     case TermKind.PiFunction:
-      const expectedType: StarTerm = { kind: TermKind.Star };
-      checkType(term.body, expectedType, [term.variableType, ...ctx]);
-      return expectedType;
-    case TermKind.Star:
-      return { kind: TermKind.Box };
-    case TermKind.Box:
+      inferSort(term.variableType, ctx);
+      return inferSort(term.body, [term.variableType, ...ctx]);
+    case TermKind.Type:
+    case TermKind.Kind:
+      // return { kind: TermKind.Kind };
       throw new Error(`'Box' has no type.`);
   }
+};
+
+export const inferSort = (
+  term: ResolvedTerm,
+  ctx: Context = []
+): ResolvedTerm => {
+  const inferred = inferType(term, ctx);
+  if (inferred.kind === TermKind.Type || inferred.kind === TermKind.Kind) {
+    return inferred;
+  }
+  throw new Error(`Expected a sort, got ${print(term)}: ${print(inferred)}`);
 };
 
 export const checkType = (
