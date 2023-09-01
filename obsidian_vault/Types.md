@@ -41,11 +41,12 @@ Basis of type system is Calculus of Constructions:
 
 1. There is a *Value* which is **Type of propositions**.
 2. There is a *Type* which is **Type of types**.
-3. There are abstractions `fn x -> f(x)`
-4. There is a type of abstractions `fn x => g(x)`
+3. There are abstractions `fn y: f(x) -> g(y)`
+4. There is a type of abstractions `fn y: f(x) => g(y)`
 5. There are applications `x y`
 6. `x: y` means *x is of type y*.
 7. `f(x: t)` means *f with substitution x of type t*
+8. `g(y)` in  `fn y: f(x) => g(y)` cannot reduce to `Type`
 
 Variables must be assigned a type. Types assigned as follows (inference rules):
 1. *Value* is of type *Type*
@@ -306,10 +307,80 @@ sym = fn a: Type -> fn x: a -> fn y: a -> fn is_eq: eq a x y -> fn ctx: (fn z: a
 
 trans = fn a: Type -> fn x: a -> fn y: a -> fn z: a -> fn xy_is_eq: eq a x y -> fn yz_is_eq: eq a y z -> fn ctx: (fn z: a => Type) -> fn w: ctx x -> yz_is_eq ctx (xy_is_eq ctx w)
 
-not = fn a: Type -> fn x: a => id
+not = fn a: Type -> fn x: a => never
+notnot_elim = fn a: Type -> fn ctx: (fn z: Type => Type) -> fn x: ctx (not not a) => a
 
-isEq: fn x: nat => fn y: nat => bool Type (eq nat x y) (not (eq nat x y)) = fn x: nat -> fn y: nat -> if x - y = 0 then refl x y else _
+proof: fn a: Type => eq Type (not not a) a = fn a: Type -> fn ctx: (fn z: Type => Type) -> fn w: ctx (not not a) -> refl Type a ctx (notnot_elim a ctx w)
+
+isEq: fn x: nat => fn y: nat => bool Type (eq nat x y) (not (eq nat x y)) = fn x: nat -> fn y: nat -> if x - y = 0 then refl x y else id
 
 eq nat x y = fn ctx: (fn z: nat => Type) => fn w: ctx x => ctx y
 
+
+  let negate = pi "x" Star Star in
+  
+  Printf.printf "%s" (print (infer_type negate)) = Box
+  
+  Printf.printf "%s" (print (infer_type (pi "x" (pi "x" Star Star) Star))) = Box
+  
+  Printf.printf "%s" (print (infer_type (pi "x" Star (Var "x")))) = Star
+  
+  Printf.printf "%s" (print (infer_type (pi "x" (lam "x" Star Star) Star))) -
+  Printf.printf "%s" (print (infer_type (pi "x" (lam "x" Star (Var "x")) Star))) -
+  Printf.printf "%s" (print (infer_type (lam "x" (lam "x" Star (Var "x")) Star))) -
+  Printf.printf "%s" (print (eval (lam "x" (lam "x" Star (Var "x")) Star))) +
+  Printf.printf "%s" (print (eval (pi "x" (lam "x" Star (Var "x")) Star))) +
+  Printf.printf "%s" (print (eval (pi "x" (lam "x" Star Star) Star))) +
+  Printf.printf "%s" (print (infer_type (lam "x" Box (Var "x")))) -
+  Printf.printf "%s" (print (infer_type (lam "x" Box Star))) -
+  Printf.printf "%s" (print (infer_type (lam "x" Box Box))) -
+  Printf.printf "%s" (print (infer_type (lam "x" Star Box))) -
+  Printf.printf "%s" (print (infer_type (lam "x" Star Star))) -
+  Printf.printf "%s" (print (infer_type (lam "x" Star (Var "x")))) -
+  Printf.printf "%s" (print (infer_type (pi "x" Box (Var "x")))) -
+  Printf.printf "%s" (print (infer_type (pi "x" Box Star))) -
+  Printf.printf "%s" (print (infer_type (pi "x" Box Box))) -
+  Printf.printf "%s" (print (infer_type (pi "x" Star (Var "x")))) = Star
+  Printf.printf "%s" (print (infer_type (pi "x" Star Star))) = Star
+  Printf.printf "%s" (print (infer_type (pi "x" Star Box))) -
+
+  lambdas in type annotation position are not allowed when inferring type
+  Box cannot appear in pi lambda, lhs\rhs of appl terms when inferring type - cannot appear in term that is subject to type inference
+  Star\Box cannot appear in lambda term that is subject to type inference
 ```
+
+Roman Храновський, [29.08.2023 23:01]
+https://inria.hal.science/file/index/docid/76261/filename/RR-0296.pdf
+
+Roman Храновський, [29.08.2023 23:05]
+https://coq.github.io/doc/V8.11.1/refman/language/cic.html
+
+Roman Храновський, [29.08.2023 23:29]
+http://pauillac.inria.fr/~huet/PUBLIC/typtyp.pdf
+
+Roman Храновський, [30.08.2023 12:21]
+Индуктивные типы это:
+Объявление номинального типа без определения
+Объявление "конструкторов" - имена которые так же не имеют тела, но определены как имеющие/использующие тип, определенный ранее
+
+Roman Храновський, [30.08.2023 12:24]
+Так они не имеют определений, они по сути используются как tuples
+
+Roman Храновський, [30.08.2023 12:29]
+Любое значение имеющее номинальный тип считается нормальной формой этого значения
+
+
+![[chrome_rmkcBFAW1x_1693548108.png]]
+Consider a derivation tree of some judgement `Γ  M : T` in the system ICC above. We shall associate with it the following information. First we have a finite set of formal variables `{x1, ..., xn}`. We think of variable `xi` as ranging over integers. Next we have a set of constraints on the formal variables, which are inequalities in terms of a partial ordering ``<``. More precisely, we have constraints of the form `xi < xj` , of the form `xi ≤ xj` , and of the form `xi = xj` . Think of these constraints `{C1, ..., Cp}` as expressing the arithmetic formula `∃x1...∃xn · C1 ∧ ... ∧ Cp`. Finally we associate with every occurrence of the constant `Type` in the judgement Γ `M : T` one of these formal variables. Several occurrences may be mapped on the same variable. In the following, we indicate `Type_i` to show that the corresponding occurrence of `Type` is mapped to the formal variable `xi` . 
+We now show by induction on the derivation of the judgement how to maintain and update this information. First, it is understood that the set of formal variables always increases along a derivation, and that “residual” occurrences of `Type` keep their mapping `Type_i` . By residual we mean the standard notion: occurrences inside the formulas matching the meta-variables `M, N, P, Q, R, Γ` in the premisses of rules have their residuals in the corresponding occurrences in the conclusion of the rule. Also the residuals of `N` in `[N/x]M` are the substituted occurrences, as usual. Finally, the residuals along λ-reductions are defined in the usual way. 
+Now, we consider each inference rule in turn. In this analysis, we assume that the rules are used in proof-checking fashion. We shall explain later how the consistency check may be computed in proof-synthesis mode. First, the rules for environment formation just preserve constraints by residuals. Next are type inference rules. 
+1. If rule `(TI1)` is used, we increment `n` by one, we add a new formal variable `xn`, we derive `Γ  -> Prop : Type_n`, and we add the constraint `0 ≤ xn`. 
+2. If rule `(TI2)` is used, we increment `n` by two, we add two new formal variable `xn−1` and `xn`, we derive `Γ -> Type_n−1 : Type_n`, and we add the constraint `xn−1 < xn`. 
+3. If rule `(TI3)` is used, we preserve the constraints by residuals, except in case `x` is bound to `Type_i` in context `Γ`, in which case we increment `n` by one, we add a new formal variable `xn`, we derive `Γ x : Type_n`, and we add the constraint `xi ≤ xn`. 
+4. If one of the rules `(TI4)` or `(TI5)` is used, we just preserve constraints by residuals. 
+5. If rule `(TI6)` is used, we assume that the derivation of the first premiss `Γ  M : T ypei` gave a set of constraints which was used (with proper residuals in `M` and `Γ`) to derive the second premiss `Γ, x : M, N : Type_j` with the current set of constraints. We then increment `n` by one, we add a new formal variable `xn`, we derive `Γ  (x : M)N : Type_n` and we add the two constraints `xi ≤ xn` and `xj ≤ xn`. 
+6. If rule `(TI7)` is used, we assume that the derivation of the first premiss `Γ  M : Prop` gave a set of constraints which was used (with proper residuals in `M` and `Γ`) to derive the second premiss `Γ, x : M , N : Type_i` with the current set of constraints. We then increment `n` by one, we add a new formal variable `xn`, we derive `Γ  (x : M)N : Type_n` and we add the constraint `xi ≤ xn`. 
+7. If rule `(TI8)` is used, we assume that the derivation of the first premiss `Γ  M : (x : Q)P` gave a set of constraints which was used (with proper residuals in `Γ`) to derive the second premiss `Γ  N : R` with the current set of constraints. We then assume (without loss of generality by the Church-Rosser property) that the test `Q ≡ R` is effected by reducing `Q` and `R` to identical forms. In these identical forms, every corresponding occurrence of say `Type_i in Q` and `Type_j in R` will generate a constraint `xi = xj` . Finally, we derive `Γ  (M N) : [N/x]P` with proper residuals. There is a special case when `P` is `Type_i` , in which case we increment `n` by one, we add a new formal variable `xn`, we derive `Γ  (M N) : Type_n`, and we add the constraint `xi ≤ xn`. 
+8. Finally, if the rule `(TE)` is used, we keep the constraints by residual, except when `P` is `Type_i` , in which case we increment `n` by one, we add a new formal variable `xn`, we derive `Γ  M : Type_n`, and we add the constraint `xi ≤ xn`.
+
+![[chrome_MDKK1pYBB9_1693548495.png]]
