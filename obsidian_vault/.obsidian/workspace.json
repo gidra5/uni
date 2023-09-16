@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Types.md",
+                "file": "Getting Started/Basic types.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Types.md",
+                "file": "Getting Started/Basic types.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Types.md",
+                "file": "Getting Started/Basic types.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,12 +125,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Types.md"
+                "file": "Getting Started/Basic types.md"
               }
             }
           },
           {
-            "id": "e2293c23d297e6ef",
+            "id": "76f28b42e5aaac15",
             "type": "leaf",
             "state": {
               "type": "chatbot-view",
@@ -159,33 +159,35 @@
   },
   "active": "83ea39ba5a517676",
   "lastOpenFiles": [
-    "chrome_rmkcBFAW1x_1693548108.png",
+    "Getting Started/Hello World.md",
+    "Getting Started/Installation.md",
+    "Interpretation.md",
+    "Iteration model.md",
+    "Language Manager.md",
+    "Getting Started/Basic types.md",
+    "Syntax.md",
+    "Syntax Tree.md",
+    "Token Tree.md",
+    "Tokenizer.md",
+    "Parser.md",
+    "Standart Library.md",
+    "Values.md",
+    "Zero-cost abstraction.md",
     "Types.md",
+    "Literals.md",
+    "Pattern matching.md",
+    "Analysis.md",
+    "Getting Started",
+    "chrome_rmkcBFAW1x_1693548108.png",
     "chrome_MDKK1pYBB9_1693548495.png",
     "Modules.md",
-    "Parser.md",
     "module.md",
     "Optimizations.md",
     "Operators.md",
     "Mar 15, 2022.md",
-    "Literals.md",
     "Leaky abstraction.md",
-    "Iteration model.md",
-    "Interpretation.md",
     "Intermediate Representation.md",
     "formal grammar.md",
-    "Design patterns.md",
-    "Data Normalization.md",
-    "Concurrency.md",
-    "Composites.md",
-    "Compilation.md",
-    "Code organization.md",
-    "Binding.md",
-    "Analysis.md",
-    "Aug 28, 2020.md",
-    "Syntax.md",
-    "Untitled.md",
-    "Syntax Tree.md",
     "Push",
     "rest",
     "Untitled.canvas"

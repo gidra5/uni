@@ -2,7 +2,7 @@
 aliases: token groups
 ---
 
-After text is tokenized, they are checked for existance of balanced token groups.
+After text is tokenized, they are checked for existence of balanced token groups.
 
 Token groups are defined by delimiters - special tokens that separate one token group from another. There may be multiple separators in one group, which separate different sections of token group.
 

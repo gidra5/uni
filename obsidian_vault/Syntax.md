@@ -36,7 +36,7 @@ precedence -> number | "none" | "inf"
 
 ```
 value -> primitive | tuple | record | function | "(" expression ")" | "{" expression ((newline | ";") expression)? "}"
-primitive -> string | number | "true" | "false"
+primitive -> string | number | identifier
 tuple -> expression ("," expression)+
 record -> labeled ("," labeled)+
 labeled -> (ident | "[" expression "]"): expression
@@ -65,14 +65,13 @@ Expressions are parsed with [[Pratt parser|pratt parser]] when all participating
 4. `_ _ /: number -> number -> number` - div of numbers
 5. `_ _ +: string -> string -> string` - concat of strings
 6. `_ _ |>: ('a -> 'b) -> ('b -> 'c) -> ('a -> 'c)` - piping functions
-7. `_ _ |>: 'a -> ('a -> 'b) -> 'b` - piping value into a function
-8. `none _ if then else?: bool -> (() -> 'a) -> (() -> 'b) -> 'a | 'b` - conditional
-9. `_ _ -: number -> number -> number` - diff of numbers*
+7. `none _ if then else?: bool -> (() -> 'a) -> (() -> 'b) -> 'a | 'b` - conditional
+8. `_ _ -: number -> number -> number` - diff of numbers*
+9. `_ _ -: number -> number -> number` - diff of numbers
 10. `_ _ -: number -> number -> number` - diff of numbers
 11. `_ _ -: number -> number -> number` - diff of numbers
 12. `_ _ -: number -> number -> number` - diff of numbers
 13. `_ _ -: number -> number -> number` - diff of numbers
 14. `_ _ -: number -> number -> number` - diff of numbers
-15. `_ _ -: number -> number -> number` - diff of numbers
 
 [^1]: https://craftinginterpreters.com/representing-code.html
