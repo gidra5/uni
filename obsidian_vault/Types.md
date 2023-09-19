@@ -349,24 +349,18 @@ eq nat x y = fn ctx: (fn z: nat => Type) => fn w: ctx x => ctx y
   Star\Box cannot appear in lambda term that is subject to type inference
 ```
 
-Roman Храновський, [29.08.2023 23:01]
 https://inria.hal.science/file/index/docid/76261/filename/RR-0296.pdf
 
-Roman Храновський, [29.08.2023 23:05]
 https://coq.github.io/doc/V8.11.1/refman/language/cic.html
 
-Roman Храновський, [29.08.2023 23:29]
 http://pauillac.inria.fr/~huet/PUBLIC/typtyp.pdf
 
-Roman Храновський, [30.08.2023 12:21]
 Индуктивные типы это:
 Объявление номинального типа без определения
 Объявление "конструкторов" - имена которые так же не имеют тела, но определены как имеющие/использующие тип, определенный ранее
 
-Roman Храновський, [30.08.2023 12:24]
 Так они не имеют определений, они по сути используются как tuples
 
-Roman Храновський, [30.08.2023 12:29]
 Любое значение имеющее номинальный тип считается нормальной формой этого значения
 
 
@@ -384,3 +378,5 @@ Now, we consider each inference rule in turn. In this analysis, we assume that t
 8. Finally, if the rule `(TE)` is used, we keep the constraints by residual, except when `P` is `Type_i` , in which case we increment `n` by one, we add a new formal variable `xn`, we derive `Γ  M : Type_n`, and we add the constraint `xi ≤ xn`.
 
 ![[chrome_MDKK1pYBB9_1693548495.png]]
+
+https://ziglearn.org/chapter-1/#comptime
