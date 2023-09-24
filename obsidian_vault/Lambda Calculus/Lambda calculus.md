@@ -1,7 +1,9 @@
 Лямбда исчисление определяется тремя конструкциями:
 1. Переменная `x`, `y` и тд. 
-2. "Абстракция", или функция/лямбда `fn x -> body`. Функции всегда объявляют одну переменную, которую можно использовать в теле функции. 
+2. "Абстракция", или функция/лямбда `fn x -> body`. Функции всегда объявляют одну переменную, которую можно использовать в теле функции. Тело функции распространяется максимально вправо, и ограничено лишь круглыми скобками. 
 3. "Применение абстракции" или вызов функции, обозначаются двумя переменными подряд `x y`. Вызов функций лево-асоциативный, что значит `x y z = (x y) z` 
+
+Для более краткой записи используется "синтаксический сахар" `fn x, y ... -> body = fn x -> fn y -> ... -> body` обозначающий функцию нескольких переменных. Перевод функций нескольких переменных в формат принимающий их "по одной" называется каррированием.
 
 Данные конструкции определяют достаточно простой, но очень експресивный синтаксис. Доказано что эта система является еквивалентной машине Тьюринга.
 
@@ -12,10 +14,11 @@
 
 Каждую из конструкций можно описать в лямбда исчислении по отдельности с помощью монад, булеанов и рекурсии.
 
-На деле имена переменным не обязательны, и можно обойтись "индексом" - насколько далеко переменная от ее объявления. Тоесть насколько функций вверх надо смотреть, что бы найти функцию которая объявляет эту переменную.
-Например `fn x -> x` тогда можно записать как `fn -> #0`. Префикс в виде `#` желателен что бы отличать эти индексы от обычных чисел.
+При этом можно заметить, что функции с разными именами для параметра по сути одинаковые - всегда можно переименовать что бы они выглядели оданиково. Такое переименовывание в литературе называют альфа конвертацией (alpha-conversion), а сами функции считаются еквивалентными. Для наглядности можно заменить имена параметров индексами в теле функции, которые указывают насколько "далеко" функция, параметр которой должен быть поставлен на месте индекса. Например `fn x -> x` тогда можно записать например как `fn -> 0`, или `fn -> #0` что бы отличать эти индексы от обычных чисел.  В таком случае все еквивалентные функции записываются так же одинаково.
 
-Так же определяется так называемая бета-редукция (beta-reduction). У нормальных людей это обычно называют подстановкой параметра в тело функции. После подстановки вместо функции и аргумента ставится результат подстановки. Таким образом выражение `(fn x -> x) y` упрощается до просто `y`
+Функции можно вычислять, или просто "упрощать". Например выражение `(fn x -> x) y` упрощается до простого `y`, или же после вычисления этого выражения мы получаем `y`. Эта процедура вычисления выражений в литературе называется бета-редукция ([[Beta-reduction|beta-reduction]]). Когда в выражении больше нельзя выполнять подстановки, такое выражение считается нормальной формой начального. Обычно все выражения которые приходят к одной и той же нормальной форме считаются еквивалентными.
+
+Так же можно заметить что выражения подобные `fn x -> f x` по сути еквиваленты самой `f`, потому что они просто "пробрасывают" параметр внутрь этой функции. Это в литературе называют эта-редукцией (eta-reduction). По сути описывает свойство функций, что если они для всех параметров дают один и тот же результат, то они еквивалентны. Функциональщики часто этим пользуются что бы было ещё сложнее читать что они написали... Это ведь так красиво писать `reduce list (+) 0` вместо более понятного `reduce list (fn acc, value -> acc + value) 0`.
 
 Эта система позволяет определят алгебраические типы данных. Тоесть енамы, каждый вариант которого может держать несколько вложенных значений дополнительно. В расте самый приятный синтаксис дл объявления таких структур, поэтому вот пару примеров:
 
@@ -47,24 +50,24 @@ enum Integer {
 
 ```rust
 match boolean {
-  True => Successor(Zero),
-  False => Zero
+  True => 1,
+  False => 0
 }
 ```
 
 Читается как *если переменная boolean держит вариант True, вернуть Successor(Zero), если False, то вернуть Zero*
 
 Это поведение является определяющим для енамов.
-Если убрать весь синтаксис по сути остаётся только `boolean`, `Successor(Zero)`, и просто `Zero`, которые надо как то скомбинировать и получить то же поведение.
-Но так или иначе все эти значения должны быть функциями в рамках лямбда исчисления, а значит можем просто передать в `boolean` наши два значения. Тоесть еквивалентное этому метчу выражение будет выглядеть так `boolean (Successor(Zero)) Zero`. 
+Если убрать весь синтаксис по сути остаётся только `boolean`, `1` и `0`, которые надо как то скомбинировать и получить то же поведение.
+Но так или иначе все эти значения должны быть функциями в рамках лямбда исчисления, а значит можем просто передать в `boolean` наши два значения, ведь он по сути определяется поведением относительно этих двух параметров. Тоесть еквивалентное этому метчу выражение будет выглядеть так `boolean 1 0`. 
 Это уже что-то. Из этого можем вывести уже что `boolean` это функция двух переменных. И так можно описать все подобные енамы - "значения" такого типа выглядят как функции которые принимают по одному параметру на каждый вариант даного типа. Тогда если хотим получить желаемое поведение, то имеем что `true` это булеан который возвращает первый аргумент, а `false` - который возвращает второй:
 
 ```
-true = fn trueMatch -> fn falseMatch -> trueMatch
-false = fn trueMatch -> fn falseMatch -> falseMatch
+true = fn trueMatch, falseMatch -> trueMatch
+false = fn trueMatch, falseMatch -> falseMatch
 ```
 
-Интуитивно я воспринимаю эти константы как "метчеры", потому что в рамках такого оператора как match они полностью выполняют его функцию. Из этой логики и вытекает репрезентация описанная выше.
+Интуитивно я воспринимаю эти константы как "метчеры", потому что в рамках такого оператора как match они полностью выполняют его функцию. Из этой логики и вытекает репрезентация описанная выше. Эта репрезентация в википедии называется Mogensen–Scott encoding. Так же есть Church encoding, но она не носит такой же интуиции, как эта (но возможно я тупой просто).
 
 А теперь рассмотрим такой метч с числом:
 
@@ -85,21 +88,21 @@ match integer {
 В таком случае варианты выглядят так:
 
 ```
-successor = fn predecessor -> fn successorMatch -> fn zeroMatch -> successorMatch predecessor
-zero = fn successorMatch -> fn zeroMatch -> zeroMatch
+successor = fn predecessor -> fn successorMatch, zeroMatch -> successorMatch predecessor
+zero = fn successorMatch, zeroMatch -> zeroMatch
 ```
 
 Следуя такой логике мы можем определить например кортежи (tuple)
 
 Кортежи это тип данных с одним вариантом для метча и двумя параметрами нужных для его создания, которые метчер должен передавать. Следовательно "значения" это функции одного аргумента, и "конструктор" это функция двух аргументов, что имеет примерно такой вид:
 
-`tuple = fn first -> fn second -> fn matched -> matched first second`
+`tuple = fn first, second -> fn matched -> matched first second`
 
 Метчингом можно определить функции которые берут первый параметр их кортежа и второй соответственно:
 
 ```
-first = fn tuple -> tuple (fn first -> fn second -> first)
-second = fn tuple -> tuple (fn first -> fn second -> second)
+first = fn tuple -> tuple (fn first, second -> first)
+second = fn tuple -> tuple (fn first, second -> second)
 ```
 
 И что интересно, метчеры в функциях `first`, `second` выглядят в точности как `true`, `false`, описанные ранее, тоесть их можно переписать так:
@@ -111,7 +114,7 @@ second = fn tuple -> tuple false
 
 Имея эти все базовые блоки уже можно кучу всего полезного определить, например операции над числами (`add`, `sub`, `mult`, etc.), логику на булеанах (`and`, `or`, `not`, `xor`, etc.)
 
-Дальше добавлю немного сахара, что бы было компактнее:
+Дальше добавлю ещё немного сахара, что бы было компактнее:
 1. `(a, b) = tuple a b`
 2. `tuple[0] = first tuple, tuple[1] = second tuple`
 3. `id = () = fn x -> x`
@@ -147,8 +150,8 @@ second = fn tuple -> tuple false
 
 ```
 value = Some
-flatMap = fn mapper -> fn option -> option mapper None = fn mapper -> fn option -> flat (map mapper option)
-map = fn mapper -> fn option -> option (fn value -> Some(mapper value)) None
+flatMap = fn mapper, option -> option mapper None = fn mapper, option -> flat (map mapper option)
+map = fn mapper, option -> option (fn value -> Some(mapper value)) None
 id = fn value -> value
 flat = fn option -> option id None
 ```
@@ -173,15 +176,15 @@ enum BlockState {
 И как мы помним такой енам конвертируется в следующие конструкторы:
 
 ```
-BlockState_Next = fn value -> fn nextMatch -> fn breakMatch -> nextMatch value
-BlockState_Break = fn withValue -> fn nextMatch -> fn breakMatch -> breakMatch withValue
+BlockState_Next = fn value -> fn nextMatch, breakMatch -> nextMatch value
+BlockState_Break = fn withValue -> fn nextMatch, breakMatch -> breakMatch withValue
 ```
 
 Но эта штука должна быть монадой, что бы мы ее могли использовать с выше описаным синтаксисом, а значит определяем `value` и `flatMap` для него:
 
 ```
 value = BlockState_Next
-flatMap = fn mapper -> fn blockState -> blockState mapper id
+flatMap = fn mapper, blockState -> blockState mapper id
 ```
 
 По сути логика такова получается:
@@ -224,7 +227,7 @@ while test_condition(state):
 Запишем в виде функции в лямбда исчислении:
 
 ```
-while = fn condition -> fn body -> fn state ->
+while = fn condition, body -> fn state ->
 	if (condition state) 
 	then while condition body (body state)
 	else state
@@ -234,7 +237,7 @@ while = fn condition -> fn body -> fn state ->
 
 ```
 pass_self = fn f -> f f
-while = fn condition -> fn body -> 
+while = fn condition, body -> 
 	pass_self (
 		fn self -> fn state ->
 			if (condition state) 
@@ -247,7 +250,7 @@ while = fn condition -> fn body ->
 
 ```
 pass_self_clean = fn f -> pass_self (fn self -> f (self self))
-while = fn condition -> fn body -> 
+while = fn condition, body -> 
 	pass_self_clean (
 		fn self -> fn state ->
 			if (condition state) 
@@ -277,13 +280,54 @@ odd = fn n -> if n = 1 then true else even (n - 1)
 Что бы определить не взаимнорекурсивные функции достаточно сделать одну общую функцию, которая принимает доп параметр, по которому определяет какую из двух функций выполнять:
 
 ```
-var_even = fn matchEven -> fn matchOdd -> matchEven
-var_odd = fn matchEven -> fn matchOdd -> matchOdd
+var_even = fn matchEven, matchOdd -> matchEven
+var_odd = fn matchEven, matchOdd -> matchOdd
 even_or_odd = fix (fn self -> fn variant -> 
 	variant 
 		(fn n -> if n = 0 then true else self var_odd (n - 1)) 
-		(fn n -> if n = 1 then true else self var_even (n - 1))
+		(fn n -> self var_even (n - 1))
 )
 even = even_or_odd var_even
 odd = even_or_odd var_odd
+```
+
+Или альтернативный вариант с кортежами:
+
+```
+(even, odd) = fix (fn (even, odd) -> (
+		fn n -> if n = 0 then true else odd (n - 1),
+		fn n -> even (n - 1)
+	)
+)
+```
+
+prepend to tuple:
+```
+prepend = fn x, tuple -> fn match -> tuple match x
+```
+append to tuple:
+```
+append = fn tuple, x -> fn match -> tuple (match x)
+```
+tuple of certain size:
+```
+tuple_n = fn n -> if n = 0 then () else fn x -> tuple_n (n-1) x
+```
+
+tuple nth:
+```
+drop = fn n, x -> if n=0 then x else fn _ -> drop (n-1) x
+nth = fn tuple, size, n -> tuple drop n (fn x -> drop (size-n-1) x)
+```
+tuple head and tail:
+```
+tail = fn tuple, n -> tuple (fn _ -> tuple_n (n-1))
+head = fn tuple, n -> (nth tuple n 0, tail tuple n)
+```
+tuple insert:
+```
+insert = fn tuple, size, n, x -> 
+	if n=0 
+		then prepend x tuple 
+		else prepend (head tuple size) (insert (tail tuple size) (size-1) (n-1) x))
 ```

@@ -4,12 +4,22 @@ export function assert(condition: any, msg?: string): asserts condition {
   }
 }
 
-export const omit = <T extends {}, K extends string>(obj: T, keys: K[]): Omit<T, K> => {
-  return Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as K))) as Omit<T, K>;
+export const omit = <T extends {}, K extends string>(
+  obj: T,
+  keys: K[]
+): Omit<T, K> => {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([key]) => !keys.includes(key as K))
+  ) as Omit<T, K>;
 };
 
-export const pick = <T extends {}, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> => {
-  return Object.fromEntries(Object.entries(obj).filter(([key]) => keys.includes(key as K))) as Pick<T, K>;
+export const pick = <T extends {}, K extends keyof T>(
+  obj: T,
+  keys: K[]
+): Pick<T, K> => {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([key]) => keys.includes(key as K))
+  ) as Pick<T, K>;
 };
 
 export class Iterator<T> {
@@ -17,6 +27,15 @@ export class Iterator<T> {
 
   [Symbol.iterator]() {
     return this.generator;
+  }
+
+  reduce<U>(reducer: (acc: U, input: T) => U, initial: U) {
+    const it = this;
+    let acc = initial;
+    for (const item1 of it.generator) {
+      acc = reducer(acc, item1);
+    }
+    return acc;
   }
 
   groupBy<U>(group: (input: Generator<T>) => Generator<U>) {
@@ -162,8 +181,13 @@ export class Iterator<T> {
     return [...this.generator];
   }
 
-  toObject(this: T extends [string | number | symbol, unknown] ? Iterator<T> : never) {
-    return Object.fromEntries(this.toArray()) as T extends [string | number | symbol, unknown]
+  toObject(
+    this: T extends [string | number | symbol, unknown] ? Iterator<T> : never
+  ) {
+    return Object.fromEntries(this.toArray()) as T extends [
+      string | number | symbol,
+      unknown
+    ]
       ? Record<T[0], T[1]>
       : never;
   }

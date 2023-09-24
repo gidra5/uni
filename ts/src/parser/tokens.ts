@@ -75,7 +75,8 @@ export const parseToken: Parser<Token> = (src, i) => {
     const start = index;
     while (/\s/.test(src.charAt(index))) index++;
     const _src = src.substring(start, index);
-    if (_src.includes("\n")) return [index, { type: "newline", src: _src }, errors];
+    if (_src.includes("\n"))
+      return [index, { type: "newline", src: _src }, errors];
   }
 
   if (src.charAt(index) === '"') {
@@ -94,7 +95,11 @@ export const parseToken: Parser<Token> = (src, i) => {
     }
     index++;
 
-    return [index, { type: "string", src: src.substring(start, index), value }, errors];
+    return [
+      index,
+      { type: "string", src: src.substring(start, index), value },
+      errors,
+    ];
   }
 
   if (/\d/.test(src.charAt(index))) {
@@ -121,14 +126,26 @@ export const parseToken: Parser<Token> = (src, i) => {
       }
     }
 
-    return [index, { type: "number", src: src.substring(start, index), value: Number(value) }, errors];
+    return [
+      index,
+      {
+        type: "number",
+        src: src.substring(start, index),
+        value: Number(value),
+      },
+      errors,
+    ];
   }
 
   if (/[_\w]/.test(src.charAt(index))) {
     const start = index;
     while (/[_\w\d]/.test(src.charAt(index))) index++;
 
-    return [index, { type: "identifier", src: src.substring(start, index) }, errors];
+    return [
+      index,
+      { type: "identifier", src: src.substring(start, index) },
+      errors,
+    ];
   }
 
   if (src.charAt(index) === "." && /\d/.test(src.charAt(index + 1))) {
@@ -143,17 +160,43 @@ export const parseToken: Parser<Token> = (src, i) => {
       index++;
     }
 
-    return [index, { type: "number", src: src.substring(start, index), value: Number(value) }, errors];
+    return [
+      index,
+      {
+        type: "number",
+        src: src.substring(start, index),
+        value: Number(value),
+      },
+      errors,
+    ];
+  }
+
+  if (/[\(\)\[\]\{\}\<\>;,.]/.test(src.charAt(index))) {
+    const start = index;
+    index++;
+
+    return [
+      index,
+      { type: "identifier", src: src.substring(start, index) },
+      errors,
+    ];
   }
 
   const start = index;
   index++;
-  while (/[^_\w\s\d."]/.test(src.charAt(index))) index++;
+  while (/[^_\w\s\d."\(\)\[\]\{\}\<\>;,]/.test(src.charAt(index))) index++;
 
-  return [index, { type: "identifier", src: src.substring(start, index) }, errors];
+  return [
+    index,
+    { type: "identifier", src: src.substring(start, index) },
+    errors,
+  ];
 };
 
-export const parseTokens = (src: string, i: number): ConsumeParsingResult<Token[]> => {
+export const parseTokens = (
+  src: string,
+  i = 0
+): ConsumeParsingResult<Token[]> => {
   let index = i;
   const errors: ParsingError[] = [];
   const tokens: Token[] = [];

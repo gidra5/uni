@@ -8,12 +8,12 @@
         "type": "tabs",
         "children": [
           {
-            "id": "83ea39ba5a517676",
+            "id": "a12be9d19003fa88",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Lambda calculus.md",
+                "file": "Lambda Calculus/Beta-reduction.md",
                 "mode": "source",
                 "source": false
               }
@@ -31,7 +31,8 @@
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -97,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Lambda calculus.md",
+                "file": "Types.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -114,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Lambda calculus.md",
+                "file": "Types.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -137,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Lambda calculus.md"
+                "file": "Types.md"
               }
             }
           },
@@ -179,10 +180,13 @@
       "bmo-chatbot:Chatbot (Clear Conversation)": false
     }
   },
-  "active": "83ea39ba5a517676",
+  "active": "5d1a5c9caf595230",
   "lastOpenFiles": [
-    "Types.md",
     "Lambda calculus.md",
+    "Lambda Calculus/Beta-reduction.md",
+    "Types.md",
+    "Lambda Calculus/Lambda calculus.md",
+    "Lambda Calculus",
     "Getting Started/Basic types.md",
     "Getting Started/Hello World.md",
     "Getting Started/Installation.md",
@@ -208,8 +212,6 @@
     "Optimizations.md",
     "Operators.md",
     "Mar 15, 2022.md",
-    "Leaky abstraction.md",
-    "Intermediate Representation.md",
     "Push",
     "rest",
     "Untitled.canvas"
