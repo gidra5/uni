@@ -184,7 +184,7 @@ export const parseToken: Parser<Token> = (src, i) => {
 
   const start = index;
   index++;
-  while (/[^_\w\s\d."\(\)\[\]\{\}\<\>;,]/.test(src.charAt(index))) index++;
+  while (/[^_\w\s\d."]/.test(src.charAt(index))) index++;
 
   return [
     index,

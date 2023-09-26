@@ -325,6 +325,8 @@ eq nat x y = fn ctx: (fn z: nat => Type) => fn w: ctx x => ctx y
   
   Printf.printf "%s" (print (infer_type (pi "x" Star (Var "x")))) = Star
   
+  Printf.printf "%s" (print (infer_type (pi "a" Star (lam "x" (Var "a") (Var "x"))))) -
+  Printf.printf "%s" (print (infer_type (pi "a" (lam "x" Star (Var "x")) Star))) -
   Printf.printf "%s" (print (infer_type (pi "x" (lam "x" Star Star) Star))) -
   Printf.printf "%s" (print (infer_type (pi "x" (lam "x" Star (Var "x")) Star))) -
   Printf.printf "%s" (print (infer_type (lam "x" (lam "x" Star (Var "x")) Star))) -
@@ -380,3 +382,10 @@ Now, we consider each inference rule in turn. In this analysis, we assume that t
 ![[chrome_MDKK1pYBB9_1693548495.png]]
 
 https://ziglearn.org/chapter-1/#comptime
+
+Adjust inference rules:
+1. In given context `C`, term `Type` is of type `Type`, preserving hierarchy.
+2. In given context `C`, `B: T`, term `fn x: A -> B` is of type `fn x: A -> T`, mirroring preserved `Type` hierarchy.
+3. In given context `C`, term `M: fn x: A -> B`, `N: A`, `M N` is of type `B[x=N]`.
+4. In given context `C`, `x: A` in `C`, `x` is of type `A`.
+They are allowed to be used in reverse to infer type of context that is required for a given term.

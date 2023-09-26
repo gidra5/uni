@@ -74,10 +74,18 @@ export const parseTokensToAST = (
 ): ParsingResult<FlatSyntaxTree> => {
   // no prefix/none-fix operators
   const reducedScope = Iterator.iterEntries(scope)
-    .filter(([_, operatorDefinition]) => operatorDefinition.precedence[0] !== null)
+    .filter(
+      ([_, operatorDefinition]) => operatorDefinition.precedence[0] !== null
+    )
     .map<[string, TokenGroupDefinition]>(([id, def]) => [
       id,
-      { ...def, separators: def.separators.map((sep) => ({ scope: () => scope, ...sep })) },
+      {
+        ...def,
+        separators: def.separators.map((sep) => ({
+          scope: () => scope,
+          ...sep,
+        })),
+      },
     ])
     .toObject();
   let index = i;
@@ -97,18 +105,35 @@ export const parseTokensToAST = (
   {
     // no postfix/infix operators
     const reducedScope = Iterator.iterEntries(scope)
-      .filter(([_, operatorDefinition]) => operatorDefinition.precedence[0] === null)
+      .filter(
+        ([_, operatorDefinition]) => operatorDefinition.precedence[0] === null
+      )
       .map<[string, TokenGroupDefinition]>(([id, def]) => [
         id,
-        { ...def, separators: def.separators.map((sep) => ({ scope: () => scope, ...sep })) },
+        {
+          ...def,
+          separators: def.separators.map((sep) => ({
+            scope: () => scope,
+            ...sep,
+          })),
+        },
       ])
       .toObject();
-    let [nextIndex, token, errors] = parseTokensToGroupScope(src, index, reducedScope);
+    let [nextIndex, token, errors] = parseTokensToGroupScope(
+      src,
+      index,
+      reducedScope
+    );
     index = nextIndex;
     const [, right] = getPrecedence(token, reducedScope);
 
     if (right !== null) {
-      const [nextIndex, rhs, _errors] = parseTokensToAST(src, index, right, scope);
+      const [nextIndex, rhs, _errors] = parseTokensToAST(
+        src,
+        index,
+        right,
+        scope
+      );
 
       index = nextIndex;
       errors.push(..._errors);
@@ -129,7 +154,11 @@ export const parseTokensToAST = (
 
     if (!src[index]) break;
 
-    const [nextIndex, token, _errors] = parseTokensToGroupScope(src, index, reducedScope);
+    const [nextIndex, token, _errors] = parseTokensToGroupScope(
+      src,
+      index,
+      reducedScope
+    );
     errors.push(..._errors);
     const [left, right] = getPrecedence(token, reducedScope);
     if (left === null || left < precedence) break;
@@ -139,7 +168,12 @@ export const parseTokensToAST = (
     if (right === null) {
       lhs = { item: token, lhs };
     } else {
-      const [nextIndex, rhs, _errors] = parseTokensToAST(src, index, right, scope);
+      const [nextIndex, rhs, _errors] = parseTokensToAST(
+        src,
+        index,
+        right,
+        scope
+      );
 
       index = nextIndex;
       errors.push(..._errors);
@@ -175,28 +209,48 @@ export const parseTokensToASTs = (
   return [ast, errors];
 };
 
-export const parseStringToAST = (src: string, i: number, scope: Scope): ConsumeParsingResult<FlatSyntaxTree[]> => {
+export const parseStringToAST = (
+  src: string,
+  i: number,
+  scope: Scope
+): ConsumeParsingResult<FlatSyntaxTree[]> => {
   const [children, errors] = parseTokens(src, i);
   const [ast, _errors] = parseTokensToASTs(children, 0, scope);
 
   return [ast, [...errors, ..._errors]];
 };
 
-export const stringifyFST = (item: FlatSyntaxTree): string => {
-  // item.
+export const stringifyFSTItem = (item: FlatSyntaxTree["item"]): string => {
   if (item.type === "operator" && item.children.length > 0)
     return `${item.id} ${item.children
-      .map((child) => `(${child.children.map(stringifyAST).join(" ")}):${child.separatorIndex}`)
+      .map(
+        (child) =>
+          `(${child.children.map(stringifyFSTItem).join(" ")}):${
+            child.separatorIndex
+          }`
+      )
       .join(" ")}`;
   if (item.type === "operator") return `${item.token.src}`;
   return stringifyToken(item);
 };
-export const stringifyFSTList = (list: FlatSyntaxTree[]): string => list.map(stringifyFST).join("; ");
+export const stringifyFST = (item: FlatSyntaxTree): string => {
+  let result = stringifyFSTItem(item.item);
+  if (item.lhs) result = `${result} (${stringifyFST(item.lhs)})`;
+  if (item.rhs) result = `${result} (${stringifyFST(item.rhs)})`;
+  return result;
+};
+export const stringifyFSTList = (list: FlatSyntaxTree[]): string =>
+  list.map(stringifyFST).join("; ");
 
 export const stringifyASTItem = (item: AbstractSyntaxTree["item"]): string => {
   if (item.type === "operator" && item.children.length > 0)
     return `${item.id} ${item.children
-      .map((child) => `(${child.children.map(stringifyAST).join(" ")}):${child.separatorIndex}`)
+      .map(
+        (child) =>
+          `(${child.children.map(stringifyAST).join(" ")}):${
+            child.separatorIndex
+          }`
+      )
       .join(" ")}`;
   if (item.type === "operator") return `${item.token.src}`;
   return stringifyToken(item);
@@ -209,4 +263,5 @@ export const stringifyAST = (ast: AbstractSyntaxTree): string => {
   return result;
 };
 
-export const stringifyASTList = (list: AbstractSyntaxTree[]): string => list.map(stringifyAST).join("; ");
+export const stringifyASTList = (list: AbstractSyntaxTree[]): string =>
+  list.map(stringifyAST).join("; ");

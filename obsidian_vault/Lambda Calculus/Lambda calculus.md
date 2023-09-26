@@ -311,7 +311,7 @@ append = fn tuple, x -> fn match -> tuple (match x)
 ```
 tuple of certain size:
 ```
-tuple_n = fn n -> if n = 0 then () else fn x -> tuple_n (n-1) x
+tuple_n = fn n -> n (fn pred -> fn x -> tuple_n pred x) ()
 ```
 
 tuple nth:
