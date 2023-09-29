@@ -384,8 +384,10 @@ Now, we consider each inference rule in turn. In this analysis, we assume that t
 https://ziglearn.org/chapter-1/#comptime
 
 Adjust inference rules:
-1. In given context `C`, term `Type` is of type `Type`, preserving hierarchy.
-2. In given context `C`, `B: T`, term `fn x: A -> B` is of type `fn x: A -> T`, mirroring preserved `Type` hierarchy.
+1. In given context `C`, term `Type[n]` is of type `Type[n+1]`, when order is ommited, it is still implied.
+2. In given context `C`, `A: Type[m]`, `B: Type[n]`, term `fn x: A -> B` is of type `fn x: A -> typeof B`, `Type[n]` and `fn x: A -> B`.
 3. In given context `C`, term `M: fn x: A -> B`, `N: A`, `M N` is of type `B[x=N]`.
 4. In given context `C`, `x: A` in `C`, `x` is of type `A`.
+5. In given context `C`, `Type: Type` is equivalent to `Type[n]: Type[n+1]` form some `n`.
+6. 
 They are allowed to be used in reverse to infer type of context that is required for a given term.
