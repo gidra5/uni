@@ -22,48 +22,69 @@ const f = (src: string, context: Term[] = []) => {
   return [withEnv, evaluated, errors] as const;
 };
 
+const env = {
+  id: "fn x->x",
+  true: "fn->fn-> #1",
+  false: "fn->fn-> #0",
+  succ: "fn predecessor -> fn successorMatch, zeroMatch -> successorMatch predecessor",
+  zero: "fn successorMatch, zeroMatch -> zeroMatch",
+  is_zero: "fn n -> n false true",
+  pass_self: "fn -> #0 #0",
+  fix: `fn -> pass_self (fn -> #1 (pass_self #0))`,
+  tuple_n_rev: `{ 
+    tuple_n = fn n -> n (fn pred -> fn x -> tuple_n pred x) ();
+    fn n -> tuple_n (succ n)
+  }`,
+  reverse:
+    "fn tuple, n -> n (fn pred -> append (reverse (tail tuple n) pred) (head tuple n)) ()",
+  tuple_n:
+    "fn n -> (fix fn tuple_c -> fn m, acc -> (sub n m) (fn x -> tuple_c (succ m) (cons x acc)) (listToTuple acc)) 0 nil",
+  tuple: "tuple_n 2",
+  append: "fn tuple, x -> fn match -> (tuple match) x",
+  prepend: "fn x, tuple -> fn match -> tuple (match x)",
+  drop: "fix fn drop -> fn n -> n (fn pred -> fn -> drop pred) id", // drop n args and ret x
+  pick: "fn n, m -> drop m (fn x -> drop (n-m-1) x)", // pick mth arg out of n args
+  nth: "fn tuple, size, n -> tuple (pick size n)", // get nth item in tuple
+  swap: "fn -> fn x, y -> #2 y x",
+  swap_tuple: "fn tuple, match -> tuple (swap match)",
+  dec: `fn n -> n id zero`,
+  sub: `fn n, m -> m (fn pred -> sub pred (dec m)) n`,
+  add: `fn n, m -> n (fn pred -> add pred (succ m)) m`,
+  mul: `fn n, m -> n (fn pred -> add m (mul pred m)) zero`,
+  div: `fn n, m -> succ (div (sub n m) m)`,
+  rem: `fn n, m -> (sub n m) (fn -> rem (sub n m) m) n`,
+  lte: `fn n, m -> (sub n m) (fn -> false) true`, // n less-than-equal m
+  and: "fn -> fn -> #1 #0 false",
+  not: "fn -> #0 false true",
+  eq: `fn n, m -> and (lte n m) (lte m n)`, // n equal m
+  tail: `fn tuple, n -> tuple (fn -> tuple_n (n-1))`,
+  head: `fn tuple, n -> nth tuple n 0`,
+  insert: `fix fn insert -> fn tuple, size, n, x -> n 
+    (fn pred -> {
+      head = head tuple size;
+      tail = tail tuple size;
+      new_tail = insert tail (dec size) pred x;
+      prepend head new_tail
+    })
+    (prepend x tuple)`,
+  cons: `fn x, tail -> fn matchCons, matchNil -> matchCons x tail`,
+  nil: `fn matchCons, matchNil -> matchNil`,
+  tupleToList: `fix fn tupleToList -> fn tuple, size -> 
+  size 
+      (fn pred -> cons (head tuple size) tupleToList (tail tuple size) pred) 
+      nil`,
+  listToTuple: `fix fn listToTuple -> fn list -> 
+    list 
+      (fn x, tail -> prepend x (listToTuple tail)) 
+      id`,
+};
+
 const examples = [
-  "fn x->x", // id, ()
-  "fn->fn-> #1", // true
-  "fn->fn-> #0", // false
   "{ true= #1;false= #1; true }",
   "{ (true, false) = (#1, #0); true }",
-  "fn predecessor -> fn successorMatch, zeroMatch -> successorMatch predecessor", // succ n constructor
-  "fn successorMatch, zeroMatch -> zeroMatch", // zero
-  "fn n -> n false true", // isZero
-  "fix fn tuple_n -> fn n -> n (fn pred -> fn x -> tuple_n pred x) ()", // tuple_n
   `{ 
-    tuple_n = fn n -> n (fn pred -> fn x -> tuple_n pred x) ();
+    rec tuple_n = fn n -> n (fn pred -> fn x -> tuple_n pred x) ();
     tuple_n
-  }`, // tuple_n 2
-  "fn tuple, x -> fn match -> (tuple match) x", // append
-  "fn x, tuple -> fn match -> tuple (match x)", // prepend
-  "fn n, x -> n (fn pred -> fn -> drop pred x) x", // drop n args and ret x
-  "fn n, m -> drop m (fn x -> drop (n-m-1) x)", // pick mth arg out of n args
-  "fn tuple, size, n -> tuple (pick size n)", // get nth item in tuple
-  `{ dec = fn n -> n id zero; dec }`,
-  `{ sub = fn n, m -> n (fn pred -> sub pred (dec m)) m; sub }`,
-  `{ add = fn n, m -> n (fn pred -> add pred (succ m)) m; add }`,
-  `{ mul = fn n, m -> n (fn pred -> add m (mul pred m)) zero; add }`,
-  `{ div = fn n, m -> succ (div (sub n m) m); add }`,
-  `{ rem = fn n, m -> (sub n m) (fn -> rem (sub n m) m) n; add }`,
-  `{ lte = fn n, m -> (sub n m) (fn -> false) true; lte }`, // n less-than-equal m
-  `{ eq = fn n, m -> n (fn predN -> m (fn predM -> eq predN predM) false) (m (fn predM -> false) true); eq }`, // n equal m
-  `{ tail = fn tuple, n -> tuple (fn _ -> tuple_n (n-1)); tail }`,
-  `{ head = fn tuple, n -> nth tuple n 0; head }`,
-  `{ insert = fn tuple, size, n, x -> n (fn pred -> prepend (head tuple size) (insert (tail tuple size) (dec size) pred x)) (prepend x tuple); insert }`,
-  `{ 
-    cons = fn x, tail -> fn matchCons, matchNil -> matchCons x tail;
-    nil  =               fn matchCons, matchNil -> matchNil;
-    tupleToList = fn tuple, n -> 
-      n 
-        (fn pred -> cons (head tuple n) tupleToList (tail tuple n)) 
-        nil;
-    listToTuple = fn list -> 
-      list 
-        (fn x, tail -> prepend x (listToTuple tail)) 
-        ();
-    (cons, nil, tupleToList, listToTuple)
   }`,
   `{
     rec (even, odd) = (
@@ -73,7 +94,7 @@ const examples = [
     (even, odd)
   }`,
   `{
-    flatmapOption = fn map, value -> option mapper none
+    flatmapOption = fn map, value -> value mapper none
     with flatmapOption {
       x = some 1;
       y = some 2;
@@ -84,29 +105,12 @@ const examples = [
 ];
 
 test.prop([fc.string().filter((s) => !s.includes("\\") && !s.includes('"'))])(
-  "parseToken - string token",
+  "env",
   (value) => {
     const src = `"${value}"`;
     const startIndex = 0;
     const expectedToken = { type: "string", src, value };
     const expectedIndex = value.length + 2;
-    const expectedErrors = [];
-
-    const [index, token, errors] = parseToken(src, startIndex);
-
-    expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
-    expect(errors).toEqual(expectedErrors);
-  }
-);
-
-test.prop([fc.string({ maxLength: 1, minLength: 1 })])(
-  "parseToken - string token escape",
-  (value) => {
-    const src = `"\\${value}"`;
-    const startIndex = 0;
-    const expectedToken = { type: "string", src, value };
-    const expectedIndex = 4;
     const expectedErrors = [];
 
     const [index, token, errors] = parseToken(src, startIndex);

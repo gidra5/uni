@@ -384,10 +384,69 @@ Now, we consider each inference rule in turn. In this analysis, we assume that t
 https://ziglearn.org/chapter-1/#comptime
 
 Adjust inference rules:
-1. In given context `C`, term `Type[n]` is of type `Type[n+1]`, when order is ommited, it is still implied.
-2. In given context `C`, `A: Type[m]`, `B: Type[n]`, term `fn x: A -> B` is of type `fn x: A -> typeof B`, `Type[n]` and `fn x: A -> B`.
+1. Term `Type[n]` is of type `Type[n+1]`.
+2. Term `fn x: A -> B` is of type `fn x: A -> typeof B[x: A]`.
 3. In given context `C`, term `M: fn x: A -> B`, `N: A`, `M N` is of type `B[x=N]`.
 4. In given context `C`, `x: A` in `C`, `x` is of type `A`.
-5. In given context `C`, `Type: Type` is equivalent to `Type[n]: Type[n+1]` form some `n`.
+5. In given context `C`, `Type: Type` is equivalent to `Type[n]: Type[n+1]` for some `n`.
 6. 
 They are allowed to be used in reverse to infer type of context that is required for a given term.
+
+```
+bool_t = fn a: Type -> fn x: a -> fn y: a -> a
+
+true: bool_t = fn a, x, y -> x
+false: bool_t = fn a, x, y -> y
+
+bool2_t = fn a: Type -> fn b: Type -> fn c: Type -> fn x: a -> fn y: b -> c
+bool2_true_t = fn a: Type -> fn b: Type -> bool2_t a b a
+bool2_false_t = fn a: Type -> fn b: Type -> bool2_t a b b
+
+true2: bool2_true_t = fn a, b, x, y -> x
+false2: bool2_false_t = fn a, b, x, y -> y
+
+tuple_t = fn a: Type -> fn b: Type -> fn c: Type -> fn match: bool2_t a b c -> c
+tuple_c = fn a: Type -> fn b: Type -> fn x: a -> fn y: b -> fn c: Type -> tuple_t a b c
+tuple: tuple_c = fn a, b, x, y, c -> fn match -> match x y
+
+getter_t = fn a: Type -> fn b: Type -> fn c: Type -> fn bool: bool2_t a b c -> fn tuple: tuple_t a b -> tuple c (bool a b)
+
+get = fn a: Type -> fn b: Type -> fn c: Type -> fn bool: bool2_t a b c -> fn tuple: tuple_t a b -> tuple c (bool a b)
+
+first = fn a: Type -> fn b: Type -> fn tuple: tuple_t a b -> tuple a (true2 a b)
+second = fn a: Type -> fn b: Type -> fn tuple: tuple_t a b -> tuple b (false2 a b)
+
+
+
+(fix fn tuple_n -> fn n -> n (fn pred -> fn x -> tuple_n pred x) ()) 2 =
+(fix fn tuple_n -> 2 (fn pred -> fn x -> tuple_n pred x) ()) =
+(fix fn tuple_n -> fn x -> tuple_n 1 x) =
+fn x -> (fix fn tuple_n -> fn n -> n (fn pred -> fn x -> tuple_n pred x) ()) 1 x =
+fn x -> (fix fn tuple_n -> 1 (fn pred -> fn x -> tuple_n pred x) ()) x =
+fn x -> (fix fn tuple_n -> fn x2 -> tuple_n 0 x2) x =
+fn x -> fn x2 -> (fix fn tuple_n -> fn n -> n (fn pred -> fn x -> tuple_n pred x) ()) 0 x2 x =
+fn x -> fn x2 -> (fix fn tuple_n -> 0 (fn pred -> fn x -> tuple_n pred x) ()) x2 x =
+fn x -> fn x2 -> () x2 x =
+fn x -> fn x2 -> (fn x -> x) x2 x =
+fn x -> fn x2 -> x2 x =
+	
+id = 
+fn id_c -> id_c = 
+fn id_c -> fn x -> id_c x
+
+fn id -> fn a -> fn x -> id x a
+fn t_c -> fn b -> fn a -> fn x -> t_c a x b = 
+fn b -> fn a -> fn x -> (fn a -> fn x -> id x a) a x b = 
+
+```
+
+```
+tuple_n = fn N -> 
+	letrec construct_tuple = fn N -> fn acc -> 
+		if iszero N then acc 
+		else construct_tuple 
+			(pred N) 
+			(fn x -> fn y -> x (y acc)) 
+	in construct_tuple N (fn x -> x) 
+end
+```

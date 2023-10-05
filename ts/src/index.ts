@@ -5,7 +5,7 @@ import {
   Term,
   eraseBlocks,
   eraseFunctionWithArgs,
-  eraseNames,
+  resolveNames,
   erasePatterns,
   evaluate,
   insertContext,
@@ -47,7 +47,7 @@ if (interactive) {
         console.dir([5, erasedBlocks], { depth: null });
         const erasedFnArgs = eraseFunctionWithArgs(erasedBlocks);
         console.dir([6, erasedFnArgs], { depth: null });
-        const erasedNames = eraseNames(erasedFnArgs);
+        const erasedNames = resolveNames(erasedFnArgs);
         console.dir([7, erasedNames, session], { depth: null });
         const withEnv = insertContext(erasedNames, session);
         console.dir([8, withEnv], { depth: null });
