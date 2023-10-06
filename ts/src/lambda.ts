@@ -7,6 +7,16 @@ import {
 } from "./parser/types.js";
 import { Iterator } from "./utils.js";
 
+const next = (src: Token[], i: number): ParsingResult<Token> => {
+  if (!src[i]) return [i + 1, src[i], [{ message: "end of tokens" }]];
+  return [i + 1, src[i], []];
+};
+const newlineNext = (src: Token[], i: number): ParsingResult<Token> => {
+  if (!src[i]) return [i + 1, src[i], [{ message: "end of tokens" }]];
+  if (src[i].type === "newline") i++;
+  return [i + 1, src[i], []];
+};
+
 export enum TermKind {
   Binding = "binding",
   Variable = "variable",
@@ -103,12 +113,13 @@ export const pattern = (patterns: PatternTerm[]) => ({
   kind: TermKind.Pattern as const,
   patterns,
 });
+export const value = (value: any) => ({ kind: TermKind.Value as const, value });
 const appAll = (fn: any, ...args: any[]) =>
   Iterator.iter(args).reduce((acc, v) => app(acc, v), fn);
 const rec = fun(app(binding(0), binding(0)));
 const fix = fun(app(rec, fun(app(binding(1), app(binding(0), binding(0))))));
-const block = (statements: BlockStatement[], result: any, operator?: any) => {
-  return statements.reduceRight((acc, val) => {
+const block = (statements: BlockStatement[], result: any, operator?: any) =>
+  statements.reduceRight((acc, val) => {
     let value = val.value;
     if (val.recursive) {
       if (val.name) value = fun(value, [val.name]);
@@ -124,7 +135,6 @@ const block = (statements: BlockStatement[], result: any, operator?: any) => {
 
     return app(acc, value);
   }, result);
-};
 const nth = (n: number, total = n + 1) =>
   fun(variable("x" + n), [
     ...Iterator.natural(total).map((x) => patternName("x" + x)),
@@ -227,11 +237,7 @@ export const evaluateStep = (
 
 export const evaluate = (term: Term): Term => {
   let evaluated = true;
-  console.dir({ term, evaluated }, { depth: null });
-  while (evaluated) {
-    [term, evaluated] = evaluateStep(term);
-    console.dir({ term, evaluated }, { depth: null });
-  }
+  while (evaluated) [term, evaluated] = evaluateStep(term);
   return term;
 };
 
@@ -312,14 +318,12 @@ export const parsePattern = (
   const errors: ParsingError[] = [];
 
   if (src[index].src === "(") {
-    index++;
-    if (src[index]?.type === "newline") index++;
+    [index] = newlineNext(src, index);
 
     const patterns: PatternTerm[] = [];
 
     while (src[index].src === ",") {
-      index++;
-      if (src[index]?.type === "newline") index++;
+      [index] = newlineNext(src, index);
 
       const [nextIndex, body, _errors] = parsePattern(src, index);
       index = nextIndex;
@@ -328,15 +332,13 @@ export const parsePattern = (
     }
 
     if (src[index].src === ")") {
-      index++;
-      if (src[index]?.type === "newline") index++;
+      [index] = newlineNext(src, index);
       return [index, { kind: TermKind.Pattern, patterns }, errors];
     }
   }
 
   const token = src[index];
-  index++;
-  if (src[index]?.type === "newline") index++;
+  [index] = newlineNext(src, index);
   if (token.type === "identifier")
     return [index, { kind: TermKind.PatternName, name: token.src }, errors];
   return [
@@ -353,15 +355,12 @@ export const parseTerm = (src: Token[], i = 0): ParsingResult<Term> => {
   if (src[index]?.type === "newline") index++;
 
   if (src[index].src === "fn") {
-    index++;
-    if (src[index]?.type === "newline") index++;
+    [index] = newlineNext(src, index);
     const names: PatternTerm[] = [];
 
     while (src[index]) {
-      console.log(2, src[index], index);
       if (src[index].src === "->") {
-        index++;
-        if (src[index]?.type === "newline") index++;
+        [index] = newlineNext(src, index);
         break;
       }
 
@@ -384,8 +383,7 @@ export const parseTerm = (src: Token[], i = 0): ParsingResult<Term> => {
   }
 
   if (src[index].src === "(") {
-    index++;
-    if (src[index]?.type === "newline") index++;
+    [index] = newlineNext(src, index);
 
     const [nextIndex, body, _errors] = parseApplication(src, index, [")", ","]);
     index = nextIndex;
@@ -393,14 +391,12 @@ export const parseTerm = (src: Token[], i = 0): ParsingResult<Term> => {
     const tupleItems: Term[] = [];
 
     if (src[index].src === ",") {
-      index++;
-      if (src[index]?.type === "newline") index++;
+      [index] = newlineNext(src, index);
       if (body) tupleItems.push(body);
       let _body: Term | null = null;
 
       while (src[index].src === ",") {
-        index++;
-        if (src[index]?.type === "newline") index++;
+        [index] = newlineNext(src, index);
         if (_body) tupleItems.push(_body);
 
         const [nextIndex, body, _errors] = parseApplication(src, index, [
@@ -416,8 +412,7 @@ export const parseTerm = (src: Token[], i = 0): ParsingResult<Term> => {
     }
 
     if (src[index].src === ")") {
-      index++;
-      if (src[index]?.type === "newline") index++;
+      [index] = newlineNext(src, index);
       if (tupleItems.length > 0)
         return [index, appAll(tuple(tupleItems.length), ...tupleItems), errors];
       if (!body) return [index, id, errors];
@@ -427,15 +422,13 @@ export const parseTerm = (src: Token[], i = 0): ParsingResult<Term> => {
   }
 
   if (src[index].src === "{") {
-    index++;
-    if (src[index]?.type === "newline") index++;
+    [index] = newlineNext(src, index);
     let result: Term | null = null;
     const statements: BlockStatement[] = [];
     while (src[index].src !== "}") {
       let operator: Term | null = null;
       if (src[index].src === "with") {
-        index++;
-        if (src[index]?.type === "newline") index++;
+        [index] = newlineNext(src, index);
         const [nextIndex, result, _errors] = parseTerm(src, index);
 
         index = nextIndex;
@@ -447,20 +440,17 @@ export const parseTerm = (src: Token[], i = 0): ParsingResult<Term> => {
           ? (index++, src[index]?.type === "newline" ? index++ : null, true)
           : false;
 
-      console.dir([9, src[index], index], { depth: null });
       let pat: PatternTerm | null = null;
       {
         const [nextIndex, _pat, _errors] = parsePattern(src, index);
 
-        if (src[nextIndex].src === "=") {
+        if (src[nextIndex].src === ":=") {
           index = nextIndex;
-          index++;
-          if (src[index]?.type === "newline") index++;
+          [index] = newlineNext(src, index);
           errors.push(..._errors);
           pat = _pat;
         }
       }
-      console.dir([9, pat, src[index], index], { depth: null });
 
       const banned = [";", "\n", "}"];
       const [nextIndex, value, _errors] = parseApplication(src, index, banned);
@@ -495,12 +485,91 @@ export const parseTerm = (src: Token[], i = 0): ParsingResult<Term> => {
     return [index, block(statements, result), errors];
   }
 
+  if (src[index].src === "do") {
+    [index] = newlineNext(src, index);
+    const [nextIndex, operator, _errors] = parseTerm(src, index);
+    errors.push(..._errors);
+    index = nextIndex;
+
+    if (src[index].src === "{") {
+      [index] = newlineNext(src, index);
+      let result: Term | null = null;
+      const statements: BlockStatement[] = [];
+      while (src[index].src !== "}") {
+        let operator: Term | null = null;
+        if (src[index].src === "with") {
+          [index] = newlineNext(src, index);
+          const [nextIndex, result, _errors] = parseTerm(src, index);
+
+          index = nextIndex;
+          errors.push(..._errors);
+          operator = result;
+        }
+        const recursive =
+          src[index].src === "recursive"
+            ? (index++, src[index]?.type === "newline" ? index++ : null, true)
+            : false;
+
+        let pat: PatternTerm | null = null;
+        {
+          const [nextIndex, _pat, _errors] = parsePattern(src, index);
+
+          if (src[nextIndex].src === "=") {
+            index = nextIndex;
+            [index] = newlineNext(src, index);
+            errors.push(..._errors);
+            pat = _pat;
+          }
+        }
+
+        const banned = [";", "\n", "}"];
+        const [nextIndex, value, _errors] = parseApplication(
+          src,
+          index,
+          banned
+        );
+
+        index = nextIndex;
+        errors.push(..._errors);
+
+        if (src[index].src !== "}") index++;
+        if (src[index]?.type === "newline") index++;
+
+        if (operator && !pat) {
+          errors.push({ message: 'must bind if using "with" clause' });
+          continue;
+        }
+        if (!value) {
+          errors.push({ message: "can't parse value term" });
+          continue;
+        }
+
+        const statement: (typeof statements)[number] = { value };
+        result = value;
+
+        if (pat) statement.name = pat;
+        if (operator) statement.operator = operator;
+        statement.recursive =
+          recursive || (!!pat && isRecursive(pat, statement.value));
+        statements.push(statement);
+      }
+      index++;
+      if (!result) errors.push({ message: "empty blocks are forbidden" });
+      statements.pop(); // result statement is pushed also, pop it
+      return [index, block(statements, result, operator), errors];
+    } else {
+      errors.push({ message: "do clause must have block to execute" });
+      while (src[index].type !== "newline") index++;
+      index++;
+      return [index, block([], id, operator), errors];
+    }
+  }
+
   const token = src[index];
-  index++;
-  if (src[index]?.type === "newline") index++;
+  [index] = newlineNext(src, index);
   if (token.type === "identifier") return [index, variable(token.src), errors];
   if (token.type === "number" || token.type === "string")
-    return [index, { kind: TermKind.Value, value: token.value }, errors];
+    return [index, value(token.value), errors];
   throw new Error("unreachable"); // ts is stoopid
 };
 
@@ -514,8 +583,6 @@ export const parseApplication = (
 
   let body: Term | null = null;
   while (src[index]) {
-    console.trace(src[index], index);
-
     if (banned.includes("\n") && src[index]?.type === "newline") break;
     if (banned.includes(src[index].src)) break;
     const [nextIndex, term, _errors] = parseTerm(src, index);
@@ -539,8 +606,8 @@ export const parseApplication = (
 
 export const parse = (src: string, i = 0): ConsumeParsingResult<Term> => {
   const [tokens, errors] = parseTokens(src, i);
-  console.log(tokens);
   const [, term, _errors] = parseApplication(tokens);
+  errors.push(..._errors);
 
   if (!term)
     return [binding(0), [{ message: "cant parse any terms" }, ...errors]];

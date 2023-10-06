@@ -1,23 +1,10 @@
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
-import {
-  Term,
-  eraseBlocks,
-  eraseFunctionWithArgs,
-  eraseNames,
-  erasePatterns,
-  evaluate,
-  insertContext,
-  parse,
-} from "../src/lambda";
+import { Term, evaluate, insertContext, parse } from "../src/lambda";
 
 const f = (src: string, context: Term[] = []) => {
   const [parsed, errors] = parse(src);
-  const erasedPatterns = erasePatterns(parsed);
-  const erasedBlocks = eraseBlocks(erasedPatterns);
-  const erasedFnArgs = eraseFunctionWithArgs(erasedBlocks);
-  const erasedNames = eraseNames(erasedFnArgs);
-  const withEnv = insertContext(erasedNames, context);
+  const withEnv = insertContext(parsed, context);
   const evaluated = evaluate(withEnv);
   return [withEnv, evaluated, errors] as const;
 };
@@ -32,7 +19,7 @@ const env = {
   pass_self: "fn -> #0 #0",
   fix: `fn -> pass_self (fn -> #1 (pass_self #0))`,
   tuple_n_rev: `{ 
-    tuple_n = fn n -> n (fn pred -> fn x -> tuple_n pred x) ();
+    tuple_n := fn n -> n (fn pred -> fn x -> tuple_n pred x) ();
     fn n -> tuple_n (succ n)
   }`,
   reverse:
@@ -61,9 +48,9 @@ const env = {
   head: `fn tuple, n -> nth tuple n 0`,
   insert: `fix fn insert -> fn tuple, size, n, x -> n 
     (fn pred -> {
-      head = head tuple size;
-      tail = tail tuple size;
-      new_tail = insert tail (dec size) pred x;
+      head := head tuple size;
+      tail := tail tuple size;
+      new_tail := insert tail (dec size) pred x;
       prepend head new_tail
     })
     (prepend x tuple)`,
@@ -80,26 +67,61 @@ const env = {
 };
 
 const examples = [
-  "{ true= #1;false= #1; true }",
-  "{ (true, false) = (#1, #0); true }",
+  "{ true := #1;false := #1; true }",
+  "{ (true, false) := (#1, #0); true }",
   `{ 
-    rec tuple_n = fn n -> n (fn pred -> fn x -> tuple_n pred x) ();
+    rec tuple_n := fn n -> n (fn pred -> fn x -> tuple_n pred x) ();
     tuple_n
   }`,
   `{
-    rec (even, odd) = (
-      fn n -> if n = 0 then true else odd (n - 1),
+    rec (even, odd) := (
+      fn n -> if n := 0 then true else odd (n - 1),
       fn n -> even (n - 1)
     )
     (even, odd)
   }`,
   `{
-    flatmapOption = fn map, value -> value mapper none
+    flatmapOption := fn map, value -> value mapper none
+    flatmapResult := fn map, value -> value mapper id
     with flatmapOption {
-      x = some 1;
-      y = some 2;
-      z = none;
-      some(x + y)
+      x := some 1;
+      y := some 2;
+      with flatmapResult w1 := ok 3;
+      with flatmapResult w2 := err "no";
+      z := none;
+      some(x + y + w1)
+    }
+  }`,
+  `{
+    flatmapOption := fn map, value -> value mapper none
+    flatmapResult := fn map, value -> value mapper id
+    with flatmapOption {
+      x := some 1;
+      y := some 2;
+      with flatmapResult w1 := ok 3;
+      with flatmapResult w2 := err "no";
+      some(x + y + w1)
+    }
+  }`,
+  `{
+    flatmapOption := fn map, value -> value mapper none
+    flatmapResult := fn map, value -> value mapper id
+    with flatmapOption {
+      x := some 1;
+      y := some 2;
+      with flatmapResult w1 := ok 3;
+      z := none;
+      some(x + y + w1)
+    }
+  }`,
+  `{
+    flatmapOption := fn map, value -> value mapper none
+    flatmapResult := fn map, value -> value mapper id
+    with flatmapOption {
+      x := some 1;
+      y := some 2;
+      with flatmapResult w1 := ok 3;
+      some(x + y + w1)
     }
   }`,
 ];
