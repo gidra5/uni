@@ -61,3 +61,8 @@ export const unwrapErr = <T, E>(x: Result<T, E>): E => {
   assert(x.type === "err", 'Result was not "err" variant');
   return x.err;
 };
+
+export type Context<T = any> = Record<string, T>;
+export type Tree = { name: string; children: Tree[] };
+
+export type RecordEntry = [string | number | symbol, unknown];
