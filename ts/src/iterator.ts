@@ -175,7 +175,6 @@ export class Iterator<T> {
     return [...this];
   }
 
-  // it doesn't work(
   // method should be available only if generic type is a tuple of form [key: string | number | symbol, value: unknown]
   // aka specialization
   toObject(this: Iterator<RecordEntry>) {

@@ -63,6 +63,5 @@ export const unwrapErr = <T, E>(x: Result<T, E>): E => {
 };
 
 export type Context<T = any> = Record<string, T>;
-export type Tree = { name: string; children: Tree[] };
 
 export type RecordEntry = [string | number | symbol, unknown];
