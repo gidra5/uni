@@ -15,10 +15,11 @@ export default class Iterator<T> implements Iterable<T> {
     let buffer: T[] = [];
     let consumed = false;
     const gen = function* () {
-      const index = 0;
+      let index = 0;
       while (true) {
         if (index < buffer.length) {
           yield buffer[index];
+          index++;
           continue;
         }
         if (consumed) break;
@@ -26,6 +27,7 @@ export default class Iterator<T> implements Iterable<T> {
         if (!item.done) {
           buffer.push(item.value);
           yield item.value;
+          index++;
         } else {
           consumed = item.done;
           break;
@@ -514,5 +516,9 @@ export default class Iterator<T> implements Iterable<T> {
 
   inspect(callback: (x: T) => void) {
     return this.map((x) => (callback(x), x));
+  }
+
+  equals<U>(gen2: Iterable<U>, compare: (a: T, b: U) => boolean) {
+    return this.zip(gen2).spreadMap(compare).every();
   }
 }
