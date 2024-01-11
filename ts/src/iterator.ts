@@ -511,4 +511,8 @@ export default class Iterator<T> implements Iterable<T> {
   isInOrder(compare: (a: T, b: T) => boolean) {
     return this.window(2).spreadMap(compare).every();
   }
+
+  inspect(callback: (x: T) => void) {
+    return this.map((x) => (callback(x), x));
+  }
 }
