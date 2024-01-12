@@ -11,15 +11,15 @@ import {
   intervalPosition,
 } from "./position.js";
 
+type TokenConstructorArgs<T> = T extends "identifier" | "newline"
+  ? [src: Token["src"], pos: TokenPos["pos"]]
+  : T extends "number"
+  ? [src: Token["src"], pos: TokenPos["pos"], value: number]
+  : [src: Token["src"], pos: TokenPos["pos"], value: string];
+
 export const token =
   <T extends Token["type"]>(type: T) =>
-  (
-    ...[src, pos, value]: T extends "identifier" | "newline"
-      ? [src: Token["src"], pos: TokenPos["pos"]]
-      : T extends "number"
-      ? [src: Token["src"], pos: TokenPos["pos"], value: number]
-      : [src: Token["src"], pos: TokenPos["pos"], value: string]
-  ) =>
+  (...[src, pos, value]: TokenConstructorArgs<T>) =>
     ({ type, src, value, pos } as TokenPos);
 
 export const identifier = token("identifier");
