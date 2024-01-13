@@ -1,3 +1,5 @@
+import Iterator from "./iterator";
+
 export type Tree = { name: string; children: Tree[] };
 export type TreeVisitor<T, Node extends Tree> = (node: Node) => T;
 export type TreeVisitors<T, Node extends Tree> = {
@@ -7,7 +9,14 @@ export type TreeVisitors<T, Node extends Tree> = {
 };
 
 export const DefaultVisitor = Symbol("DefaultVisitor");
-export const visit =
-  <T, Node extends Tree>(visitors: TreeVisitors<T, Node>) =>
-  (tree: Node): T =>
-    (visitors[tree.name] ?? visitors[DefaultVisitor])(tree);
+export class Visitor<T, Node extends Tree = Tree> {
+  constructor(private visitors: TreeVisitors<T, Node>) {}
+  visitChildren(tree: Node): Iterator<T> {
+    return Iterator.iter(tree.children).map(
+      this.visitNode as TreeVisitor<T, Tree>
+    );
+  }
+  visitNode(tree: Node): T {
+    return (this.visitors[tree.name] ?? this.visitors[DefaultVisitor])(tree);
+  }
+}
