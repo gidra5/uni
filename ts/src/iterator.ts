@@ -384,19 +384,15 @@ export default class Iterator<T> implements Iterable<T> {
   }
 
   some(this: Iterator<boolean>) {
-    return (
-      this.filter((x) => x)
-        .take(1)
-        .count() > 0
-    );
+    return !this.filter((x) => x).isEmpty();
   }
 
   every(this: Iterator<boolean>) {
-    return (
-      this.filter((x) => !x)
-        .take(1)
-        .count() === 0
-    );
+    return this.filter((x) => !x).isEmpty();
+  }
+
+  isEmpty() {
+    return this.take(1).count() === 0;
   }
 
   count() {
@@ -454,6 +450,8 @@ export default class Iterator<T> implements Iterable<T> {
     return this.skipWhile(() => _count++ < count);
   }
 
+  partition<U extends T>(pred: (x: T) => x is U): [Iterator<U>, Iterator<T>];
+  partition(pred: (x: T) => boolean): [Iterator<T>, Iterator<T>];
   partition(pred: (x: T) => boolean): [Iterator<T>, Iterator<T>] {
     return [this.filter(pred), this.filter((x) => !pred(x))];
   }
