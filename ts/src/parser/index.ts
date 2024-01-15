@@ -43,8 +43,7 @@ export const parseGroup =
       });
 
     if (matchingScope.isEmpty()) {
-      errors.push(error("Unexpected token", indexPosition(index)));
-      return [index + 1, group(), errors];
+      return [index + 1, group(src[index].src), errors];
     }
 
     const matchingScopeIsSingleSep = matchingScope
