@@ -42,6 +42,7 @@ export const parseGroup =
         return precedence[0] === null;
       });
 
+    // TODO: how to handle if-then and if-then-else cases?
     if (matchingScope.isEmpty()) {
       return [index + 1, group(src[index].src), errors];
     }
@@ -63,6 +64,8 @@ export const parseGroup =
     if (src[index].type === "newline") index++;
 
     const _context = { ...context, precedence: 0 };
+    _context.lhs = undefined;
+
     const [nextIndex, expr, _errors] = parseExpr(_context)(src, index);
     if (_errors.length > 0) {
       errors.push(
@@ -79,9 +82,11 @@ export const parseGroup =
         const entry = [k, { precedence, separators }];
         return entry as [key: string, value: TokenGroupDefinition];
       })
+      .filter(([_, { separators }]) => separators.length > 0)
       .toObject();
 
-    const [_index, rest, _errors2] = parseGroup(context, _scope)(src, index);
+    // TODO: how to handle if-then and if-then-else cases?
+    const [_index, rest, _errors2] = parseGroup(_context, _scope)(src, index);
     errors.push(..._errors2);
 
     return [_index, { ...rest, children: [expr, ...rest.children] }, errors];
