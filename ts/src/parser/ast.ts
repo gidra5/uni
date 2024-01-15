@@ -106,7 +106,8 @@ export const parseGroup =
     index++;
     if (src[index].type === "newline") index++;
 
-    const [nextIndex, expr, _errors] = parseExpr(context)(src, index);
+    const _context = { ...context, precedence: 0 };
+    const [nextIndex, expr, _errors] = parseExpr(_context)(src, index);
     if (_errors.length > 0) {
       errors.push(
         error("Errors in operand", position(index, nextIndex), _errors)
@@ -117,19 +118,17 @@ export const parseGroup =
 
     const _scope = matchingScope
       .spreadMap((k, v) => {
-        const entry = [k, { ...v, separators: v.separators.slice(1) }];
+        const separators = v.separators.slice(1);
+        const precedence = [null, v.precedence[1]] as Precedence;
+        const entry = [k, { precedence, separators }];
         return entry as [key: string, value: TokenGroupDefinition];
       })
       .toObject();
 
-    const [nextIndex2, rest, _errors2] = parseGroup(context, _scope)(
-      src,
-      index
-    );
+    const [_index, rest, _errors2] = parseGroup(context, _scope)(src, index);
     errors.push(..._errors2);
-    index = nextIndex2;
 
-    return [index, { ...rest, children: [expr, ...rest.children] }, errors];
+    return [_index, { ...rest, children: [expr, ...rest.children] }, errors];
   };
 
 export const parsePrefix =
