@@ -412,6 +412,64 @@ export default class Iterator<T> implements Iterable<T> {
     return this.map((args) => map(...args));
   }
 
+  spreadFilterMap<U extends unknown[], V>(
+    this: Iterator<U>,
+    map: (...args: U) => { pred: false } | { pred: true; value: V }
+  ) {
+    return this.filterMap((args) => map(...args));
+  }
+
+  spreadFlatMap<U extends unknown[], V>(
+    this: Iterator<U>,
+    map: (...args: U) => Iterable<V>
+  ) {
+    return this.flatMap((args) => map(...args));
+  }
+
+  spreadPartition<U extends unknown[]>(
+    this: Iterator<U>,
+    pred: (...args: U) => boolean
+  ): [Iterator<U>, Iterator<U>] {
+    return this.partition((args) => pred(...args));
+  }
+
+  spreadInspect<U extends unknown[]>(
+    this: Iterator<U>,
+    callback: (...args: U) => void
+  ) {
+    return this.inspect((args) => callback(...args));
+  }
+
+  spreadSkipWhile<U extends unknown[]>(
+    this: Iterator<U>,
+    pred: (...args: U) => boolean
+  ) {
+    return this.skipWhile((args) => pred(...args));
+  }
+
+  spreadTakeWhile<U extends unknown[]>(
+    this: Iterator<U>,
+    pred: (...args: U) => boolean
+  ) {
+    return this.takeWhile((args) => pred(...args));
+  }
+
+  spreadReduce<U extends unknown[], V>(
+    this: Iterator<U>,
+    reducer: (acc: V, ...args: U) => V,
+    initial: V
+  ) {
+    return this.reduce((acc, args) => reducer(acc, ...args), initial);
+  }
+
+  spreadAccumulate<U extends unknown[], V>(
+    this: Iterator<U>,
+    reducer: (acc: V, ...args: U) => V,
+    initial: V
+  ) {
+    return this.accumulate((acc, args) => reducer(acc, ...args), initial);
+  }
+
   filterMap<U>(map: (x: T) => { pred: false } | { pred: true; value: U }) {
     type PredTrue = { pred: true; value: U };
     return this.map(map)
@@ -430,7 +488,7 @@ export default class Iterator<T> implements Iterable<T> {
   ): [Iterator<U>, Iterator<V>, Iterator<W>];
   unzip<U>(this: Iterator<U[]>, size?: number): Iterator<U>[];
   unzip<U>(this: Iterator<U[]>, size = Infinity): Iterator<U>[] {
-    size = Math.min(size, this.head().length);
+    size = Math.min(size, this.head()?.length ?? 0);
     return Iterator.natural(size)
       .map((i) => this.map((x) => x[i]))
       .toArray();
@@ -492,7 +550,7 @@ export default class Iterator<T> implements Iterable<T> {
   }
 
   nth(n: number) {
-    return this.skip(n).take(1).toArray()[0];
+    return this.skip(n).take(1).toArray()[0] as T | undefined;
   }
 
   head() {
