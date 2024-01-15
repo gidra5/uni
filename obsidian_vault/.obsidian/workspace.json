@@ -25,7 +25,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Types.md",
+                "file": "Syntax Tree.md",
                 "mode": "source",
                 "source": false
               }
@@ -98,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Types.md",
+                "file": "Syntax Tree.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Types.md",
+                "file": "Syntax Tree.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Types.md"
+                "file": "Syntax Tree.md"
               }
             }
           },
@@ -182,8 +182,10 @@
   },
   "active": "5d1a5c9caf595230",
   "lastOpenFiles": [
-    "Lambda Calculus/Lambda calculus.md",
+    "Parser.md",
+    "Syntax Tree.md",
     "Types.md",
+    "Lambda Calculus/Lambda calculus.md",
     "Lambda calculus.md",
     "Lambda Calculus/Beta-reduction.md",
     "Lambda Calculus",
@@ -194,10 +196,8 @@
     "Iteration model.md",
     "Language Manager.md",
     "Syntax.md",
-    "Syntax Tree.md",
     "Token Tree.md",
     "Tokenizer.md",
-    "Parser.md",
     "Standart Library.md",
     "Values.md",
     "Zero-cost abstraction.md",
