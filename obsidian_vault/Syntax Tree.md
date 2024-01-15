@@ -15,6 +15,8 @@ While parsing expressions some nodes may declare new variables. For example
 * `1+2 is x and x+1 is x and x-1` - `1+2 is x` declared `x`, `x+1 is x` redeclared `x` using previous declaration, and used in `x-1`
 * `x is of_type number and x+1` - `x is of_type number` declares type of `x` as `number` for the rest of expression and returned `boolean`, that will short-circuit when used with `and`
 * `async { await x }` - `await` declared by `async` in `{ await x }`
+* `async { x = () -> { /* no await*/ }; await x }` - `await` declared by `async` in the lexical scope, but undeclared in `() -> { /* no await*/ }`
+* `x, y -> x + y` - declares `x`, `y` for the body of the function
 
 `or` declares intersection of declarations in its operands for the rest of expression
 `and` declares union of declarations in its operands for the rest of expression
