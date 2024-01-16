@@ -1,6 +1,6 @@
 import { parse } from ".";
 import Iterator from "../iterator";
-import { parseTokens } from "../tokens";
+import { parseTokens } from "./tokens";
 import { DefaultVisitor, Tree, Visitor } from "../tree";
 import { isEqual } from "../utils";
 import { AbstractSyntaxTree } from "./ast";

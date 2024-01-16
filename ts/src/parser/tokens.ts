@@ -1,15 +1,10 @@
-import { endOfSrcError, error } from "./errors.js";
-import type {
-  ParsingError,
-  StringParser,
-  Token,
-  TokenPos,
-} from "./parser/types.js";
+import { endOfSrcError, error } from "../errors.js";
+import type { ParsingError, StringParser, Token, TokenPos } from "./types.js";
 import {
   indexPosition,
   position as _position,
   intervalPosition,
-} from "./position.js";
+} from "../position.js";
 
 type TokenConstructorArgs<T> = T extends "identifier" | "newline"
   ? [src: Token["src"], pos: TokenPos["pos"]]
