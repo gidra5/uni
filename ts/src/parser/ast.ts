@@ -1,6 +1,6 @@
 import { Tree } from "../tree";
 
-export type AbstractSyntaxTree = Tree & { value?: string };
+export type AbstractSyntaxTree = Tree & { value?: any };
 
 export const placeholder = (): AbstractSyntaxTree => ({
   name: "placeholder",
@@ -8,6 +8,16 @@ export const placeholder = (): AbstractSyntaxTree => ({
 });
 export const name = (value: string): AbstractSyntaxTree => ({
   name: "name",
+  value,
+  children: [],
+});
+export const number = (value: number): AbstractSyntaxTree => ({
+  name: "number",
+  value,
+  children: [],
+});
+export const string = (value: string): AbstractSyntaxTree => ({
+  name: "string",
   value,
   children: [],
 });
