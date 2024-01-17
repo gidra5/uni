@@ -390,37 +390,34 @@ describe("iterator", () => {
     );
   });
 
-  test("Iterator.groupBy objects", () => {
-    const even = { type: "even" };
-    const odd = { type: "odd" };
-    const actual = Iterator.iter([1, 2, 3, 4, 5]).groupBy((v) =>
-      v % 2 === 0 ? even : odd
-    );
-    expect(actual).toEqual(
-      new Map([
-        [odd, [1, 3, 5]],
-        [even, [2, 4]],
-      ])
-    );
+  it.prop([fc.anything(), fc.anything()])(
+    "Iterator.groupBy keys",
+    (even, odd) => {
+      const actual = Iterator.iter([1, 2, 3, 4, 5]).groupBy((v) =>
+        v % 2 === 0 ? even : odd
+      );
+      expect(actual).toEqual(
+        new Map([
+          [odd, [1, 3, 5]],
+          [even, [2, 4]],
+        ])
+      );
+    }
+  );
+
+  it.prop([fc.object()])("Iterator.iterEntries", (object) => {
+    const entries = Iterator.iterEntries(object).toArray();
+    expect(entries).toEqual(Object.entries(object));
   });
 
-  test("iterEntries must iterate over object entries", () => {
-    const source = { a: 13, b: 42, c: "hello" };
-    expect(Iterator.iterEntries(source).toArray()).toEqual(
-      Object.entries(source)
-    );
+  it.prop([fc.object()])("Iterator.iterKeys", (object) => {
+    const keys = Iterator.iterKeys(object).toArray();
+    expect(keys).toEqual(Object.keys(object));
   });
 
-  test("iterKeys must iterate over object keys", () => {
-    const source = { a: 13, b: 42, c: "hello" };
-    expect(Iterator.iterKeys(source).toArray()).toEqual(Object.keys(source));
-  });
-
-  test("iterValues must iterate over object values", () => {
-    const source = { a: 13, b: 42, c: "hello" };
-    expect(Iterator.iterValues(source).toArray()).toEqual(
-      Object.values(source)
-    );
+  it.prop([fc.object()])("Iterator.iterValues", (object) => {
+    const values = Iterator.iterValues(object).toArray();
+    expect(values).toEqual(Object.values(object));
   });
 
   it.prop([fc.array(fc.anything())])("Iterator.inspect", (array) => {
@@ -428,9 +425,11 @@ describe("iterator", () => {
     const iterator = Iterator.iter(array).inspect(fn);
     expect(iterator.toArray()).toEqual(array);
     expect(fn).toHaveBeenCalledTimes(array.length);
+    expect(fn.mock.calls).toEqual(array.map((value) => [value]));
 
     expect(iterator.toArray()).toEqual(array);
     expect(fn).toHaveBeenCalledTimes(array.length * 2);
+    expect(fn.mock.calls).toEqual([...array, ...array].map((value) => [value]));
   });
 
   it.prop([fc.array(fc.anything())])("Iterator.cached", (array) => {
@@ -506,5 +505,19 @@ describe("iterator", () => {
     const iterator = Iterator.iter(array).inspect(fn).cycle();
     iterator.take(array.length * 2).consume();
     expect(fn).toHaveBeenCalledTimes(array.length);
+  });
+
+  it.prop([fc.array(fc.anything())])("Iterator.consume", (array) => {
+    const fn = vi.fn();
+    const iterator = Iterator.iter(array).inspect(fn);
+    iterator.consume();
+    expect(fn).toHaveBeenCalledTimes(array.length);
+  });
+
+  it.prop([fc.array(fc.anything())])("Iterator.consume fn", (array) => {
+    const fn = vi.fn();
+    Iterator.iter(array).consume(fn);
+    expect(fn).toHaveBeenCalledTimes(array.length);
+    expect(fn.mock.calls).toEqual(array.map((value) => [value]));
   });
 });
