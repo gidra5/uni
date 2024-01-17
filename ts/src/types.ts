@@ -43,36 +43,51 @@ export type ExpandRecursively<T> = T extends (...args: infer A) => infer R
     : never
   : T;
 
-  export type Zip<T extends Iterable<unknown>[]> = T extends [Iterable<infer A>, ...infer B extends Iterable<unknown>[]]
-    ? [A, ...Zip<B>]
-    : [];
-  export type ZipLongest<T extends Iterable<unknown>[]> = T extends [
-    Iterable<infer A>,
-    ...infer B extends Iterable<unknown>[]
-  ]
-    ? [A | undefined, ...Zip<B>]
-    : [];
+export type TupleN<
+  N extends number,
+  T = unknown,
+  A extends unknown[] = []
+> = number extends N
+  ? T[]
+  : A["length"] extends N
+  ? A
+  : TupleN<N, T, [...A, T]>;
+export type Sum<A extends number, B extends number> = [
+  ...TupleN<A>,
+  ...TupleN<B>
+]["length"];
+export type Succ<A extends number> = Sum<A, 1>;
+export type Pred<A extends number> = A extends 0
+  ? 0
+  : TupleN<A> extends [...infer B, infer _]
+  ? B["length"]
+  : A;
+export type Sub<A extends number, B extends number> = B extends 0
+  ? A
+  : number extends B
+  ? number
+  : Sub<Pred<A>, Pred<B>>;
 
-  export type Option<T> = TaggedUnion<{ some: { value: T }; none: {} }>;
-  export const some = <T>(value: T): Option<T> => ({ type: "some", value });
-  export const none = <T>(): Option<T> => ({ type: "none" });
-  export const unwrapSome = <T>(x: Option<T>): T => {
-    assert(x.type === "some", 'Option was not "some" variant');
-    return x.value;
-  };
-  export type Result<T, E> = TaggedUnion<{ ok: { value: T }; err: { err: E } }>;
-  export const ok = <T, E>(value: T): Result<T, E> => ({ type: "ok", value });
-  export const err = <T, E>(err: E): Result<T, E> => ({ type: "err", err });
-  export const unwrapOk = <T, E>(x: Result<T, E>): T => {
-    assert(x.type === "ok", 'Result was not "ok" variant');
-    return x.value;
-  };
-  export const unwrapErr = <T, E>(x: Result<T, E>): E => {
-    assert(x.type === "err", 'Result was not "err" variant');
-    return x.err;
-  };
+export type Option<T> = TaggedUnion<{ some: { value: T }; none: {} }>;
+export const some = <T>(value: T): Option<T> => ({ type: "some", value });
+export const none = <T>(): Option<T> => ({ type: "none" });
+export const unwrapSome = <T>(x: Option<T>): T => {
+  assert(x.type === "some", 'Option was not "some" variant');
+  return x.value;
+};
+export type Result<T, E> = TaggedUnion<{ ok: { value: T }; err: { err: E } }>;
+export const ok = <T, E>(value: T): Result<T, E> => ({ type: "ok", value });
+export const err = <T, E>(err: E): Result<T, E> => ({ type: "err", err });
+export const unwrapOk = <T, E>(x: Result<T, E>): T => {
+  assert(x.type === "ok", 'Result was not "ok" variant');
+  return x.value;
+};
+export const unwrapErr = <T, E>(x: Result<T, E>): E => {
+  assert(x.type === "err", 'Result was not "err" variant');
+  return x.err;
+};
 
-  export type Context<T = any> = Record<string, T>;
+export type Context<T = any> = Record<string, T>;
 
-  export type RecordKey = string | number | symbol;
-  export type RecordEntry = [RecordKey, unknown];
+export type RecordKey = string | number | symbol;
+export type RecordEntry = [RecordKey, unknown];
