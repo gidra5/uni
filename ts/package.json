@@ -19,11 +19,12 @@
     "commander": "^9.3.0"
   },
   "devDependencies": {
-    "@fast-check/vitest": "^0.0.6",
+    "@fast-check/vitest": "^0.0.9",
     "@types/node": "^20.2.5",
-    "@vitest/ui": "^0.32.0",
+    "@vitest/coverage-istanbul": "^1.2.1",
+    "@vitest/ui": "^1.2.0",
     "fast-check": "^3.10.0",
     "typescript": "^5.0.4",
-    "vitest": "^0.32.0"
+    "vitest": "^1.2.0"
   }
 }
