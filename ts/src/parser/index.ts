@@ -45,7 +45,9 @@ export const parseGroup =
       return [index + 1, group(src[index].src), errors];
     }
 
-    const matchingScopeIsSingleSep = matchingScope.map(([_, { separators }]) => separators.length === 1).every();
+    const matchingScopeIsSingleSep = matchingScope
+      .map(([_, { separators }]) => separators.length === 1)
+      .every();
 
     if (matchingScopeIsSingleSep) {
       if (!matchingScope.skip(1).isEmpty()) {
@@ -64,7 +66,9 @@ export const parseGroup =
 
     const [nextIndex, expr, _errors] = parseExpr(_context)(src, index);
     if (_errors.length > 0) {
-      errors.push(error("Errors in operand", position(index, nextIndex), _errors));
+      errors.push(
+        error("Errors in operand", position(index, nextIndex), _errors)
+      );
     }
     index = nextIndex;
     if (src[index].type === "newline") index++;

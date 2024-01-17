@@ -91,3 +91,8 @@ export type Context<T = any> = Record<string, T>;
 
 export type RecordKey = string | number | symbol;
 export type RecordEntry = [RecordKey, unknown];
+export type IteratorInterface<T, TReturn = any, TNext = unknown> = Iterator<
+  T,
+  TReturn,
+  TNext
+>;

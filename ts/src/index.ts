@@ -1,18 +1,7 @@
 import { program } from "commander";
 import readline from "readline";
 import { stdin as input, stdout as output } from "process";
-import {
-  Term,
-  eraseBlocks,
-  eraseFunctionWithArgs,
-  resolveNames,
-  erasePatterns,
-  evaluate,
-  insertContext,
-  parse,
-  print,
-} from "./lambda.js";
-import { print as printErrors } from "./errors.js";
+import { parseTokens } from "./parser/tokens";
 
 program.option("-i, --interactive");
 
@@ -20,11 +9,11 @@ program.parse();
 
 const { interactive } = program.opts();
 const [file] = program.args;
+// let map = new FileMap();
+// const ctx: Context = {};
 
 if (interactive) {
   const rl = readline.createInterface({ input, output, prompt: ">> " });
-  const session: Term[] = [];
-
   rl.prompt();
 
   rl.on("line", (_line) => {
@@ -37,24 +26,17 @@ if (interactive) {
         rl.close();
         break;
       default: {
-        const [parsed, errors] = parse(line);
-        printErrors(errors);
-        console.log(3, parsed, errors);
+        const [tokens, tokenErrors] = parseTokens(line);
 
-        const erasedPatterns = erasePatterns(parsed);
-        console.dir([4, erasedPatterns], { depth: null });
-        const erasedBlocks = eraseBlocks(erasedPatterns);
-        console.dir([5, erasedBlocks], { depth: null });
-        const erasedFnArgs = eraseFunctionWithArgs(erasedBlocks);
-        console.dir([6, erasedFnArgs], { depth: null });
-        const erasedNames = resolveNames(erasedFnArgs);
-        console.dir([7, erasedNames, session], { depth: null });
-        const withEnv = insertContext(erasedNames, session);
-        console.dir([8, withEnv], { depth: null });
-        console.log(print(withEnv));
-        const evaluated = evaluate(withEnv);
-        session.unshift(evaluated);
-        console.log(print(evaluated), session);
+        // const fileName = "cli";
+        // map.addFile(fileName, line);
+        // printTokenErrors(tokenErrors, map, fileName);
+        // const [, tree, exprErrors] = parseExpr()(tokens);
+        // printErrors(exprErrors, tokens, map, fileName);
+        // console.log(printTree(treeExpression(tree)));
+        // console.log(printTree(treeOptimizer(treeExpression(tree))[0]));
+
+        // const x = evalExpr(tree, ctx);
         break;
       }
     }
@@ -65,3 +47,9 @@ if (interactive) {
   });
 } else {
 }
+
+// export const evalAccessStr = (str: string, ctx: Context) =>
+//   evalAccessExpr(parseAccessExpression(parseTokens(str)[0])[1], ctx);
+// export const evalExprStr = (str: string, ctx: Context) => {
+//   return evalExpr(parseExpr()(parseTokens(str)[0])[1], ctx);
+// };

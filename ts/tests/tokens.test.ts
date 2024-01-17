@@ -5,33 +5,39 @@ import { position } from "../src/position.js";
 import { TokenPos } from "../src/parser/types.js";
 
 // Test case: Parsing a string token
-test.prop([fc.string().filter((s) => !s.includes("\\") && !s.includes('"'))])("parseToken - string token", (value) => {
-  const src = `"${value}"`;
-  const startIndex = 0;
-  const expectedToken = { type: "string", src, value };
-  const expectedIndex = value.length + 2;
-  const expectedErrors = [];
+test.prop([fc.string().filter((s) => !s.includes("\\") && !s.includes('"'))])(
+  "parseToken - string token",
+  (value) => {
+    const src = `"${value}"`;
+    const startIndex = 0;
+    const expectedToken = { type: "string", src, value };
+    const expectedIndex = value.length + 2;
+    const expectedErrors = [];
 
-  const [index, { pos, ...token }, errors] = parseToken(src, startIndex);
+    const [index, { pos, ...token }, errors] = parseToken(src, startIndex);
 
-  expect(index).toBe(expectedIndex);
-  expect(token).toEqual(expectedToken);
-  expect(errors).toEqual(expectedErrors);
-});
+    expect(index).toBe(expectedIndex);
+    expect(token).toEqual(expectedToken);
+    expect(errors).toEqual(expectedErrors);
+  }
+);
 
-test.prop([fc.string({ maxLength: 1, minLength: 1 })])("parseToken - string token escape", (value) => {
-  const src = `"\\${value}"`;
-  const startIndex = 0;
-  const expectedToken = { type: "string", src, value };
-  const expectedIndex = 4;
-  const expectedErrors = [];
+test.prop([fc.string({ maxLength: 1, minLength: 1 })])(
+  "parseToken - string token escape",
+  (value) => {
+    const src = `"\\${value}"`;
+    const startIndex = 0;
+    const expectedToken = { type: "string", src, value };
+    const expectedIndex = 4;
+    const expectedErrors = [];
 
-  const [index, { pos, ...token }, errors] = parseToken(src, startIndex);
+    const [index, { pos, ...token }, errors] = parseToken(src, startIndex);
 
-  expect(index).toBe(expectedIndex);
-  expect(token).toEqual(expectedToken);
-  expect(errors).toEqual(expectedErrors);
-});
+    expect(index).toBe(expectedIndex);
+    expect(token).toEqual(expectedToken);
+    expect(errors).toEqual(expectedErrors);
+  }
+);
 
 // Test case: Parsing a number token
 describe("parseToken - number token", () => {
@@ -87,22 +93,25 @@ describe("parseToken - number token", () => {
     expect(index).toBe(expectedIndex);
   });
 
-  it.prop([fc.stringMatching(/^(\d+_*)*\d+\.(\d+_*)*\d+$/)])("literals with spacers", (src) => {
-    const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-      value: Number(src.replace(/_/g, "")),
-    };
-    const expectedIndex = src.length;
-    const expectedErrors = [];
+  it.prop([fc.stringMatching(/^(\d+_*)*\d+\.(\d+_*)*\d+$/)])(
+    "literals with spacers",
+    (src) => {
+      const startIndex = 0;
+      const expectedToken = {
+        type: "number",
+        src,
+        value: Number(src.replace(/_/g, "")),
+      };
+      const expectedIndex = src.length;
+      const expectedErrors = [];
 
-    const [index, { pos, ...token }, errors] = parseToken(src, startIndex);
+      const [index, { pos, ...token }, errors] = parseToken(src, startIndex);
 
-    expect(token).toEqual(expectedToken);
-    expect(errors).toEqual(expectedErrors);
-    expect(index).toBe(expectedIndex);
-  });
+      expect(token).toEqual(expectedToken);
+      expect(errors).toEqual(expectedErrors);
+      expect(index).toBe(expectedIndex);
+    }
+  );
 });
 
 // Test case: Parsing an identifier token
@@ -124,7 +133,6 @@ describe("parseToken - identifier token", () => {
 // Test case: Parsing tokens from a source string
 test("parseTokens", () => {
   const src = '42 "Hello" variable ((expr))';
-  const startIndex = 0;
   const expectedTokens: TokenPos[] = [
     { type: "number", src: "42", value: 42, pos: position(0, 2) },
     { type: "string", src: '"Hello"', value: "Hello", pos: position(3, 10) },
@@ -137,7 +145,7 @@ test("parseTokens", () => {
   ];
   const expectedErrors = [];
 
-  const [tokens, errors] = parseTokens(src, startIndex);
+  const [tokens, errors] = parseTokens(src);
 
   expect(tokens).toEqual(expectedTokens);
   expect(errors).toEqual(expectedErrors);
