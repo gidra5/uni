@@ -480,6 +480,16 @@ describe.concurrent("iterator", () => {
     }
   );
 
+  it.concurrent.prop([
+    fc
+      .tuple(fc.array(fc.anything()), fc.nat())
+      .filter(([arr, i]) => i < arr.length && i >= 0),
+  ])("Iterator.nth", ([array, index]) => {
+    const fn = vi.fn();
+    expect(Iterator.iter(array).inspect(fn).nth(index)).toEqual(array[index]);
+    expect(fn).toHaveBeenCalledTimes(index + 1);
+  });
+
   test.concurrent("Iterator.range with start and stop", () => {
     const actual = Iterator.range(1, 5).toArray();
     expect(actual).toEqual([1, 2, 3, 4]);
