@@ -25,14 +25,11 @@ export const defaultParsingContext = (): ParsingContext => ({
 });
 
 export const parseGroup =
-  (
-    context: ParsingContext,
-    scope = context.scope
-  ): TokenParser<AbstractSyntaxTree> =>
+  (context: ParsingContext): TokenParser<AbstractSyntaxTree> =>
   (src, i = 0) => {
     let index = i;
     const errors: ParsingError[] = [];
-    const matchingScope = Iterator.iterEntries(scope)
+    const matchingScope = Iterator.iterEntries(context.scope)
       .filter(([_, { separators }]) => src[index].src === separators[0])
       .filter(([_, { precedence }]) => {
         return precedence[0] === null || precedence[0] >= context.precedence;
@@ -40,16 +37,15 @@ export const parseGroup =
       .filter(([_, { precedence }]) => {
         if (context.lhs) return precedence[0] !== null;
         return precedence[0] === null;
-      });
+      })
+      .cached();
 
     // TODO: how to handle if-then and if-then-else cases?
     if (matchingScope.isEmpty()) {
       return [index + 1, group(src[index].src), errors];
     }
 
-    const matchingScopeIsSingleSep = matchingScope
-      .map(([_, { separators }]) => separators.length === 1)
-      .every();
+    const matchingScopeIsSingleSep = matchingScope.map(([_, { separators }]) => separators.length === 1).every();
 
     if (matchingScopeIsSingleSep) {
       if (!matchingScope.skip(1).isEmpty()) {
@@ -68,9 +64,7 @@ export const parseGroup =
 
     const [nextIndex, expr, _errors] = parseExpr(_context)(src, index);
     if (_errors.length > 0) {
-      errors.push(
-        error("Errors in operand", position(index, nextIndex), _errors)
-      );
+      errors.push(error("Errors in operand", position(index, nextIndex), _errors));
     }
     index = nextIndex;
     if (src[index].type === "newline") index++;
@@ -86,7 +80,7 @@ export const parseGroup =
       .toObject();
 
     // TODO: how to handle if-then and if-then-else cases?
-    const [_index, rest, _errors2] = parseGroup(_context, _scope)(src, index);
+    const [_index, rest, _errors2] = parseGroup(_context)(src, index);
     errors.push(..._errors2);
 
     return [_index, { ...rest, children: [expr, ...rest.children] }, errors];

@@ -1,8 +1,8 @@
-import { RecordEntry } from "./types";
-import { isEqual } from "./utils";
+import { RecordEntry, RecordKey, Zip, ZipLongest } from "./types";
+import { identity, isEqual } from "./utils";
 
 export default class Iterator<T> implements Iterable<T> {
-  constructor(private generator: () => Generator<T>) {}
+  private constructor(private generator: () => Generator<T>) {}
 
   [Symbol.iterator]() {
     return this.generator();
@@ -42,9 +42,11 @@ export default class Iterator<T> implements Iterable<T> {
     return new Iterator(() => it);
   }
 
-  reduce<U>(reducer: (acc: U, input: T) => U, initial: U) {
-    const it = this;
-    let acc = initial;
+  reduce(reducer: (acc: T, input: T) => T): T;
+  reduce<U>(reducer: (acc: U, input: T) => U, initial: U): U;
+  reduce(reducer: (acc: any, input: T) => any, initial?: any) {
+    const it = this.consumable();
+    let acc = initial ?? it.head()!;
     for (const item1 of it) {
       acc = reducer(acc, item1);
     }
@@ -99,44 +101,17 @@ export default class Iterator<T> implements Iterable<T> {
     return new Iterator(gen);
   }
 
-  flat<U>(this: Iterator<Iterable<U>>) {
+  flat<U, V extends Iterable<U>>(this: Iterator<V>): Iterator<U>;
+  flat<U>(this: Iterator<Iterable<U> | U>, depth: 1): Iterator<U>;
+  flat<U>(this: Iterator<Iterable<Iterable<U> | U> | Iterable<U> | U>, depth: 2): Iterator<U>;
+  flat<U, V extends Iterable<U>>(this: Iterator<U | V>, depth: number): Iterator<U>;
+  flat<U, V extends Iterable<U>>(this: Iterator<V>, depth = 1) {
     const it = this;
     const gen = function* () {
-      for (const item of it) yield* item;
-    };
-    return new Iterator(gen);
-  }
-
-  zip<U>(gen2: Iterable<U>): Iterator<[T, U]>;
-  zip<U1, U2>(gen2: Iterable<U1>, gen3: Iterable<U2>): Iterator<[T, U1, U2]>;
-  zip(...iterables: Iterable<T>[]): Iterator<T[]>;
-  zip(...iterables: Iterable<T>[]) {
-    iterables.unshift(this);
-    const iterators = iterables.map((it) => it[Symbol.iterator]());
-    const gen = function* () {
-      while (true) {
-        const items = iterators.map((it) => it.next());
-        if (items.some((x) => x.done)) return;
-        yield items.map((x) => x.value) as T[];
-      }
-    };
-    return new Iterator(gen);
-  }
-
-  zipLongest<U>(gen2: Iterable<U>): Iterator<[T | undefined, U | undefined]>;
-  zipLongest<U1, U2>(
-    gen2: Iterable<U1>,
-    gen3: Iterable<U2>
-  ): Iterator<[T | undefined, U1 | undefined, U2 | undefined]>;
-  zipLongest(...iterables: Iterable<T>[]): Iterator<(T | undefined)[]>;
-  zipLongest(...iterables: Iterable<T>[]) {
-    iterables.unshift(this);
-    const iterators = iterables.map((it) => it[Symbol.iterator]());
-    const gen = function* () {
-      while (true) {
-        const items = iterators.map((it) => it.next());
-        if (items.every((x) => x.done)) return;
-        yield items.map((x) => x.value) as T[];
+      for (const item of it) {
+        if (!item[Symbol.iterator]) yield item;
+        else if (depth === 1) yield * item;
+        else yield * Iterator.iter(item).flat(depth - 1);
       }
     };
     return new Iterator(gen);
@@ -165,28 +140,23 @@ export default class Iterator<T> implements Iterable<T> {
     return new Iterator(gen);
   }
 
-  chain(rest: Iterable<T>) {
+  chain(...rest: Iterable<T>[]) {
+    return Iterator.chain(this, ...rest);
+  }
+
+  append(...next: T[]) {
     const it = this;
     const gen = function* () {
       yield* it;
-      yield* rest;
+      yield * next;
     };
     return new Iterator(gen);
   }
 
-  append(next: T) {
+  prepend(...prev: T[]) {
     const it = this;
     const gen = function* () {
-      yield* it;
-      yield next;
-    };
-    return new Iterator(gen);
-  }
-
-  prepend(prev: T) {
-    const it = this;
-    const gen = function* () {
-      yield prev;
+      yield * prev;
       yield* it;
     };
     return new Iterator(gen);
@@ -224,6 +194,36 @@ export default class Iterator<T> implements Iterable<T> {
 
   // static methods
 
+  static zip<T extends Iterable<unknown>[]>(...iterables: T): Iterator<Zip<T>>;
+  static zip<T extends Iterable<unknown>[]>(...iterables: T) {
+    const iterators = iterables.map((it) => it[Symbol.iterator]());
+    const gen = function* () {
+      while (true) {
+        const items = iterators.map((it) => it.next());
+        if (items.some((x) => x.done)) return;
+        yield items.map((x) => x.value) as Zip<T>;
+      }
+    };
+    return new Iterator(gen);
+  }
+
+  static zipLongest<T extends Iterable<unknown>[]>(...iterables: T): Iterator<ZipLongest<T>>;
+  static zipLongest<T extends Iterable<unknown>[]>(...iterables: T) {
+    const iterators = iterables.map((it) => it[Symbol.iterator]());
+    const gen = function* () {
+      while (true) {
+        const items = iterators.map((it) => it.next());
+        if (items.every((x) => x.done)) return;
+        yield items.map((x) => x.value) as ZipLongest<T>;
+      }
+    };
+    return new Iterator(gen);
+  }
+
+  static chain<T>(...iterables: Iterable<T>[]) {
+    return Iterator.iter(iterables).flatMap(identity);
+  }
+
   static random() {
     const gen = function* () {
       while (true) yield Math.random();
@@ -258,8 +258,7 @@ export default class Iterator<T> implements Iterable<T> {
     return Iterator.natural(items.length)
       .power(size)
       .filterMap((indices) => {
-        const pred = isEqual(indices, indices.slice().sort());
-        return pred ? { pred, value: indices.map((i) => items[i]) } : { pred };
+        if (isEqual(indices, indices.slice().sort())) return indices.map((i) => items[i]);
       });
   }
 
@@ -276,7 +275,7 @@ export default class Iterator<T> implements Iterable<T> {
     return new Iterator<T[]>(gen);
   }
 
-  static subsets<T>(items: Iterable<T>) {
+  static subsets<T>(items: Iterable<T>): Iterator<T[]> {
     const it = Iterator.iter(items).cached();
     const gen = function* () {
       yield it.toArray();
@@ -292,9 +291,7 @@ export default class Iterator<T> implements Iterable<T> {
     const it = Iterator.iter(items);
     return Iterator.natural(items.length)
       .map((size) => [it.take(size), size] as [Iterator<T>, number])
-      .flatMap(([it, size]) =>
-        Iterator.natural(size).map((offset) => it.skip(offset).toArray())
-      );
+      .flatMap(([it, size]) => Iterator.natural(size).map((offset) => it.skip(offset).toArray()));
   }
 
   static roundRobin<T>(...iterables: Iterable<T>[]) {
@@ -322,9 +319,12 @@ export default class Iterator<T> implements Iterable<T> {
     return new Iterator(gen);
   }
 
-  static range(start: number, end: number) {
+  static range(start: number, end: number, step = 1) {
     const gen = function* () {
-      while (start < end) yield start++;
+      while (start !== end) {
+        yield start;
+        start += step;
+      }
     };
     return new Iterator(gen);
   }
@@ -340,16 +340,23 @@ export default class Iterator<T> implements Iterable<T> {
     return new Iterator(gen);
   }
 
-  static iterEntries<K extends string | number | symbol, T>(x: Record<K, T>) {
+  static iterEntries<K extends RecordKey, T>(x: Record<K, T>) {
     const gen = function* () {
       for (const key in x) yield [key, x[key]] as [key: K, value: T];
     };
     return new Iterator(gen);
   }
 
-  static iterKeys<K extends string | number | symbol>(x: Record<K, unknown>) {
+  static iterKeys<K extends RecordKey>(x: Record<K, unknown>) {
     const gen = function* () {
       for (const key in x) yield key;
+    };
+    return new Iterator(gen);
+  }
+
+  static iterValues<T>(x: Record<RecordKey, T>) {
+    const gen = function* () {
+      for (const key in x) yield x[key];
     };
     return new Iterator(gen);
   }
@@ -375,20 +382,44 @@ export default class Iterator<T> implements Iterable<T> {
 
   // derived methods
 
-  sum(this: Iterator<number>) {
-    return this.reduce((acc, x) => acc + x, 0);
+  join(this: Iterator<string>, separator = "") {
+    return this.reduce((acc, x) => acc + separator + x);
   }
 
-  mult(this: Iterator<number>) {
-    return this.reduce((acc, x) => acc * x, 1);
+  max(this: Iterator<number>): number;
+  max(accessor: (x: T) => number): number;
+  max(accessor: (x: T) => number = identity as any) {
+    return this.map(accessor).reduce(Math.max);
   }
 
-  some(this: Iterator<boolean>) {
-    return !this.filter((x) => x).isEmpty();
+  min(this: Iterator<number>): number;
+  min(accessor: (x: T) => number): number;
+  min(accessor: (x: T) => number = identity as any) {
+    return this.map(accessor).reduce(Math.min);
   }
 
-  every(this: Iterator<boolean>) {
-    return this.filter((x) => !x).isEmpty();
+  sum(this: Iterator<number>): number;
+  sum(accessor: (x: T) => number): number;
+  sum(accessor: (x: T) => number = identity as any) {
+    return this.map(accessor).reduce((acc, x) => acc + x, 0);
+  }
+
+  mul(this: Iterator<number>): number;
+  mul(accessor: (x: T) => number): number;
+  mul(accessor: (x: T) => number = identity as any) {
+    return this.map(accessor).reduce((acc, x) => acc * x, 1);
+  }
+
+  some(this: Iterator<boolean>): boolean;
+  some(pred: (x: T) => boolean): boolean;
+  some(pred: (x: T) => boolean = identity as any) {
+    return !this.filter(pred).isEmpty();
+  }
+
+  every(this: Iterator<boolean>): boolean;
+  every(pred: (x: T) => boolean): boolean;
+  every(pred: (x: T) => boolean = identity as any) {
+    return !this.some((x) => !pred(x));
   }
 
   isEmpty() {
@@ -403,78 +434,55 @@ export default class Iterator<T> implements Iterable<T> {
   power(n: number): Iterator<T[]>;
   power(n: number): Iterator<T[] | T> {
     if (n === 1) return this;
-    return this.product(...Iterator.repeat(this).take(n - 1)).map(
-      (t) => t.flat(Infinity) as T[]
-    );
+    return this.product(...Iterator.repeat(this).take(n - 1)).map((t) => t.flat(Infinity) as T[]);
+  }
+
+  zip<U extends Iterable<unknown>[]>(...iterables: U) {
+    return Iterator.zip<[typeof this, ...U]>(this, ...iterables);
+  }
+
+  zipLongest<U extends Iterable<unknown>[]>(...iterables: U) {
+    return Iterator.zipLongest<[typeof this, ...U]>(this, ...iterables);
   }
 
   spreadMap<U extends unknown[], V>(this: Iterator<U>, map: (...args: U) => V) {
     return this.map((args) => map(...args));
   }
 
-  spreadFilterMap<U extends unknown[], V>(
-    this: Iterator<U>,
-    map: (...args: U) => { pred: false } | { pred: true; value: V }
-  ) {
+  spreadFilterMap<U extends unknown[], V>(this: Iterator<U>, map: (...args: U) => V | undefined) {
     return this.filterMap((args) => map(...args));
   }
 
-  spreadFlatMap<U extends unknown[], V>(
-    this: Iterator<U>,
-    map: (...args: U) => Iterable<V>
-  ) {
+  spreadFlatMap<U extends unknown[], V>(this: Iterator<U>, map: (...args: U) => Iterable<V>) {
     return this.flatMap((args) => map(...args));
   }
 
-  spreadPartition<U extends unknown[]>(
-    this: Iterator<U>,
-    pred: (...args: U) => boolean
-  ): [Iterator<U>, Iterator<U>] {
+  spreadPartition<U extends unknown[]>(this: Iterator<U>, pred: (...args: U) => boolean): [Iterator<U>, Iterator<U>] {
     return this.partition((args) => pred(...args));
   }
 
-  spreadInspect<U extends unknown[]>(
-    this: Iterator<U>,
-    callback: (...args: U) => void
-  ) {
+  spreadInspect<U extends unknown[]>(this: Iterator<U>, callback: (...args: U) => void) {
     return this.inspect((args) => callback(...args));
   }
 
-  spreadSkipWhile<U extends unknown[]>(
-    this: Iterator<U>,
-    pred: (...args: U) => boolean
-  ) {
+  spreadSkipWhile<U extends unknown[]>(this: Iterator<U>, pred: (...args: U) => boolean) {
     return this.skipWhile((args) => pred(...args));
   }
 
-  spreadTakeWhile<U extends unknown[]>(
-    this: Iterator<U>,
-    pred: (...args: U) => boolean
-  ) {
+  spreadTakeWhile<U extends unknown[]>(this: Iterator<U>, pred: (...args: U) => boolean) {
     return this.takeWhile((args) => pred(...args));
   }
 
-  spreadReduce<U extends unknown[], V>(
-    this: Iterator<U>,
-    reducer: (acc: V, ...args: U) => V,
-    initial: V
-  ) {
+  spreadReduce<U extends unknown[], V>(this: Iterator<U>, reducer: (acc: V, ...args: U) => V, initial: V) {
     return this.reduce((acc, args) => reducer(acc, ...args), initial);
   }
 
-  spreadAccumulate<U extends unknown[], V>(
-    this: Iterator<U>,
-    reducer: (acc: V, ...args: U) => V,
-    initial: V
-  ) {
+  spreadAccumulate<U extends unknown[], V>(this: Iterator<U>, reducer: (acc: V, ...args: U) => V, initial: V) {
     return this.accumulate((acc, args) => reducer(acc, ...args), initial);
   }
 
-  filterMap<U>(map: (x: T) => { pred: false } | { pred: true; value: U }) {
-    type PredTrue = { pred: true; value: U };
-    return this.map(map)
-      .filter<PredTrue>((x): x is PredTrue => x.pred)
-      .map(({ value }) => value);
+  filterMap<U>(map: (x: T) => U | undefined | void) {
+    return this.map(map).filter<U>((x): x is U => x !== undefined);
   }
 
   flatMap<U>(map: (x: T) => Iterable<U>) {
@@ -483,9 +491,7 @@ export default class Iterator<T> implements Iterable<T> {
 
   unzip<U>(this: Iterator<[U]>): [Iterator<U>];
   unzip<U, V>(this: Iterator<[U, V]>): [Iterator<U>, Iterator<V>];
-  unzip<U, V, W>(
-    this: Iterator<[U, V, W]>
-  ): [Iterator<U>, Iterator<V>, Iterator<W>];
+  unzip<U, V, W>(this: Iterator<[U, V, W]>): [Iterator<U>, Iterator<V>, Iterator<W>];
   unzip<U>(this: Iterator<U[]>, size?: number): Iterator<U>[];
   unzip<U>(this: Iterator<U[]>, size = Infinity): Iterator<U>[] {
     size = Math.min(size, this.head()?.length ?? 0);
@@ -576,5 +582,18 @@ export default class Iterator<T> implements Iterable<T> {
 
   equals<U>(gen2: Iterable<U>, compare: (a: T, b: U) => boolean) {
     return this.zip(gen2).spreadMap(compare).every();
+  }
+
+  groupBy<U>(key: (x: T) => U) {
+    return this.reduce((map, x) => {
+      const k = key(x);
+      if (!map.has(k)) map.set(k, []);
+      map.get(k)!.push(x);
+      return map;
+    }, new Map<U, T[]>());
+  }
+
+  find(pred: (x: T) => boolean) {
+    return this.filter(pred).head();
   }
 }

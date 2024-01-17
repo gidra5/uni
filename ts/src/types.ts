@@ -43,25 +43,36 @@ export type ExpandRecursively<T> = T extends (...args: infer A) => infer R
     : never
   : T;
 
-export type Option<T> = TaggedUnion<{ some: { value: T }; none: {} }>;
-export const some = <T>(value: T): Option<T> => ({ type: "some", value });
-export const none = <T>(): Option<T> => ({ type: "none" });
-export const unwrapSome = <T>(x: Option<T>): T => {
-  assert(x.type === "some", 'Option was not "some" variant');
-  return x.value;
-};
-export type Result<T, E> = TaggedUnion<{ ok: { value: T }; err: { err: E } }>;
-export const ok = <T, E>(value: T): Result<T, E> => ({ type: "ok", value });
-export const err = <T, E>(err: E): Result<T, E> => ({ type: "err", err });
-export const unwrapOk = <T, E>(x: Result<T, E>): T => {
-  assert(x.type === "ok", 'Result was not "ok" variant');
-  return x.value;
-};
-export const unwrapErr = <T, E>(x: Result<T, E>): E => {
-  assert(x.type === "err", 'Result was not "err" variant');
-  return x.err;
-};
+  export type Zip<T extends Iterable<unknown>[]> = T extends [Iterable<infer A>, ...infer B extends Iterable<unknown>[]]
+    ? [A, ...Zip<B>]
+    : [];
+  export type ZipLongest<T extends Iterable<unknown>[]> = T extends [
+    Iterable<infer A>,
+    ...infer B extends Iterable<unknown>[]
+  ]
+    ? [A | undefined, ...Zip<B>]
+    : [];
 
-export type Context<T = any> = Record<string, T>;
+  export type Option<T> = TaggedUnion<{ some: { value: T }; none: {} }>;
+  export const some = <T>(value: T): Option<T> => ({ type: "some", value });
+  export const none = <T>(): Option<T> => ({ type: "none" });
+  export const unwrapSome = <T>(x: Option<T>): T => {
+    assert(x.type === "some", 'Option was not "some" variant');
+    return x.value;
+  };
+  export type Result<T, E> = TaggedUnion<{ ok: { value: T }; err: { err: E } }>;
+  export const ok = <T, E>(value: T): Result<T, E> => ({ type: "ok", value });
+  export const err = <T, E>(err: E): Result<T, E> => ({ type: "err", err });
+  export const unwrapOk = <T, E>(x: Result<T, E>): T => {
+    assert(x.type === "ok", 'Result was not "ok" variant');
+    return x.value;
+  };
+  export const unwrapErr = <T, E>(x: Result<T, E>): E => {
+    assert(x.type === "err", 'Result was not "err" variant');
+    return x.err;
+  };
 
-export type RecordEntry = [string | number | symbol, unknown];
+  export type Context<T = any> = Record<string, T>;
+
+  export type RecordKey = string | number | symbol;
+  export type RecordEntry = [RecordKey, unknown];
