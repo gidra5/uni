@@ -197,28 +197,6 @@ export default class Iterator<T> implements Iterable<T> {
     return new Iterator(gen);
   }
 
-  chain(...rest: Iterable<T>[]) {
-    return Iterator.chain(this, ...rest);
-  }
-
-  append(...next: T[]) {
-    const it = this;
-    const gen = function* () {
-      yield* it;
-      yield* next;
-    };
-    return new Iterator(gen);
-  }
-
-  prepend(...prev: T[]) {
-    const it = this;
-    const gen = function* () {
-      yield* prev;
-      yield* it;
-    };
-    return new Iterator(gen);
-  }
-
   cycle() {
     const it = this.cached();
     const gen = function* () {
@@ -242,11 +220,27 @@ export default class Iterator<T> implements Iterable<T> {
     return new Iterator(gen);
   }
 
-  sample() {
-    const it = this.cycle().consumable();
-    const step = 1_000_000;
+  // for bufferSize < streamSize will produce "true" random permutation of its items
+  sample(bufferSize = 20) {
+    const it = this;
+    const buffer: T[] = [];
     const gen = function* () {
-      while (true) yield it.skip(Math.floor(Math.random() * step)).head();
+      for (const item of it) {
+        // fill the buffer
+        if (buffer.length < bufferSize) {
+          buffer.push(item);
+        } else {
+          // yield random item from the buffer, replacing it with the new one
+          const index = Math.random() * buffer.length;
+          yield buffer.splice(index, 1, item)[0];
+        }
+      }
+
+      // yield remaining items from the buffer in random order
+      while (buffer.length > 0) {
+        const index = Math.floor(Math.random() * buffer.length);
+        yield buffer.splice(index, 1)[0];
+      }
     };
     return new Iterator(gen);
   }
@@ -330,8 +324,8 @@ export default class Iterator<T> implements Iterable<T> {
     const range = Iterator.natural(items.length).toArray();
 
     return Iterator.permutation(range, size).filterMap((indices) => {
-      const pred = isEqual(indices, indices.slice().sort());
-      return pred ? { pred, value: indices.map((i) => items[i]) } : { pred };
+      if (isEqual(indices, indices.slice().sort()))
+        return indices.map((i) => items[i]);
     });
   }
 
@@ -468,6 +462,18 @@ export default class Iterator<T> implements Iterable<T> {
   }
 
   // derived methods
+
+  chain(...rest: Iterable<T>[]) {
+    return Iterator.chain(this, ...rest);
+  }
+
+  append(...next: T[]) {
+    return Iterator.chain(this, next);
+  }
+
+  prepend(...prev: T[]) {
+    return Iterator.chain(prev, this);
+  }
 
   reduce(reducer: (acc: T | undefined, input: T) => T): T | undefined;
   reduce<U>(reducer: (acc: U, input: T) => U, initial?: U): U;
@@ -684,7 +690,7 @@ export default class Iterator<T> implements Iterable<T> {
   }
 
   convolve(this: Iterator<number>, kernel: number[]) {
-    return this.window(kernel.length).dot(kernel);
+    return this.window(kernel.length).map((x) => Iterator.iter(x).dot(kernel));
   }
 
   padBefore(size: number, value: T) {
@@ -715,11 +721,11 @@ export default class Iterator<T> implements Iterable<T> {
 
   allUnique() {
     const seen = new Set();
-    return this.map((x) => {
+    return this.every((x) => {
       if (seen.has(x)) return false;
       seen.add(x);
       return true;
-    }).every();
+    });
   }
 
   inOrder(compare: (a: T, b: T) => boolean) {

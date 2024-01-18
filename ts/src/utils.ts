@@ -1,3 +1,5 @@
+import Iterator from "./iterator";
+
 export const identity = <T>(x: T): T => x;
 
 export function assert(condition: any, msg?: string): asserts condition {
@@ -5,15 +7,26 @@ export function assert(condition: any, msg?: string): asserts condition {
   throw new Error(msg ? `Assertion failed: ${msg}` : "Assertion failed");
 }
 
-export const omit = <T extends {}, K extends string>(obj: T, keys: K[]): Omit<T, K> => {
-  return Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key as K))) as Omit<T, K>;
+export const omit = <T extends {}, K extends string>(
+  obj: T,
+  keys: K[]
+): Omit<T, K> => {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([key]) => !keys.includes(key as K))
+  ) as Omit<T, K>;
 };
 
-export const pick = <T extends {}, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> => {
-  return Object.fromEntries(Object.entries(obj).filter(([key]) => keys.includes(key as K))) as Pick<T, K>;
+export const pick = <T extends {}, K extends keyof T>(
+  obj: T,
+  keys: K[]
+): Pick<T, K> => {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([key]) => keys.includes(key as K))
+  ) as Pick<T, K>;
 };
 
-export const clamp = (x: number, min: number, max: number) => Math.min(Math.max(x, min), max);
+export const clamp = (x: number, min: number, max: number) =>
+  Math.min(Math.max(x, min), max);
 
 export const isEqual = (a, b) => {
   if (a === b) return true;
@@ -35,4 +48,8 @@ export const isEqual = (a, b) => {
   }
 
   return true;
+};
+
+export const factorial = (n: number): number => {
+  return Iterator.range(1, n + 1).mult();
 };
