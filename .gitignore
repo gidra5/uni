@@ -1,3 +1,4 @@
 ml.code-workspace
 .vscode
 test-results
+coverage

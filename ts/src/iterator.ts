@@ -96,11 +96,11 @@ export default class Iterator<T> implements Iterable<T> {
   accumulate<U>(reducer: (acc: U, input: T) => U, initial?: U): Iterator<U>;
   accumulate(reducer: (acc: any, input: T) => any, initial?: any) {
     let it: Iterator<T> = this;
-    if (initial === undefined) {
-      initial = it.head();
-      it = it.skip(1);
-    }
     const gen = function* () {
+      if (initial === undefined) {
+        initial = it.head();
+        it = it.skip(1);
+      }
       let acc = initial;
       yield acc;
 
@@ -186,8 +186,8 @@ export default class Iterator<T> implements Iterable<T> {
   }
 
   skip(count: number) {
-    const it = this;
     if (count <= 0) return this;
+    const it = this;
     const gen = function* () {
       for (const item of it) {
         if (count === 0) yield item;
@@ -223,15 +223,15 @@ export default class Iterator<T> implements Iterable<T> {
   // for bufferSize < streamSize will produce "true" random permutation of its items
   sample(bufferSize = 20) {
     const it = this;
-    const buffer: T[] = [];
     const gen = function* () {
+      const buffer: T[] = [];
       for (const item of it) {
         // fill the buffer
         if (buffer.length < bufferSize) {
           buffer.push(item);
         } else {
           // yield random item from the buffer, replacing it with the new one
-          const index = Math.random() * buffer.length;
+          const index = Math.floor(Math.random() * buffer.length);
           yield buffer.splice(index, 1, item)[0];
         }
       }
@@ -257,9 +257,8 @@ export default class Iterator<T> implements Iterable<T> {
   static product<T extends Iterable<unknown>[]>(...args: T) {
     if (args.length === 0) return Iterator.empty();
     if (args.length === 1) return Iterator.iter(args[0]).map((x) => [x]);
-    const iterators = args.map((it) => Iterator.iter(it).cached());
+    const [head, ...rest] = args.map((it) => Iterator.iter(it).cached());
     const gen = function* () {
-      const [head, ...rest] = iterators;
       for (const item of head) {
         yield* Iterator.product(...rest).map((tuple) => [item, ...tuple]);
       }
@@ -269,8 +268,8 @@ export default class Iterator<T> implements Iterable<T> {
 
   static zip<T extends Iterable<unknown>[]>(...iterables: T): Iterator<Zip<T>>;
   static zip<T extends Iterable<unknown>[]>(...iterables: T) {
-    const iterators = iterables.map((it) => it[Symbol.iterator]());
     const gen = function* () {
+      const iterators = iterables.map((it) => it[Symbol.iterator]());
       while (true) {
         const items = iterators.map((it) => it.next());
         if (items.some((x) => x.done)) return;
@@ -284,8 +283,8 @@ export default class Iterator<T> implements Iterable<T> {
     ...iterables: T
   ): Iterator<ZipLongest<T>>;
   static zipLongest<T extends Iterable<unknown>[]>(...iterables: T) {
-    const iterators = iterables.map((it) => it[Symbol.iterator]());
     const gen = function* () {
+      const iterators = iterables.map((it) => it[Symbol.iterator]());
       while (true) {
         const items = iterators.map((it) => it.next());
         if (items.every((x) => x.done)) return;
@@ -374,8 +373,8 @@ export default class Iterator<T> implements Iterable<T> {
   }
 
   static roundRobin<T>(...iterables: Iterable<T>[]) {
-    const iterators = iterables.map((it) => it[Symbol.iterator]());
     const gen = function* () {
+      const iterators = iterables.map((it) => it[Symbol.iterator]());
       while (true) {
         for (const it of [...iterators]) {
           const item = it.next();

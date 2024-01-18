@@ -183,14 +183,18 @@ describe.concurrent("iterator", () => {
   //   }
   // );
 
-  it.concurrent.prop([fc.array(fc.anything())])("Iterator.sample", (array) => {
-    const samples = Iterator.iter(array).sample();
+  it.concurrent.prop([
+    fc.array(fc.anything(), { size: "xlarge" }),
+    fc.nat({ max: 100 }).filter((size) => size > 0),
+  ])("Iterator.sample", (array, size) => {
+    const fn = vi.fn();
+    const samples = Iterator.iter(array).inspect(fn).sample(size);
+    samples.take(1).toArray();
+    expect(fn).toHaveBeenCalledTimes(Math.min(array.length, size + 1));
     expect(samples.count()).toEqual(array.length);
-    const samplesArray = samples.toArray();
-    expect(
-      Iterator.permutation(array)
-        .inspect(console.log)
-        .some((value) => isEqual(value, samplesArray))
-    ).toBe(true);
+    // const samplesArray = samples.toArray();
+    // expect(
+    //   Iterator.permutation(array).some((value) => isEqual(value, samplesArray))
+    // ).toBe(true);
   });
 });

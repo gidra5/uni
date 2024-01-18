@@ -12,16 +12,15 @@ const testIteration = (iterator: Iterable<number>) => {
     sum += value;
   }
 };
-const createArray = (size: number) => new Array(size).fill(0).map((_, i) => i);
 const sizes = Iterator.natural(6)
   .map((i) => 0.2 * i * 10 ** i)
   .map(Math.round);
 
 for (const size of sizes) {
   describe.concurrent(`iteration - ${size}`, () => {
-    const array = createArray(size);
-    const iterator = Iterator.iter(array);
     const iteratorNat = Iterator.natural(size);
+    const array = iteratorNat.toArray();
+    const iterator = Iterator.iter(array);
 
     Iterator.iterEntries({ iterator, iteratorNat }).consume(
       ([name, iterator]) => {
