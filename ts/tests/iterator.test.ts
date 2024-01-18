@@ -251,7 +251,7 @@ describe.concurrent("iterator", () => {
   it.concurrent.prop([fc.array(fc.anything())])("Iterator.head", (array) => {
     const fn = vi.fn();
     expect(Iterator.iter(array).inspect(fn).head()).toEqual(array[0]);
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(fn).toHaveBeenCalledTimes(Math.min(array.length, 1));
   });
 
   it.concurrent.prop([fc.array(fc.anything())])("Iterator.last", (array) => {

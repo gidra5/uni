@@ -342,8 +342,9 @@ export default class Iterator<T> implements Iterable<T> {
     const gen = function* () {
       if (size > items.length) return;
       if (size === 0) yield [];
-      for (const x of items) {
-        const rest = items.filter((_x) => _x !== x);
+      for (let i = 0; i < items.length; i++) {
+        const x = items[i];
+        const rest = items.filter((_, _i) => _i !== i);
         const restPermutations = Iterator.permutation(rest, size - 1);
         yield* restPermutations.map((xs) => [x, ...xs]);
       }

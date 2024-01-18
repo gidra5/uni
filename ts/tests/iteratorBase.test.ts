@@ -188,7 +188,9 @@ describe.concurrent("iterator", () => {
     expect(samples.count()).toEqual(array.length);
     const samplesArray = samples.toArray();
     expect(
-      Iterator.permutation(array).some((value) => isEqual(value, samplesArray))
+      Iterator.permutation(array)
+        .inspect(console.log)
+        .some((value) => isEqual(value, samplesArray))
     ).toBe(true);
   });
 });
