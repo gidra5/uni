@@ -50,6 +50,14 @@ export type Product<T extends Iterable<unknown>[]> = T extends [
   : T extends Iterable<infer A>[]
   ? A[]
   : never;
+export type FromEntries<T extends RecordEntry> = {
+  [K in T[0]]: T extends [K, infer V] ? V : never;
+};
+export type ToEntries<T> = T extends Record<infer _K, any>
+  ? _K extends infer K
+    ? [K, T[_K & K]]
+    : never
+  : never;
 
 const done = { done: true } as { done: true; value: undefined };
 
@@ -487,6 +495,9 @@ export default class Iterator<T> implements Iterable<T> {
     return new Iterator(() => it[Symbol.iterator]());
   }
 
+  static iterEntries<T extends Record<RecordKey, any>>(
+    x: T
+  ): Iterator<ToEntries<T>>;
   static iterEntries<K extends RecordKey, T>(x: Record<K, T>) {
     const gen = function* () {
       for (const key in x) yield [key, x[key]] as [key: K, value: T];
@@ -514,9 +525,8 @@ export default class Iterator<T> implements Iterable<T> {
     return [...this];
   }
 
-  toObject(this: Iterator<RecordEntry>) {
-    type Inferred = T extends RecordEntry ? Record<T[0], T[1]> : never;
-    return Object.fromEntries(this.toArray()) as Inferred;
+  toObject<U extends RecordEntry>(this: Iterator<U>) {
+    return Object.fromEntries(this.toArray()) as FromEntries<U>;
   }
 
   toMap<K, V>(this: Iterator<[K, V]>) {
