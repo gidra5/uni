@@ -98,6 +98,138 @@ class RepeatIterator<T> implements IteratorInterface<T> {
     return this as any;
   }
 }
+
+class MapIterator<T, U> implements IteratorInterface<U> {
+  constructor(
+    private base: IteratorInterface<T>,
+    private mapper: (x: T) => U
+  ) {}
+
+  next() {
+    const value = this.base.next();
+    if (value.done) return done;
+    return { done: false as const, value: this.mapper(value.value) };
+  }
+}
+
+class FilterIterator<T> implements IteratorInterface<T> {
+  constructor(
+    private base: IteratorInterface<T>,
+    private predicate: (x: T) => boolean
+  ) {}
+
+  next() {
+    for (let value; !(value = this.base.next()).done; ) {
+      if (!this.predicate(value.value)) continue;
+      return value;
+    }
+    return done;
+  }
+}
+
+class FlatMapIterator<T, U> implements IteratorInterface<T> {
+  private nested: IteratorInterface<T> | null = null;
+
+  constructor(
+    private base: IteratorInterface<U>,
+    private mapper: (x: U) => Iterable<T>
+  ) {}
+
+  next() {
+    if (!this.nested) {
+      const next = this.base.next();
+      if (next.done) return next;
+      this.nested = this.mapper(next.value)[Symbol.iterator]();
+    }
+
+    const next = this.nested!.next();
+    if (!next.done) return next;
+
+    this.nested = null;
+    return this.next();
+  }
+}
+
+class AccumulateIterator<T> implements IteratorInterface<T> {
+  constructor(
+    private base: IteratorInterface<T>,
+    private reducer: (acc: T | undefined, input: T) => T,
+    private acc: T | undefined
+  ) {}
+
+  next() {
+    if (this.acc === undefined) {
+      const next = this.base.next();
+      if (next.done) return done;
+      this.acc = next.value;
+      return next;
+    }
+
+    const next = this.base.next();
+    if (next.done) return done;
+
+    this.acc = this.reducer(this.acc, next.value);
+    return { done: false, value: this.acc };
+  }
+}
+
+class CachedIterator<T> implements IteratorInterface<T> {
+  private index = 0;
+
+  constructor(
+    private base: IteratorInterface<T>,
+    private buffer: T[],
+    private consumed: boolean,
+    private setConsumed: () => void
+  ) {}
+
+  next() {
+    if (this.index < this.buffer.length) {
+      return { done: false, value: this.buffer[this.index++] };
+    }
+
+    if (this.consumed) return done;
+
+    const item = this.base.next();
+
+    if (item.done) {
+      this.setConsumed();
+      this.consumed = true;
+      return done;
+    }
+
+    this.buffer.push(item.value);
+    this.index++;
+    return item;
+  }
+}
+
+class SampleIterator<T> implements IteratorInterface<T> {
+  private buffer: IteratorResult<T>[] = [];
+  private consumed = false;
+
+  constructor(private base: IteratorInterface<T>, private bufferSize: number) {}
+
+  next() {
+    while (!this.consumed && this.buffer.length < this.bufferSize) {
+      const next = this.base.next();
+      this.consumed = !!next.done;
+      if (next.done) break;
+      this.buffer.push(next);
+    }
+
+    if (this.buffer.length === 0) return done;
+    if (this.buffer.length === 1) return this.buffer.pop()!;
+
+    const index = Math.floor(Math.random() * this.buffer.length);
+    const next = this.base.next();
+    const value = !next.done
+      ? this.buffer.splice(index, 1, next)[0]
+      : this.buffer.splice(index, 1)[0];
+    return value;
+  }
+}
+
 export default class Iterator<T> implements Iterable<T> {
   private constructor(private getIterator: () => IteratorInterface<T>) {}
 
@@ -111,26 +243,12 @@ export default class Iterator<T> implements Iterable<T> {
     let it = this.getIterator();
     let buffer: T[] = [];
     let consumed = false;
-    const gen = function* () {
-      let index = 0;
-      while (!consumed || index < buffer.length) {
-        if (index < buffer.length) {
-          yield buffer[index++];
-          continue;
-        }
-
-        const item = it.next();
-        if (item.done) {
-          consumed = true;
-          return;
-        }
-
-        buffer.push(item.value);
-        yield item.value;
-        ++index;
-      }
-    };
-    return new Iterator(() => (consumed ? buffer[Symbol.iterator]() : gen()));
+    const setConsumed = () => (consumed = true);
+    return new Iterator<T>(() =>
+      consumed
+        ? buffer[Symbol.iterator]()
+        : new CachedIterator(it, buffer, consumed, setConsumed)
+    );
   }
 
   consumable() {
@@ -141,23 +259,9 @@ export default class Iterator<T> implements Iterable<T> {
   accumulate(reducer: (acc: T, input: T) => T): Iterator<T>;
   accumulate<U>(reducer: (acc: U, input: T) => U, initial?: U): Iterator<U>;
   accumulate(reducer: (acc: any, input: T) => any, initial?: any) {
-    let _it: Iterator<T> = this;
-    const gen = function* () {
-      let it = _it.getIterator();
-      let acc = initial;
-      if (acc === undefined) {
-        const next = it.next();
-        if (next.done) return;
-        acc = next.value;
-      }
-      yield acc;
-
-      for (let item; !(item = it.next()).done; ) {
-        acc = reducer(acc, item.value);
-        yield acc;
-      }
-    };
-    return new Iterator(gen);
+    return new Iterator(
+      () => new AccumulateIterator(this.getIterator(), reducer, initial)
+    );
   }
 
   reduce(reducer: (acc: T | undefined, input: T) => T): T | undefined;
@@ -180,19 +284,15 @@ export default class Iterator<T> implements Iterable<T> {
   filter(pred: (x: T) => boolean): Iterator<T>;
   filter<U extends T>(pred: (x: T) => x is U): Iterator<U>;
   filter(pred: (x: T) => boolean) {
-    const it = this;
-    const gen = function* () {
-      for (const item of it) if (pred(item)) yield item;
-    };
-    return new Iterator(gen);
+    return new Iterator(() => new FilterIterator(this.getIterator(), pred));
   }
 
   map<U>(map: (x: T) => U) {
-    const it = this;
-    const gen = function* () {
-      for (const item of it) yield map(item);
-    };
-    return new Iterator(gen);
+    return new Iterator<U>(() => new MapIterator(this.getIterator(), map));
+  }
+
+  flatMap<U>(map: (x: T) => Iterable<U>) {
+    return new Iterator<U>(() => new FlatMapIterator(this.getIterator(), map));
   }
 
   flat<U, D extends number>(
@@ -201,13 +301,14 @@ export default class Iterator<T> implements Iterable<T> {
   ): Iterator<Flat<T, D>>;
   flat<U>(this: Iterator<Flattable<U>>): Iterator<Flat<T, 1>>;
   flat<U, V extends Iterable<U>>(this: Iterator<V>, depth = 1) {
+    if (depth <= 0) return this;
+    if (depth === 1) return this.flatMap(identity);
     const it = this;
     const gen = function* () {
       for (const item of it) {
         if (!item) yield item;
         else if (typeof item !== "object") yield item;
         else if (!item[Symbol.iterator]) yield item;
-        else if (depth === 0) yield item;
         else yield* Iterator.iter(item).flat(depth - 1);
       }
     };
@@ -253,11 +354,10 @@ export default class Iterator<T> implements Iterable<T> {
   skip(count: number) {
     if (count <= 0) return this;
     const it = this;
-    const gen = function* () {
-      for (const item of it) {
-        if (count === 0) yield item;
-        else count--;
-      }
+    const gen = () => {
+      const iterator = it.getIterator();
+      while (count > 0 && !iterator.next().done) count--;
+      return iterator;
     };
     return new Iterator(gen);
   }
@@ -285,32 +385,18 @@ export default class Iterator<T> implements Iterable<T> {
     return new Iterator(gen);
   }
 
-  // for bufferSize < streamSize will produce "true" random permutation of its items
+  // for streamSize <= bufferSize will produce "true" random permutation of its items
   sample(bufferSize = 20) {
-    const it = this;
-    const gen = function* () {
-      const buffer: T[] = [];
-      for (const item of it) {
-        // fill the buffer
-        if (buffer.length < bufferSize) {
-          buffer.push(item);
-        } else {
-          // yield random item from the buffer, replacing it with the new one
-          const index = Math.floor(Math.random() * buffer.length);
-          yield buffer.splice(index, 1, item)[0];
-        }
-      }
-
-      // yield remaining items from the buffer in random order
-      while (buffer.length > 0) {
-        const index = Math.floor(Math.random() * buffer.length);
-        yield buffer.splice(index, 1)[0];
-      }
-    };
-    return new Iterator(gen);
+    return new Iterator(
+      () => new SampleIterator(this.getIterator(), bufferSize)
+    );
   }
 
   // static methods
+
+  static rotations<T>(items: T[]) {
+    return Iterator.chain(items, items).window(items.length);
+  }
 
   static empty<T>() {
     return Iterator.iter<T>([]);
@@ -457,6 +543,13 @@ export default class Iterator<T> implements Iterable<T> {
       );
   }
 
+  static prefixes<T>(items: T[]) {
+    const it = Iterator.iter(items);
+    return Iterator.natural(items.length).map((size) =>
+      it.take(size).toArray()
+    );
+  }
+
   static roundRobin<T>(...iterables: Iterable<T>[]) {
     const gen = function* () {
       const iterators = iterables.map((it) => it[Symbol.iterator]());
@@ -537,7 +630,7 @@ export default class Iterator<T> implements Iterable<T> {
     return new Set(this);
   }
 
-  consume(f?: (x: T) => void) {
+  collect(f?: (x: T) => void) {
     for (const item of this) f?.(item);
   }
 
@@ -565,68 +658,82 @@ export default class Iterator<T> implements Iterable<T> {
 
   max(this: Iterator<number>): number;
   max(accessor: (x: T) => number): number;
-  max(accessor: (x: T) => number = identity as any) {
-    return this.map(accessor).reduce(Math.max);
+  max(accessor?: (x: T) => number) {
+    if (accessor)
+      return this.reduce((acc, x) => Math.max(acc, accessor(x)), -Infinity);
+    return (this as Iterator<number>).reduce(Math.max, -Infinity);
   }
 
   maxAccumulate(this: Iterator<number>): Iterator<number>;
   maxAccumulate(accessor: (x: T) => number): Iterator<number>;
-  maxAccumulate(accessor: (x: T) => number = identity as any) {
-    return this.accumulate<number>((acc, x) => Math.max(acc, accessor(x)));
+  maxAccumulate(accessor?: (x: T) => number) {
+    if (accessor)
+      return this.accumulate((acc, x) => Math.max(acc, accessor(x)), -Infinity);
+    return (this as Iterator<number>).accumulate(Math.max);
   }
 
   min(this: Iterator<number>): number;
   min(accessor: (x: T) => number): number;
-  min(accessor: (x: T) => number = identity as any) {
-    return this.map(accessor).reduce(Math.min);
+  min(accessor?: (x: T) => number) {
+    if (accessor)
+      return this.reduce((acc, x) => Math.min(acc, accessor(x)), Infinity);
+    return (this as Iterator<number>).reduce(Math.min, Infinity);
   }
 
   minAccumulate(this: Iterator<number>): Iterator<number>;
   minAccumulate(accessor: (x: T) => number): Iterator<number>;
-  minAccumulate(accessor: (x: T) => number = identity as any) {
-    return this.accumulate<number>((acc, x) => Math.min(acc, accessor(x)));
+  minAccumulate(accessor?: (x: T) => number) {
+    if (accessor)
+      return this.accumulate((acc, x) => Math.min(acc, accessor(x)), Infinity);
+    return (this as Iterator<number>).accumulate(Math.min);
   }
 
   sum(this: Iterator<number>): number;
   sum(accessor: (x: T) => number): number;
   sum(accessor?: (x: T) => number) {
-    let it: any = this;
-    if (accessor) it = it.map(accessor);
-    return it.reduce((acc, x) => acc + x, 0);
+    if (accessor) return this.reduce((acc, x) => acc + accessor(x), 0);
+    return (this as Iterator<number>).reduce((acc, x) => acc + x, 0);
   }
 
   sumAccumulate(this: Iterator<number>): Iterator<number>;
   sumAccumulate(accessor: (x: T) => number): Iterator<number>;
-  sumAccumulate(accessor: (x: T) => number = identity as any) {
-    return this.accumulate<number>((acc, x) => acc + accessor(x));
+  sumAccumulate(accessor?: (x: T) => number) {
+    if (accessor) return this.accumulate((acc, x) => acc + accessor(x), 0);
+    return (this as Iterator<number>).accumulate((acc, x) => acc + x);
   }
 
   mult(this: Iterator<number>): number;
   mult(accessor: (x: T) => number): number;
-  mult(accessor: (x: T) => number = identity as any) {
-    return this.map(accessor).reduce((acc, x) => acc * x, 1);
+  mult(accessor?: (x: T) => number) {
+    if (accessor) return this.reduce((acc, x) => acc * accessor(x), 1);
+    return (this as Iterator<number>).reduce((acc, x) => acc * x, 1);
   }
 
   multAccumulate(this: Iterator<number>): Iterator<number>;
   multAccumulate(accessor: (x: T) => number): Iterator<number>;
-  multAccumulate(accessor: (x: T) => number = identity as any) {
-    return this.accumulate<number>((acc, x) => acc * accessor(x));
+  multAccumulate(accessor?: (x: T) => number) {
+    if (accessor) return this.accumulate((acc, x) => acc * accessor(x), 1);
+    return (this as Iterator<number>).accumulate((acc, x) => acc * x);
   }
 
   some(this: Iterator<boolean>): boolean;
   some(pred: (x: T) => boolean): boolean;
-  some(pred: (x: T) => boolean = identity as any) {
+  some(pred?: (x: T) => boolean) {
+    if (!pred) return !(this as Iterator<boolean>).filter(identity).isEmpty();
     return !this.filter(pred).isEmpty();
   }
 
   every(this: Iterator<boolean>): boolean;
   every(pred: (x: T) => boolean): boolean;
-  every(pred: (x: T) => boolean = identity as any) {
+  every(pred?: (x: T) => boolean) {
+    if (!pred) return !this.some((x) => !x);
     return !this.some((x) => !pred(x));
   }
 
-  avg(this: Iterator<number>) {
-    return this.sumAccumulate()
+  avg(this: Iterator<number>): Iterator<number>;
+  avg(accessor: (x: T) => number): Iterator<number>;
+  avg(accessor?: (x: T) => number) {
+    return this.sumAccumulate(accessor!)
       .enumerate()
       .spreadMap((x, i) => x / (i + 1));
   }
@@ -658,12 +765,12 @@ export default class Iterator<T> implements Iterable<T> {
     this: Iterator<U>,
     map: V
   ) {
-    return this.map((args) => map(...args));
+    return this.map<ReturnType<V>>((args) => map(...args));
   }
 
   spreadFilterMap<U extends unknown[], V>(
     this: Iterator<U>,
-    map: (...args: U) => V | undefined
+    map: (...args: U) => V | undefined | void
   ) {
     return this.filterMap((args) => map(...args));
   }
@@ -721,10 +828,6 @@ export default class Iterator<T> implements Iterable<T> {
 
   filterMap<U>(map: (x: T) => U | undefined | void) {
     return this.map(map).filter<U>((x): x is U => x !== undefined);
-  }
-
-  flatMap<U>(map: (x: T) => Iterable<U>) {
-    return this.map(map).flat();
   }
 
   unzip<U extends unknown[]>(
@@ -791,7 +894,7 @@ export default class Iterator<T> implements Iterable<T> {
 
   last() {
     let item: T | undefined;
-    this.consume((x) => (item = x));
+    this.collect((x) => (item = x));
     return item;
   }
 

@@ -165,7 +165,7 @@ describe.concurrent("iterator", () => {
     (array) => {
       const fn = vi.fn();
       const iterator = Iterator.iter(array).inspect(fn).cycle();
-      iterator.take(array.length * 2).consume();
+      iterator.take(array.length * 2).collect();
       expect(fn).toHaveBeenCalledTimes(array.length);
     }
   );
