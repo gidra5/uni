@@ -13,7 +13,7 @@ const testIteration = (iterator: Iterable<number>) => {
     sum += value;
   }
 };
-const sizes = Iterator.range(1, 6)
+const sizes = Iterator.range(5, 6)
   .map((i) => 0.2 * i * 10 ** i)
   .map(Math.round);
 const options = {
