@@ -51,65 +51,122 @@ export type Product<T extends Iterable<unknown>[]> = T extends [
   ? A[]
   : never;
 
+const done = { done: true } as { done: true; value: undefined };
+
+class RangeIteratorUp implements IteratorInterface<number> {
+  constructor(
+    private value: number,
+    private end: number,
+    private step: number
+  ) {}
+
+  next() {
+    const value = this.value;
+    if (value >= this.end) return done;
+    this.value += this.step;
+    return { value };
+  }
+}
+
+class RangeIteratorDown implements IteratorInterface<number> {
+  constructor(
+    private value: number,
+    private end: number,
+    private step: number
+  ) {}
+
+  next() {
+    const value = this.value;
+    if (value <= this.end) return done;
+    this.value += this.step;
+    return { value };
+  }
+}
+
+class RepeatIterator<T> implements IteratorInterface<T> {
+  constructor(private value: T) {}
+
+  next() {
+    return this as any;
+  }
+}
 export default class Iterator<T> implements Iterable<T> {
-  private constructor(private generator: () => IteratorInterface<T>) {}
+  private constructor(private getIterator: () => IteratorInterface<T>) {}
 
   [Symbol.iterator]() {
-    return this.generator();
+    return this.getIterator();
   }
 
   // base methods
 
   cached() {
-    let it = this.generator();
+    let it = this.getIterator();
     let buffer: T[] = [];
     let consumed = false;
     const gen = function* () {
       let index = 0;
-      while (true) {
+      while (!consumed || index < buffer.length) {
         if (index < buffer.length) {
-          yield buffer[index];
-          index++;
+          yield buffer[index++];
           continue;
         }
-        if (consumed) break;
+
         const item = it.next();
-        if (!item.done) {
-          buffer.push(item.value);
-          yield item.value;
-          index++;
-        } else {
-          consumed = item.done;
-          break;
+        if (item.done) {
+          consumed = true;
+          return;
         }
+
+        buffer.push(item.value);
+        yield item.value;
+        ++index;
       }
     };
-    return new Iterator(gen);
+    return new Iterator(() => (consumed ? buffer[Symbol.iterator]() : gen()));
   }
 
   consumable() {
-    const it = this.generator();
+    const it = this.getIterator();
     return new Iterator(() => it);
   }
 
   accumulate(reducer: (acc: T, input: T) => T): Iterator<T>;
   accumulate<U>(reducer: (acc: U, input: T) => U, initial?: U): Iterator<U>;
   accumulate(reducer: (acc: any, input: T) => any, initial?: any) {
-    let it: Iterator<T> = this;
+    let _it: Iterator<T> = this;
     const gen = function* () {
-      if (initial === undefined) {
-        initial = it.head();
-        it = it.skip(1);
-      }
+      let it = _it.getIterator();
       let acc = initial;
+      if (acc === undefined) {
+        const next = it.next();
+        if (next.done) return;
+        acc = next.value;
+      }
       yield acc;
 
-      for (const item of it) {
-        acc = reducer(acc, item);
+      for (let item; !(item = it.next()).done; ) {
+        acc = reducer(acc, item.value);
         yield acc;
       }
     };
     return new Iterator(gen);
+  }
+
+  reduce(reducer: (acc: T | undefined, input: T) => T): T | undefined;
+  reduce<U>(reducer: (acc: U, input: T) => U, initial?: U): U;
+  reduce(reducer: (acc: any, input: T) => any, initial?: any) {
+    let it = this.getIterator();
+    let acc = initial;
+    if (acc === undefined) {
+      const next = it.next();
+      if (next.done) return;
+      acc = next.value;
+    }
+
+    for (let item; !(item = it.next()).done; ) {
+      acc = reducer(acc, item.value);
+    }
+    return acc;
   }
 
   filter(pred: (x: T) => boolean): Iterator<T>;
@@ -309,6 +366,26 @@ export default class Iterator<T> implements Iterable<T> {
     return Iterator.random().map((x) => items[Math.floor(x * items.length)]);
   }
 
+  static randomInRange(min: number, max: number) {
+    const delta = max - min;
+    return Iterator.random().map((x) => x * delta + min);
+  }
+
+  static randomDistribution(cpdf: (x: number) => number) {
+    const dx = 1e-4;
+    return Iterator.random().map((y) => {
+      // newton's method
+      let x = 0;
+      let dy = Infinity;
+      while (Math.abs(dy) > dx) {
+        const yEstimate = cpdf(x);
+        dy = yEstimate - y;
+        x -= (dy * dx) / (cpdf(x + dx) - yEstimate);
+      }
+      return x;
+    });
+  }
+
   // just copypaste of https://more-itertools.readthedocs.io/en/stable/_modules/more_itertools/more.html#partitions
   static partitions<T>(items: T[]) {
     return Iterator.subsets(Iterator.range(1, items.length)).map((x) => {
@@ -391,20 +468,13 @@ export default class Iterator<T> implements Iterable<T> {
   }
 
   static repeat<T>(x: T) {
-    const gen = function* () {
-      while (true) yield x;
-    };
-    return new Iterator(gen);
+    return new Iterator<T>(() => new RepeatIterator(x));
   }
 
   static range(start: number, end: number, step = 1) {
-    const gen = function* () {
-      while (step > 0 ? start < end : start > end) {
-        yield start;
-        start += step;
-      }
-    };
-    return new Iterator(gen);
+    const genUp = () => new RangeIteratorUp(start, end, step);
+    const genDown = () => new RangeIteratorDown(start, end, step);
+    return new Iterator<number>(step > 0 ? genUp : genDown);
   }
 
   static natural(end: number = Infinity) {
@@ -475,12 +545,6 @@ export default class Iterator<T> implements Iterable<T> {
     return Iterator.chain(prev, this);
   }
 
-  reduce(reducer: (acc: T | undefined, input: T) => T): T | undefined;
-  reduce<U>(reducer: (acc: U, input: T) => U, initial?: U): U;
-  reduce(reducer: (acc: any, input: T) => any, initial?: any) {
-    return this.accumulate(reducer, initial).last();
-  }
-
   product<T extends Iterable<unknown>[]>(...args: Iterable<T>[]) {
     return Iterator.product(this, ...args);
   }
@@ -515,8 +579,10 @@ export default class Iterator<T> implements Iterable<T> {
 
   sum(this: Iterator<number>): number;
   sum(accessor: (x: T) => number): number;
-  sum(accessor: (x: T) => number = identity as any) {
-    return this.map(accessor).reduce((acc, x) => acc + x, 0);
+  sum(accessor?: (x: T) => number) {
+    let it: any = this;
+    if (accessor) it = it.map(accessor);
+    return it.reduce((acc, x) => acc + x, 0);
   }
 
   sumAccumulate(this: Iterator<number>): Iterator<number>;

@@ -1,5 +1,6 @@
 import { describe, bench, afterEach } from "vitest";
 import Iterator from "../src/iterator";
+import MetarhiaIterator from "@metarhia/iterator";
 
 afterEach(async () => {
   // flush promises https://github.com/vitest-dev/vitest/issues/4497#
@@ -12,50 +13,72 @@ const testIteration = (iterator: Iterable<number>) => {
     sum += value;
   }
 };
-const sizes = Iterator.natural(6)
+const sizes = Iterator.range(1, 6)
   .map((i) => 0.2 * i * 10 ** i)
   .map(Math.round);
 
 for (const size of sizes) {
+  const iteratorNat = Iterator.natural(size);
+  const array = iteratorNat.toArray();
+  const iterator = Iterator.iter(array);
+
+  for (const [name, _iterator] of Iterator.iterEntries({
+    iterator,
+    iteratorNat,
+  })) {
+    describe.concurrent(`${name} iteration cache - ${size}`, () => {
+      bench(name, () => {
+        testIteration(_iterator);
+      });
+
+      bench(`${name}.cached`, () => {
+        testIteration(_iterator.cached());
+      });
+
+      bench(`${name}.consumable`, () => {
+        testIteration(_iterator.consumable());
+      });
+    });
+  }
+
   describe.concurrent(`iteration - ${size}`, () => {
     const iteratorNat = Iterator.natural(size);
     const array = iteratorNat.toArray();
     const iterator = Iterator.iter(array);
+    const metarhiaIterator = () => MetarhiaIterator.iter(array);
+    const reducer = (acc: number, x: number) => acc + x;
 
-    Iterator.iterEntries({ iterator, iteratorNat }).consume(
-      ([name, iterator]) => {
-        bench(name, () => {
-          testIteration(iterator);
-        });
+    for (const [name, _iterator] of Iterator.iterEntries({
+      iterator,
+      iteratorNat,
+    })) {
+      bench(name, () => {
+        testIteration(_iterator);
+      });
 
-        bench(`${name}.cached`, () => {
-          testIteration(iterator.cached());
-        });
+      bench(`${name}.reduce`, () => {
+        _iterator.reduce(reducer, 0);
+      });
 
-        bench(`${name}.consumable`, () => {
-          testIteration(iterator.consumable());
-        });
-
-        bench(`${name}.sum`, () => {
-          iterator.sum();
-        });
-
-        bench(`${name}.cached.sum`, () => {
-          iterator.cached().sum();
-        });
-
-        bench(`${name}.consumable.sum`, () => {
-          iterator.consumable().sum();
-        });
-      }
-    );
+      bench(`${name}.sum`, () => {
+        _iterator.sum();
+      });
+    }
 
     bench(`Array`, () => {
       testIteration(array);
     });
 
     bench(`Array.reduce`, () => {
-      array.reduce((a, b) => a + b, 0);
+      array.reduce(reducer, 0);
+    });
+
+    bench(`MetarhiaIterator`, () => {
+      testIteration(metarhiaIterator());
+    });
+
+    bench(`MetarhiaIterator.reduce`, () => {
+      metarhiaIterator().reduce(reducer, 0);
     });
   });
 

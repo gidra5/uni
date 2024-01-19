@@ -15,6 +15,7 @@
   "author": "Roman Khranovskiy",
   "license": "MIT",
   "dependencies": {
+    "@metarhia/iterator": "^1.0.0-alpha3",
     "codespan-napi": "^0.4.0",
     "commander": "^9.3.0"
   },
