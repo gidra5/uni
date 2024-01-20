@@ -59,9 +59,13 @@ export const match = (
   return visitor.visitNode(pattern);
 };
 
+export const parseString = (src: string) => {
+  const [tokens] = parseTokens(src);
+  return parse(tokens);
+};
+
 export const templateString = (templateStr: string, values: TemplateValues) => {
-  const [tokens] = parseTokens(templateStr);
-  const [parsed] = parse(tokens);
+  const [parsed] = parseString(templateStr);
   return template(parsed, values);
 };
 
@@ -70,7 +74,6 @@ export const matchString = (
   pattern: string,
   matches: Record<string, AbstractSyntaxTree> = {}
 ) => {
-  const [patternTokens] = parseTokens(pattern);
-  const [patternParsed] = parse(patternTokens);
+  const [patternParsed] = parseString(pattern);
   return match(tree, patternParsed, matches);
 };

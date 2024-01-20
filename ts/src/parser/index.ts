@@ -3,6 +3,7 @@ import { Iterator, spread } from "iterator-js";
 import { indexPosition, position } from "../position";
 import { AbstractSyntaxTree, group, infix, postfix, prefix } from "./ast";
 import { ParsingError, TokenParser } from "./types";
+export { parseString } from "./utils";
 
 export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {
