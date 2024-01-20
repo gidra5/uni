@@ -1,5 +1,5 @@
 import { endOfTokensError, error } from "../errors";
-import Iterator from "../iterator";
+import { Iterator, spread } from "iterator-js";
 import { indexPosition, position } from "../position";
 import { AbstractSyntaxTree, group, infix, postfix, prefix } from "./ast";
 import { ParsingError, TokenParser } from "./types";
@@ -53,7 +53,7 @@ export const parseGroup =
       if (!matchingScope.skip(1).isEmpty()) {
         errors.push(error("Ambiguous name", indexPosition(index)));
       }
-      const [name] = matchingScope.head()!;
+      const [name] = matchingScope.first()!;
 
       return [index + 1, group(name), errors];
     }
@@ -74,13 +74,12 @@ export const parseGroup =
     if (src[index].type === "newline") index++;
 
     const _scope = matchingScope
-      .spreadMap((k, v) => {
+      .mapValues((v) => {
         const separators = v.separators.slice(1);
         const precedence = [null, v.precedence[1]] as Precedence;
-        const entry = [k, { precedence, separators }];
-        return entry as [key: string, value: TokenGroupDefinition];
+        return { precedence, separators } as TokenGroupDefinition;
       })
-      .filter(([_, { separators }]) => separators.length > 0)
+      .filter(spread((_, { separators }) => separators.length > 0))
       .toObject();
 
     // TODO: how to handle if-then and if-then-else cases?

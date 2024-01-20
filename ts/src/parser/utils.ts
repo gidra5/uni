@@ -1,5 +1,5 @@
 import { parse } from ".";
-import Iterator from "../iterator";
+import { Iterator } from "iterator-js";
 import { parseTokens } from "./tokens";
 import { DefaultVisitor, Tree, Visitor } from "../tree";
 import { isEqual } from "../utils";

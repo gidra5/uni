@@ -116,7 +116,7 @@ describe("parseToken - number token", () => {
 
 // Test case: Parsing an identifier token
 describe("parseToken - identifier token", () => {
-  it.prop([fc.stringMatching(/^[\w_][\w\d_]*$/)])("regular idents", (src) => {
+  it.prop([fc.stringMatching(/^[a-zA-Z_]\w*$/)])("regular idents", (src) => {
     const startIndex = 0;
     const expectedToken = { type: "identifier", src };
     const expectedIndex = src.length;

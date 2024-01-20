@@ -1,5 +1,4 @@
-import Iterator from "./iterator";
-
+import { Iterator } from "iterator-js";
 export type Tree = { name: string; children: Tree[] };
 export type TreeVisitor<T, Node extends Tree> = (node: Node) => T;
 export type TreeVisitors<T, Node extends Tree> = {

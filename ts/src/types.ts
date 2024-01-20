@@ -57,9 +57,7 @@ export type Sum<A extends number, B extends number> = [
   ...TupleN<B>
 ]["length"];
 export type Succ<A extends number> = Sum<A, 1>;
-export type Pred<A extends number> = A extends 0
-  ? 0
-  : TupleN<A> extends [...infer B, infer _]
+export type Pred<A extends number> = TupleN<A> extends [...infer B, infer _]
   ? B["length"]
   : A;
 export type Sub<A extends number, B extends number> = B extends 0

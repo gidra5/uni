@@ -1,4 +1,4 @@
-import Iterator from "./iterator";
+import { Iterator } from "iterator-js";
 
 export const identity = <T>(x: T): T => x;
 
@@ -11,9 +11,9 @@ export const omit = <T extends {}, K extends string>(
   obj: T,
   keys: K[]
 ): Omit<T, K> => {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([key]) => !keys.includes(key as K))
-  ) as Omit<T, K>;
+  return Iterator.iterEntries(obj)
+    .filter(([key]) => !keys.includes(key as K))
+    .toObject() as Omit<T, K>;
 };
 
 export const pick = <T extends {}, K extends keyof T>(
@@ -48,8 +48,4 @@ export const isEqual = (a, b) => {
   }
 
   return true;
-};
-
-export const factorial = (n: number): number => {
-  return Iterator.range(1, n + 1).mult();
 };

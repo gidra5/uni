@@ -5,6 +5,7 @@ import {
   position as _position,
   intervalPosition,
 } from "../position.js";
+import { Iterator } from "iterator-js";
 
 type TokenConstructorArgs<T> = T extends "identifier" | "newline"
   ? [src: Token["src"], pos: TokenPos["pos"]]
@@ -22,7 +23,7 @@ export const number = token("number");
 export const string = token("string");
 export const newline = token("newline");
 
-const symbols = ["->"];
+const symbols = Iterator.iter(["->"]);
 
 export const parseToken: StringParser<TokenPos> = (src, i = 0) => {
   let index = i;
@@ -91,9 +92,9 @@ export const parseToken: StringParser<TokenPos> = (src, i = 0) => {
     return [index, token, errors];
   }
 
-  if (/[_\w]/.test(src.charAt(index))) {
+  if (/[a-zA-Z_]/.test(src.charAt(index))) {
     const start = index;
-    while (/[_\w\d]/.test(src.charAt(index))) index++;
+    while (/\w/.test(src.charAt(index))) index++;
 
     return [index, identifier(tokenSrc(start), position(start)), errors];
   }
@@ -119,7 +120,7 @@ export const parseToken: StringParser<TokenPos> = (src, i = 0) => {
     symbols
       .filter((symbol) => src.startsWith(symbol, start))
       .reduce((a, b) => (a.length > b.length ? a : b), "") || src.charAt(index);
-  index += src.length;
+  index += _src.length;
 
   return [index, identifier(_src, position(start)), errors];
 };
