@@ -11,13 +11,19 @@ const errorsTestCase = (src, expectedErrors, _it: any = it) =>
     expect(errors).toEqual(expectedErrors);
   });
 
-const treeTestCase = (src, expectedTree, scope = {}, _it: any = it) =>
-  _it(`produces correct tree in example '${src}'`, () => {
-    const [tree, errors] = parseString(src, scope);
-    console.dir(tree, { depth: null });
-    expect(errors).toEqual([]);
-    expect(tree).toEqual(expectedTree);
-  });
+const treeTestCase = (src, expectedTree?, scope = {}) => {
+  const [tree, errors] = parseString(src, scope);
+  console.dir(tree, { depth: null });
+  expect(errors).toEqual([]);
+  if (expectedTree) expect(tree).toEqual(expectedTree);
+  expect(tree).toMatchSnapshot();
+};
+
+const treeTestCaseArgs = (src, expectedTree?, scope = {}) =>
+  [
+    `produces correct tree for '${src}'`,
+    () => treeTestCase(src, expectedTree, scope),
+  ] as const;
 
 describe("comments", () => {
   test.todo("comment", () => {
@@ -115,24 +121,15 @@ describe("expressions", () => {
       const src = `123++`;
     });
 
-    treeTestCase(
-      "1 + 2^3 * 4",
-      infix(
-        group("+"),
-        number(1),
-        infix(group("*"), infix(group("^"), number(2), number(3)), number(4))
-      ),
-      {},
-      it.only
-    );
+    it(...treeTestCaseArgs("1 + 2^3 * 4"));
+    it(...treeTestCaseArgs("--i"));
+    it(...treeTestCaseArgs("++i"));
+    it(...treeTestCaseArgs("-(a+b)"));
 
-    treeTestCase("--i", prefix(group("prefixDecrement"), name("i")));
-
-    treeTestCase("-(a+b)", []);
-
-    treeTestCase(
-      "(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1",
-      []
+    it(
+      ...treeTestCaseArgs(
+        "(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1"
+      )
     );
   });
 
@@ -188,74 +185,45 @@ describe("expressions", () => {
   });
 
   describe("function expressions", () => {
-    test.todo("function", () => {
+    test.todo("funciton multiple params", () => {
+      const src = `x, y -> x + y`;
+    });
+
+    test("function", () => {
       const src = `x -> x`;
+      treeTestCase(src);
     });
 
-    test.todo("function call", () => {
-      const src = `f x`;
+    describe("application", () => {
+      test("function call", () => {
+        const src = `f x`;
+        treeTestCase(src);
+      });
+
+      test("function call multiple args", () => {
+        const src = `f x y`;
+        treeTestCase(src);
+      });
+
+      it(
+        ...treeTestCaseArgs("send((1+2), 3)", undefined, {
+          send: {
+            separators: matchSeparators(["send"]),
+            precedence: [null, Infinity],
+          },
+        })
+      );
+
+      it(...treeTestCaseArgs("send(2, 3)"));
+      it(...treeTestCaseArgs("(send)(2, 3)"));
+      it(...treeTestCaseArgs("(send 1)(2, 3)"));
+      it(...treeTestCaseArgs("(send 1 2)(2, 3)"));
+      it(...treeTestCaseArgs("send 1 + 2"));
+      it(...treeTestCaseArgs("send 1 (2, 3)"));
+      it(...treeTestCaseArgs("send a (2, 3)"));
+      it(...treeTestCaseArgs("a + send (2, 3)"));
+      it(...treeTestCaseArgs("a + send 1 + 2"));
     });
-
-    test.todo("function call multiple args", () => {
-      const src = `f x y`;
-    });
-
-    treeTestCase(
-      "send((1+2), 3)",
-      prefix(
-        group("send"),
-        group(
-          "parens",
-          infix(
-            group(","),
-            group("parens", infix(group("+"), number(1), number(2))),
-            number(3)
-          )
-        )
-      ),
-      {
-        send: {
-          separators: matchSeparators(["send"]),
-          precedence: [null, Infinity],
-        },
-      }
-    );
-
-    treeTestCase(
-      "send(2, 3)",
-      infix(
-        group("application"),
-        name("send"),
-        group("parens", infix(group(","), number(2), number(3)))
-      )
-    );
-
-    treeTestCase(
-      "(send)(2, 3)",
-      infix(
-        group("application"),
-        group("parens", name("send")),
-        group("parens", infix(group(","), number(2), number(3)))
-      )
-    );
-
-    treeTestCase(
-      "(send 1)(2, 3)",
-      infix(
-        group("application"),
-        group("parens", infix(group("application"), name("send"), number(1))),
-        group("parens", infix(group(","), number(2), number(3)))
-      )
-    );
-
-    treeTestCase(
-      "send 1 (2, 3)",
-      infix(
-        group("application"),
-        infix(group("application"), name("send"), number(1)),
-        group("parens", infix(group(","), number(2), number(3)))
-      )
-    );
   });
 
   describe("pattern matching", () => {
@@ -263,11 +231,11 @@ describe("expressions", () => {
       const src = `match x { 1 => 2; 3 => 4 }`;
     });
 
-    test.todo("in parameters", () => {
+    test.todo("in function parameters", () => {
       const src = `(x, y) -> x + y`;
     });
 
-    test.todo("with is operator", () => {
+    test.todo("with 'is' operator", () => {
       const src = `x is (a, b)`;
     });
 
@@ -338,8 +306,16 @@ describe("expressions", () => {
   });
 
   describe("data structures", () => {
-    test.todo("tuple", () => {
+    it(...treeTestCaseArgs("(-(2+7)/A,j, i, 127.0 )"));
+
+    test("unit", () => {
+      const src = `()`;
+      treeTestCase(src);
+    });
+
+    test("tuple", () => {
       const src = `1, 2`;
+      treeTestCase(src);
     });
 
     test.todo("list", () => {
@@ -356,6 +332,14 @@ describe("expressions", () => {
 
     test.todo("map", () => {
       const src = `map { 1: 2, 3: 4 }`;
+    });
+
+    test.todo("field access", () => {
+      const src = `x.y`;
+    });
+
+    test.todo("field access dynamic", () => {
+      const src = `x[y]`;
     });
   });
 });
