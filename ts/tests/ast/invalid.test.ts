@@ -1,7 +1,6 @@
 import { describe, expect } from "vitest";
 import { it } from "@fast-check/vitest";
 import { parseString } from "../../src/parser/index.js";
-import { parseTokens } from "../../src/parser/tokens.js";
 
 describe("parsing", () => {
   const testCase = (src, expectedErrors, _it: any = it) =>

@@ -4,13 +4,11 @@ import { parseTokens } from "./tokens";
 import { DefaultVisitor, Tree, Visitor } from "../tree";
 import { isEqual } from "../utils";
 import { AbstractSyntaxTree } from "./ast";
+import { TokenParser } from "./types";
 
 type TemplateValues = AbstractSyntaxTree[] | Record<string, AbstractSyntaxTree>;
 export const template = (tree: AbstractSyntaxTree, values: TemplateValues) => {
-  const visitor: Visitor<Tree, AbstractSyntaxTree> = new Visitor<
-    Tree,
-    AbstractSyntaxTree
-  >({
+  const visitor: Visitor<Tree, AbstractSyntaxTree> = new Visitor<Tree, AbstractSyntaxTree>({
     [DefaultVisitor]: (tree) => {
       const children = visitor.visitChildren(tree).toArray();
       return { ...tree, children };
@@ -34,8 +32,7 @@ export const match = (
   const visitor: Visitor<ReturnType, AbstractSyntaxTree> = new Visitor({
     [DefaultVisitor]: (pattern) => {
       if (tree.name !== pattern.name) return [false, matches];
-      if (tree.children.length !== pattern.children.length)
-        return [false, matches];
+      if (tree.children.length !== pattern.children.length) return [false, matches];
       return Iterator.iter(tree.children)
         .zip(pattern.children)
         .reduce<ReturnType>(
@@ -77,3 +74,11 @@ export const matchString = (
   const [patternParsed] = parseString(pattern);
   return match(tree, patternParsed, matches);
 };
+
+export const matchTokens =
+  (...tokens: string[]): TokenParser<boolean> =>
+  (src, i = 0) => {
+    const found = tokens.includes(src[i].src);
+    if (found) return [i + 1, true, []];
+    return [i, false, []];
+  };

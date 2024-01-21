@@ -3,11 +3,13 @@ import { Iterator, spread } from "iterator-js";
 import { indexPosition, position } from "../position";
 import { AbstractSyntaxTree, group, infix, postfix, prefix } from "./ast";
 import { ParsingError, TokenParser } from "./types";
+import { matchTokens } from "./utils";
+import { RecordEntry } from "iterator-js/dist/types";
 export { parseString } from "./utils";
 
 export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {
-  separators: string[];
+  separators: (context: ParsingContext) => TokenParser<"done" | "noMatch" | "match">;
   precedence: Precedence;
 };
 export type Scope = Record<string, TokenGroupDefinition>;
@@ -15,13 +17,19 @@ export type ParsingContext = {
   scope: Scope;
   precedence: number;
   lhs?: AbstractSyntaxTree;
+  groupNodes?: AbstractSyntaxTree[];
 };
 
 const getPrecedence = (node: AbstractSyntaxTree, scope: Scope): Precedence =>
-  (node.value && scope[node.value].precedence) || [null, null];
+  (node.value && scope[node.value]?.precedence) || [null, null];
 
 export const defaultParsingContext = (): ParsingContext => ({
-  scope: {},
+  scope: {
+    // _: {
+    //   separators: () => matchTokens("_"),
+    //   precedence: [null, null],
+    // },
+  },
   precedence: 0,
 });
 
@@ -30,8 +38,9 @@ export const parseGroup =
   (src, i = 0) => {
     let index = i;
     const errors: ParsingError[] = [];
-    const matchingScope = Iterator.iterEntries(context.scope)
-      .filter(([_, { separators }]) => src[index].src === separators[0])
+    let matchingScope = Iterator.iterEntries(context.scope)
+      .inspect(console.log)
+      .filter(([_, { separators }]) => separators(context)(src, index)[1] !== "noMatch")
       .filter(([_, { precedence }]) => {
         return precedence[0] === null || precedence[0] >= context.precedence;
       })
@@ -46,9 +55,9 @@ export const parseGroup =
       return [index + 1, group(src[index].src), errors];
     }
 
-    const matchingScopeIsSingleSep = matchingScope
-      .map(([_, { separators }]) => separators.length === 1)
-      .every();
+    const matchingScopeIsSingleSep = matchingScope.every(
+      ([_, { separators }]) => separators(context)(src, index)[1] === "done"
+    );
 
     if (matchingScopeIsSingleSep) {
       if (!matchingScope.skip(1).isEmpty()) {
@@ -62,32 +71,44 @@ export const parseGroup =
     index++;
     if (src[index].type === "newline") index++;
 
-    const _context = { ...context, precedence: 0 };
-    _context.lhs = undefined;
+    context = { ...context, precedence: 0, groupNodes: [] };
+    context.lhs = undefined;
 
-    const [nextIndex, expr, _errors] = parseExpr(_context)(src, index);
-    if (_errors.length > 0) {
-      errors.push(
-        error("Errors in operand", position(index, nextIndex), _errors)
-      );
+    while (src[index]) {
+      const [nextIndex, expr, _errors] = parseExpr(context)(src, index);
+      if (_errors.length > 0) {
+        errors.push(error("Errors in operand", position(index, nextIndex), _errors));
+      }
+      index = nextIndex;
+      context.groupNodes!.push(expr);
+      if (src[index].type === "newline") index++;
+
+      matchingScope = matchingScope.filterMap(([k, v]) => {
+        const [, result] = v.separators(context)(src, index);
+        if (result === "noMatch") return;
+
+        return [k, v] as [string, TokenGroupDefinition];
+      });
+
+      if (matchingScope.isEmpty()) {
+        break;
+      }
+
+      if (matchingScope.every(([_, { separators }]) => separators(context)(src, index)[1] === "done")) {
+        if (!matchingScope.skip(1).isEmpty()) {
+          errors.push(error("Ambiguous name", indexPosition(index)));
+        }
+        const [name] = matchingScope.first()!;
+        index++;
+        if (src[index].type === "newline") index++;
+
+        return [index, group(name, ...context.groupNodes!), errors];
+      }
+
+      index++;
     }
-    index = nextIndex;
-    if (src[index].type === "newline") index++;
 
-    const _scope = matchingScope
-      .mapValues((v) => {
-        const separators = v.separators.slice(1);
-        const precedence = [null, v.precedence[1]] as Precedence;
-        return { precedence, separators } as TokenGroupDefinition;
-      })
-      .filter(spread((_, { separators }) => separators.length > 0))
-      .toObject();
-
-    // TODO: how to handle if-then and if-then-else cases?
-    const [_index, rest, _errors2] = parseGroup(_context)(src, index);
-    errors.push(..._errors2);
-
-    return [_index, { ...rest, children: [expr, ...rest.children] }, errors];
+    return [index, group("name", ...context.groupNodes!), errors];
   };
 
 export const parsePrefix =
@@ -119,7 +140,7 @@ export const parsePrefix =
   };
 
 export const parseExpr =
-  (context: ParsingContext): TokenParser<AbstractSyntaxTree> =>
+  ({ ...context }: ParsingContext): TokenParser<AbstractSyntaxTree> =>
   (src, i = 0) => {
     let index = i;
     const errors: ParsingError[] = [];
@@ -153,9 +174,7 @@ export const parseExpr =
       }
     }
 
-    const lhs = context.lhs;
-    context.lhs = undefined;
-    return [index, lhs, errors];
+    return [index, context.lhs, errors];
   };
 
 export const parse: TokenParser<AbstractSyntaxTree, true> = (src, i = 0) => {
