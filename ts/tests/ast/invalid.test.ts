@@ -46,8 +46,6 @@ describe("parsing", () => {
     },
   ]);
 
-  testCase("1 + 2^3 * 4", []);
-
   testCase("1 + * 2", [
     {
       message: "symbol can't be used in place of value",
@@ -244,8 +242,6 @@ describe("parsing", () => {
     },
   ]);
 
-  testCase("send((1+2), 3)", []);
-
   testCase("send((1+2), 3+,4)", [
     {
       message: "unexpected token inside fn args",
@@ -283,10 +279,6 @@ describe("parsing", () => {
       pos: { start: 6, end: 7 },
     },
   ]);
-
-  testCase("send(2, 3)", []);
-
-  testCase("--i", []);
 
   testCase("send(-(2x+7)/A[j, i], 127.0.0.1)", [
     {
@@ -566,13 +558,6 @@ describe("parsing", () => {
       },
     ]
   );
-
-  testCase(
-    "(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1",
-    []
-  );
-
-  testCase("-(a+b)", []);
 
   testCase("(,) + .. + a", [
     {

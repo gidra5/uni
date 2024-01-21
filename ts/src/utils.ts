@@ -1,4 +1,5 @@
 import { Iterator } from "iterator-js";
+import { RecordKey } from "./types";
 
 export const identity = <T>(x: T): T => x;
 
@@ -49,3 +50,25 @@ export const isEqual = (a, b) => {
 
   return true;
 };
+
+const mapField = (path: RecordKey[], fn: (x: any) => any) => (obj: any) => {
+  const [head, ...tail] = path;
+  if (Array.isArray(obj) && typeof head !== "symbol") {
+    const index = Number(head);
+    if (isNaN(index)) return obj;
+
+    const prefix = obj.slice(0, index);
+    const suffix = obj.slice(index + 1);
+    if (tail.length === 0) return [...prefix, fn(obj[index]), ...suffix];
+    return [...prefix, mapField(tail, fn)(obj[index]), ...suffix];
+  }
+
+  if (tail.length === 0) return { ...obj, [head]: fn(obj[head]) };
+  return { ...obj, [head]: mapField(tail, fn)(obj[head]) };
+};
+
+export const setField = (path: RecordKey[], value: any) =>
+  mapField(path, () => value);
+
+export const pushField = (path: RecordKey[], value: any) =>
+  mapField(path, (x) => [...x, value]);

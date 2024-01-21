@@ -1,6 +1,23 @@
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { Iterator } from "iterator-js";
+import { parseString } from "../../src/parser";
+import { group, infix, name, number, prefix } from "../../src/parser/ast";
+import { matchSeparators } from "../../src/parser/utils";
+
+const errorsTestCase = (src, expectedErrors, _it: any = it) =>
+  _it(`finds all errors in example '${src}'`, () => {
+    const [, errors] = parseString(src);
+    expect(errors).toEqual(expectedErrors);
+  });
+
+const treeTestCase = (src, expectedTree, scope = {}, _it: any = it) =>
+  _it(`produces correct tree in example '${src}'`, () => {
+    const [tree, errors] = parseString(src, scope);
+    console.dir(tree, { depth: null });
+    expect(errors).toEqual([]);
+    expect(tree).toEqual(expectedTree);
+  });
 
 describe("comments", () => {
   test.todo("comment", () => {
@@ -81,6 +98,42 @@ describe("expressions", () => {
     test.todo("negate", () => {
       const src = `-123`;
     });
+
+    test.todo("decrement", () => {
+      const src = `--123`;
+    });
+
+    test.todo("increment", () => {
+      const src = `++123`;
+    });
+
+    test.todo("postfix decrement", () => {
+      const src = `123--`;
+    });
+
+    test.todo("postfix increment", () => {
+      const src = `123++`;
+    });
+
+    treeTestCase(
+      "1 + 2^3 * 4",
+      infix(
+        group("+"),
+        number(1),
+        infix(group("*"), infix(group("^"), number(2), number(3)), number(4))
+      ),
+      {},
+      it.only
+    );
+
+    treeTestCase("--i", prefix(group("prefixDecrement"), name("i")));
+
+    treeTestCase("-(a+b)", []);
+
+    treeTestCase(
+      "(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1",
+      []
+    );
   });
 
   describe("boolean expressions", () => {
@@ -124,7 +177,9 @@ describe("expressions", () => {
         });
       }
 
-      for (const [op1, op2] of Iterator.iter(comparators).flatMap((pair) => Iterator.iter(pair).power(2))) {
+      for (const [op1, op2] of Iterator.iter(comparators).flatMap((pair) =>
+        Iterator.iter(pair).power(2)
+      )) {
         test.todo(`range ${op1} ${op2}`, () => {
           const src = `123 ${op1} x ${op2} 456`;
         });
@@ -140,6 +195,67 @@ describe("expressions", () => {
     test.todo("function call", () => {
       const src = `f x`;
     });
+
+    test.todo("function call multiple args", () => {
+      const src = `f x y`;
+    });
+
+    treeTestCase(
+      "send((1+2), 3)",
+      prefix(
+        group("send"),
+        group(
+          "parens",
+          infix(
+            group(","),
+            group("parens", infix(group("+"), number(1), number(2))),
+            number(3)
+          )
+        )
+      ),
+      {
+        send: {
+          separators: matchSeparators(["send"]),
+          precedence: [null, Infinity],
+        },
+      }
+    );
+
+    treeTestCase(
+      "send(2, 3)",
+      infix(
+        group("application"),
+        name("send"),
+        group("parens", infix(group(","), number(2), number(3)))
+      )
+    );
+
+    treeTestCase(
+      "(send)(2, 3)",
+      infix(
+        group("application"),
+        group("parens", name("send")),
+        group("parens", infix(group(","), number(2), number(3)))
+      )
+    );
+
+    treeTestCase(
+      "(send 1)(2, 3)",
+      infix(
+        group("application"),
+        group("parens", infix(group("application"), name("send"), number(1))),
+        group("parens", infix(group(","), number(2), number(3)))
+      )
+    );
+
+    treeTestCase(
+      "send 1 (2, 3)",
+      infix(
+        group("application"),
+        infix(group("application"), name("send"), number(1)),
+        group("parens", infix(group(","), number(2), number(3)))
+      )
+    );
   });
 
   describe("pattern matching", () => {
