@@ -112,27 +112,25 @@ export const parseGroup =
 
     if (matchingScope.isEmpty()) {
       const token = src[index];
-      console.dir({ msg: "parseGroup unmatched", index, token, context });
-
-      if (context.lhs) {
-        // if (!context.groupNodes) return [index, group("application"), errors];
-        // if (context.lhs.name !== "infix") {
-        //   const path = ["groupNodes"];
-        //   const _context = pushField(path, placeholder())(context);
-        //   const nextTokenIsCurrentGroupSeparator = scopeEntries.some(
-        //     ([_, { separators }]) =>
-        //       separators(_context)(src, index)[1] !== "noMatch"
-        //   );
-        //   if (!nextTokenIsCurrentGroupSeparator)
-        //     return [index, group("application"), errors];
-        // }
-        return [index, placeholder(), errors];
-      }
 
       if (!token) {
         errors.push(endOfTokensError(index));
         return [index, placeholder(), errors];
       }
+
+      if (context.lhs && context.precedence === 0) {
+        if (!context.groupNodes) return [index, group("application"), errors];
+        const path = ["groupNodes"];
+        const _context = pushField(path, placeholder())(context);
+        const nextTokenIsCurrentGroupSeparator = scopeEntries.some(
+          ([_, { separators }]) =>
+            separators(_context)(src, index)[1] !== "noMatch"
+        );
+        if (!nextTokenIsCurrentGroupSeparator)
+          return [index, group("application"), errors];
+        return [index, placeholder(), errors];
+      }
+
       if (token.src === "_") return [index + 1, placeholder(), errors];
       if (token.type === "identifier")
         return [index + 1, name(token.src), errors];
@@ -143,7 +141,6 @@ export const parseGroup =
     }
 
     context = { ...context, precedence: 0, groupNodes: [] };
-    context.lhs = undefined;
 
     while (src[index]) {
       if (
@@ -238,7 +235,7 @@ export const parseExpr =
       }
       let [nextIndex, group, _errors] = parseGroup(context)(src, index);
       errors.push(..._errors);
-      if (!group.value) break;
+      if (group.value === undefined || group.name !== "group") break;
       const [, right] = getPrecedence(group, context.scope);
       index = nextIndex;
 
@@ -247,7 +244,6 @@ export const parseExpr =
         break;
       }
       let _context = { ...context, precedence: right };
-      // _context.lhs = infix(group, context.lhs, placeholder());
 
       let rhs: AbstractSyntaxTree;
       [index, rhs, _errors] = parseExpr(_context)(src, index);

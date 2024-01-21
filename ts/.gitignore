@@ -2,3 +2,5 @@
 /node_modules
 /temp
 ../ml.code-workspace
+*.snap
+__snapshots__
