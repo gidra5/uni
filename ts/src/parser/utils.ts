@@ -1,10 +1,4 @@
-import {
-  ParsingContext,
-  Scope,
-  defaultParsingContext,
-  parse,
-  parseExpr,
-} from ".";
+import { ParsingContext, Scope, defaultParsingContext, parseExpr } from ".";
 import { Iterator } from "iterator-js";
 import { parseTokens } from "./tokens";
 import { DefaultVisitor, Tree, Visitor } from "../tree";
@@ -92,8 +86,6 @@ export const matchTokens =
   (...tokens: string[]): TokenParser<boolean> =>
   (src, i = 0) => {
     const found = tokens.includes(src[i]?.src);
-    console.log("matchTokens", tokens, i, src[i]?.src, found);
-
     if (found) return [i + 1, true, []];
     return [i, false, []];
   };
@@ -112,8 +104,6 @@ export const matchSeparators =
   (...separators: string[][]) =>
   (context: ParsingContext) => {
     const index = context.groupNodes?.length ?? 0;
-    console.log("separators", separators, index, separators[index]);
-
     const separator = separators[index] ?? [];
     const isLast = index === separators.length - 1;
     return mapParserResult(matchTokens(...separator), (matched) =>

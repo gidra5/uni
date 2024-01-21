@@ -71,4 +71,4 @@ export const setField = (path: RecordKey[], value: any) =>
   mapField(path, () => value);
 
 export const pushField = (path: RecordKey[], value: any) =>
-  mapField(path, (x) => [...x, value]);
+  mapField(path, (x) => x && [...x, value]);

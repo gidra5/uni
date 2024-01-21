@@ -129,24 +129,25 @@ export const parseGroup =
         return [index, placeholder(), errors];
       }
 
-      const _context = setField(["groupNodes"], [])(context);
+      const path = ["groupNodes"];
+      const __context = pushField(path, placeholder())(context);
+      const nextTokenIsCurrentGroupSeparator =
+        context.groupNodes &&
+        scopeEntries.some(
+          ([_, { separators }]) =>
+            separators(__context)(src, index)[1] !== "noMatch"
+        );
+      if (nextTokenIsCurrentGroupSeparator)
+        return [index, placeholder(), errors];
+
+      const _context = setField(path, [])(context);
       const isStartOfGroup = scopeEntries.some(
         ([_, { separators, precedence }]) =>
           precedence[0] !== null &&
           separators(_context)(src, index)[1] !== "noMatch"
       );
-      if (context.lhs && !isStartOfGroup && context.precedence !== Infinity) {
-        if (!context.groupNodes) return [index, group("application"), errors];
-        const path = ["groupNodes"];
-        const _context = pushField(path, placeholder())(context);
-        const nextTokenIsCurrentGroupSeparator = scopeEntries.some(
-          ([_, { separators }]) =>
-            separators(_context)(src, index)[1] !== "noMatch"
-        );
-        if (!nextTokenIsCurrentGroupSeparator)
+      if (context.lhs && !isStartOfGroup && context.precedence !== Infinity)
           return [index, group("application"), errors];
-        return [index, placeholder(), errors];
-      }
 
       if (token.src === "_") return [index + 1, placeholder(), errors];
       if (token.type === "identifier")
