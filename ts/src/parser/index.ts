@@ -39,12 +39,14 @@ const getPrecedence = (node: AbstractSyntaxTree, scope: Scope): Precedence =>
 export const defaultParsingContext = (): ParsingContext => ({
   scope: {
     "+": { separators: matchSeparators(["+"]), precedence: [1, 2] },
-    "-": { separators: matchSeparators(["-"]), precedence: [1, 1] },
+    "-": { separators: matchSeparators(["-"]), precedence: [1, 2] },
     "*": { separators: matchSeparators(["*"]), precedence: [3, 4] },
-    "/": { separators: matchSeparators(["/"]), precedence: [1, 1] },
+    "/": { separators: matchSeparators(["/"]), precedence: [3, 4] },
     "^": { separators: matchSeparators(["^"]), precedence: [5, 6] },
     "!": { separators: matchSeparators(["!"]), precedence: [null, 1] },
     ",": { separators: matchSeparators([","]), precedence: [1, 1] },
+    "->": { separators: matchSeparators(["->"]), precedence: [1, 1] },
+    negate: { separators: matchSeparators(["-"]), precedence: [null, 1] },
     prefixDecrement: {
       separators: matchSeparators(["--"]),
       precedence: [null, 1],
