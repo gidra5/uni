@@ -38,30 +38,30 @@ const getPrecedence = (node: AbstractSyntaxTree, scope: Scope): Precedence =>
 
 export const defaultParsingContext = (): ParsingContext => ({
   scope: {
-    "+": { separators: matchSeparators(["+"]), precedence: [1, 2] },
-    "-": { separators: matchSeparators(["-"]), precedence: [1, 2] },
-    "*": { separators: matchSeparators(["*"]), precedence: [3, 4] },
-    "/": { separators: matchSeparators(["/"]), precedence: [3, 4] },
-    "^": { separators: matchSeparators(["^"]), precedence: [5, 6] },
-    "!": { separators: matchSeparators(["!"]), precedence: [null, 1] },
-    ",": { separators: matchSeparators([","]), precedence: [1, 1] },
-    "->": { separators: matchSeparators(["->"]), precedence: [1, 1] },
-    negate: { separators: matchSeparators(["-"]), precedence: [null, 1] },
+    "+": { separators: matchSeparators(["+"]), precedence: [3, 4] },
+    "-": { separators: matchSeparators(["-"]), precedence: [3, 4] },
+    "*": { separators: matchSeparators(["*"]), precedence: [5, 6] },
+    "/": { separators: matchSeparators(["/"]), precedence: [5, 6] },
+    "^": { separators: matchSeparators(["^"]), precedence: [7, 8] },
+    "!": { separators: matchSeparators(["!"]), precedence: [null, 3] },
+    ",": { separators: matchSeparators([","]), precedence: [1, 2] },
+    "->": { separators: matchSeparators(["->"]), precedence: [3, 3] },
+    negate: { separators: matchSeparators(["-"]), precedence: [null, 3] },
     prefixDecrement: {
       separators: matchSeparators(["--"]),
-      precedence: [null, 1],
+      precedence: [null, 3],
     },
     prefixIncrement: {
       separators: matchSeparators(["++"]),
-      precedence: [null, 1],
+      precedence: [null, 3],
     },
     postfixDecrement: {
       separators: matchSeparators(["--"]),
-      precedence: [1, null],
+      precedence: [3, null],
     },
     postfixIncrement: {
       separators: matchSeparators(["++"]),
-      precedence: [1, null],
+      precedence: [3, null],
     },
     parens: {
       separators: matchSeparators(["("], [")"]),
@@ -118,7 +118,13 @@ export const parseGroup =
         return [index, placeholder(), errors];
       }
 
-      if (context.lhs && context.precedence === 0) {
+      const _context = setField(["groupNodes"], [])(context);
+      const isStartOfGroup = scopeEntries.some(
+        ([_, { separators, precedence }]) =>
+          precedence[0] !== null &&
+          separators(_context)(src, index)[1] !== "noMatch"
+      );
+      if (context.lhs && !isStartOfGroup && context.precedence !== Infinity) {
         if (!context.groupNodes) return [index, group("application"), errors];
         const path = ["groupNodes"];
         const _context = pushField(path, placeholder())(context);
