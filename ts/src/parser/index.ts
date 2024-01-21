@@ -173,12 +173,14 @@ export const parseGroup =
       context.groupNodes!.push(expr);
       if (src[index]?.type === "newline") index++;
 
-      matchingScope = matchingScope.filterMap(([k, v]) => {
+      matchingScope = matchingScope
+        .filterMap(([k, v]) => {
         const [, result] = v.separators(context)(src, index);
         if (result === "noMatch") return;
 
         return [k, v] as [string, TokenGroupDefinition];
-      });
+        })
+        .cached();
 
       if (matchingScope.isEmpty()) {
         errors.push(error("unterminated group", indexPosition(index)));
@@ -191,8 +193,9 @@ export const parseGroup =
   };
 
 export const parsePrefix =
-  (context: ParsingContext): TokenParser<AbstractSyntaxTree> =>
+  ({ ...context }: ParsingContext): TokenParser<AbstractSyntaxTree> =>
   (src, i = 0) => {
+    context.lhs = undefined;
     let index = i;
     const errors: ParsingError[] = [];
     //skip possible whitespace prefix
@@ -224,7 +227,6 @@ export const parseExpr =
     let index = i;
     const errors: ParsingError[] = [];
     let _errors: ParsingError[];
-    context.lhs = undefined;
     [index, context.lhs, _errors] = parsePrefix(context)(src, index);
     errors.push(..._errors);
 
