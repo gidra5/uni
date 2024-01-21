@@ -64,7 +64,18 @@ export const defaultParsingContext = (): ParsingContext => ({
       precedence: [3, null],
     },
     parens: {
-      separators: matchSeparators(["("], [")"]),
+      separators:
+        (context) =>
+        (src, i = 0) => {
+          let index = i;
+          if (!src[index]) return [i, "noMatch", []];
+          if (src[index].src === "(") {
+            index++;
+            if (src[index]?.type === "newline") index++;
+            if (src[index]?.src === ")") return [index + 1, "done", []];
+          }
+          return matchSeparators(["("], [")"])(context)(src, i);
+        },
       precedence: [null, null],
     },
     brackets: {
@@ -157,8 +168,8 @@ export const parseGroup =
         if (!matchingScope.skip(1).isEmpty()) {
           errors.push(error("Ambiguous name", indexPosition(index)));
         }
-        const [name] = matchingScope.first()!;
-        index++;
+        const [name, { separators }] = matchingScope.first()!;
+        [index] = separators(context)(src, index);
         if (src[index]?.type === "newline") index++;
 
         return [index, group(name, ...context.groupNodes!), errors];
