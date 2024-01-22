@@ -1,0 +1,1741 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`comments > comment 1`] = `
+{
+  "children": [],
+  "name": "number",
+  "value": 123,
+}
+`;
+
+exports[`comments > comment block 1`] = `
+{
+  "children": [],
+  "name": "number",
+  "value": 123,
+}
+`;
+
+exports[`expressions > arithmetics > add 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "+",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > arithmetics > decrement 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "prefixDecrement",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > arithmetics > divide 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "/",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > arithmetics > increment 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "prefixIncrement",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > arithmetics > modulo 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "%",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > arithmetics > multiply 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "*",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > arithmetics > negate 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "negate",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > arithmetics > postfix decrement 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "postfixDecrement",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "postfix",
+}
+`;
+
+exports[`expressions > arithmetics > postfix increment 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "postfixIncrement",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "postfix",
+}
+`;
+
+exports[`expressions > arithmetics > power 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "^",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "+",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "+",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "+",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": "-",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "name": "group",
+                      "value": "+",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "name": "group",
+                          "value": "-",
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "name": "group",
+                                  "value": "+",
+                                },
+                                {
+                                  "children": [
+                                    {
+                                      "children": [],
+                                      "name": "group",
+                                      "value": "-",
+                                    },
+                                    {
+                                      "children": [
+                                        {
+                                          "children": [],
+                                          "name": "group",
+                                          "value": "^",
+                                        },
+                                        {
+                                          "children": [],
+                                          "name": "number",
+                                          "value": 2,
+                                        },
+                                        {
+                                          "children": [],
+                                          "name": "number",
+                                          "value": 2,
+                                        },
+                                      ],
+                                      "name": "infix",
+                                    },
+                                    {
+                                      "children": [],
+                                      "name": "number",
+                                      "value": 5,
+                                    },
+                                  ],
+                                  "name": "infix",
+                                },
+                                {
+                                  "children": [],
+                                  "name": "number",
+                                  "value": 7,
+                                },
+                              ],
+                              "name": "infix",
+                            },
+                          ],
+                          "name": "group",
+                          "value": "parens",
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "name": "group",
+                                  "value": "negate",
+                                },
+                                {
+                                  "children": [],
+                                  "name": "name",
+                                  "value": "i",
+                                },
+                              ],
+                              "name": "prefix",
+                            },
+                          ],
+                          "name": "group",
+                          "value": "parens",
+                        },
+                      ],
+                      "name": "infix",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "name": "group",
+                          "value": "/",
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [],
+                              "name": "name",
+                              "value": "j",
+                            },
+                          ],
+                          "name": "group",
+                          "value": "parens",
+                        },
+                        {
+                          "children": [],
+                          "name": "number",
+                          "value": 0,
+                        },
+                      ],
+                      "name": "infix",
+                    },
+                  ],
+                  "name": "infix",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "name": "group",
+                      "value": "*",
+                    },
+                    {
+                      "children": [],
+                      "name": "number",
+                      "value": 1,
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "children": [],
+                              "name": "group",
+                              "value": "*",
+                            },
+                            {
+                              "children": [],
+                              "name": "number",
+                              "value": 1,
+                            },
+                            {
+                              "children": [],
+                              "name": "name",
+                              "value": "f",
+                            },
+                          ],
+                          "name": "infix",
+                        },
+                      ],
+                      "name": "group",
+                      "value": "parens",
+                    },
+                  ],
+                  "name": "infix",
+                },
+              ],
+              "name": "infix",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": "/",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "name": "group",
+                          "value": "-",
+                        },
+                        {
+                          "children": [],
+                          "name": "number",
+                          "value": 27,
+                        },
+                        {
+                          "children": [],
+                          "name": "name",
+                          "value": "x",
+                        },
+                      ],
+                      "name": "infix",
+                    },
+                  ],
+                  "name": "group",
+                  "value": "parens",
+                },
+                {
+                  "children": [],
+                  "name": "name",
+                  "value": "q",
+                },
+              ],
+              "name": "infix",
+            },
+          ],
+          "name": "infix",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "application",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "send",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "name": "group",
+                      "value": ",",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "name": "group",
+                          "value": ",",
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [],
+                              "name": "group",
+                              "value": ",",
+                            },
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "name": "group",
+                                  "value": "/",
+                                },
+                                {
+                                  "children": [
+                                    {
+                                      "children": [],
+                                      "name": "group",
+                                      "value": "negate",
+                                    },
+                                    {
+                                      "children": [
+                                        {
+                                          "children": [
+                                            {
+                                              "children": [],
+                                              "name": "group",
+                                              "value": "+",
+                                            },
+                                            {
+                                              "children": [],
+                                              "name": "number",
+                                              "value": 2,
+                                            },
+                                            {
+                                              "children": [],
+                                              "name": "number",
+                                              "value": 7,
+                                            },
+                                          ],
+                                          "name": "infix",
+                                        },
+                                      ],
+                                      "name": "group",
+                                      "value": "parens",
+                                    },
+                                  ],
+                                  "name": "prefix",
+                                },
+                                {
+                                  "children": [],
+                                  "name": "name",
+                                  "value": "A",
+                                },
+                              ],
+                              "name": "infix",
+                            },
+                            {
+                              "children": [],
+                              "name": "name",
+                              "value": "j",
+                            },
+                          ],
+                          "name": "infix",
+                        },
+                        {
+                          "children": [],
+                          "name": "name",
+                          "value": "i",
+                        },
+                      ],
+                      "name": "infix",
+                    },
+                    {
+                      "children": [],
+                      "name": "number",
+                      "value": 127,
+                    },
+                  ],
+                  "name": "infix",
+                },
+              ],
+              "name": "group",
+              "value": "parens",
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "/",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 1,
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 1,
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > arithmetics > produces correct tree for '++i' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "prefixIncrement",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "i",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > arithmetics > produces correct tree for '-(a+b)' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "negate",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "+",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "a",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "b",
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > arithmetics > produces correct tree for '--i' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "prefixDecrement",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "i",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > arithmetics > produces correct tree for '1 + 2^3 * 4' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "+",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 1,
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "*",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "^",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 3,
+            },
+          ],
+          "name": "infix",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 4,
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > arithmetics > subtract 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "-",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > data structures > produces correct tree for '(-(2+7)/A,j, i, 127.0 )' 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ",",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": ",",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "name": "group",
+                      "value": "/",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "name": "group",
+                          "value": "negate",
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "name": "group",
+                                  "value": "+",
+                                },
+                                {
+                                  "children": [],
+                                  "name": "number",
+                                  "value": 2,
+                                },
+                                {
+                                  "children": [],
+                                  "name": "number",
+                                  "value": 7,
+                                },
+                              ],
+                              "name": "infix",
+                            },
+                          ],
+                          "name": "group",
+                          "value": "parens",
+                        },
+                      ],
+                      "name": "prefix",
+                    },
+                    {
+                      "children": [],
+                      "name": "name",
+                      "value": "A",
+                    },
+                  ],
+                  "name": "infix",
+                },
+                {
+                  "children": [],
+                  "name": "name",
+                  "value": "j",
+                },
+              ],
+              "name": "infix",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "i",
+            },
+          ],
+          "name": "infix",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 127,
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "parens",
+}
+`;
+
+exports[`expressions > data structures > tuple 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": ",",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 1,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 2,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > data structures > unit 1`] = `
+{
+  "children": [],
+  "name": "group",
+  "value": "parens",
+}
+`;
+
+exports[`expressions > fixity expressions > group 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "number",
+      "value": 1,
+    },
+  ],
+  "name": "group",
+  "value": "parens",
+}
+`;
+
+exports[`expressions > fixity expressions > infix 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "+",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > fixity expressions > mixfix 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "number",
+          "value": 456,
+        },
+      ],
+      "name": "group",
+      "value": "inRange",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 789,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > fixity expressions > name 1`] = `
+{
+  "children": [],
+  "name": "name",
+  "value": "name",
+}
+`;
+
+exports[`expressions > fixity expressions > postfix 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "postfixDecrement",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "postfix",
+}
+`;
+
+exports[`expressions > fixity expressions > prefix 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "name",
+      "value": "+",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > function expressions > application > function call 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "application",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "f",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > function expressions > application > function call multiple args 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "application",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "application",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "f",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "infix",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "y",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > function expressions > application > produces correct tree for '(send 1 2)(2, 3)' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "application",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "application",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": "application",
+                },
+                {
+                  "children": [],
+                  "name": "name",
+                  "value": "send",
+                },
+                {
+                  "children": [],
+                  "name": "number",
+                  "value": 1,
+                },
+              ],
+              "name": "infix",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 3,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > function expressions > application > produces correct tree for '(send 1)(2, 3)' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "application",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "application",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "send",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 1,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 3,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > function expressions > application > produces correct tree for '(send)(2, 3)' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "application",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "send",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 3,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > function expressions > application > produces correct tree for 'a + send (2, 3)' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "+",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "a",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "application",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "send",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": ",",
+                },
+                {
+                  "children": [],
+                  "name": "number",
+                  "value": 2,
+                },
+                {
+                  "children": [],
+                  "name": "number",
+                  "value": 3,
+                },
+              ],
+              "name": "infix",
+            },
+          ],
+          "name": "group",
+          "value": "parens",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > function expressions > application > produces correct tree for 'a + send 1 + 2' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "+",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "+",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "application",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "send",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 1,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 2,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > function expressions > application > produces correct tree for 'send 1 (2, 3)' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "application",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "application",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "send",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 1,
+        },
+      ],
+      "name": "infix",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 3,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > function expressions > application > produces correct tree for 'send 1 + 2' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "+",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "application",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "send",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 1,
+        },
+      ],
+      "name": "infix",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 2,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > function expressions > application > produces correct tree for 'send a (2, 3)' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "application",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "application",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "send",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "a",
+        },
+      ],
+      "name": "infix",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 3,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > function expressions > application > produces correct tree for 'send((1+2), 3)' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "send",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "name": "group",
+                      "value": "+",
+                    },
+                    {
+                      "children": [],
+                      "name": "number",
+                      "value": 1,
+                    },
+                    {
+                      "children": [],
+                      "name": "number",
+                      "value": 2,
+                    },
+                  ],
+                  "name": "infix",
+                },
+              ],
+              "name": "group",
+              "value": "parens",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 3,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > function expressions > application > produces correct tree for 'send(2, 3)' 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "application",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "send",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 3,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > function expressions > funciton multiple params 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "application",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "fn",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "+",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > function expressions > function 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "->",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > values > number 1`] = `
+{
+  "children": [],
+  "name": "number",
+  "value": 123,
+}
+`;
+
+exports[`expressions > values > string 1`] = `
+{
+  "children": [],
+  "name": "string",
+  "value": "string",
+}
+`;
+
+exports[`values > number 1`] = `
+{
+  "children": [],
+  "name": "number",
+  "value": 123,
+}
+`;
+
+exports[`values > string 1`] = `
+{
+  "children": [],
+  "name": "string",
+  "value": "string",
+}
+`;
