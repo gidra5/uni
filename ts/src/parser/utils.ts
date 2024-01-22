@@ -64,7 +64,7 @@ export const parseString = (src: string, scope: Scope = {}) => {
   const [tokens] = parseTokens(src);
   const context = defaultParsingContext();
   context.scope = { ...context.scope, ...scope };
-  const result = parseExpr(context)(tokens).slice(1, 3);
+  const result = parseExpr(context)(tokens).slice(1);
   return result as ConsumeParsingResult<AbstractSyntaxTree>;
 };
 

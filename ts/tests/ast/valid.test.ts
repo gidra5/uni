@@ -1,29 +1,13 @@
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { Iterator } from "iterator-js";
-import { parseString } from "../../src/parser";
+import {
+  infixArithmeticOps,
+  prefixArithmeticOps,
+} from "../../src/parser";
 import { group, infix, name, number, prefix } from "../../src/parser/ast";
 import { matchSeparators } from "../../src/parser/utils";
-
-const errorsTestCase = (src, expectedErrors, _it: any = it) =>
-  _it(`finds all errors in example '${src}'`, () => {
-    const [, errors] = parseString(src);
-    expect(errors).toEqual(expectedErrors);
-  });
-
-const treeTestCase = (src, expectedTree?, scope = {}) => {
-  const [tree, errors] = parseString(src, scope);
-  console.dir(tree, { depth: null });
-  expect(errors).toEqual([]);
-  if (expectedTree) expect(tree).toEqual(expectedTree);
-  expect(tree).toMatchSnapshot();
-};
-
-const treeTestCaseArgs = (src, expectedTree?, scope = {}) =>
-  [
-    `produces correct tree for '${src}'`,
-    () => treeTestCase(src, expectedTree, scope),
-  ] as const;
+import { treeTestCase, treeTestCaseArgs } from "./utils";
 
 describe("comments", () => {
   test.todo("comment", () => {
@@ -47,78 +31,64 @@ describe("values", () => {
 
 describe("expressions", () => {
   describe("fixity expressions", () => {
-    test.todo("name", () => {
+    test("name", () => {
       const src = `name`;
+      treeTestCase(src);
     });
 
     test.todo("operator", () => {
       const src = `+`;
     });
 
-    test.todo("group", () => {
-      const src = `(1 + 2)`;
+    test("group", () => {
+      const src = `(1)`;
+      treeTestCase(src);
     });
 
-    test.todo("prefix", () => {
+    test("prefix", () => {
       const src = `+123`;
+      treeTestCase(src);
     });
 
-    test.todo("postfix", () => {
-      const src = `123!`;
+    test("postfix", () => {
+      const src = `123--`;
+      treeTestCase(src);
     });
 
-    test.todo("infix", () => {
+    test("infix", () => {
       const src = `123+456`;
+      treeTestCase(src);
     });
 
-    test.todo("mixfix", () => {
-      const src = `123 ? 456 : 789`;
+    test("mixfix", () => {
+      const src = `123 < 456 < 789`;
+      treeTestCase(src);
     });
   });
 
   describe("arithmetics", () => {
-    test.todo("add", () => {
-      const src = `123 + 456`;
-    });
+    for (const [opName, op] of infixArithmeticOps) {
+      test(opName, () => {
+        const src = `123 ${op} 456`;
+        treeTestCase(src);
+      });
+    }
 
-    test.todo("subtract", () => {
-      const src = `123 - 456`;
-    });
+    for (const [opName, op] of prefixArithmeticOps) {
+      test(opName, () => {
+        const src = `${op}123`;
+        treeTestCase(src);
+      });
+    }
 
-    test.todo("multiply", () => {
-      const src = `123 * 456`;
-    });
-
-    test.todo("divide", () => {
-      const src = `123 / 456`;
-    });
-
-    test.todo("modulo", () => {
-      const src = `123 % 456`;
-    });
-
-    test.todo("power", () => {
-      const src = `123 ^ 456`;
-    });
-
-    test.todo("negate", () => {
-      const src = `-123`;
-    });
-
-    test.todo("decrement", () => {
-      const src = `--123`;
-    });
-
-    test.todo("increment", () => {
-      const src = `++123`;
-    });
-
-    test.todo("postfix decrement", () => {
+    test("postfix decrement", () => {
       const src = `123--`;
+      treeTestCase(src);
     });
 
-    test.todo("postfix increment", () => {
+    test("postfix increment", () => {
       const src = `123++`;
+      treeTestCase(src);
     });
 
     it(...treeTestCaseArgs("1 + 2^3 * 4"));
@@ -186,7 +156,7 @@ describe("expressions", () => {
 
   describe("function expressions", () => {
     test.todo("funciton multiple params", () => {
-      const src = `x, y -> x + y`;
+      const src = `fn x, y -> x + y`;
     });
 
     test("function", () => {

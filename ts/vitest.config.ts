@@ -7,7 +7,7 @@ const reportFolder = `test-results/report-${date}`;
 export default defineConfig({
   test: {
     coverage: {
-      enabled: reportName === "node",
+      // enabled: reportName === "node",
       provider: "istanbul",
       reportsDirectory: reportFolder + "/coverage",
       reporter: ["html"],
