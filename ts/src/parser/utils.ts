@@ -85,7 +85,9 @@ export const matchString = (
 export const matchTokens =
   (...tokens: string[]): TokenParser<boolean> =>
   (src, i = 0) => {
-    const found = tokens.includes(src[i]?.src);
+    const found = tokens.some(
+      (x) => src[i]?.src === x || (x === "\n" && src[i]?.type === "newline")
+    );
     if (found) return [i + 1, true, []];
     return [i, false, []];
   };

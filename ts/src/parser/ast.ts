@@ -1,4 +1,5 @@
 import { Tree } from "../tree";
+import { Token } from "./types";
 
 export type AbstractSyntaxTree = Tree & { value?: any };
 
@@ -21,6 +22,12 @@ export const string = (value: string): AbstractSyntaxTree => ({
   value,
   children: [],
 });
+export const token = (token: Token): AbstractSyntaxTree =>
+  token.type === "number"
+    ? number(token.value)
+    : token.type === "string"
+    ? string(token.value)
+    : name(token.src);
 export const group = (
   value?: string,
   ...children: AbstractSyntaxTree[]

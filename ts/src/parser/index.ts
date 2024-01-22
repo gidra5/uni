@@ -11,6 +11,7 @@ import {
   postfix,
   prefix,
   string,
+  token,
 } from "./ast";
 import { ParsingError, TokenParser } from "./types";
 import { matchSeparators } from "./utils";
@@ -23,6 +24,8 @@ export type TokenGroupDefinition = {
     context: ParsingContext
   ) => TokenParser<"done" | "noMatch" | "match">;
   precedence: Precedence;
+  drop?: boolean;
+  flat?: boolean;
 };
 export type Scope = Record<string, TokenGroupDefinition>;
 export type ParsingContext = {
@@ -119,10 +122,13 @@ export const defaultParsingContext = (): ParsingContext => ({
     comment: {
       separators: matchSeparators(["//"], ["\n"]),
       precedence: [null, null],
+      drop: true,
+      flat: true,
     },
     commentBlock: {
       separators: matchSeparators(["/*"], ["*/"]),
       precedence: [null, null],
+      drop: true,
     },
     application: {
       separators: matchSeparators(),
@@ -200,23 +206,34 @@ export const parseGroup =
     );
 
     context = { ...context, precedence: 0, groupNodes: [] };
+    const isFlatGroup = matchingScope.every(([_, { flat }]) => !!flat);
 
     while (src[index]) {
-      console.dir(
-        {
-          msg: "iteration",
-          matchingScope: matchingScope.toArray(),
-          context,
-          token: src[index],
-          index,
-        },
-        { depth: null }
+      const [noMatch, match, done] = matchingScope.partition(
+        ([_, { separators }]) => {
+          const [, result] = separators(context)(src, index);
+          if (result === "noMatch") return 0;
+          if (result === "match") return 1;
+          return 2;
+        }
       );
-      if (
-        matchingScope.every(
-          ([_, { separators }]) => separators(context)(src, index)[1] === "done"
-        )
-      ) {
+
+      if (isFlatGroup) {
+        if (noMatch.count() === matchingScope.count()) {
+          if (src[index]?.type === "newline") {
+            index++;
+            continue;
+          }
+          context.groupNodes!.push(token(src[index]));
+          index++;
+          continue;
+        } else if (match.count() === matchingScope.count()) {
+          index++;
+          continue;
+        }
+      }
+
+      if (done.count() === matchingScope.count()) {
         if (!matchingScope.skip(1).isEmpty()) {
           errors.push(error("Ambiguous name", indexPosition(index)));
           console.dir(
@@ -229,15 +246,16 @@ export const parseGroup =
             { depth: null }
           );
         }
-        const [name, { separators }] = matchingScope.first()!;
+        const [name, { separators, drop }] = matchingScope.first()!;
         [index] = separators(context)(src, index);
+        if (drop) return parseGroup(context)(src, index);
         if (src[index]?.type === "newline") index++;
 
         return [index, group(name, ...context.groupNodes!), errors];
       }
 
+      if (!isFlatGroup) {
       index++;
-
       const [nextIndex, expr, _errors] = parseExpr(context)(src, index);
       console.log("parseGroup expr", nextIndex, expr, _errors);
 
@@ -249,6 +267,7 @@ export const parseGroup =
       index = nextIndex;
       context.groupNodes!.push(expr);
       if (src[index]?.type === "newline") index++;
+      }
 
       matchingScope = matchingScope
         .filterMap(([k, v]) => {

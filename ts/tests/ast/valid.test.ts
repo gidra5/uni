@@ -10,26 +10,30 @@ import { matchSeparators } from "../../src/parser/utils";
 import { treeTestCase, treeTestCaseArgs } from "./utils";
 
 describe("comments", () => {
-  test.todo("comment", () => {
+  test("comment", () => {
     const src = `// comment\n123`;
+    treeTestCase(src);
   });
 
-  test.todo("comment block", () => {
+  test("comment block", () => {
     const src = `/* comment block */123`;
-  });
-});
-
-describe("values", () => {
-  test.todo("number", () => {
-    const src = `123`;
-  });
-
-  test.todo("string", () => {
-    const src = `"string"`;
+    treeTestCase(src);
   });
 });
 
 describe("expressions", () => {
+describe("values", () => {
+    test("number", () => {
+    const src = `123`;
+      treeTestCase(src);
+  });
+
+    test("string", () => {
+    const src = `"string"`;
+      treeTestCase(src);
+  });
+});
+
   describe("fixity expressions", () => {
     test("name", () => {
       const src = `name`;
@@ -155,8 +159,9 @@ describe("expressions", () => {
   });
 
   describe("function expressions", () => {
-    test.todo("funciton multiple params", () => {
-      const src = `fn x, y -> x + y`;
+    test("funciton multiple params", () => {
+      const src = `fn x y -> x + y`;
+      treeTestCase(src);
     });
 
     test("function", () => {
@@ -198,7 +203,7 @@ describe("expressions", () => {
 
   describe("pattern matching", () => {
     test.todo("match", () => {
-      const src = `match x { 1 => 2; 3 => 4 }`;
+      const src = `match x { 1 -> 2; 3 -> 4 }`;
     });
 
     test.todo("in function parameters", () => {
