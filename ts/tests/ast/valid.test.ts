@@ -1,11 +1,15 @@
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { Iterator } from "iterator-js";
+import { infixArithmeticOps, prefixArithmeticOps } from "../../src/parser";
 import {
-  infixArithmeticOps,
-  prefixArithmeticOps,
-} from "../../src/parser";
-import { group, infix, name, number, prefix } from "../../src/parser/ast";
+  group,
+  infix,
+  name,
+  number,
+  prefix,
+  string,
+} from "../../src/parser/ast";
 import { matchSeparators } from "../../src/parser/utils";
 import { treeTestCase, treeTestCaseArgs } from "./utils";
 
@@ -22,17 +26,17 @@ describe("comments", () => {
 });
 
 describe("expressions", () => {
-describe("values", () => {
+  describe("values", () => {
     test("number", () => {
-    const src = `123`;
+      const src = `123`;
       treeTestCase(src);
-  });
+    });
 
     test("string", () => {
-    const src = `"string"`;
+      const src = `"string"`;
       treeTestCase(src);
+    });
   });
-});
 
   describe("fixity expressions", () => {
     test("name", () => {
@@ -108,32 +112,39 @@ describe("values", () => {
   });
 
   describe("boolean expressions", () => {
-    test.todo("in", () => {
+    test("in", () => {
       const src = `123 in 456`;
+      treeTestCase(src);
     });
 
-    test.todo("is", () => {
+    test("is", () => {
       const src = `123 is 456`;
+      treeTestCase(src);
     });
 
-    test.todo("and", () => {
+    test("and", () => {
       const src = `123 and 456`;
+      treeTestCase(src);
     });
 
-    test.todo("or", () => {
+    test("or", () => {
       const src = `123 or 456`;
+      treeTestCase(src);
     });
 
-    test.todo("not", () => {
+    test("not", () => {
       const src = `not 123`;
+      treeTestCase(src);
     });
 
-    test.todo("equal", () => {
+    test("equal", () => {
       const src = `123 == 456`;
+      treeTestCase(src);
     });
 
-    test.todo("not equal", () => {
+    test("not equal", () => {
       const src = `123 != 456`;
+      treeTestCase(src);
     });
 
     describe("comparators", () => {
@@ -143,16 +154,18 @@ describe("values", () => {
       ];
 
       for (const op of Iterator.iter(comparators).flat()) {
-        test.todo(`comparator ${op}`, () => {
+        test(`comparator ${op}`, () => {
           const src = `123 ${op} 456`;
+          treeTestCase(src);
         });
       }
 
       for (const [op1, op2] of Iterator.iter(comparators).flatMap((pair) =>
         Iterator.iter(pair).power(2)
       )) {
-        test.todo(`range ${op1} ${op2}`, () => {
+        test(`range ${op1} ${op2}`, () => {
           const src = `123 ${op1} x ${op2} 456`;
+          treeTestCase(src);
         });
       }
     });

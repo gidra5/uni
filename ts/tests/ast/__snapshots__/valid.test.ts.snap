@@ -757,6 +757,394 @@ exports[`expressions > arithmetics > subtract 1`] = `
 }
 `;
 
+exports[`expressions > boolean expressions > and 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "and",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > comparators > range < < 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "group",
+      "value": "inRange",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > comparators > range < <= 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "group",
+      "value": "inRange",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > comparators > range <= < 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "group",
+      "value": "inRange",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > comparators > range <= <= 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "group",
+      "value": "inRange",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > comparators > range > > 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "group",
+      "value": "inRange",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > comparators > range > >= 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "group",
+      "value": "inRange",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > comparators > range >= > 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "group",
+      "value": "inRange",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > comparators > range >= >= 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "group",
+      "value": "inRange",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > equal 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "==",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > in 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "in",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > is 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "is",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > not 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "not",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > boolean expressions > not equal 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "!=",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > or 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "or",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
 exports[`expressions > data structures > produces correct tree for '(-(2+7)/A,j, i, 127.0 )' 1`] = `
 {
   "children": [
@@ -1717,22 +2105,6 @@ exports[`expressions > values > number 1`] = `
 `;
 
 exports[`expressions > values > string 1`] = `
-{
-  "children": [],
-  "name": "string",
-  "value": "string",
-}
-`;
-
-exports[`values > number 1`] = `
-{
-  "children": [],
-  "name": "number",
-  "value": 123,
-}
-`;
-
-exports[`values > string 1`] = `
 {
   "children": [],
   "name": "string",
