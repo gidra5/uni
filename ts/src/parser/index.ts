@@ -1,19 +1,8 @@
 import { endOfTokensError, error } from "../errors";
 import { Iterator, spread } from "iterator-js";
 import { indexPosition, position } from "../position";
-import {
-  AbstractSyntaxTree,
-  group,
-  infix,
-  name,
-  number,
-  placeholder,
-  postfix,
-  prefix,
-  string,
-  token,
-} from "./ast";
-import { ParsingError, TokenParser } from "./types";
+import { AbstractSyntaxTree, group, infix, name, number, placeholder, postfix, prefix, string, token } from "./ast";
+import { ParsingError, ParsingResult, TokenParser } from "./types";
 import { matchSeparators } from "./utils";
 import { pushField, setField } from "../utils";
 export { parseString } from "./utils";
@@ -53,6 +42,8 @@ export const prefixArithmeticOps = Iterator.iterEntries({
   increment: "++",
 });
 
+export const comparisonOps = Iterator.iter(["<", "<=", ">=", ">"]);
+
 export const defaultParsingContext = (): ParsingContext => ({
   scope: {
     "+": { separators: matchSeparators(["+"]), precedence: [3, 4] },
@@ -70,21 +61,23 @@ export const defaultParsingContext = (): ParsingContext => ({
     "==": { separators: matchSeparators(["=="]), precedence: [1, 1] },
     "!=": { separators: matchSeparators(["!="]), precedence: [1, 1] },
     not: { separators: matchSeparators(["not"]), precedence: [null, 1] },
-    comparison: {
-      separators: matchSeparators(["<", "<=", ">=", ">"]),
-      precedence: [1, 1],
-    },
+    ...comparisonOps
+      .map((op) => {
+        const definition = { separators: matchSeparators([op]), precedence: [1, 1] };
+        return [op, definition] as [string, TokenGroupDefinition];
+      })
+      .toObject(),
+    ...comparisonOps
+      .power(2)
+      .map<[string, TokenGroupDefinition]>(([op1, op2]) => {
+        const definition = { separators: matchSeparators([op1], [op2]), precedence: [1, 1] };
+        return [`inRange_${op1}_${op2}`, definition] as [string, TokenGroupDefinition];
+      })
+      .toObject(),
     true: { separators: matchSeparators(["true"]), precedence: [null, null] },
     false: { separators: matchSeparators(["false"]), precedence: [null, null] },
     "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 1] },
     fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 1] },
-    inRange: {
-      separators: matchSeparators(
-        ["<", "<=", ">=", ">"],
-        ["<", "<=", ">=", ">"]
-      ),
-      precedence: [1, 1],
-    },
     negate: {
       separators: matchSeparators(["-"]),
       precedence: [null, Number.MAX_SAFE_INTEGER],
@@ -207,19 +200,9 @@ export const parseGroup =
         return [index + 1, string(token.value), errors];
     }
 
-    console.dir(
-      {
-        msg: "group start",
-        matchingScope: matchingScope.toArray(),
-        context,
-        token: src[index],
-        index,
-      },
-      { depth: null }
-    );
-
     context = { ...context, precedence: 0, groupNodes: [] };
     const isFlatGroup = matchingScope.every(([_, { flat }]) => !!flat);
+    const parsedScope: ParsingResult<AbstractSyntaxTree>[] = [];
 
     while (src[index]) {
       const [noMatch, match, done] = matchingScope.partition(
@@ -249,15 +232,6 @@ export const parseGroup =
       if (done.count() === matchingScope.count()) {
         if (!matchingScope.skip(1).isEmpty()) {
           errors.push(error("Ambiguous name", indexPosition(index)));
-          console.dir(
-            {
-              msg: "Ambiguous name",
-              matchingScope: matchingScope.toArray(),
-              token: src[index],
-              index,
-            },
-            { depth: null }
-          );
         }
         const [name, { separators, drop }] = matchingScope.first()!;
         [index] = separators(context)(src, index);
@@ -265,21 +239,25 @@ export const parseGroup =
         if (src[index]?.type === "newline") index++;
 
         return [index, group(name, ...context.groupNodes!), errors];
+      } else {
+        parsedScope.push(
+          ...done.map<ParsingResult<AbstractSyntaxTree>>(([k, { separators }]) => {
+            const [_index] = separators(context)(src, index);
+            return [_index, group(k, ...context.groupNodes!), [...errors]];
+          })
+        );
       }
 
       if (!isFlatGroup) {
-      index++;
-      const [nextIndex, expr, _errors] = parseExpr(context)(src, index);
-      console.log("parseGroup expr", nextIndex, expr, _errors);
+        index++;
+        const [nextIndex, expr, _errors] = parseExpr(context)(src, index);
 
-      if (_errors.length > 0) {
-        errors.push(
-          error("Errors in operand", position(index, nextIndex), _errors)
-        );
-      }
-      index = nextIndex;
-      context.groupNodes!.push(expr);
-      if (src[index]?.type === "newline") index++;
+        if (_errors.length > 0) {
+          errors.push(error("Errors in operand", position(index, nextIndex), _errors));
+        }
+        index = nextIndex;
+        context.groupNodes!.push(expr);
+        if (src[index]?.type === "newline") index++;
       }
 
       matchingScope = matchingScope
@@ -292,16 +270,11 @@ export const parseGroup =
         .cached();
 
       if (matchingScope.isEmpty()) {
+        if (parsedScope.length > 0) {
+          return parsedScope.pop()!;
+        }
+
         errors.push(error("unterminated group", indexPosition(index)));
-        console.dir(
-          {
-            msg: "unterminated group",
-            context,
-            token: src[index],
-            index,
-          },
-          { depth: null }
-        );
         return [index, placeholder(), errors];
       }
     }
