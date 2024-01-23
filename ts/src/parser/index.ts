@@ -1,5 +1,5 @@
 import { endOfTokensError, error } from "../errors";
-import { Iterator, spread } from "iterator-js";
+import { Iterator } from "iterator-js";
 import { indexPosition, position } from "../position";
 import { AbstractSyntaxTree, group, infix, name, number, placeholder, postfix, prefix, string, token } from "./ast";
 import { ParsingError, ParsingResult, TokenParser } from "./types";
@@ -205,31 +205,14 @@ export const parseGroup =
     const parsedScope: ParsingResult<AbstractSyntaxTree>[] = [];
 
     while (src[index]) {
-      const [noMatch, match, done] = matchingScope.partition(
-        ([_, { separators }]) => {
-          const [, result] = separators(context)(src, index);
-          if (result === "noMatch") return 0;
-          if (result === "match") return 1;
-          return 2;
-        }
-      );
+      const [match, done] = matchingScope.partition(([_, { separators }]) => {
+        const [, result] = separators(context)(src, index);
+        if (result === "match") return 0;
+        if (result === "done") return 1;
+        return -1;
+      });
 
-      if (isFlatGroup) {
-        if (noMatch.count() === matchingScope.count()) {
-          if (src[index]?.type === "newline") {
-            index++;
-            continue;
-          }
-          context.groupNodes!.push(token(src[index]));
-          index++;
-          continue;
-        } else if (match.count() === matchingScope.count()) {
-          index++;
-          continue;
-        }
-      }
-
-      if (done.count() === matchingScope.count()) {
+      if (match.count() === 0) {
         if (!matchingScope.skip(1).isEmpty()) {
           errors.push(error("Ambiguous name", indexPosition(index)));
         }
@@ -239,14 +222,31 @@ export const parseGroup =
         if (src[index]?.type === "newline") index++;
 
         return [index, group(name, ...context.groupNodes!), errors];
-      } else {
-        parsedScope.push(
-          ...done.map<ParsingResult<AbstractSyntaxTree>>(([k, { separators }]) => {
-            const [_index] = separators(context)(src, index);
-            return [_index, group(k, ...context.groupNodes!), [...errors]];
-          })
-        );
+      } else if (isFlatGroup) {
+        index++;
+
+        while (true) {
+          const noMatch = matchingScope.filter(([_, { separators }]) => {
+            const [, result] = separators(context)(src, index);
+            return result !== "noMatch";
+          });
+          if (noMatch.count() !== 0) break;
+          if (src[index]?.type === "newline") {
+            index++;
+            continue;
+          }
+          context.groupNodes!.push(token(src[index]));
+          index++;
+          continue;
+        }
       }
+
+      parsedScope.push(
+        ...done.map<ParsingResult<AbstractSyntaxTree>>(([k, { separators }]) => {
+          const [_index] = separators(context)(src, index);
+          return [_index, group(k, ...context.groupNodes!), [...errors]];
+        })
+      );
 
       if (!isFlatGroup) {
         index++;
