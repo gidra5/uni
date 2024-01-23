@@ -36,6 +36,16 @@ describe("expressions", () => {
       const src = `"string"`;
       treeTestCase(src);
     });
+
+    test("true", () => {
+      const src = `true`;
+      treeTestCase(src);
+    });
+
+    test("false", () => {
+      const src = `false`;
+      treeTestCase(src);
+    });
   });
 
   describe("fixity expressions", () => {

@@ -2188,6 +2188,14 @@ exports[`expressions > function expressions > function 1`] = `
 }
 `;
 
+exports[`expressions > values > false 1`] = `
+{
+  "children": [],
+  "name": "name",
+  "value": "false",
+}
+`;
+
 exports[`expressions > values > number 1`] = `
 {
   "children": [],
@@ -2201,5 +2209,13 @@ exports[`expressions > values > string 1`] = `
   "children": [],
   "name": "string",
   "value": "string",
+}
+`;
+
+exports[`expressions > values > true 1`] = `
+{
+  "children": [],
+  "name": "name",
+  "value": "true",
 }
 `;
