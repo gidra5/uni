@@ -159,6 +159,14 @@ export const parseGroup =
       return [index, placeholder(), errors];
     }
 
+    const path = ["groupNodes"];
+    const _context = pushField(path, placeholder())(context);
+    const nextTokenIsCurrentGroupSeparator =
+      context.groupNodes &&
+      context.matchedGroupScope &&
+      scopeIter(context.matchedGroupScope).some(({ separators }) => separators(_context)(src, index)[1] !== "noMatch");
+    if (nextTokenIsCurrentGroupSeparator) return [index, placeholder(), errors];
+
     const scopeEntries = scopeIter(context.scope);
     let matchingScope = scopeEntries
       // .inspect((x) => console.log(1, x))
@@ -187,11 +195,6 @@ export const parseGroup =
     //   },
     //   { depth: null }
     // );
-    const path = ["groupNodes"];
-    const __context = pushField(path, placeholder())(context);
-    const nextTokenIsCurrentGroupSeparator =
-      context.groupNodes && scopeEntries.some(({ separators }) => separators(__context)(src, index)[1] !== "noMatch");
-    if (nextTokenIsCurrentGroupSeparator) return [index, placeholder(), errors];
 
     if (matchingScope.isEmpty()) {
       const token = src[index];
