@@ -212,8 +212,8 @@ export const parseGroup =
 
     context = { ...context, precedence: 0, groupNodes: [] };
     const isFlatGroup = matchingScope.every(({ flat }) => !!flat);
-    const parsedScope: ParsingResult<AbstractSyntaxTree>[] = [];
-   
+    const parsedGroups: ParsingResult<AbstractSyntaxTree>[] = [];
+
     // console.dir({ msg: "parseGroup 3", index, src: src[index], context: omit(context, ["scope"]) }, { depth: null });
 
     while (src[index]) {
@@ -266,7 +266,7 @@ export const parseGroup =
         }
       }
 
-      parsedScope.push(
+      parsedGroups.push(
         ...done.map<ParsingResult<AbstractSyntaxTree>>(({ name, separators }) => {
           const [_index] = separators(context)(src, index);
           return [_index, group(name, ...context.groupNodes!), [...errors]];
@@ -293,8 +293,8 @@ export const parseGroup =
         .cached();
 
       if (matchingScope.isEmpty()) {
-        if (parsedScope.length > 0) {
-          return parsedScope.pop()!;
+        if (parsedGroups.length > 0) {
+          return parsedGroups.pop()!;
         }
 
         errors.push(error("unterminated group", indexPosition(index)));
