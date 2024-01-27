@@ -17,6 +17,7 @@ export type TokenGroupDefinition = {
   flat?: boolean;
 };
 export type Scope = Record<string, TokenGroupDefinition>;
+export type ScopeArray = ({ name: string } & TokenGroupDefinition)[];
 export type ParsingContext = {
   scope: Scope;
   precedence: number;
@@ -43,106 +44,107 @@ export const prefixArithmeticOps = Iterator.iterEntries({
 });
 
 export const comparisonOps = Iterator.iter(["<", "<=", ">=", ">"]);
-
-export const defaultParsingContext = (): ParsingContext => ({
-  scope: {
-    "+": { separators: matchSeparators(["+"]), precedence: [3, 4] },
-    "-": { separators: matchSeparators(["-"]), precedence: [3, 4] },
-    "*": { separators: matchSeparators(["*"]), precedence: [5, 6] },
-    "/": { separators: matchSeparators(["/"]), precedence: [5, 6] },
-    "%": { separators: matchSeparators(["%"]), precedence: [5, 6] },
-    "^": { separators: matchSeparators(["^"]), precedence: [7, 8] },
-    "!": { separators: matchSeparators(["!"]), precedence: [null, 3] },
-    ",": { separators: matchSeparators([","]), precedence: [1, 2] },
-    in: { separators: matchSeparators(["in"]), precedence: [1, 1] },
-    is: { separators: matchSeparators(["is"]), precedence: [1, 1] },
-    and: { separators: matchSeparators(["and"]), precedence: [1, 1] },
-    or: { separators: matchSeparators(["or"]), precedence: [1, 1] },
-    "==": { separators: matchSeparators(["=="]), precedence: [1, 1] },
-    "!=": { separators: matchSeparators(["!="]), precedence: [1, 1] },
-    not: { separators: matchSeparators(["not"]), precedence: [null, 1] },
-    ...comparisonOps
-      .map((op) => {
-        const definition = { separators: matchSeparators([op]), precedence: [1, 1] };
-        return [op, definition] as [string, TokenGroupDefinition];
-      })
-      .toObject(),
-    ...comparisonOps
-      .power(2)
-      .map<[string, TokenGroupDefinition]>(([op1, op2]) => {
-        const definition = { separators: matchSeparators([op1], [op2]), precedence: [1, 1] };
-        return [`inRange_${op1}_${op2}`, definition] as [string, TokenGroupDefinition];
-      })
-      .toObject(),
-    true: { separators: matchSeparators(["true"]), precedence: [null, null] },
-    false: { separators: matchSeparators(["false"]), precedence: [null, null] },
-    "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 1] },
-    fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 1] },
-    negate: {
-      separators: matchSeparators(["-"]),
-      precedence: [null, Number.MAX_SAFE_INTEGER],
-    },
-    prefixDecrement: {
-      separators: matchSeparators(["--"]),
-      precedence: [null, Number.MAX_SAFE_INTEGER],
-    },
-    prefixIncrement: {
-      separators: matchSeparators(["++"]),
-      precedence: [null, Number.MAX_SAFE_INTEGER],
-    },
-    postfixDecrement: {
-      separators: matchSeparators(["--"]),
-      precedence: [3, null],
-    },
-    postfixIncrement: {
-      separators: matchSeparators(["++"]),
-      precedence: [3, null],
-    },
-    parens: {
-      separators:
-        (context) =>
-        (src, i = 0) => {
-          let index = i;
-          if (!src[index]) return [i, "noMatch", []];
-          if (src[index].src === "(") {
-            index++;
-            if (src[index]?.type === "newline") index++;
-            if (src[index]?.src === ")") return [index + 1, "done", []];
-          }
-          return matchSeparators(["("], [")"])(context)(src, i);
-        },
-      precedence: [null, null],
-    },
-    brackets: {
-      separators: matchSeparators(["["], ["]"]),
-      precedence: [null, null],
-    },
-    bracketsPostfix: {
-      separators: matchSeparators(["["], ["]"]),
-      precedence: [Infinity, null],
-    },
-    braces: {
-      separators: matchSeparators(["{"], ["}"]),
-      precedence: [null, null],
-    },
-    comment: {
-      separators: matchSeparators(["//"], ["\n"]),
-      precedence: [null, null],
-      drop: true,
-      flat: true,
-    },
-    commentBlock: {
-      separators: matchSeparators(["/*"], ["*/"]),
-      precedence: [null, null],
-      drop: true,
-    },
-    application: {
-      separators: matchSeparators(),
-      precedence: [Infinity, Infinity],
-    },
+export const scopeIter = (scope: Scope): Iterator<ScopeArray[number]> =>
+  Iterator.iterEntries(scope)
+    .map(([name, v]) => ({ ...v, name }));
+const scope: Scope = {
+  "+": { separators: matchSeparators(["+"]), precedence: [3, 4] },
+  "-": { separators: matchSeparators(["-"]), precedence: [3, 4] },
+  "*": { separators: matchSeparators(["*"]), precedence: [5, 6] },
+  "/": { separators: matchSeparators(["/"]), precedence: [5, 6] },
+  "%": { separators: matchSeparators(["%"]), precedence: [5, 6] },
+  "^": { separators: matchSeparators(["^"]), precedence: [7, 8] },
+  "!": { separators: matchSeparators(["!"]), precedence: [null, 3] },
+  ",": { separators: matchSeparators([","]), precedence: [1, 2] },
+  in: { separators: matchSeparators(["in"]), precedence: [1, 1] },
+  is: { separators: matchSeparators(["is"]), precedence: [1, 1] },
+  and: { separators: matchSeparators(["and"]), precedence: [1, 1] },
+  or: { separators: matchSeparators(["or"]), precedence: [1, 1] },
+  "==": { separators: matchSeparators(["=="]), precedence: [1, 1] },
+  "!=": { separators: matchSeparators(["!="]), precedence: [1, 1] },
+  not: { separators: matchSeparators(["not"]), precedence: [null, 1] },
+  ...comparisonOps
+    .map((op) => {
+      const definition = { separators: matchSeparators([op]), precedence: [1, 1] };
+      return [op, definition] as [string, TokenGroupDefinition];
+    })
+    .toObject(),
+  ...comparisonOps
+    .power(2)
+    .map<[string, TokenGroupDefinition]>(([op1, op2]) => {
+      const definition = { separators: matchSeparators([op1], [op2]), precedence: [1, 1] };
+      return [`inRange_${op1}_${op2}`, definition] as [string, TokenGroupDefinition];
+    })
+    .toObject(),
+  "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 1] },
+  fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 1] },
+  ";": { separators: matchSeparators([";", "\n"]), precedence: [1, 1] },
+  match: { separators: matchSeparators(["match"], ["{"], ["}"]), precedence: [null, null] },
+  matchColon: { separators: matchSeparators(["match"], [":", "\n"]), precedence: [null, 1] },
+  negate: {
+    separators: matchSeparators(["-"]),
+    precedence: [null, Number.MAX_SAFE_INTEGER],
   },
-  precedence: 0,
-});
+  prefixDecrement: {
+    separators: matchSeparators(["--"]),
+    precedence: [null, Number.MAX_SAFE_INTEGER],
+  },
+  prefixIncrement: {
+    separators: matchSeparators(["++"]),
+    precedence: [null, Number.MAX_SAFE_INTEGER],
+  },
+  postfixDecrement: {
+    separators: matchSeparators(["--"]),
+    precedence: [3, null],
+  },
+  postfixIncrement: {
+    separators: matchSeparators(["++"]),
+    precedence: [3, null],
+  },
+  parens: {
+    separators:
+      (context) =>
+      (src, i = 0) => {
+        let index = i;
+        if (!src[index]) return [i, "noMatch", []];
+        if (src[index].src === "(") {
+          index++;
+          if (src[index]?.type === "newline") index++;
+          if (src[index]?.src === ")") return [index + 1, "done", []];
+        }
+        return matchSeparators(["("], [")"])(context)(src, i);
+      },
+    precedence: [null, null],
+  },
+  brackets: {
+    separators: matchSeparators(["["], ["]"]),
+    precedence: [null, null],
+  },
+  bracketsPostfix: {
+    separators: matchSeparators(["["], ["]"]),
+    precedence: [Infinity, null],
+  },
+  braces: {
+    separators: matchSeparators(["{"], ["}"]),
+    precedence: [null, null],
+  },
+  comment: {
+    separators: matchSeparators(["//"], ["\n"]),
+    precedence: [null, null],
+    drop: true,
+    flat: true,
+  },
+  commentBlock: {
+    separators: matchSeparators(["/*"], ["*/"]),
+    precedence: [null, null],
+    drop: true,
+  },
+  application: {
+    separators: matchSeparators(),
+    precedence: [Infinity, Infinity],
+  },
+};
+export const defaultParsingContext = (): ParsingContext => ({ scope, precedence: 0 });
 
 export const parseGroup =
   (context: ParsingContext): TokenParser<AbstractSyntaxTree> =>
