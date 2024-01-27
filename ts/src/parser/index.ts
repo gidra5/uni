@@ -9,9 +9,7 @@ export { parseString } from "./utils";
 
 export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {
-  separators: (
-    context: ParsingContext
-  ) => TokenParser<"done" | "noMatch" | "match">;
+  separators: (context: ParsingContext) => TokenParser<"done" | "noMatch" | "match">;
   precedence: Precedence;
   drop?: boolean;
   flat?: boolean;
@@ -23,6 +21,7 @@ export type ParsingContext = {
   precedence: number;
   lhs?: AbstractSyntaxTree;
   groupNodes?: AbstractSyntaxTree[];
+  matchedGroupScope?: Scope;
 };
 
 const getPrecedence = (node: AbstractSyntaxTree, scope: Scope): Precedence =>
@@ -210,7 +209,7 @@ export const parseGroup =
       if (token.type === "string") return [index + 1, string(token.value), errors];
     }
 
-    context = { ...context, precedence: 0, groupNodes: [] };
+    context = { ...context, precedence: 0, groupNodes: [], matchedGroupScope: scopeIterToScope(matchingScope) };
     const isFlatGroup = matchingScope.every(({ flat }) => !!flat);
     const parsedGroups: ParsingResult<AbstractSyntaxTree>[] = [];
 
@@ -291,6 +290,7 @@ export const parseGroup =
           return result !== "noMatch";
         })
         .cached();
+      context.matchedGroupScope = scopeIterToScope(matchingScope);
 
       if (matchingScope.isEmpty()) {
         if (parsedGroups.length > 0) {
