@@ -151,6 +151,8 @@ export const parseGroup =
   (src, i = 0) => {
     let index = i;
     const errors: ParsingError[] = [];
+    // console.dir({ msg: "parseGroup", index, src: src[index], context: omit(context, ["scope"]) }, { depth: null });
+    // console.dir({ msg: "parseGroup", index, src: src[index], context }, { depth: null });
 
     if (!src[index]) {
       errors.push(endOfTokensError(index));
@@ -159,26 +161,37 @@ export const parseGroup =
 
     const scopeEntries = Iterator.iterEntries(context.scope);
     let matchingScope = scopeEntries
+      // .inspect((x) => console.log(1, x))
       .filterValues(({ precedence }) => {
         return precedence[0] === null || precedence[0] >= context.precedence;
       })
+      // .inspect((x) => console.log(2, x))
       .filterValues(({ precedence }) => {
         if (context.lhs) return precedence[0] !== null;
         return precedence[0] === null;
       })
+      // .inspect((x) => console.log(3, x))
       .filterValues(({ separators }) => {
         return separators(context)(src, index)[1] !== "noMatch";
       })
+      // .inspect((x) => console.log(4, x))
       .cached();
 
+    // console.dir(
+    //   {
+    //     msg: "parseGroup 2",
+    //     index,
+    //     src: src[index],
+    //     context: omit(context, ["scope"]),
+    //     matchingScope: matchingScope.toArray(),
+    //   },
+    //   { depth: null }
+    // );
     const path = ["groupNodes"];
     const __context = pushField(path, placeholder())(context);
     const nextTokenIsCurrentGroupSeparator =
       context.groupNodes &&
-      scopeEntries.some(
-        ([_, { separators }]) =>
-          separators(__context)(src, index)[1] !== "noMatch"
-      );
+      scopeEntries.some(([_, { separators }]) => separators(__context)(src, index)[1] !== "noMatch");
     if (nextTokenIsCurrentGroupSeparator) return [index, placeholder(), errors];
 
     if (matchingScope.isEmpty()) {
@@ -205,6 +218,8 @@ export const parseGroup =
     context = { ...context, precedence: 0, groupNodes: [] };
     const isFlatGroup = matchingScope.every(([_, { flat }]) => !!flat);
     const parsedScope: ParsingResult<AbstractSyntaxTree>[] = [];
+   
+    // console.dir({ msg: "parseGroup 3", index, src: src[index], context: omit(context, ["scope"]) }, { depth: null });
 
     while (src[index]) {
       const [match, done] = matchingScope.partition(([_, { separators }]) => {
@@ -213,6 +228,19 @@ export const parseGroup =
         if (result === "done") return 1;
         return -1;
       });
+
+      // console.dir(
+      //   {
+      //     msg: "parseGroup 4",
+      //     index,
+      //     src: src[index],
+      //     context: omit(context, ["scope"]),
+      //     match: match.toArray(),
+      //     done: done.toArray(),
+      //     matchingScope: context.groupScope?.toArray(),
+      //   },
+      //   { depth: null }
+      // );
 
       if (match.count() === 0) {
         if (!matchingScope.skip(1).isEmpty()) {
