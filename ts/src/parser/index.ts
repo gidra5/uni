@@ -160,19 +160,19 @@ export const parseGroup =
       return [index, placeholder(), errors];
     }
 
-    const scopeEntries = Iterator.iterEntries(context.scope);
+    const scopeEntries = scopeIter(context.scope);
     let matchingScope = scopeEntries
       // .inspect((x) => console.log(1, x))
-      .filterValues(({ precedence }) => {
+      .filter(({ precedence }) => {
         return precedence[0] === null || precedence[0] >= context.precedence;
       })
       // .inspect((x) => console.log(2, x))
-      .filterValues(({ precedence }) => {
+      .filter(({ precedence }) => {
         if (context.lhs) return precedence[0] !== null;
         return precedence[0] === null;
       })
       // .inspect((x) => console.log(3, x))
-      .filterValues(({ separators }) => {
+      .filter(({ separators }) => {
         return separators(context)(src, index)[1] !== "noMatch";
       })
       // .inspect((x) => console.log(4, x))
@@ -191,8 +191,7 @@ export const parseGroup =
     const path = ["groupNodes"];
     const __context = pushField(path, placeholder())(context);
     const nextTokenIsCurrentGroupSeparator =
-      context.groupNodes &&
-      scopeEntries.some(([_, { separators }]) => separators(__context)(src, index)[1] !== "noMatch");
+      context.groupNodes && scopeEntries.some(({ separators }) => separators(__context)(src, index)[1] !== "noMatch");
     if (nextTokenIsCurrentGroupSeparator) return [index, placeholder(), errors];
 
     if (matchingScope.isEmpty()) {
@@ -212,13 +211,13 @@ export const parseGroup =
     }
 
     context = { ...context, precedence: 0, groupNodes: [] };
-    const isFlatGroup = matchingScope.every(([_, { flat }]) => !!flat);
+    const isFlatGroup = matchingScope.every(({ flat }) => !!flat);
     const parsedScope: ParsingResult<AbstractSyntaxTree>[] = [];
    
     // console.dir({ msg: "parseGroup 3", index, src: src[index], context: omit(context, ["scope"]) }, { depth: null });
 
     while (src[index]) {
-      const [match, done] = matchingScope.partition(([_, { separators }]) => {
+      const [match, done] = matchingScope.partition(({ separators }) => {
         const [, result] = separators(context)(src, index);
         if (result === "match") return 0;
         if (result === "done") return 1;
@@ -242,7 +241,7 @@ export const parseGroup =
         if (!matchingScope.skip(1).isEmpty()) {
           errors.push(error("Ambiguous name", indexPosition(index)));
         }
-        const [name, { separators, drop }] = matchingScope.first()!;
+        const { name, separators, drop } = matchingScope.first()!;
         [index] = separators(context)(src, index);
         if (drop) return parseGroup(context)(src, index);
         if (src[index]?.type === "newline") index++;
@@ -252,7 +251,7 @@ export const parseGroup =
         index++;
 
         while (true) {
-          const noMatch = matchingScope.filter(([_, { separators }]) => {
+          const noMatch = matchingScope.filter(({ separators }) => {
             const [, result] = separators(context)(src, index);
             return result !== "noMatch";
           });
@@ -268,9 +267,9 @@ export const parseGroup =
       }
 
       parsedScope.push(
-        ...done.map<ParsingResult<AbstractSyntaxTree>>(([k, { separators }]) => {
+        ...done.map<ParsingResult<AbstractSyntaxTree>>(({ name, separators }) => {
           const [_index] = separators(context)(src, index);
-          return [_index, group(k, ...context.groupNodes!), [...errors]];
+          return [_index, group(name, ...context.groupNodes!), [...errors]];
         })
       );
 
@@ -287,11 +286,9 @@ export const parseGroup =
       }
 
       matchingScope = matchingScope
-        .filterMap(([k, v]) => {
+        .filter((v) => {
           const [, result] = v.separators(context)(src, index);
-          if (result === "noMatch") return;
-
-          return [k, v] as [string, TokenGroupDefinition];
+          return result !== "noMatch";
         })
         .cached();
 
