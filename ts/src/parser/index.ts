@@ -252,6 +252,8 @@ export const parseGroup =
       } else if (isFlatGroup) {
         index++;
 
+        const placeholderIndex = context.groupNodes!.push(placeholder()) - 1;
+        const node: AbstractSyntaxTree[] = [];
         while (true) {
           const noMatch = matchingScope.filter(({ separators }) => {
             const [, result] = separators(context)(src, index);
@@ -262,10 +264,11 @@ export const parseGroup =
             index++;
             continue;
           }
-          context.groupNodes!.push(token(src[index]));
+          node.push(token(src[index]));
           index++;
           continue;
         }
+        context.groupNodes![placeholderIndex] = group("tokens", ...node);
       }
 
       parsedGroups.push(
@@ -288,9 +291,8 @@ export const parseGroup =
       }
 
       matchingScope = matchingScope
-        .filter((v) => {
-          const [, result] = v.separators(context)(src, index);
-          return result !== "noMatch";
+        .filter(({ separators }) => {
+          return separators(context)(src, index)[1] !== "noMatch";
         })
         .cached();
       context.matchedGroupScope = scopeIterToScope(matchingScope);
