@@ -11,8 +11,8 @@ export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {
   separators: (context: ParsingContext) => TokenParser<"done" | "noMatch" | "match">;
   precedence: Precedence;
+  parse?: (context: ParsingContext) => TokenParser<AbstractSyntaxTree>;
   drop?: boolean;
-  flat?: boolean;
 };
 export type Scope = Record<string, TokenGroupDefinition>;
 export type ScopeArray = ({ name: string } & TokenGroupDefinition)[];
@@ -131,12 +131,25 @@ const scope: Scope = {
   comment: {
     separators: matchSeparators(["//"], ["\n"]),
     precedence: [null, null],
+    parse:
+      () =>
+      (src, i = 0) => {
+        let index = i;
+        while (src[index] && src[index].type !== "newline") index++;
+        return [index, placeholder(), []];
+      },
     drop: true,
-    flat: true,
   },
   commentBlock: {
     separators: matchSeparators(["/*"], ["*/"]),
     precedence: [null, null],
+    parse:
+      () =>
+      (src, i = 0) => {
+        let index = i;
+        while (src[index] && src[index].src !== "*/") index++;
+        return [index, placeholder(), []];
+      },
     drop: true,
   },
   application: {
@@ -213,7 +226,6 @@ export const parseGroup =
     }
 
     context = { ...context, precedence: 0, groupNodes: [], matchedGroupScope: scopeIterToScope(matchingScope) };
-    const isFlatGroup = matchingScope.every(({ flat }) => !!flat);
     const parsedGroups: ParsingResult<AbstractSyntaxTree>[] = [];
 
     // console.dir({ msg: "parseGroup 3", index, src: src[index], context: omit(context, ["scope"]) }, { depth: null });
@@ -249,26 +261,6 @@ export const parseGroup =
         if (src[index]?.type === "newline") index++;
 
         return [index, group(name, ...context.groupNodes!), errors];
-      } else if (isFlatGroup) {
-        index++;
-
-        const placeholderIndex = context.groupNodes!.push(placeholder()) - 1;
-        const node: AbstractSyntaxTree[] = [];
-        while (true) {
-          const noMatch = matchingScope.filter(({ separators }) => {
-            const [, result] = separators(context)(src, index);
-            return result !== "noMatch";
-          });
-          if (noMatch.count() !== 0) break;
-          if (src[index]?.type === "newline") {
-            index++;
-            continue;
-          }
-          node.push(token(src[index]));
-          index++;
-          continue;
-        }
-        context.groupNodes![placeholderIndex] = group("tokens", ...node);
       }
 
       parsedGroups.push(
@@ -278,17 +270,16 @@ export const parseGroup =
         })
       );
 
-      if (!isFlatGroup) {
-        index++;
-        const [nextIndex, expr, _errors] = parseExpr(context)(src, index);
+      index++;
+      const parser = matchingScope.first()?.parse ?? parseExpr;
+      const [nextIndex, expr, _errors] = parser(context)(src, index);
 
-        if (_errors.length > 0) {
-          errors.push(error("Errors in operand", position(index, nextIndex), _errors));
-        }
-        index = nextIndex;
-        context.groupNodes!.push(expr);
-        if (src[index]?.type === "newline") index++;
+      if (_errors.length > 0) {
+        errors.push(error("Errors in operand", position(index, nextIndex), _errors));
       }
+      index = nextIndex;
+      context.groupNodes!.push(expr);
+      if (src[index]?.type === "newline" && parser === parseExpr) index++;
 
       matchingScope = matchingScope
         .filter(({ separators }) => {
