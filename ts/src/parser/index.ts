@@ -44,9 +44,10 @@ export const prefixArithmeticOps = Iterator.iterEntries({
 });
 
 export const comparisonOps = Iterator.iter(["<", "<=", ">=", ">"]);
-export const scopeIter = (scope: Scope): Iterator<ScopeArray[number]> =>
-  Iterator.iterEntries(scope)
-    .map(([name, v]) => ({ ...v, name }));
+export const scopeIter = (scope: Scope = {}): Iterator<ScopeArray[number]> =>
+  Iterator.iterEntries(scope).map(([name, v]) => ({ ...v, name }));
+export const scopeIterToScope = (scopeIter: Iterator<ScopeArray[number]>): Scope =>
+  scopeIter.map(({ name, ...v }) => [name, v] as [string, TokenGroupDefinition]).toObject();
 const scope: Scope = {
   "+": { separators: matchSeparators(["+"]), precedence: [3, 4] },
   "-": { separators: matchSeparators(["-"]), precedence: [3, 4] },
