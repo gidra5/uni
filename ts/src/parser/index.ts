@@ -200,20 +200,15 @@ export const parseGroup =
 
       const _context = setField(path, [])(context);
       const isStartOfGroup = scopeEntries.some(
-        ([_, { separators, precedence }]) =>
-          precedence[0] !== null &&
-          separators(_context)(src, index)[1] !== "noMatch"
+        ({ separators, precedence }) => precedence[0] !== null && separators(_context)(src, index)[1] !== "noMatch"
       );
       if (context.lhs && !isStartOfGroup && context.precedence !== Infinity)
         return [index, group("application"), errors];
 
       if (token.src === "_") return [index + 1, placeholder(), errors];
-      if (token.type === "identifier")
-        return [index + 1, name(token.src), errors];
-      if (token.type === "number")
-        return [index + 1, number(token.value), errors];
-      if (token.type === "string")
-        return [index + 1, string(token.value), errors];
+      if (token.type === "identifier") return [index + 1, name(token.src), errors];
+      if (token.type === "number") return [index + 1, number(token.value), errors];
+      if (token.type === "string") return [index + 1, string(token.value), errors];
     }
 
     context = { ...context, precedence: 0, groupNodes: [] };
