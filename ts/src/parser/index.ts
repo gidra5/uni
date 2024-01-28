@@ -5,7 +5,6 @@ import { AbstractSyntaxTree, group, infix, name, number, placeholder, postfix, p
 import { ParsingError, ParsingResult, TokenParser } from "./types";
 import { matchSeparators } from "./utils";
 import { pushField, setField } from "../utils";
-export { parseString } from "./utils";
 
 export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {

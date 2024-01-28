@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { parseString } from "../../src/parser";
+import { parseString } from "../../src/parser/string";
 
 export const errorsTestCase = (src, expectedErrors, _it: any = it) =>
   _it(`finds all errors in example '${src}'`, () => {

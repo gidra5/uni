@@ -1,17 +1,13 @@
-import { ParsingContext, Scope, defaultParsingContext, parseExpr } from ".";
+import { ParsingContext } from ".";
 import { Iterator } from "iterator-js";
-import { parseTokens } from "./tokens";
 import { DefaultVisitor, Tree, Visitor } from "../tree";
 import { isEqual } from "../utils";
 import { AbstractSyntaxTree } from "./ast";
-import { ConsumeParsingResult, ParsingResult, TokenParser } from "./types";
+import { ParsingResult, TokenParser } from "./types";
 
-type TemplateValues = AbstractSyntaxTree[] | Record<string, AbstractSyntaxTree>;
+export type TemplateValues = AbstractSyntaxTree[] | Record<string, AbstractSyntaxTree>;
 export const template = (tree: AbstractSyntaxTree, values: TemplateValues) => {
-  const visitor: Visitor<Tree, AbstractSyntaxTree> = new Visitor<
-    Tree,
-    AbstractSyntaxTree
-  >({
+  const visitor: Visitor<Tree, AbstractSyntaxTree> = new Visitor<Tree, AbstractSyntaxTree>({
     [DefaultVisitor]: (tree) => {
       const children = visitor.visitChildren(tree).toArray();
       return { ...tree, children };
@@ -35,8 +31,7 @@ export const match = (
   const visitor: Visitor<ReturnType, AbstractSyntaxTree> = new Visitor({
     [DefaultVisitor]: (pattern) => {
       if (tree.name !== pattern.name) return [false, matches];
-      if (tree.children.length !== pattern.children.length)
-        return [false, matches];
+      if (tree.children.length !== pattern.children.length) return [false, matches];
       return Iterator.iter(tree.children)
         .zip(pattern.children)
         .reduce<ReturnType>(
@@ -60,34 +55,10 @@ export const match = (
   return visitor.visitNode(pattern);
 };
 
-export const parseString = (src: string, scope: Scope = {}) => {
-  const [tokens] = parseTokens(src);
-  const context = defaultParsingContext();
-  context.scope = { ...context.scope, ...scope };
-  const result = parseExpr(context)(tokens).slice(1);
-  return result as ConsumeParsingResult<AbstractSyntaxTree>;
-};
-
-export const templateString = (templateStr: string, values: TemplateValues) => {
-  const [parsed] = parseString(templateStr);
-  return template(parsed, values);
-};
-
-export const matchString = (
-  tree: AbstractSyntaxTree,
-  pattern: string,
-  matches: Record<string, AbstractSyntaxTree> = {}
-) => {
-  const [patternParsed] = parseString(pattern);
-  return match(tree, patternParsed, matches);
-};
-
 export const matchTokens =
   (...tokens: string[]): TokenParser<boolean> =>
   (src, i = 0) => {
-    const found = tokens.some(
-      (x) => src[i]?.src === x || (x === "\n" && src[i]?.type === "newline")
-    );
+    const found = tokens.some((x) => src[i]?.src === x || (x === "\n" && src[i]?.type === "newline"));
     if (found) return [i + 1, true, []];
     return [i, false, []];
   };
@@ -108,7 +79,13 @@ export const matchSeparators =
     const index = context.groupNodes?.length ?? 0;
     const separator = separators[index] ?? [];
     const isLast = index === separators.length - 1;
-    return mapParserResult(matchTokens(...separator), (matched) =>
+    const parser = mapParserResult(matchTokens(...separator), (matched) =>
       matched ? (isLast ? "done" : "match") : "noMatch"
     );
+    return (src, i) => {
+      const result = parser(src, i);
+      if (separator.length === 0) return result;
+      // console.log("matchSeparators", index, separator, isLast, JSON.stringify(src[i]?.src), i, result);
+      return result;
+    };
   };

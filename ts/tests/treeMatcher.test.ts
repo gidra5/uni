@@ -1,7 +1,7 @@
 import { describe, expect } from "vitest";
 import { it } from "@fast-check/vitest";
-import { matchString } from "../src/parser/utils";
 import { group, infix, name } from "../src/parser/ast";
+import { matchString } from "../src/parser/string";
 
 describe("parsing", () => {
   const stringTreeMatcherTestCase = (src, testTrees, _it: any = it) =>
