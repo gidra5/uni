@@ -4,7 +4,7 @@ import { indexPosition, position } from "../position";
 import { AbstractSyntaxTree, group, infix, name, number, placeholder, postfix, prefix, string, token } from "./ast";
 import { ParsingError, ParsingResult, TokenParser } from "./types";
 import { matchSeparators } from "./utils";
-import { pushField, setField } from "../utils";
+import { omit, pushField, setField } from "../utils";
 
 export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {
@@ -80,6 +80,29 @@ const scope: Scope = {
   ";": { separators: matchSeparators([";", "\n"]), precedence: [1, 1] },
   match: { separators: matchSeparators(["match"], ["{"], ["}"]), precedence: [null, null] },
   matchColon: { separators: matchSeparators(["match"], [":", "\n"]), precedence: [null, 1] },
+  if: { separators: matchSeparators(["if"], [":", "\n"]), precedence: [null, 1] },
+  ifElse: { separators: matchSeparators(["if"], [":", "\n"], ["else"]), precedence: [null, 1] },
+  for: { separators: matchSeparators(["for"], ["in"], [":", "\n"]), precedence: [null, 1] },
+  while: { separators: matchSeparators(["while"], [":", "\n"]), precedence: [null, 1] },
+  break: { separators: matchSeparators(["break"]), precedence: [null, 1] },
+  continue: { separators: matchSeparators(["continue"]), precedence: [null, 1] },
+  return: { separators: matchSeparators(["return"]), precedence: [null, 1] },
+  "=": { separators: matchSeparators(["="]), precedence: [1, 1] },
+  ":=": { separators: matchSeparators([":="]), precedence: [2, 2] },
+  record: { separators: matchSeparators(["record"], ["{"], ["}"]), precedence: [null, null] },
+  set: { separators: matchSeparators(["set"], ["{"], ["}"]), precedence: [null, null] },
+  map: { separators: matchSeparators(["map"], ["{"], ["}"]), precedence: [null, null] },
+  access: { separators: matchSeparators(["."]), precedence: [Infinity, Infinity] },
+  accessDynamic: { separators: matchSeparators(["["], ["]"]), precedence: [Infinity, null] },
+  import: { separators: matchSeparators(["import"], ["as"]), precedence: [null, 1] },
+  importWith: { separators: matchSeparators(["import"], ["as"], ["with"]), precedence: [null, 1] },
+  use: { separators: matchSeparators(["use"], ["as"]), precedence: [null, 1] },
+  useWith: { separators: matchSeparators(["use"], ["as"], ["with"]), precedence: [null, 1] },
+  export: { separators: matchSeparators(["export"]), precedence: [null, 1] },
+  exportAs: { separators: matchSeparators(["export"], ["as"]), precedence: [null, 1] },
+  external: { separators: matchSeparators(["external"]), precedence: [null, 1] },
+  label: { separators: matchSeparators([":"]), precedence: [2, 2] },
+  // labelDynamic: { separators: matchSeparators(["["], ["]:"]), precedence: [1, null] },
   negate: {
     separators: matchSeparators(["-"]),
     precedence: [null, Number.MAX_SAFE_INTEGER],
@@ -233,6 +256,7 @@ export const parseGroup =
       if (token.type === "identifier") return [index + 1, name(token.src), errors];
       if (token.type === "number") return [index + 1, number(token.value), errors];
       if (token.type === "string") return [index + 1, string(token.value), errors];
+      // console.log("fuck");
       return [index, placeholder(), errors];
     }
 
@@ -285,12 +309,43 @@ export const parseGroup =
       const parser = matchingScope.first()?.parse ?? parseExpr;
       const [nextIndex, expr, _errors] = parser(context)(src, index);
 
+      // console.dir(
+      //   {
+      //     msg: "parseGroup 5",
+      //     index,
+      //     src: src[index],
+      //     context: omit(context, ["scope"]),
+      //     match: match.toArray(),
+      //     done: done.toArray(),
+      //     matchingScope: context.matchedGroupScope,
+      //     res: [nextIndex, expr, _errors],
+      //   },
+      //   { depth: null }
+      // );
+
       if (_errors.length > 0) {
         errors.push(error("Errors in operand", position(index, nextIndex), _errors));
       }
       index = nextIndex;
       context.groupNodes!.push(expr);
-      if (src[index]?.type === "newline" && parser === parseExpr) index++;
+      const nextTokenIsCurrentGroupSeparator = matchingScope.some(
+        ({ separators }) => separators(context)(src, index)[1] !== "noMatch"
+      );
+
+      // console.dir(
+      //   {
+      //     msg: "parseGroup 6",
+      //     index,
+      //     nextTokenIsCurrentGroupSeparator,
+      //     src: src[index],
+      //     context: omit(context, ["scope"]),
+      //     match: match.toArray(),
+      //     done: done.toArray(),
+      //     matchingScope: context.matchedGroupScope,
+      //   },
+      //   { depth: null }
+      // );
+      if (!nextTokenIsCurrentGroupSeparator && src[index]?.type === "newline") index++;
 
       matchingScope = matchingScope
         .filter(({ separators }) => {
@@ -298,6 +353,20 @@ export const parseGroup =
         })
         .cached();
       context.matchedGroupScope = scopeIterToScope(matchingScope);
+
+      // console.dir(
+      //   {
+      //     msg: "parseGroup 7",
+      //     index,
+      //     nextTokenIsCurrentGroupSeparator,
+      //     src: src[index],
+      //     context: omit(context, ["scope"]),
+      //     match: match.toArray(),
+      //     done: done.toArray(),
+      //     matchingScope: context.matchedGroupScope,
+      //   },
+      //   { depth: null }
+      // );
 
       if (matchingScope.isEmpty()) {
         if (parsedGroups.length > 0) {
@@ -359,9 +428,18 @@ export const parseExpr =
       //   index++;
       //   continue;
       // }
-      // console.dir({ msg: "parseExpr 2", index, src: src[index], context });
+      // console.dir({ msg: "parseExpr 2", index, src: src[index], context: omit(context, ["scope"]) });
 
       let [nextIndex, group, _errors] = parseGroup(context)(src, index);
+      // console.dir({
+      //   msg: "parseExpr 3",
+      //   index,
+      //   src: src[index],
+      //   context: omit(context, ["scope"]),
+      //   res: [nextIndex, group, _errors],
+      //   break: group.value === undefined || group.name !== "group",
+      // });
+
       errors.push(..._errors);
       if (group.value === undefined || group.name !== "group") break;
       const [, right] = getPrecedence(group, context.scope);
@@ -374,7 +452,7 @@ export const parseExpr =
       let _context = { ...context, precedence: right };
 
       let rhs: AbstractSyntaxTree;
-      // console.dir({ msg: "parseExpr 3", index, src: src[index], context });
+      // console.dir({ msg: "parseExpr 4", index, src: src[index], context });
 
       [index, rhs, _errors] = parseExpr(_context)(src, index);
       errors.push(..._errors);
