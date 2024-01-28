@@ -1260,6 +1260,30 @@ exports[`expressions > data structures > field access 1`] = `
 }
 `;
 
+exports[`expressions > data structures > field access dynamic 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "name": "group",
+      "value": "accessDynamic",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+  ],
+  "name": "postfix",
+}
+`;
+
 exports[`expressions > data structures > list 1`] = `
 {
   "children": [
@@ -1681,8 +1705,8 @@ exports[`expressions > fixity expressions > prefix 1`] = `
   "children": [
     {
       "children": [],
-      "name": "name",
-      "value": "+",
+      "name": "group",
+      "value": "negate",
     },
     {
       "children": [],
@@ -2907,6 +2931,71 @@ exports[`expressions > structured programming > for loop 1`] = `
 }
 `;
 
+exports[`expressions > structured programming > for loop newline 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": ",",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "name": "group",
+                      "value": ",",
+                    },
+                    {
+                      "children": [],
+                      "name": "number",
+                      "value": 1,
+                    },
+                    {
+                      "children": [],
+                      "name": "number",
+                      "value": 2,
+                    },
+                  ],
+                  "name": "infix",
+                },
+                {
+                  "children": [],
+                  "name": "number",
+                  "value": 3,
+                },
+              ],
+              "name": "infix",
+            },
+          ],
+          "name": "group",
+          "value": "brackets",
+        },
+      ],
+      "name": "group",
+      "value": "for",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
 exports[`expressions > structured programming > if-then 1`] = `
 {
   "children": [
@@ -3039,6 +3128,79 @@ exports[`expressions > structured programming > if-then-else 1`] = `
     },
   ],
   "name": "prefix",
+}
+`;
+
+exports[`expressions > structured programming > if-then-elseif-then-else 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "true",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "group",
+      "value": "ifElse",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "name",
+              "value": "false",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 789,
+            },
+          ],
+          "name": "group",
+          "value": "ifElse",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 456,
+        },
+      ],
+      "name": "prefix",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > structured programming > labeled expression 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "label",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "label",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "infix",
 }
 `;
 
@@ -3268,240 +3430,6 @@ exports[`expressions > values > true 1`] = `
   "children": [],
   "name": "name",
   "value": "true",
-}
-`;
-
-exports[`programs > c > export main 1`] = `
-{
-  "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": "export",
-    },
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "->",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "args",
-        },
-        {
-          "children": [
-            {
-              "children": [],
-              "name": "placeholder",
-            },
-          ],
-          "name": "group",
-          "value": "braces",
-        },
-      ],
-      "name": "infix",
-    },
-  ],
-  "name": "prefix",
-}
-`;
-
-exports[`programs > c > external 1`] = `
-{
-  "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": "external",
-    },
-    {
-      "children": [],
-      "name": "name",
-      "value": "y",
-    },
-  ],
-  "name": "prefix",
-}
-`;
-
-exports[`programs > c > import 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "string",
-          "value": "a",
-        },
-      ],
-      "name": "group",
-      "value": "import",
-    },
-    {
-      "children": [],
-      "name": "name",
-      "value": "b",
-    },
-  ],
-  "name": "prefix",
-}
-`;
-
-exports[`programs > c > import with 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "string",
-          "value": "a",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "b",
-        },
-      ],
-      "name": "group",
-      "value": "importWith",
-    },
-    {
-      "children": [],
-      "name": "name",
-      "value": "c",
-    },
-  ],
-  "name": "prefix",
-}
-`;
-
-exports[`programs > c > import with external 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "string",
-          "value": "a",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "b",
-        },
-      ],
-      "name": "group",
-      "value": "importWith",
-    },
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "external",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "c",
-        },
-      ],
-      "name": "prefix",
-    },
-  ],
-  "name": "prefix",
-}
-`;
-
-exports[`programs > c > private declare 1`] = `
-{
-  "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": ":=",
-    },
-    {
-      "children": [],
-      "name": "name",
-      "value": "z",
-    },
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "+",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "y",
-        },
-        {
-          "children": [],
-          "name": "number",
-          "value": 1,
-        },
-      ],
-      "name": "infix",
-    },
-  ],
-  "name": "infix",
-}
-`;
-
-exports[`programs > c > public declare 1`] = `
-{
-  "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": "export",
-    },
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": ":=",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-        {
-          "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "+",
-            },
-            {
-              "children": [],
-              "name": "name",
-              "value": "z",
-            },
-            {
-              "children": [],
-              "name": "number",
-              "value": 123,
-            },
-          ],
-          "name": "infix",
-        },
-      ],
-      "name": "infix",
-    },
-  ],
-  "name": "prefix",
 }
 `;
 

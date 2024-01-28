@@ -64,7 +64,7 @@ describe("expressions", () => {
     });
 
     test("prefix", () => {
-      const src = `+123`;
+      const src = `-123`;
       treeTestCase(src);
     });
 
@@ -261,6 +261,11 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
+    test("if-then-elseif-then-else", () => {
+      const src = `if true: 123 else if false: 789 else 456`;
+      treeTestCase(src);
+    });
+
     test("if-then newline-else", () => {
       const src = `if true\n 123 else 456`;
       treeTestCase(src);
@@ -283,17 +288,7 @@ describe("expressions", () => {
 
     test("for loop newline", () => {
       const src = `for x in [1, 2, 3]\n x`;
-      treeTestCase(
-        src,
-        prefix(
-          group(
-            "for",
-            name("x"),
-            group("brackets", infix(group(","), infix(group(","), number(1), number(2)), number(3)))
-          ),
-          name("x")
-        )
-      );
+      treeTestCase(src);
     });
 
     test("while loop", () => {
@@ -338,11 +333,6 @@ describe("expressions", () => {
 
     test("block variable declaration", () => {
       const src = `{ x := 123 }`;
-      treeTestCase(src);
-    });
-
-    test.todo("block variable declaration with type", () => {
-      const src = `{ x: number := 123 }`;
       treeTestCase(src);
     });
 
