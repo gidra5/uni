@@ -9,7 +9,7 @@ export const errorsTestCase = (src, expectedErrors, _it: any = it) =>
 
 export const treeTestCase = (src, expectedTree?, scope = {}) => {
   const [tree, errors] = parseString(src, scope);
-  console.dir(tree, { depth: null });
+  // console.dir(tree, { depth: null });
   expect(errors).toEqual([]);
   if (expectedTree) expect(tree).toEqual(expectedTree);
   expect(tree).toMatchSnapshot();

@@ -4,7 +4,7 @@ import { test } from "@fast-check/vitest";
 import { treeTestCase } from "./utils";
 
 describe("arithmetics", () => {
-  const infixOpPairs = infixArithmeticOps.power(2).inspect(console.dir);
+  const infixOpPairs = infixArithmeticOps.power(2);
 
   for (const [[op1Name, op1], [op2Name, op2]] of infixOpPairs) {
     if (op1Name === op2Name) {

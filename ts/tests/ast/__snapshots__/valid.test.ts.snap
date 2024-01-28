@@ -1104,6 +1104,52 @@ exports[`expressions > boolean expressions > comparators > range >= >= 1`] = `
 }
 `;
 
+exports[`expressions > boolean expressions > deep equal 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "===",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > boolean expressions > deep not equal 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "!==",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
 exports[`expressions > boolean expressions > equal 1`] = `
 {
   "children": [

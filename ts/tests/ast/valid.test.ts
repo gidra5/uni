@@ -153,6 +153,16 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
+    test("deep equal", () => {
+      const src = `123 === 456`;
+      treeTestCase(src);
+    });
+
+    test("deep not equal", () => {
+      const src = `123 !== 456`;
+      treeTestCase(src);
+    });
+
     describe("comparators", () => {
       const comparators = [
         ["<", "<="],
