@@ -281,7 +281,22 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
-    test.todo("while loop", () => {
+    test("for loop newline", () => {
+      const src = `for x in [1, 2, 3]\n x`;
+      treeTestCase(
+        src,
+        prefix(
+          group(
+            "for",
+            name("x"),
+            group("brackets", infix(group(","), infix(group(","), number(1), number(2)), number(3)))
+          ),
+          name("x")
+        )
+      );
+    });
+
+    test("while loop", () => {
       const src = `while true: 123`;
       treeTestCase(src);
     });
@@ -306,8 +321,9 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
-    test.todo("labeled expression", () => {
+    test("labeled expression", () => {
       const src = `label: 123`;
+      treeTestCase(src, infix(group("label"), name("label"), number(123)));
     });
 
     test("expression-label", () => {
@@ -379,8 +395,9 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
-    test.todo("field access dynamic", () => {
+    test("field access dynamic", () => {
       const src = `x[y]`;
+      treeTestCase(src);
     });
   });
 });
