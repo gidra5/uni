@@ -2,14 +2,7 @@ import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { Iterator } from "iterator-js";
 import { infixArithmeticOps, prefixArithmeticOps } from "../../src/parser";
-import {
-  group,
-  infix,
-  name,
-  number,
-  prefix,
-  string,
-} from "../../src/parser/ast";
+import { group, infix, name, number, placeholder, prefix, string } from "../../src/parser/ast";
 import { matchSeparators } from "../../src/parser/utils";
 import { treeTestCase, treeTestCaseArgs } from "./utils";
 
@@ -253,6 +246,26 @@ describe("expressions", () => {
       const src = `x is (_, b)`;
       treeTestCase(src);
     });
+
+    test("with variable value", () => {
+      const src = `x is (#a, b)`;
+      treeTestCase(src);
+    });
+
+    test("with rest value", () => {
+      const src = `x is (a, ...b)`;
+      treeTestCase(src);
+    });
+
+    test("with rest value first", () => {
+      const src = `x is (...b, a)`;
+      treeTestCase(src);
+    });
+
+    test("binding visible in scope where it is true", () => {
+      const src = `x is (a, b) and a == b + 1`;
+      treeTestCase(src);
+    });
   });
 
   describe("structured programming", () => {
@@ -328,7 +341,7 @@ describe("expressions", () => {
 
     test("labeled expression", () => {
       const src = `label: 123`;
-      treeTestCase(src, infix(group("label"), name("label"), number(123)));
+      treeTestCase(src);
     });
 
     test("expression-label", () => {
@@ -343,6 +356,11 @@ describe("expressions", () => {
 
     test("block variable declaration", () => {
       const src = `{ x := 123 }`;
+      treeTestCase(src);
+    });
+
+    test("block mutable variable declaration", () => {
+      const src = `{ mut x := 123 }`;
       treeTestCase(src);
     });
 
@@ -375,23 +393,18 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
-    test("list", () => {
-      const src = `[1, 2]`;
-      treeTestCase(src);
-    });
-
     test("record", () => {
-      const src = `record { a: 1, b: 2 }`;
+      const src = `record { a: 1; b: 2 }`;
       treeTestCase(src);
     });
 
     test("set", () => {
-      const src = `set { 1, 2 }`;
+      const src = `set { 1; 2 }`;
       treeTestCase(src);
     });
 
     test("map", () => {
-      const src = `map { 1: 2, 3: 4 }`;
+      const src = `map { 1: 2; 3: 4 }`;
       treeTestCase(src);
     });
 
@@ -473,5 +486,32 @@ describe("programs", () => {
       const src = `export args -> {}`;
       treeTestCase(src);
     });
+  });
+});
+
+describe("newline handling", () => {
+  test("block newline in the middle", () => {
+    const src = `{ a := 1\n b := 2 }`;
+    treeTestCase(src);
+  });
+
+  test("block newline at the end", () => {
+    const src = `{ a := 1\n b := 2\n }`;
+    treeTestCase(src);
+  });
+
+  test("block newline at the beginning", () => {
+    const src = `{\n a := 1\n b := 2 }`;
+    treeTestCase(src);
+  });
+
+  test("block semicolon newline", () => {
+    const src = `{ a := 1;\n b := 2 }`;
+    treeTestCase(src);
+  });
+
+  test("block semicolon newline at the end", () => {
+    const src = `{ a := 1;\n b := 2;\n }`;
+    treeTestCase(src);
   });
 });

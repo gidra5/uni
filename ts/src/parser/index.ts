@@ -8,9 +8,9 @@ import { omit, pushField, setField } from "../utils";
 
 export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {
-  separators: (context: ParsingContext) => TokenParser<"done" | "noMatch" | "match">;
+  separators: TokenParserWithContext<"done" | "noMatch" | "match">;
   precedence: Precedence;
-  parse?: (context: ParsingContext) => TokenParser<AbstractSyntaxTree>;
+  parse?: TokenParserWithContext<AbstractSyntaxTree>;
   drop?: boolean;
 };
 export type Scope = Record<string, TokenGroupDefinition>;
@@ -22,6 +22,7 @@ export type ParsingContext = {
   groupNodes?: AbstractSyntaxTree[];
   matchedGroupScope?: Scope;
 };
+export type TokenParserWithContext<T> = (context: ParsingContext) => TokenParser<T>;
 
 const getPrecedence = (node: AbstractSyntaxTree, scope: Scope): Precedence =>
   (node.name === "group" && node.value && scope[node.value]?.precedence) || [null, null];
@@ -56,7 +57,7 @@ const scope: Scope = {
   "!": { separators: matchSeparators(["!"]), precedence: [null, 3] },
   ",": { separators: matchSeparators([","]), precedence: [1, 2] },
   in: { separators: matchSeparators(["in"]), precedence: [1, 1] },
-  is: { separators: matchSeparators(["is"]), precedence: [1, 1] },
+  is: { separators: matchSeparators(["is"]), precedence: [1, Infinity] },
   and: { separators: matchSeparators(["and"]), precedence: [1, 1] },
   or: { separators: matchSeparators(["or"]), precedence: [1, 1] },
   "==": { separators: matchSeparators(["=="]), precedence: [1, 1] },
@@ -65,6 +66,7 @@ const scope: Scope = {
   "!==": { separators: matchSeparators(["!=="]), precedence: [1, 1] },
   as: { separators: matchSeparators(["as"]), precedence: [1, 1] },
   not: { separators: matchSeparators(["not"]), precedence: [null, 1] },
+  mut: { separators: matchSeparators(["mut"]), precedence: [null, 3] },
   ...comparisonOps
     .map((op) => {
       const definition = { separators: matchSeparators([op]), precedence: [1, 1] };
@@ -81,6 +83,8 @@ const scope: Scope = {
   "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 2] },
   fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
   ";": { separators: matchSeparators([";", "\n"]), precedence: [1, 1] },
+  "#": { separators: matchSeparators(["#"]), precedence: [null, 2] },
+  "...": { separators: matchSeparators(["..."]), precedence: [null, 2] },
   match: { separators: matchSeparators(["match"], ["{"], ["}"]), precedence: [null, null] },
   matchColon: { separators: matchSeparators(["match"], [":", "\n"]), precedence: [null, 1] },
   if: { separators: matchSeparators(["if"], [":", "\n"]), precedence: [null, 1] },
@@ -180,8 +184,8 @@ const scope: Scope = {
 };
 export const defaultParsingContext = (): ParsingContext => ({ scope, precedence: 0 });
 
-export const parseGroup =
-  (context: ParsingContext): TokenParser<AbstractSyntaxTree> =>
+export const parseGroup: TokenParserWithContext<AbstractSyntaxTree> =
+  (context) =>
   (src, i = 0) => {
     let index = i;
     const errors: ParsingError[] = [];
@@ -381,8 +385,8 @@ export const parseGroup =
     return [index, placeholder(), errors];
   };
 
-export const parsePrefix =
-  ({ ...context }: ParsingContext): TokenParser<AbstractSyntaxTree> =>
+export const parsePrefix: TokenParserWithContext<AbstractSyntaxTree> =
+  ({ ...context }) =>
   (src, i = 0) => {
     context.lhs = undefined;
     let index = i;
@@ -419,8 +423,8 @@ export const parsePrefix =
     return [index, group, errors];
   };
 
-export const parseExpr =
-  ({ ...context }: ParsingContext): TokenParser<AbstractSyntaxTree> =>
+export const parseExpr: TokenParserWithContext<AbstractSyntaxTree> =
+  ({ ...context }) =>
   (src, i = 0) => {
     let index = i;
     const errors: ParsingError[] = [];

@@ -23,7 +23,7 @@ export const number = token("number");
 export const string = token("string");
 export const newline = token("newline");
 
-const symbols = Iterator.iter(["->", "--", "++", "//", "/*", "*/", "!=", "==", ">=", "<=", ":=", "===", "!=="]);
+const symbols = Iterator.iter(["->", "--", "++", "//", "/*", "*/", "!=", "==", ">=", "<=", ":=", "===", "!==", "..."]);
 
 export const parseToken: StringParser<TokenPos> = (src, i = 0) => {
   let index = i;

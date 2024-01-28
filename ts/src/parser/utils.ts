@@ -1,4 +1,4 @@
-import { ParsingContext } from ".";
+import { TokenParserWithContext } from ".";
 import { Iterator } from "iterator-js";
 import { DefaultVisitor, Tree, Visitor } from "../tree";
 import { isEqual } from "../utils";
@@ -74,8 +74,8 @@ export const mapParserResult =
     mapParsingResult(parser(src, i), fn);
 
 export const matchSeparators =
-  (...separators: string[][]) =>
-  (context: ParsingContext) => {
+  (...separators: string[][]): TokenParserWithContext<"done" | "match" | "noMatch"> =>
+  (context) => {
     const index = context.groupNodes?.length ?? 0;
     const separator = separators[index] ?? [];
     const isLast = index === separators.length - 1;
@@ -88,4 +88,11 @@ export const matchSeparators =
       // console.log("matchSeparators", index, separator, isLast, JSON.stringify(src[i]?.src), i, result);
       return result;
     };
+  };
+
+const parseOperands =
+  (...parsers: TokenParserWithContext<AbstractSyntaxTree>[]): TokenParserWithContext<AbstractSyntaxTree> =>
+  (context) => {
+    const index = context.groupNodes?.length ?? 0;
+    return parsers[index - 1](context);
   };

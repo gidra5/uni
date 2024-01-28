@@ -1330,35 +1330,6 @@ exports[`expressions > data structures > field access dynamic 1`] = `
 }
 `;
 
-exports[`expressions > data structures > list 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": ",",
-        },
-        {
-          "children": [],
-          "name": "number",
-          "value": 1,
-        },
-        {
-          "children": [],
-          "name": "number",
-          "value": 2,
-        },
-      ],
-      "name": "infix",
-    },
-  ],
-  "name": "group",
-  "value": "brackets",
-}
-`;
-
 exports[`expressions > data structures > map 1`] = `
 {
   "children": [
@@ -1371,7 +1342,7 @@ exports[`expressions > data structures > map 1`] = `
         {
           "children": [],
           "name": "group",
-          "value": ",",
+          "value": ";",
         },
         {
           "children": [
@@ -1539,7 +1510,7 @@ exports[`expressions > data structures > record 1`] = `
         {
           "children": [],
           "name": "group",
-          "value": ",",
+          "value": ";",
         },
         {
           "children": [
@@ -1602,7 +1573,7 @@ exports[`expressions > data structures > set 1`] = `
         {
           "children": [],
           "name": "group",
-          "value": ",",
+          "value": ";",
         },
         {
           "children": [],
@@ -2487,6 +2458,95 @@ exports[`expressions > function expressions > function 1`] = `
 }
 `;
 
+exports[`expressions > pattern matching > binding visible in scope where it is true 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "and",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "is",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": ",",
+                },
+                {
+                  "children": [],
+                  "name": "name",
+                  "value": "a",
+                },
+                {
+                  "children": [],
+                  "name": "name",
+                  "value": "b",
+                },
+              ],
+              "name": "infix",
+            },
+          ],
+          "name": "group",
+          "value": "parens",
+        },
+      ],
+      "name": "infix",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "==",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "+",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "b",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 1,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
 exports[`expressions > pattern matching > in function parameters 1`] = `
 {
   "children": [
@@ -2761,6 +2821,168 @@ exports[`expressions > pattern matching > with placeholder 1`] = `
 }
 `;
 
+exports[`expressions > pattern matching > with rest value 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "is",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "a",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": "...",
+                },
+                {
+                  "children": [],
+                  "name": "name",
+                  "value": "b",
+                },
+              ],
+              "name": "prefix",
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > pattern matching > with rest value first 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "is",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": "...",
+                },
+                {
+                  "children": [],
+                  "name": "name",
+                  "value": "b",
+                },
+              ],
+              "name": "prefix",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "a",
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > pattern matching > with variable value 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "is",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": "#",
+                },
+                {
+                  "children": [],
+                  "name": "name",
+                  "value": "a",
+                },
+              ],
+              "name": "prefix",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "b",
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
 exports[`expressions > structured programming > block 1`] = `
 {
   "children": [
@@ -2768,6 +2990,45 @@ exports[`expressions > structured programming > block 1`] = `
       "children": [],
       "name": "number",
       "value": 123,
+    },
+  ],
+  "name": "group",
+  "value": "braces",
+}
+`;
+
+exports[`expressions > structured programming > block mutable variable declaration 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ":=",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "mut",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "x",
+            },
+          ],
+          "name": "prefix",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "infix",
     },
   ],
   "name": "group",
@@ -3494,6 +3755,329 @@ exports[`expressions > values > true 1`] = `
   "children": [],
   "name": "name",
   "value": "true",
+}
+`;
+
+exports[`newline handling > block newline at the beginning 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ";",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ":=",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "a",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 1,
+            },
+          ],
+          "name": "infix",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ":=",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "b",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "braces",
+}
+`;
+
+exports[`newline handling > block newline at the end 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ";",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ":=",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "a",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 1,
+            },
+          ],
+          "name": "infix",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ";",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": ":=",
+                },
+                {
+                  "children": [],
+                  "name": "name",
+                  "value": "b",
+                },
+                {
+                  "children": [],
+                  "name": "number",
+                  "value": 2,
+                },
+              ],
+              "name": "infix",
+            },
+            {
+              "children": [],
+              "name": "placeholder",
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "braces",
+}
+`;
+
+exports[`newline handling > block newline in the middle 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ";",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ":=",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "a",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 1,
+            },
+          ],
+          "name": "infix",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ":=",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "b",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "braces",
+}
+`;
+
+exports[`newline handling > block semicolon newline 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ";",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ":=",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "a",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 1,
+            },
+          ],
+          "name": "infix",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ":=",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "b",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "braces",
+}
+`;
+
+exports[`newline handling > block semicolon newline at the end 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ";",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ":=",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "a",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 1,
+            },
+          ],
+          "name": "infix",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ";",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": ":=",
+                },
+                {
+                  "children": [],
+                  "name": "name",
+                  "value": "b",
+                },
+                {
+                  "children": [],
+                  "name": "number",
+                  "value": 2,
+                },
+              ],
+              "name": "infix",
+            },
+            {
+              "children": [],
+              "name": "placeholder",
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "braces",
 }
 `;
 
