@@ -246,63 +246,98 @@ describe("expressions", () => {
   });
 
   describe("structured programming", () => {
-    test.todo("if-then", () => {
+    test("if-then", () => {
       const src = `if true: 123`;
+      treeTestCase(src);
     });
 
-    test.todo("if-then-else", () => {
+    test("if-then newline", () => {
+      const src = `if true\n 123`;
+      treeTestCase(src);
+    });
+
+    test("if-then-else", () => {
       const src = `if true: 123 else 456`;
-    });
-    test.todo("block", () => {
-      const src = `{ 123 }`;
+      treeTestCase(src);
     });
 
-    test.todo("for loop", () => {
+    test("if-then newline-else", () => {
+      const src = `if true\n 123 else 456`;
+      treeTestCase(src);
+    });
+
+    test("if-then newline-else newline", () => {
+      const src = `if true\n 123 else\n 456`;
+      treeTestCase(src);
+    });
+
+    test("block", () => {
+      const src = `{ 123 }`;
+      treeTestCase(src);
+    });
+
+    test("for loop", () => {
       const src = `for x in [1, 2, 3]: x`;
+      treeTestCase(src);
     });
 
     test.todo("while loop", () => {
       const src = `while true: 123`;
+      treeTestCase(src);
     });
 
-    test.todo("while loop break", () => {
+    test("while loop break", () => {
+      const src = `while true: break _`;
+      treeTestCase(src);
+    });
+
+    test("while loop break value", () => {
       const src = `while true: break 1`;
+      treeTestCase(src);
     });
 
-    test.todo("while loop continue", () => {
-      const src = `while true: continue`;
+    test("while loop continue", () => {
+      const src = `while true: continue _`;
+      treeTestCase(src);
     });
 
-    test.todo("block break", () => {
-      const src = `{ break 1 }`;
+    test("while loop continue value", () => {
+      const src = `while true: continue 1`;
+      treeTestCase(src);
     });
 
     test.todo("labeled expression", () => {
       const src = `label: 123`;
     });
 
-    test.todo("expression-label", () => {
-      const src = `[123]: 456`;
+    test("expression-label", () => {
+      const src = `123+456: 789`;
+      treeTestCase(src);
     });
 
-    test.todo("return", () => {
-      const src = `() => { return 123 }`;
+    test("return", () => {
+      const src = `() -> { return 123 }`;
+      treeTestCase(src);
     });
 
-    test.todo("block variable declaration", () => {
+    test("block variable declaration", () => {
       const src = `{ x := 123 }`;
+      treeTestCase(src);
     });
 
     test.todo("block variable declaration with type", () => {
       const src = `{ x: number := 123 }`;
+      treeTestCase(src);
     });
 
-    test.todo("block variable assignment", () => {
+    test("block variable assignment", () => {
       const src = `{ x = 123 }`;
+      treeTestCase(src);
     });
 
-    test.todo("block pattern matching", () => {
+    test("block pattern matching", () => {
       const src = `{ x, y = 123, 456 }`;
+      treeTestCase(src);
     });
   });
 
@@ -319,24 +354,29 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
-    test.todo("list", () => {
+    test("list", () => {
       const src = `[1, 2]`;
+      treeTestCase(src);
     });
 
-    test.todo("record", () => {
+    test("record", () => {
       const src = `record { a: 1, b: 2 }`;
+      treeTestCase(src);
     });
 
-    test.todo("set", () => {
+    test("set", () => {
       const src = `set { 1, 2 }`;
+      treeTestCase(src);
     });
 
-    test.todo("map", () => {
+    test("map", () => {
       const src = `map { 1: 2, 3: 4 }`;
+      treeTestCase(src);
     });
 
-    test.todo("field access", () => {
+    test("field access", () => {
       const src = `x.y`;
+      treeTestCase(src);
     });
 
     test.todo("field access dynamic", () => {
@@ -347,44 +387,69 @@ describe("expressions", () => {
 
 describe("programs", () => {
   describe("script", () => {
-    test.todo("variable", () => {
-      const src = `x := 123`;
+    test("use", () => {
+      const src = `use "a" as b`;
+      treeTestCase(src);
     });
-    test.todo("import", () => {
-      const src = `x := 123;  import "a" as b`;
+    test("use with", () => {
+      const src = `use "a" as b with x`;
+      treeTestCase(src);
     });
-    test.todo("import with", () => {
-      const src = `x := 123;  import "a" as b with x `;
+    test("export", () => {
+      const src = `export x`;
+      treeTestCase(src);
     });
-    test.todo("export", () => {
+    test("export as", () => {
+      const src = `export x as y`;
+      treeTestCase(src);
+    });
+
+    test("variable use", () => {
+      const src = `x := 123;  use "a" as b`;
+      treeTestCase(src);
+    });
+    test("variable use with", () => {
+      const src = `x := 123;  use "a" as b with x`;
+      treeTestCase(src);
+    });
+    test("variable export", () => {
       const src = `x := 123; export x`;
+      treeTestCase(src);
     });
-    test.todo("export as", () => {
+    test("variable export as", () => {
       const src = `x := 123; export x as y`;
+      treeTestCase(src);
     });
   });
 
   describe("module", () => {
-    test.todo("import/use", () => {
-      const src = `use "a" as b`;
+    test("import", () => {
+      const src = `import "a" as b`;
+      treeTestCase(src);
     });
-    test.todo("import/use with", () => {
-      const src = `use "a" as b with c`;
+    test("import with", () => {
+      const src = `import "a" as b with c`;
+      treeTestCase(src);
     });
-    test.todo("import/use with external", () => {
-      const src = `use "a" as b with external c`;
+    test("import with external", () => {
+      const src = `import "a" as b with external c`;
+      treeTestCase(src);
     });
-    test.todo("external", () => {
+    test("external", () => {
       const src = `external y`;
+      treeTestCase(src);
     });
-    test.todo("private declare", () => {
+    test("private declare", () => {
       const src = `z := y+1`;
+      treeTestCase(src);
     });
-    test.todo("public declare", () => {
+    test("public declare", () => {
       const src = `export x := z+123`;
+      treeTestCase(src);
     });
-    test.todo("export main", () => {
-      const src = `export (args) -> {}`;
+    test("export main", () => {
+      const src = `export args -> {}`;
+      treeTestCase(src);
     });
   });
 });

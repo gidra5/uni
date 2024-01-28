@@ -1237,6 +1237,121 @@ exports[`expressions > boolean expressions > or 1`] = `
 }
 `;
 
+exports[`expressions > data structures > field access 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "access",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "y",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > data structures > list 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ",",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 1,
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 2,
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "brackets",
+}
+`;
+
+exports[`expressions > data structures > map 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "placeholder",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ",",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "label",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 1,
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+          ],
+          "name": "infix",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "label",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 3,
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 4,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "map",
+}
+`;
+
 exports[`expressions > data structures > produces correct tree for '(-(2+7)/A,j, i, 127.0 )' 1`] = `
 {
   "children": [
@@ -1339,6 +1454,102 @@ exports[`expressions > data structures > produces correct tree for '(-(2+7)/A,j,
   ],
   "name": "group",
   "value": "parens",
+}
+`;
+
+exports[`expressions > data structures > record 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "placeholder",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ",",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "label",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "a",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 1,
+            },
+          ],
+          "name": "infix",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "label",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "b",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "record",
+}
+`;
+
+exports[`expressions > data structures > set 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "placeholder",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ",",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 1,
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 2,
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "set",
 }
 `;
 
@@ -2462,6 +2673,572 @@ exports[`expressions > pattern matching > with placeholder 1`] = `
 }
 `;
 
+exports[`expressions > structured programming > block 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "group",
+  "value": "braces",
+}
+`;
+
+exports[`expressions > structured programming > block pattern matching 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "=",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "name": "infix",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": ",",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 123,
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 456,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "braces",
+}
+`;
+
+exports[`expressions > structured programming > block variable assignment 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "=",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "braces",
+}
+`;
+
+exports[`expressions > structured programming > block variable declaration 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ":=",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "group",
+  "value": "braces",
+}
+`;
+
+exports[`expressions > structured programming > expression-label 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "label",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "+",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 456,
+        },
+      ],
+      "name": "infix",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 789,
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > structured programming > for loop 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "group",
+                  "value": ",",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "name": "group",
+                      "value": ",",
+                    },
+                    {
+                      "children": [],
+                      "name": "number",
+                      "value": 1,
+                    },
+                    {
+                      "children": [],
+                      "name": "number",
+                      "value": 2,
+                    },
+                  ],
+                  "name": "infix",
+                },
+                {
+                  "children": [],
+                  "name": "number",
+                  "value": 3,
+                },
+              ],
+              "name": "infix",
+            },
+          ],
+          "name": "group",
+          "value": "brackets",
+        },
+      ],
+      "name": "group",
+      "value": "for",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > structured programming > if-then 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "true",
+        },
+      ],
+      "name": "group",
+      "value": "if",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > structured programming > if-then newline 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "true",
+        },
+      ],
+      "name": "group",
+      "value": "if",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > structured programming > if-then newline-else 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "true",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "group",
+      "value": "ifElse",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > structured programming > if-then newline-else newline 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "true",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "group",
+      "value": "ifElse",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > structured programming > if-then-else 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "true",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "group",
+      "value": "ifElse",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > structured programming > return 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "->",
+    },
+    {
+      "children": [],
+      "name": "group",
+      "value": "parens",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "return",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 123,
+            },
+          ],
+          "name": "prefix",
+        },
+      ],
+      "name": "group",
+      "value": "braces",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`expressions > structured programming > while loop 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "true",
+        },
+      ],
+      "name": "group",
+      "value": "while",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > structured programming > while loop break 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "true",
+        },
+      ],
+      "name": "group",
+      "value": "while",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "break",
+        },
+        {
+          "children": [],
+          "name": "placeholder",
+        },
+      ],
+      "name": "prefix",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > structured programming > while loop break value 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "true",
+        },
+      ],
+      "name": "group",
+      "value": "while",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "break",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 1,
+        },
+      ],
+      "name": "prefix",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > structured programming > while loop continue 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "true",
+        },
+      ],
+      "name": "group",
+      "value": "while",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "continue",
+        },
+        {
+          "children": [],
+          "name": "placeholder",
+        },
+      ],
+      "name": "prefix",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`expressions > structured programming > while loop continue value 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "true",
+        },
+      ],
+      "name": "group",
+      "value": "while",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "continue",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 1,
+        },
+      ],
+      "name": "prefix",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
 exports[`expressions > values > false 1`] = `
 {
   "children": [],
@@ -2491,5 +3268,783 @@ exports[`expressions > values > true 1`] = `
   "children": [],
   "name": "name",
   "value": "true",
+}
+`;
+
+exports[`programs > c > export main 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "export",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "->",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "args",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "placeholder",
+            },
+          ],
+          "name": "group",
+          "value": "braces",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > c > external 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "external",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "y",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > c > import 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "string",
+          "value": "a",
+        },
+      ],
+      "name": "group",
+      "value": "import",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "b",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > c > import with 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "string",
+          "value": "a",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "b",
+        },
+      ],
+      "name": "group",
+      "value": "importWith",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "c",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > c > import with external 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "string",
+          "value": "a",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "b",
+        },
+      ],
+      "name": "group",
+      "value": "importWith",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "external",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "c",
+        },
+      ],
+      "name": "prefix",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > c > private declare 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": ":=",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "z",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "+",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "y",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 1,
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`programs > c > public declare 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "export",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ":=",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "+",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "z",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 123,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > module > export main 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "export",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "->",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "args",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "placeholder",
+            },
+          ],
+          "name": "group",
+          "value": "braces",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > module > external 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "external",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "y",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > module > import 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "string",
+          "value": "a",
+        },
+      ],
+      "name": "group",
+      "value": "import",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "b",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > module > import with 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "string",
+          "value": "a",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "b",
+        },
+      ],
+      "name": "group",
+      "value": "importWith",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "c",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > module > import with external 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "string",
+          "value": "a",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "b",
+        },
+      ],
+      "name": "group",
+      "value": "importWith",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "external",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "c",
+        },
+      ],
+      "name": "prefix",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > module > private declare 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": ":=",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "z",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "+",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "y",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 1,
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`programs > module > public declare 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "export",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ":=",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "group",
+              "value": "+",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "z",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 123,
+            },
+          ],
+          "name": "infix",
+        },
+      ],
+      "name": "infix",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > script > export 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "export",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > script > export as 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "group",
+      "value": "exportAs",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "y",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > script > use 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "string",
+          "value": "a",
+        },
+      ],
+      "name": "group",
+      "value": "use",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "b",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > script > use with 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "string",
+          "value": "a",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "b",
+        },
+      ],
+      "name": "group",
+      "value": "useWith",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
+exports[`programs > script > variable export 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": ";",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ":=",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "infix",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": "export",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "prefix",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`programs > script > variable export as 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": ";",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ":=",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "infix",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "name",
+              "value": "x",
+            },
+          ],
+          "name": "group",
+          "value": "exportAs",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "name": "prefix",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`programs > script > variable use 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": ";",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ":=",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "infix",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "string",
+              "value": "a",
+            },
+          ],
+          "name": "group",
+          "value": "use",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "b",
+        },
+      ],
+      "name": "prefix",
+    },
+  ],
+  "name": "infix",
+}
+`;
+
+exports[`programs > script > variable use with 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": ";",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "group",
+          "value": ":=",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "infix",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "string",
+              "value": "a",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "b",
+            },
+          ],
+          "name": "group",
+          "value": "useWith",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "prefix",
+    },
+  ],
+  "name": "infix",
 }
 `;
