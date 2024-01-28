@@ -355,6 +355,11 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
+    test("symbol", () => {
+      const src = `symbol x`;
+      treeTestCase(src);
+    });
+
     test("tuple", () => {
       const src = `1, 2`;
       treeTestCase(src);

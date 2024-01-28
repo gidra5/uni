@@ -1577,6 +1577,24 @@ exports[`expressions > data structures > set 1`] = `
 }
 `;
 
+exports[`expressions > data structures > symbol 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "name": "group",
+      "value": "symbol",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+  ],
+  "name": "prefix",
+}
+`;
+
 exports[`expressions > data structures > tuple 1`] = `
 {
   "children": [

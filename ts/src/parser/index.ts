@@ -89,6 +89,7 @@ const scope: Scope = {
   return: { separators: matchSeparators(["return"]), precedence: [null, 1] },
   "=": { separators: matchSeparators(["="]), precedence: [1, 1] },
   ":=": { separators: matchSeparators([":="]), precedence: [2, 2] },
+  symbol: { separators: matchSeparators(["symbol"]), precedence: [null, 1] },
   record: { separators: matchSeparators(["record"], ["{"], ["}"]), precedence: [null, null] },
   set: { separators: matchSeparators(["set"], ["{"], ["}"]), precedence: [null, null] },
   map: { separators: matchSeparators(["map"], ["{"], ["}"]), precedence: [null, null] },
