@@ -75,8 +75,8 @@ const scope: Scope = {
       return [`inRange_${op1}_${op2}`, definition] as [string, TokenGroupDefinition];
     })
     .toObject(),
-  "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 1] },
-  fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 1] },
+  "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 2] },
+  fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
   ";": { separators: matchSeparators([";", "\n"]), precedence: [1, 1] },
   match: { separators: matchSeparators(["match"], ["{"], ["}"]), precedence: [null, null] },
   matchColon: { separators: matchSeparators(["match"], [":", "\n"]), precedence: [null, 1] },
@@ -179,16 +179,26 @@ export const parseGroup =
       scopeIter(context.matchedGroupScope).some(({ separators }) => separators(_context)(src, index)[1] !== "noMatch");
     if (nextTokenIsCurrentGroupSeparator) return [index, placeholder(), errors];
 
+    context = { ...context, groupNodes: [] };
     const scopeEntries = scopeIter(context.scope);
     let matchingScope = scopeEntries
       // .inspect((x) => console.log(1, x))
       .filter(({ precedence }) => {
-        return precedence[0] === null || precedence[0] >= context.precedence;
-      })
-      // .inspect((x) => console.log(2, x))
-      .filter(({ precedence }) => {
         if (context.lhs) return precedence[0] !== null;
         return precedence[0] === null;
+      })
+      // .inspect((x) => console.log(2, x))
+      .filter((x) => {
+        const { precedence } = x;
+        // console.log(
+        //   3,
+        //   x,
+        //   precedence[0],
+        //   context.precedence,
+        //   precedence[0] === null || precedence[0] >= context.precedence
+        // );
+
+        return precedence[0] === null || precedence[0] >= context.precedence;
       })
       // .inspect((x) => console.log(3, x))
       .filter(({ separators }) => {
@@ -204,6 +214,7 @@ export const parseGroup =
     //     src: src[index],
     //     context: omit(context, ["scope"]),
     //     matchingScope: matchingScope.toArray(),
+    //     empty: matchingScope.isEmpty(),
     //   },
     //   { depth: null }
     // );
@@ -222,9 +233,10 @@ export const parseGroup =
       if (token.type === "identifier") return [index + 1, name(token.src), errors];
       if (token.type === "number") return [index + 1, number(token.value), errors];
       if (token.type === "string") return [index + 1, string(token.value), errors];
+      return [index, placeholder(), errors];
     }
 
-    context = { ...context, precedence: 0, groupNodes: [], matchedGroupScope: scopeIterToScope(matchingScope) };
+    context = { ...context, precedence: 0, matchedGroupScope: scopeIterToScope(matchingScope) };
     const parsedGroups: ParsingResult<AbstractSyntaxTree>[] = [];
 
     // console.dir({ msg: "parseGroup 3", index, src: src[index], context: omit(context, ["scope"]) }, { depth: null });
@@ -245,7 +257,7 @@ export const parseGroup =
       //     context: omit(context, ["scope"]),
       //     match: match.toArray(),
       //     done: done.toArray(),
-      //     matchingScope: context.groupScope?.toArray(),
+      //     matchingScope: context.matchedGroupScope,
       //   },
       //   { depth: null }
       // );
@@ -343,10 +355,10 @@ export const parseExpr =
 
     while (src[index]) {
       //skip possible whitespace prefix
-      if (src[index].type === "newline") {
-        index++;
-        continue;
-      }
+      // if (src[index].type === "newline") {
+      //   index++;
+      //   continue;
+      // }
       // console.dir({ msg: "parseExpr 2", index, src: src[index], context });
 
       let [nextIndex, group, _errors] = parseGroup(context)(src, index);

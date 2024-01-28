@@ -114,11 +114,7 @@ describe("expressions", () => {
     it(...treeTestCaseArgs("++i"));
     it(...treeTestCaseArgs("-(a+b)"));
 
-    it(
-      ...treeTestCaseArgs(
-        "(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1"
-      )
-    );
+    it(...treeTestCaseArgs("(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1"));
   });
 
   describe("boolean expressions", () => {
@@ -170,9 +166,7 @@ describe("expressions", () => {
         });
       }
 
-      for (const [op1, op2] of Iterator.iter(comparators).flatMap((pair) =>
-        Iterator.iter(pair).power(2)
-      )) {
+      for (const [op1, op2] of Iterator.iter(comparators).flatMap((pair) => Iterator.iter(pair).power(2))) {
         test(`range ${op1} ${op2}`, () => {
           const src = `123 ${op1} x ${op2} 456`;
           treeTestCase(src);
@@ -225,20 +219,29 @@ describe("expressions", () => {
   });
 
   describe("pattern matching", () => {
-    test.todo("match", () => {
+    test("match", () => {
       const src = `match x { 1 -> 2; 3 -> 4 }`;
+      treeTestCase(src);
     });
 
-    test.todo("in function parameters", () => {
+    test("match newline inside", () => {
+      const src = `match x { 1 -> 2\n 3 -> 4 }`;
+      treeTestCase(src);
+    });
+
+    test("in function parameters", () => {
       const src = `(x, y) -> x + y`;
+      treeTestCase(src);
     });
 
-    test.todo("with 'is' operator", () => {
+    test("with 'is' operator", () => {
       const src = `x is (a, b)`;
+      treeTestCase(src);
     });
 
-    test.todo("with placeholder", () => {
+    test("with placeholder", () => {
       const src = `x is (_, b)`;
+      treeTestCase(src);
     });
   });
 
