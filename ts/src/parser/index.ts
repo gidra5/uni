@@ -110,6 +110,8 @@ const scope: Scope = {
   exportAs: { separators: matchSeparators(["export"], ["as"]), precedence: [null, 1] },
   external: { separators: matchSeparators(["external"]), precedence: [null, 1] },
   label: { separators: matchSeparators([":"]), precedence: [2, 2] },
+  operator: { separators: matchSeparators(["operator"]), precedence: [null, 1] },
+  operatorPrecedence: { separators: matchSeparators(["operator"], ["precedence"]), precedence: [null, 1] },
   negate: {
     separators: matchSeparators(["-"]),
     precedence: [null, Number.MAX_SAFE_INTEGER],
@@ -131,18 +133,7 @@ const scope: Scope = {
     precedence: [3, null],
   },
   parens: {
-    separators:
-      (context) =>
-      (src, i = 0) => {
-        let index = i;
-        if (!src[index]) return [i, "noMatch", []];
-        if (src[index].src === "(") {
-          index++;
-          if (src[index]?.type === "newline") index++;
-          if (src[index]?.src === ")") return [index + 1, "done", []];
-        }
-        return matchSeparators(["("], [")"])(context)(src, i);
-      },
+    separators: matchSeparators(["("], [")"]),
     precedence: [null, null],
   },
   brackets: {
@@ -474,19 +465,20 @@ export const parseExpr: TokenParserWithContext<AbstractSyntaxTree> =
     return [index, context.lhs, errors];
   };
 
-export const parse: TokenParser<AbstractSyntaxTree, true> = (src, i = 0) => {
-  const children: AbstractSyntaxTree[] = [];
-  const errors: ParsingError[] = [];
-  let index = i;
-  const context = defaultParsingContext();
+export const parse =
+  (context = defaultParsingContext()): TokenParser<AbstractSyntaxTree, true> =>
+  (src, i = 0) => {
+    const children: AbstractSyntaxTree[] = [];
+    const errors: ParsingError[] = [];
+    let index = i;
 
-  while (src[index]) {
-    const [_index, astNode, _errors] = parseExpr(context)(src, index);
+    while (src[index]) {
+      const [_index, astNode, _errors] = parseExpr(context)(src, index);
 
-    index = _index;
-    children.push(astNode);
-    errors.push(..._errors);
-  }
+      index = _index;
+      children.push(astNode);
+      errors.push(..._errors);
+    }
 
-  return [{ name: "program", children }, []];
-};
+    return [{ name: "program", children }, []];
+  };

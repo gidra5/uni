@@ -4,7 +4,7 @@ import { Iterator } from "iterator-js";
 import { infixArithmeticOps, prefixArithmeticOps } from "../../src/parser";
 import { group, infix, name, number, placeholder, prefix, string } from "../../src/parser/ast";
 import { matchSeparators } from "../../src/parser/utils";
-import { treeTestCase, treeTestCaseArgs } from "./utils";
+import { exampleTestCase, treeTestCase, treeTestCaseArgs } from "./utils";
 
 describe("comments", () => {
   test("comment", () => {
@@ -486,6 +486,18 @@ describe("programs", () => {
       const src = `export args -> {}`;
       treeTestCase(src);
     });
+    test("operator", () => {
+      const src = `operator _+_ := fn x, y -> x + y`;
+      treeTestCase(src);
+    });
+    test("operator with precedence", () => {
+      const src = `operator _+_ precedence 1 := fn x, y -> x + y`;
+      treeTestCase(src);
+    });
+    test("operator with tuple precedence", () => {
+      const src = `operator _+_ precedence 1, 2 := fn x, y -> x + y`;
+      treeTestCase(src);
+    });
   });
 });
 
@@ -513,5 +525,133 @@ describe("newline handling", () => {
   test("block semicolon newline at the end", () => {
     const src = `{ a := 1;\n b := 2;\n }`;
     treeTestCase(src);
+  });
+});
+
+describe("examples", () => {
+  describe("procedural", () => {
+    test("hello world", () => {
+      const src = `
+        external println
+        export args -> {
+          println "Hello, World!"
+        }`;
+      exampleTestCase(src);
+    });
+
+    test("fibonacci", () => {
+      const src = `
+        export fib = n -> {
+          if n < 2
+            1
+          else
+            fib n-1 + fib n-2
+        }`;
+
+      exampleTestCase(src);
+    });
+
+    test("quick sort", () => {
+      const src = `
+        export quicksort = xs -> {
+          if xs == ()
+            return ()
+          
+          (pivot, ...rest) := xs
+          smaller := for x in rest: if x < pivot: x
+          bigger := for x in rest: if x >= pivot: x
+          return (...quicksort smaller, pivot, ...quicksort bigger)
+        }`;
+
+      exampleTestCase(src);
+    });
+  });
+
+  describe("functional", () => {
+    test("option", () => {
+      const src = `
+        export none := fn some, none -> none
+        export some := value -> fn some, none -> some value
+        export map := fn f, option -> match option {
+          none -> none
+          some value -> some (f value)
+        }
+        export unwrap := fn option, default -> match option {
+          none -> default
+          some value -> value
+        }
+        export flat_map := fn f, option -> match option {
+          none -> none
+          some value -> f value
+        }
+      `;
+      exampleTestCase(src);
+    });
+
+    test("result", () => {
+      const src = `
+        export ok := value -> fn ok, err -> ok value
+        export err := value -> fn ok, err -> err value
+        export map := fn f, result ->
+          if result is ok value: ok (f value) else: result
+        export unwrap := fn result, default ->
+          if result is ok value: value else: default
+        export flat_map := fn f, result ->
+          if result is ok value: f value else: result
+      `;
+      exampleTestCase(src);
+    });
+
+    test("tuple", () => {
+      const src = `
+        export tuple := fn x, y -> fn match -> match x y
+        export first := fn tuple -> tuple (fn x, y -> x)
+        export second := fn tuple -> tuple (fn x, y -> y)
+      `;
+      exampleTestCase(src);
+    });
+
+    test("list", () => {
+      const src = `
+        symbol EmptyList
+        export nil := fn cons, nil -> nil
+        export cons := fn x, xs -> fn cons, nil -> cons x xs
+        export head := fn list -> list (fn x, xs -> x) EmptyList
+        export tail := fn list -> list (fn x, xs -> xs) EmptyList
+        export map := fn f, list -> list (fn x, xs -> cons (f x) (map f xs)) nil
+      `;
+      exampleTestCase(src);
+    });
+
+    test.todo("map", () => {
+      const src = `
+        symbol NotFound
+        export empty := fn entry, empty -> empty
+        export entry := fn key, value, rest -> fn entry, empty -> entry key value rest
+        export find := fn key, map -> map
+          (fn _key, value, rest ->
+            if key == _key: value else find key rest
+          )
+          NotFound
+        export insert := fn key, value, map -> entry key value (remove key map)
+        export remove := fn key, map -> map
+          (fn _key, value, rest ->
+            if key == _key: rest else remove key rest
+          )
+          empty
+        operator _[_] = fn map, key -> find key map
+      `;
+      exampleTestCase(src);
+    });
+  });
+
+  test.todo("prototype", () => {
+    const src = `
+      symbol Prototype
+      operator _._ = fn value, name -> 
+        if value[name] is some value: value
+        else accessor value[Prototype] name
+    `;
+    exampleTestCase(src);
   });
 });

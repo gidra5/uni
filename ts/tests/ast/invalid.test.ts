@@ -2,7 +2,7 @@ import { describe, expect } from "vitest";
 import { it } from "@fast-check/vitest";
 import { parseString } from "../../src/parser/string.js";
 
-describe.skip("parsing", () => {
+describe.todo("parsing", () => {
   const testCase = (src, expectedErrors, _it: any = it) =>
     _it(`finds all errors in example '${src}'`, () => {
       const [tree, errors] = parseString(src);
