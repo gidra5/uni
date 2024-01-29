@@ -551,7 +551,7 @@ describe("examples", () => {
       exampleTestCase(src);
     });
 
-    test("quick sort", () => {
+    test("quick sort recursive", () => {
       const src = `
         export quicksort = xs -> {
           if xs == ()
@@ -561,6 +561,19 @@ describe("examples", () => {
           smaller := for x in rest: if x < pivot: x
           bigger := for x in rest: if x >= pivot: x
           return (...quicksort smaller, pivot, ...quicksort bigger)
+        }`;
+
+      exampleTestCase(src);
+    });
+
+    test("bubble sort imperative", () => {
+      const src = `
+        export bubblesort = fn mut list -> {
+          for i in range 0 list.length:
+          for j in range 0 (list.length - i - 1):
+          if list[j] > list[j+1]:
+            list[j], list[j+1] = list[j+1], list[j]
+          return list
         }`;
 
       exampleTestCase(src);
