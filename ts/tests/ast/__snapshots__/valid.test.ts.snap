@@ -16,14 +16,244 @@ exports[`comments > comment block 1`] = `
 }
 `;
 
-exports[`expressions > arithmetics > add 1`] = `
+exports[`examples > procedural > fibonacci 1`] = `
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "+",
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "name",
+              "value": "fib",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "name",
+                  "value": "n",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "name": "name",
+                                  "value": "n",
+                                },
+                                {
+                                  "children": [],
+                                  "name": "number",
+                                  "value": 2,
+                                },
+                              ],
+                              "name": "operator",
+                              "value": "<",
+                            },
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "name": "number",
+                                  "value": 1,
+                                },
+                                {
+                                  "children": [],
+                                  "name": "placeholder",
+                                },
+                              ],
+                              "name": "operator",
+                              "value": ";",
+                            },
+                            {
+                              "children": [
+                                {
+                                  "children": [
+                                    {
+                                      "children": [],
+                                      "name": "name",
+                                      "value": "fib",
+                                    },
+                                    {
+                                      "children": [
+                                        {
+                                          "children": [
+                                            {
+                                              "children": [],
+                                              "name": "name",
+                                              "value": "n",
+                                            },
+                                            {
+                                              "children": [],
+                                              "name": "number",
+                                              "value": 1,
+                                            },
+                                          ],
+                                          "name": "operator",
+                                          "value": "-",
+                                        },
+                                      ],
+                                      "name": "group",
+                                      "value": "parens",
+                                    },
+                                  ],
+                                  "name": "operator",
+                                  "value": "application",
+                                },
+                                {
+                                  "children": [
+                                    {
+                                      "children": [],
+                                      "name": "name",
+                                      "value": "fib",
+                                    },
+                                    {
+                                      "children": [
+                                        {
+                                          "children": [
+                                            {
+                                              "children": [],
+                                              "name": "name",
+                                              "value": "n",
+                                            },
+                                            {
+                                              "children": [],
+                                              "name": "number",
+                                              "value": 2,
+                                            },
+                                          ],
+                                          "name": "operator",
+                                          "value": "-",
+                                        },
+                                      ],
+                                      "name": "group",
+                                      "value": "parens",
+                                    },
+                                  ],
+                                  "name": "operator",
+                                  "value": "application",
+                                },
+                              ],
+                              "name": "operator",
+                              "value": "+",
+                            },
+                          ],
+                          "name": "operator",
+                          "value": "ifElse",
+                        },
+                        {
+                          "children": [],
+                          "name": "placeholder",
+                        },
+                      ],
+                      "name": "operator",
+                      "value": ";",
+                    },
+                  ],
+                  "name": "group",
+                  "value": "braces",
+                },
+              ],
+              "name": "operator",
+              "value": "->",
+            },
+          ],
+          "name": "operator",
+          "value": ":=",
+        },
+      ],
+      "name": "operator",
+      "value": "export",
     },
+  ],
+  "name": "program",
+}
+`;
+
+exports[`examples > procedural > hello world 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "name",
+              "value": "println",
+            },
+          ],
+          "name": "operator",
+          "value": "external",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "name",
+                  "value": "args",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "children": [],
+                              "name": "name",
+                              "value": "println",
+                            },
+                            {
+                              "children": [],
+                              "name": "string",
+                              "value": "Hello, World!",
+                            },
+                          ],
+                          "name": "operator",
+                          "value": "application",
+                        },
+                        {
+                          "children": [],
+                          "name": "placeholder",
+                        },
+                      ],
+                      "name": "operator",
+                      "value": ";",
+                    },
+                  ],
+                  "name": "group",
+                  "value": "braces",
+                },
+              ],
+              "name": "operator",
+              "value": "->",
+            },
+          ],
+          "name": "operator",
+          "value": "export",
+        },
+      ],
+      "name": "operator",
+      "value": ";",
+    },
+  ],
+  "name": "program",
+}
+`;
+
+exports[`expressions > arithmetics > add 1`] = `
+{
+  "children": [
     {
       "children": [],
       "name": "number",
@@ -35,7 +265,8 @@ exports[`expressions > arithmetics > add 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "+",
 }
 `;
 
@@ -44,16 +275,12 @@ exports[`expressions > arithmetics > decrement 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "prefixDecrement",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "prefixDecrement",
 }
 `;
 
@@ -62,11 +289,6 @@ exports[`expressions > arithmetics > divide 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "/",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -76,7 +298,8 @@ exports[`expressions > arithmetics > divide 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "/",
 }
 `;
 
@@ -85,16 +308,12 @@ exports[`expressions > arithmetics > increment 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "prefixIncrement",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "prefixIncrement",
 }
 `;
 
@@ -103,11 +322,6 @@ exports[`expressions > arithmetics > modulo 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "%",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -117,7 +331,8 @@ exports[`expressions > arithmetics > modulo 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "%",
 }
 `;
 
@@ -126,11 +341,6 @@ exports[`expressions > arithmetics > multiply 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "*",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -140,7 +350,8 @@ exports[`expressions > arithmetics > multiply 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "*",
 }
 `;
 
@@ -149,16 +360,12 @@ exports[`expressions > arithmetics > negate 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "negate",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "negate",
 }
 `;
 
@@ -167,16 +374,12 @@ exports[`expressions > arithmetics > postfix decrement 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "postfixDecrement",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
   ],
-  "name": "postfix",
+  "name": "operator",
+  "value": "postfixDecrement",
 }
 `;
 
@@ -185,27 +388,18 @@ exports[`expressions > arithmetics > postfix increment 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "postfixIncrement",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
   ],
-  "name": "postfix",
+  "name": "operator",
+  "value": "postfixIncrement",
 }
 `;
 
 exports[`expressions > arithmetics > power 1`] = `
 {
   "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": "^",
-    },
     {
       "children": [],
       "name": "number",
@@ -217,7 +411,8 @@ exports[`expressions > arithmetics > power 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "^",
 }
 `;
 
@@ -225,68 +420,23 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "+",
-    },
-    {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "+",
-        },
         {
           "children": [
             {
-              "children": [],
-              "name": "group",
-              "value": "+",
-            },
-            {
               "children": [
-                {
-                  "children": [],
-                  "name": "group",
-                  "value": "-",
-                },
                 {
                   "children": [
                     {
-                      "children": [],
-                      "name": "group",
-                      "value": "+",
-                    },
-                    {
                       "children": [
-                        {
-                          "children": [],
-                          "name": "group",
-                          "value": "-",
-                        },
                         {
                           "children": [
                             {
                               "children": [
                                 {
-                                  "children": [],
-                                  "name": "group",
-                                  "value": "+",
-                                },
-                                {
                                   "children": [
                                     {
-                                      "children": [],
-                                      "name": "group",
-                                      "value": "-",
-                                    },
-                                    {
                                       "children": [
-                                        {
-                                          "children": [],
-                                          "name": "group",
-                                          "value": "^",
-                                        },
                                         {
                                           "children": [],
                                           "name": "number",
@@ -298,7 +448,8 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                                           "value": 2,
                                         },
                                       ],
-                                      "name": "infix",
+                                      "name": "operator",
+                                      "value": "^",
                                     },
                                     {
                                       "children": [],
@@ -306,7 +457,8 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                                       "value": 5,
                                     },
                                   ],
-                                  "name": "infix",
+                                  "name": "operator",
+                                  "value": "-",
                                 },
                                 {
                                   "children": [],
@@ -314,7 +466,8 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                                   "value": 7,
                                 },
                               ],
-                              "name": "infix",
+                              "name": "operator",
+                              "value": "+",
                             },
                           ],
                           "name": "group",
@@ -326,31 +479,23 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                               "children": [
                                 {
                                   "children": [],
-                                  "name": "group",
-                                  "value": "negate",
-                                },
-                                {
-                                  "children": [],
                                   "name": "name",
                                   "value": "i",
                                 },
                               ],
-                              "name": "prefix",
+                              "name": "operator",
+                              "value": "negate",
                             },
                           ],
                           "name": "group",
                           "value": "parens",
                         },
                       ],
-                      "name": "infix",
+                      "name": "operator",
+                      "value": "-",
                     },
                     {
                       "children": [
-                        {
-                          "children": [],
-                          "name": "group",
-                          "value": "/",
-                        },
                         {
                           "children": [
                             {
@@ -368,18 +513,15 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                           "value": 0,
                         },
                       ],
-                      "name": "infix",
+                      "name": "operator",
+                      "value": "/",
                     },
                   ],
-                  "name": "infix",
+                  "name": "operator",
+                  "value": "+",
                 },
                 {
                   "children": [
-                    {
-                      "children": [],
-                      "name": "group",
-                      "value": "*",
-                    },
                     {
                       "children": [],
                       "name": "number",
@@ -391,11 +533,6 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                           "children": [
                             {
                               "children": [],
-                              "name": "group",
-                              "value": "*",
-                            },
-                            {
-                              "children": [],
                               "name": "number",
                               "value": 1,
                             },
@@ -405,34 +542,27 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                               "value": "f",
                             },
                           ],
-                          "name": "infix",
+                          "name": "operator",
+                          "value": "*",
                         },
                       ],
                       "name": "group",
                       "value": "parens",
                     },
                   ],
-                  "name": "infix",
+                  "name": "operator",
+                  "value": "*",
                 },
               ],
-              "name": "infix",
+              "name": "operator",
+              "value": "-",
             },
             {
               "children": [
                 {
-                  "children": [],
-                  "name": "group",
-                  "value": "/",
-                },
-                {
                   "children": [
                     {
                       "children": [
-                        {
-                          "children": [],
-                          "name": "group",
-                          "value": "-",
-                        },
                         {
                           "children": [],
                           "name": "number",
@@ -444,7 +574,8 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                           "value": "x",
                         },
                       ],
-                      "name": "infix",
+                      "name": "operator",
+                      "value": "-",
                     },
                   ],
                   "name": "group",
@@ -456,18 +587,15 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                   "value": "q",
                 },
               ],
-              "name": "infix",
+              "name": "operator",
+              "value": "/",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "+",
         },
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "application",
-            },
             {
               "children": [],
               "name": "name",
@@ -478,47 +606,17 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                 {
                   "children": [
                     {
-                      "children": [],
-                      "name": "group",
-                      "value": ",",
-                    },
-                    {
                       "children": [
-                        {
-                          "children": [],
-                          "name": "group",
-                          "value": ",",
-                        },
                         {
                           "children": [
                             {
-                              "children": [],
-                              "name": "group",
-                              "value": ",",
-                            },
-                            {
                               "children": [
                                 {
-                                  "children": [],
-                                  "name": "group",
-                                  "value": "/",
-                                },
-                                {
                                   "children": [
-                                    {
-                                      "children": [],
-                                      "name": "group",
-                                      "value": "negate",
-                                    },
                                     {
                                       "children": [
                                         {
                                           "children": [
-                                            {
-                                              "children": [],
-                                              "name": "group",
-                                              "value": "+",
-                                            },
                                             {
                                               "children": [],
                                               "name": "number",
@@ -530,14 +628,16 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                                               "value": 7,
                                             },
                                           ],
-                                          "name": "infix",
+                                          "name": "operator",
+                                          "value": "+",
                                         },
                                       ],
                                       "name": "group",
                                       "value": "parens",
                                     },
                                   ],
-                                  "name": "prefix",
+                                  "name": "operator",
+                                  "value": "negate",
                                 },
                                 {
                                   "children": [],
@@ -545,7 +645,8 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                                   "value": "A",
                                 },
                               ],
-                              "name": "infix",
+                              "name": "operator",
+                              "value": "/",
                             },
                             {
                               "children": [],
@@ -553,7 +654,8 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                               "value": "j",
                             },
                           ],
-                          "name": "infix",
+                          "name": "operator",
+                          "value": ",",
                         },
                         {
                           "children": [],
@@ -561,7 +663,8 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                           "value": "i",
                         },
                       ],
-                      "name": "infix",
+                      "name": "operator",
+                      "value": ",",
                     },
                     {
                       "children": [],
@@ -569,27 +672,25 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                       "value": 127,
                     },
                   ],
-                  "name": "infix",
+                  "name": "operator",
+                  "value": ",",
                 },
               ],
               "name": "group",
               "value": "parens",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "application",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "+",
     },
     {
       "children": [
         {
           "children": [],
-          "name": "group",
-          "value": "/",
-        },
-        {
-          "children": [],
           "name": "number",
           "value": 1,
         },
@@ -599,10 +700,12 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
           "value": 1,
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "/",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "+",
 }
 `;
 
@@ -611,16 +714,12 @@ exports[`expressions > arithmetics > produces correct tree for '++i' 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "prefixIncrement",
-    },
-    {
-      "children": [],
       "name": "name",
       "value": "i",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "prefixIncrement",
 }
 `;
 
@@ -628,19 +727,9 @@ exports[`expressions > arithmetics > produces correct tree for '-(a+b)' 1`] = `
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "negate",
-    },
-    {
       "children": [
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "+",
-            },
             {
               "children": [],
               "name": "name",
@@ -652,14 +741,16 @@ exports[`expressions > arithmetics > produces correct tree for '-(a+b)' 1`] = `
               "value": "b",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "+",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "negate",
 }
 `;
 
@@ -668,16 +759,12 @@ exports[`expressions > arithmetics > produces correct tree for '--i' 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "prefixDecrement",
-    },
-    {
-      "children": [],
       "name": "name",
       "value": "i",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "prefixDecrement",
 }
 `;
 
@@ -686,28 +773,13 @@ exports[`expressions > arithmetics > produces correct tree for '1 + 2^3 * 4' 1`]
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "+",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 1,
     },
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": "*",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "^",
-            },
             {
               "children": [],
               "name": "number",
@@ -719,7 +791,8 @@ exports[`expressions > arithmetics > produces correct tree for '1 + 2^3 * 4' 1`]
               "value": 3,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "^",
         },
         {
           "children": [],
@@ -727,10 +800,12 @@ exports[`expressions > arithmetics > produces correct tree for '1 + 2^3 * 4' 1`]
           "value": 4,
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "*",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "+",
 }
 `;
 
@@ -739,11 +814,6 @@ exports[`expressions > arithmetics > subtract 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "-",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -753,7 +823,8 @@ exports[`expressions > arithmetics > subtract 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "-",
 }
 `;
 
@@ -762,11 +833,6 @@ exports[`expressions > boolean expressions > and 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "and",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -776,7 +842,8 @@ exports[`expressions > boolean expressions > and 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "and",
 }
 `;
 
@@ -785,11 +852,6 @@ exports[`expressions > boolean expressions > comparators > comparator < 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "<",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -799,7 +861,8 @@ exports[`expressions > boolean expressions > comparators > comparator < 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "<",
 }
 `;
 
@@ -808,11 +871,6 @@ exports[`expressions > boolean expressions > comparators > comparator <= 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "<=",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -822,7 +880,8 @@ exports[`expressions > boolean expressions > comparators > comparator <= 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "<=",
 }
 `;
 
@@ -831,11 +890,6 @@ exports[`expressions > boolean expressions > comparators > comparator > 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": ">",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -845,7 +899,8 @@ exports[`expressions > boolean expressions > comparators > comparator > 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": ">",
 }
 `;
 
@@ -854,11 +909,6 @@ exports[`expressions > boolean expressions > comparators > comparator >= 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": ">=",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -868,7 +918,8 @@ exports[`expressions > boolean expressions > comparators > comparator >= 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": ">=",
 }
 `;
 
@@ -876,20 +927,14 @@ exports[`expressions > boolean expressions > comparators > range < < 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-      ],
-      "name": "group",
-      "value": "inRange_<_<",
-    },
-    {
       "children": [],
       "name": "number",
       "value": 123,
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
     },
     {
       "children": [],
@@ -897,7 +942,8 @@ exports[`expressions > boolean expressions > comparators > range < < 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "inRange_<_<",
 }
 `;
 
@@ -905,20 +951,14 @@ exports[`expressions > boolean expressions > comparators > range < <= 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-      ],
-      "name": "group",
-      "value": "inRange_<_<=",
-    },
-    {
       "children": [],
       "name": "number",
       "value": 123,
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
     },
     {
       "children": [],
@@ -926,7 +966,8 @@ exports[`expressions > boolean expressions > comparators > range < <= 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "inRange_<_<=",
 }
 `;
 
@@ -934,20 +975,14 @@ exports[`expressions > boolean expressions > comparators > range <= < 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-      ],
-      "name": "group",
-      "value": "inRange_<=_<",
-    },
-    {
       "children": [],
       "name": "number",
       "value": 123,
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
     },
     {
       "children": [],
@@ -955,7 +990,8 @@ exports[`expressions > boolean expressions > comparators > range <= < 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "inRange_<=_<",
 }
 `;
 
@@ -963,20 +999,14 @@ exports[`expressions > boolean expressions > comparators > range <= <= 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-      ],
-      "name": "group",
-      "value": "inRange_<=_<=",
-    },
-    {
       "children": [],
       "name": "number",
       "value": 123,
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
     },
     {
       "children": [],
@@ -984,7 +1014,8 @@ exports[`expressions > boolean expressions > comparators > range <= <= 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "inRange_<=_<=",
 }
 `;
 
@@ -992,20 +1023,14 @@ exports[`expressions > boolean expressions > comparators > range > > 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-      ],
-      "name": "group",
-      "value": "inRange_>_>",
-    },
-    {
       "children": [],
       "name": "number",
       "value": 123,
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
     },
     {
       "children": [],
@@ -1013,7 +1038,8 @@ exports[`expressions > boolean expressions > comparators > range > > 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "inRange_>_>",
 }
 `;
 
@@ -1021,20 +1047,14 @@ exports[`expressions > boolean expressions > comparators > range > >= 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-      ],
-      "name": "group",
-      "value": "inRange_>_>=",
-    },
-    {
       "children": [],
       "name": "number",
       "value": 123,
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
     },
     {
       "children": [],
@@ -1042,7 +1062,8 @@ exports[`expressions > boolean expressions > comparators > range > >= 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "inRange_>_>=",
 }
 `;
 
@@ -1050,20 +1071,14 @@ exports[`expressions > boolean expressions > comparators > range >= > 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-      ],
-      "name": "group",
-      "value": "inRange_>=_>",
-    },
-    {
       "children": [],
       "name": "number",
       "value": 123,
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
     },
     {
       "children": [],
@@ -1071,7 +1086,8 @@ exports[`expressions > boolean expressions > comparators > range >= > 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "inRange_>=_>",
 }
 `;
 
@@ -1079,20 +1095,14 @@ exports[`expressions > boolean expressions > comparators > range >= >= 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-      ],
-      "name": "group",
-      "value": "inRange_>=_>=",
-    },
-    {
       "children": [],
       "name": "number",
       "value": 123,
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
     },
     {
       "children": [],
@@ -1100,7 +1110,8 @@ exports[`expressions > boolean expressions > comparators > range >= >= 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "inRange_>=_>=",
 }
 `;
 
@@ -1109,11 +1120,6 @@ exports[`expressions > boolean expressions > deep equal 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "===",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -1123,7 +1129,8 @@ exports[`expressions > boolean expressions > deep equal 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "===",
 }
 `;
 
@@ -1132,11 +1139,6 @@ exports[`expressions > boolean expressions > deep not equal 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "!==",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -1146,7 +1148,8 @@ exports[`expressions > boolean expressions > deep not equal 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "!==",
 }
 `;
 
@@ -1155,11 +1158,6 @@ exports[`expressions > boolean expressions > equal 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "==",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -1169,7 +1167,8 @@ exports[`expressions > boolean expressions > equal 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "==",
 }
 `;
 
@@ -1178,11 +1177,6 @@ exports[`expressions > boolean expressions > in 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "in",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -1192,7 +1186,8 @@ exports[`expressions > boolean expressions > in 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "in",
 }
 `;
 
@@ -1201,11 +1196,6 @@ exports[`expressions > boolean expressions > is 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "is",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -1215,7 +1205,8 @@ exports[`expressions > boolean expressions > is 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "is",
 }
 `;
 
@@ -1224,16 +1215,12 @@ exports[`expressions > boolean expressions > not 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "not",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "!",
 }
 `;
 
@@ -1242,11 +1229,6 @@ exports[`expressions > boolean expressions > not equal 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "!=",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -1256,7 +1238,8 @@ exports[`expressions > boolean expressions > not equal 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "!=",
 }
 `;
 
@@ -1265,11 +1248,6 @@ exports[`expressions > boolean expressions > or 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "or",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
@@ -1279,18 +1257,14 @@ exports[`expressions > boolean expressions > or 1`] = `
       "value": 456,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "or",
 }
 `;
 
 exports[`expressions > data structures > field access 1`] = `
 {
   "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": "access",
-    },
     {
       "children": [],
       "name": "name",
@@ -1302,7 +1276,8 @@ exports[`expressions > data structures > field access 1`] = `
       "value": "y",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "access",
 }
 `;
 
@@ -1310,23 +1285,18 @@ exports[`expressions > data structures > field access dynamic 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "y",
-        },
-      ],
-      "name": "group",
-      "value": "accessDynamic",
-    },
-    {
       "children": [],
       "name": "name",
       "value": "x",
     },
+    {
+      "children": [],
+      "name": "name",
+      "value": "y",
+    },
   ],
-  "name": "postfix",
+  "name": "operator",
+  "value": "accessDynamic",
 }
 `;
 
@@ -1340,17 +1310,7 @@ exports[`expressions > data structures > map 1`] = `
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": ";",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "label",
-            },
             {
               "children": [],
               "name": "number",
@@ -1362,15 +1322,11 @@ exports[`expressions > data structures > map 1`] = `
               "value": 2,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "label",
         },
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "label",
-            },
             {
               "children": [],
               "name": "number",
@@ -1382,10 +1338,12 @@ exports[`expressions > data structures > map 1`] = `
               "value": 4,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "label",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ";",
     },
   ],
   "name": "group",
@@ -1399,47 +1357,17 @@ exports[`expressions > data structures > produces correct tree for '(-(2+7)/A,j,
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": ",",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ",",
-            },
             {
               "children": [
                 {
-                  "children": [],
-                  "name": "group",
-                  "value": ",",
-                },
-                {
                   "children": [
                     {
-                      "children": [],
-                      "name": "group",
-                      "value": "/",
-                    },
-                    {
                       "children": [
-                        {
-                          "children": [],
-                          "name": "group",
-                          "value": "negate",
-                        },
                         {
                           "children": [
                             {
                               "children": [
-                                {
-                                  "children": [],
-                                  "name": "group",
-                                  "value": "+",
-                                },
                                 {
                                   "children": [],
                                   "name": "number",
@@ -1451,14 +1379,16 @@ exports[`expressions > data structures > produces correct tree for '(-(2+7)/A,j,
                                   "value": 7,
                                 },
                               ],
-                              "name": "infix",
+                              "name": "operator",
+                              "value": "+",
                             },
                           ],
                           "name": "group",
                           "value": "parens",
                         },
                       ],
-                      "name": "prefix",
+                      "name": "operator",
+                      "value": "negate",
                     },
                     {
                       "children": [],
@@ -1466,7 +1396,8 @@ exports[`expressions > data structures > produces correct tree for '(-(2+7)/A,j,
                       "value": "A",
                     },
                   ],
-                  "name": "infix",
+                  "name": "operator",
+                  "value": "/",
                 },
                 {
                   "children": [],
@@ -1474,7 +1405,8 @@ exports[`expressions > data structures > produces correct tree for '(-(2+7)/A,j,
                   "value": "j",
                 },
               ],
-              "name": "infix",
+              "name": "operator",
+              "value": ",",
             },
             {
               "children": [],
@@ -1482,7 +1414,8 @@ exports[`expressions > data structures > produces correct tree for '(-(2+7)/A,j,
               "value": "i",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
         {
           "children": [],
@@ -1490,7 +1423,8 @@ exports[`expressions > data structures > produces correct tree for '(-(2+7)/A,j,
           "value": 127,
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ",",
     },
   ],
   "name": "group",
@@ -1508,17 +1442,7 @@ exports[`expressions > data structures > record 1`] = `
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": ";",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "label",
-            },
             {
               "children": [],
               "name": "name",
@@ -1530,15 +1454,11 @@ exports[`expressions > data structures > record 1`] = `
               "value": 1,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "label",
         },
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "label",
-            },
             {
               "children": [],
               "name": "name",
@@ -1550,10 +1470,12 @@ exports[`expressions > data structures > record 1`] = `
               "value": 2,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "label",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ";",
     },
   ],
   "name": "group",
@@ -1572,11 +1494,6 @@ exports[`expressions > data structures > set 1`] = `
       "children": [
         {
           "children": [],
-          "name": "group",
-          "value": ";",
-        },
-        {
-          "children": [],
           "name": "number",
           "value": 1,
         },
@@ -1586,7 +1503,8 @@ exports[`expressions > data structures > set 1`] = `
           "value": 2,
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ";",
     },
   ],
   "name": "group",
@@ -1599,27 +1517,18 @@ exports[`expressions > data structures > symbol 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "symbol",
-    },
-    {
-      "children": [],
       "name": "name",
       "value": "x",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "symbol",
 }
 `;
 
 exports[`expressions > data structures > tuple 1`] = `
 {
   "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": ",",
-    },
     {
       "children": [],
       "name": "number",
@@ -1631,13 +1540,19 @@ exports[`expressions > data structures > tuple 1`] = `
       "value": 2,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": ",",
 }
 `;
 
 exports[`expressions > data structures > unit 1`] = `
 {
-  "children": [],
+  "children": [
+    {
+      "children": [],
+      "name": "placeholder",
+    },
+  ],
   "name": "group",
   "value": "parens",
 }
@@ -1662,9 +1577,23 @@ exports[`expressions > fixity expressions > infix 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "+",
+      "name": "number",
+      "value": 123,
     },
+    {
+      "children": [],
+      "name": "number",
+      "value": 456,
+    },
+  ],
+  "name": "operator",
+  "value": "+",
+}
+`;
+
+exports[`expressions > fixity expressions > mixfix 1`] = `
+{
+  "children": [
     {
       "children": [],
       "name": "number",
@@ -1675,37 +1604,14 @@ exports[`expressions > fixity expressions > infix 1`] = `
       "name": "number",
       "value": 456,
     },
-  ],
-  "name": "infix",
-}
-`;
-
-exports[`expressions > fixity expressions > mixfix 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "number",
-          "value": 456,
-        },
-      ],
-      "name": "group",
-      "value": "inRange_<_<",
-    },
-    {
-      "children": [],
-      "name": "number",
-      "value": 123,
-    },
     {
       "children": [],
       "name": "number",
       "value": 789,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "inRange_<_<",
 }
 `;
 
@@ -1722,16 +1628,12 @@ exports[`expressions > fixity expressions > postfix 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "postfixDecrement",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
   ],
-  "name": "postfix",
+  "name": "operator",
+  "value": "postfixDecrement",
 }
 `;
 
@@ -1740,27 +1642,18 @@ exports[`expressions > fixity expressions > prefix 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "negate",
-    },
-    {
-      "children": [],
       "name": "number",
       "value": 123,
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "negate",
 }
 `;
 
 exports[`expressions > function expressions > application > function call 1`] = `
 {
   "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": "application",
-    },
     {
       "children": [],
       "name": "name",
@@ -1772,7 +1665,8 @@ exports[`expressions > function expressions > application > function call 1`] = 
       "value": "x",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "application",
 }
 `;
 
@@ -1780,17 +1674,7 @@ exports[`expressions > function expressions > application > function call multip
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "application",
-    },
-    {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "application",
-        },
         {
           "children": [],
           "name": "name",
@@ -1802,7 +1686,8 @@ exports[`expressions > function expressions > application > function call multip
           "value": "x",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "application",
     },
     {
       "children": [],
@@ -1810,7 +1695,8 @@ exports[`expressions > function expressions > application > function call multip
       "value": "y",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "application",
 }
 `;
 
@@ -1818,26 +1704,11 @@ exports[`expressions > function expressions > application > produces correct tre
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "application",
-    },
-    {
       "children": [
         {
           "children": [
             {
-              "children": [],
-              "name": "group",
-              "value": "application",
-            },
-            {
               "children": [
-                {
-                  "children": [],
-                  "name": "group",
-                  "value": "application",
-                },
                 {
                   "children": [],
                   "name": "name",
@@ -1849,7 +1720,8 @@ exports[`expressions > function expressions > application > produces correct tre
                   "value": 1,
                 },
               ],
-              "name": "infix",
+              "name": "operator",
+              "value": "application",
             },
             {
               "children": [],
@@ -1857,7 +1729,8 @@ exports[`expressions > function expressions > application > produces correct tre
               "value": 2,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "application",
         },
       ],
       "name": "group",
@@ -1867,11 +1740,6 @@ exports[`expressions > function expressions > application > produces correct tre
       "children": [
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ",",
-            },
             {
               "children": [],
               "name": "number",
@@ -1883,14 +1751,16 @@ exports[`expressions > function expressions > application > produces correct tre
               "value": 3,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "application",
 }
 `;
 
@@ -1898,19 +1768,9 @@ exports[`expressions > function expressions > application > produces correct tre
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "application",
-    },
-    {
       "children": [
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "application",
-            },
             {
               "children": [],
               "name": "name",
@@ -1922,7 +1782,8 @@ exports[`expressions > function expressions > application > produces correct tre
               "value": 1,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "application",
         },
       ],
       "name": "group",
@@ -1934,11 +1795,6 @@ exports[`expressions > function expressions > application > produces correct tre
           "children": [
             {
               "children": [],
-              "name": "group",
-              "value": ",",
-            },
-            {
-              "children": [],
               "name": "number",
               "value": 2,
             },
@@ -1948,25 +1804,22 @@ exports[`expressions > function expressions > application > produces correct tre
               "value": 3,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "application",
 }
 `;
 
 exports[`expressions > function expressions > application > produces correct tree for '(send)(2, 3)' 1`] = `
 {
   "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": "application",
-    },
     {
       "children": [
         {
@@ -1984,11 +1837,6 @@ exports[`expressions > function expressions > application > produces correct tre
           "children": [
             {
               "children": [],
-              "name": "group",
-              "value": ",",
-            },
-            {
-              "children": [],
               "name": "number",
               "value": 2,
             },
@@ -1998,25 +1846,22 @@ exports[`expressions > function expressions > application > produces correct tre
               "value": 3,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "application",
 }
 `;
 
 exports[`expressions > function expressions > application > produces correct tree for 'a + send (2, 3)' 1`] = `
 {
   "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": "+",
-    },
     {
       "children": [],
       "name": "name",
@@ -2026,11 +1871,6 @@ exports[`expressions > function expressions > application > produces correct tre
       "children": [
         {
           "children": [],
-          "name": "group",
-          "value": "application",
-        },
-        {
-          "children": [],
           "name": "name",
           "value": "send",
         },
@@ -2038,11 +1878,6 @@ exports[`expressions > function expressions > application > produces correct tre
           "children": [
             {
               "children": [
-                {
-                  "children": [],
-                  "name": "group",
-                  "value": ",",
-                },
                 {
                   "children": [],
                   "name": "number",
@@ -2054,17 +1889,20 @@ exports[`expressions > function expressions > application > produces correct tre
                   "value": 3,
                 },
               ],
-              "name": "infix",
+              "name": "operator",
+              "value": ",",
             },
           ],
           "name": "group",
           "value": "parens",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "application",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "+",
 }
 `;
 
@@ -2072,17 +1910,7 @@ exports[`expressions > function expressions > application > produces correct tre
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "+",
-    },
-    {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "+",
-        },
         {
           "children": [],
           "name": "name",
@@ -2090,11 +1918,6 @@ exports[`expressions > function expressions > application > produces correct tre
         },
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "application",
-            },
             {
               "children": [],
               "name": "name",
@@ -2106,10 +1929,12 @@ exports[`expressions > function expressions > application > produces correct tre
               "value": 1,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "application",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "+",
     },
     {
       "children": [],
@@ -2117,7 +1942,8 @@ exports[`expressions > function expressions > application > produces correct tre
       "value": 2,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "+",
 }
 `;
 
@@ -2125,17 +1951,7 @@ exports[`expressions > function expressions > application > produces correct tre
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "application",
-    },
-    {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "application",
-        },
         {
           "children": [],
           "name": "name",
@@ -2147,17 +1963,13 @@ exports[`expressions > function expressions > application > produces correct tre
           "value": 1,
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "application",
     },
     {
       "children": [
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ",",
-            },
             {
               "children": [],
               "name": "number",
@@ -2169,14 +1981,16 @@ exports[`expressions > function expressions > application > produces correct tre
               "value": 3,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "application",
 }
 `;
 
@@ -2184,17 +1998,7 @@ exports[`expressions > function expressions > application > produces correct tre
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "+",
-    },
-    {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "application",
-        },
         {
           "children": [],
           "name": "name",
@@ -2206,7 +2010,8 @@ exports[`expressions > function expressions > application > produces correct tre
           "value": 1,
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "application",
     },
     {
       "children": [],
@@ -2214,7 +2019,8 @@ exports[`expressions > function expressions > application > produces correct tre
       "value": 2,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "+",
 }
 `;
 
@@ -2222,17 +2028,7 @@ exports[`expressions > function expressions > application > produces correct tre
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "application",
-    },
-    {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "application",
-        },
         {
           "children": [],
           "name": "name",
@@ -2244,17 +2040,13 @@ exports[`expressions > function expressions > application > produces correct tre
           "value": "a",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "application",
     },
     {
       "children": [
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ",",
-            },
             {
               "children": [],
               "name": "number",
@@ -2266,14 +2058,16 @@ exports[`expressions > function expressions > application > produces correct tre
               "value": 3,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "application",
 }
 `;
 
@@ -2281,28 +2075,13 @@ exports[`expressions > function expressions > application > produces correct tre
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "send",
-    },
-    {
       "children": [
         {
           "children": [
             {
-              "children": [],
-              "name": "group",
-              "value": ",",
-            },
-            {
               "children": [
                 {
                   "children": [
-                    {
-                      "children": [],
-                      "name": "group",
-                      "value": "+",
-                    },
                     {
                       "children": [],
                       "name": "number",
@@ -2314,7 +2093,8 @@ exports[`expressions > function expressions > application > produces correct tre
                       "value": 2,
                     },
                   ],
-                  "name": "infix",
+                  "name": "operator",
+                  "value": "+",
                 },
               ],
               "name": "group",
@@ -2326,25 +2106,22 @@ exports[`expressions > function expressions > application > produces correct tre
               "value": 3,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "send",
 }
 `;
 
 exports[`expressions > function expressions > application > produces correct tree for 'send(2, 3)' 1`] = `
 {
   "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": "application",
-    },
     {
       "children": [],
       "name": "name",
@@ -2356,11 +2133,6 @@ exports[`expressions > function expressions > application > produces correct tre
           "children": [
             {
               "children": [],
-              "name": "group",
-              "value": ",",
-            },
-            {
-              "children": [],
               "name": "number",
               "value": 2,
             },
@@ -2370,14 +2142,16 @@ exports[`expressions > function expressions > application > produces correct tre
               "value": 3,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "application",
 }
 `;
 
@@ -2386,37 +2160,6 @@ exports[`expressions > function expressions > funciton multiple params 1`] = `
   "children": [
     {
       "children": [
-        {
-          "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "application",
-            },
-            {
-              "children": [],
-              "name": "name",
-              "value": "x",
-            },
-            {
-              "children": [],
-              "name": "name",
-              "value": "y",
-            },
-          ],
-          "name": "infix",
-        },
-      ],
-      "name": "group",
-      "value": "fn",
-    },
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "+",
-        },
         {
           "children": [],
           "name": "name",
@@ -2428,10 +2171,28 @@ exports[`expressions > function expressions > funciton multiple params 1`] = `
           "value": "y",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "application",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "name": "operator",
+      "value": "+",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "fn",
 }
 `;
 
@@ -2440,11 +2201,6 @@ exports[`expressions > function expressions > function 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "->",
-    },
-    {
-      "children": [],
       "name": "name",
       "value": "x",
     },
@@ -2454,7 +2210,8 @@ exports[`expressions > function expressions > function 1`] = `
       "value": "x",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "->",
 }
 `;
 
@@ -2462,17 +2219,7 @@ exports[`expressions > pattern matching > binding visible in scope where it is t
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "and",
-    },
-    {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "is",
-        },
         {
           "children": [],
           "name": "name",
@@ -2484,11 +2231,6 @@ exports[`expressions > pattern matching > binding visible in scope where it is t
               "children": [
                 {
                   "children": [],
-                  "name": "group",
-                  "value": ",",
-                },
-                {
-                  "children": [],
                   "name": "name",
                   "value": "a",
                 },
@@ -2498,22 +2240,19 @@ exports[`expressions > pattern matching > binding visible in scope where it is t
                   "value": "b",
                 },
               ],
-              "name": "infix",
+              "name": "operator",
+              "value": ",",
             },
           ],
           "name": "group",
           "value": "parens",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "is",
     },
     {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "==",
-        },
         {
           "children": [],
           "name": "name",
@@ -2521,11 +2260,6 @@ exports[`expressions > pattern matching > binding visible in scope where it is t
         },
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "+",
-            },
             {
               "children": [],
               "name": "name",
@@ -2537,13 +2271,16 @@ exports[`expressions > pattern matching > binding visible in scope where it is t
               "value": 1,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "+",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "==",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "and",
 }
 `;
 
@@ -2551,19 +2288,9 @@ exports[`expressions > pattern matching > in function parameters 1`] = `
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "->",
-    },
-    {
       "children": [
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ",",
-            },
             {
               "children": [],
               "name": "name",
@@ -2575,7 +2302,8 @@ exports[`expressions > pattern matching > in function parameters 1`] = `
               "value": "y",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
@@ -2583,11 +2311,6 @@ exports[`expressions > pattern matching > in function parameters 1`] = `
     },
     {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "+",
-        },
         {
           "children": [],
           "name": "name",
@@ -2599,10 +2322,12 @@ exports[`expressions > pattern matching > in function parameters 1`] = `
           "value": "y",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "+",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "->",
 }
 `;
 
@@ -2617,17 +2342,7 @@ exports[`expressions > pattern matching > match 1`] = `
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": ";",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "->",
-            },
             {
               "children": [],
               "name": "number",
@@ -2639,15 +2354,11 @@ exports[`expressions > pattern matching > match 1`] = `
               "value": 2,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "->",
         },
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "->",
-            },
             {
               "children": [],
               "name": "number",
@@ -2659,10 +2370,12 @@ exports[`expressions > pattern matching > match 1`] = `
               "value": 4,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "->",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ";",
     },
   ],
   "name": "group",
@@ -2681,17 +2394,7 @@ exports[`expressions > pattern matching > match newline inside 1`] = `
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": ";",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "->",
-            },
             {
               "children": [],
               "name": "number",
@@ -2703,15 +2406,11 @@ exports[`expressions > pattern matching > match newline inside 1`] = `
               "value": 2,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "->",
         },
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "->",
-            },
             {
               "children": [],
               "name": "number",
@@ -2723,10 +2422,12 @@ exports[`expressions > pattern matching > match newline inside 1`] = `
               "value": 4,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "->",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ";",
     },
   ],
   "name": "group",
@@ -2739,11 +2440,6 @@ exports[`expressions > pattern matching > with 'is' operator 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "is",
-    },
-    {
-      "children": [],
       "name": "name",
       "value": "x",
     },
@@ -2751,11 +2447,6 @@ exports[`expressions > pattern matching > with 'is' operator 1`] = `
       "children": [
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ",",
-            },
             {
               "children": [],
               "name": "name",
@@ -2767,25 +2458,22 @@ exports[`expressions > pattern matching > with 'is' operator 1`] = `
               "value": "b",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "is",
 }
 `;
 
 exports[`expressions > pattern matching > with placeholder 1`] = `
 {
   "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": "is",
-    },
     {
       "children": [],
       "name": "name",
@@ -2795,11 +2483,6 @@ exports[`expressions > pattern matching > with placeholder 1`] = `
       "children": [
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ",",
-            },
             {
               "children": [],
               "name": "placeholder",
@@ -2810,14 +2493,16 @@ exports[`expressions > pattern matching > with placeholder 1`] = `
               "value": "b",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "is",
 }
 `;
 
@@ -2826,11 +2511,6 @@ exports[`expressions > pattern matching > with rest value 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "is",
-    },
-    {
-      "children": [],
       "name": "name",
       "value": "x",
     },
@@ -2840,11 +2520,6 @@ exports[`expressions > pattern matching > with rest value 1`] = `
           "children": [
             {
               "children": [],
-              "name": "group",
-              "value": ",",
-            },
-            {
-              "children": [],
               "name": "name",
               "value": "a",
             },
@@ -2852,26 +2527,24 @@ exports[`expressions > pattern matching > with rest value 1`] = `
               "children": [
                 {
                   "children": [],
-                  "name": "group",
-                  "value": "...",
-                },
-                {
-                  "children": [],
                   "name": "name",
                   "value": "b",
                 },
               ],
-              "name": "prefix",
+              "name": "operator",
+              "value": "...",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "is",
 }
 `;
 
@@ -2880,11 +2553,6 @@ exports[`expressions > pattern matching > with rest value first 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "is",
-    },
-    {
-      "children": [],
       "name": "name",
       "value": "x",
     },
@@ -2893,24 +2561,15 @@ exports[`expressions > pattern matching > with rest value first 1`] = `
         {
           "children": [
             {
-              "children": [],
-              "name": "group",
-              "value": ",",
-            },
-            {
               "children": [
-                {
-                  "children": [],
-                  "name": "group",
-                  "value": "...",
-                },
                 {
                   "children": [],
                   "name": "name",
                   "value": "b",
                 },
               ],
-              "name": "prefix",
+              "name": "operator",
+              "value": "...",
             },
             {
               "children": [],
@@ -2918,14 +2577,16 @@ exports[`expressions > pattern matching > with rest value first 1`] = `
               "value": "a",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "is",
 }
 `;
 
@@ -2934,11 +2595,6 @@ exports[`expressions > pattern matching > with variable value 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "is",
-    },
-    {
-      "children": [],
       "name": "name",
       "value": "x",
     },
@@ -2947,24 +2603,15 @@ exports[`expressions > pattern matching > with variable value 1`] = `
         {
           "children": [
             {
-              "children": [],
-              "name": "group",
-              "value": ",",
-            },
-            {
               "children": [
-                {
-                  "children": [],
-                  "name": "group",
-                  "value": "#",
-                },
                 {
                   "children": [],
                   "name": "name",
                   "value": "a",
                 },
               ],
-              "name": "prefix",
+              "name": "operator",
+              "value": "#",
             },
             {
               "children": [],
@@ -2972,14 +2619,16 @@ exports[`expressions > pattern matching > with variable value 1`] = `
               "value": "b",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
       "value": "parens",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "is",
 }
 `;
 
@@ -3003,24 +2652,15 @@ exports[`expressions > structured programming > block mutable variable declarati
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": ":=",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "mut",
-            },
             {
               "children": [],
               "name": "name",
               "value": "x",
             },
           ],
-          "name": "prefix",
+          "name": "operator",
+          "value": "mut",
         },
         {
           "children": [],
@@ -3028,7 +2668,8 @@ exports[`expressions > structured programming > block mutable variable declarati
           "value": 123,
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ":=",
     },
   ],
   "name": "group",
@@ -3042,17 +2683,7 @@ exports[`expressions > structured programming > block pattern matching 1`] = `
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": "=",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ",",
-            },
             {
               "children": [],
               "name": "name",
@@ -3064,15 +2695,11 @@ exports[`expressions > structured programming > block pattern matching 1`] = `
               "value": "y",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ",",
-            },
             {
               "children": [],
               "name": "number",
@@ -3084,10 +2711,12 @@ exports[`expressions > structured programming > block pattern matching 1`] = `
               "value": 456,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ",",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "=",
     },
   ],
   "name": "group",
@@ -3102,11 +2731,6 @@ exports[`expressions > structured programming > block variable assignment 1`] = 
       "children": [
         {
           "children": [],
-          "name": "group",
-          "value": "=",
-        },
-        {
-          "children": [],
           "name": "name",
           "value": "x",
         },
@@ -3116,7 +2740,8 @@ exports[`expressions > structured programming > block variable assignment 1`] = 
           "value": 123,
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "=",
     },
   ],
   "name": "group",
@@ -3131,11 +2756,6 @@ exports[`expressions > structured programming > block variable declaration 1`] =
       "children": [
         {
           "children": [],
-          "name": "group",
-          "value": ":=",
-        },
-        {
-          "children": [],
           "name": "name",
           "value": "x",
         },
@@ -3145,7 +2765,8 @@ exports[`expressions > structured programming > block variable declaration 1`] =
           "value": 123,
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ":=",
     },
   ],
   "name": "group",
@@ -3157,17 +2778,7 @@ exports[`expressions > structured programming > expression-label 1`] = `
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "label",
-    },
-    {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "+",
-        },
         {
           "children": [],
           "name": "number",
@@ -3179,7 +2790,8 @@ exports[`expressions > structured programming > expression-label 1`] = `
           "value": 456,
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "+",
     },
     {
       "children": [],
@@ -3187,7 +2799,8 @@ exports[`expressions > structured programming > expression-label 1`] = `
       "value": 789,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "label",
 }
 `;
 
@@ -3195,56 +2808,42 @@ exports[`expressions > structured programming > for loop 1`] = `
 {
   "children": [
     {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+    {
       "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
         {
           "children": [
             {
               "children": [
                 {
                   "children": [],
-                  "name": "group",
-                  "value": ",",
-                },
-                {
-                  "children": [
-                    {
-                      "children": [],
-                      "name": "group",
-                      "value": ",",
-                    },
-                    {
-                      "children": [],
-                      "name": "number",
-                      "value": 1,
-                    },
-                    {
-                      "children": [],
-                      "name": "number",
-                      "value": 2,
-                    },
-                  ],
-                  "name": "infix",
+                  "name": "number",
+                  "value": 1,
                 },
                 {
                   "children": [],
                   "name": "number",
-                  "value": 3,
+                  "value": 2,
                 },
               ],
-              "name": "infix",
+              "name": "operator",
+              "value": ",",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 3,
             },
           ],
-          "name": "group",
-          "value": "brackets",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
-      "value": "for",
+      "value": "brackets",
     },
     {
       "children": [],
@@ -3252,7 +2851,8 @@ exports[`expressions > structured programming > for loop 1`] = `
       "value": "x",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "for",
 }
 `;
 
@@ -3260,56 +2860,42 @@ exports[`expressions > structured programming > for loop newline 1`] = `
 {
   "children": [
     {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+    {
       "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
         {
           "children": [
             {
               "children": [
                 {
                   "children": [],
-                  "name": "group",
-                  "value": ",",
-                },
-                {
-                  "children": [
-                    {
-                      "children": [],
-                      "name": "group",
-                      "value": ",",
-                    },
-                    {
-                      "children": [],
-                      "name": "number",
-                      "value": 1,
-                    },
-                    {
-                      "children": [],
-                      "name": "number",
-                      "value": 2,
-                    },
-                  ],
-                  "name": "infix",
+                  "name": "number",
+                  "value": 1,
                 },
                 {
                   "children": [],
                   "name": "number",
-                  "value": 3,
+                  "value": 2,
                 },
               ],
-              "name": "infix",
+              "name": "operator",
+              "value": ",",
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 3,
             },
           ],
-          "name": "group",
-          "value": "brackets",
+          "name": "operator",
+          "value": ",",
         },
       ],
       "name": "group",
-      "value": "for",
+      "value": "brackets",
     },
     {
       "children": [],
@@ -3317,7 +2903,8 @@ exports[`expressions > structured programming > for loop newline 1`] = `
       "value": "x",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "for",
 }
 `;
 
@@ -3325,15 +2912,9 @@ exports[`expressions > structured programming > if-then 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "true",
-        },
-      ],
-      "name": "group",
-      "value": "if",
+      "children": [],
+      "name": "name",
+      "value": "true",
     },
     {
       "children": [],
@@ -3341,7 +2922,8 @@ exports[`expressions > structured programming > if-then 1`] = `
       "value": 123,
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "if",
 }
 `;
 
@@ -3349,15 +2931,9 @@ exports[`expressions > structured programming > if-then newline 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "true",
-        },
-      ],
-      "name": "group",
-      "value": "if",
+      "children": [],
+      "name": "name",
+      "value": "true",
     },
     {
       "children": [],
@@ -3365,7 +2941,8 @@ exports[`expressions > structured programming > if-then newline 1`] = `
       "value": 123,
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "if",
 }
 `;
 
@@ -3373,20 +2950,14 @@ exports[`expressions > structured programming > if-then newline-else 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "true",
-        },
-        {
-          "children": [],
-          "name": "number",
-          "value": 123,
-        },
-      ],
-      "name": "group",
-      "value": "ifElse",
+      "children": [],
+      "name": "name",
+      "value": "true",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
     },
     {
       "children": [],
@@ -3394,7 +2965,8 @@ exports[`expressions > structured programming > if-then newline-else 1`] = `
       "value": 456,
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "ifElse",
 }
 `;
 
@@ -3402,20 +2974,14 @@ exports[`expressions > structured programming > if-then newline-else newline 1`]
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "true",
-        },
-        {
-          "children": [],
-          "name": "number",
-          "value": 123,
-        },
-      ],
-      "name": "group",
-      "value": "ifElse",
+      "children": [],
+      "name": "name",
+      "value": "true",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
     },
     {
       "children": [],
@@ -3423,7 +2989,8 @@ exports[`expressions > structured programming > if-then newline-else newline 1`]
       "value": 456,
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "ifElse",
 }
 `;
 
@@ -3431,20 +2998,14 @@ exports[`expressions > structured programming > if-then-else 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "true",
-        },
-        {
-          "children": [],
-          "name": "number",
-          "value": 123,
-        },
-      ],
-      "name": "group",
-      "value": "ifElse",
+      "children": [],
+      "name": "name",
+      "value": "true",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
     },
     {
       "children": [],
@@ -3452,7 +3013,8 @@ exports[`expressions > structured programming > if-then-else 1`] = `
       "value": 456,
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "ifElse",
 }
 `;
 
@@ -3460,38 +3022,26 @@ exports[`expressions > structured programming > if-then-elseif-then-else 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "true",
-        },
-        {
-          "children": [],
-          "name": "number",
-          "value": 123,
-        },
-      ],
-      "name": "group",
-      "value": "ifElse",
+      "children": [],
+      "name": "name",
+      "value": "true",
+    },
+    {
+      "children": [],
+      "name": "number",
+      "value": 123,
     },
     {
       "children": [
         {
-          "children": [
-            {
-              "children": [],
-              "name": "name",
-              "value": "false",
-            },
-            {
-              "children": [],
-              "name": "number",
-              "value": 789,
-            },
-          ],
-          "name": "group",
-          "value": "ifElse",
+          "children": [],
+          "name": "name",
+          "value": "false",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 789,
         },
         {
           "children": [],
@@ -3499,10 +3049,12 @@ exports[`expressions > structured programming > if-then-elseif-then-else 1`] = `
           "value": 456,
         },
       ],
-      "name": "prefix",
+      "name": "operator",
+      "value": "ifElse",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "ifElse",
 }
 `;
 
@@ -3511,11 +3063,6 @@ exports[`expressions > structured programming > labeled expression 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "label",
-    },
-    {
-      "children": [],
       "name": "name",
       "value": "label",
     },
@@ -3525,7 +3072,8 @@ exports[`expressions > structured programming > labeled expression 1`] = `
       "value": 123,
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "label",
 }
 `;
 
@@ -3533,12 +3081,12 @@ exports[`expressions > structured programming > return 1`] = `
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "->",
-    },
-    {
-      "children": [],
+      "children": [
+        {
+          "children": [],
+          "name": "placeholder",
+        },
+      ],
       "name": "group",
       "value": "parens",
     },
@@ -3548,23 +3096,20 @@ exports[`expressions > structured programming > return 1`] = `
           "children": [
             {
               "children": [],
-              "name": "group",
-              "value": "return",
-            },
-            {
-              "children": [],
               "name": "number",
               "value": 123,
             },
           ],
-          "name": "prefix",
+          "name": "operator",
+          "value": "return",
         },
       ],
       "name": "group",
       "value": "braces",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": "->",
 }
 `;
 
@@ -3572,15 +3117,9 @@ exports[`expressions > structured programming > while loop 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "true",
-        },
-      ],
-      "name": "group",
-      "value": "while",
+      "children": [],
+      "name": "name",
+      "value": "true",
     },
     {
       "children": [],
@@ -3588,7 +3127,8 @@ exports[`expressions > structured programming > while loop 1`] = `
       "value": 123,
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "while",
 }
 `;
 
@@ -3596,32 +3136,23 @@ exports[`expressions > structured programming > while loop break 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "true",
-        },
-      ],
-      "name": "group",
-      "value": "while",
+      "children": [],
+      "name": "name",
+      "value": "true",
     },
     {
       "children": [
         {
           "children": [],
-          "name": "group",
-          "value": "break",
-        },
-        {
-          "children": [],
           "name": "placeholder",
         },
       ],
-      "name": "prefix",
+      "name": "operator",
+      "value": "break",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "while",
 }
 `;
 
@@ -3629,33 +3160,24 @@ exports[`expressions > structured programming > while loop break value 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "true",
-        },
-      ],
-      "name": "group",
-      "value": "while",
+      "children": [],
+      "name": "name",
+      "value": "true",
     },
     {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "break",
-        },
         {
           "children": [],
           "name": "number",
           "value": 1,
         },
       ],
-      "name": "prefix",
+      "name": "operator",
+      "value": "break",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "while",
 }
 `;
 
@@ -3663,32 +3185,23 @@ exports[`expressions > structured programming > while loop continue 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "true",
-        },
-      ],
-      "name": "group",
-      "value": "while",
+      "children": [],
+      "name": "name",
+      "value": "true",
     },
     {
       "children": [
         {
           "children": [],
-          "name": "group",
-          "value": "continue",
-        },
-        {
-          "children": [],
           "name": "placeholder",
         },
       ],
-      "name": "prefix",
+      "name": "operator",
+      "value": "continue",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "while",
 }
 `;
 
@@ -3696,33 +3209,24 @@ exports[`expressions > structured programming > while loop continue value 1`] = 
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "true",
-        },
-      ],
-      "name": "group",
-      "value": "while",
+      "children": [],
+      "name": "name",
+      "value": "true",
     },
     {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "continue",
-        },
         {
           "children": [],
           "name": "number",
           "value": 1,
         },
       ],
-      "name": "prefix",
+      "name": "operator",
+      "value": "continue",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "while",
 }
 `;
 
@@ -3764,17 +3268,7 @@ exports[`newline handling > block newline at the beginning 1`] = `
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": ";",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ":=",
-            },
             {
               "children": [],
               "name": "name",
@@ -3786,15 +3280,11 @@ exports[`newline handling > block newline at the beginning 1`] = `
               "value": 1,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ":=",
         },
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ":=",
-            },
             {
               "children": [],
               "name": "name",
@@ -3806,10 +3296,12 @@ exports[`newline handling > block newline at the beginning 1`] = `
               "value": 2,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ":=",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ";",
     },
   ],
   "name": "group",
@@ -3823,17 +3315,7 @@ exports[`newline handling > block newline at the end 1`] = `
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": ";",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ":=",
-            },
             {
               "children": [],
               "name": "name",
@@ -3845,22 +3327,13 @@ exports[`newline handling > block newline at the end 1`] = `
               "value": 1,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ":=",
         },
         {
           "children": [
             {
-              "children": [],
-              "name": "group",
-              "value": ";",
-            },
-            {
               "children": [
-                {
-                  "children": [],
-                  "name": "group",
-                  "value": ":=",
-                },
                 {
                   "children": [],
                   "name": "name",
@@ -3872,17 +3345,20 @@ exports[`newline handling > block newline at the end 1`] = `
                   "value": 2,
                 },
               ],
-              "name": "infix",
+              "name": "operator",
+              "value": ":=",
             },
             {
               "children": [],
               "name": "placeholder",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ";",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ";",
     },
   ],
   "name": "group",
@@ -3896,17 +3372,7 @@ exports[`newline handling > block newline in the middle 1`] = `
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": ";",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ":=",
-            },
             {
               "children": [],
               "name": "name",
@@ -3918,15 +3384,11 @@ exports[`newline handling > block newline in the middle 1`] = `
               "value": 1,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ":=",
         },
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ":=",
-            },
             {
               "children": [],
               "name": "name",
@@ -3938,10 +3400,12 @@ exports[`newline handling > block newline in the middle 1`] = `
               "value": 2,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ":=",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ";",
     },
   ],
   "name": "group",
@@ -3955,17 +3419,7 @@ exports[`newline handling > block semicolon newline 1`] = `
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": ";",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ":=",
-            },
             {
               "children": [],
               "name": "name",
@@ -3977,15 +3431,11 @@ exports[`newline handling > block semicolon newline 1`] = `
               "value": 1,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ":=",
         },
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ":=",
-            },
             {
               "children": [],
               "name": "name",
@@ -3997,10 +3447,12 @@ exports[`newline handling > block semicolon newline 1`] = `
               "value": 2,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ":=",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ";",
     },
   ],
   "name": "group",
@@ -4014,17 +3466,7 @@ exports[`newline handling > block semicolon newline at the end 1`] = `
     {
       "children": [
         {
-          "children": [],
-          "name": "group",
-          "value": ";",
-        },
-        {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": ":=",
-            },
             {
               "children": [],
               "name": "name",
@@ -4036,22 +3478,13 @@ exports[`newline handling > block semicolon newline at the end 1`] = `
               "value": 1,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ":=",
         },
         {
           "children": [
             {
-              "children": [],
-              "name": "group",
-              "value": ";",
-            },
-            {
               "children": [
-                {
-                  "children": [],
-                  "name": "group",
-                  "value": ":=",
-                },
                 {
                   "children": [],
                   "name": "name",
@@ -4063,17 +3496,20 @@ exports[`newline handling > block semicolon newline at the end 1`] = `
                   "value": 2,
                 },
               ],
-              "name": "infix",
+              "name": "operator",
+              "value": ":=",
             },
             {
               "children": [],
               "name": "placeholder",
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": ";",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ";",
     },
   ],
   "name": "group",
@@ -4085,17 +3521,7 @@ exports[`programs > module > export main 1`] = `
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "export",
-    },
-    {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "->",
-        },
         {
           "children": [],
           "name": "name",
@@ -4112,10 +3538,12 @@ exports[`programs > module > export main 1`] = `
           "value": "braces",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "->",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "export",
 }
 `;
 
@@ -4124,16 +3552,12 @@ exports[`programs > module > external 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "external",
-    },
-    {
-      "children": [],
       "name": "name",
       "value": "y",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "external",
 }
 `;
 
@@ -4141,15 +3565,9 @@ exports[`programs > module > import 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "string",
-          "value": "a",
-        },
-      ],
-      "name": "group",
-      "value": "import",
+      "children": [],
+      "name": "string",
+      "value": "a",
     },
     {
       "children": [],
@@ -4157,7 +3575,8 @@ exports[`programs > module > import 1`] = `
       "value": "b",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "import",
 }
 `;
 
@@ -4165,20 +3584,14 @@ exports[`programs > module > import with 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "string",
-          "value": "a",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "b",
-        },
-      ],
-      "name": "group",
-      "value": "importWith",
+      "children": [],
+      "name": "string",
+      "value": "a",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "b",
     },
     {
       "children": [],
@@ -4186,7 +3599,8 @@ exports[`programs > module > import with 1`] = `
       "value": "c",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "importWith",
 }
 `;
 
@@ -4194,38 +3608,251 @@ exports[`programs > module > import with external 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "string",
-          "value": "a",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "b",
-        },
-      ],
-      "name": "group",
-      "value": "importWith",
+      "children": [],
+      "name": "string",
+      "value": "a",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "b",
     },
     {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "external",
-        },
         {
           "children": [],
           "name": "name",
           "value": "c",
         },
       ],
-      "name": "prefix",
+      "name": "operator",
+      "value": "external",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "importWith",
+}
+`;
+
+exports[`programs > module > operator 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "placeholder",
+            },
+            {
+              "children": [],
+              "name": "placeholder",
+            },
+          ],
+          "name": "operator",
+          "value": "+",
+        },
+      ],
+      "name": "operator",
+      "value": "operator",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "name": "operator",
+          "value": ",",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "name": "operator",
+          "value": "+",
+        },
+      ],
+      "name": "operator",
+      "value": "fn",
+    },
+  ],
+  "name": "operator",
+  "value": ":=",
+}
+`;
+
+exports[`programs > module > operator with precedence 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "placeholder",
+            },
+            {
+              "children": [],
+              "name": "placeholder",
+            },
+          ],
+          "name": "operator",
+          "value": "+",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 1,
+        },
+      ],
+      "name": "operator",
+      "value": "operatorPrecedence",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "name": "operator",
+          "value": ",",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "name": "operator",
+          "value": "+",
+        },
+      ],
+      "name": "operator",
+      "value": "fn",
+    },
+  ],
+  "name": "operator",
+  "value": ":=",
+}
+`;
+
+exports[`programs > module > operator with tuple precedence 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "placeholder",
+            },
+            {
+              "children": [],
+              "name": "placeholder",
+            },
+          ],
+          "name": "operator",
+          "value": "+",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "number",
+              "value": 1,
+            },
+            {
+              "children": [],
+              "name": "number",
+              "value": 2,
+            },
+          ],
+          "name": "operator",
+          "value": ",",
+        },
+      ],
+      "name": "operator",
+      "value": "operatorPrecedence",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "name": "operator",
+          "value": ",",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "name": "operator",
+          "value": "+",
+        },
+      ],
+      "name": "operator",
+      "value": "fn",
+    },
+  ],
+  "name": "operator",
+  "value": ":=",
 }
 `;
 
@@ -4234,21 +3861,11 @@ exports[`programs > module > private declare 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": ":=",
-    },
-    {
-      "children": [],
       "name": "name",
       "value": "z",
     },
     {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "+",
-        },
         {
           "children": [],
           "name": "name",
@@ -4260,10 +3877,12 @@ exports[`programs > module > private declare 1`] = `
           "value": 1,
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": "+",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": ":=",
 }
 `;
 
@@ -4271,17 +3890,7 @@ exports[`programs > module > public declare 1`] = `
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": "export",
-    },
-    {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": ":=",
-        },
         {
           "children": [],
           "name": "name",
@@ -4289,11 +3898,6 @@ exports[`programs > module > public declare 1`] = `
         },
         {
           "children": [
-            {
-              "children": [],
-              "name": "group",
-              "value": "+",
-            },
             {
               "children": [],
               "name": "name",
@@ -4305,13 +3909,16 @@ exports[`programs > module > public declare 1`] = `
               "value": 123,
             },
           ],
-          "name": "infix",
+          "name": "operator",
+          "value": "+",
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ":=",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "export",
 }
 `;
 
@@ -4320,16 +3927,12 @@ exports[`programs > script > export 1`] = `
   "children": [
     {
       "children": [],
-      "name": "group",
-      "value": "export",
-    },
-    {
-      "children": [],
       "name": "name",
       "value": "x",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "export",
 }
 `;
 
@@ -4337,15 +3940,9 @@ exports[`programs > script > export as 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-      ],
-      "name": "group",
-      "value": "exportAs",
+      "children": [],
+      "name": "name",
+      "value": "x",
     },
     {
       "children": [],
@@ -4353,7 +3950,8 @@ exports[`programs > script > export as 1`] = `
       "value": "y",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "exportAs",
 }
 `;
 
@@ -4361,15 +3959,9 @@ exports[`programs > script > use 1`] = `
 {
   "children": [
     {
-      "children": [
-        {
-          "children": [],
-          "name": "string",
-          "value": "a",
-        },
-      ],
-      "name": "group",
-      "value": "use",
+      "children": [],
+      "name": "string",
+      "value": "a",
     },
     {
       "children": [],
@@ -4377,13 +3969,131 @@ exports[`programs > script > use 1`] = `
       "value": "b",
     },
   ],
-  "name": "prefix",
+  "name": "operator",
+  "value": "use",
 }
 `;
 
 exports[`programs > script > use with 1`] = `
 {
   "children": [
+    {
+      "children": [],
+      "name": "string",
+      "value": "a",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "b",
+    },
+    {
+      "children": [],
+      "name": "name",
+      "value": "x",
+    },
+  ],
+  "name": "operator",
+  "value": "useWith",
+}
+`;
+
+exports[`programs > script > variable export 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "operator",
+      "value": ":=",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "name": "operator",
+      "value": "export",
+    },
+  ],
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`programs > script > variable export as 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "operator",
+      "value": ":=",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "name": "operator",
+      "value": "exportAs",
+    },
+  ],
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`programs > script > variable use 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "name": "number",
+          "value": 123,
+        },
+      ],
+      "name": "operator",
+      "value": ":=",
+    },
     {
       "children": [
         {
@@ -4397,172 +4107,12 @@ exports[`programs > script > use with 1`] = `
           "value": "b",
         },
       ],
-      "name": "group",
-      "value": "useWith",
-    },
-    {
-      "children": [],
-      "name": "name",
-      "value": "x",
+      "name": "operator",
+      "value": "use",
     },
   ],
-  "name": "prefix",
-}
-`;
-
-exports[`programs > script > variable export 1`] = `
-{
-  "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": ";",
-    },
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": ":=",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-        {
-          "children": [],
-          "name": "number",
-          "value": 123,
-        },
-      ],
-      "name": "infix",
-    },
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": "export",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-      ],
-      "name": "prefix",
-    },
-  ],
-  "name": "infix",
-}
-`;
-
-exports[`programs > script > variable export as 1`] = `
-{
-  "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": ";",
-    },
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": ":=",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-        {
-          "children": [],
-          "name": "number",
-          "value": 123,
-        },
-      ],
-      "name": "infix",
-    },
-    {
-      "children": [
-        {
-          "children": [
-            {
-              "children": [],
-              "name": "name",
-              "value": "x",
-            },
-          ],
-          "name": "group",
-          "value": "exportAs",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "y",
-        },
-      ],
-      "name": "prefix",
-    },
-  ],
-  "name": "infix",
-}
-`;
-
-exports[`programs > script > variable use 1`] = `
-{
-  "children": [
-    {
-      "children": [],
-      "name": "group",
-      "value": ";",
-    },
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": ":=",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-        {
-          "children": [],
-          "name": "number",
-          "value": 123,
-        },
-      ],
-      "name": "infix",
-    },
-    {
-      "children": [
-        {
-          "children": [
-            {
-              "children": [],
-              "name": "string",
-              "value": "a",
-            },
-          ],
-          "name": "group",
-          "value": "use",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "b",
-        },
-      ],
-      "name": "prefix",
-    },
-  ],
-  "name": "infix",
+  "name": "operator",
+  "value": ";",
 }
 `;
 
@@ -4570,17 +4120,7 @@ exports[`programs > script > variable use with 1`] = `
 {
   "children": [
     {
-      "children": [],
-      "name": "group",
-      "value": ";",
-    },
-    {
       "children": [
-        {
-          "children": [],
-          "name": "group",
-          "value": ":=",
-        },
         {
           "children": [],
           "name": "name",
@@ -4592,25 +4132,20 @@ exports[`programs > script > variable use with 1`] = `
           "value": 123,
         },
       ],
-      "name": "infix",
+      "name": "operator",
+      "value": ":=",
     },
     {
       "children": [
         {
-          "children": [
-            {
-              "children": [],
-              "name": "string",
-              "value": "a",
-            },
-            {
-              "children": [],
-              "name": "name",
-              "value": "b",
-            },
-          ],
-          "name": "group",
-          "value": "useWith",
+          "children": [],
+          "name": "string",
+          "value": "a",
+        },
+        {
+          "children": [],
+          "name": "name",
+          "value": "b",
         },
         {
           "children": [],
@@ -4618,9 +4153,11 @@ exports[`programs > script > variable use with 1`] = `
           "value": "x",
         },
       ],
-      "name": "prefix",
+      "name": "operator",
+      "value": "useWith",
     },
   ],
-  "name": "infix",
+  "name": "operator",
+  "value": ";",
 }
 `;

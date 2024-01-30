@@ -1,10 +1,22 @@
 import { endOfTokensError, error } from "../errors";
 import { Iterator } from "iterator-js";
 import { indexPosition, position } from "../position";
-import { AbstractSyntaxTree, group, infix, name, number, placeholder, postfix, prefix, string, token } from "./ast";
+import {
+  AbstractSyntaxTree,
+  group,
+  infix,
+  name,
+  number,
+  placeholder,
+  postfix,
+  prefix,
+  program,
+  string,
+  token,
+} from "./ast";
 import { ParsingError, ParsingResult, TokenParser } from "./types";
-import { matchSeparators } from "./utils";
-import { omit, pushField, setField } from "../utils";
+import { match, matchSeparators } from "./utils";
+import { assert, mapField, omit, pushField, setField } from "../utils";
 
 export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {
@@ -48,14 +60,13 @@ export const scopeIter = (scope: Scope = {}): Iterator<ScopeArray[number]> =>
 export const scopeIterToScope = (scopeIter: Iterator<ScopeArray[number]>): Scope =>
   scopeIter.map(({ name, ...v }) => [name, v] as [string, TokenGroupDefinition]).toObject();
 const scope: Scope = {
-  "+": { separators: matchSeparators(["+"]), precedence: [3, 4] },
-  "-": { separators: matchSeparators(["-"]), precedence: [3, 4] },
-  "*": { separators: matchSeparators(["*"]), precedence: [5, 6] },
-  "/": { separators: matchSeparators(["/"]), precedence: [5, 6] },
-  "%": { separators: matchSeparators(["%"]), precedence: [5, 6] },
-  "^": { separators: matchSeparators(["^"]), precedence: [7, 8] },
-  "!": { separators: matchSeparators(["!"]), precedence: [null, 3] },
-  ",": { separators: matchSeparators([","]), precedence: [1, 2] },
+  "+": { separators: matchSeparators(["+"]), precedence: [4, 5] },
+  "-": { separators: matchSeparators(["-"]), precedence: [4, 5] },
+  "*": { separators: matchSeparators(["*"]), precedence: [6, 7] },
+  "/": { separators: matchSeparators(["/"]), precedence: [6, 7] },
+  "%": { separators: matchSeparators(["%"]), precedence: [6, 7] },
+  "^": { separators: matchSeparators(["^"]), precedence: [8, 9] },
+  ",": { separators: matchSeparators([","]), precedence: [3, 4] },
   in: { separators: matchSeparators(["in"]), precedence: [1, 1] },
   is: { separators: matchSeparators(["is"]), precedence: [1, Infinity] },
   and: { separators: matchSeparators(["and"]), precedence: [1, 1] },
@@ -64,8 +75,8 @@ const scope: Scope = {
   "!=": { separators: matchSeparators(["!="]), precedence: [1, 1] },
   "===": { separators: matchSeparators(["==="]), precedence: [1, 1] },
   "!==": { separators: matchSeparators(["!=="]), precedence: [1, 1] },
+  "!": { separators: matchSeparators(["!"]), precedence: [null, 4] },
   as: { separators: matchSeparators(["as"]), precedence: [1, 1] },
-  not: { separators: matchSeparators(["not"]), precedence: [null, 1] },
   mut: { separators: matchSeparators(["mut"]), precedence: [null, 3] },
   ...comparisonOps
     .map((op) => {
@@ -83,18 +94,18 @@ const scope: Scope = {
   "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 2] },
   fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
   ";": { separators: matchSeparators([";", "\n"]), precedence: [1, 1] },
-  "#": { separators: matchSeparators(["#"]), precedence: [null, 2] },
-  "...": { separators: matchSeparators(["..."]), precedence: [null, 2] },
+  "#": { separators: matchSeparators(["#"]), precedence: [null, 4] },
+  "...": { separators: matchSeparators(["..."]), precedence: [null, 4] },
   match: { separators: matchSeparators(["match"], ["{"], ["}"]), precedence: [null, null] },
-  matchColon: { separators: matchSeparators(["match"], [":", "\n"]), precedence: [null, 1] },
-  if: { separators: matchSeparators(["if"], [":", "\n"]), precedence: [null, 1] },
-  ifElse: { separators: matchSeparators(["if"], [":", "\n"], ["else"]), precedence: [null, 1] },
-  for: { separators: matchSeparators(["for"], ["in"], [":", "\n"]), precedence: [null, 1] },
-  while: { separators: matchSeparators(["while"], [":", "\n"]), precedence: [null, 1] },
-  break: { separators: matchSeparators(["break"]), precedence: [null, 1] },
-  continue: { separators: matchSeparators(["continue"]), precedence: [null, 1] },
-  return: { separators: matchSeparators(["return"]), precedence: [null, 1] },
-  "=": { separators: matchSeparators(["="]), precedence: [1, 1] },
+  matchColon: { separators: matchSeparators(["match"], [":", "\n"]), precedence: [null, 2] },
+  if: { separators: matchSeparators(["if"], [":", "\n"]), precedence: [null, 2] },
+  ifElse: { separators: matchSeparators(["if"], [":", "\n"], ["else"]), precedence: [null, 2] },
+  for: { separators: matchSeparators(["for"], ["in"], [":", "\n"]), precedence: [null, 2] },
+  while: { separators: matchSeparators(["while"], [":", "\n"]), precedence: [null, 2] },
+  break: { separators: matchSeparators(["break"]), precedence: [null, 2] },
+  continue: { separators: matchSeparators(["continue"]), precedence: [null, 2] },
+  return: { separators: matchSeparators(["return"]), precedence: [null, 2] },
+  "=": { separators: matchSeparators(["="]), precedence: [2, 2] },
   ":=": { separators: matchSeparators([":="]), precedence: [2, 2] },
   symbol: { separators: matchSeparators(["symbol"]), precedence: [null, 1] },
   record: { separators: matchSeparators(["record"], ["{"], ["}"]), precedence: [null, null] },
@@ -108,10 +119,10 @@ const scope: Scope = {
   useWith: { separators: matchSeparators(["use"], ["as"], ["with"]), precedence: [null, 1] },
   export: { separators: matchSeparators(["export"]), precedence: [null, 1] },
   exportAs: { separators: matchSeparators(["export"], ["as"]), precedence: [null, 1] },
-  external: { separators: matchSeparators(["external"]), precedence: [null, 1] },
+  external: { separators: matchSeparators(["external"]), precedence: [null, 2] },
   label: { separators: matchSeparators([":"]), precedence: [2, 2] },
-  operator: { separators: matchSeparators(["operator"]), precedence: [null, 1] },
-  operatorPrecedence: { separators: matchSeparators(["operator"], ["precedence"]), precedence: [null, 1] },
+  operator: { separators: matchSeparators(["operator"]), precedence: [null, 3] },
+  operatorPrecedence: { separators: matchSeparators(["operator"], ["precedence"]), precedence: [null, 3] },
   negate: {
     separators: matchSeparators(["-"]),
     precedence: [null, Number.MAX_SAFE_INTEGER],
@@ -237,7 +248,7 @@ export const parseGroup: TokenParserWithContext<AbstractSyntaxTree> =
     // );
 
     if (matchingScope.isEmpty()) {
-      const token = src[index];
+      const _token = src[index];
 
       const _context = setField(path, [])(context);
       const isStartOfGroup = scopeEntries.some(
@@ -246,12 +257,8 @@ export const parseGroup: TokenParserWithContext<AbstractSyntaxTree> =
       if (context.lhs && !isStartOfGroup && context.precedence !== Infinity)
         return [index, group("application"), errors];
 
-      if (/^_+$/.test(token.src)) return [index + 1, placeholder(), errors];
-      if (token.type === "identifier") return [index + 1, name(token.src), errors];
-      if (token.type === "number") return [index + 1, number(token.value), errors];
-      if (token.type === "string") return [index + 1, string(token.value), errors];
-      // console.log("fuck");
-      return [index, placeholder(), errors];
+      if (_token.type === "newline") return [index, placeholder(), errors];
+      return [index + 1, token(_token), errors];
     }
 
     context = { ...context, precedence: 0, matchedGroupScope: scopeIterToScope(matchingScope) };
@@ -480,5 +487,6 @@ export const parse =
       errors.push(..._errors);
     }
 
-    return [{ name: "program", children }, []];
+    // return [postprocess(program(...children)), []];
+    return [program(...children), []];
   };

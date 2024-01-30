@@ -51,7 +51,7 @@ export const isEqual = (a, b) => {
   return true;
 };
 
-const mapField = (path: RecordKey[], fn: (x: any) => any) => (obj: any) => {
+export const mapField = (path: RecordKey[], fn: (x: any) => any) => (obj: any) => {
   const [head, ...tail] = path;
   if (Array.isArray(obj) && typeof head !== "symbol") {
     const index = Number(head);

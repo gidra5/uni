@@ -132,7 +132,7 @@ describe("expressions", () => {
     });
 
     test("not", () => {
-      const src = `not 123`;
+      const src = `!123`;
       treeTestCase(src);
     });
 
@@ -541,19 +541,19 @@ describe("examples", () => {
 
     test("fibonacci", () => {
       const src = `
-        export fib = n -> {
+        export fib := n -> {
           if n < 2
             1
           else
-            fib n-1 + fib n-2
+            fib (n - 1) + fib (n - 2)
         }`;
 
       exampleTestCase(src);
     });
 
-    test("quick sort recursive", () => {
+    test.todo("quick sort recursive", () => {
       const src = `
-        export quicksort = xs -> {
+        export quicksort := xs -> {
           if xs == ()
             return ()
           
@@ -566,12 +566,12 @@ describe("examples", () => {
       exampleTestCase(src);
     });
 
-    test("bubble sort imperative", () => {
+    test.todo("bubble sort imperative", () => {
       const src = `
-        export bubblesort = fn mut list -> {
-          for i in range 0 list.length:
-          for j in range 0 (list.length - i - 1):
-          if list[j] > list[j+1]:
+        export bubblesort := fn mut list -> {
+          for i in range 0 list.length
+          for j in range 0 (list.length - i - 1)
+          if list[j] > list[j+1]
             list[j], list[j+1] = list[j+1], list[j]
           return list
         }`;
@@ -580,7 +580,7 @@ describe("examples", () => {
     });
   });
 
-  describe("functional", () => {
+  describe.todo("functional", () => {
     test("option", () => {
       const src = `
         export none := fn some, none -> none

@@ -1,8 +1,12 @@
-import { Tree } from "../tree";
+import { assert } from "../utils";
 import { matchString } from "./string";
 import { Token } from "./types";
 
-export type AbstractSyntaxTree = Tree & { value?: any };
+export type AbstractSyntaxTree = {
+  name: string;
+  value?: any;
+  children: AbstractSyntaxTree[];
+};
 
 export const placeholder = (): AbstractSyntaxTree => ({
   name: "placeholder",
@@ -24,26 +28,42 @@ export const string = (value: string): AbstractSyntaxTree => ({
   children: [],
 });
 export const token = (token: Token): AbstractSyntaxTree =>
-  token.type === "number" ? number(token.value) : token.type === "string" ? string(token.value) : name(token.src);
+  token.type === "number"
+    ? number(token.value)
+    : token.type === "string"
+    ? string(token.value)
+    : /^_+$/.test(token.src)
+    ? placeholder()
+    : name(token.src);
 export const group = (value?: string, ...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
   name: "group",
   value,
   children,
 });
+export const operator = (value: string, ...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
+  name: "operator",
+  value,
+  children,
+});
 export const infix = (
-  ...children: [group: AbstractSyntaxTree, lhs: AbstractSyntaxTree, rhs: AbstractSyntaxTree]
-): AbstractSyntaxTree => ({
-  name: "infix",
-  children,
-});
-export const postfix = (...children: [group: AbstractSyntaxTree, lhs: AbstractSyntaxTree]): AbstractSyntaxTree => ({
-  name: "postfix",
-  children,
-});
-export const prefix = (...children: [group: AbstractSyntaxTree, rhs: AbstractSyntaxTree]): AbstractSyntaxTree => ({
-  name: "prefix",
-  children,
-});
+  group: AbstractSyntaxTree,
+  lhs: AbstractSyntaxTree,
+  rhs: AbstractSyntaxTree
+): AbstractSyntaxTree => {
+  assert(group.name === "group", 'infix: group.name !== "group"');
+  const { value, children } = group;
+  return operator(value, lhs, ...children, rhs);
+};
+export const postfix = (group: AbstractSyntaxTree, lhs: AbstractSyntaxTree): AbstractSyntaxTree => {
+  assert(group.name === "group", 'postfix: group.name !== "group"');
+  const { value, children } = group;
+  return operator(value, lhs, ...children);
+};
+export const prefix = (group: AbstractSyntaxTree, rhs: AbstractSyntaxTree): AbstractSyntaxTree => {
+  assert(group.name === "group", 'prefix: group.name !== "group"');
+  const { value, children } = group;
+  return operator(value, ...children, rhs);
+};
 
 export const tuple = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
   const children: AbstractSyntaxTree[] = [];
@@ -184,3 +204,8 @@ export const pattern = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
 
   return { name: "pattern", children };
 };
+
+export const program = (...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
+  name: "program",
+  children,
+});
