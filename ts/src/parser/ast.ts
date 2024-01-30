@@ -22,8 +22,21 @@ export const name = (value: string): AbstractSyntaxTree => ({
   children: [],
 });
 
-export const number = (value: number): AbstractSyntaxTree => ({
-  name: "number",
+// export const number = (value: number): AbstractSyntaxTree => ({
+//   name: "number",
+//   value,
+//   data: {},
+//   children: [],
+// });
+export const int = (value: number): AbstractSyntaxTree => ({
+  name: "int",
+  value,
+  data: {},
+  children: [],
+});
+
+export const float = (value: number): AbstractSyntaxTree => ({
+  name: "float",
   value,
   data: {},
   children: [],
@@ -38,7 +51,9 @@ export const string = (value: string): AbstractSyntaxTree => ({
 
 export const token = (token: Token): AbstractSyntaxTree =>
   token.type === "number"
-    ? number(token.value)
+    ? token.src.includes(".")
+      ? float(token.value)
+      : int(token.value)
     : token.type === "string"
     ? string(token.value)
     : /^_+$/.test(token.src)

@@ -8,13 +8,13 @@ exports[`arithmetics > add association 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -25,7 +25,7 @@ exports[`arithmetics > add association 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -41,7 +41,7 @@ exports[`arithmetics > add decrement application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -59,7 +59,7 @@ exports[`arithmetics > add decrement application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -75,7 +75,7 @@ exports[`arithmetics > add decrement application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -96,7 +96,7 @@ exports[`arithmetics > add decrement application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -114,7 +114,7 @@ exports[`arithmetics > add decrement application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -130,7 +130,7 @@ exports[`arithmetics > add decrement application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -151,7 +151,7 @@ exports[`arithmetics > add decrement application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -169,7 +169,7 @@ exports[`arithmetics > add decrement application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -185,7 +185,7 @@ exports[`arithmetics > add decrement application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -206,7 +206,7 @@ exports[`arithmetics > add decrement application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -224,7 +224,7 @@ exports[`arithmetics > add decrement application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -240,7 +240,7 @@ exports[`arithmetics > add decrement application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -263,7 +263,7 @@ exports[`arithmetics > add decrement application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -279,7 +279,7 @@ exports[`arithmetics > add decrement application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -300,7 +300,7 @@ exports[`arithmetics > add decrement application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -316,7 +316,7 @@ exports[`arithmetics > add decrement divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -326,7 +326,7 @@ exports[`arithmetics > add decrement divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -337,7 +337,7 @@ exports[`arithmetics > add decrement divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -358,7 +358,7 @@ exports[`arithmetics > add decrement modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -368,7 +368,7 @@ exports[`arithmetics > add decrement modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -379,7 +379,7 @@ exports[`arithmetics > add decrement modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -400,7 +400,7 @@ exports[`arithmetics > add decrement multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -410,7 +410,7 @@ exports[`arithmetics > add decrement multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -421,7 +421,7 @@ exports[`arithmetics > add decrement multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -442,7 +442,7 @@ exports[`arithmetics > add decrement power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -452,7 +452,7 @@ exports[`arithmetics > add decrement power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -463,7 +463,7 @@ exports[`arithmetics > add decrement power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -486,7 +486,7 @@ exports[`arithmetics > add decrement subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -494,7 +494,7 @@ exports[`arithmetics > add decrement subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -510,7 +510,7 @@ exports[`arithmetics > add decrement subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -526,7 +526,7 @@ exports[`arithmetics > add divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -534,13 +534,13 @@ exports[`arithmetics > add divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -561,7 +561,7 @@ exports[`arithmetics > add increment application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -579,7 +579,7 @@ exports[`arithmetics > add increment application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -595,7 +595,7 @@ exports[`arithmetics > add increment application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -616,7 +616,7 @@ exports[`arithmetics > add increment application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -634,7 +634,7 @@ exports[`arithmetics > add increment application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -650,7 +650,7 @@ exports[`arithmetics > add increment application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -671,7 +671,7 @@ exports[`arithmetics > add increment application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -689,7 +689,7 @@ exports[`arithmetics > add increment application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -705,7 +705,7 @@ exports[`arithmetics > add increment application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -726,7 +726,7 @@ exports[`arithmetics > add increment application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -744,7 +744,7 @@ exports[`arithmetics > add increment application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -760,7 +760,7 @@ exports[`arithmetics > add increment application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -783,7 +783,7 @@ exports[`arithmetics > add increment application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -799,7 +799,7 @@ exports[`arithmetics > add increment application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -820,7 +820,7 @@ exports[`arithmetics > add increment application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -836,7 +836,7 @@ exports[`arithmetics > add increment divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -846,7 +846,7 @@ exports[`arithmetics > add increment divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -857,7 +857,7 @@ exports[`arithmetics > add increment divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -878,7 +878,7 @@ exports[`arithmetics > add increment modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -888,7 +888,7 @@ exports[`arithmetics > add increment modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -899,7 +899,7 @@ exports[`arithmetics > add increment modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -920,7 +920,7 @@ exports[`arithmetics > add increment multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -930,7 +930,7 @@ exports[`arithmetics > add increment multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -941,7 +941,7 @@ exports[`arithmetics > add increment multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -962,7 +962,7 @@ exports[`arithmetics > add increment power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -972,7 +972,7 @@ exports[`arithmetics > add increment power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -983,7 +983,7 @@ exports[`arithmetics > add increment power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -1006,7 +1006,7 @@ exports[`arithmetics > add increment subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -1014,7 +1014,7 @@ exports[`arithmetics > add increment subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -1030,7 +1030,7 @@ exports[`arithmetics > add increment subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -1046,7 +1046,7 @@ exports[`arithmetics > add modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -1054,13 +1054,13 @@ exports[`arithmetics > add modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -1081,7 +1081,7 @@ exports[`arithmetics > add multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -1089,13 +1089,13 @@ exports[`arithmetics > add multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -1116,7 +1116,7 @@ exports[`arithmetics > add negate application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -1134,7 +1134,7 @@ exports[`arithmetics > add negate application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -1150,7 +1150,7 @@ exports[`arithmetics > add negate application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -1171,7 +1171,7 @@ exports[`arithmetics > add negate application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -1189,7 +1189,7 @@ exports[`arithmetics > add negate application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -1205,7 +1205,7 @@ exports[`arithmetics > add negate application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -1226,7 +1226,7 @@ exports[`arithmetics > add negate application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -1244,7 +1244,7 @@ exports[`arithmetics > add negate application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -1260,7 +1260,7 @@ exports[`arithmetics > add negate application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -1281,7 +1281,7 @@ exports[`arithmetics > add negate application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -1299,7 +1299,7 @@ exports[`arithmetics > add negate application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -1315,7 +1315,7 @@ exports[`arithmetics > add negate application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -1338,7 +1338,7 @@ exports[`arithmetics > add negate application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -1354,7 +1354,7 @@ exports[`arithmetics > add negate application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -1375,7 +1375,7 @@ exports[`arithmetics > add negate application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -1391,7 +1391,7 @@ exports[`arithmetics > add negate divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -1401,7 +1401,7 @@ exports[`arithmetics > add negate divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -1412,7 +1412,7 @@ exports[`arithmetics > add negate divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -1433,7 +1433,7 @@ exports[`arithmetics > add negate modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -1443,7 +1443,7 @@ exports[`arithmetics > add negate modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -1454,7 +1454,7 @@ exports[`arithmetics > add negate modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -1475,7 +1475,7 @@ exports[`arithmetics > add negate multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -1485,7 +1485,7 @@ exports[`arithmetics > add negate multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -1496,7 +1496,7 @@ exports[`arithmetics > add negate multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -1517,7 +1517,7 @@ exports[`arithmetics > add negate power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -1527,7 +1527,7 @@ exports[`arithmetics > add negate power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -1538,7 +1538,7 @@ exports[`arithmetics > add negate power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -1561,7 +1561,7 @@ exports[`arithmetics > add negate subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -1569,7 +1569,7 @@ exports[`arithmetics > add negate subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -1585,7 +1585,7 @@ exports[`arithmetics > add negate subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -1601,7 +1601,7 @@ exports[`arithmetics > add power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -1609,13 +1609,13 @@ exports[`arithmetics > add power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -1638,13 +1638,13 @@ exports[`arithmetics > add subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -1655,7 +1655,7 @@ exports[`arithmetics > add subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -1673,13 +1673,13 @@ exports[`arithmetics > divide add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -1690,7 +1690,7 @@ exports[`arithmetics > divide add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -1708,13 +1708,13 @@ exports[`arithmetics > divide association 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -1725,7 +1725,7 @@ exports[`arithmetics > divide association 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -1743,7 +1743,7 @@ exports[`arithmetics > divide decrement add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -1751,7 +1751,7 @@ exports[`arithmetics > divide decrement add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -1767,7 +1767,7 @@ exports[`arithmetics > divide decrement add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -1785,7 +1785,7 @@ exports[`arithmetics > divide decrement application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -1801,7 +1801,7 @@ exports[`arithmetics > divide decrement application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -1822,7 +1822,7 @@ exports[`arithmetics > divide decrement application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -1840,7 +1840,7 @@ exports[`arithmetics > divide decrement application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -1856,7 +1856,7 @@ exports[`arithmetics > divide decrement application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -1877,7 +1877,7 @@ exports[`arithmetics > divide decrement application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -1895,7 +1895,7 @@ exports[`arithmetics > divide decrement application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -1911,7 +1911,7 @@ exports[`arithmetics > divide decrement application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -1932,7 +1932,7 @@ exports[`arithmetics > divide decrement application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -1948,7 +1948,7 @@ exports[`arithmetics > divide decrement application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -1966,7 +1966,7 @@ exports[`arithmetics > divide decrement application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -1982,7 +1982,7 @@ exports[`arithmetics > divide decrement application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -2005,7 +2005,7 @@ exports[`arithmetics > divide decrement application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2021,7 +2021,7 @@ exports[`arithmetics > divide decrement application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -2042,7 +2042,7 @@ exports[`arithmetics > divide decrement application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2060,7 +2060,7 @@ exports[`arithmetics > divide decrement modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2068,7 +2068,7 @@ exports[`arithmetics > divide decrement modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -2084,7 +2084,7 @@ exports[`arithmetics > divide decrement modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2102,7 +2102,7 @@ exports[`arithmetics > divide decrement multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2110,7 +2110,7 @@ exports[`arithmetics > divide decrement multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -2126,7 +2126,7 @@ exports[`arithmetics > divide decrement multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2142,7 +2142,7 @@ exports[`arithmetics > divide decrement power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -2152,7 +2152,7 @@ exports[`arithmetics > divide decrement power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -2163,7 +2163,7 @@ exports[`arithmetics > divide decrement power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -2186,7 +2186,7 @@ exports[`arithmetics > divide decrement subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2194,7 +2194,7 @@ exports[`arithmetics > divide decrement subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -2210,7 +2210,7 @@ exports[`arithmetics > divide decrement subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2228,7 +2228,7 @@ exports[`arithmetics > divide increment add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2236,7 +2236,7 @@ exports[`arithmetics > divide increment add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -2252,7 +2252,7 @@ exports[`arithmetics > divide increment add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2270,7 +2270,7 @@ exports[`arithmetics > divide increment application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2286,7 +2286,7 @@ exports[`arithmetics > divide increment application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -2307,7 +2307,7 @@ exports[`arithmetics > divide increment application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2325,7 +2325,7 @@ exports[`arithmetics > divide increment application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2341,7 +2341,7 @@ exports[`arithmetics > divide increment application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -2362,7 +2362,7 @@ exports[`arithmetics > divide increment application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2380,7 +2380,7 @@ exports[`arithmetics > divide increment application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2396,7 +2396,7 @@ exports[`arithmetics > divide increment application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -2417,7 +2417,7 @@ exports[`arithmetics > divide increment application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2433,7 +2433,7 @@ exports[`arithmetics > divide increment application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -2451,7 +2451,7 @@ exports[`arithmetics > divide increment application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -2467,7 +2467,7 @@ exports[`arithmetics > divide increment application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -2490,7 +2490,7 @@ exports[`arithmetics > divide increment application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2506,7 +2506,7 @@ exports[`arithmetics > divide increment application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -2527,7 +2527,7 @@ exports[`arithmetics > divide increment application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2545,7 +2545,7 @@ exports[`arithmetics > divide increment modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2553,7 +2553,7 @@ exports[`arithmetics > divide increment modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -2569,7 +2569,7 @@ exports[`arithmetics > divide increment modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2587,7 +2587,7 @@ exports[`arithmetics > divide increment multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2595,7 +2595,7 @@ exports[`arithmetics > divide increment multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -2611,7 +2611,7 @@ exports[`arithmetics > divide increment multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2627,7 +2627,7 @@ exports[`arithmetics > divide increment power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -2637,7 +2637,7 @@ exports[`arithmetics > divide increment power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -2648,7 +2648,7 @@ exports[`arithmetics > divide increment power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -2671,7 +2671,7 @@ exports[`arithmetics > divide increment subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2679,7 +2679,7 @@ exports[`arithmetics > divide increment subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -2695,7 +2695,7 @@ exports[`arithmetics > divide increment subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2713,13 +2713,13 @@ exports[`arithmetics > divide modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -2730,7 +2730,7 @@ exports[`arithmetics > divide modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2748,13 +2748,13 @@ exports[`arithmetics > divide multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -2765,7 +2765,7 @@ exports[`arithmetics > divide multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2783,7 +2783,7 @@ exports[`arithmetics > divide negate add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2791,7 +2791,7 @@ exports[`arithmetics > divide negate add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -2807,7 +2807,7 @@ exports[`arithmetics > divide negate add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2825,7 +2825,7 @@ exports[`arithmetics > divide negate application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2841,7 +2841,7 @@ exports[`arithmetics > divide negate application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -2862,7 +2862,7 @@ exports[`arithmetics > divide negate application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2880,7 +2880,7 @@ exports[`arithmetics > divide negate application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2896,7 +2896,7 @@ exports[`arithmetics > divide negate application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -2917,7 +2917,7 @@ exports[`arithmetics > divide negate application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2935,7 +2935,7 @@ exports[`arithmetics > divide negate application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -2951,7 +2951,7 @@ exports[`arithmetics > divide negate application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -2972,7 +2972,7 @@ exports[`arithmetics > divide negate application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -2988,7 +2988,7 @@ exports[`arithmetics > divide negate application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -3006,7 +3006,7 @@ exports[`arithmetics > divide negate application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -3022,7 +3022,7 @@ exports[`arithmetics > divide negate application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -3045,7 +3045,7 @@ exports[`arithmetics > divide negate application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3061,7 +3061,7 @@ exports[`arithmetics > divide negate application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -3082,7 +3082,7 @@ exports[`arithmetics > divide negate application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3100,7 +3100,7 @@ exports[`arithmetics > divide negate modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3108,7 +3108,7 @@ exports[`arithmetics > divide negate modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -3124,7 +3124,7 @@ exports[`arithmetics > divide negate modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3142,7 +3142,7 @@ exports[`arithmetics > divide negate multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3150,7 +3150,7 @@ exports[`arithmetics > divide negate multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -3166,7 +3166,7 @@ exports[`arithmetics > divide negate multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3182,7 +3182,7 @@ exports[`arithmetics > divide negate power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -3192,7 +3192,7 @@ exports[`arithmetics > divide negate power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -3203,7 +3203,7 @@ exports[`arithmetics > divide negate power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -3226,7 +3226,7 @@ exports[`arithmetics > divide negate subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3234,7 +3234,7 @@ exports[`arithmetics > divide negate subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -3250,7 +3250,7 @@ exports[`arithmetics > divide negate subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3266,7 +3266,7 @@ exports[`arithmetics > divide power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -3274,13 +3274,13 @@ exports[`arithmetics > divide power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -3303,13 +3303,13 @@ exports[`arithmetics > divide subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -3320,7 +3320,7 @@ exports[`arithmetics > divide subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3338,13 +3338,13 @@ exports[`arithmetics > modulo add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -3355,7 +3355,7 @@ exports[`arithmetics > modulo add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3373,13 +3373,13 @@ exports[`arithmetics > modulo association 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -3390,7 +3390,7 @@ exports[`arithmetics > modulo association 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3408,7 +3408,7 @@ exports[`arithmetics > modulo decrement add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3416,7 +3416,7 @@ exports[`arithmetics > modulo decrement add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -3432,7 +3432,7 @@ exports[`arithmetics > modulo decrement add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3450,7 +3450,7 @@ exports[`arithmetics > modulo decrement application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3466,7 +3466,7 @@ exports[`arithmetics > modulo decrement application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -3487,7 +3487,7 @@ exports[`arithmetics > modulo decrement application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3505,7 +3505,7 @@ exports[`arithmetics > modulo decrement application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3521,7 +3521,7 @@ exports[`arithmetics > modulo decrement application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -3542,7 +3542,7 @@ exports[`arithmetics > modulo decrement application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3560,7 +3560,7 @@ exports[`arithmetics > modulo decrement application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3576,7 +3576,7 @@ exports[`arithmetics > modulo decrement application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -3597,7 +3597,7 @@ exports[`arithmetics > modulo decrement application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3613,7 +3613,7 @@ exports[`arithmetics > modulo decrement application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -3631,7 +3631,7 @@ exports[`arithmetics > modulo decrement application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -3647,7 +3647,7 @@ exports[`arithmetics > modulo decrement application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -3670,7 +3670,7 @@ exports[`arithmetics > modulo decrement application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3686,7 +3686,7 @@ exports[`arithmetics > modulo decrement application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -3707,7 +3707,7 @@ exports[`arithmetics > modulo decrement application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3725,7 +3725,7 @@ exports[`arithmetics > modulo decrement divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3733,7 +3733,7 @@ exports[`arithmetics > modulo decrement divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -3749,7 +3749,7 @@ exports[`arithmetics > modulo decrement divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3767,7 +3767,7 @@ exports[`arithmetics > modulo decrement multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3775,7 +3775,7 @@ exports[`arithmetics > modulo decrement multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -3791,7 +3791,7 @@ exports[`arithmetics > modulo decrement multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3807,7 +3807,7 @@ exports[`arithmetics > modulo decrement power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -3817,7 +3817,7 @@ exports[`arithmetics > modulo decrement power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -3828,7 +3828,7 @@ exports[`arithmetics > modulo decrement power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -3851,7 +3851,7 @@ exports[`arithmetics > modulo decrement subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3859,7 +3859,7 @@ exports[`arithmetics > modulo decrement subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -3875,7 +3875,7 @@ exports[`arithmetics > modulo decrement subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3893,13 +3893,13 @@ exports[`arithmetics > modulo divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -3910,7 +3910,7 @@ exports[`arithmetics > modulo divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3928,7 +3928,7 @@ exports[`arithmetics > modulo increment add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3936,7 +3936,7 @@ exports[`arithmetics > modulo increment add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -3952,7 +3952,7 @@ exports[`arithmetics > modulo increment add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -3970,7 +3970,7 @@ exports[`arithmetics > modulo increment application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -3986,7 +3986,7 @@ exports[`arithmetics > modulo increment application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -4007,7 +4007,7 @@ exports[`arithmetics > modulo increment application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4025,7 +4025,7 @@ exports[`arithmetics > modulo increment application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4041,7 +4041,7 @@ exports[`arithmetics > modulo increment application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -4062,7 +4062,7 @@ exports[`arithmetics > modulo increment application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4080,7 +4080,7 @@ exports[`arithmetics > modulo increment application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4096,7 +4096,7 @@ exports[`arithmetics > modulo increment application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -4117,7 +4117,7 @@ exports[`arithmetics > modulo increment application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4133,7 +4133,7 @@ exports[`arithmetics > modulo increment application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -4151,7 +4151,7 @@ exports[`arithmetics > modulo increment application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -4167,7 +4167,7 @@ exports[`arithmetics > modulo increment application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -4190,7 +4190,7 @@ exports[`arithmetics > modulo increment application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4206,7 +4206,7 @@ exports[`arithmetics > modulo increment application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -4227,7 +4227,7 @@ exports[`arithmetics > modulo increment application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4245,7 +4245,7 @@ exports[`arithmetics > modulo increment divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4253,7 +4253,7 @@ exports[`arithmetics > modulo increment divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -4269,7 +4269,7 @@ exports[`arithmetics > modulo increment divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4287,7 +4287,7 @@ exports[`arithmetics > modulo increment multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4295,7 +4295,7 @@ exports[`arithmetics > modulo increment multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -4311,7 +4311,7 @@ exports[`arithmetics > modulo increment multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4327,7 +4327,7 @@ exports[`arithmetics > modulo increment power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -4337,7 +4337,7 @@ exports[`arithmetics > modulo increment power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -4348,7 +4348,7 @@ exports[`arithmetics > modulo increment power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -4371,7 +4371,7 @@ exports[`arithmetics > modulo increment subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4379,7 +4379,7 @@ exports[`arithmetics > modulo increment subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -4395,7 +4395,7 @@ exports[`arithmetics > modulo increment subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4413,13 +4413,13 @@ exports[`arithmetics > modulo multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -4430,7 +4430,7 @@ exports[`arithmetics > modulo multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4448,7 +4448,7 @@ exports[`arithmetics > modulo negate add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4456,7 +4456,7 @@ exports[`arithmetics > modulo negate add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -4472,7 +4472,7 @@ exports[`arithmetics > modulo negate add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4490,7 +4490,7 @@ exports[`arithmetics > modulo negate application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4506,7 +4506,7 @@ exports[`arithmetics > modulo negate application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -4527,7 +4527,7 @@ exports[`arithmetics > modulo negate application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4545,7 +4545,7 @@ exports[`arithmetics > modulo negate application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4561,7 +4561,7 @@ exports[`arithmetics > modulo negate application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -4582,7 +4582,7 @@ exports[`arithmetics > modulo negate application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4600,7 +4600,7 @@ exports[`arithmetics > modulo negate application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4616,7 +4616,7 @@ exports[`arithmetics > modulo negate application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -4637,7 +4637,7 @@ exports[`arithmetics > modulo negate application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4653,7 +4653,7 @@ exports[`arithmetics > modulo negate application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -4671,7 +4671,7 @@ exports[`arithmetics > modulo negate application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -4687,7 +4687,7 @@ exports[`arithmetics > modulo negate application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -4710,7 +4710,7 @@ exports[`arithmetics > modulo negate application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4726,7 +4726,7 @@ exports[`arithmetics > modulo negate application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -4747,7 +4747,7 @@ exports[`arithmetics > modulo negate application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4765,7 +4765,7 @@ exports[`arithmetics > modulo negate divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4773,7 +4773,7 @@ exports[`arithmetics > modulo negate divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -4789,7 +4789,7 @@ exports[`arithmetics > modulo negate divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4807,7 +4807,7 @@ exports[`arithmetics > modulo negate multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4815,7 +4815,7 @@ exports[`arithmetics > modulo negate multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -4831,7 +4831,7 @@ exports[`arithmetics > modulo negate multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4847,7 +4847,7 @@ exports[`arithmetics > modulo negate power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -4857,7 +4857,7 @@ exports[`arithmetics > modulo negate power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -4868,7 +4868,7 @@ exports[`arithmetics > modulo negate power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -4891,7 +4891,7 @@ exports[`arithmetics > modulo negate subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -4899,7 +4899,7 @@ exports[`arithmetics > modulo negate subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -4915,7 +4915,7 @@ exports[`arithmetics > modulo negate subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -4931,7 +4931,7 @@ exports[`arithmetics > modulo power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -4939,13 +4939,13 @@ exports[`arithmetics > modulo power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -4968,13 +4968,13 @@ exports[`arithmetics > modulo subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -4985,7 +4985,7 @@ exports[`arithmetics > modulo subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5003,13 +5003,13 @@ exports[`arithmetics > multiply add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -5020,7 +5020,7 @@ exports[`arithmetics > multiply add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5038,13 +5038,13 @@ exports[`arithmetics > multiply association 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -5055,7 +5055,7 @@ exports[`arithmetics > multiply association 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5073,7 +5073,7 @@ exports[`arithmetics > multiply decrement add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5081,7 +5081,7 @@ exports[`arithmetics > multiply decrement add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -5097,7 +5097,7 @@ exports[`arithmetics > multiply decrement add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5115,7 +5115,7 @@ exports[`arithmetics > multiply decrement application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5131,7 +5131,7 @@ exports[`arithmetics > multiply decrement application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -5152,7 +5152,7 @@ exports[`arithmetics > multiply decrement application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5170,7 +5170,7 @@ exports[`arithmetics > multiply decrement application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5186,7 +5186,7 @@ exports[`arithmetics > multiply decrement application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -5207,7 +5207,7 @@ exports[`arithmetics > multiply decrement application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5225,7 +5225,7 @@ exports[`arithmetics > multiply decrement application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5241,7 +5241,7 @@ exports[`arithmetics > multiply decrement application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -5262,7 +5262,7 @@ exports[`arithmetics > multiply decrement application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5278,7 +5278,7 @@ exports[`arithmetics > multiply decrement application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -5296,7 +5296,7 @@ exports[`arithmetics > multiply decrement application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -5312,7 +5312,7 @@ exports[`arithmetics > multiply decrement application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -5335,7 +5335,7 @@ exports[`arithmetics > multiply decrement application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5351,7 +5351,7 @@ exports[`arithmetics > multiply decrement application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -5372,7 +5372,7 @@ exports[`arithmetics > multiply decrement application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5390,7 +5390,7 @@ exports[`arithmetics > multiply decrement divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5398,7 +5398,7 @@ exports[`arithmetics > multiply decrement divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -5414,7 +5414,7 @@ exports[`arithmetics > multiply decrement divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5432,7 +5432,7 @@ exports[`arithmetics > multiply decrement modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5440,7 +5440,7 @@ exports[`arithmetics > multiply decrement modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -5456,7 +5456,7 @@ exports[`arithmetics > multiply decrement modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5472,7 +5472,7 @@ exports[`arithmetics > multiply decrement power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -5482,7 +5482,7 @@ exports[`arithmetics > multiply decrement power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -5493,7 +5493,7 @@ exports[`arithmetics > multiply decrement power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -5516,7 +5516,7 @@ exports[`arithmetics > multiply decrement subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5524,7 +5524,7 @@ exports[`arithmetics > multiply decrement subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -5540,7 +5540,7 @@ exports[`arithmetics > multiply decrement subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5558,13 +5558,13 @@ exports[`arithmetics > multiply divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -5575,7 +5575,7 @@ exports[`arithmetics > multiply divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5593,7 +5593,7 @@ exports[`arithmetics > multiply increment add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5601,7 +5601,7 @@ exports[`arithmetics > multiply increment add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -5617,7 +5617,7 @@ exports[`arithmetics > multiply increment add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5635,7 +5635,7 @@ exports[`arithmetics > multiply increment application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5651,7 +5651,7 @@ exports[`arithmetics > multiply increment application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -5672,7 +5672,7 @@ exports[`arithmetics > multiply increment application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5690,7 +5690,7 @@ exports[`arithmetics > multiply increment application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5706,7 +5706,7 @@ exports[`arithmetics > multiply increment application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -5727,7 +5727,7 @@ exports[`arithmetics > multiply increment application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5745,7 +5745,7 @@ exports[`arithmetics > multiply increment application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5761,7 +5761,7 @@ exports[`arithmetics > multiply increment application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -5782,7 +5782,7 @@ exports[`arithmetics > multiply increment application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5798,7 +5798,7 @@ exports[`arithmetics > multiply increment application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -5816,7 +5816,7 @@ exports[`arithmetics > multiply increment application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -5832,7 +5832,7 @@ exports[`arithmetics > multiply increment application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -5855,7 +5855,7 @@ exports[`arithmetics > multiply increment application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5871,7 +5871,7 @@ exports[`arithmetics > multiply increment application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -5892,7 +5892,7 @@ exports[`arithmetics > multiply increment application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5910,7 +5910,7 @@ exports[`arithmetics > multiply increment divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5918,7 +5918,7 @@ exports[`arithmetics > multiply increment divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -5934,7 +5934,7 @@ exports[`arithmetics > multiply increment divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5952,7 +5952,7 @@ exports[`arithmetics > multiply increment modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -5960,7 +5960,7 @@ exports[`arithmetics > multiply increment modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -5976,7 +5976,7 @@ exports[`arithmetics > multiply increment modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -5992,7 +5992,7 @@ exports[`arithmetics > multiply increment power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -6002,7 +6002,7 @@ exports[`arithmetics > multiply increment power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -6013,7 +6013,7 @@ exports[`arithmetics > multiply increment power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -6036,7 +6036,7 @@ exports[`arithmetics > multiply increment subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6044,7 +6044,7 @@ exports[`arithmetics > multiply increment subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -6060,7 +6060,7 @@ exports[`arithmetics > multiply increment subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6078,13 +6078,13 @@ exports[`arithmetics > multiply modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -6095,7 +6095,7 @@ exports[`arithmetics > multiply modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6113,7 +6113,7 @@ exports[`arithmetics > multiply negate add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6121,7 +6121,7 @@ exports[`arithmetics > multiply negate add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -6137,7 +6137,7 @@ exports[`arithmetics > multiply negate add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6155,7 +6155,7 @@ exports[`arithmetics > multiply negate application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6171,7 +6171,7 @@ exports[`arithmetics > multiply negate application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -6192,7 +6192,7 @@ exports[`arithmetics > multiply negate application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6210,7 +6210,7 @@ exports[`arithmetics > multiply negate application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6226,7 +6226,7 @@ exports[`arithmetics > multiply negate application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -6247,7 +6247,7 @@ exports[`arithmetics > multiply negate application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6265,7 +6265,7 @@ exports[`arithmetics > multiply negate application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6281,7 +6281,7 @@ exports[`arithmetics > multiply negate application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -6302,7 +6302,7 @@ exports[`arithmetics > multiply negate application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6318,7 +6318,7 @@ exports[`arithmetics > multiply negate application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -6336,7 +6336,7 @@ exports[`arithmetics > multiply negate application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -6352,7 +6352,7 @@ exports[`arithmetics > multiply negate application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -6375,7 +6375,7 @@ exports[`arithmetics > multiply negate application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6391,7 +6391,7 @@ exports[`arithmetics > multiply negate application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -6412,7 +6412,7 @@ exports[`arithmetics > multiply negate application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6430,7 +6430,7 @@ exports[`arithmetics > multiply negate divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6438,7 +6438,7 @@ exports[`arithmetics > multiply negate divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -6454,7 +6454,7 @@ exports[`arithmetics > multiply negate divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6472,7 +6472,7 @@ exports[`arithmetics > multiply negate modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6480,7 +6480,7 @@ exports[`arithmetics > multiply negate modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -6496,7 +6496,7 @@ exports[`arithmetics > multiply negate modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6512,7 +6512,7 @@ exports[`arithmetics > multiply negate power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -6522,7 +6522,7 @@ exports[`arithmetics > multiply negate power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -6533,7 +6533,7 @@ exports[`arithmetics > multiply negate power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -6556,7 +6556,7 @@ exports[`arithmetics > multiply negate subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6564,7 +6564,7 @@ exports[`arithmetics > multiply negate subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -6580,7 +6580,7 @@ exports[`arithmetics > multiply negate subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6596,7 +6596,7 @@ exports[`arithmetics > multiply power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -6604,13 +6604,13 @@ exports[`arithmetics > multiply power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -6633,13 +6633,13 @@ exports[`arithmetics > multiply subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -6650,7 +6650,7 @@ exports[`arithmetics > multiply subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6668,13 +6668,13 @@ exports[`arithmetics > power add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -6685,7 +6685,7 @@ exports[`arithmetics > power add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6703,13 +6703,13 @@ exports[`arithmetics > power association 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -6720,7 +6720,7 @@ exports[`arithmetics > power association 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6738,7 +6738,7 @@ exports[`arithmetics > power decrement add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6746,7 +6746,7 @@ exports[`arithmetics > power decrement add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -6762,7 +6762,7 @@ exports[`arithmetics > power decrement add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6780,7 +6780,7 @@ exports[`arithmetics > power decrement application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6796,7 +6796,7 @@ exports[`arithmetics > power decrement application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -6817,7 +6817,7 @@ exports[`arithmetics > power decrement application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6835,7 +6835,7 @@ exports[`arithmetics > power decrement application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6851,7 +6851,7 @@ exports[`arithmetics > power decrement application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -6872,7 +6872,7 @@ exports[`arithmetics > power decrement application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6890,7 +6890,7 @@ exports[`arithmetics > power decrement application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6906,7 +6906,7 @@ exports[`arithmetics > power decrement application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -6927,7 +6927,7 @@ exports[`arithmetics > power decrement application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -6945,7 +6945,7 @@ exports[`arithmetics > power decrement application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -6961,7 +6961,7 @@ exports[`arithmetics > power decrement application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -6982,7 +6982,7 @@ exports[`arithmetics > power decrement application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7000,7 +7000,7 @@ exports[`arithmetics > power decrement application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7016,7 +7016,7 @@ exports[`arithmetics > power decrement application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -7037,7 +7037,7 @@ exports[`arithmetics > power decrement application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7055,7 +7055,7 @@ exports[`arithmetics > power decrement divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7063,7 +7063,7 @@ exports[`arithmetics > power decrement divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -7079,7 +7079,7 @@ exports[`arithmetics > power decrement divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7097,7 +7097,7 @@ exports[`arithmetics > power decrement modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7105,7 +7105,7 @@ exports[`arithmetics > power decrement modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -7121,7 +7121,7 @@ exports[`arithmetics > power decrement modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7139,7 +7139,7 @@ exports[`arithmetics > power decrement multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7147,7 +7147,7 @@ exports[`arithmetics > power decrement multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -7163,7 +7163,7 @@ exports[`arithmetics > power decrement multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7181,7 +7181,7 @@ exports[`arithmetics > power decrement subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7189,7 +7189,7 @@ exports[`arithmetics > power decrement subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -7205,7 +7205,7 @@ exports[`arithmetics > power decrement subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7223,13 +7223,13 @@ exports[`arithmetics > power divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -7240,7 +7240,7 @@ exports[`arithmetics > power divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7258,7 +7258,7 @@ exports[`arithmetics > power increment add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7266,7 +7266,7 @@ exports[`arithmetics > power increment add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -7282,7 +7282,7 @@ exports[`arithmetics > power increment add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7300,7 +7300,7 @@ exports[`arithmetics > power increment application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7316,7 +7316,7 @@ exports[`arithmetics > power increment application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -7337,7 +7337,7 @@ exports[`arithmetics > power increment application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7355,7 +7355,7 @@ exports[`arithmetics > power increment application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7371,7 +7371,7 @@ exports[`arithmetics > power increment application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -7392,7 +7392,7 @@ exports[`arithmetics > power increment application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7410,7 +7410,7 @@ exports[`arithmetics > power increment application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7426,7 +7426,7 @@ exports[`arithmetics > power increment application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -7447,7 +7447,7 @@ exports[`arithmetics > power increment application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7465,7 +7465,7 @@ exports[`arithmetics > power increment application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7481,7 +7481,7 @@ exports[`arithmetics > power increment application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -7502,7 +7502,7 @@ exports[`arithmetics > power increment application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7520,7 +7520,7 @@ exports[`arithmetics > power increment application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7536,7 +7536,7 @@ exports[`arithmetics > power increment application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -7557,7 +7557,7 @@ exports[`arithmetics > power increment application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7575,7 +7575,7 @@ exports[`arithmetics > power increment divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7583,7 +7583,7 @@ exports[`arithmetics > power increment divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -7599,7 +7599,7 @@ exports[`arithmetics > power increment divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7617,7 +7617,7 @@ exports[`arithmetics > power increment modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7625,7 +7625,7 @@ exports[`arithmetics > power increment modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -7641,7 +7641,7 @@ exports[`arithmetics > power increment modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7659,7 +7659,7 @@ exports[`arithmetics > power increment multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7667,7 +7667,7 @@ exports[`arithmetics > power increment multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -7683,7 +7683,7 @@ exports[`arithmetics > power increment multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7701,7 +7701,7 @@ exports[`arithmetics > power increment subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7709,7 +7709,7 @@ exports[`arithmetics > power increment subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -7725,7 +7725,7 @@ exports[`arithmetics > power increment subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7743,13 +7743,13 @@ exports[`arithmetics > power modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -7760,7 +7760,7 @@ exports[`arithmetics > power modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7778,13 +7778,13 @@ exports[`arithmetics > power multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -7795,7 +7795,7 @@ exports[`arithmetics > power multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7813,7 +7813,7 @@ exports[`arithmetics > power negate add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7821,7 +7821,7 @@ exports[`arithmetics > power negate add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -7837,7 +7837,7 @@ exports[`arithmetics > power negate add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7855,7 +7855,7 @@ exports[`arithmetics > power negate application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7871,7 +7871,7 @@ exports[`arithmetics > power negate application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -7892,7 +7892,7 @@ exports[`arithmetics > power negate application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7910,7 +7910,7 @@ exports[`arithmetics > power negate application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7926,7 +7926,7 @@ exports[`arithmetics > power negate application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -7947,7 +7947,7 @@ exports[`arithmetics > power negate application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -7965,7 +7965,7 @@ exports[`arithmetics > power negate application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -7981,7 +7981,7 @@ exports[`arithmetics > power negate application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -8002,7 +8002,7 @@ exports[`arithmetics > power negate application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8020,7 +8020,7 @@ exports[`arithmetics > power negate application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -8036,7 +8036,7 @@ exports[`arithmetics > power negate application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -8057,7 +8057,7 @@ exports[`arithmetics > power negate application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8075,7 +8075,7 @@ exports[`arithmetics > power negate application subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -8091,7 +8091,7 @@ exports[`arithmetics > power negate application subtract 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -8112,7 +8112,7 @@ exports[`arithmetics > power negate application subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8130,7 +8130,7 @@ exports[`arithmetics > power negate divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -8138,7 +8138,7 @@ exports[`arithmetics > power negate divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -8154,7 +8154,7 @@ exports[`arithmetics > power negate divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8172,7 +8172,7 @@ exports[`arithmetics > power negate modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -8180,7 +8180,7 @@ exports[`arithmetics > power negate modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -8196,7 +8196,7 @@ exports[`arithmetics > power negate modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8214,7 +8214,7 @@ exports[`arithmetics > power negate multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -8222,7 +8222,7 @@ exports[`arithmetics > power negate multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -8238,7 +8238,7 @@ exports[`arithmetics > power negate multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8256,7 +8256,7 @@ exports[`arithmetics > power negate subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -8264,7 +8264,7 @@ exports[`arithmetics > power negate subtract 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -8280,7 +8280,7 @@ exports[`arithmetics > power negate subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8298,13 +8298,13 @@ exports[`arithmetics > power subtract 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -8315,7 +8315,7 @@ exports[`arithmetics > power subtract 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8333,13 +8333,13 @@ exports[`arithmetics > subtract add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -8350,7 +8350,7 @@ exports[`arithmetics > subtract add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8368,13 +8368,13 @@ exports[`arithmetics > subtract association 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
       ],
@@ -8385,7 +8385,7 @@ exports[`arithmetics > subtract association 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8403,7 +8403,7 @@ exports[`arithmetics > subtract decrement add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -8411,7 +8411,7 @@ exports[`arithmetics > subtract decrement add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -8427,7 +8427,7 @@ exports[`arithmetics > subtract decrement add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8445,7 +8445,7 @@ exports[`arithmetics > subtract decrement application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -8461,7 +8461,7 @@ exports[`arithmetics > subtract decrement application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -8482,7 +8482,7 @@ exports[`arithmetics > subtract decrement application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8498,7 +8498,7 @@ exports[`arithmetics > subtract decrement application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -8516,7 +8516,7 @@ exports[`arithmetics > subtract decrement application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -8532,7 +8532,7 @@ exports[`arithmetics > subtract decrement application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -8553,7 +8553,7 @@ exports[`arithmetics > subtract decrement application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -8571,7 +8571,7 @@ exports[`arithmetics > subtract decrement application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -8587,7 +8587,7 @@ exports[`arithmetics > subtract decrement application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -8608,7 +8608,7 @@ exports[`arithmetics > subtract decrement application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -8626,7 +8626,7 @@ exports[`arithmetics > subtract decrement application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -8642,7 +8642,7 @@ exports[`arithmetics > subtract decrement application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -8663,7 +8663,7 @@ exports[`arithmetics > subtract decrement application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -8681,7 +8681,7 @@ exports[`arithmetics > subtract decrement application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -8697,7 +8697,7 @@ exports[`arithmetics > subtract decrement application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -8718,7 +8718,7 @@ exports[`arithmetics > subtract decrement divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -8728,7 +8728,7 @@ exports[`arithmetics > subtract decrement divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -8739,7 +8739,7 @@ exports[`arithmetics > subtract decrement divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -8760,7 +8760,7 @@ exports[`arithmetics > subtract decrement modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -8770,7 +8770,7 @@ exports[`arithmetics > subtract decrement modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -8781,7 +8781,7 @@ exports[`arithmetics > subtract decrement modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -8802,7 +8802,7 @@ exports[`arithmetics > subtract decrement multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -8812,7 +8812,7 @@ exports[`arithmetics > subtract decrement multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -8823,7 +8823,7 @@ exports[`arithmetics > subtract decrement multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -8844,7 +8844,7 @@ exports[`arithmetics > subtract decrement power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -8854,7 +8854,7 @@ exports[`arithmetics > subtract decrement power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -8865,7 +8865,7 @@ exports[`arithmetics > subtract decrement power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -8886,7 +8886,7 @@ exports[`arithmetics > subtract divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -8894,13 +8894,13 @@ exports[`arithmetics > subtract divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -8923,7 +8923,7 @@ exports[`arithmetics > subtract increment add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -8931,7 +8931,7 @@ exports[`arithmetics > subtract increment add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -8947,7 +8947,7 @@ exports[`arithmetics > subtract increment add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -8965,7 +8965,7 @@ exports[`arithmetics > subtract increment application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -8981,7 +8981,7 @@ exports[`arithmetics > subtract increment application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -9002,7 +9002,7 @@ exports[`arithmetics > subtract increment application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -9018,7 +9018,7 @@ exports[`arithmetics > subtract increment application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9036,7 +9036,7 @@ exports[`arithmetics > subtract increment application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -9052,7 +9052,7 @@ exports[`arithmetics > subtract increment application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9073,7 +9073,7 @@ exports[`arithmetics > subtract increment application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9091,7 +9091,7 @@ exports[`arithmetics > subtract increment application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -9107,7 +9107,7 @@ exports[`arithmetics > subtract increment application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9128,7 +9128,7 @@ exports[`arithmetics > subtract increment application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9146,7 +9146,7 @@ exports[`arithmetics > subtract increment application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -9162,7 +9162,7 @@ exports[`arithmetics > subtract increment application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9183,7 +9183,7 @@ exports[`arithmetics > subtract increment application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9201,7 +9201,7 @@ exports[`arithmetics > subtract increment application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -9217,7 +9217,7 @@ exports[`arithmetics > subtract increment application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9238,7 +9238,7 @@ exports[`arithmetics > subtract increment divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9248,7 +9248,7 @@ exports[`arithmetics > subtract increment divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -9259,7 +9259,7 @@ exports[`arithmetics > subtract increment divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9280,7 +9280,7 @@ exports[`arithmetics > subtract increment modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9290,7 +9290,7 @@ exports[`arithmetics > subtract increment modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -9301,7 +9301,7 @@ exports[`arithmetics > subtract increment modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9322,7 +9322,7 @@ exports[`arithmetics > subtract increment multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9332,7 +9332,7 @@ exports[`arithmetics > subtract increment multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -9343,7 +9343,7 @@ exports[`arithmetics > subtract increment multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9364,7 +9364,7 @@ exports[`arithmetics > subtract increment power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9374,7 +9374,7 @@ exports[`arithmetics > subtract increment power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -9385,7 +9385,7 @@ exports[`arithmetics > subtract increment power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9406,7 +9406,7 @@ exports[`arithmetics > subtract modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9414,13 +9414,13 @@ exports[`arithmetics > subtract modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9441,7 +9441,7 @@ exports[`arithmetics > subtract multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9449,13 +9449,13 @@ exports[`arithmetics > subtract multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9478,7 +9478,7 @@ exports[`arithmetics > subtract negate add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -9486,7 +9486,7 @@ exports[`arithmetics > subtract negate add 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -9502,7 +9502,7 @@ exports[`arithmetics > subtract negate add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -9520,7 +9520,7 @@ exports[`arithmetics > subtract negate application add 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 123,
         },
         {
@@ -9536,7 +9536,7 @@ exports[`arithmetics > subtract negate application add 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -9557,7 +9557,7 @@ exports[`arithmetics > subtract negate application add 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 789,
     },
   ],
@@ -9573,7 +9573,7 @@ exports[`arithmetics > subtract negate application divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9591,7 +9591,7 @@ exports[`arithmetics > subtract negate application divide 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -9607,7 +9607,7 @@ exports[`arithmetics > subtract negate application divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9628,7 +9628,7 @@ exports[`arithmetics > subtract negate application modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9646,7 +9646,7 @@ exports[`arithmetics > subtract negate application modulo 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -9662,7 +9662,7 @@ exports[`arithmetics > subtract negate application modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9683,7 +9683,7 @@ exports[`arithmetics > subtract negate application multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9701,7 +9701,7 @@ exports[`arithmetics > subtract negate application multiply 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -9717,7 +9717,7 @@ exports[`arithmetics > subtract negate application multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9738,7 +9738,7 @@ exports[`arithmetics > subtract negate application power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9756,7 +9756,7 @@ exports[`arithmetics > subtract negate application power 1`] = `
                 {
                   "children": [],
                   "data": {},
-                  "name": "number",
+                  "name": "int",
                   "value": 456,
                 },
               ],
@@ -9772,7 +9772,7 @@ exports[`arithmetics > subtract negate application power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9793,7 +9793,7 @@ exports[`arithmetics > subtract negate divide 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9803,7 +9803,7 @@ exports[`arithmetics > subtract negate divide 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -9814,7 +9814,7 @@ exports[`arithmetics > subtract negate divide 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9835,7 +9835,7 @@ exports[`arithmetics > subtract negate modulo 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9845,7 +9845,7 @@ exports[`arithmetics > subtract negate modulo 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -9856,7 +9856,7 @@ exports[`arithmetics > subtract negate modulo 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9877,7 +9877,7 @@ exports[`arithmetics > subtract negate multiply 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9887,7 +9887,7 @@ exports[`arithmetics > subtract negate multiply 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -9898,7 +9898,7 @@ exports[`arithmetics > subtract negate multiply 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9919,7 +9919,7 @@ exports[`arithmetics > subtract negate power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9929,7 +9929,7 @@ exports[`arithmetics > subtract negate power 1`] = `
             {
               "children": [],
               "data": {},
-              "name": "number",
+              "name": "int",
               "value": 456,
             },
           ],
@@ -9940,7 +9940,7 @@ exports[`arithmetics > subtract negate power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],
@@ -9961,7 +9961,7 @@ exports[`arithmetics > subtract power 1`] = `
     {
       "children": [],
       "data": {},
-      "name": "number",
+      "name": "int",
       "value": 123,
     },
     {
@@ -9969,13 +9969,13 @@ exports[`arithmetics > subtract power 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 456,
         },
         {
           "children": [],
           "data": {},
-          "name": "number",
+          "name": "int",
           "value": 789,
         },
       ],

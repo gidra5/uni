@@ -20,8 +20,13 @@ describe("comments", () => {
 
 describe("expressions", () => {
   describe("values", () => {
-    test("number", () => {
+    test("integer", () => {
       const src = `123`;
+      treeTestCase(src);
+    });
+
+    test("float", () => {
+      const src = `123.456`;
       treeTestCase(src);
     });
 
