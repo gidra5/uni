@@ -3,6 +3,7 @@
 exports[`comments > comment 1`] = `
 {
   "children": [],
+  "data": {},
   "name": "number",
   "value": 123,
 }
@@ -11,6 +12,7 @@ exports[`comments > comment 1`] = `
 exports[`comments > comment block 1`] = `
 {
   "children": [],
+  "data": {},
   "name": "number",
   "value": 123,
 }
@@ -25,6 +27,7 @@ exports[`examples > procedural > fibonacci 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "fib",
             },
@@ -32,6 +35,7 @@ exports[`examples > procedural > fibonacci 1`] = `
               "children": [
                 {
                   "children": [],
+                  "data": {},
                   "name": "name",
                   "value": "n",
                 },
@@ -45,15 +49,18 @@ exports[`examples > procedural > fibonacci 1`] = `
                               "children": [
                                 {
                                   "children": [],
+                                  "data": {},
                                   "name": "name",
                                   "value": "n",
                                 },
                                 {
                                   "children": [],
+                                  "data": {},
                                   "name": "number",
                                   "value": 2,
                                 },
                               ],
+                              "data": {},
                               "name": "operator",
                               "value": "<",
                             },
@@ -61,14 +68,17 @@ exports[`examples > procedural > fibonacci 1`] = `
                               "children": [
                                 {
                                   "children": [],
+                                  "data": {},
                                   "name": "number",
                                   "value": 1,
                                 },
                                 {
                                   "children": [],
+                                  "data": {},
                                   "name": "placeholder",
                                 },
                               ],
+                              "data": {},
                               "name": "operator",
                               "value": ";",
                             },
@@ -78,6 +88,7 @@ exports[`examples > procedural > fibonacci 1`] = `
                                   "children": [
                                     {
                                       "children": [],
+                                      "data": {},
                                       "name": "name",
                                       "value": "fib",
                                     },
@@ -87,23 +98,28 @@ exports[`examples > procedural > fibonacci 1`] = `
                                           "children": [
                                             {
                                               "children": [],
+                                              "data": {},
                                               "name": "name",
                                               "value": "n",
                                             },
                                             {
                                               "children": [],
+                                              "data": {},
                                               "name": "number",
                                               "value": 1,
                                             },
                                           ],
+                                          "data": {},
                                           "name": "operator",
                                           "value": "-",
                                         },
                                       ],
+                                      "data": {},
                                       "name": "group",
                                       "value": "parens",
                                     },
                                   ],
+                                  "data": {},
                                   "name": "operator",
                                   "value": "application",
                                 },
@@ -111,6 +127,7 @@ exports[`examples > procedural > fibonacci 1`] = `
                                   "children": [
                                     {
                                       "children": [],
+                                      "data": {},
                                       "name": "name",
                                       "value": "fib",
                                     },
@@ -120,59 +137,73 @@ exports[`examples > procedural > fibonacci 1`] = `
                                           "children": [
                                             {
                                               "children": [],
+                                              "data": {},
                                               "name": "name",
                                               "value": "n",
                                             },
                                             {
                                               "children": [],
+                                              "data": {},
                                               "name": "number",
                                               "value": 2,
                                             },
                                           ],
+                                          "data": {},
                                           "name": "operator",
                                           "value": "-",
                                         },
                                       ],
+                                      "data": {},
                                       "name": "group",
                                       "value": "parens",
                                     },
                                   ],
+                                  "data": {},
                                   "name": "operator",
                                   "value": "application",
                                 },
                               ],
+                              "data": {},
                               "name": "operator",
                               "value": "+",
                             },
                           ],
+                          "data": {},
                           "name": "operator",
                           "value": "ifElse",
                         },
                         {
                           "children": [],
+                          "data": {},
                           "name": "placeholder",
                         },
                       ],
+                      "data": {},
                       "name": "operator",
                       "value": ";",
                     },
                   ],
+                  "data": {},
                   "name": "group",
                   "value": "braces",
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": "->",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ":=",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "export",
     },
   ],
+  "data": {},
   "name": "program",
 }
 `;
@@ -186,10 +217,12 @@ exports[`examples > procedural > hello world 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "println",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "external",
         },
@@ -199,6 +232,7 @@ exports[`examples > procedural > hello world 1`] = `
               "children": [
                 {
                   "children": [],
+                  "data": {},
                   "name": "name",
                   "value": "args",
                 },
@@ -210,43 +244,53 @@ exports[`examples > procedural > hello world 1`] = `
                           "children": [
                             {
                               "children": [],
+                              "data": {},
                               "name": "name",
                               "value": "println",
                             },
                             {
                               "children": [],
+                              "data": {},
                               "name": "string",
                               "value": "Hello, World!",
                             },
                           ],
+                          "data": {},
                           "name": "operator",
                           "value": "application",
                         },
                         {
                           "children": [],
+                          "data": {},
                           "name": "placeholder",
                         },
                       ],
+                      "data": {},
                       "name": "operator",
                       "value": ";",
                     },
                   ],
+                  "data": {},
                   "name": "group",
                   "value": "braces",
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": "->",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "export",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ";",
     },
   ],
+  "data": {},
   "name": "program",
 }
 `;
@@ -256,15 +300,18 @@ exports[`expressions > arithmetics > add 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "+",
 }
@@ -275,10 +322,12 @@ exports[`expressions > arithmetics > decrement 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "prefixDecrement",
 }
@@ -289,15 +338,18 @@ exports[`expressions > arithmetics > divide 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "/",
 }
@@ -308,10 +360,12 @@ exports[`expressions > arithmetics > increment 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "prefixIncrement",
 }
@@ -322,15 +376,18 @@ exports[`expressions > arithmetics > modulo 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "%",
 }
@@ -341,15 +398,18 @@ exports[`expressions > arithmetics > multiply 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "*",
 }
@@ -360,10 +420,12 @@ exports[`expressions > arithmetics > negate 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "negate",
 }
@@ -374,10 +436,12 @@ exports[`expressions > arithmetics > postfix decrement 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "postfixDecrement",
 }
@@ -388,10 +452,12 @@ exports[`expressions > arithmetics > postfix increment 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "postfixIncrement",
 }
@@ -402,15 +468,18 @@ exports[`expressions > arithmetics > power 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "^",
 }
@@ -439,37 +508,45 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                                       "children": [
                                         {
                                           "children": [],
+                                          "data": {},
                                           "name": "number",
                                           "value": 2,
                                         },
                                         {
                                           "children": [],
+                                          "data": {},
                                           "name": "number",
                                           "value": 2,
                                         },
                                       ],
+                                      "data": {},
                                       "name": "operator",
                                       "value": "^",
                                     },
                                     {
                                       "children": [],
+                                      "data": {},
                                       "name": "number",
                                       "value": 5,
                                     },
                                   ],
+                                  "data": {},
                                   "name": "operator",
                                   "value": "-",
                                 },
                                 {
                                   "children": [],
+                                  "data": {},
                                   "name": "number",
                                   "value": 7,
                                 },
                               ],
+                              "data": {},
                               "name": "operator",
                               "value": "+",
                             },
                           ],
+                          "data": {},
                           "name": "group",
                           "value": "parens",
                         },
@@ -479,18 +556,22 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                               "children": [
                                 {
                                   "children": [],
+                                  "data": {},
                                   "name": "name",
                                   "value": "i",
                                 },
                               ],
+                              "data": {},
                               "name": "operator",
                               "value": "negate",
                             },
                           ],
+                          "data": {},
                           "name": "group",
                           "value": "parens",
                         },
                       ],
+                      "data": {},
                       "name": "operator",
                       "value": "-",
                     },
@@ -500,23 +581,28 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                           "children": [
                             {
                               "children": [],
+                              "data": {},
                               "name": "name",
                               "value": "j",
                             },
                           ],
+                          "data": {},
                           "name": "group",
                           "value": "parens",
                         },
                         {
                           "children": [],
+                          "data": {},
                           "name": "number",
                           "value": 0,
                         },
                       ],
+                      "data": {},
                       "name": "operator",
                       "value": "/",
                     },
                   ],
+                  "data": {},
                   "name": "operator",
                   "value": "+",
                 },
@@ -524,6 +610,7 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                   "children": [
                     {
                       "children": [],
+                      "data": {},
                       "name": "number",
                       "value": 1,
                     },
@@ -533,27 +620,33 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                           "children": [
                             {
                               "children": [],
+                              "data": {},
                               "name": "number",
                               "value": 1,
                             },
                             {
                               "children": [],
+                              "data": {},
                               "name": "name",
                               "value": "f",
                             },
                           ],
+                          "data": {},
                           "name": "operator",
                           "value": "*",
                         },
                       ],
+                      "data": {},
                       "name": "group",
                       "value": "parens",
                     },
                   ],
+                  "data": {},
                   "name": "operator",
                   "value": "*",
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": "-",
             },
@@ -565,32 +658,39 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                       "children": [
                         {
                           "children": [],
+                          "data": {},
                           "name": "number",
                           "value": 27,
                         },
                         {
                           "children": [],
+                          "data": {},
                           "name": "name",
                           "value": "x",
                         },
                       ],
+                      "data": {},
                       "name": "operator",
                       "value": "-",
                     },
                   ],
+                  "data": {},
                   "name": "group",
                   "value": "parens",
                 },
                 {
                   "children": [],
+                  "data": {},
                   "name": "name",
                   "value": "q",
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": "/",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "+",
         },
@@ -598,6 +698,7 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "send",
             },
@@ -619,71 +720,87 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                                           "children": [
                                             {
                                               "children": [],
+                                              "data": {},
                                               "name": "number",
                                               "value": 2,
                                             },
                                             {
                                               "children": [],
+                                              "data": {},
                                               "name": "number",
                                               "value": 7,
                                             },
                                           ],
+                                          "data": {},
                                           "name": "operator",
                                           "value": "+",
                                         },
                                       ],
+                                      "data": {},
                                       "name": "group",
                                       "value": "parens",
                                     },
                                   ],
+                                  "data": {},
                                   "name": "operator",
                                   "value": "negate",
                                 },
                                 {
                                   "children": [],
+                                  "data": {},
                                   "name": "name",
                                   "value": "A",
                                 },
                               ],
+                              "data": {},
                               "name": "operator",
                               "value": "/",
                             },
                             {
                               "children": [],
+                              "data": {},
                               "name": "name",
                               "value": "j",
                             },
                           ],
+                          "data": {},
                           "name": "operator",
                           "value": ",",
                         },
                         {
                           "children": [],
+                          "data": {},
                           "name": "name",
                           "value": "i",
                         },
                       ],
+                      "data": {},
                       "name": "operator",
                       "value": ",",
                     },
                     {
                       "children": [],
+                      "data": {},
                       "name": "number",
                       "value": 127,
                     },
                   ],
+                  "data": {},
                   "name": "operator",
                   "value": ",",
                 },
               ],
+              "data": {},
               "name": "group",
               "value": "parens",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "application",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "+",
     },
@@ -691,19 +808,23 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 1,
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 1,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "/",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "+",
 }
@@ -714,10 +835,12 @@ exports[`expressions > arithmetics > produces correct tree for '++i' 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "i",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "prefixIncrement",
 }
@@ -732,23 +855,28 @@ exports[`expressions > arithmetics > produces correct tree for '-(a+b)' 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "a",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "b",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "+",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "negate",
 }
@@ -759,10 +887,12 @@ exports[`expressions > arithmetics > produces correct tree for '--i' 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "i",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "prefixDecrement",
 }
@@ -773,6 +903,7 @@ exports[`expressions > arithmetics > produces correct tree for '1 + 2^3 * 4' 1`]
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 1,
     },
@@ -782,28 +913,34 @@ exports[`expressions > arithmetics > produces correct tree for '1 + 2^3 * 4' 1`]
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "^",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 4,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "*",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "+",
 }
@@ -814,15 +951,18 @@ exports[`expressions > arithmetics > subtract 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "-",
 }
@@ -833,15 +973,18 @@ exports[`expressions > boolean expressions > and 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "and",
 }
@@ -852,15 +995,18 @@ exports[`expressions > boolean expressions > comparators > comparator < 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "<",
 }
@@ -871,15 +1017,18 @@ exports[`expressions > boolean expressions > comparators > comparator <= 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "<=",
 }
@@ -890,15 +1039,18 @@ exports[`expressions > boolean expressions > comparators > comparator > 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": ">",
 }
@@ -909,15 +1061,18 @@ exports[`expressions > boolean expressions > comparators > comparator >= 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": ">=",
 }
@@ -928,20 +1083,24 @@ exports[`expressions > boolean expressions > comparators > range < < 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "inRange_<_<",
 }
@@ -952,20 +1111,24 @@ exports[`expressions > boolean expressions > comparators > range < <= 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "inRange_<_<=",
 }
@@ -976,20 +1139,24 @@ exports[`expressions > boolean expressions > comparators > range <= < 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "inRange_<=_<",
 }
@@ -1000,20 +1167,24 @@ exports[`expressions > boolean expressions > comparators > range <= <= 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "inRange_<=_<=",
 }
@@ -1024,20 +1195,24 @@ exports[`expressions > boolean expressions > comparators > range > > 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "inRange_>_>",
 }
@@ -1048,20 +1223,24 @@ exports[`expressions > boolean expressions > comparators > range > >= 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "inRange_>_>=",
 }
@@ -1072,20 +1251,24 @@ exports[`expressions > boolean expressions > comparators > range >= > 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "inRange_>=_>",
 }
@@ -1096,20 +1279,24 @@ exports[`expressions > boolean expressions > comparators > range >= >= 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "inRange_>=_>=",
 }
@@ -1120,15 +1307,18 @@ exports[`expressions > boolean expressions > deep equal 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "===",
 }
@@ -1139,15 +1329,18 @@ exports[`expressions > boolean expressions > deep not equal 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "!==",
 }
@@ -1158,15 +1351,18 @@ exports[`expressions > boolean expressions > equal 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "==",
 }
@@ -1177,15 +1373,18 @@ exports[`expressions > boolean expressions > in 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "in",
 }
@@ -1196,15 +1395,18 @@ exports[`expressions > boolean expressions > is 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "is",
 }
@@ -1215,10 +1417,12 @@ exports[`expressions > boolean expressions > not 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "!",
 }
@@ -1229,15 +1433,18 @@ exports[`expressions > boolean expressions > not equal 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "!=",
 }
@@ -1248,15 +1455,18 @@ exports[`expressions > boolean expressions > or 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "or",
 }
@@ -1267,15 +1477,18 @@ exports[`expressions > data structures > field access 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "y",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "access",
 }
@@ -1286,15 +1499,18 @@ exports[`expressions > data structures > field access dynamic 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "y",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "accessDynamic",
 }
@@ -1305,6 +1521,7 @@ exports[`expressions > data structures > map 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "placeholder",
     },
     {
@@ -1313,15 +1530,18 @@ exports[`expressions > data structures > map 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "label",
         },
@@ -1329,23 +1549,28 @@ exports[`expressions > data structures > map 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 4,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "label",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ";",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "map",
 }
@@ -1370,63 +1595,77 @@ exports[`expressions > data structures > produces correct tree for '(-(2+7)/A,j,
                               "children": [
                                 {
                                   "children": [],
+                                  "data": {},
                                   "name": "number",
                                   "value": 2,
                                 },
                                 {
                                   "children": [],
+                                  "data": {},
                                   "name": "number",
                                   "value": 7,
                                 },
                               ],
+                              "data": {},
                               "name": "operator",
                               "value": "+",
                             },
                           ],
+                          "data": {},
                           "name": "group",
                           "value": "parens",
                         },
                       ],
+                      "data": {},
                       "name": "operator",
                       "value": "negate",
                     },
                     {
                       "children": [],
+                      "data": {},
                       "name": "name",
                       "value": "A",
                     },
                   ],
+                  "data": {},
                   "name": "operator",
                   "value": "/",
                 },
                 {
                   "children": [],
+                  "data": {},
                   "name": "name",
                   "value": "j",
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": ",",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "i",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 127,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ",",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "parens",
 }
@@ -1437,6 +1676,7 @@ exports[`expressions > data structures > record 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "placeholder",
     },
     {
@@ -1445,15 +1685,18 @@ exports[`expressions > data structures > record 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "a",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "label",
         },
@@ -1461,23 +1704,28 @@ exports[`expressions > data structures > record 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "b",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "label",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ";",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "record",
 }
@@ -1488,25 +1736,30 @@ exports[`expressions > data structures > set 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "placeholder",
     },
     {
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 1,
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 2,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ";",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "set",
 }
@@ -1517,10 +1770,12 @@ exports[`expressions > data structures > symbol 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "symbol",
 }
@@ -1531,15 +1786,18 @@ exports[`expressions > data structures > tuple 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 1,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 2,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": ",",
 }
@@ -1550,9 +1808,11 @@ exports[`expressions > data structures > unit 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "placeholder",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "parens",
 }
@@ -1563,10 +1823,12 @@ exports[`expressions > fixity expressions > group 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 1,
     },
   ],
+  "data": {},
   "name": "group",
   "value": "parens",
 }
@@ -1577,15 +1839,18 @@ exports[`expressions > fixity expressions > infix 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "+",
 }
@@ -1596,20 +1861,24 @@ exports[`expressions > fixity expressions > mixfix 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 789,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "inRange_<_<",
 }
@@ -1618,6 +1887,7 @@ exports[`expressions > fixity expressions > mixfix 1`] = `
 exports[`expressions > fixity expressions > name 1`] = `
 {
   "children": [],
+  "data": {},
   "name": "name",
   "value": "name",
 }
@@ -1628,10 +1898,12 @@ exports[`expressions > fixity expressions > postfix 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "postfixDecrement",
 }
@@ -1642,10 +1914,12 @@ exports[`expressions > fixity expressions > prefix 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "negate",
 }
@@ -1656,15 +1930,18 @@ exports[`expressions > function expressions > application > function call 1`] = 
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "f",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "application",
 }
@@ -1677,24 +1954,29 @@ exports[`expressions > function expressions > application > function call multip
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "f",
         },
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "application",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "y",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "application",
 }
@@ -1711,28 +1993,34 @@ exports[`expressions > function expressions > application > produces correct tre
               "children": [
                 {
                   "children": [],
+                  "data": {},
                   "name": "name",
                   "value": "send",
                 },
                 {
                   "children": [],
+                  "data": {},
                   "name": "number",
                   "value": 1,
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": "application",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "application",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
@@ -1742,23 +2030,28 @@ exports[`expressions > function expressions > application > produces correct tre
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "application",
 }
@@ -1773,19 +2066,23 @@ exports[`expressions > function expressions > application > produces correct tre
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "send",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "application",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
@@ -1795,23 +2092,28 @@ exports[`expressions > function expressions > application > produces correct tre
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "application",
 }
@@ -1824,10 +2126,12 @@ exports[`expressions > function expressions > application > produces correct tre
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "send",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
@@ -1837,23 +2141,28 @@ exports[`expressions > function expressions > application > produces correct tre
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "application",
 }
@@ -1864,6 +2173,7 @@ exports[`expressions > function expressions > application > produces correct tre
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "a",
     },
@@ -1871,6 +2181,7 @@ exports[`expressions > function expressions > application > produces correct tre
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "send",
         },
@@ -1880,27 +2191,33 @@ exports[`expressions > function expressions > application > produces correct tre
               "children": [
                 {
                   "children": [],
+                  "data": {},
                   "name": "number",
                   "value": 2,
                 },
                 {
                   "children": [],
+                  "data": {},
                   "name": "number",
                   "value": 3,
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": ",",
             },
           ],
+          "data": {},
           "name": "group",
           "value": "parens",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "application",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "+",
 }
@@ -1913,6 +2230,7 @@ exports[`expressions > function expressions > application > produces correct tre
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "a",
         },
@@ -1920,28 +2238,34 @@ exports[`expressions > function expressions > application > produces correct tre
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "send",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "application",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "+",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 2,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "+",
 }
@@ -1954,15 +2278,18 @@ exports[`expressions > function expressions > application > produces correct tre
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "send",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 1,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "application",
     },
@@ -1972,23 +2299,28 @@ exports[`expressions > function expressions > application > produces correct tre
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "application",
 }
@@ -2001,24 +2333,29 @@ exports[`expressions > function expressions > application > produces correct tre
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "send",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 1,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "application",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 2,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "+",
 }
@@ -2031,15 +2368,18 @@ exports[`expressions > function expressions > application > produces correct tre
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "send",
         },
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "a",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "application",
     },
@@ -2049,23 +2389,28 @@ exports[`expressions > function expressions > application > produces correct tre
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "application",
 }
@@ -2084,36 +2429,44 @@ exports[`expressions > function expressions > application > produces correct tre
                   "children": [
                     {
                       "children": [],
+                      "data": {},
                       "name": "number",
                       "value": 1,
                     },
                     {
                       "children": [],
+                      "data": {},
                       "name": "number",
                       "value": 2,
                     },
                   ],
+                  "data": {},
                   "name": "operator",
                   "value": "+",
                 },
               ],
+              "data": {},
               "name": "group",
               "value": "parens",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "send",
 }
@@ -2124,6 +2477,7 @@ exports[`expressions > function expressions > application > produces correct tre
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "send",
     },
@@ -2133,66 +2487,30 @@ exports[`expressions > function expressions > application > produces correct tre
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "application",
-}
-`;
-
-exports[`expressions > function expressions > funciton multiple params 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "y",
-        },
-      ],
-      "name": "operator",
-      "value": "application",
-    },
-    {
-      "children": [
-        {
-          "children": [],
-          "name": "name",
-          "value": "x",
-        },
-        {
-          "children": [],
-          "name": "name",
-          "value": "y",
-        },
-      ],
-      "name": "operator",
-      "value": "+",
-    },
-  ],
-  "name": "operator",
-  "value": "fn",
 }
 `;
 
@@ -2201,17 +2519,68 @@ exports[`expressions > function expressions > function 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "->",
+}
+`;
+
+exports[`expressions > function expressions > function multiple params 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "application",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "+",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "fn",
 }
 `;
 
@@ -2222,6 +2591,7 @@ exports[`expressions > pattern matching > binding visible in scope where it is t
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
@@ -2231,23 +2601,28 @@ exports[`expressions > pattern matching > binding visible in scope where it is t
               "children": [
                 {
                   "children": [],
+                  "data": {},
                   "name": "name",
                   "value": "a",
                 },
                 {
                   "children": [],
+                  "data": {},
                   "name": "name",
                   "value": "b",
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": ",",
             },
           ],
+          "data": {},
           "name": "group",
           "value": "parens",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "is",
     },
@@ -2255,6 +2630,7 @@ exports[`expressions > pattern matching > binding visible in scope where it is t
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "a",
         },
@@ -2262,23 +2638,28 @@ exports[`expressions > pattern matching > binding visible in scope where it is t
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "b",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "+",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "==",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "and",
 }
@@ -2293,19 +2674,23 @@ exports[`expressions > pattern matching > in function parameters 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "x",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "y",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
@@ -2313,19 +2698,23 @@ exports[`expressions > pattern matching > in function parameters 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "y",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "+",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "->",
 }
@@ -2336,6 +2725,7 @@ exports[`expressions > pattern matching > match 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
@@ -2345,15 +2735,18 @@ exports[`expressions > pattern matching > match 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "->",
         },
@@ -2361,23 +2754,28 @@ exports[`expressions > pattern matching > match 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 4,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "->",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ";",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "match",
 }
@@ -2388,6 +2786,7 @@ exports[`expressions > pattern matching > match newline inside 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
@@ -2397,15 +2796,18 @@ exports[`expressions > pattern matching > match newline inside 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "->",
         },
@@ -2413,23 +2815,28 @@ exports[`expressions > pattern matching > match newline inside 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 4,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "->",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ";",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "match",
 }
@@ -2440,6 +2847,7 @@ exports[`expressions > pattern matching > with 'is' operator 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
@@ -2449,23 +2857,28 @@ exports[`expressions > pattern matching > with 'is' operator 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "a",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "b",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "is",
 }
@@ -2476,6 +2889,7 @@ exports[`expressions > pattern matching > with placeholder 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
@@ -2485,22 +2899,27 @@ exports[`expressions > pattern matching > with placeholder 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "placeholder",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "b",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "is",
 }
@@ -2511,6 +2930,7 @@ exports[`expressions > pattern matching > with rest value 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
@@ -2520,6 +2940,7 @@ exports[`expressions > pattern matching > with rest value 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "a",
             },
@@ -2527,22 +2948,27 @@ exports[`expressions > pattern matching > with rest value 1`] = `
               "children": [
                 {
                   "children": [],
+                  "data": {},
                   "name": "name",
                   "value": "b",
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": "...",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "is",
 }
@@ -2553,6 +2979,7 @@ exports[`expressions > pattern matching > with rest value first 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
@@ -2564,27 +2991,33 @@ exports[`expressions > pattern matching > with rest value first 1`] = `
               "children": [
                 {
                   "children": [],
+                  "data": {},
                   "name": "name",
                   "value": "b",
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": "...",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "a",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "is",
 }
@@ -2595,6 +3028,7 @@ exports[`expressions > pattern matching > with variable value 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
@@ -2606,27 +3040,33 @@ exports[`expressions > pattern matching > with variable value 1`] = `
               "children": [
                 {
                   "children": [],
+                  "data": {},
                   "name": "name",
                   "value": "a",
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": "#",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "b",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "is",
 }
@@ -2637,10 +3077,12 @@ exports[`expressions > structured programming > block 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "group",
   "value": "braces",
 }
@@ -2655,23 +3097,28 @@ exports[`expressions > structured programming > block mutable variable declarati
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "x",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "mut",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 123,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ":=",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "braces",
 }
@@ -2686,15 +3133,18 @@ exports[`expressions > structured programming > block pattern matching 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "x",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "y",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
@@ -2702,23 +3152,28 @@ exports[`expressions > structured programming > block pattern matching 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 123,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 456,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "=",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "braces",
 }
@@ -2731,19 +3186,23 @@ exports[`expressions > structured programming > block variable assignment 1`] = 
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 123,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "=",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "braces",
 }
@@ -2756,19 +3215,23 @@ exports[`expressions > structured programming > block variable declaration 1`] =
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 123,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ":=",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "braces",
 }
@@ -2781,24 +3244,29 @@ exports[`expressions > structured programming > expression-label 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 123,
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 456,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "+",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 789,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "label",
 }
@@ -2809,6 +3277,7 @@ exports[`expressions > structured programming > for loop 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
@@ -2820,37 +3289,45 @@ exports[`expressions > structured programming > for loop 1`] = `
               "children": [
                 {
                   "children": [],
+                  "data": {},
                   "name": "number",
                   "value": 1,
                 },
                 {
                   "children": [],
+                  "data": {},
                   "name": "number",
                   "value": 2,
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": ",",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "brackets",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "for",
 }
@@ -2861,6 +3338,7 @@ exports[`expressions > structured programming > for loop newline 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
@@ -2872,37 +3350,45 @@ exports[`expressions > structured programming > for loop newline 1`] = `
               "children": [
                 {
                   "children": [],
+                  "data": {},
                   "name": "number",
                   "value": 1,
                 },
                 {
                   "children": [],
+                  "data": {},
                   "name": "number",
                   "value": 2,
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": ",",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 3,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "brackets",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "for",
 }
@@ -2913,15 +3399,18 @@ exports[`expressions > structured programming > if-then 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "true",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "if",
 }
@@ -2932,15 +3421,18 @@ exports[`expressions > structured programming > if-then newline 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "true",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "if",
 }
@@ -2951,20 +3443,24 @@ exports[`expressions > structured programming > if-then newline-else 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "true",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "ifElse",
 }
@@ -2975,20 +3471,24 @@ exports[`expressions > structured programming > if-then newline-else newline 1`]
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "true",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "ifElse",
 }
@@ -2999,20 +3499,24 @@ exports[`expressions > structured programming > if-then-else 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "true",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 456,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "ifElse",
 }
@@ -3023,11 +3527,13 @@ exports[`expressions > structured programming > if-then-elseif-then-else 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "true",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
@@ -3035,24 +3541,29 @@ exports[`expressions > structured programming > if-then-elseif-then-else 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "false",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 789,
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 456,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "ifElse",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "ifElse",
 }
@@ -3063,15 +3574,18 @@ exports[`expressions > structured programming > labeled expression 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "label",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "label",
 }
@@ -3084,9 +3598,11 @@ exports[`expressions > structured programming > return 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "placeholder",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "parens",
     },
@@ -3096,18 +3612,22 @@ exports[`expressions > structured programming > return 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 123,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "return",
         },
       ],
+      "data": {},
       "name": "group",
       "value": "braces",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "->",
 }
@@ -3118,15 +3638,18 @@ exports[`expressions > structured programming > while loop 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "true",
     },
     {
       "children": [],
+      "data": {},
       "name": "number",
       "value": 123,
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "while",
 }
@@ -3137,6 +3660,7 @@ exports[`expressions > structured programming > while loop break 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "true",
     },
@@ -3144,13 +3668,16 @@ exports[`expressions > structured programming > while loop break 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "placeholder",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "break",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "while",
 }
@@ -3161,6 +3688,7 @@ exports[`expressions > structured programming > while loop break value 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "true",
     },
@@ -3168,14 +3696,17 @@ exports[`expressions > structured programming > while loop break value 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 1,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "break",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "while",
 }
@@ -3186,6 +3717,7 @@ exports[`expressions > structured programming > while loop continue 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "true",
     },
@@ -3193,13 +3725,16 @@ exports[`expressions > structured programming > while loop continue 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "placeholder",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "continue",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "while",
 }
@@ -3210,6 +3745,7 @@ exports[`expressions > structured programming > while loop continue value 1`] = 
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "true",
     },
@@ -3217,14 +3753,17 @@ exports[`expressions > structured programming > while loop continue value 1`] = 
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 1,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "continue",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "while",
 }
@@ -3233,6 +3772,7 @@ exports[`expressions > structured programming > while loop continue value 1`] = 
 exports[`expressions > values > false 1`] = `
 {
   "children": [],
+  "data": {},
   "name": "name",
   "value": "false",
 }
@@ -3241,6 +3781,7 @@ exports[`expressions > values > false 1`] = `
 exports[`expressions > values > number 1`] = `
 {
   "children": [],
+  "data": {},
   "name": "number",
   "value": 123,
 }
@@ -3249,6 +3790,7 @@ exports[`expressions > values > number 1`] = `
 exports[`expressions > values > string 1`] = `
 {
   "children": [],
+  "data": {},
   "name": "string",
   "value": "string",
 }
@@ -3257,6 +3799,7 @@ exports[`expressions > values > string 1`] = `
 exports[`expressions > values > true 1`] = `
 {
   "children": [],
+  "data": {},
   "name": "name",
   "value": "true",
 }
@@ -3271,15 +3814,18 @@ exports[`newline handling > block newline at the beginning 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "a",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ":=",
         },
@@ -3287,23 +3833,28 @@ exports[`newline handling > block newline at the beginning 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "b",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ":=",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ";",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "braces",
 }
@@ -3318,15 +3869,18 @@ exports[`newline handling > block newline at the end 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "a",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ":=",
         },
@@ -3336,31 +3890,38 @@ exports[`newline handling > block newline at the end 1`] = `
               "children": [
                 {
                   "children": [],
+                  "data": {},
                   "name": "name",
                   "value": "b",
                 },
                 {
                   "children": [],
+                  "data": {},
                   "name": "number",
                   "value": 2,
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": ":=",
             },
             {
               "children": [],
+              "data": {},
               "name": "placeholder",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ";",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ";",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "braces",
 }
@@ -3375,15 +3936,18 @@ exports[`newline handling > block newline in the middle 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "a",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ":=",
         },
@@ -3391,23 +3955,28 @@ exports[`newline handling > block newline in the middle 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "b",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ":=",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ";",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "braces",
 }
@@ -3422,15 +3991,18 @@ exports[`newline handling > block semicolon newline 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "a",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ":=",
         },
@@ -3438,23 +4010,28 @@ exports[`newline handling > block semicolon newline 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "b",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ":=",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ";",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "braces",
 }
@@ -3469,15 +4046,18 @@ exports[`newline handling > block semicolon newline at the end 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "a",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ":=",
         },
@@ -3487,31 +4067,38 @@ exports[`newline handling > block semicolon newline at the end 1`] = `
               "children": [
                 {
                   "children": [],
+                  "data": {},
                   "name": "name",
                   "value": "b",
                 },
                 {
                   "children": [],
+                  "data": {},
                   "name": "number",
                   "value": 2,
                 },
               ],
+              "data": {},
               "name": "operator",
               "value": ":=",
             },
             {
               "children": [],
+              "data": {},
               "name": "placeholder",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ";",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ";",
     },
   ],
+  "data": {},
   "name": "group",
   "value": "braces",
 }
@@ -3524,6 +4111,7 @@ exports[`programs > module > export main 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "args",
         },
@@ -3531,17 +4119,21 @@ exports[`programs > module > export main 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "placeholder",
             },
           ],
+          "data": {},
           "name": "group",
           "value": "braces",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "->",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "export",
 }
@@ -3552,10 +4144,12 @@ exports[`programs > module > external 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "y",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "external",
 }
@@ -3566,15 +4160,18 @@ exports[`programs > module > import 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "string",
       "value": "a",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "b",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "import",
 }
@@ -3585,20 +4182,24 @@ exports[`programs > module > import with 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "string",
       "value": "a",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "b",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "c",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "importWith",
 }
@@ -3609,11 +4210,13 @@ exports[`programs > module > import with external 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "string",
       "value": "a",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "b",
     },
@@ -3621,14 +4224,17 @@ exports[`programs > module > import with external 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "c",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "external",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "importWith",
 }
@@ -3643,17 +4249,21 @@ exports[`programs > module > operator 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "placeholder",
             },
             {
               "children": [],
+              "data": {},
               "name": "placeholder",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "+",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "operator",
     },
@@ -3663,15 +4273,18 @@ exports[`programs > module > operator 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "x",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "y",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
@@ -3679,23 +4292,28 @@ exports[`programs > module > operator 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "x",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "y",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "+",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "fn",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": ":=",
 }
@@ -3710,22 +4328,27 @@ exports[`programs > module > operator with precedence 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "placeholder",
             },
             {
               "children": [],
+              "data": {},
               "name": "placeholder",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "+",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 1,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "operatorPrecedence",
     },
@@ -3735,15 +4358,18 @@ exports[`programs > module > operator with precedence 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "x",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "y",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
@@ -3751,23 +4377,28 @@ exports[`programs > module > operator with precedence 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "x",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "y",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "+",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "fn",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": ":=",
 }
@@ -3782,13 +4413,16 @@ exports[`programs > module > operator with tuple precedence 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "placeholder",
             },
             {
               "children": [],
+              "data": {},
               "name": "placeholder",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "+",
         },
@@ -3796,19 +4430,23 @@ exports[`programs > module > operator with tuple precedence 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 1,
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 2,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "operatorPrecedence",
     },
@@ -3818,15 +4456,18 @@ exports[`programs > module > operator with tuple precedence 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "x",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "y",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": ",",
         },
@@ -3834,23 +4475,28 @@ exports[`programs > module > operator with tuple precedence 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "x",
             },
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "y",
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "+",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "fn",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": ":=",
 }
@@ -3861,6 +4507,7 @@ exports[`programs > module > private declare 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "z",
     },
@@ -3868,19 +4515,23 @@ exports[`programs > module > private declare 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "y",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 1,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "+",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": ":=",
 }
@@ -3893,6 +4544,7 @@ exports[`programs > module > public declare 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
@@ -3900,23 +4552,28 @@ exports[`programs > module > public declare 1`] = `
           "children": [
             {
               "children": [],
+              "data": {},
               "name": "name",
               "value": "z",
             },
             {
               "children": [],
+              "data": {},
               "name": "number",
               "value": 123,
             },
           ],
+          "data": {},
           "name": "operator",
           "value": "+",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ":=",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "export",
 }
@@ -3927,10 +4584,12 @@ exports[`programs > script > export 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "export",
 }
@@ -3941,15 +4600,18 @@ exports[`programs > script > export as 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "y",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "exportAs",
 }
@@ -3960,15 +4622,18 @@ exports[`programs > script > use 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "string",
       "value": "a",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "b",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "use",
 }
@@ -3979,20 +4644,24 @@ exports[`programs > script > use with 1`] = `
   "children": [
     {
       "children": [],
+      "data": {},
       "name": "string",
       "value": "a",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "b",
     },
     {
       "children": [],
+      "data": {},
       "name": "name",
       "value": "x",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": "useWith",
 }
@@ -4005,15 +4674,18 @@ exports[`programs > script > variable export 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 123,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ":=",
     },
@@ -4021,14 +4693,17 @@ exports[`programs > script > variable export 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "export",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": ";",
 }
@@ -4041,15 +4716,18 @@ exports[`programs > script > variable export as 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 123,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ":=",
     },
@@ -4057,19 +4735,23 @@ exports[`programs > script > variable export as 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "y",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "exportAs",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": ";",
 }
@@ -4082,15 +4764,18 @@ exports[`programs > script > variable use 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 123,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ":=",
     },
@@ -4098,19 +4783,23 @@ exports[`programs > script > variable use 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "string",
           "value": "a",
         },
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "b",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "use",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": ";",
 }
@@ -4123,15 +4812,18 @@ exports[`programs > script > variable use with 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
         {
           "children": [],
+          "data": {},
           "name": "number",
           "value": 123,
         },
       ],
+      "data": {},
       "name": "operator",
       "value": ":=",
     },
@@ -4139,24 +4831,29 @@ exports[`programs > script > variable use with 1`] = `
       "children": [
         {
           "children": [],
+          "data": {},
           "name": "string",
           "value": "a",
         },
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "b",
         },
         {
           "children": [],
+          "data": {},
           "name": "name",
           "value": "x",
         },
       ],
+      "data": {},
       "name": "operator",
       "value": "useWith",
     },
   ],
+  "data": {},
   "name": "operator",
   "value": ";",
 }

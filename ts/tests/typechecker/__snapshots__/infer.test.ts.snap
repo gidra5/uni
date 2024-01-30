@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`expressions > function expressions > function 1`] = `
+{
+  "kind": "function",
+  "types": [
+    {
+      "kind": "void",
+      "types": [],
+    },
+    {
+      "kind": "void",
+      "types": [],
+    },
+  ],
+}
+`;

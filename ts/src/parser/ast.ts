@@ -2,31 +2,40 @@ import { assert } from "../utils";
 import { matchString } from "./string";
 import { Token } from "./types";
 
-export type AbstractSyntaxTree = {
+export type AbstractSyntaxTree<T = any> = {
   name: string;
   value?: any;
-  children: AbstractSyntaxTree[];
+  data: T;
+  children: AbstractSyntaxTree<T>[];
 };
 
 export const placeholder = (): AbstractSyntaxTree => ({
   name: "placeholder",
+  data: {},
   children: [],
 });
+
 export const name = (value: string): AbstractSyntaxTree => ({
   name: "name",
   value,
+  data: {},
   children: [],
 });
+
 export const number = (value: number): AbstractSyntaxTree => ({
   name: "number",
   value,
+  data: {},
   children: [],
 });
+
 export const string = (value: string): AbstractSyntaxTree => ({
   name: "string",
   value,
+  data: {},
   children: [],
 });
+
 export const token = (token: Token): AbstractSyntaxTree =>
   token.type === "number"
     ? number(token.value)
@@ -35,16 +44,21 @@ export const token = (token: Token): AbstractSyntaxTree =>
     : /^_+$/.test(token.src)
     ? placeholder()
     : name(token.src);
+
 export const group = (value?: string, ...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
   name: "group",
   value,
+  data: {},
   children,
 });
+
 export const operator = (value: string, ...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
   name: "operator",
   value,
+  data: {},
   children,
 });
+
 export const infix = (
   group: AbstractSyntaxTree,
   lhs: AbstractSyntaxTree,
@@ -54,43 +68,17 @@ export const infix = (
   const { value, children } = group;
   return operator(value, lhs, ...children, rhs);
 };
+
 export const postfix = (group: AbstractSyntaxTree, lhs: AbstractSyntaxTree): AbstractSyntaxTree => {
   assert(group.name === "group", 'postfix: group.name !== "group"');
   const { value, children } = group;
   return operator(value, lhs, ...children);
 };
+
 export const prefix = (group: AbstractSyntaxTree, rhs: AbstractSyntaxTree): AbstractSyntaxTree => {
   assert(group.name === "group", 'prefix: group.name !== "group"');
   const { value, children } = group;
   return operator(value, ...children, rhs);
-};
-
-export const tuple = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
-  const children: AbstractSyntaxTree[] = [];
-
-  while (true) {
-    const [matched, { left, right }] = matchString(node, "left, right");
-    if (!matched) break;
-    if (right.name !== "placeholder") children.unshift(right);
-    node = left;
-  }
-
-  if (children.length === 0) return node;
-  return { name: "tuple", children };
-};
-
-export const sequence = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
-  const children: AbstractSyntaxTree[] = [];
-
-  while (true) {
-    const [matched, { left, right }] = matchString(node, "left; right");
-    if (!matched) break;
-    if (right.name !== "placeholder") children.unshift(right);
-    node = left;
-  }
-
-  if (children.length === 0) return node;
-  return { name: "sequence", children };
 };
 
 export const record = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
@@ -129,11 +117,12 @@ export const record = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
   }
 
   if (children.length === 0) return node;
-  return { name: "record", children };
+  return { name: "record", data: {}, children };
 };
 
 export const field = (...children: [name: AbstractSyntaxTree, value: AbstractSyntaxTree]): AbstractSyntaxTree => ({
   name: "field",
+  data: {},
   children,
 });
 
@@ -173,7 +162,7 @@ export const map = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
   }
 
   if (children.length === 0) return node;
-  return { name: "map", children };
+  return { name: "map", data: {}, children };
 };
 
 export const set = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
@@ -196,16 +185,17 @@ export const set = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
   }
 
   if (children.length === 0) return node;
-  return { name: "set", children };
+  return { name: "set", data: {}, children };
 };
 
 export const pattern = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
   const children: AbstractSyntaxTree[] = [];
 
-  return { name: "pattern", children };
+  return { name: "pattern", data: {}, children };
 };
 
 export const program = (...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
   name: "program",
+  data: {},
   children,
 });

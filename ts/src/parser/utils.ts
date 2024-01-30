@@ -28,9 +28,12 @@ export const match = (
   matches: Record<string, AbstractSyntaxTree> = {}
 ): [boolean, Record<string, AbstractSyntaxTree>] => {
   type ReturnType = [boolean, Record<string, AbstractSyntaxTree>];
+  // console.dir({ msg: "match", tree, pattern, matches }, { depth: null });
+
   const visitor: Visitor<ReturnType, AbstractSyntaxTree> = new Visitor({
     [DefaultVisitor]: (pattern) => {
       if (tree.name !== pattern.name) return [false, matches];
+      if (tree.value !== pattern.value) return [false, matches];
       if (tree.children.length !== pattern.children.length) return [false, matches];
       return Iterator.iter(tree.children)
         .zip(pattern.children)

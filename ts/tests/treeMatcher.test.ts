@@ -41,6 +41,15 @@ describe("parsing", () => {
     ),
   ]);
 
+  patternMatcherTestCase("_ _ _", [
+    infix(group("application"), infix(group("application"), name("a"), name("b")), name("b")),
+    infix(
+      group("application"),
+      infix(group("application"), infix(group("application"), name("a"), name("b")), name("b")),
+      name("b")
+    ),
+  ]);
+
   stringTreeMatcherTestCase("a", [
     [{ name: "a" }, true, { a: { name: "a" } }],
     [{ name: "b" }, true, { a: { name: "b" } }],

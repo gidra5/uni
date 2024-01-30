@@ -21,7 +21,7 @@ export const parseProgramString = (src: string, scope: Scope = {}) => {
 
 export const templateString = (templateStr: string, values: TemplateValues) => {
   const [parsed] = parseExprString(templateStr);
-  return template(parsed, values);
+  return template(parsed, values) as AbstractSyntaxTree;
 };
 
 export const matchString = (
@@ -30,5 +30,7 @@ export const matchString = (
   matches: Record<string, AbstractSyntaxTree> = {}
 ) => {
   const [patternParsed] = parseExprString(pattern);
+  // console.dir({ msg: "patternParsed", patternParsed, tree }, { depth: null });
+
   return match(tree, patternParsed, matches);
 };
