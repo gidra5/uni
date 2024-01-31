@@ -1,10 +1,16 @@
 import { AbstractSyntaxTree } from "../parser/ast";
 import { matchString } from "../parser/string";
+import { Scope } from "../scope";
 import { mapField, setField } from "../utils";
 
-const collectScope = (tree: AbstractSyntaxTree): string[] => {
-  if (matchString(tree, "_ := _")[0]) {
-    const { pattern } = matchString(tree, "pattern := _")[1];
+const collectScope = (pattern: AbstractSyntaxTree): string[] => {
+  if (matchString(pattern, "_, _")[0]) {
+    const [left, right] = pattern.children;
+    return [...collectScope(left), ...collectScope(right)];
+  }
+
+  if (matchString(pattern, "..._")[0]) {
+    return collectScope(pattern.children[0]);
   }
 
   return [];
@@ -12,24 +18,5 @@ const collectScope = (tree: AbstractSyntaxTree): string[] => {
 
 export const resolve = <T>(
   tree: AbstractSyntaxTree<T>,
-  scope: string[] = []
-): AbstractSyntaxTree<T & { index?: number }> => {
-  switch (tree.name) {
-    case "name":
-      return setField(["data", "index"], scope.indexOf(tree.value))(tree);
-    case "group":
-      return {
-        name: "group",
-        value: tree.value,
-        children: tree.children.map(_resolve),
-      };
-    case "operator":
-      return {
-        name: "operator",
-        value: tree.value,
-        children: tree.children.map(_resolve),
-      };
-    default:
-      return tree;
-  }
-};
+  scope = new Scope<any>()
+): AbstractSyntaxTree<T & { scope: Scope<any> }> => {};

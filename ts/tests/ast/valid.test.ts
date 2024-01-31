@@ -2,7 +2,7 @@ import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { Iterator } from "iterator-js";
 import { infixArithmeticOps, prefixArithmeticOps } from "../../src/parser";
-import { group, infix, name, number, placeholder, prefix, string } from "../../src/parser/ast";
+import { group, infix, name, placeholder, prefix, string } from "../../src/parser/ast";
 import { matchSeparators } from "../../src/parser/utils";
 import { exampleTestCase, treeTestCase, treeTestCaseArgs } from "./utils";
 
@@ -232,8 +232,8 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
-    test("match newline inside", () => {
-      const src = `match x { 1 -> 2\n 3 -> 4 }`;
+    test("match that accepts tuple", () => {
+      const src = `match x: ((1 -> 2), (3 -> 4)) `;
       treeTestCase(src);
     });
 
@@ -269,6 +269,16 @@ describe("expressions", () => {
 
     test("binding visible in scope where it is true", () => {
       const src = `x is (a, b) and a == b + 1`;
+      treeTestCase(src);
+    });
+
+    test("'is' with 'and' produces union of bindings", () => {
+      const src = `x is (a, b) and y is (c, d) and a + b == c + d`;
+      treeTestCase(src);
+    });
+
+    test("'is' with 'or' produces intersection of bindings", () => {
+      const src = `(x is (a, b) or y is (a, c)) and a == 1`;
       treeTestCase(src);
     });
   });

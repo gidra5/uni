@@ -22,20 +22,21 @@ export const template = (tree: AbstractSyntaxTree, values: TemplateValues) => {
   return visitor.visitNode(tree);
 };
 
-export const match = (
-  tree: AbstractSyntaxTree,
-  pattern: AbstractSyntaxTree,
-  matches: Record<string, AbstractSyntaxTree> = {}
-): [boolean, Record<string, AbstractSyntaxTree>] => {
-  type ReturnType = [boolean, Record<string, AbstractSyntaxTree>];
+type MatchTree = { name: string; value?: any; children: MatchTree[] };
+export const match = <T extends MatchTree>(
+  tree: T,
+  pattern: MatchTree,
+  matches: Record<string, T> = {}
+): [boolean, Record<string, T>] => {
+  type ReturnType = [boolean, Record<string, T>];
   // console.dir({ msg: "match", tree, pattern, matches }, { depth: null });
 
-  const visitor: Visitor<ReturnType, AbstractSyntaxTree> = new Visitor({
+  const visitor: Visitor<ReturnType, MatchTree> = new Visitor({
     [DefaultVisitor]: (pattern) => {
       if (tree.name !== pattern.name) return [false, matches];
       if (tree.value !== pattern.value) return [false, matches];
       if (tree.children.length !== pattern.children.length) return [false, matches];
-      return Iterator.iter(tree.children)
+      return Iterator.iter(tree.children as T[])
         .zip(pattern.children)
         .reduce<ReturnType>(
           (acc, args) => {
@@ -47,7 +48,7 @@ export const match = (
         );
     },
     placeholder: () => [true, matches] as ReturnType,
-    name: (pattern: AbstractSyntaxTree): ReturnType => {
+    name: (pattern: MatchTree): ReturnType => {
       const name = pattern.value as string;
       if (name in matches) {
         return [isEqual(tree, matches[name]), matches];

@@ -16,6 +16,10 @@ export class Scope<T> {
     return Iterator.iterEntries(this.names).map(([name, i]) => ({ name, ...this.scope[i] }));
   }
 
+  iterScope() {
+    return Iterator.iter(this.scope);
+  }
+
   getByName(name: string): T | undefined {
     if (!(name in this.names)) return;
     const index = this.names[name];
@@ -42,7 +46,18 @@ export class Scope<T> {
   }
 
   push(value: T): number {
-    return this.scope.push(value) - 1;
+    const index = this.scope.push(value) - 1;
+    console.dir(
+      {
+        msg: "scope push",
+        index,
+        value,
+        scope: this.scope,
+        stack: new Error().stack,
+      },
+      { depth: null }
+    );
+    return index;
   }
 
   add(name: string, value: T): number {
@@ -63,17 +78,19 @@ export class Scope<T> {
 
   /** mutates */
   append(scope: Scope<T>) {
+    const length = this.scope.length;
     this.scope.push(...scope.scope);
-    Object.assign(this.names, scope.names);
+    const _names = Iterator.iterEntries(scope.names)
+      .map<[string, number]>(([x, i]) => [x, i + length])
+      .toObject();
+    this.names = { ...this.names, ..._names };
     return this;
   }
 
   /** creates new merged scope with priority to passed scope */
   merge(scope: Scope<T>): Scope<T> {
     const copied = this.copy();
-    copied.scope.push(...scope.scope);
-    copied.names = { ...copied.names, ...scope.names };
-    return copied;
+    return copied.append(scope);
   }
 
   copy(): Scope<T> {

@@ -3,7 +3,8 @@ import { matchString } from "../parser/string";
 import { Scope } from "../scope";
 import { assert, setField } from "../utils";
 import { inferScope } from "./inferScope";
-import { bool, float, func, int, string, type, unit, unknown, voidType } from "./type";
+import { simplifyType } from "./simplify";
+import { bool, float, func, int, string, type, unit, unknown, value, voidType } from "./type";
 import { Type, TypeScope } from "./types";
 
 type InferTypeContext = {
@@ -15,8 +16,11 @@ type InferTypeContext = {
 export type TypedAST<T = any> = AbstractSyntaxTree<T & { type: Type }>;
 
 const getScopeBindings = (tree: TypedAST): TypeScope => {
+  console.dir({ msg: "getScopeBindings", tree }, { depth: null });
   const bindings: TypeScope = new Scope();
   const traverse = (tree: TypedAST) => {
+    console.dir({ msg: "getScopeBindings traverse", tree }, { depth: null });
+
     if (tree.name === "name") {
       const name = tree.value;
       const type = tree.data.type;
@@ -30,8 +34,8 @@ const getScopeBindings = (tree: TypedAST): TypeScope => {
 
 const defaultContext = (): InferTypeContext => ({
   scope: new Scope({
-    true: bool(),
-    false: bool(),
+    true: value({ kind: "bool", value: true }),
+    false: value({ kind: "bool", value: false }),
   }),
   isBinding: false,
 });
@@ -47,8 +51,8 @@ export const inferType = <T>(tree: AbstractSyntaxTree<T>, context = defaultConte
     tree = setField(["children", 0], funcTyped)(tree);
     tree = setField(["children", 1], argTyped)(tree);
     const funcType = funcTyped.data.type;
-    assert(funcType.kind === "function");
-    return setField(["data", "type"], funcType.types[1])(tree);
+    assert(funcType.argName === "function");
+    return setField(["data", "type"], simplifyType(funcType.children[1]))(tree);
   }
 
   /* function */
@@ -61,29 +65,36 @@ export const inferType = <T>(tree: AbstractSyntaxTree<T>, context = defaultConte
     const retTyped = inferType(_ret, { ...context, scope });
     tree = setField(["children", 0], argTyped)(tree);
     tree = setField(["children", 1], retTyped)(tree);
+    const treeScoped = inferScope(tree);
+    const _scope = treeScoped.data.scope;
+    const implicitArgs = _scope.iterScope().map((entry) => ({ type: entry, implicit: true }));
     // const type = func(argTyped.data.type, retTyped.data.type);
-    const type = func(argTyped.data.type, retTyped.data.type);
+    let type = func(...implicitArgs, argTyped.data.type, retTyped.data.type);
+    type = simplifyType(type);
     return setField(["data", "type"], type)(tree);
   }
 
   /* variable name */
   if (tree.name === "name") {
     const name = tree.value;
-    const type = context.isBinding
+    let type = context.isBinding
       ? context.inferredScope?.getByName(name) ?? unknown()
       : context.scope.getByName(name) ?? voidType();
+    type = simplifyType(type);
+    console.dir({ msg: "inferType name", name, type, tree, context }, { depth: null });
+
     return setField(["data", "type"], type)(tree);
   }
 
   /* literals */
   if (tree.name === "string") {
-    return setField(["data", "type"], string())(tree);
+    return setField(["data", "type"], value({ kind: "string", value: tree.value }))(tree);
   }
   if (tree.name === "int") {
-    return setField(["data", "type"], int())(tree);
+    return setField(["data", "type"], value({ kind: "int", value: tree.value }))(tree);
   }
   if (tree.name === "float") {
-    return setField(["data", "type"], float())(tree);
+    return setField(["data", "type"], value({ kind: "float", value: tree.value }))(tree);
   }
   if (matchString(tree, "()")) {
     return setField(["data", "type"], unit())(tree);

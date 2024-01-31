@@ -5,6 +5,7 @@ import { Scope } from "../scope";
 import { setField } from "../utils";
 import { and, bool, func, index, type, unknown } from "./type";
 import { Type, TypeScope } from "./types";
+import { simplifyType } from "./simplify";
 
 type InferTypeContext = {
   scope: TypeScope;
@@ -67,8 +68,10 @@ export const inferScope = <T>(
     const typeVarIndex = scope.push(type());
     const name = tree.value;
     const typeVar = index(typeVarIndex);
-    const _type = and(typeVar, context.minimalType);
-    scope.add(name, scopeType ? and(scopeType, _type) : _type);
+    let _type = and(typeVar, context.minimalType);
+    if (scopeType) _type = and(_type, scopeType);
+    _type = simplifyType(_type);
+    scope.add(name, _type);
     return setField(["data", "scope"], scope)(tree);
   }
 

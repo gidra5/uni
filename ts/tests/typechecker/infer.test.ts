@@ -175,8 +175,8 @@ describe("expressions", () => {
         func(
           { type: type(), implicit: true },
           { type: type(), implicit: true },
-          { name: "x", type: func(index(1), index(0)) },
-          { name: "y", type: index(2) },
+          { argName: "x", type: func(index(1), index(0)) },
+          { argName: "y", type: index(2) },
           index(2)
         )
       );

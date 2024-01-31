@@ -2584,6 +2584,267 @@ exports[`expressions > function expressions > function multiple params 1`] = `
 }
 `;
 
+exports[`expressions > pattern matching > 'is' with 'and' produces union of bindings 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "a",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "b",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": ",",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "is",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "y",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "c",
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "d",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": ",",
+                },
+              ],
+              "data": {},
+              "name": "group",
+              "value": "parens",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "is",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "a",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "b",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": "+",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "c",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "d",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": "+",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "==",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "and",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "and",
+}
+`;
+
+exports[`expressions > pattern matching > 'is' with 'or' produces intersection of bindings 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "x",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "a",
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "b",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": ",",
+                    },
+                  ],
+                  "data": {},
+                  "name": "group",
+                  "value": "parens",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": "is",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "y",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "a",
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "c",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": ",",
+                    },
+                  ],
+                  "data": {},
+                  "name": "group",
+                  "value": "parens",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": "is",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "or",
+        },
+      ],
+      "data": {},
+      "name": "group",
+      "value": "parens",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 1,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "==",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "and",
+}
+`;
+
 exports[`expressions > pattern matching > binding visible in scope where it is true 1`] = `
 {
   "children": [
@@ -2781,7 +3042,7 @@ exports[`expressions > pattern matching > match 1`] = `
 }
 `;
 
-exports[`expressions > pattern matching > match newline inside 1`] = `
+exports[`expressions > pattern matching > match that accepts tuple 1`] = `
 {
   "children": [
     {
@@ -2795,50 +3056,84 @@ exports[`expressions > pattern matching > match newline inside 1`] = `
         {
           "children": [
             {
-              "children": [],
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "int",
+                          "value": 1,
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "int",
+                          "value": 2,
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "->",
+                    },
+                  ],
+                  "data": {},
+                  "name": "group",
+                  "value": "parens",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "int",
+                          "value": 3,
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "int",
+                          "value": 4,
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "->",
+                    },
+                  ],
+                  "data": {},
+                  "name": "group",
+                  "value": "parens",
+                },
+              ],
               "data": {},
-              "name": "int",
-              "value": 1,
-            },
-            {
-              "children": [],
-              "data": {},
-              "name": "int",
-              "value": 2,
+              "name": "operator",
+              "value": ",",
             },
           ],
           "data": {},
-          "name": "operator",
-          "value": "->",
+          "name": "group",
+          "value": "parens",
         },
         {
-          "children": [
-            {
-              "children": [],
-              "data": {},
-              "name": "int",
-              "value": 3,
-            },
-            {
-              "children": [],
-              "data": {},
-              "name": "int",
-              "value": 4,
-            },
-          ],
+          "children": [],
           "data": {},
-          "name": "operator",
-          "value": "->",
+          "name": "name",
+          "value": "",
         },
       ],
       "data": {},
       "name": "operator",
-      "value": ";",
+      "value": "application",
     },
   ],
   "data": {},
-  "name": "group",
-  "value": "match",
+  "name": "operator",
+  "value": "matchColon",
 }
 `;
 
