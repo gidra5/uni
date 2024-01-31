@@ -1,96 +1,166 @@
 import { Iterator } from "iterator-js";
 
+type ScopeInnerEntry<T> = { name?: string; value: T };
+export type ScopeEntry<T> = { name?: string; index: number; level: number; value: T };
+type ScopeEntryIdentifier = { name: string } | { index: number } | { level: number };
+
 export class Scope<T> {
-  scope: T[];
+  scope: ScopeInnerEntry<T>[];
   names: Record<string, number>;
 
   constructor(recordScope: Record<string, T> = {}) {
     const iter = Iterator.iterEntries(recordScope)
       .enumerate()
       .map<[string, T, number]>(([x, i]) => [...x, i]);
-    this.scope = iter.map(([_, x]) => x).toArray();
+    this.scope = iter.map(([name, value]) => ({ name, value })).toArray();
     this.names = iter.map<[string, number]>(([x, _, i]) => [x, i]).toObject();
   }
 
+  static namesFromScope<T>(entry: ScopeInnerEntry<T>[]) {
+    return Iterator.iter(entry)
+      .enumerate()
+      .filterMap<[string, number]>(([{ name }, i]) => {
+        if (name === undefined) return;
+        return [name, i];
+      })
+      .toObject();
+  }
+
+  private updateNames() {
+    this.names = Scope.namesFromScope(this.scope);
+  }
+
+  indexToLevel(index: number): number {
+    return this.scope.length - index - 1;
+  }
+
+  levelToIndex(level: number): number {
+    return this.scope.length - level - 1;
+  }
+
   iter() {
-    return Iterator.iterEntries(this.names).map(([name, i]) => ({ name, ...this.scope[i] }));
+    return Iterator.iter(this.scope)
+      .enumerate()
+      .map<ScopeEntry<T>>(([{ name, value }, level]) => ({
+        level,
+        index: this.levelToIndex(level),
+        name,
+        value,
+      }));
   }
 
-  iterScope() {
-    return Iterator.iter(this.scope);
+  toLevel(identifier: ScopeEntryIdentifier): number | undefined {
+    if ("level" in identifier) return identifier.level;
+    if ("index" in identifier) return this.indexToLevel(identifier.index);
+    if ("name" in identifier) return this.names[identifier.name];
   }
 
-  getByName(name: string): T | undefined {
-    if (!(name in this.names)) return;
-    const index = this.names[name];
-    return this.scope[index];
+  toIndex(identifier: ScopeEntryIdentifier): number | undefined {
+    if ("index" in identifier) return identifier.index;
+    const level = this.toLevel(identifier);
+    if (level === undefined) return;
+    return this.levelToIndex(level);
+  }
+
+  toName(identifier: ScopeEntryIdentifier): string | undefined {
+    if ("name" in identifier) return identifier.name;
+    const level = this.toLevel(identifier);
+    if (level === undefined) return;
+    return this.scope[level].name;
+  }
+
+  get(identifier: ScopeEntryIdentifier): ScopeEntry<T> | undefined {
+    const level = this.toLevel(identifier);
+    if (level === undefined) return;
+
+    return { ...this.scope[level], level, index: this.levelToIndex(level) };
+  }
+
+  getByName(name: string): ScopeEntry<T> | undefined {
+    return this.get({ name });
   }
 
   /** 0 is closest scope variable */
-  getByIndex(index: number): T | undefined {
-    return this.scope[index];
+  getByIndex(index: number): ScopeEntry<T> | undefined {
+    return this.get({ index });
   }
 
   /** 0 is top-level scope variable */
-  getByLevel(level: number): T | undefined {
-    return this.scope[this.scope.length - level];
+  getByLevel(level: number): ScopeEntry<T> | undefined {
+    return this.get({ level });
   }
 
   getLevel(name: string): number | undefined {
     if (!(name in this.names)) return;
-    return this.scope.length - this.names[name];
-  }
-
-  getIndex(name: string): number | undefined {
     return this.names[name];
   }
 
-  push(value: T): number {
-    const index = this.scope.push(value) - 1;
+  getIndex(name: string): number | undefined {
+    if (!(name in this.names)) return;
+    return this.levelToIndex(this.names[name]);
+  }
+
+  push(value: T): Scope<T> {
+    const copied = this.copy();
+    copied.scope.push({ value });
     console.dir(
       {
         msg: "scope push",
-        index,
         value,
         scope: this.scope,
         stack: new Error().stack,
       },
       { depth: null }
     );
-    return index;
+    return copied;
   }
 
-  add(name: string, value: T): number {
-    const index = this.push(value);
-    this.names[name] = index;
-    return index;
+  add(name: string, value: T): Scope<T> {
+    const copied = this.push(value);
+    const index = copied.scope.length - 1;
+    copied.names[name] = index;
+    copied.scope[index].name = name;
+    return copied;
   }
 
-  removeByName(name: string): T | undefined {
-    if (!(name in this.names)) return;
-    const index = this.names[name];
-    delete this.names[name];
-    this.names = Iterator.iterEntries(this.names)
-      .map<[string, number]>(([x, i]) => [x, i > index ? i - 1 : i])
-      .toObject();
-    return this.scope.splice(index, 1)[0];
+  remove(identifier: ScopeEntryIdentifier): Scope<T> {
+    const level = this.toLevel(identifier);
+    if (level === undefined) return this;
+    const copied = this.copy();
+    copied.scope.splice(level, 1);
+    copied.updateNames();
+    return copied;
   }
 
-  /** mutates */
-  append(scope: Scope<T>) {
-    const length = this.scope.length;
+  removeAll(name: string): Scope<T> {
+    const copied = this.copy();
+    copied.scope = copied.scope.filter((x) => x.name !== name);
+    copied.updateNames();
+    return copied;
+  }
+
+  removeByName(name: string): Scope<T> {
+    return this.remove({ name });
+  }
+
+  removeByIndex(index: number): Scope<T> {
+    return this.remove({ index });
+  }
+
+  removeByLevel(level: number): Scope<T> {
+    return this.remove({ level });
+  }
+
+  private _append(scope: Scope<T>) {
     this.scope.push(...scope.scope);
-    const _names = Iterator.iterEntries(scope.names)
-      .map<[string, number]>(([x, i]) => [x, i + length])
-      .toObject();
-    this.names = { ...this.names, ..._names };
+    this.updateNames();
     return this;
   }
 
   /** creates new merged scope with priority to passed scope */
-  merge(scope: Scope<T>): Scope<T> {
+  append(scope: Scope<T>): Scope<T> {
     const copied = this.copy();
-    return copied.append(scope);
+    return copied._append(scope);
   }
 
   copy(): Scope<T> {
