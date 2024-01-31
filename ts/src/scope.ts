@@ -49,29 +49,28 @@ export class Scope<T> {
       }));
   }
 
-  toLevel(identifier: ScopeEntryIdentifier): number | undefined {
+  toLevel(identifier: ScopeEntryIdentifier): number {
     if ("level" in identifier) return identifier.level;
     if ("index" in identifier) return this.indexToLevel(identifier.index);
-    if ("name" in identifier) return this.names[identifier.name];
+    return this.names[identifier.name] ?? -1;
   }
 
-  toIndex(identifier: ScopeEntryIdentifier): number | undefined {
+  toIndex(identifier: ScopeEntryIdentifier): number {
     if ("index" in identifier) return identifier.index;
     const level = this.toLevel(identifier);
-    if (level === undefined) return;
     return this.levelToIndex(level);
   }
 
   toName(identifier: ScopeEntryIdentifier): string | undefined {
     if ("name" in identifier) return identifier.name;
     const level = this.toLevel(identifier);
-    if (level === undefined) return;
+    if (level === -1) return;
     return this.scope[level].name;
   }
 
   get(identifier: ScopeEntryIdentifier): ScopeEntry<T> | undefined {
     const level = this.toLevel(identifier);
-    if (level === undefined) return;
+    if (level === -1) return;
 
     return { ...this.scope[level], level, index: this.levelToIndex(level) };
   }
@@ -90,14 +89,12 @@ export class Scope<T> {
     return this.get({ level });
   }
 
-  getLevel(name: string): number | undefined {
-    if (!(name in this.names)) return;
-    return this.names[name];
+  getLevel(name: string): number {
+    return this.toLevel({ name });
   }
 
-  getIndex(name: string): number | undefined {
-    if (!(name in this.names)) return;
-    return this.levelToIndex(this.names[name]);
+  getIndex(name: string): number {
+    return this.toIndex({ name });
   }
 
   push(value: T): Scope<T> {
