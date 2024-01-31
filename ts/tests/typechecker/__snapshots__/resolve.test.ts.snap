@@ -1,0 +1,273 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`expressions > function expressions > function 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "index": undefined,
+        "scope": Scope {
+          "names": {},
+          "scope": [],
+        },
+      },
+      "name": "name",
+      "value": "x",
+    },
+    {
+      "children": [],
+      "data": {
+        "index": 0,
+        "scope": Scope {
+          "names": {
+            "x": 0,
+          },
+          "scope": [
+            {
+              "name": "x",
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "name",
+      "value": "x",
+    },
+  ],
+  "data": {
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "operator",
+  "value": "->",
+}
+`;
+
+exports[`expressions > function expressions > function multiple params 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "index": undefined,
+            "scope": Scope {
+              "names": {},
+              "scope": [],
+            },
+          },
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "data": {
+            "index": undefined,
+            "scope": Scope {
+              "names": {
+                "x": 0,
+              },
+              "scope": [
+                {
+                  "name": "x",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {},
+          "scope": [],
+        },
+      },
+      "name": "operator",
+      "value": "application",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "index": 1,
+            "scope": Scope {
+              "names": {
+                "x": 0,
+                "y": 1,
+              },
+              "scope": [
+                {
+                  "name": "x",
+                  "value": {},
+                },
+                {
+                  "name": "y",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "data": {
+            "index": 0,
+            "scope": Scope {
+              "names": {
+                "x": 0,
+                "y": 1,
+              },
+              "scope": [
+                {
+                  "name": "x",
+                  "value": {},
+                },
+                {
+                  "name": "y",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {
+            "x": 0,
+            "y": 1,
+          },
+          "scope": [
+            {
+              "name": "x",
+              "value": {},
+            },
+            {
+              "name": "y",
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "operator",
+      "value": "application",
+    },
+  ],
+  "data": {
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "operator",
+  "value": "fn",
+}
+`;
+
+exports[`expressions > function expressions > function with no arg 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "scope": Scope {
+          "names": {},
+          "scope": [],
+        },
+      },
+      "name": "placeholder",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 0,
+        },
+      ],
+      "data": {
+        "index": 0,
+        "scope": Scope {
+          "names": {},
+          "scope": [
+            {
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "operator",
+      "value": "#",
+    },
+  ],
+  "data": {
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "operator",
+  "value": "fn",
+}
+`;
+
+exports[`expressions > function expressions > function with placeholder arg 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "scope": Scope {
+          "names": {},
+          "scope": [],
+        },
+      },
+      "name": "placeholder",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 0,
+        },
+      ],
+      "data": {
+        "index": 0,
+        "scope": Scope {
+          "names": {},
+          "scope": [
+            {
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "operator",
+      "value": "#",
+    },
+  ],
+  "data": {
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "operator",
+  "value": "->",
+}
+`;

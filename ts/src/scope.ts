@@ -103,15 +103,15 @@ export class Scope<T> {
   push(value: T): Scope<T> {
     const copied = this.copy();
     copied.scope.push({ value });
-    console.dir(
-      {
-        msg: "scope push",
-        value,
-        scope: this.scope,
-        stack: new Error().stack,
-      },
-      { depth: null }
-    );
+    // console.dir(
+    //   {
+    //     msg: "scope push",
+    //     value,
+    //     scope: this.scope,
+    //     stack: new Error().stack,
+    //   },
+    //   { depth: null }
+    // );
     return copied;
   }
 

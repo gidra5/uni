@@ -2584,6 +2584,62 @@ exports[`expressions > function expressions > function multiple params 1`] = `
 }
 `;
 
+exports[`expressions > function expressions > function with no arg 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "placeholder",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 0,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "#",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "fn",
+}
+`;
+
+exports[`expressions > function expressions > function with placeholder arg 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "placeholder",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 0,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "#",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "->",
+}
+`;
+
 exports[`expressions > pattern matching > 'is' with 'and' produces union of bindings 1`] = `
 {
   "children": [

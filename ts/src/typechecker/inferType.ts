@@ -61,7 +61,7 @@ export const inferType = <T>(tree: AbstractSyntaxTree<T>, context = defaultConte
     const _ret = inferScope(ret);
     const inferredScope = _ret.data.scope;
     const argTyped = inferType(arg, { ...context, isBinding: true, inferredScope });
-    const scope = context.scope.merge(getScopeBindings(argTyped));
+    const scope = context.scope.append(getScopeBindings(argTyped));
     const retTyped = inferType(_ret, { ...context, scope });
     tree = setField(["children", 0], argTyped)(tree);
     tree = setField(["children", 1], retTyped)(tree);
