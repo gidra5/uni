@@ -2,9 +2,10 @@ import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { Iterator } from "iterator-js";
 import { infixArithmeticOps, prefixArithmeticOps } from "../../src/parser";
-import { group, infix, name, number, placeholder, prefix, string } from "../../src/parser/ast";
+import { group, infix, name, placeholder, prefix, string } from "../../src/parser/ast";
 import { matchSeparators } from "../../src/parser/utils";
 import { exampleInferTestCase, treeInferTestCase, treeInferTestCaseArgs } from "./utils";
+import { func, index, type, unknown } from "../../src/typechecker/type";
 
 describe("expressions", () => {
   describe.todo("values", () => {
@@ -168,13 +169,22 @@ describe("expressions", () => {
 
   describe("function expressions", () => {
     test.todo("function multiple params", () => {
-      const src = `fn x y -> x + y`;
-      treeInferTestCase(src);
+      const src = `fn x y -> x y`;
+      treeInferTestCase(
+        src,
+        func(
+          { type: type(), implicit: true },
+          { type: type(), implicit: true },
+          { name: "x", type: func(index(1), index(0)) },
+          { name: "y", type: index(2) },
+          index(2)
+        )
+      );
     });
 
     test("function", () => {
       const src = `x -> x`;
-      treeInferTestCase(src);
+      treeInferTestCase(src, func({ type: type(), implicit: true }, index(0), index(1)));
     });
 
     describe.todo("application", () => {

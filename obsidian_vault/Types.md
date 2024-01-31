@@ -81,9 +81,9 @@ x: a'
 
 => (7)
 x: a' and fn x: a' => b'
+```
 
-
-
+```
 2. fix = fn f -> (fn x -> x x) (fn x -> f (x x))
 
 =>
@@ -182,10 +182,9 @@ f: fn x: a' => a'
 x1: fn x2: b' and (fn x2: b' => a') => a',
 
 fix = fn f: (fn x: a' => a') -> (fn x1: (fn x2: b' and (fn x2: b' => a') => a') -> x1 x1) (fn x2: b' and (fn x2: b' => a') -> f (x2 x2))
+```
 
-
-
-
+```
 3. a (fn a: Value => fn x: a => fn y: a => a) b (fn a: Value -> fn x: a -> fn y: a -> y) 
 
 =>
@@ -213,9 +212,9 @@ b'
 c'
 a: fn _: Value => fn _: c' => fn _: (fn a: Value => fn x: a => fn y: a => a) => b'
 b: c'
+```
 
-
-
+```
 4. a (fn a => fn x: a => fn y: a => a) b (fn a -> fn x: a -> fn y: a -> y) 
 
 =>
@@ -245,6 +244,18 @@ b: d'
 a: fn _: e' => fn _: d' => fn _: (fn a: c' => fn x: a => fn y: a => a) => b'
 (fn a: e' => fn x: a => fn y: a => a): e'
 b: d'
+```
+
+```
+5. fn x -> fn y -> x y
+
+a'
+b'
+y: b'
+x: fn x: a' => b'
+
+fn a': Type -> fn b': Type -> fn x: (fn x: a' -> b') -> fn y: 'a -> b' 
+
 ```
 
 Inductive types are translated as follows:
@@ -391,6 +402,20 @@ Adjust inference rules:
 5. In given context `C`, `Type: Type` is equivalent to `Type[n]: Type[n+1]` for some `n`.
 6. 
 They are allowed to be used in reverse to infer type of context that is required for a given term.
+
+Reverse rules to infer context: 
+1. Given term `x` infers context `a': Type, x: a'`
+2. Given term `x y` infers context `x: fn x: a' => b', y: a'`
+3. Given term `fn x -> B` infers context `a: Type, (fn x -> B): fn x: a -> typeof B[x: a]`
+3. Given term `fn x: A -> B` infers context `a: Type, (fn x: A -> B): fn x: a and A -> typeof B[x: a and A]`
+4. Given term `x: y` infers context `y: Type`
+5. Given context `(fn x: t1 -> f(x)): fn x: t1 => g(x)` infers context `f(x: t1): g(x)`
+6. Given context `(fn x: t1 => f(x)): t2` infers context `f(x: t1): t2`
+7. Given context `x: a, x: b` infers context `x: a and b`
+8. Given context `x: (fn x: t1 => f(x)) and (fn x: t2 => f(x))` infers context `x: (fn x: t1 or t2 => f(x))`
+9. Given context `x: (fn x: t1 => f(x)) and (fn x: t2 => g(x))` infers context `bool: (fn a: Value => fn x: a => fn y: a => a), a': bool, x: (fn x: a' unknown t1 t2 => a' unknown f(x) g(x))`
+10. Given context `x: a, a: Type[n], a: b, b: Type` infers context `b: Type[n+1]`
+11. Given context `x: a, a: Type` infers context `a: Type[0]`
 
 ```
 bool_t = fn a: Type -> fn x: a -> fn y: a -> a

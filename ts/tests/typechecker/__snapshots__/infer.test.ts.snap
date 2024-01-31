@@ -5,11 +5,11 @@ exports[`expressions > function expressions > function 1`] = `
   "kind": "function",
   "types": [
     {
-      "kind": "void",
+      "kind": "unknown",
       "types": [],
     },
     {
-      "kind": "void",
+      "kind": "unknown",
       "types": [],
     },
   ],
