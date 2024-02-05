@@ -263,7 +263,7 @@ describe("expressions", () => {
     });
 
     test("with variable value", () => {
-      const src = `x is (#a, b)`;
+      const src = `x is (^a, b)`;
       treeTestCase(src);
     });
 
