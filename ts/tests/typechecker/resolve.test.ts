@@ -1,11 +1,6 @@
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
-import { Iterator } from "iterator-js";
-import { infixArithmeticOps, prefixArithmeticOps } from "../../src/parser";
-import { group, infix, name, placeholder, prefix, string } from "../../src/parser/ast";
-import { matchSeparators } from "../../src/parser/utils";
-import { exampleScopeTestCase, treeScopeTestCase, treeScopeTestCaseArgs } from "./utils";
-import { func, index, type, unknown } from "../../src/typechecker/type";
+import { exampleScopeTestCase, treeScopeTestCase } from "./utils";
 
 describe("expressions", () => {
   describe("function expressions", () => {
@@ -28,50 +23,60 @@ describe("expressions", () => {
       const src = `fn -> #0`;
       treeScopeTestCase(src);
     });
+
+    test("function with name shadowing", () => {
+      const src = `fn a -> fn a -> a`;
+      treeScopeTestCase(src);
+    });
+
+    test("function with shadowed name access", () => {
+      const src = `fn a -> fn a -> #a`;
+      treeScopeTestCase(src);
+    });
+
+    test("function with deep shadowed name access", () => {
+      const src = `fn a -> fn a -> fn a -> ##a`;
+      treeScopeTestCase(src);
+    });
   });
 
-  describe.todo("pattern matching", () => {
-    test("match", () => {
-      const src = `match x { 1 -> 2; 3 -> 4 }`;
-      treeScopeTestCase(src);
-    });
-
-    test("match newline inside", () => {
-      const src = `match x { 1 -> 2\n 3 -> 4 }`;
-      treeScopeTestCase(src);
-    });
-
+  describe("pattern matching", () => {
     test("in function parameters", () => {
       const src = `(x, y) -> x + y`;
       treeScopeTestCase(src);
     });
 
-    test("with 'is' operator", () => {
-      const src = `x is (a, b)`;
+    test.only("with 'is' operator", () => {
+      const src = `x is (a, b) and a == b + 1`;
       treeScopeTestCase(src);
     });
 
-    test("with placeholder", () => {
-      const src = `x is (_, b)`;
+    test.todo("with 'is' operator with equality", () => {
+      const src = `x is (a, a, b) and a == b + 1`;
       treeScopeTestCase(src);
     });
 
-    test("with variable value", () => {
-      const src = `x is (#a, b)`;
+    test.todo("with placeholder", () => {
+      const src = `x is (_, b) and a == b + 1`;
       treeScopeTestCase(src);
     });
 
-    test("with rest value", () => {
-      const src = `x is (a, ...b)`;
+    test.todo("with variable value", () => {
+      const src = `x is (^a, b) and a == b + 1`;
       treeScopeTestCase(src);
     });
 
-    test("with rest value first", () => {
-      const src = `x is (...b, a)`;
+    test.todo("with rest value", () => {
+      const src = `x is (a, ...b) and a == b + 1`;
       treeScopeTestCase(src);
     });
 
-    test("binding visible in scope where it is true", () => {
+    test.todo("with rest value first", () => {
+      const src = `x is (...b, a) and a == b + 1`;
+      treeScopeTestCase(src);
+    });
+
+    test.todo("binding visible in scope where it is true", () => {
       const src = `x is (a, b) and a == b + 1`;
       treeScopeTestCase(src);
     });

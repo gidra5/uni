@@ -6,7 +6,6 @@ exports[`expressions > function expressions > function 1`] = `
     {
       "children": [],
       "data": {
-        "index": undefined,
         "scope": Scope {
           "names": {},
           "scope": [],
@@ -18,7 +17,7 @@ exports[`expressions > function expressions > function 1`] = `
     {
       "children": [],
       "data": {
-        "index": 0,
+        "relativeIndex": 0,
         "scope": Scope {
           "names": {
             "x": 0,
@@ -54,7 +53,6 @@ exports[`expressions > function expressions > function multiple params 1`] = `
         {
           "children": [],
           "data": {
-            "index": undefined,
             "scope": Scope {
               "names": {},
               "scope": [],
@@ -66,7 +64,7 @@ exports[`expressions > function expressions > function multiple params 1`] = `
         {
           "children": [],
           "data": {
-            "index": undefined,
+            "relativeIndex": -1,
             "scope": Scope {
               "names": {
                 "x": 0,
@@ -97,7 +95,7 @@ exports[`expressions > function expressions > function multiple params 1`] = `
         {
           "children": [],
           "data": {
-            "index": 1,
+            "relativeIndex": 1,
             "scope": Scope {
               "names": {
                 "x": 0,
@@ -121,7 +119,7 @@ exports[`expressions > function expressions > function multiple params 1`] = `
         {
           "children": [],
           "data": {
-            "index": 0,
+            "relativeIndex": 0,
             "scope": Scope {
               "names": {
                 "x": 0,
@@ -176,6 +174,283 @@ exports[`expressions > function expressions > function multiple params 1`] = `
 }
 `;
 
+exports[`expressions > function expressions > function with deep shadowed name access 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "scope": Scope {
+          "names": {},
+          "scope": [],
+        },
+      },
+      "name": "name",
+      "value": "a",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "scope": Scope {
+              "names": {
+                "a": 0,
+              },
+              "scope": [
+                {
+                  "name": "a",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "scope": Scope {
+                  "names": {
+                    "a": 1,
+                  },
+                  "scope": [
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                  ],
+                },
+              },
+              "name": "name",
+              "value": "a",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "relativeIndex": 0,
+                        "scope": Scope {
+                          "names": {
+                            "a": 2,
+                          },
+                          "scope": [
+                            {
+                              "name": "a",
+                              "value": {},
+                            },
+                            {
+                              "name": "a",
+                              "value": {},
+                            },
+                            {
+                              "name": "a",
+                              "value": {},
+                            },
+                          ],
+                        },
+                      },
+                      "name": "name",
+                      "value": "a",
+                    },
+                  ],
+                  "data": {
+                    "relativeIndex": 1,
+                    "scope": Scope {
+                      "names": {
+                        "a": 2,
+                      },
+                      "scope": [
+                        {
+                          "name": "a",
+                          "value": {},
+                        },
+                        {
+                          "name": "a",
+                          "value": {},
+                        },
+                        {
+                          "name": "a",
+                          "value": {},
+                        },
+                      ],
+                    },
+                  },
+                  "name": "operator",
+                  "value": "#",
+                },
+              ],
+              "data": {
+                "relativeIndex": 2,
+                "scope": Scope {
+                  "names": {
+                    "a": 2,
+                  },
+                  "scope": [
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                  ],
+                },
+              },
+              "name": "operator",
+              "value": "#",
+            },
+          ],
+          "data": {
+            "scope": Scope {
+              "names": {
+                "a": 1,
+              },
+              "scope": [
+                {
+                  "name": "a",
+                  "value": {},
+                },
+                {
+                  "name": "a",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "operator",
+          "value": "fn",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {
+            "a": 0,
+          },
+          "scope": [
+            {
+              "name": "a",
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "operator",
+      "value": "fn",
+    },
+  ],
+  "data": {
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "operator",
+  "value": "fn",
+}
+`;
+
+exports[`expressions > function expressions > function with name shadowing 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "scope": Scope {
+          "names": {},
+          "scope": [],
+        },
+      },
+      "name": "name",
+      "value": "a",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "scope": Scope {
+              "names": {
+                "a": 0,
+              },
+              "scope": [
+                {
+                  "name": "a",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [],
+          "data": {
+            "relativeIndex": 0,
+            "scope": Scope {
+              "names": {
+                "a": 1,
+              },
+              "scope": [
+                {
+                  "name": "a",
+                  "value": {},
+                },
+                {
+                  "name": "a",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "a",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {
+            "a": 0,
+          },
+          "scope": [
+            {
+              "name": "a",
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "operator",
+      "value": "fn",
+    },
+  ],
+  "data": {
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "operator",
+  "value": "fn",
+}
+`;
+
 exports[`expressions > function expressions > function with no arg 1`] = `
 {
   "children": [
@@ -199,7 +474,7 @@ exports[`expressions > function expressions > function with no arg 1`] = `
         },
       ],
       "data": {
-        "index": 0,
+        "relativeIndex": 0,
         "scope": Scope {
           "names": {},
           "scope": [
@@ -247,7 +522,7 @@ exports[`expressions > function expressions > function with placeholder arg 1`] 
         },
       ],
       "data": {
-        "index": 0,
+        "relativeIndex": 0,
         "scope": Scope {
           "names": {},
           "scope": [
@@ -269,5 +544,797 @@ exports[`expressions > function expressions > function with placeholder arg 1`] 
   },
   "name": "operator",
   "value": "->",
+}
+`;
+
+exports[`expressions > function expressions > function with shadowed name access 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "scope": Scope {
+          "names": {},
+          "scope": [],
+        },
+      },
+      "name": "name",
+      "value": "a",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "scope": Scope {
+              "names": {
+                "a": 0,
+              },
+              "scope": [
+                {
+                  "name": "a",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "relativeIndex": 0,
+                "scope": Scope {
+                  "names": {
+                    "a": 1,
+                  },
+                  "scope": [
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                  ],
+                },
+              },
+              "name": "name",
+              "value": "a",
+            },
+          ],
+          "data": {
+            "relativeIndex": 1,
+            "scope": Scope {
+              "names": {
+                "a": 1,
+              },
+              "scope": [
+                {
+                  "name": "a",
+                  "value": {},
+                },
+                {
+                  "name": "a",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "operator",
+          "value": "#",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {
+            "a": 0,
+          },
+          "scope": [
+            {
+              "name": "a",
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "operator",
+      "value": "fn",
+    },
+  ],
+  "data": {
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "operator",
+  "value": "fn",
+}
+`;
+
+exports[`expressions > pattern matching > in function parameters 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "scope": Scope {
+                  "names": {},
+                  "scope": [],
+                },
+              },
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "data": {
+                "scope": Scope {
+                  "names": {
+                    "x": 0,
+                  },
+                  "scope": [
+                    {
+                      "name": "x",
+                      "value": {},
+                    },
+                  ],
+                },
+              },
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "data": {
+            "scope": Scope {
+              "names": {},
+              "scope": [],
+            },
+          },
+          "name": "operator",
+          "value": ",",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {},
+          "scope": [],
+        },
+      },
+      "name": "group",
+      "value": "parens",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "relativeIndex": 1,
+            "scope": Scope {
+              "names": {
+                "x": 0,
+                "y": 1,
+              },
+              "scope": [
+                {
+                  "name": "x",
+                  "value": {},
+                },
+                {
+                  "name": "y",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "data": {
+            "relativeIndex": 0,
+            "scope": Scope {
+              "names": {
+                "x": 0,
+                "y": 1,
+              },
+              "scope": [
+                {
+                  "name": "x",
+                  "value": {},
+                },
+                {
+                  "name": "y",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {
+            "x": 0,
+            "y": 1,
+          },
+          "scope": [
+            {
+              "name": "x",
+              "value": {},
+            },
+            {
+              "name": "y",
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "operator",
+      "value": "+",
+    },
+  ],
+  "data": {
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "operator",
+  "value": "->",
+}
+`;
+
+exports[`expressions > pattern matching > with 'is' operator 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "relativeIndex": -1,
+                "scope": Scope {
+                  "names": {},
+                  "scope": [],
+                },
+              },
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "scope": Scope {
+                          "names": {},
+                          "scope": [],
+                        },
+                      },
+                      "name": "name",
+                      "value": "a",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "relativeIndex": -1,
+                        "scope": Scope {
+                          "names": {
+                            "a": 0,
+                          },
+                          "scope": [
+                            {
+                              "name": "a",
+                              "value": {},
+                            },
+                          ],
+                        },
+                      },
+                      "name": "name",
+                      "value": "b",
+                    },
+                  ],
+                  "data": {
+                    "scope": Scope {
+                      "names": {},
+                      "scope": [],
+                    },
+                  },
+                  "name": "operator",
+                  "value": ",",
+                },
+              ],
+              "data": {
+                "scope": Scope {
+                  "names": {},
+                  "scope": [],
+                },
+              },
+              "name": "group",
+              "value": "parens",
+            },
+          ],
+          "data": {
+            "scope": Scope {
+              "names": {},
+              "scope": [],
+            },
+          },
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "a",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "b",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": ",",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {},
+          "scope": [],
+        },
+      },
+      "name": "operator",
+      "value": "is",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "relativeIndex": 1,
+            "scope": Scope {
+              "names": {
+                "a": 0,
+                "b": 1,
+              },
+              "scope": [
+                {
+                  "name": "a",
+                  "value": {},
+                },
+                {
+                  "name": "b",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "relativeIndex": 0,
+                "scope": Scope {
+                  "names": {
+                    "a": 0,
+                    "b": 1,
+                  },
+                  "scope": [
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                    {
+                      "name": "b",
+                      "value": {},
+                    },
+                  ],
+                },
+              },
+              "name": "name",
+              "value": "b",
+            },
+            {
+              "children": [],
+              "data": {
+                "scope": Scope {
+                  "names": {
+                    "a": 0,
+                    "b": 1,
+                  },
+                  "scope": [
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                    {
+                      "name": "b",
+                      "value": {},
+                    },
+                  ],
+                },
+              },
+              "name": "int",
+              "value": 1,
+            },
+          ],
+          "data": {
+            "scope": Scope {
+              "names": {
+                "a": 0,
+                "b": 1,
+              },
+              "scope": [
+                {
+                  "name": "a",
+                  "value": {},
+                },
+                {
+                  "name": "b",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "operator",
+          "value": "+",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {
+            "a": 0,
+            "b": 1,
+          },
+          "scope": [
+            {
+              "name": "a",
+              "value": {},
+            },
+            {
+              "name": "b",
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "operator",
+      "value": "==",
+    },
+  ],
+  "data": {
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "operator",
+  "value": "and",
+}
+`;
+
+exports[`expressions > pattern matching > with 'is' operator with equality 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "relativeIndex": -1,
+                "scope": Scope {
+                  "names": {},
+                  "scope": [],
+                },
+              },
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {
+                            "scope": Scope {
+                              "names": {},
+                              "scope": [],
+                            },
+                          },
+                          "name": "name",
+                          "value": "a",
+                        },
+                        {
+                          "children": [],
+                          "data": {
+                            "scope": Scope {
+                              "names": {
+                                "a": 0,
+                              },
+                              "scope": [
+                                {
+                                  "name": "a",
+                                  "value": {},
+                                },
+                              ],
+                            },
+                          },
+                          "name": "name",
+                          "value": "a",
+                        },
+                      ],
+                      "data": {
+                        "scope": Scope {
+                          "names": {},
+                          "scope": [],
+                        },
+                      },
+                      "name": "operator",
+                      "value": ",",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "scope": Scope {
+                          "names": {
+                            "a": 0,
+                          },
+                          "scope": [
+                            {
+                              "name": "a",
+                              "value": {},
+                            },
+                          ],
+                        },
+                      },
+                      "name": "name",
+                      "value": "b",
+                    },
+                  ],
+                  "data": {
+                    "scope": Scope {
+                      "names": {},
+                      "scope": [],
+                    },
+                  },
+                  "name": "operator",
+                  "value": ",",
+                },
+              ],
+              "data": {
+                "scope": Scope {
+                  "names": {},
+                  "scope": [],
+                },
+              },
+              "name": "group",
+              "value": "parens",
+            },
+          ],
+          "data": {
+            "scope": Scope {
+              "names": {},
+              "scope": [],
+            },
+          },
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "a",
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "a",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": ",",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "b",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": ",",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {},
+          "scope": [],
+        },
+      },
+      "name": "operator",
+      "value": "is",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "relativeIndex": 1,
+            "scope": Scope {
+              "names": {
+                "a": 0,
+                "b": 1,
+              },
+              "scope": [
+                {
+                  "name": "a",
+                  "value": {},
+                },
+                {
+                  "name": "b",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "relativeIndex": 0,
+                "scope": Scope {
+                  "names": {
+                    "a": 0,
+                    "b": 1,
+                  },
+                  "scope": [
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                    {
+                      "name": "b",
+                      "value": {},
+                    },
+                  ],
+                },
+              },
+              "name": "name",
+              "value": "b",
+            },
+            {
+              "children": [],
+              "data": {
+                "scope": Scope {
+                  "names": {
+                    "a": 0,
+                    "b": 1,
+                  },
+                  "scope": [
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                    {
+                      "name": "b",
+                      "value": {},
+                    },
+                  ],
+                },
+              },
+              "name": "int",
+              "value": 1,
+            },
+          ],
+          "data": {
+            "scope": Scope {
+              "names": {
+                "a": 0,
+                "b": 1,
+              },
+              "scope": [
+                {
+                  "name": "a",
+                  "value": {},
+                },
+                {
+                  "name": "b",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "operator",
+          "value": "+",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {
+            "a": 0,
+            "b": 1,
+          },
+          "scope": [
+            {
+              "name": "a",
+              "value": {},
+            },
+            {
+              "name": "b",
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "operator",
+      "value": "==",
+    },
+  ],
+  "data": {
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "operator",
+  "value": "and",
 }
 `;

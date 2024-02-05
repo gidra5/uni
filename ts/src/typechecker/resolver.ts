@@ -1,5 +1,5 @@
 import { AbstractSyntaxTree } from "../parser/ast";
-import { matchString } from "../parser/string";
+import { matchString, templateString } from "../parser/string";
 import { Scope } from "../scope";
 import { mapField, setField } from "../utils";
 
@@ -8,7 +8,7 @@ const getScope = (tree: AbstractSyntaxTree): Scope<{}> => {
     // console.dir({ msg: "getScope traverse", tree, scope }, { depth: null });
     if (tree.name === "name") {
       const name = tree.value;
-      scope = scope.add(name, {});
+      if (!scope.has({ name })) scope = scope.add(name, {});
     }
     if (tree.name === "placeholder") {
       scope = scope.push({});
@@ -37,6 +37,19 @@ export const resolve = <T>(
     return tree as AbstractSyntaxTree<T & { scope: Scope<{}> }>;
   }
 
+  if (matchString(tree, "_ is _ and _")[0]) {
+    const { value, pattern, rest } = matchString(tree, "value is pattern and rest")[1];
+    const valueScoped = resolve(value, scope);
+    const patternScoped = resolve(pattern, scope, true);
+    const restScoped = resolve(rest, scope.append(getScope(patternScoped)));
+    tree = setField(["children", 1], restScoped)(tree);
+    tree = setField(["children", 0, "children", 0, "children", 0], valueScoped)(tree);
+    tree = setField(["children", 0, "children", 0, "children", 1], patternScoped)(tree);
+    tree = setField(["children", 0, "data", "scope"], scope)(tree);
+    tree = setField(["children", 0, "children", 0, "data", "scope"], scope)(tree);
+    return tree as AbstractSyntaxTree<T & { scope: Scope<{}> }>;
+  }
+
   if (tree.name === "name" && !pattern) {
     const index = scope.getByName(tree.value)?.relativeIndex ?? -1;
     return setField(["data", "relativeIndex"], index)(tree);
@@ -47,18 +60,56 @@ export const resolve = <T>(
     return setField(["data", "relativeIndex"], relativeIndex)(tree);
   }
 
+  if (matchString(tree, "#_")[0]) {
+    const child = tree.children[0];
+    const childScoped = resolve(child, scope);
+
+    if (childScoped.data.relativeIndex !== undefined) {
+      tree = setField(["children", 0], childScoped)(tree);
+      return setField(["data", "relativeIndex"], childScoped.data.relativeIndex + 1)(tree);
+    }
+  }
+
   if (pattern) {
     if (matchString(tree, "_ _")[0]) {
       const [left, right] = tree.children;
       const leftScoped = resolve(left, scope, true);
       const rightScope = scope.append(getScope(leftScoped));
-      const rightScoped = resolve(right, rightScope);
+      const rightScoped = resolve(right, rightScope, true);
+      tree = setField(["children", 0], leftScoped)(tree);
+      tree = setField(["children", 1], rightScoped)(tree);
+      return tree as AbstractSyntaxTree<T & { scope: Scope<{}> }>;
+    }
+
+    if (matchString(tree, "_, _")[0]) {
+      const [left, right] = tree.children;
+      const leftScoped = resolve(left, scope, true);
+      const rightScope = scope.append(getScope(leftScoped));
+      const rightScoped = resolve(right, rightScope, true);
+      tree = setField(["children", 0], leftScoped)(tree);
+      tree = setField(["children", 1], rightScoped)(tree);
+      return tree as AbstractSyntaxTree<T & { scope: Scope<{}> }>;
+    }
+
+    if (matchString(tree, "_ and _")[0]) {
+      const [left, right] = tree.children;
+      const leftScoped = resolve(left, scope, true);
+      const rightScoped = resolve(right, scope.append(getScope(leftScoped)), true);
       tree = setField(["children", 0], leftScoped)(tree);
       tree = setField(["children", 1], rightScoped)(tree);
       return tree as AbstractSyntaxTree<T & { scope: Scope<{}> }>;
     }
   }
 
-  tree = mapField(["children"], (children) => children.map((child) => resolve(child, scope)))(tree);
+  tree = mapField(["children"], (children) => {
+    const [childrenScoped, _] = children.reduce(
+      ([children, scope], child) => {
+        const childScoped = resolve(child, scope, pattern);
+        return [[...children, childScoped], childScoped.data.scope];
+      },
+      [[], scope]
+    );
+    return childrenScoped;
+  })(tree);
   return tree as AbstractSyntaxTree<T & { scope: Scope<{}> }>;
 };

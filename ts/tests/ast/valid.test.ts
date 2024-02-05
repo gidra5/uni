@@ -6,6 +6,8 @@ import { group, infix, name, placeholder, prefix, string } from "../../src/parse
 import { matchSeparators } from "../../src/parser/utils";
 import { exampleTestCase, treeTestCase, treeTestCaseArgs } from "./utils";
 
+/* one test per example of a language construct  */
+
 describe("comments", () => {
   test("comment", () => {
     const src = `// comment\n123`;
@@ -204,6 +206,16 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
+    test("function with shadowed name access", () => {
+      const src = `fn a -> fn a -> #a`;
+      treeTestCase(src);
+    });
+
+    test("function with deep shadowed name access", () => {
+      const src = `fn a -> fn a -> fn a -> ##a`;
+      treeTestCase(src);
+    });
+
     describe("application", () => {
       test("function call", () => {
         const src = `f x`;
@@ -243,12 +255,32 @@ describe("expressions", () => {
     });
 
     test("match that accepts tuple", () => {
-      const src = `match x: ((1 -> 2), (3 -> 4)) `;
+      const src = `match x: ((1 -> 2), (3 -> 4))`;
       treeTestCase(src);
     });
 
     test("in function parameters", () => {
       const src = `(x, y) -> x + y`;
+      treeTestCase(src);
+    });
+
+    test("pattern union", () => {
+      const src = `fn (x, y) or (x, y, z) -> x + y`;
+      treeTestCase(src);
+    });
+
+    test("pattern intersection", () => {
+      const src = `fn (x, y) and (x, y, z) -> x + y + z`;
+      treeTestCase(src);
+    });
+
+    test("arrow function pattern union", () => {
+      const src = `((x, y) or (x, y, z)) -> x + y`;
+      treeTestCase(src);
+    });
+
+    test("arrow function pattern intersection", () => {
+      const src = `((x, y) and (x, y, z)) -> x + y + z`;
       treeTestCase(src);
     });
 

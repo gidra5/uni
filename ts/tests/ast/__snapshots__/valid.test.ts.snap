@@ -2584,6 +2584,68 @@ exports[`expressions > function expressions > function multiple params 1`] = `
 }
 `;
 
+exports[`expressions > function expressions > function with deep shadowed name access 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "a",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "a",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "a",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": "#",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": "#",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "fn",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "fn",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "fn",
+}
+`;
+
 exports[`expressions > function expressions > function with no arg 1`] = `
 {
   "children": [
@@ -2637,6 +2699,48 @@ exports[`expressions > function expressions > function with placeholder arg 1`] 
   "data": {},
   "name": "operator",
   "value": "->",
+}
+`;
+
+exports[`expressions > function expressions > function with shadowed name access 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "a",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "a",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "#",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "fn",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "fn",
 }
 `;
 
@@ -2901,6 +3005,235 @@ exports[`expressions > pattern matching > 'is' with 'or' produces intersection o
 }
 `;
 
+exports[`expressions > pattern matching > arrow function pattern intersection 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "x",
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "y",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": ",",
+                },
+              ],
+              "data": {},
+              "name": "group",
+              "value": "parens",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "x",
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "y",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": ",",
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "z",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": ",",
+                },
+              ],
+              "data": {},
+              "name": "group",
+              "value": "parens",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "and",
+        },
+      ],
+      "data": {},
+      "name": "group",
+      "value": "parens",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "+",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "z",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "+",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "->",
+}
+`;
+
+exports[`expressions > pattern matching > arrow function pattern union 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "x",
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "y",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": ",",
+                },
+              ],
+              "data": {},
+              "name": "group",
+              "value": "parens",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "x",
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "y",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": ",",
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "z",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": ",",
+                },
+              ],
+              "data": {},
+              "name": "group",
+              "value": "parens",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "or",
+        },
+      ],
+      "data": {},
+      "name": "group",
+      "value": "parens",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "+",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "->",
+}
+`;
+
 exports[`expressions > pattern matching > binding visible in scope where it is true 1`] = `
 {
   "children": [
@@ -3116,54 +3449,90 @@ exports[`expressions > pattern matching > match that accepts tuple 1`] = `
                 {
                   "children": [
                     {
-                      "children": [
-                        {
-                          "children": [],
-                          "data": {},
-                          "name": "int",
-                          "value": 1,
-                        },
-                        {
-                          "children": [],
-                          "data": {},
-                          "name": "int",
-                          "value": 2,
-                        },
-                      ],
+                      "children": [],
                       "data": {},
-                      "name": "operator",
-                      "value": "->",
+                      "name": "int",
+                      "value": 1,
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "int",
+                      "value": 2,
                     },
                   ],
                   "data": {},
-                  "name": "group",
-                  "value": "parens",
+                  "name": "operator",
+                  "value": "->",
                 },
+              ],
+              "data": {},
+              "name": "group",
+              "value": "parens",
+            },
+            {
+              "children": [
                 {
                   "children": [
                     {
-                      "children": [
-                        {
-                          "children": [],
-                          "data": {},
-                          "name": "int",
-                          "value": 3,
-                        },
-                        {
-                          "children": [],
-                          "data": {},
-                          "name": "int",
-                          "value": 4,
-                        },
-                      ],
+                      "children": [],
                       "data": {},
-                      "name": "operator",
-                      "value": "->",
+                      "name": "int",
+                      "value": 3,
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "int",
+                      "value": 4,
                     },
                   ],
                   "data": {},
-                  "name": "group",
-                  "value": "parens",
+                  "name": "operator",
+                  "value": "->",
+                },
+              ],
+              "data": {},
+              "name": "group",
+              "value": "parens",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": ",",
+        },
+      ],
+      "data": {},
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "matchColon",
+}
+`;
+
+exports[`expressions > pattern matching > pattern intersection 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "x",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "y",
                 },
               ],
               "data": {},
@@ -3176,20 +3545,186 @@ exports[`expressions > pattern matching > match that accepts tuple 1`] = `
           "value": "parens",
         },
         {
-          "children": [],
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "x",
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "y",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": ",",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "z",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": ",",
+            },
+          ],
           "data": {},
-          "name": "name",
-          "value": "",
+          "name": "group",
+          "value": "parens",
         },
       ],
       "data": {},
       "name": "operator",
-      "value": "application",
+      "value": "and",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "+",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "z",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "+",
     },
   ],
   "data": {},
   "name": "operator",
-  "value": "matchColon",
+  "value": "fn",
+}
+`;
+
+exports[`expressions > pattern matching > pattern union 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "x",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "y",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": ",",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "x",
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "y",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": ",",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "z",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": ",",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "or",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "+",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "fn",
 }
 `;
 
@@ -3398,7 +3933,7 @@ exports[`expressions > pattern matching > with variable value 1`] = `
               ],
               "data": {},
               "name": "operator",
-              "value": "#",
+              "value": "pin",
             },
             {
               "children": [],
