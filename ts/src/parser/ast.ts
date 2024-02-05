@@ -22,12 +22,6 @@ export const name = (value: string): AbstractSyntaxTree => ({
   children: [],
 });
 
-// export const number = (value: number): AbstractSyntaxTree => ({
-//   name: "number",
-//   value,
-//   data: {},
-//   children: [],
-// });
 export const int = (value: number): AbstractSyntaxTree => ({
   name: "int",
   value,
