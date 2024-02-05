@@ -22,7 +22,7 @@ export const resolve = <T>(
   tree: AbstractSyntaxTree<T>,
   scope = new Scope<any>(),
   pattern = false
-): AbstractSyntaxTree<T & { scope: Scope<{}>; index?: number }> => {
+): AbstractSyntaxTree<T & { scope: Scope<{}>; relativeIndex?: number }> => {
   tree = setField(["data", "scope"], scope)(tree);
   // console.dir({ msg: "resolve", tree, scope }, { depth: null });
 
@@ -37,13 +37,14 @@ export const resolve = <T>(
     return tree as AbstractSyntaxTree<T & { scope: Scope<{}> }>;
   }
 
-  if (tree.name === "name") {
-    return setField(["data", "index"], scope.getByName(tree.value)?.index)(tree);
+  if (tree.name === "name" && !pattern) {
+    const index = scope.getByName(tree.value)?.relativeIndex ?? -1;
+    return setField(["data", "relativeIndex"], index)(tree);
   }
 
   if (matchString(tree, "#_")[0] && tree.children[0].name === "int") {
-    const index = tree.children[0].value;
-    return setField(["data", "index"], scope.get({ index })?.index)(tree);
+    const relativeIndex = tree.children[0].value;
+    return setField(["data", "relativeIndex"], relativeIndex)(tree);
   }
 
   if (pattern) {

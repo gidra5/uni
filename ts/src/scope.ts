@@ -1,8 +1,8 @@
 import { Iterator } from "iterator-js";
 
 type ScopeInnerEntry<T> = { name?: string; value: T };
-export type ScopeEntry<T> = { name?: string; index: number; level: number; value: T };
-type ScopeEntryIdentifier = { name: string } | { index: number } | { level: number };
+export type ScopeEntry<T> = { name?: string; relativeIndex: number; index: number; value: T };
+type ScopeEntryIdentifier = { name: string } | { relativeIndex: number } | { index: number };
 
 export class Scope<T> {
   scope: ScopeInnerEntry<T>[];
@@ -30,35 +30,35 @@ export class Scope<T> {
     this.names = Scope.namesFromScope(this.scope);
   }
 
-  indexToLevel(index: number): number {
+  relativeToIndex(index: number): number {
     return this.scope.length - index - 1;
   }
 
-  levelToIndex(level: number): number {
+  indexToRelative(level: number): number {
     return this.scope.length - level - 1;
   }
 
   iter() {
     return Iterator.iter(this.scope)
       .enumerate()
-      .map<ScopeEntry<T>>(([{ name, value }, level]) => ({
-        level,
-        index: this.levelToIndex(level),
+      .map<ScopeEntry<T>>(([{ name, value }, index]) => ({
+        index,
+        relativeIndex: this.indexToRelative(index),
         name,
         value,
       }));
   }
 
   toLevel(identifier: ScopeEntryIdentifier): number {
-    if ("level" in identifier) return identifier.level;
-    if ("index" in identifier) return this.indexToLevel(identifier.index);
+    if ("index" in identifier) return identifier.index;
+    if ("relativeIndex" in identifier) return this.relativeToIndex(identifier.relativeIndex);
     return this.names[identifier.name] ?? -1;
   }
 
   toIndex(identifier: ScopeEntryIdentifier): number {
-    if ("index" in identifier) return identifier.index;
+    if ("relativeIndex" in identifier) return identifier.relativeIndex;
     const level = this.toLevel(identifier);
-    return this.levelToIndex(level);
+    return this.indexToRelative(level);
   }
 
   toName(identifier: ScopeEntryIdentifier): string | undefined {
@@ -68,11 +68,17 @@ export class Scope<T> {
     return this.scope[level].name;
   }
 
+  has(identifier: ScopeEntryIdentifier): boolean {
+    if ("index" in identifier) return identifier.index < this.scope.length;
+    if ("relativeIndex" in identifier) return identifier.relativeIndex <= this.scope.length;
+    return identifier.name in this.names;
+  }
+
   get(identifier: ScopeEntryIdentifier): ScopeEntry<T> | undefined {
     const level = this.toLevel(identifier);
     if (level === -1) return;
 
-    return { ...this.scope[level], level, index: this.levelToIndex(level) };
+    return { ...this.scope[level], index: level, relativeIndex: this.indexToRelative(level) };
   }
 
   getByName(name: string): ScopeEntry<T> | undefined {
@@ -81,12 +87,12 @@ export class Scope<T> {
 
   /** 0 is closest scope variable */
   getByIndex(index: number): ScopeEntry<T> | undefined {
-    return this.get({ index });
+    return this.get({ relativeIndex: index });
   }
 
   /** 0 is top-level scope variable */
   getByLevel(level: number): ScopeEntry<T> | undefined {
-    return this.get({ level });
+    return this.get({ index: level });
   }
 
   getLevel(name: string): number {
@@ -141,11 +147,11 @@ export class Scope<T> {
   }
 
   removeByIndex(index: number): Scope<T> {
-    return this.remove({ index });
+    return this.remove({ relativeIndex: index });
   }
 
   removeByLevel(level: number): Scope<T> {
-    return this.remove({ level });
+    return this.remove({ index: level });
   }
 
   private _append(scope: Scope<T>) {
