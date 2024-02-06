@@ -227,6 +227,16 @@ describe("expressions", () => {
         treeTestCase(src);
       });
 
+      test("function call placeholder arg", () => {
+        const src = `f _ y`;
+        treeTestCase(src);
+      });
+
+      test("function call placeholder args", () => {
+        const src = `f _ y _`;
+        treeTestCase(src);
+      });
+
       it(
         ...treeTestCaseArgs("send((1+2), 3)", undefined, {
           send: {

@@ -1982,6 +1982,86 @@ exports[`expressions > function expressions > application > function call multip
 }
 `;
 
+exports[`expressions > function expressions > application > function call placeholder arg 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "f",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "placeholder",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "application",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "y",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "application",
+}
+`;
+
+exports[`expressions > function expressions > application > function call placeholder args 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "f",
+            },
+            {
+              "children": [],
+              "data": {},
+              "name": "placeholder",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "application",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "application",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "placeholder",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "application",
+}
+`;
+
 exports[`expressions > function expressions > application > produces correct tree for '(send 1 2)(2, 3)' 1`] = `
 {
   "children": [
