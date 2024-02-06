@@ -1,21 +1,22 @@
-import { Scope, defaultParsingContext, parse, parseExpr } from ".";
+import { defaultParsingContext, parse, parseExpr } from ".";
+import { Scope } from "../scope";
 import { AbstractSyntaxTree } from "./ast";
 import { parseTokens } from "./tokens";
 import { ConsumeParsingResult } from "./types";
 import { TemplateValues, match, template } from "./utils";
 
-export const parseExprString = (src: string, scope: Scope = {}) => {
+export const parseExprString = (src: string, scope = {}) => {
   const [tokens] = parseTokens(src);
   const context = defaultParsingContext();
-  context.scope = { ...context.scope, ...scope };
+  context.scope = context.scope.append(new Scope(scope));
   const result = parseExpr(context)(tokens).slice(1);
   return result as ConsumeParsingResult<AbstractSyntaxTree>;
 };
 
-export const parseProgramString = (src: string, scope: Scope = {}) => {
+export const parseProgramString = (src: string, scope = {}) => {
   const [tokens] = parseTokens(src);
   const context = defaultParsingContext();
-  context.scope = { ...context.scope, ...scope };
+  context.scope = context.scope.append(new Scope(scope));
   return parse(context)(tokens);
 };
 

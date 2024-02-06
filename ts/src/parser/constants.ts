@@ -1,7 +1,8 @@
 import { Iterator } from "iterator-js";
 import { matchSeparators } from "./utils";
 import { placeholder } from "./ast";
-import { Scope, TokenGroupDefinition } from ".";
+import { TokenGroupDefinition } from ".";
+import { Scope } from "../scope";
 
 export const infixArithmeticOps = Iterator.iterEntries({
   add: "+",
@@ -20,7 +21,7 @@ export const prefixArithmeticOps = Iterator.iterEntries({
 
 export const comparisonOps = Iterator.iter(["<", "<=", ">=", ">"]);
 
-export const scope: Scope = {
+export const scope = new Scope<TokenGroupDefinition>({
   "+": { separators: matchSeparators(["+"]), precedence: [4, 5] },
   "-": { separators: matchSeparators(["-"]), precedence: [4, 5] },
   "*": { separators: matchSeparators(["*"]), precedence: [6, 7] },
@@ -208,7 +209,7 @@ export const scope: Scope = {
     separators: matchSeparators(),
     precedence: [Infinity, Infinity],
   },
-};
+});
 
 export const symbols = Iterator.iter([
   "->",

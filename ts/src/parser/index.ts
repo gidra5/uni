@@ -3,9 +3,10 @@ import { Iterator } from "iterator-js";
 import { indexPosition, position } from "../position";
 import { AbstractSyntaxTree, group, infix, operator, placeholder, postfix, prefix, program, token } from "./ast";
 import { ParsingError, ParsingResult, TokenParser } from "./types";
-import { mapField, pushField, setField } from "../utils";
+import { mapField, omit, pushField, setField } from "../utils";
 import { matchString, templateString } from "./string";
 import { scope } from "./constants";
+import { Scope as ScopeClass } from "../scope";
 
 export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {
@@ -14,7 +15,7 @@ export type TokenGroupDefinition = {
   parse?: TokenParserWithContext<AbstractSyntaxTree>;
   drop?: boolean;
 };
-export type Scope = Record<string, TokenGroupDefinition>;
+export type Scope = ScopeClass<TokenGroupDefinition>;
 export type ScopeArray = ({ name: string } & TokenGroupDefinition)[];
 export type ParsingContext = {
   scope: Scope;
@@ -26,12 +27,12 @@ export type ParsingContext = {
 export type TokenParserWithContext<T> = (context: ParsingContext) => TokenParser<T>;
 
 const getPrecedence = (node: AbstractSyntaxTree, scope: Scope): Precedence =>
-  (node.name === "group" && node.value && scope[node.value]?.precedence) || [null, null];
+  (node.name === "group" && node.value && scope.getByName(node.value)?.value.precedence) || [null, null];
 
-export const scopeIter = (scope: Scope = {}): Iterator<ScopeArray[number]> =>
-  Iterator.iterEntries(scope).map(([name, v]) => ({ ...v, name }));
+export const scopeIter = (scope: Scope = new ScopeClass()): Iterator<ScopeArray[number]> =>
+  scope.iterEntries().map(({ name, value }) => ({ name, ...value }));
 export const scopeIterToScope = (scopeIter: Iterator<ScopeArray[number]>): Scope =>
-  scopeIter.map(({ name, ...v }) => [name, v] as [string, TokenGroupDefinition]).toObject();
+  new ScopeClass(scopeIter.map(({ name, ...v }) => [name, v] as [string, TokenGroupDefinition]).toObject());
 export const defaultParsingContext = (): ParsingContext => ({ scope, precedence: 0 });
 
 export const parseGroup: TokenParserWithContext<AbstractSyntaxTree> =
@@ -89,6 +90,7 @@ export const parseGroup: TokenParserWithContext<AbstractSyntaxTree> =
     //     index,
     //     src: src[index],
     //     context: omit(context, ["scope"]),
+    //     // context,
     //     matchingScope: matchingScope.toArray(),
     //     empty: matchingScope.isEmpty(),
     //   },
