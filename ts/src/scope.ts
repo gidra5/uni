@@ -49,6 +49,15 @@ export class Scope<T> {
       }));
   }
 
+  iterEntries() {
+    return Iterator.iterEntries(this.names).map<Required<ScopeEntry<T>>>(([name, index]) => ({
+      index,
+      relativeIndex: this.indexToRelative(index),
+      name,
+      value: this.scope[index].value,
+    }));
+  }
+
   toLevel(identifier: ScopeEntryIdentifier): number {
     if ("index" in identifier) return identifier.index;
     if ("relativeIndex" in identifier) return this.relativeToIndex(identifier.relativeIndex);
