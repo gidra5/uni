@@ -82,89 +82,54 @@ describe("expressions", () => {
     });
   });
 
-  describe.todo("structured programming", () => {
-    test("if-then", () => {
-      const src = `if true: 123`;
+  describe("structured programming", () => {
+    test.todo("if-then", () => {
+      const src = `if x is (a, b): a + b`;
       treeScopeTestCase(src);
     });
 
-    test("if-then newline", () => {
+    test.todo("if-then newline", () => {
       const src = `if true\n 123`;
       treeScopeTestCase(src);
     });
 
-    test("if-then-else", () => {
+    test.todo("if-then-else", () => {
       const src = `if true: 123 else 456`;
       treeScopeTestCase(src);
     });
 
-    test("if-then-elseif-then-else", () => {
+    test.todo("if-then-elseif-then-else", () => {
       const src = `if true: 123 else if false: 789 else 456`;
       treeScopeTestCase(src);
     });
 
-    test("if-then newline-else", () => {
+    test.todo("if-then newline-else", () => {
       const src = `if true\n 123 else 456`;
       treeScopeTestCase(src);
     });
 
-    test("if-then newline-else newline", () => {
+    test.todo("if-then newline-else newline", () => {
       const src = `if true\n 123 else\n 456`;
       treeScopeTestCase(src);
     });
 
-    test("block", () => {
+    test.todo("block", () => {
       const src = `{ 123 }`;
       treeScopeTestCase(src);
     });
 
-    test("for loop", () => {
+    test.todo("for loop", () => {
       const src = `for x in [1, 2, 3]: x`;
       treeScopeTestCase(src);
     });
 
-    test("for loop newline", () => {
+    test.todo("for loop newline", () => {
       const src = `for x in [1, 2, 3]\n x`;
       treeScopeTestCase(src);
     });
 
-    test("while loop", () => {
+    test.todo("while loop", () => {
       const src = `while true: 123`;
-      treeScopeTestCase(src);
-    });
-
-    test("while loop break", () => {
-      const src = `while true: break _`;
-      treeScopeTestCase(src);
-    });
-
-    test("while loop break value", () => {
-      const src = `while true: break 1`;
-      treeScopeTestCase(src);
-    });
-
-    test("while loop continue", () => {
-      const src = `while true: continue _`;
-      treeScopeTestCase(src);
-    });
-
-    test("while loop continue value", () => {
-      const src = `while true: continue 1`;
-      treeScopeTestCase(src);
-    });
-
-    test("labeled expression", () => {
-      const src = `label: 123`;
-      treeScopeTestCase(src);
-    });
-
-    test("expression-label", () => {
-      const src = `123+456: 789`;
-      treeScopeTestCase(src);
-    });
-
-    test("return", () => {
-      const src = `() -> { return 123 }`;
       treeScopeTestCase(src);
     });
 
@@ -175,16 +140,6 @@ describe("expressions", () => {
 
     test("block mutable variable declaration", () => {
       const src = `{ mut x := 123 }`;
-      treeScopeTestCase(src);
-    });
-
-    test("block variable assignment", () => {
-      const src = `{ x = 123 }`;
-      treeScopeTestCase(src);
-    });
-
-    test("block pattern matching", () => {
-      const src = `{ x, y = 123, 456 }`;
       treeScopeTestCase(src);
     });
   });
