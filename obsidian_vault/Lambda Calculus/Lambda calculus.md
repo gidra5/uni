@@ -311,7 +311,7 @@ append = fn tuple, x -> fn match -> tuple (match x)
 ```
 tuple of certain size:
 ```
-tuple_n = fn n -> n (fn pred -> fn x -> tuple_n pred x) ()
+tuple_n = fn n -> fn x -> n (fn sub_n -> append x (tuple_n sub_n)) (fn -> x)
 ```
 
 tuple nth:
@@ -322,7 +322,8 @@ nth = fn tuple, size, n -> tuple drop n (fn x -> drop (size-n-1) x)
 tuple head and tail:
 ```
 tail = fn tuple, n -> tuple (fn _ -> tuple_n (n-1))
-head = fn tuple, n -> (nth tuple n 0, tail tuple n)
+head = fn tuple, n -> nth tuple n 0
+head_and_tail = fn tuple, n -> (head tuple n, tail tuple n)
 ```
 tuple insert:
 ```
@@ -348,3 +349,16 @@ insert = fn tuple, size, n, x ->
 Тоесть аргумент игнорируется, а значит он может быть как типа `void` так и типа `unknown`, ака `top type`.
 
 В каком то смысле значением типа `void` может быть только пустой блок кода `{}` - значение которое нельзя пытаться использовать, его можно только проигнорировать.
+
+```
+
+apply_tuple = fn f, n -> match n 
+	0 -> f ()
+	sub_n -> fn x -> apply_tuple (fn rest -> f (prepend x rest)) sub_n
+
+rotate = fn tuple, len -> 
+	prepend (drop len-1 tuple) (nth tuple len (len-1))
+
+rotateFn = fn f, len -> apply_tuple (fn args -> rotate args n f) n
+
+```
