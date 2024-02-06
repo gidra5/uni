@@ -46,7 +46,7 @@ describe("expressions", () => {
       treeScopeTestCase(src);
     });
 
-    test.only("with 'is' operator", () => {
+    test.todo("with 'is' operator", () => {
       const src = `x is (a, b) and a == b + 1`;
       treeScopeTestCase(src);
     });

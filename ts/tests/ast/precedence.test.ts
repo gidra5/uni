@@ -1,4 +1,4 @@
-import { infixArithmeticOps, prefixArithmeticOps } from "../../src/parser";
+import { infixArithmeticOps, prefixArithmeticOps } from "../../src/parser/constants";
 import { describe } from "vitest";
 import { test } from "@fast-check/vitest";
 import { treeTestCase } from "./utils";

@@ -67,7 +67,7 @@ export const inferType = <T>(tree: AbstractSyntaxTree<T>, context = defaultConte
     tree = setField(["children", 1], retTyped)(tree);
     const treeScoped = inferScope(tree);
     const _scope = treeScoped.data.scope;
-    const implicitArgs = _scope.iterScope().map((entry) => ({ type: entry, implicit: true }));
+    const implicitArgs = _scope.iter().map(({ value: type }) => ({ type, implicit: true }));
     // const type = func(argTyped.data.type, retTyped.data.type);
     let type = func(...implicitArgs, argTyped.data.type, retTyped.data.type);
     type = simplifyType(type);
@@ -78,8 +78,8 @@ export const inferType = <T>(tree: AbstractSyntaxTree<T>, context = defaultConte
   if (tree.name === "name") {
     const name = tree.value;
     let type = context.isBinding
-      ? context.inferredScope?.getByName(name) ?? unknown()
-      : context.scope.getByName(name) ?? voidType();
+      ? context.inferredScope?.getByName(name)?.value ?? unknown()
+      : context.scope.getByName(name)?.value ?? voidType();
     type = simplifyType(type);
     console.dir({ msg: "inferType name", name, type, tree, context }, { depth: null });
 
