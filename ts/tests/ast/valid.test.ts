@@ -1,22 +1,23 @@
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { Iterator } from "iterator-js";
-import { infixArithmeticOps, prefixArithmeticOps } from "../../src/parser/constants";
+import { infixArithmeticOps, infixBooleanOps, prefixArithmeticOps, scopeDictionary } from "../../src/parser/constants";
 import { group, infix, name, placeholder, prefix, string } from "../../src/parser/ast";
 import { matchSeparators } from "../../src/parser/utils";
 import { exampleTestCase, treeTestCase, treeTestCaseArgs } from "./utils";
+import { pick } from "../../src/utils";
 
 /* one test per example of a language construct  */
 
 describe("comments", () => {
   test("comment", () => {
     const src = `// comment\n123`;
-    treeTestCase(src);
+    treeTestCase(src, null, pick(scopeDictionary, ["comment"]));
   });
 
   test("comment block", () => {
     const src = `/* comment block */123`;
-    treeTestCase(src);
+    treeTestCase(src, null, pick(scopeDictionary, ["commentBlock"]));
   });
 });
 
@@ -39,12 +40,12 @@ describe("expressions", () => {
 
     test("true", () => {
       const src = `true`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["true"]));
     });
 
     test("false", () => {
       const src = `false`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["false"]));
     });
   });
 
@@ -60,27 +61,27 @@ describe("expressions", () => {
 
     test("group", () => {
       const src = `(1)`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["parens"]));
     });
 
     test("prefix", () => {
       const src = `-123`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["negate"]));
     });
 
     test("postfix", () => {
       const src = `123--`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["postfixDecrement"]));
     });
 
     test("infix", () => {
       const src = `123+456`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["+"]));
     });
 
     test("mixfix", () => {
       const src = `123 < 456 < 789`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["inRange_<_<"]));
     });
   });
 
@@ -88,7 +89,7 @@ describe("expressions", () => {
     for (const [opName, op] of infixArithmeticOps) {
       test(opName, () => {
         const src = `123 ${op} 456`;
-        treeTestCase(src);
+        treeTestCase(src, null, pick(scopeDictionary, [op]));
       });
     }
 
@@ -101,66 +102,31 @@ describe("expressions", () => {
 
     test("postfix decrement", () => {
       const src = `123--`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["postfixDecrement"]));
     });
 
     test("postfix increment", () => {
       const src = `123++`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["postfixIncrement"]));
     });
 
-    it(...treeTestCaseArgs("1 + 2^3 * 4"));
-    it(...treeTestCaseArgs("--i"));
-    it(...treeTestCaseArgs("++i"));
-    it(...treeTestCaseArgs("-(a+b)"));
+    it(...treeTestCaseArgs("1 + 2^3 * 4", null, pick(scopeDictionary, ["+", "*", "^"])));
+    it(...treeTestCaseArgs("-(a+b)", null, pick(scopeDictionary, ["negate", "+", "parens"])));
 
     it(...treeTestCaseArgs("(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1"));
   });
 
   describe("boolean expressions", () => {
-    test("in", () => {
-      const src = `123 in 456`;
-      treeTestCase(src);
-    });
-
-    test("is", () => {
-      const src = `123 is 456`;
-      treeTestCase(src);
-    });
-
-    test("and", () => {
-      const src = `123 and 456`;
-      treeTestCase(src);
-    });
-
-    test("or", () => {
-      const src = `123 or 456`;
-      treeTestCase(src);
-    });
+    for (const [opName, op] of infixBooleanOps) {
+      test(opName, () => {
+        const src = `123 ${op} 456`;
+        treeTestCase(src, null, pick(scopeDictionary, [op]));
+      });
+    }
 
     test("not", () => {
       const src = `!123`;
-      treeTestCase(src);
-    });
-
-    test("equal", () => {
-      const src = `123 == 456`;
-      treeTestCase(src);
-    });
-
-    test("not equal", () => {
-      const src = `123 != 456`;
-      treeTestCase(src);
-    });
-
-    test("deep equal", () => {
-      const src = `123 === 456`;
-      treeTestCase(src);
-    });
-
-    test("deep not equal", () => {
-      const src = `123 !== 456`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["!"]));
     });
 
     describe("comparators", () => {
@@ -172,14 +138,14 @@ describe("expressions", () => {
       for (const op of Iterator.iter(comparators).flat()) {
         test(`comparator ${op}`, () => {
           const src = `123 ${op} 456`;
-          treeTestCase(src);
+          treeTestCase(src, null, pick(scopeDictionary, [op]));
         });
       }
 
       for (const [op1, op2] of Iterator.iter(comparators).flatMap((pair) => Iterator.iter(pair).power(2))) {
         test(`range ${op1} ${op2}`, () => {
           const src = `123 ${op1} x ${op2} 456`;
-          treeTestCase(src);
+          treeTestCase(src, null, pick(scopeDictionary, [`inRange_${op1}_${op2}`]));
         });
       }
     });
@@ -198,63 +164,64 @@ describe("expressions", () => {
 
     test("function with placeholder arg", () => {
       const src = `_ -> #0`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["->", "#"]));
     });
 
     test("function with no arg", () => {
       const src = `fn -> #0`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["fn", "#"]));
     });
 
     test("function with shadowed name access", () => {
       const src = `fn a -> fn a -> #a`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["fn", "#"]));
     });
 
     test("function with deep shadowed name access", () => {
       const src = `fn a -> fn a -> fn a -> ##a`;
-      treeTestCase(src);
+      treeTestCase(src, null, pick(scopeDictionary, ["fn", "#"]));
     });
 
     describe("application", () => {
       test("function call", () => {
         const src = `f x`;
-        treeTestCase(src);
+        treeTestCase(src, null, pick(scopeDictionary, ["application"]));
       });
 
       test("function call multiple args", () => {
         const src = `f x y`;
-        treeTestCase(src);
+        treeTestCase(src, null, pick(scopeDictionary, ["application"]));
       });
 
       test("function call placeholder arg", () => {
         const src = `f _ y`;
-        treeTestCase(src);
+        treeTestCase(src, null, pick(scopeDictionary, ["application"]));
       });
 
       test("function call placeholder args", () => {
         const src = `f _ y _`;
-        treeTestCase(src);
+        treeTestCase(src, null, pick(scopeDictionary, ["application"]));
       });
 
       it(
-        ...treeTestCaseArgs("send((1+2), 3)", undefined, {
+        ...treeTestCaseArgs("send((1+2), 3)", null, {
           send: {
             separators: matchSeparators(["send"]),
             precedence: [null, Infinity],
           },
+          ...pick(scopeDictionary, ["+", "parens", ","]),
         })
       );
 
-      it(...treeTestCaseArgs("send(2, 3)"));
-      it(...treeTestCaseArgs("(send)(2, 3)"));
-      it(...treeTestCaseArgs("(send 1)(2, 3)"));
-      it(...treeTestCaseArgs("(send 1 2)(2, 3)"));
-      it(...treeTestCaseArgs("send 1 + 2"));
-      it(...treeTestCaseArgs("send 1 (2, 3)"));
-      it(...treeTestCaseArgs("send a (2, 3)"));
-      it(...treeTestCaseArgs("a + send (2, 3)"));
-      it(...treeTestCaseArgs("a + send 1 + 2"));
+      it(...treeTestCaseArgs("send(2, 3)", null, pick(scopeDictionary, ["application", "parens", ","])));
+      it(...treeTestCaseArgs("(send)(2, 3)", null, pick(scopeDictionary, ["application", "parens", ","])));
+      it(...treeTestCaseArgs("(send 1)(2, 3)", null, pick(scopeDictionary, ["application", "parens", ","])));
+      it(...treeTestCaseArgs("(send 1 2)(2, 3)", null, pick(scopeDictionary, ["application", "parens", ","])));
+      it(...treeTestCaseArgs("send 1 + 2", null, pick(scopeDictionary, ["application", "+"])));
+      it(...treeTestCaseArgs("send 1 (2, 3)", null, pick(scopeDictionary, ["application", "parens", ","])));
+      it(...treeTestCaseArgs("send a (2, 3)", null, pick(scopeDictionary, ["application", "parens", ","])));
+      it(...treeTestCaseArgs("a + send (2, 3)", null, pick(scopeDictionary, ["application", "+", "parens", ","])));
+      it(...treeTestCaseArgs("a + send 1 + 2", null, pick(scopeDictionary, ["application", "+", ","])));
     });
   });
 
@@ -275,22 +242,21 @@ describe("expressions", () => {
     });
 
     test("pattern union", () => {
-      const src = `fn (x, y) or (x, y, z) -> x + y`;
+      const src = `match a {
+        record { y, z } or record { y, z } -> y
+      }`;
       treeTestCase(src);
     });
 
     test("pattern intersection", () => {
-      const src = `fn (x, y) and (x, y, z) -> x + y + z`;
+      const src = `match a {
+        record { x, y } and record { z } -> x + y + z
+      }`;
       treeTestCase(src);
     });
 
     test("arrow function pattern union", () => {
-      const src = `((x, y) or (x, y, z)) -> x + y`;
-      treeTestCase(src);
-    });
-
-    test("arrow function pattern intersection", () => {
-      const src = `((x, y) and (x, y, z)) -> x + y + z`;
+      const src = `(record { y, z } or record { y, z }) -> y`;
       treeTestCase(src);
     });
 
@@ -319,18 +285,28 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
+    test("with default value", () => {
+      const src = `x is (b = 4, a)`;
+      treeTestCase(src);
+    });
+
+    test("with rename", () => {
+      const src = `x is record { b @ a }`;
+      treeTestCase(src);
+    });
+
+    test("with name for match", () => {
+      const src = `x is (a, b) @ c`;
+      treeTestCase(src);
+    });
+
+    test.todo("with type", () => {
+      const src = `x is (b: number, a)`;
+      treeTestCase(src);
+    });
+
     test("binding visible in scope where it is true", () => {
       const src = `x is (a, b) and a == b + 1`;
-      treeTestCase(src);
-    });
-
-    test("'is' with 'and' produces union of bindings", () => {
-      const src = `x is (a, b) and y is (c, d) and a + b == c + d`;
-      treeTestCase(src);
-    });
-
-    test("'is' with 'or' produces intersection of bindings", () => {
-      const src = `(x is (a, b) or y is (a, c)) and a == 1`;
       treeTestCase(src);
     });
   });

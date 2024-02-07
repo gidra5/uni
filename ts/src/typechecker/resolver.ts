@@ -23,7 +23,7 @@ export const resolve = <T>(
   scope = new Scope<any>(),
   pattern = false
 ): AbstractSyntaxTree<T & { scope: Scope<{}>; relativeIndex?: number }> => {
-  tree = setField(["data", "scope"], scope)(tree);
+  tree = mapField(["data", "scope"], (_scope) => _scope?.append(scope) ?? scope)(tree);
   // console.dir({ msg: "resolve", tree, scope }, { depth: null });
 
   /* function */
@@ -45,8 +45,8 @@ export const resolve = <T>(
     tree = setField(["children", 1], restScoped)(tree);
     tree = setField(["children", 0, "children", 0, "children", 0], valueScoped)(tree);
     tree = setField(["children", 0, "children", 0, "children", 1], patternScoped)(tree);
-    tree = setField(["children", 0, "data", "scope"], scope)(tree);
-    tree = setField(["children", 0, "children", 0, "data", "scope"], scope)(tree);
+    tree = mapField(["children", 0, "data", "scope"], (_scope) => _scope?.append(scope) ?? scope)(tree);
+    tree = mapField(["children", 0, "children", 0, "data", "scope"], (_scope) => _scope?.append(scope) ?? scope)(tree);
     return tree as AbstractSyntaxTree<T & { scope: Scope<{}> }>;
   }
 
@@ -56,6 +56,8 @@ export const resolve = <T>(
   }
 
   if (matchString(tree, "#_")[0] && tree.children[0].name === "int") {
+    // @ts-ignore
+    tree = mapField(["children", 0, "data", "scope"], (_scope) => _scope?.append(scope) ?? scope)(tree);
     const relativeIndex = tree.children[0].value;
     return setField(["data", "relativeIndex"], relativeIndex)(tree);
   }
