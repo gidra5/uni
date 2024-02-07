@@ -13,15 +13,29 @@ export const infixArithmeticOps = Iterator.iterEntries({
   power: "^",
 });
 
+export const infixBooleanOps = Iterator.iterEntries({
+  and: "and",
+  or: "or",
+  in: "in",
+  is: "is",
+  equal: "==",
+  "not equal": "!=",
+  "deep equal": "===",
+  "deep not equal": "!==",
+});
+
 export const prefixArithmeticOps = Iterator.iterEntries({
   negate: "-",
-  decrement: "--",
-  increment: "++",
+  prefixDecrement: "--",
+  prefixIncrement: "++",
 });
 
 export const comparisonOps = Iterator.iter(["<", "<=", ">=", ">"]);
 
-export const scope = new Scope<TokenGroupDefinition>({
+export const scopeDictionary: Record<string, TokenGroupDefinition> = {
+  false: { separators: matchSeparators(["false"]), precedence: [null, null] },
+  true: { separators: matchSeparators(["true"]), precedence: [null, null] },
+  "@": { separators: matchSeparators(["@"]), precedence: [1, 1] },
   "+": { separators: matchSeparators(["+"]), precedence: [4, 5] },
   "-": { separators: matchSeparators(["-"]), precedence: [4, 5] },
   "*": { separators: matchSeparators(["*"]), precedence: [6, 7] },
@@ -209,7 +223,9 @@ export const scope = new Scope<TokenGroupDefinition>({
     separators: matchSeparators(),
     precedence: [Infinity, Infinity],
   },
-});
+};
+
+export const scope = new Scope(scopeDictionary);
 
 export const symbols = Iterator.iter([
   "->",
