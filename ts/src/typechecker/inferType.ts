@@ -16,10 +16,10 @@ type InferTypeContext = {
 export type TypedAST<T = any> = AbstractSyntaxTree<T & { type: Type }>;
 
 const getScopeBindings = (tree: TypedAST): TypeScope => {
-  console.dir({ msg: "getScopeBindings", tree }, { depth: null });
+  // console.dir({ msg: "getScopeBindings", tree }, { depth: null });
   const bindings: TypeScope = new Scope();
   const traverse = (tree: TypedAST) => {
-    console.dir({ msg: "getScopeBindings traverse", tree }, { depth: null });
+    // console.dir({ msg: "getScopeBindings traverse", tree }, { depth: null });
 
     if (tree.name === "name") {
       const name = tree.value;
@@ -81,7 +81,7 @@ export const inferType = <T>(tree: AbstractSyntaxTree<T>, context = defaultConte
       ? context.inferredScope?.getByName(name)?.value ?? unknown()
       : context.scope.getByName(name)?.value ?? voidType();
     type = simplifyType(type);
-    console.dir({ msg: "inferType name", name, type, tree, context }, { depth: null });
+    // console.dir({ msg: "inferType name", name, type, tree, context }, { depth: null });
 
     return setField(["data", "type"], type)(tree);
   }

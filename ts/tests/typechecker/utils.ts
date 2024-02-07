@@ -21,7 +21,7 @@ export const exampleInferTestCase = (src, expectedType?, scope = {}) => {
 export const treeInferTestCase = (src, expectedType?, scope = {}) => {
   const [tree, errors] = parseExprString(src, scope);
   const typedTree = inferType(tree);
-  console.dir(typedTree, { depth: null });
+  // console.dir(typedTree, { depth: null });
   expect(errors).toEqual([]);
   if (expectedType) expect(typedTree.data.type).toEqual(expectedType);
   expect(typedTree.data.type).toMatchSnapshot();
@@ -42,7 +42,7 @@ export const exampleScopeTestCase = (src, expectedScope?, scope = {}) => {
 export const treeScopeTestCase = (src, expectedScope?, scope = {}) => {
   const [tree, errors] = parseExprString(src, scope);
   const resolvedTree = resolve(tree);
-  console.dir(resolvedTree, { depth: null });
+  // console.dir(resolvedTree, { depth: null });
   expect(errors).toEqual([]);
   if (expectedScope) expect(resolvedTree.data.scope).toEqual(expectedScope);
   expect(resolvedTree).toMatchSnapshot();
