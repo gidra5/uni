@@ -159,6 +159,7 @@ export const parseGroup: TokenParserWithContext<AbstractSyntaxTree> =
       index++;
       const parser = matchingScope.first()?.parse ?? parseExpr;
       const [nextIndex, expr, _errors] = parser(context)(src, index);
+      expr.data.scope = context.scope;
 
       // console.dir(
       //   {
@@ -246,6 +247,7 @@ export const parsePrefix: TokenParserWithContext<AbstractSyntaxTree> =
     if (!src[index]) errors.push(endOfTokensError(index));
 
     let [nextIndex, group, _errors] = parseGroup(context)(src, index);
+    group.data.scope = context.scope;
     index = nextIndex;
     errors.push(..._errors);
     const [, right] = getPrecedence(group, context.scope);
@@ -264,6 +266,7 @@ export const parsePrefix: TokenParserWithContext<AbstractSyntaxTree> =
       let _errors: ParsingError[];
       let rhs: AbstractSyntaxTree;
       [index, rhs, _errors] = parseExpr(_context)(src, index);
+      rhs.data.scope = context.scope;
       errors.push(..._errors);
       return [index, prefix(group, rhs), errors];
     }
@@ -280,6 +283,7 @@ export const parseExpr: TokenParserWithContext<AbstractSyntaxTree> =
     // console.dir({ msg: "parseExpr 1", index, src: src[index], context: omit(context, ["scope"]) });
 
     [index, context.lhs, _errors] = parsePrefix(context)(src, index);
+    context.lhs.data.scope = context.scope;
     errors.push(..._errors);
 
     while (src[index]) {
@@ -291,6 +295,7 @@ export const parseExpr: TokenParserWithContext<AbstractSyntaxTree> =
       // console.dir({ msg: "parseExpr 2", index, src: src[index], context: omit(context, ["scope"]) });
 
       let [nextIndex, group, _errors] = parseGroup(context)(src, index);
+      group.data.scope = context.scope;
       // console.dir({
       //   msg: "parseExpr 3",
       //   index,
@@ -307,6 +312,7 @@ export const parseExpr: TokenParserWithContext<AbstractSyntaxTree> =
 
       if (right === null) {
         context.lhs = postfix(group, context.lhs);
+        context.lhs.data.scope = context.scope;
         break;
       }
       let _context = { ...context, precedence: right };
@@ -315,8 +321,10 @@ export const parseExpr: TokenParserWithContext<AbstractSyntaxTree> =
       // console.dir({ msg: "parseExpr 4", index, src: src[index], context });
 
       [index, rhs, _errors] = parseExpr(_context)(src, index);
+      rhs.data.scope = context.scope;
       errors.push(..._errors);
       context.lhs = infix(group, context.lhs, rhs);
+      context.lhs.data.scope = context.scope;
     }
 
     return [index, context.lhs, errors];
@@ -331,6 +339,7 @@ export const parse =
 
     while (src[index]) {
       const [_index, astNode, _errors] = parseExpr(context)(src, index);
+      astNode.data.scope = context.scope;
 
       index = _index;
       children.push(astNode);

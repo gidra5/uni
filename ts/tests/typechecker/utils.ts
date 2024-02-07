@@ -2,6 +2,10 @@ import { expect, it } from "vitest";
 import { parseExprString, parseProgramString } from "../../src/parser/string";
 import { resolve } from "../../src/typechecker/resolver";
 import { inferType } from "../../src/typechecker/inferType";
+import { defaultParsingContext, parseExpr } from "../../src/parser";
+import { parseTokens } from "../../src/parser/tokens";
+import { Scope } from "../../src/scope";
+import type { AbstractSyntaxTree } from "../../src/parser/ast";
 
 export const errorsTestCase = (src, expectedErrors, _it: any = it) =>
   _it(`finds all errors in example '${src}'`, () => {
@@ -40,8 +44,11 @@ export const exampleScopeTestCase = (src, expectedScope?, scope = {}) => {
 };
 
 export const treeScopeTestCase = (src, expectedScope?, scope = {}) => {
-  const [tree, errors] = parseExprString(src, scope);
-  const resolvedTree = resolve(tree);
+  const [tokens] = parseTokens(src);
+  const context = defaultParsingContext();
+  context.scope = new Scope(scope);
+  const [tree, errors] = parseExpr(context)(tokens).slice(1);
+  const resolvedTree = resolve(tree as AbstractSyntaxTree);
   // console.dir(resolvedTree, { depth: null });
   expect(errors).toEqual([]);
   if (expectedScope) expect(resolvedTree.data.scope).toEqual(expectedScope);
