@@ -32,34 +32,34 @@ export const prefixArithmeticOps = Iterator.iterEntries({
 
 export const comparisonOps = Iterator.iter(["<", "<=", ">=", ">"]);
 
-const arithmeticsMinPrecedence = 4;
-const booleanMinPrecedence = 1;
+const arithmeticPrecedence = 5;
+const booleanPrecedence = 2;
 
 export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   false: { separators: matchSeparators(["false"]), precedence: [null, null] },
   true: { separators: matchSeparators(["true"]), precedence: [null, null] },
   "@": { separators: matchSeparators(["@"]), precedence: [1, 1] },
-  "+": { separators: matchSeparators(["+"]), precedence: [arithmeticsMinPrecedence, arithmeticsMinPrecedence + 1] },
-  "-": { separators: matchSeparators(["-"]), precedence: [arithmeticsMinPrecedence, arithmeticsMinPrecedence + 1] },
-  "*": { separators: matchSeparators(["*"]), precedence: [arithmeticsMinPrecedence + 2, arithmeticsMinPrecedence + 3] },
-  "/": { separators: matchSeparators(["/"]), precedence: [arithmeticsMinPrecedence + 2, arithmeticsMinPrecedence + 3] },
-  "%": { separators: matchSeparators(["%"]), precedence: [arithmeticsMinPrecedence + 2, arithmeticsMinPrecedence + 3] },
-  "^": { separators: matchSeparators(["^"]), precedence: [arithmeticsMinPrecedence + 4, arithmeticsMinPrecedence + 5] },
+  "+": { separators: matchSeparators(["+"]), precedence: [arithmeticPrecedence, arithmeticPrecedence + 1] },
+  "-": { separators: matchSeparators(["-"]), precedence: [arithmeticPrecedence, arithmeticPrecedence + 1] },
+  "*": { separators: matchSeparators(["*"]), precedence: [arithmeticPrecedence + 2, arithmeticPrecedence + 3] },
+  "/": { separators: matchSeparators(["/"]), precedence: [arithmeticPrecedence + 2, arithmeticPrecedence + 3] },
+  "%": { separators: matchSeparators(["%"]), precedence: [arithmeticPrecedence + 2, arithmeticPrecedence + 3] },
+  "^": { separators: matchSeparators(["^"]), precedence: [arithmeticPrecedence + 4, arithmeticPrecedence + 5] },
   ",": { separators: matchSeparators([","]), precedence: [3, 4] },
-  in: { separators: matchSeparators(["in"]), precedence: [booleanMinPrecedence, booleanMinPrecedence] },
-  is: { separators: matchSeparators(["is"]), precedence: [booleanMinPrecedence, Infinity] },
-  and: { separators: matchSeparators(["and"]), precedence: [booleanMinPrecedence + 1, booleanMinPrecedence + 1] },
-  or: { separators: matchSeparators(["or"]), precedence: [booleanMinPrecedence, booleanMinPrecedence] },
-  "==": { separators: matchSeparators(["=="]), precedence: [booleanMinPrecedence + 2, booleanMinPrecedence + 2] },
-  "!=": { separators: matchSeparators(["!="]), precedence: [booleanMinPrecedence + 2, booleanMinPrecedence + 2] },
-  "===": { separators: matchSeparators(["==="]), precedence: [booleanMinPrecedence + 2, booleanMinPrecedence + 2] },
-  "!==": { separators: matchSeparators(["!=="]), precedence: [booleanMinPrecedence + 2, booleanMinPrecedence + 2] },
+  in: { separators: matchSeparators(["in"]), precedence: [booleanPrecedence, booleanPrecedence] },
+  is: { separators: matchSeparators(["is"]), precedence: [booleanPrecedence, Infinity] },
+  and: { separators: matchSeparators(["and"]), precedence: [booleanPrecedence + 1, booleanPrecedence + 1] },
+  or: { separators: matchSeparators(["or"]), precedence: [booleanPrecedence, booleanPrecedence] },
+  "==": { separators: matchSeparators(["=="]), precedence: [booleanPrecedence + 2, booleanPrecedence + 2] },
+  "!=": { separators: matchSeparators(["!="]), precedence: [booleanPrecedence + 2, booleanPrecedence + 2] },
+  "===": { separators: matchSeparators(["==="]), precedence: [booleanPrecedence + 2, booleanPrecedence + 2] },
+  "!==": { separators: matchSeparators(["!=="]), precedence: [booleanPrecedence + 2, booleanPrecedence + 2] },
   "!": { separators: matchSeparators(["!"]), precedence: [null, 4] },
   ...comparisonOps
     .map((op) => {
       const definition = {
         separators: matchSeparators([op]),
-        precedence: [booleanMinPrecedence + 3, booleanMinPrecedence + 3],
+        precedence: [booleanPrecedence + 3, booleanPrecedence + 3],
       };
       return [op, definition] as [string, TokenGroupDefinition];
     })
@@ -69,7 +69,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     .map<[string, TokenGroupDefinition]>(([op1, op2]) => {
       const definition = {
         separators: matchSeparators([op1], [op2]),
-        precedence: [booleanMinPrecedence + 3, booleanMinPrecedence + 3],
+        precedence: [booleanPrecedence + 3, booleanPrecedence + 3],
       };
       return [`inRange_${op1}_${op2}`, definition] as [string, TokenGroupDefinition];
     })

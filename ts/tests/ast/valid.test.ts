@@ -243,14 +243,14 @@ describe("expressions", () => {
 
     test("pattern union", () => {
       const src = `match a {
-        record { y, z } or record { y, z } -> y
+        (record { y, z } or record { y, z }) -> y
       }`;
       treeTestCase(src);
     });
 
     test("pattern intersection", () => {
       const src = `match a {
-        record { x, y } and record { z } -> x + y + z
+        (record { x, y } and record { z }) -> x + y + z
       }`;
       treeTestCase(src);
     });
@@ -286,7 +286,7 @@ describe("expressions", () => {
     });
 
     test("with default value", () => {
-      const src = `x is (b = 4, a)`;
+      const src = `x is ((b = 4), a)`;
       treeTestCase(src);
     });
 
@@ -296,12 +296,12 @@ describe("expressions", () => {
     });
 
     test("with name for match", () => {
-      const src = `x is (a, b) @ c`;
+      const src = `x is ((a, b) @ c)`;
       treeTestCase(src);
     });
 
     test.todo("with type", () => {
-      const src = `x is (b: number, a)`;
+      const src = `x is ((b: number), a)`;
       treeTestCase(src);
     });
 
