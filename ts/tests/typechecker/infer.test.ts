@@ -169,7 +169,7 @@ describe("expressions", () => {
 
   describe("function expressions", () => {
     test.todo("function multiple params", () => {
-      const src = `fn x y -> x y`;
+      const src = `fn x, y -> x y`;
       treeInferTestCase(
         src,
         func(

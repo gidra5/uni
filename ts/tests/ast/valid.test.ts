@@ -153,7 +153,7 @@ describe("expressions", () => {
 
   describe("function expressions", () => {
     test("function multiple params", () => {
-      const src = `fn x y -> x + y`;
+      const src = `fn x, y -> x + y`;
       treeTestCase(src);
     });
 
@@ -243,7 +243,7 @@ describe("expressions", () => {
 
     test("pattern union", () => {
       const src = `match a {
-        (record { y, z } or record { y, z }) -> y
+        (record { x, y } or record { y, z }) -> y
       }`;
       treeTestCase(src);
     });
@@ -256,7 +256,7 @@ describe("expressions", () => {
     });
 
     test("arrow function pattern union", () => {
-      const src = `(record { y, z } or record { y, z }) -> y`;
+      const src = `(record { x, y } or record { y, z }) -> y`;
       treeTestCase(src);
     });
 
@@ -427,7 +427,7 @@ describe("expressions", () => {
     });
 
     test("symbol", () => {
-      const src = `symbol x`;
+      const src = `symbol`;
       treeTestCase(src);
     });
 
@@ -458,6 +458,159 @@ describe("expressions", () => {
 
     test("field access dynamic", () => {
       const src = `x[y]`;
+      treeTestCase(src);
+    });
+  });
+
+  describe.todo("types", () => {
+    describe("primitives", () => {
+      test("number", () => {
+        const src = `number`;
+        treeTestCase(src);
+      });
+
+      test("int", () => {
+        const src = `int`;
+        treeTestCase(src);
+      });
+
+      test("float", () => {
+        const src = `float`;
+        treeTestCase(src);
+      });
+
+      test("string", () => {
+        const src = `string`;
+        treeTestCase(src);
+      });
+
+      test("char", () => {
+        const src = `char`;
+        treeTestCase(src);
+      });
+
+      test("boolean", () => {
+        const src = `boolean`;
+        treeTestCase(src);
+      });
+
+      test("unit", () => {
+        const src = `unit`;
+        treeTestCase(src);
+      });
+
+      test("unknown", () => {
+        const src = `unknown`;
+        treeTestCase(src);
+      });
+
+      test("void", () => {
+        const src = `void`;
+        treeTestCase(src);
+      });
+
+      test("type", () => {
+        const src = `type`;
+        treeTestCase(src);
+      });
+
+      test("type with order", () => {
+        const src = `type[1]`;
+        treeTestCase(src);
+      });
+
+      test("value type", () => {
+        const src = `value 1`;
+        treeTestCase(src);
+      });
+    });
+
+    describe("composite", () => {
+      test("record", () => {
+        const src = `record { a: number; b: string }`;
+        treeTestCase(src);
+      });
+
+      test("set", () => {
+        const src = `set number`;
+        treeTestCase(src);
+      });
+
+      test("map", () => {
+        const src = `map (number, string)`;
+        treeTestCase(src);
+      });
+
+      test("tuple", () => {
+        const src = `number, string`;
+        treeTestCase(src);
+      });
+    });
+
+    test("typeof", () => {
+      const src = `typeof x`;
+      treeTestCase(src);
+    });
+
+    test("negated type", () => {
+      const src = `!number`;
+      treeTestCase(src);
+    });
+
+    test("type intersection", () => {
+      const src = `number and string`;
+      treeTestCase(src);
+    });
+
+    test("type union", () => {
+      const src = `number or string`;
+      treeTestCase(src);
+    });
+
+    test("discriminated union from record type", () => {
+      const src = `union (record { a: number; b: string })`;
+      treeTestCase(src);
+    });
+
+    test("discriminated by order union from tuple", () => {
+      const src = `union (number, string)`;
+      treeTestCase(src);
+    });
+
+    describe("functions", () => {
+      test("function type", () => {
+        const src = `number -> string`;
+        treeTestCase(src);
+      });
+
+      test("function type with multiple args", () => {
+        const src = `fn number, string -> string`;
+        treeTestCase(src);
+      });
+
+      test("function type with named args", () => {
+        const src = `fn x: number, y: string -> string`;
+        treeTestCase(src);
+      });
+
+      test("dependent function type", () => {
+        const src = `fn x: boolean -> if x: string else number`;
+        treeTestCase(src);
+      });
+    });
+
+    test("type cast", () => {
+      const src = `x as number`;
+      treeTestCase(src);
+    });
+
+    test("type coalesce", () => {
+      const src = `x :> number`;
+      treeTestCase(src);
+    });
+
+    test("subtyping check", () => {
+      const src = `my_type < number`;
       treeTestCase(src);
     });
   });
