@@ -614,6 +614,18 @@ describe("expressions", () => {
       treeTestCase(src);
     });
   });
+
+  describe("signals", () => {
+    test("value", () => {
+      const src = `signal 123`;
+      treeTestCase(src);
+    });
+
+    test("derived", () => {
+      const src = `signal (x + y)`;
+      treeTestCase(src);
+    });
+  });
 });
 
 describe("programs", () => {

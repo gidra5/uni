@@ -44,10 +44,6 @@ Symbols are unique scoped identifiers. That means that any instance of symbol is
 #x
 >> { #x } == #x // symbol literals from different scopes are unequal
 false
->> { x == #x } // false because #x is from different scope compared to `x`
-false 
->> x == #x // true because #x is from same scope as `x`
-true
 ```
 
 Symbols can be lifted with multiple `#`, which means they can refer to the symbol in scopes above:
@@ -55,25 +51,9 @@ Symbols can be lifted with multiple `#`, which means they can refer to the symbo
 ```
 >> { ##x } == #x // true because ##x is lifted to the outer scope
 true
->> { x == ##x }
-true
-```
-
-Symbols that are above all scopes considered global scoped:
-
-```
->> ###x == ##x // true because ##x and ###x are both global scoped
-true
 ```
 ## Booleans
 Booleans are simplest datatype defined as union of two possible values `true` and `false`, which are themselves global symbolic constants.
-
-```
->> true == ##true
-true
->> false == ##false
-false
-```
 
 ## Strings
 Strings are sequences of characters delimited by `"`. They can be any characters encodable in utf-8. Strings with single character are considered to be `char`s, that can be converted back to string when needed.
