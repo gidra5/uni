@@ -1,7 +1,9 @@
 import { program } from "commander";
 import readline from "readline";
 import { stdin as input, stdout as output } from "process";
-import { parseTokens } from "./parser/tokens";
+import { parseTokens } from "./parser/tokens.js";
+import { VM } from "./vm/index.js";
+import { keyboardDevice } from "./vm/devices.js";
 
 program.option("-i, --interactive");
 

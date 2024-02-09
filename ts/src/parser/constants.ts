@@ -1,8 +1,8 @@
 import { Iterator } from "iterator-js";
-import { matchSeparators } from "./utils";
-import { placeholder } from "./ast";
-import { TokenGroupDefinition } from ".";
-import { Scope } from "../scope";
+import { matchSeparators } from "./utils.js";
+import { placeholder } from "./ast.js";
+import { TokenGroupDefinition } from "./index.js";
+import { Scope } from "../scope.js";
 
 export const infixArithmeticOps = Iterator.iterEntries({
   add: "+",

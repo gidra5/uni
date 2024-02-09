@@ -1,11 +1,10 @@
-import { Iterator } from "iterator-js";
-import { AbstractSyntaxTree } from "../parser/ast";
-import { matchString } from "../parser/string";
-import { Scope } from "../scope";
-import { setField } from "../utils";
-import { and, bool, func, index, type, unknown } from "./type";
-import { Type, TypeScope } from "./types";
-import { simplifyType } from "./simplify";
+import { AbstractSyntaxTree } from "../parser/ast.js";
+import { matchString } from "../parser/string.js";
+import { Scope } from "../scope.js";
+import { setField } from "../utils.js";
+import { and, bool, func, index, type, unknown } from "./type.js";
+import { Type, TypeScope } from "./types.js";
+import { simplifyType } from "./simplify.js";
 
 type InferTypeContext = {
   scope: TypeScope;

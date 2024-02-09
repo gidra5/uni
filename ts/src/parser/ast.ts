@@ -1,6 +1,6 @@
-import { assert } from "../utils";
-import { matchString } from "./string";
-import { Token } from "./types";
+import { assert } from "../utils.js";
+import { matchString } from "./string.js";
+import { Token } from "./types.js";
 
 export type AbstractSyntaxTree<T = any> = {
   name: string;

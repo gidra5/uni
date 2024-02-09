@@ -1,8 +1,7 @@
-import { ParsingError, Position } from "./parser/types";
-import { indexPosition } from "./position";
+import { ParsingError, Position } from "./parser/types.js";
+import { indexPosition } from "./position.js";
 
-export const formatError = (line: number, where: string, msg: string) =>
-  `[line ${line}] Error${where}: ${msg}`;
+export const formatError = (line: number, where: string, msg: string) => `[line ${line}] Error${where}: ${msg}`;
 
 export const intent = (text: string, prefix: string) =>
   text
@@ -18,17 +17,11 @@ export const print = (errors: ParsingError[]) =>
     })
     .join("\n\n");
 
-export const error = (
-  message: string,
-  pos: Position,
-  cause: ParsingError[] = []
-): ParsingError => ({
+export const error = (message: string, pos: Position, cause: ParsingError[] = []): ParsingError => ({
   message,
   cause,
   pos,
 });
 
-export const endOfTokensError = (index: number) =>
-  error("end of tokens", indexPosition(index));
-export const endOfSrcError = (index: number) =>
-  error("end of src", indexPosition(index));
+export const endOfTokensError = (index: number) => error("end of tokens", indexPosition(index));
+export const endOfSrcError = (index: number) => error("end of src", indexPosition(index));

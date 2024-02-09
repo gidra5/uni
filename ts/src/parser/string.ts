@@ -1,9 +1,9 @@
-import { defaultParsingContext, parse, parseExpr } from ".";
-import { Scope } from "../scope";
-import { AbstractSyntaxTree } from "./ast";
-import { parseTokens } from "./tokens";
-import { ConsumeParsingResult } from "./types";
-import { TemplateValues, match, template } from "./utils";
+import { defaultParsingContext, parse, parseExpr } from "./index.js";
+import { Scope } from "../scope.js";
+import { AbstractSyntaxTree } from "./ast.js";
+import { parseTokens } from "./tokens.js";
+import { ConsumeParsingResult } from "./types.js";
+import { TemplateValues, match, template } from "./utils.js";
 
 export const parseExprString = (src: string, scope = {}) => {
   const [tokens] = parseTokens(src);

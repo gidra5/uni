@@ -1,9 +1,9 @@
-import { TokenParserWithContext } from ".";
+import { TokenParserWithContext } from "./index.js";
 import { Iterator } from "iterator-js";
-import { DefaultVisitor, Tree, Visitor } from "../tree";
-import { isEqual } from "../utils";
-import { AbstractSyntaxTree } from "./ast";
-import { ParsingResult, TokenParser } from "./types";
+import { DefaultVisitor, Tree, Visitor } from "../tree.js";
+import { isEqual } from "../utils.js";
+import { AbstractSyntaxTree } from "./ast.js";
+import { ParsingResult, TokenParser } from "./types.js";
 
 export type TemplateValues = AbstractSyntaxTree[] | Record<string, AbstractSyntaxTree>;
 export const template = (tree: AbstractSyntaxTree, values: TemplateValues) => {

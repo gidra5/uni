@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "run": "tsc && node ./build/index.js",
+    "build": "tsc",
     "test": "vitest run",
     "watch": "vitest --ui"
   },

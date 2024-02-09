@@ -1,12 +1,12 @@
-import { endOfTokensError, error } from "../errors";
+import { endOfTokensError, error } from "../errors.js";
 import { Iterator } from "iterator-js";
-import { indexPosition, position } from "../position";
-import { AbstractSyntaxTree, group, infix, operator, placeholder, postfix, prefix, program, token } from "./ast";
-import { ParsingError, ParsingResult, TokenParser } from "./types";
-import { mapField, omit, pushField, setField } from "../utils";
-import { matchString, templateString } from "./string";
-import { scope } from "./constants";
-import { Scope as ScopeClass } from "../scope";
+import { indexPosition, position } from "../position.js";
+import { AbstractSyntaxTree, group, infix, operator, placeholder, postfix, prefix, program, token } from "./ast.js";
+import { ParsingError, ParsingResult, TokenParser } from "./types.js";
+import { mapField, omit, pushField, setField } from "../utils.js";
+import { matchString, templateString } from "./string.js";
+import { scope } from "./constants.js";
+import { Scope as ScopeClass } from "../scope.js";
 
 export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {

@@ -1,5 +1,5 @@
 import { Iterator } from "iterator-js";
-import { RecordKey } from "./types";
+import { RecordKey } from "./types.js";
 
 export const identity = <T>(x: T): T => x;
 
