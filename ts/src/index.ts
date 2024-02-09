@@ -3,18 +3,37 @@ import readline from "readline";
 import { stdin as input, stdout as output } from "process";
 import { parseTokens } from "./parser/tokens.js";
 import { VM } from "./vm/index.js";
+import fs from "fs";
 import { keyboardDevice } from "./vm/devices.js";
 
 program.option("-i, --interactive");
+program.option("--vm");
 
 program.parse();
 
-const { interactive } = program.opts();
+const { interactive, vm } = program.opts();
 const [file] = program.args;
 // let map = new FileMap();
 // const ctx: Context = {};
 
-if (interactive) {
+if (vm) {
+  input.setRawMode(true);
+  readline.emitKeypressEvents(input);
+  const keyboardData = [] as number[];
+  input.on("keypress", (char, key) => {
+    keyboardData.push(char.charCodeAt(0));
+  });
+  const vm = new VM(
+    keyboardDevice(() => {
+      while (keyboardData.length === 0) {}
+      return keyboardData.shift()!;
+    })
+  );
+
+  const image = fs.readFileSync(file);
+
+  vm.run(image);
+} else if (interactive) {
   const rl = readline.createInterface({ input, output, prompt: ">> " });
   rl.prompt();
 
