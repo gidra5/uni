@@ -23,6 +23,8 @@ program
       keyboardData.push(char.charCodeAt(0));
     });
     const waitForInput = (vm: VM) => {
+      // revert pc to previous instruction
+      // so that it can be executed once input is available
       vm.pc--;
       input.once("keypress", () => {
         vm.resume();

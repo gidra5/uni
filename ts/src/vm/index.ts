@@ -10,8 +10,8 @@ import {
   INITIAL_ADDR,
   STATUS_BIT,
   signFlag,
-  toHex,
-  toBin,
+  SUSPENDED_BIT,
+  OS_LOADED_BIT,
 } from "./utils.js";
 
 class SuspendedError extends Error {
@@ -23,19 +23,21 @@ class SuspendedError extends Error {
 export class VM {
   memory = new Uint16Array(MEMORY_SIZE);
   registers = new Uint16Array(R_COUNT);
-  suspended = false;
   keyboard: Device;
   display: Device;
 
-  constructor(keyboard: MemoryMappedDevice, osImage?: Buffer) {
-    this.keyboard = keyboard(this.memory);
-    this.display = displayDevice(this.memory);
+  constructor(keyboard: Device, osImage?: Buffer) {
+    this.keyboard = keyboard;
+    this.display = displayDevice;
 
     this.cond = Flag.ZERO;
     this.pc = INITIAL_ADDR;
-    this.memory[MemoryMappedRegisters.MCR] = STATUS_BIT;
+    this.memory[MemoryMappedRegisters.MSR] = STATUS_BIT;
 
-    if (osImage) this.loadImage(osImage);
+    if (osImage) {
+      this.loadImage(osImage);
+      this.memory[MemoryMappedRegisters.MSR] |= OS_LOADED_BIT;
+    }
   }
 
   get pc() {
@@ -54,26 +56,17 @@ export class VM {
     return this.registers[Register.R_COND];
   }
 
+  get running() {
+    return !!(this.memory[MemoryMappedRegisters.MSR] & STATUS_BIT);
+  }
+
+  get suspended() {
+    return !!(this.memory[MemoryMappedRegisters.MSR] & SUSPENDED_BIT);
+  }
+
   run() {
-    // let counter = 0;
-
     try {
-      while (this.read(MemoryMappedRegisters.MCR) & STATUS_BIT && !this.suspended) {
-        // counter++;
-        // if (counter > 10000) {
-        //   console.log("Infinite loop detected");
-        //   break;
-        // }
-
-        // const values = [...this.registers.values()];
-        // const cond = values.pop()!;
-        // const pc = values.pop()!;
-        // process.stdout.write("\n");
-        // process.stdout.write(toHex(pc) + " ");
-        // process.stdout.write(toBin(cond, 4) + " ");
-        // process.stdout.write(values.map(toHex) + "\n");
-        // process.stdout.write([...this.memory.subarray(pc - 20, pc + 2).values()].map(toHex) + "\n");
-
+      while (this.running && !this.suspended) {
         const instr = this.read(this.pc++);
         const op: OpCode = instr >> 12;
         const handler = opCodeHandlers[op];
@@ -87,9 +80,7 @@ export class VM {
       }
       process.exit(0);
     } catch (e) {
-      if (!(e instanceof SuspendedError)) {
-        throw e;
-      }
+      if (!(e instanceof SuspendedError)) throw e;
     }
   }
 
@@ -115,15 +106,12 @@ export class VM {
   }
 
   suspend() {
-    // console.log("suspended");
-
-    this.suspended = true;
+    this.memory[MemoryMappedRegisters.MSR] |= SUSPENDED_BIT;
     throw new SuspendedError();
   }
 
   resume() {
-    // console.log("resumed");
-    this.suspended = false;
+    this.memory[MemoryMappedRegisters.MSR] &= ~SUSPENDED_BIT;
     this.run();
   }
 

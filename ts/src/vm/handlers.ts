@@ -1,4 +1,15 @@
-import { Address, Flag, Register, UInt16, putBuf, signExtend, toBin, toHex } from "./utils.js";
+import {
+  Address,
+  Flag,
+  OS_LOADED_BIT,
+  Register,
+  STATUS_BIT,
+  UInt16,
+  putBuf,
+  signExtend,
+  toBin,
+  toHex,
+} from "./utils.js";
 import { VM } from "./index.js";
 import { MemoryMappedRegisters } from "./devices.js";
 
@@ -267,52 +278,54 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     const trapCode: Address = instr & 0xff;
     // console.log("VM_OPCODE_TRAP trapvect8 %s", toHex(trapCode));
 
-    vm.registers[Register.R_R7] = vm.pc;
-    vm.pc = vm.read(trapCode);
-    // trapHandlers[trapCode]?.(vm);
+    // if os is loaded use its implementation, otherwise use native
+    if (vm.memory[MemoryMappedRegisters.MSR] & OS_LOADED_BIT) {
+      vm.registers[Register.R_R7] = vm.pc;
+      vm.pc = vm.read(trapCode);
+    } else trapHandlers[trapCode]?.(vm);
   },
 };
 
-// export const trapHandlers: Record<number, TrapHandler> = {
-//   [TrapCode.TRAP_GETC]: function (vm) {
-//     /* read a single ASCII char */
-//     vm.registers[Register.R_R0] = vm.read(MemoryMappedRegisters.KBDR);
-//   },
-//   [TrapCode.TRAP_OUT]: function (vm) {
-//     putBuf([vm.registers[Register.R_R0]]);
-//   },
-//   [TrapCode.TRAP_PUTS]: function (vm) {
-//     /* one char per word */
-//     let addr = vm.registers[Register.R_R0];
-//     const buf: number[] = [];
-//     while (vm.memory[addr] !== 0) {
-//       buf.push(vm.memory[addr]);
-//       addr++;
-//     }
-//     putBuf(buf);
-//   },
-//   [TrapCode.TRAP_IN]: function (vm) {
-//     vm.registers[Register.R_R0] = vm.read(MemoryMappedRegisters.KBDR);
-//   },
-//   [TrapCode.TRAP_PUTSP]: function (vm) {
-//     /* one char per byte (two bytes per word) here we need to swap back to
-//      big endian format */
-//     let addr = vm.registers[Register.R_R0];
-//     const buf: number[] = [];
+export const trapHandlers: Record<number, TrapHandler> = {
+  [TrapCode.TRAP_GETC]: function (vm) {
+    /* read a single ASCII char */
+    vm.registers[Register.R_R0] = vm.read(MemoryMappedRegisters.KBDR);
+  },
+  [TrapCode.TRAP_OUT]: function (vm) {
+    putBuf([vm.registers[Register.R_R0]]);
+  },
+  [TrapCode.TRAP_PUTS]: function (vm) {
+    /* one char per word */
+    let addr = vm.registers[Register.R_R0];
+    const buf: number[] = [];
+    while (vm.memory[addr] !== 0) {
+      buf.push(vm.memory[addr]);
+      addr++;
+    }
+    putBuf(buf);
+  },
+  [TrapCode.TRAP_IN]: function (vm) {
+    vm.registers[Register.R_R0] = vm.read(MemoryMappedRegisters.KBDR);
+  },
+  [TrapCode.TRAP_PUTSP]: function (vm) {
+    /* one char per byte (two bytes per word) here we need to swap back to
+     big endian format */
+    let addr = vm.registers[Register.R_R0];
+    const buf: number[] = [];
 
-//     while (vm.memory[addr] !== 0) {
-//       const char1 = vm.memory[addr] & 0xff;
-//       buf.push(char1);
+    while (vm.memory[addr] !== 0) {
+      const char1 = vm.memory[addr] & 0xff;
+      buf.push(char1);
 
-//       const char2 = vm.memory[addr] >> 8;
-//       if (char2) {
-//         buf.push(char2);
-//       }
-//       addr++;
-//     }
-//     putBuf(buf);
-//   },
-//   [TrapCode.TRAP_HALT]: function (vm) {
-//     vm.memory[MemoryMappedRegisters.MCR] = 0;
-//   },
-// };
+      const char2 = vm.memory[addr] >> 8;
+      if (char2) {
+        buf.push(char2);
+      }
+      addr++;
+    }
+    putBuf(buf);
+  },
+  [TrapCode.TRAP_HALT]: function (vm) {
+    vm.memory[MemoryMappedRegisters.MSR] &= ~STATUS_BIT;
+  },
+};

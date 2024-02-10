@@ -1,6 +1,9 @@
 import { STATUS_BIT } from "./utils.js";
 
-export type MemoryMappedDevice = (memory: Uint16Array) => Device;
+export type MemoryMappedDevice = {
+  device: Device;
+  range: [number, number];
+};
 
 export type Device = {
   read(address: number): number | null;
@@ -10,32 +13,30 @@ export type Device = {
 export enum MemoryMappedRegisters {
   DSR = 0xfe04 /* display status */,
   DDR = 0xfe06 /* display data */,
-  MCR = 0xfffe,
+  MSR = 0xfffe /* machine status */,
   KBSR = 0xfe00 /* keyboard status */,
   KBDR = 0xfe02 /* keyboard data */,
 }
 
-export const keyboardDevice =
-  (getChar: () => number, checkChar: () => boolean): MemoryMappedDevice =>
-  (memory) => ({
-    read(address) {
-      if (address === MemoryMappedRegisters.KBSR) {
-        const input = checkChar();
-        return input ? STATUS_BIT : 0;
-      } else if (address === MemoryMappedRegisters.KBDR) {
-        if (this.read(MemoryMappedRegisters.KBSR)) {
-          return getChar();
-        }
-        return 0;
+export const keyboardDevice = (getChar: () => number, checkChar: () => boolean): Device => ({
+  read(address) {
+    if (address === MemoryMappedRegisters.KBSR) {
+      const input = checkChar();
+      return input ? STATUS_BIT : 0;
+    } else if (address === MemoryMappedRegisters.KBDR) {
+      if (this.read(MemoryMappedRegisters.KBSR)) {
+        return getChar();
       }
-      return null;
-    },
-    write(address) {
-      return address === MemoryMappedRegisters.KBSR || address === MemoryMappedRegisters.KBDR;
-    },
-  });
+      return 0;
+    }
+    return null;
+  },
+  write(address) {
+    return address === MemoryMappedRegisters.KBSR || address === MemoryMappedRegisters.KBDR;
+  },
+});
 
-export const displayDevice: MemoryMappedDevice = (memory) => ({
+export const displayDevice: Device = {
   read(address: number) {
     if (address === MemoryMappedRegisters.DSR) {
       return STATUS_BIT;
@@ -51,4 +52,4 @@ export const displayDevice: MemoryMappedDevice = (memory) => ({
     }
     return address === MemoryMappedRegisters.DSR;
   },
-});
+};
