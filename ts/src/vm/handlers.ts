@@ -102,19 +102,14 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     }
 
     vm.updateFlags(destReg);
+  },
+  [OpCode.OP_NOT]: function (vm, instr) {
+    const destReg: Register = (instr >> 9) & 0b111;
+    const srcReg: Register = (instr >> 6) & 0b111;
+    // console.log("VM_OPCODE_NOT dr %d sr %d", destReg, srcReg);
 
-    // const r0 = (instr >> 9) & 0x7;
-    // const r1 = (instr >> 6) & 0x7;
-    // const immFlag = (instr >> 5) & 0x1;
-
-    // if (immFlag) {
-    //   const imm5 = signExtend(instr & 0x1f, 5);
-    //   vm.registers[r0] = vm.registers[r1] & imm5;
-    // } else {
-    //   const r2 = instr & 0x7;
-    //   vm.registers[r0] = vm.registers[r1] & vm.registers[r2];
-    // }
-    // vm.updateFlags(r0);
+    vm.registers[destReg] = ~vm.registers[srcReg];
+    vm.updateFlags(destReg);
   },
   [OpCode.OP_BR]: function (vm, instr) {
     const currentCond: UInt16 = vm.cond & 0b111;
@@ -125,22 +120,12 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     if (currentCond & desiredCond) {
       vm.pc += offset;
     }
-
-    // const pcOffset = signExtend(instr & 0x1ff, 9);
-    // const condFlag = (instr >> 9) & 0x7;
-    // if (condFlag & vm.registers[Register.R_COND]) {
-    //   vm.pc += pcOffset;
-    // }
   },
   [OpCode.OP_JMP]: function (vm, instr) {
     const baseReg: Register = (instr >> 6) & 0b111;
     // console.log("VM_OPCODE_JMP baser %d", baseReg);
 
     vm.pc = vm.registers[baseReg];
-
-    /* Also handles RET */
-    // const r1 = (instr >> 6) & 0x7;
-    // vm.pc = vm.registers[r1];
   },
   [OpCode.OP_JSR]: function (vm, instr) {
     const originalPC: Address = vm.pc;
@@ -159,16 +144,14 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     }
 
     vm.registers[Register.R_R7] = originalPC;
+  },
+  [OpCode.OP_LEA]: function (vm, instr) {
+    const destReg: Register = (instr >> 9) & 0b111;
+    const offset: Address = signExtend(instr, 9);
+    // console.log("VM_OPCODE_LEA dr %d pc_offset9 %d", destReg, offset);
 
-    // const r1 = (instr >> 6) & 0x7;
-    // const longPCOffset = signExtend(instr & 0x7ff, 11);
-    // const longFlag = (instr >> 11) & 1;
-    // vm.registers[Register.R_R7] = vm.pc;
-    // if (longFlag) {
-    //   vm.pc += longPCOffset; /* JSR */
-    // } else {
-    //   vm.pc = vm.registers[r1]; /* JSRR */
-    // }
+    vm.registers[destReg] = vm.pc + offset;
+    vm.updateFlags(destReg);
   },
   [OpCode.OP_LD]: function (vm, instr) {
     const destReg: Register = (instr >> 9) & 0b111;
@@ -177,11 +160,6 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
 
     vm.registers[destReg] = vm.read(vm.pc + offset);
     vm.updateFlags(destReg);
-
-    // const r0 = (instr >> 9) & 0x7;
-    // const pcOffset = signExtend(instr & 0x1ff, 9);
-    // vm.registers[r0] = vm.read(vm.pc + pcOffset);
-    // vm.updateFlags(r0);
   },
   [OpCode.OP_LDI]: function (vm, instr) {
     const destReg: Register = (instr >> 9) & 0b111;
@@ -192,15 +170,6 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     // console.log("VM_OPCODE_LDI dr %s pc_offset9 %d val %d", Register[destReg], offset, vm.registers[destReg]);
 
     vm.updateFlags(destReg);
-
-    // /* destination register (DR) */
-    // const r0 = (instr >> 9) & 0x7;
-    // /* PCoffset 9*/
-    // const pcOffset = signExtend(instr & 0x1ff, 9);
-
-    // /* add pc_offset to the current PC, look at that memory location to get the final address */
-    // vm.registers[r0] = vm.read(vm.read(vm.pc + pcOffset));
-    // vm.updateFlags(r0);
   },
   [OpCode.OP_LDR]: function (vm, instr) {
     const destReg: Register = (instr >> 9) & 0b111;
@@ -210,33 +179,6 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
 
     vm.registers[destReg] = vm.read(vm.registers[baseReg] + offset);
     vm.updateFlags(destReg);
-
-    // const r0 = (instr >> 9) & 0x7;
-    // const r1 = (instr >> 6) & 0x7;
-    // const offset = signExtend(instr & 0x3f, 6);
-    // vm.registers[r0] = vm.read(vm.registers[r1] + offset);
-    // vm.updateFlags(r0);
-  },
-  [OpCode.OP_LEA]: function (vm, instr) {
-    const destReg: Register = (instr >> 9) & 0b111;
-    const offset: Address = signExtend(instr, 9);
-    // console.log("VM_OPCODE_LEA dr %d pc_offset9 %d", destReg, offset);
-
-    vm.registers[destReg] = vm.pc + offset;
-    vm.updateFlags(destReg);
-
-    // const r0 = (instr >> 9) & 0x7;
-    // const pcOffset = signExtend(instr & 0x1ff, 9);
-    // vm.registers[r0] = vm.pc + pcOffset;
-    // vm.updateFlags(r0);
-  },
-  [OpCode.OP_NOT]: function (vm, instr) {
-    const destReg: Register = (instr >> 9) & 0b111;
-    const srcReg: Register = (instr >> 6) & 0b111;
-    // console.log("VM_OPCODE_NOT dr %d sr %d", destReg, srcReg);
-
-    vm.registers[destReg] = ~vm.registers[srcReg];
-    vm.updateFlags(destReg);
   },
   [OpCode.OP_ST]: function (vm, instr) {
     const srcReg: Register = (instr >> 9) & 0b111;
@@ -245,10 +187,6 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     // console.log("VM_OPCODE_ST sr %s pc_offset9 %d", Register[srcReg], offset);
 
     vm.write(vm.pc + offset, vm.registers[srcReg]);
-
-    // const r0 = (instr >> 9) & 0x7;
-    // const pcOffset = signExtend(instr & 0x1ff, 9);
-    // vm.write(vm.pc + pcOffset, vm.registers[r0]);
   },
   [OpCode.OP_STI]: function (vm, instr) {
     const srcReg: Register = (instr >> 9) & 0b111;
@@ -256,10 +194,6 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     // console.log("VM_OPCODE_STI sr %d pc_offset9 %d", srcReg, offset);
 
     vm.write(vm.read(vm.pc + offset), vm.registers[srcReg]);
-
-    // const r0 = (instr >> 9) & 0x7;
-    // const pcOffset = signExtend(instr & 0x1ff, 9);
-    // vm.write(vm.read(vm.pc + pcOffset), vm.registers[r0]);
   },
   [OpCode.OP_STR]: function (vm, instr) {
     const srcReg: Register = (instr >> 9) & 0b111;
@@ -268,11 +202,6 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     // console.log("VM_OPCODE_STR sr %d baser %d offset6 %d", srcReg, baseReg, offset);
 
     vm.write(vm.registers[baseReg] + offset, vm.registers[srcReg]);
-
-    // const r0 = (instr >> 9) & 0x7;
-    // const r1 = (instr >> 6) & 0x7;
-    // const offset = signExtend(instr & 0x3f, 6);
-    // vm.write(vm.registers[r1] + offset, vm.registers[r0]);
   },
   [OpCode.OP_TRAP]: function (vm, instr) {
     const trapCode: Address = instr & 0xff;
