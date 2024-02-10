@@ -20,6 +20,10 @@ program
     readline.emitKeypressEvents(input);
     const keyboardData = [] as number[];
     input.on("keypress", (char, key) => {
+      if (key.ctrl && key.name === "c") {
+        process.exit(0);
+      }
+
       keyboardData.push(char.charCodeAt(0));
     });
     const waitForInput = (vm: VM) => {
@@ -53,7 +57,6 @@ program
 
     vm.loadImage(image);
     vm.run();
-    // process.exit(0);
   });
 
 program.parse();

@@ -115,18 +115,19 @@ export class VM {
     this.run();
   }
 
-  loadImage(image: Buffer) {
-    let origin: Address = image.readUInt16BE(0);
+  loadImage(buffer: Buffer) {
+    // https://stackoverflow.com/questions/59996221/convert-nodejs-buffer-to-uint16array
+    buffer.swap16();
+
+    let image = new Uint16Array(buffer.buffer, buffer.byteOffset, buffer.byteLength / 2);
+    let origin: Address = image[0];
     this.pc = origin;
-    image = image.subarray(2);
+    image = image.subarray(1);
 
     if (origin + image.length >= MEMORY_SIZE) {
       throw new Error("Image too big to fit in memory");
     }
 
-    while (image.length > 0) {
-      this.memory[origin++] = image.readUInt16BE(0);
-      image = image.subarray(2);
-    }
+    this.memory.set(image, origin);
   }
 }
