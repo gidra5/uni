@@ -98,12 +98,12 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
   [OpCode.OP_BR]: function (vm, instr) {
     const currentCond: UInt16 = vm.cond & 0b111;
     const desiredCond: UInt16 = (instr >> 9) & 0b111;
+    if (!(currentCond & desiredCond)) return;
+
     const offset: Address = signExtend(instr, 9);
     // console.log("VM_OPCODE_BR desired_cond %s pc_offset9 %d", toBin(desiredCond, 3), offset);
 
-    if (currentCond & desiredCond) {
       vm.pc += offset;
-    }
   },
   [OpCode.OP_JMP]: function (vm, instr) {
     const baseReg: Register = (instr >> 6) & 0b111;
