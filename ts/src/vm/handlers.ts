@@ -69,18 +69,10 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     const srcReg1 = (instr >> 6) & 0b111;
     /* whether we are in immediate mode */
     const immFlag = instr & (1 << 5);
+    const value = immFlag ? signExtend(instr, 5) : vm.registers[instr & 0b111];
 
-    if (immFlag) {
-      const imm5 = signExtend(instr, 5);
-      vm.registers[destReg] = vm.registers[srcReg1] + imm5;
-
-      // console.log("VM_OPCODE_ADD dr %d sr1 %d imm5 %d", destReg, srcReg1, imm5);
-    } else {
-      const srcReg2 = instr & 0b111;
-      vm.registers[destReg] = vm.registers[srcReg1] + vm.registers[srcReg2];
-
-      // console.log("VM_OPCODE_ADD dr %d sr1 %d sr2 %d", destReg, srcReg1, srcReg2);
-    }
+    vm.registers[destReg] = vm.registers[srcReg1] + value;
+    // console.log("VM_OPCODE_ADD dr %d sr1 %d val %d", destReg, srcReg1, value);
 
     vm.updateFlags(destReg);
   },
@@ -88,18 +80,10 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     const destReg: Register = (instr >> 9) & 0b111;
     const srcReg1: Register = (instr >> 6) & 0b111;
     const immFlag: UInt16 = instr & (1 << 5);
+    const value: UInt16 = immFlag ? signExtend(instr, 5) : vm.registers[instr & 0b111];
 
-    if (immFlag) {
-      const imm5: UInt16 = signExtend(instr, 5);
-      vm.registers[destReg] = vm.registers[srcReg1] & imm5;
-
-      // console.log("VM_OPCODE_AND dr %d sr1 %d imm5 %d", destReg, srcReg1, imm5);
-    } else {
-      const srcReg2: Register = instr & 0b111;
-      vm.registers[destReg] = vm.registers[srcReg1] & vm.registers[srcReg2];
-
-      // console.log("VM_OPCODE_AND dr %d sr1 %d sr2 %d", destReg, srcReg1, srcReg2);
-    }
+    vm.registers[destReg] = vm.registers[srcReg1] & value;
+    // console.log("VM_OPCODE_AND dr %d sr1 %d val %d", destReg, srcReg1, value);
 
     vm.updateFlags(destReg);
   },
