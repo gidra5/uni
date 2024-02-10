@@ -16,47 +16,25 @@ program
   .command("vm <image> [osImage]")
   .description("Run an image of compiled program")
   .action((imageFile, osImageFile) => {
+    const osImage = osImageFile ? fs.readFileSync(osImageFile) : undefined;
+    const image = fs.readFileSync(imageFile);
+
+    const vm = new VM(osImage);
+
     input.setRawMode(true);
     readline.emitKeypressEvents(input);
-    const keyboardData = [] as number[];
     input.on("keypress", (char, key) => {
       if (key.ctrl && key.name === "c") {
         process.exit(0);
       }
-
-      keyboardData.push(char.charCodeAt(0));
+      vm.emit("input", char);
     });
-    const waitForInput = (vm: VM) => {
-      // revert pc to previous instruction
-      // so that it can be executed once input is available
-      vm.pc--;
-      input.once("keypress", () => {
-        vm.resume();
-      });
-      vm.suspend();
-    };
-
-    const osImage = osImageFile ? fs.readFileSync(osImageFile) : undefined;
-    const image = fs.readFileSync(imageFile);
-
-    const vm = new VM(
-      keyboardDevice(
-        () => {
-          if (keyboardData.length !== 0) return keyboardData.shift()!;
-          waitForInput(vm);
-          return 0;
-        },
-        () => {
-          if (keyboardData.length !== 0) return true;
-          waitForInput(vm);
-          return false;
-        }
-      ),
-      osImage
-    );
 
     vm.loadImage(image);
     vm.run();
+    vm.on("halt", () => {
+      process.exit(0);
+    });
   });
 
 program.parse();

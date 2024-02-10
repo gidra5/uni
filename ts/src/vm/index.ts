@@ -1,4 +1,5 @@
-import { MemoryMappedDevice, Device, MemoryMappedRegisters, displayDevice } from "./devices.js";
+import EventEmitter from "events";
+import { Device, MemoryMappedRegisters, displayDevice, keyboardDevice } from "./devices.js";
 import { OpCode, opCodeHandlers } from "./handlers.js";
 import {
   MEMORY_SIZE,
@@ -20,14 +21,32 @@ class SuspendedError extends Error {
   }
 }
 
-export class VM {
+export class VM extends EventEmitter {
   memory = new Uint16Array(MEMORY_SIZE);
   registers = new Uint16Array(R_COUNT);
   keyboard: Device;
   display: Device;
 
-  constructor(keyboard: Device, osImage?: Buffer) {
-    this.keyboard = keyboard;
+  constructor(osImage?: Buffer) {
+    super();
+
+    const keyboardData = [] as number[];
+
+    this.on("input", (char) => {
+      keyboardData.push(char.charCodeAt(0));
+    });
+    const getChar = () => {
+      if (keyboardData.length !== 0) return keyboardData.shift()!;
+      this.awaitInput();
+      return 0;
+    };
+    const checkChar = () => {
+      if (keyboardData.length !== 0) return true;
+      this.awaitInput();
+      return false;
+    };
+
+    this.keyboard = keyboardDevice(getChar, checkChar);
     this.display = displayDevice;
 
     this.cond = Flag.ZERO;
@@ -38,6 +57,13 @@ export class VM {
       this.loadImage(osImage);
       this.memory[MemoryMappedRegisters.MSR] |= OS_LOADED_BIT;
     }
+  }
+
+  awaitInput() {
+    this.once("input", () => {
+      this.resume();
+    });
+    this.suspend();
   }
 
   get pc() {
@@ -78,7 +104,7 @@ export class VM {
 
         handler(this, instr);
       }
-      process.exit(0);
+      this.emit("halt");
     } catch (e) {
       if (!(e instanceof SuspendedError)) throw e;
     }
