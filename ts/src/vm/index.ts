@@ -1,75 +1,144 @@
-import { MEMORY_SIZE, R_COUNT, Register } from "./memory.js";
-import { MemoryMappedDevice, Device } from "./devices.js";
-import { opCodeHandlers } from "./handlers.js";
+import { MemoryMappedDevice, Device, MemoryMappedRegisters, displayDevice } from "./devices.js";
+import { OpCode, opCodeHandlers } from "./handlers.js";
+import {
+  MEMORY_SIZE,
+  R_COUNT,
+  Register,
+  Address,
+  UInt16,
+  Flag,
+  INITIAL_ADDR,
+  STATUS_BIT,
+  signFlag,
+  toHex,
+  toBin,
+} from "./utils.js";
 
-const SIGN_BIT = 1 << 15;
-
-enum Flag {
-  FL_POS = 1 << 0 /* P */,
-  FL_ZRO = 1 << 1 /* Z */,
-  FL_NEG = 1 << 2 /* N */,
+class SuspendedError extends Error {
+  constructor() {
+    super("Suspended");
+  }
 }
 
 export class VM {
   memory = new Uint16Array(MEMORY_SIZE);
   registers = new Uint16Array(R_COUNT);
-  running = true;
+  suspended = false;
   keyboard: Device;
+  display: Device;
 
-  constructor(keyboard: MemoryMappedDevice) {
+  constructor(keyboard: MemoryMappedDevice, osImage?: Buffer) {
     this.keyboard = keyboard(this.memory);
+    this.display = displayDevice(this.memory);
+
+    this.cond = Flag.ZERO;
+    this.pc = INITIAL_ADDR;
+    this.memory[MemoryMappedRegisters.MCR] = STATUS_BIT;
+
+    if (osImage) this.loadImage(osImage);
   }
 
   get pc() {
     return this.registers[Register.R_PC];
   }
 
-  set pc(val: number) {
+  set pc(val: UInt16) {
     this.registers[Register.R_PC] = val;
   }
 
-  run(image: Buffer) {
-    this.loadImage(image);
-    this.running = true;
+  set cond(val: Flag) {
+    this.registers[Register.R_COND] = val;
+  }
 
-    while (this.running) {
-      const instr = this.read(this.pc++);
-      const op = instr >> 12;
-      const handler = opCodeHandlers[op];
+  get cond() {
+    return this.registers[Register.R_COND];
+  }
 
-      if (!handler) process.exit(-1);
+  run() {
+    // let counter = 0;
 
-      handler(this, instr);
+    try {
+      while (this.read(MemoryMappedRegisters.MCR) & STATUS_BIT && !this.suspended) {
+        // counter++;
+        // if (counter > 10000) {
+        //   console.log("Infinite loop detected");
+        //   break;
+        // }
+
+        // const values = [...this.registers.values()];
+        // const cond = values.pop()!;
+        // const pc = values.pop()!;
+        // process.stdout.write("\n");
+        // process.stdout.write(toHex(pc) + " ");
+        // process.stdout.write(toBin(cond, 4) + " ");
+        // process.stdout.write(values.map(toHex) + "\n");
+        // process.stdout.write([...this.memory.subarray(pc - 20, pc + 2).values()].map(toHex) + "\n");
+
+        const instr = this.read(this.pc++);
+        const op: OpCode = instr >> 12;
+        const handler = opCodeHandlers[op];
+
+        if (!handler) {
+          console.log(OpCode[op], "not implemented");
+          return;
+        }
+
+        handler(this, instr);
+      }
+      process.exit(0);
+    } catch (e) {
+      if (!(e instanceof SuspendedError)) {
+        throw e;
+      }
     }
   }
 
   updateFlags(register: Register) {
-    if (this.registers[register] === 0) {
-      this.registers[Register.R_COND] = Flag.FL_ZRO;
-    } else if (this.registers[register] & SIGN_BIT) {
-      /* a 1 in the left-most bit indicates negative */
-      this.registers[Register.R_COND] = Flag.FL_NEG;
-    } else {
-      this.registers[Register.R_COND] = Flag.FL_POS;
-    }
+    const val = this.registers[register];
+    this.cond = signFlag(val);
   }
 
-  write(address: number, val: number) {
+  write(address: Address, val: UInt16) {
+    if (this.keyboard.write(address, val)) return;
+    if (this.display.write(address, val)) return;
     this.memory[address] = val;
   }
 
-  read(address: number): number {
-    this.keyboard.read(address);
+  read(address: Address): UInt16 {
+    let value = this.keyboard.read(address);
+    if (value !== null) return value;
+
+    value = this.display.read(address);
+    if (value !== null) return value;
+
     return this.memory[address];
   }
 
-  loadImage(image: Buffer) {
-    /* the origin tells us where in memory to place the image */
-    let pos = 0;
-    const origin = image.readUInt16BE(pos);
-    pos += 2;
+  suspend() {
+    // console.log("suspended");
 
+    this.suspended = true;
+    throw new SuspendedError();
+  }
+
+  resume() {
+    // console.log("resumed");
+    this.suspended = false;
+    this.run();
+  }
+
+  loadImage(image: Buffer) {
+    let origin: Address = image.readUInt16BE(0);
     this.pc = origin;
-    this.memory.set(image.subarray(pos), origin);
+    image = image.subarray(2);
+
+    if (origin + image.length >= MEMORY_SIZE) {
+      throw new Error("Image too big to fit in memory");
+    }
+
+    while (image.length > 0) {
+      this.memory[origin++] = image.readUInt16BE(0);
+      image = image.subarray(2);
+    }
   }
 }

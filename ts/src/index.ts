@@ -1,39 +1,67 @@
 import { program } from "commander";
 import readline from "readline";
 import { stdin as input, stdout as output } from "process";
-import { parseTokens } from "./parser/tokens.js";
 import { VM } from "./vm/index.js";
 import fs from "fs";
 import { keyboardDevice } from "./vm/devices.js";
 
 program.option("-i, --interactive");
-program.option("--vm");
+
+program
+  .command("repl [file]")
+  .description("Run interactive environment with optional initial script/module")
+  .action(() => {});
+
+program
+  .command("vm <image> [osImage]")
+  .description("Run an image of compiled program")
+  .action((imageFile, osImageFile) => {
+    input.setRawMode(true);
+    readline.emitKeypressEvents(input);
+    const keyboardData = [] as number[];
+    input.on("keypress", (char, key) => {
+      keyboardData.push(char.charCodeAt(0));
+    });
+    const waitForInput = (vm: VM) => {
+      vm.pc--;
+      input.once("keypress", () => {
+        vm.resume();
+      });
+      vm.suspend();
+    };
+
+    const osImage = osImageFile ? fs.readFileSync(osImageFile) : undefined;
+    const image = fs.readFileSync(imageFile);
+
+    const vm = new VM(
+      keyboardDevice(
+        () => {
+          if (keyboardData.length !== 0) return keyboardData.shift()!;
+          waitForInput(vm);
+          return 0;
+        },
+        () => {
+          if (keyboardData.length !== 0) return true;
+          waitForInput(vm);
+          return false;
+        }
+      ),
+      osImage
+    );
+
+    vm.loadImage(image);
+    vm.run();
+    // process.exit(0);
+  });
 
 program.parse();
 
-const { interactive, vm } = program.opts();
+const { interactive } = program.opts();
 const [file] = program.args;
 // let map = new FileMap();
 // const ctx: Context = {};
 
-if (vm) {
-  input.setRawMode(true);
-  readline.emitKeypressEvents(input);
-  const keyboardData = [] as number[];
-  input.on("keypress", (char, key) => {
-    keyboardData.push(char.charCodeAt(0));
-  });
-  const vm = new VM(
-    keyboardDevice(() => {
-      while (keyboardData.length === 0) {}
-      return keyboardData.shift()!;
-    })
-  );
-
-  const image = fs.readFileSync(file);
-
-  vm.run(image);
-} else if (interactive) {
+if (interactive) {
   const rl = readline.createInterface({ input, output, prompt: ">> " });
   rl.prompt();
 
@@ -47,17 +75,8 @@ if (vm) {
         rl.close();
         break;
       default: {
-        const [tokens, tokenErrors] = parseTokens(line);
+        // const [tokens, tokenErrors] = parseTokens(line);
 
-        // const fileName = "cli";
-        // map.addFile(fileName, line);
-        // printTokenErrors(tokenErrors, map, fileName);
-        // const [, tree, exprErrors] = parseExpr()(tokens);
-        // printErrors(exprErrors, tokens, map, fileName);
-        // console.log(printTree(treeExpression(tree)));
-        // console.log(printTree(treeOptimizer(treeExpression(tree))[0]));
-
-        // const x = evalExpr(tree, ctx);
         break;
       }
     }
@@ -68,9 +87,3 @@ if (vm) {
   });
 } else {
 }
-
-// export const evalAccessStr = (str: string, ctx: Context) =>
-//   evalAccessExpr(parseAccessExpression(parseTokens(str)[0])[1], ctx);
-// export const evalExprStr = (str: string, ctx: Context) => {
-//   return evalExpr(parseExpr()(parseTokens(str)[0])[1], ctx);
-// };

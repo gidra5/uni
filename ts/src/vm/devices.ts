@@ -1,30 +1,54 @@
+import { STATUS_BIT } from "./utils.js";
+
 export type MemoryMappedDevice = (memory: Uint16Array) => Device;
 
 export type Device = {
-  read: (address: number) => number;
-  write: (address: number, val: number) => void;
+  read(address: number): number | null;
+  write(address: number, val: number): boolean;
 };
 
-/** Memory Mapped Registers */
 export enum MemoryMappedRegisters {
-  MR_KBSR = 0xfe00 /* keyboard status */,
-  MR_KBDR = 0xfe02 /* keyboard data */,
+  DSR = 0xfe04 /* display status */,
+  DDR = 0xfe06 /* display data */,
+  MCR = 0xfffe,
+  KBSR = 0xfe00 /* keyboard status */,
+  KBDR = 0xfe02 /* keyboard data */,
 }
 
 export const keyboardDevice =
-  (getChar: () => number): MemoryMappedDevice =>
+  (getChar: () => number, checkChar: () => boolean): MemoryMappedDevice =>
   (memory) => ({
-    read(address: number) {
-      if (address === MemoryMappedRegisters.MR_KBSR) {
-        const input = getChar();
-        if (input) {
-          memory[MemoryMappedRegisters.MR_KBSR] = 1 << 15;
-          memory[MemoryMappedRegisters.MR_KBDR] = input;
-        } else {
-          memory[MemoryMappedRegisters.MR_KBSR] = 0;
+    read(address) {
+      if (address === MemoryMappedRegisters.KBSR) {
+        const input = checkChar();
+        return input ? STATUS_BIT : 0;
+      } else if (address === MemoryMappedRegisters.KBDR) {
+        if (this.read(MemoryMappedRegisters.KBSR)) {
+          return getChar();
         }
+        return 0;
       }
-      return memory[address];
+      return null;
     },
-    write() {},
+    write(address) {
+      return address === MemoryMappedRegisters.KBSR || address === MemoryMappedRegisters.KBDR;
+    },
   });
+
+export const displayDevice: MemoryMappedDevice = (memory) => ({
+  read(address: number) {
+    if (address === MemoryMappedRegisters.DSR) {
+      return STATUS_BIT;
+    } else if (address === MemoryMappedRegisters.DDR) {
+      return 0;
+    }
+    return null;
+  },
+  write(address: number, val: number) {
+    if (address === MemoryMappedRegisters.DDR) {
+      process.stdout.write(String.fromCharCode(val));
+      return true;
+    }
+    return address === MemoryMappedRegisters.DSR;
+  },
+});
