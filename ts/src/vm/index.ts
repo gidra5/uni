@@ -59,13 +59,6 @@ export class VM extends EventEmitter {
     }
   }
 
-  awaitInput() {
-    this.once("input", () => {
-      this.resume();
-    });
-    this.suspend();
-  }
-
   get pc() {
     return this.registers[Register.R_PC];
   }
@@ -139,6 +132,13 @@ export class VM extends EventEmitter {
   resume() {
     this.memory[MemoryMappedRegisters.MSR] &= ~SUSPENDED_BIT;
     this.run();
+  }
+
+  awaitInput() {
+    this.once("input", () => {
+      this.resume();
+    });
+    this.suspend();
   }
 
   loadImage(buffer: Buffer) {
