@@ -66,6 +66,44 @@ export enum TrapCode {
 type OpCodeHandler = (vm: VM, instr: number) => void;
 type TrapHandler = (vm: VM) => void;
 
+// 8bit command, 4 opcodes, 8 registers (with pc register)
+export const opCodeHandlers4: Record<number, OpCodeHandler> = {
+  [OpCode.OP_NAND]: function (vm, instr) {
+    /* opcode XX | src XXX | valueReg XXX */
+    const srcReg: Register = (instr >> 3) & 0b111;
+    const value: UInt16 = vm.registers[instr & 0b111];
+
+    vm.registers[srcReg] = ~(vm.registers[srcReg] & value);
+
+    vm.updateFlags(srcReg);
+  },
+  [OpCode.OP_SHIFT]: function (vm, instr) {
+    /* opcode: XX | srcReg XXX | valueReg XXX */
+    const srcReg: Register = (instr >> 3) & 0b111;
+    const value: UInt16 = vm.registers[instr & 0b111];
+
+    vm.registers[srcReg] = vm.registers[srcReg] << value;
+
+    vm.updateFlags(srcReg);
+  },
+  [OpCode.OP_LD]: function (vm, instr) {
+    /* opcode XX | dest XXX | addrReg XXX */
+    const destReg: Register = (instr >> 3) & 0b111;
+    const addrReg: Register = instr & 0b111;
+
+    vm.registers[destReg] = vm.read(vm.registers[addrReg]);
+
+    vm.updateFlags(destReg);
+  },
+  [OpCode.OP_ST]: function (vm, instr) {
+    /* opcode XX | src XXX | addrReg XXX */
+    const srcReg: Register = (instr >> 3) & 0b111;
+    const addrReg: Register = instr & 0b111;
+
+    vm.write(vm.registers[addrReg], vm.registers[srcReg]);
+  },
+};
+
 // 8bit command, 4 opcodes, 4 registers (with pc register)
 export const opCodeHandlers3: Record<number, OpCodeHandler> = {
   [OpCode.OP_NAND]: function (vm, instr) {
@@ -303,7 +341,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     } else {
       const baseReg: Register = (instr >> 6) & 0b111;
       const baseRegVal: Register = vm.registers[baseReg];
-      // console.log("VM_OPCODE_JSRR baser %d baser_val %d", baseReg, baseRegVal);
+      // console.log("VM_OPCODE_JSR baser %d baser_val %d", baseReg, baseRegVal);
 
       vm.pc = baseRegVal;
     }
