@@ -1,80 +1,39 @@
 import { AbstractSyntaxTree } from "../parser/ast.js";
 import { Scope } from "../scope.js";
-import {
-  addParamsImm,
-  addParamsReg,
-  andParamsImm,
-  andParamsReg,
-  branchParams,
-  jmpParams,
-  jsrParamsLong,
-  jsrParamsReg,
-  leaParams,
-  loadIndirectParams,
-  loadParams,
-  loadRegParams,
-  notParams,
-  opCode,
-  storeIndirectParams,
-  storeParams,
-  storeRegParams,
-} from "../vm/constructors.js";
 import { OpCode, TrapCode } from "../vm/handlers.js";
-import { Address, Register } from "../vm/utils.js";
-
-type CodeChunk = {
-  opcode: OpCode;
-  dataOffset?: Address;
-  stackOffset?: Address;
-  value: number;
-  address: Address;
-  reg1: Register;
-  reg2: Register;
-  reg3: Register;
-};
-
-const chunk = (
-  opcode: OpCode,
-  {
-    dataOffset,
-    stackOffset,
-    value = 0,
-    address = 0,
-    reg1 = 0,
-    reg2 = 0,
-    reg3 = 0,
-  }: {
-    dataOffset?: Address;
-    stackOffset?: Address;
-    value?: number;
-    address?: number;
-    reg1?: number;
-    reg2?: number;
-    reg3?: number;
-  } = {}
-): CodeChunk => ({
-  opcode,
-  value,
-  address,
-  reg1,
-  reg2,
-  reg3,
-  dataOffset,
-  stackOffset,
-});
+import { Register } from "../vm/utils.js";
+import { CodeChunk, chunk, chunkToByteCode } from "./chunks.js";
 
 type Context = {
   scope: Scope;
-  pc: number;
   chunks: CodeChunk[];
   data: number[][];
+  occupiedRegisters: Register[];
 };
 
 export class Compiler {
-  private context: Context = { scope: new Scope(), pc: 0x3000, chunks: [], data: [] };
+  private context: Context = { scope: new Scope(), chunks: [], data: [], occupiedRegisters: [] };
   constructor(context?: Context) {
     if (context) this.context = context;
   }
+
+  isOccupied(register: Register) {
+    return this.context.occupiedRegisters.includes(register);
+  }
+
+  unoccupy(register: Register) {
+    const copy = this.copy();
+    copy.context.occupiedRegisters = copy.context.occupiedRegisters.filter((r) => r !== register);
+    return copy;
+  }
+
+  occupy(register: Register) {
+    const copy = this.copy();
+    copy.context.occupiedRegisters.push(register);
+    return copy;
+  }
+
+  unoccupyForChunks(chunks: CodeChunk[]) {}
 
   copy() {
     const context: Context = {
@@ -92,7 +51,7 @@ export class Compiler {
     return copy;
   }
 
-  pushCode(...code: CodeChunk[]) {
+  pushChunk(...code: CodeChunk[]) {
     const copy = this.copy();
     copy.context.chunks.push(...code);
     return copy;
@@ -105,23 +64,42 @@ export class Compiler {
   }
 
   private compileToChunks(ast: AbstractSyntaxTree): Compiler {
-    if (ast.name === "operator") {
+    if (ast.name === "group") {
+      if (ast.value === "true") {
+        return this.pushData([-1]);
+      } else if (ast.value === "false") {
+        return this.pushData([0]);
+      } else {
+      }
+    } else if (ast.name === "operator") {
       if (ast.value === "->" || ast.value === "fn") {
         const name: string = ast.children[0].value;
         const expr = ast.children[1];
+        return this.scopeAdd(name, expr);
       } else if (ast.value === "application") {
         const fn = ast.children[0];
-        const args = ast.children[1];
-      } else if (ast.value === "true") {
-        return this.pushData([1]);
-      } else if (ast.value === "false") {
-        return this.pushData([0]);
+        const arg = ast.children[1];
+        const compiledFn = this.compileToChunks(fn);
+        const compiledArg = this.compileToChunks(arg);
+        const dataOffset = this.context.data.length;
+        const stackOffset = this.context.scope.size();
+        const compiled = compiledFn.pushChunk(
+          chunk(OpCode.OP_ST, { stackOffset, reg1: Register.R_R6 }),
+          chunk(OpCode.OP_ST, { stackOffset: stackOffset + 1, reg1: Register.R_R7 }),
+          chunk(OpCode.OP_LD, { dataOffset, reg1: Register.R_R6 }),
+          chunk(OpCode.OP_LD, { dataOffset: dataOffset + 1, reg1: Register.R_R7 }),
+          chunk(OpCode.OP_ADD, { reg1: Register.R_R6, reg2: Register.R_R6, reg3: Register.R_R6 }),
+          chunk(OpCode.OP_ADD, { reg1: Register.R_R7, reg2: Register.R_R7, reg3: Register.R_R7 })
+        );
+        return compiled;
       } else if (ast.value === "print") {
         const expr = ast.children[0];
         const dataOffset = this.context.data.length;
         let compiled = this.compileToChunks(expr);
-        compiled = compiled.pushCode(chunk(OpCode.OP_LEA, { dataOffset, reg1: Register.R_R0 }));
-        compiled = compiled.pushCode(chunk(OpCode.OP_TRAP, { value: TrapCode.TRAP_PUTS }));
+        compiled = compiled.pushChunk(
+          chunk(OpCode.OP_LEA, { dataOffset, reg1: Register.R_R0 }),
+          chunk(OpCode.OP_TRAP, { value: TrapCode.TRAP_PUTS })
+        );
 
         return compiled;
       }
@@ -146,113 +124,12 @@ export class Compiler {
       const name = ast.value;
       const value = this.context.scope.get(name);
       if (value === undefined) {
+        return this.pushData([0]);
       }
+      return this.pushChunk(chunk(OpCode.OP_LD, { stackOffset: name.index, reg1: Register.R_R0 }));
     }
 
     return this;
-  }
-
-  static chunkToByteCode(chunk: CodeChunk, pc: number, dataStart: Address, stackStart: Address): number {
-    const { opcode, dataOffset, stackOffset, value: _value } = chunk;
-    const dataStartAddr = dataStart - (pc + 1);
-    const dataAddr = dataOffset !== undefined ? dataStartAddr + dataOffset : undefined;
-    const stackStartAddr = stackStart - (pc + 1);
-    const stackAddr = stackOffset !== undefined ? stackStartAddr + stackOffset : undefined;
-    const value = dataAddr ?? stackAddr ?? _value;
-
-    switch (opcode) {
-      case OpCode.OP_ADD: {
-        const { reg1, reg2, reg3 } = chunk;
-        const absValue = Math.abs(value);
-        const trimmedValue = absValue & 0x1f;
-        const imm = trimmedValue === absValue;
-        const params = imm ? addParamsImm(reg1, reg2, value) : addParamsReg(reg1, reg2, reg3);
-        return opCode(opcode, params);
-      }
-      case OpCode.OP_AND: {
-        const { reg1, reg2, reg3 } = chunk;
-        const absValue = Math.abs(value);
-        const trimmedValue = absValue & 0x1f;
-        const imm = trimmedValue === absValue;
-        const params = imm ? andParamsImm(reg1, reg2, value) : andParamsReg(reg1, reg2, reg3);
-        return opCode(opcode, params);
-      }
-      case OpCode.OP_NOT: {
-        const { reg1, reg2 } = chunk;
-        return opCode(opcode, notParams(reg1, reg2));
-      }
-      case OpCode.OP_LD: {
-        const { reg1 } = chunk;
-        const trimmedValue = value & 0x1ff;
-        const params = loadParams(reg1, trimmedValue);
-        return opCode(opcode, params);
-      }
-      case OpCode.OP_LDI: {
-        const { reg1 } = chunk;
-        const trimmedValue = value & 0x1ff;
-        const params = loadIndirectParams(reg1, trimmedValue);
-        return opCode(opcode, params);
-      }
-      case OpCode.OP_LDR: {
-        const { reg1, reg2 } = chunk;
-        const trimmedValue = value & 0x3f;
-        const params = loadRegParams(reg1, reg2, trimmedValue);
-        return opCode(opcode, params);
-      }
-      case OpCode.OP_ST: {
-        const { reg1 } = chunk;
-        const trimmedValue = value & 0x1ff;
-        const params = storeParams(reg1, trimmedValue);
-        return opCode(opcode, params);
-      }
-      case OpCode.OP_STI: {
-        const { reg1 } = chunk;
-        const trimmedValue = value & 0x1ff;
-        const params = storeIndirectParams(reg1, trimmedValue);
-        return opCode(opcode, params);
-      }
-      case OpCode.OP_STR: {
-        const { reg1, reg2 } = chunk;
-        const trimmedValue = value & 0x3f;
-        const params = storeRegParams(reg1, reg2, trimmedValue);
-        return opCode(opcode, params);
-      }
-      case OpCode.OP_JSR: {
-        const { reg1 } = chunk;
-        if (value !== undefined) {
-          const trimmedValue = value & 0x7ff;
-          const params = jsrParamsLong(trimmedValue);
-          return opCode(opcode, params);
-        }
-        const params = jsrParamsReg(reg1);
-        return opCode(opcode, params);
-      }
-      case OpCode.OP_JMP: {
-        const { reg1 } = chunk;
-        const params = jmpParams(reg1);
-        return opCode(opcode, params);
-      }
-      case OpCode.OP_LEA: {
-        const { reg1 } = chunk;
-        const trimmedValue = value & 0x1ff;
-        const params = leaParams(reg1, trimmedValue);
-        return opCode(opcode, params);
-      }
-      case OpCode.OP_TRAP: {
-        const trimmedValue = value & 0xff;
-        return opCode(opcode, trimmedValue);
-      }
-      case OpCode.OP_BR: {
-        const { address } = chunk;
-        const mask = value & 0b111;
-        const offset = address - (pc + 1);
-        const params = branchParams(mask, offset);
-        return opCode(opcode, params);
-      }
-      default: {
-        return opCode(opcode, 0);
-      }
-    }
   }
 
   static compile(ast: AbstractSyntaxTree, offset: number): Uint16Array {
@@ -262,7 +139,7 @@ export class Compiler {
     const dataStart = context.chunks.length;
     const data = context.data.flat();
     const stackStart = dataStart + data.length;
-    const code = context.chunks.map((chunk, pc) => this.chunkToByteCode(chunk, pc, dataStart, stackStart));
+    const code = context.chunks.map(chunkToByteCode(dataStart, stackStart));
     const _chunk = code.concat(data);
     _chunk.unshift(offset);
     return new Uint16Array(_chunk);
