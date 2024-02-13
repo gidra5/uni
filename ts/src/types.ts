@@ -1,14 +1,11 @@
-import { assert } from "./utils.js";
+import { assert } from "./utils/index.js";
 
 export type Tagged<Type, T, TypeKey extends string = "type"> = {
   [k in TypeKey]: Type;
 } & T;
-export type TaggedItem<
-  Type,
-  T,
-  TypeKey extends string = "type",
-  ItemKey extends string = "item"
-> = { [k in TypeKey]: Type } & { [k in ItemKey]: T };
+export type TaggedItem<Type, T, TypeKey extends string = "type", ItemKey extends string = "item"> = {
+  [k in TypeKey]: Type;
+} & { [k in ItemKey]: T };
 
 /**
  * Generates tagged union (`{ type: T } & TypeMap[T]` for every `T in keyof TypeMap`) from a map of types `TypeMap`
@@ -43,23 +40,14 @@ export type ExpandRecursively<T> = T extends (...args: infer A) => infer R
     : never
   : T;
 
-export type TupleN<
-  N extends number,
-  T = unknown,
-  A extends unknown[] = []
-> = number extends N
+export type TupleN<N extends number, T = unknown, A extends unknown[] = []> = number extends N
   ? T[]
   : A["length"] extends N
   ? A
   : TupleN<N, T, [...A, T]>;
-export type Sum<A extends number, B extends number> = [
-  ...TupleN<A>,
-  ...TupleN<B>
-]["length"];
+export type Sum<A extends number, B extends number> = [...TupleN<A>, ...TupleN<B>]["length"];
 export type Succ<A extends number> = Sum<A, 1>;
-export type Pred<A extends number> = TupleN<A> extends [...infer B, infer _]
-  ? B["length"]
-  : A;
+export type Pred<A extends number> = TupleN<A> extends [...infer B, infer _] ? B["length"] : A;
 export type Sub<A extends number, B extends number> = B extends 0
   ? A
   : number extends B
@@ -89,8 +77,4 @@ export type Context<T = any> = Record<string, T>;
 
 export type RecordKey = string | number | symbol;
 export type RecordEntry = [RecordKey, unknown];
-export type IteratorInterface<T, TReturn = any, TNext = unknown> = Iterator<
-  T,
-  TReturn,
-  TNext
->;
+export type IteratorInterface<T, TReturn = any, TNext = unknown> = Iterator<T, TReturn, TNext>;

@@ -33,8 +33,8 @@ export enum OpCode {
   OP_SHIFT /* shift */,
   OP_NAND /* bitwise nand */,
   OP_MULT /* multiply */,
+
   /* 
-  
   VM_OPCODE_ADD = 0b0001,
   VM_OPCODE_AND = 0b0101,
   VM_OPCODE_BR = 0b0000,
@@ -54,7 +54,7 @@ export enum OpCode {
   */
 }
 
-enum TrapCode {
+export enum TrapCode {
   TRAP_GETC = 0x20 /* get character from keyboard, not echoed onto the terminal */,
   TRAP_OUT = 0x21 /* output a character */,
   TRAP_PUTS = 0x22 /* output a word string */,
@@ -237,6 +237,8 @@ export const opCodeHandlers2: Record<number, OpCodeHandler> = {
 // 16bit command, 16 opcodes, 8 registers
 export const opCodeHandlers: Record<number, OpCodeHandler> = {
   [OpCode.OP_ADD]: function (vm, instr) {
+    /* opcode XXXX | dest XXX | src XXX | imm 1 | value XXXXX */
+    /* opcode XXXX | dest XXX | src XXX | imm 0 | XX | valueReg XXX */
     const destReg = (instr >> 9) & 0b111;
     const srcReg1 = (instr >> 6) & 0b111;
     /* whether we are in immediate mode */
@@ -249,6 +251,8 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.updateFlags(destReg);
   },
   [OpCode.OP_AND]: function (vm, instr) {
+    /* opcode XXXX | dest XXX | src XXX | imm 1 | value XXXXX */
+    /* opcode XXXX | dest XXX | src XXX | imm 0 | XX | valueReg XXX */
     const destReg: Register = (instr >> 9) & 0b111;
     const srcReg1: Register = (instr >> 6) & 0b111;
     const immFlag: UInt16 = instr & (1 << 5);
@@ -260,6 +264,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.updateFlags(destReg);
   },
   [OpCode.OP_NOT]: function (vm, instr) {
+    /* opcode XXXX | dest XXX | src XXX | XXXXX */
     const destReg: Register = (instr >> 9) & 0b111;
     const srcReg: Register = (instr >> 6) & 0b111;
     // console.log("VM_OPCODE_NOT dr %d sr %d", destReg, srcReg);
@@ -268,6 +273,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.updateFlags(destReg);
   },
   [OpCode.OP_BR]: function (vm, instr) {
+    /* opcode XXXX | mask XXX | offset X_XXXX_XXXX */
     const currentCond: UInt16 = vm.cond & 0b111;
     const desiredCond: UInt16 = (instr >> 9) & 0b111;
     if (!(currentCond & desiredCond)) return;
@@ -278,12 +284,15 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.pc += offset;
   },
   [OpCode.OP_JMP]: function (vm, instr) {
+    /* opcode XXXX | XXX | baser XXX | XX_XXXX */
     const baseReg: Register = (instr >> 6) & 0b111;
     // console.log("VM_OPCODE_JMP baser %d", baseReg);
 
     vm.pc = vm.registers[baseReg];
   },
   [OpCode.OP_JSR]: function (vm, instr) {
+    /* opcode XXXX | long 1 | offset XXX_XXXX_XXXX */
+    /* opcode XXXX | long 0 | XX | baser XXX | XX_XXXX */
     const originalPC: Address = vm.pc;
 
     if (instr & (1 << 11)) {
@@ -302,6 +311,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.registers[Register.R_R7] = originalPC;
   },
   [OpCode.OP_LEA]: function (vm, instr) {
+    /* opcode XXXX | dest XXX | offset X_XXXX_XXXX */
     const destReg: Register = (instr >> 9) & 0b111;
     const offset: Address = signExtend(instr, 9);
     // console.log("VM_OPCODE_LEA dr %d pc_offset9 %d", destReg, offset);
@@ -310,6 +320,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.updateFlags(destReg);
   },
   [OpCode.OP_LD]: function (vm, instr) {
+    /* opcode XXXX | dest XXX | offset X_XXXX_XXXX */
     const destReg: Register = (instr >> 9) & 0b111;
     const offset: Address = signExtend(instr, 9);
     // console.log("VM_OPCODE_LD dr %d pc_offset9 %d", destReg, offset);
@@ -318,6 +329,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.updateFlags(destReg);
   },
   [OpCode.OP_LDI]: function (vm, instr) {
+    /* opcode XXXX | dest XXX | offset X_XXXX_XXXX */
     const destReg: Register = (instr >> 9) & 0b111;
     const offset: Address = signExtend(instr, 9);
 
@@ -328,6 +340,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.updateFlags(destReg);
   },
   [OpCode.OP_LDR]: function (vm, instr) {
+    /* opcode XXXX | dest XXX | baser XXX | offset XX_XXXX */
     const destReg: Register = (instr >> 9) & 0b111;
     const baseReg: Register = (instr >> 6) & 0b111;
     const offset: Address = signExtend(instr, 6);
@@ -337,6 +350,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.updateFlags(destReg);
   },
   [OpCode.OP_ST]: function (vm, instr) {
+    /* opcode XXXX | src XXX | offset X_XXXX_XXXX */
     const srcReg: Register = (instr >> 9) & 0b111;
     const offset: Address = signExtend(instr, 9);
     // const offset: Address = instr & 0x1ff;
@@ -345,6 +359,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.write(vm.pc + offset, vm.registers[srcReg]);
   },
   [OpCode.OP_STI]: function (vm, instr) {
+    /* opcode XXXX | src XXX | offset X_XXXX_XXXX */
     const srcReg: Register = (instr >> 9) & 0b111;
     const offset: Address = signExtend(instr, 9);
     // console.log("VM_OPCODE_STI sr %d pc_offset9 %d", srcReg, offset);
@@ -352,6 +367,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.write(vm.read(vm.pc + offset), vm.registers[srcReg]);
   },
   [OpCode.OP_STR]: function (vm, instr) {
+    /* opcode XXXX | src XXX | baser XXX | offset XX_XXXX */
     const srcReg: Register = (instr >> 9) & 0b111;
     const baseReg: Register = (instr >> 6) & 0b111;
     const offset: Address = signExtend(instr, 6);
@@ -360,6 +376,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.write(vm.registers[baseReg] + offset, vm.registers[srcReg]);
   },
   [OpCode.OP_TRAP]: function (vm, instr) {
+    /* opcode XXXX | XXXX | trapvect8 XXXX_XXXX */
     const trapCode: Address = instr & 0xff;
     // console.log("VM_OPCODE_TRAP trapvect8 %s", toHex(trapCode));
 

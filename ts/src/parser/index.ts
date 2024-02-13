@@ -3,7 +3,7 @@ import { Iterator } from "iterator-js";
 import { indexPosition, position } from "../position.js";
 import { AbstractSyntaxTree, group, infix, operator, placeholder, postfix, prefix, program, token } from "./ast.js";
 import { ParsingError, ParsingResult, TokenParser } from "./types.js";
-import { mapField, omit, pushField, setField } from "../utils.js";
+import { mapField, omit, pushField, setField } from "../utils/index.js";
 import { matchString, templateString } from "./string.js";
 import { scope } from "./constants.js";
 import { Scope as ScopeClass } from "../scope.js";

@@ -1,4 +1,4 @@
-import { assert } from "../utils.js";
+import { assert } from "../utils/index.js";
 import { matchString } from "./string.js";
 import { Token } from "./types.js";
 

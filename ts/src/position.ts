@@ -1,5 +1,5 @@
 import { Position, TokenPos } from "./parser/types.js";
-import { clamp } from "./utils.js";
+import { clamp } from "./utils/index.js";
 
 export function position(start: number, end: number): Position {
   return { start, end };

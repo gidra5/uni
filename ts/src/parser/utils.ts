@@ -1,7 +1,7 @@
 import { TokenParserWithContext } from "./index.js";
 import { Iterator } from "iterator-js";
 import { DefaultVisitor, Tree, Visitor } from "../tree.js";
-import { isEqual } from "../utils.js";
+import { isEqual } from "../utils/index.js";
 import { AbstractSyntaxTree } from "./ast.js";
 import { ParsingResult, TokenParser } from "./types.js";
 
