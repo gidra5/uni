@@ -3,7 +3,10 @@ import readline from "readline";
 import { stdin as input, stdout as output } from "process";
 import { VM } from "./vm/index.js";
 import fs from "fs";
-import { keyboardDevice } from "./vm/devices.js";
+import { parseTokens } from "./parser/tokens.js";
+import { parse } from "./parser/index.js";
+import { Compiler } from "./compiler/index.js";
+import { parseExprString } from "./parser/string.js";
 
 program.option("-i, --interactive");
 
@@ -11,6 +14,21 @@ program
   .command("repl [file]")
   .description("Run interactive environment with optional initial script/module")
   .action(() => {});
+
+program
+  .command("build <file> <output>")
+  .description("Compile a program into an image")
+  .action((file, output) => {
+    const code = fs.readFileSync(file, "utf-8");
+    // const [tokens, _errors] = parseTokens(code);
+    // const [ast, __errors] = parse()(tokens);
+    const [ast, _errors] = parseExprString(code);
+
+    const compiled = Compiler.compile(ast, 0x3000);
+    const buffer = Buffer.from(compiled.buffer);
+
+    fs.writeFileSync(output, buffer.swap16(), { encoding: "binary" });
+  });
 
 program
   .command("vm <image> [osImage]")
@@ -31,10 +49,10 @@ program
     });
 
     vm.loadImage(image);
-    vm.run();
     vm.on("halt", () => {
       process.exit(0);
     });
+    vm.run();
   });
 
 program.parse();
