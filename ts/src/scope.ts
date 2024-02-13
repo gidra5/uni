@@ -181,4 +181,8 @@ export class Scope<T = any> {
     copied.names = { ...this.names };
     return copied;
   }
+
+  size() {
+    return this.scope.length;
+  }
 }

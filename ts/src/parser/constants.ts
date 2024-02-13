@@ -38,6 +38,7 @@ const booleanPrecedence = 2;
 export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   false: { separators: matchSeparators(["false"]), precedence: [null, null] },
   true: { separators: matchSeparators(["true"]), precedence: [null, null] },
+  print: { separators: matchSeparators(["print"]), precedence: [null, 1] },
   "@": { separators: matchSeparators(["@"]), precedence: [1, 1] },
   "+": { separators: matchSeparators(["+"]), precedence: [arithmeticPrecedence, arithmeticPrecedence + 1] },
   "-": { separators: matchSeparators(["-"]), precedence: [arithmeticPrecedence, arithmeticPrecedence + 1] },
