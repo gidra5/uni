@@ -1,0 +1,1 @@
+An abstraction that once introduced, causes all other abstractions to adopt it, even if its required only for one part of the whole system.

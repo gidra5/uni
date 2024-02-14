@@ -1,5 +1,5 @@
 Basic types (aka primitives) with examples are:
-1. `number`
+1. `number` (`int` and `float`)
 1. `string`
 1. `boolean`
 1. `symbol`
