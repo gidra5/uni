@@ -25,7 +25,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Syntax Tree.md",
+                "file": "Lambda Calculus/Pi Calculus.md",
                 "mode": "source",
                 "source": false
               }
@@ -98,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Syntax Tree.md",
+                "file": "Lambda Calculus/Pi Calculus.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Syntax Tree.md",
+                "file": "Lambda Calculus/Pi Calculus.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Syntax Tree.md"
+                "file": "Lambda Calculus/Pi Calculus.md"
               }
             }
           },
@@ -156,7 +156,9 @@
             "state": {
               "type": "all-properties",
               "state": {
-                "sortOrder": "frequency"
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
               }
             }
           }
@@ -182,10 +184,12 @@
   },
   "active": "5d1a5c9caf595230",
   "lastOpenFiles": [
-    "Parser.md",
-    "Syntax Tree.md",
-    "Types.md",
+    "Analysis.md",
     "Lambda Calculus/Lambda calculus.md",
+    "Lambda Calculus/Pi Calculus.md",
+    "Syntax Tree.md",
+    "Parser.md",
+    "Types.md",
     "Lambda calculus.md",
     "Lambda Calculus/Beta-reduction.md",
     "Lambda Calculus",
@@ -203,7 +207,6 @@
     "Zero-cost abstraction.md",
     "Literals.md",
     "Pattern matching.md",
-    "Analysis.md",
     "Getting Started",
     "chrome_rmkcBFAW1x_1693548108.png",
     "chrome_MDKK1pYBB9_1693548495.png",
@@ -211,7 +214,6 @@
     "module.md",
     "Optimizations.md",
     "Operators.md",
-    "Mar 15, 2022.md",
     "Push",
     "rest",
     "Untitled.canvas"
