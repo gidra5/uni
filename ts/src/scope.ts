@@ -155,12 +155,12 @@ export class Scope<T = any> {
     return this.remove({ name });
   }
 
-  removeByIndex(index: number): Scope<T> {
-    return this.remove({ relativeIndex: index });
+  removeByRelativeIndex(relativeIndex: number): Scope<T> {
+    return this.remove({ relativeIndex });
   }
 
-  removeByLevel(level: number): Scope<T> {
-    return this.remove({ index: level });
+  removeByIndex(index: number): Scope<T> {
+    return this.remove({ index });
   }
 
   private _append(scope: Scope<T>) {

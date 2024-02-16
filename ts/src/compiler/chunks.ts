@@ -1,5 +1,5 @@
 import { OpCode } from "../vm/handlers.js";
-import { Address, Register } from "../vm/utils.js";
+import { Address, Register, signExtend } from "../vm/utils.js";
 import {
   addParamsImm,
   addParamsReg,
@@ -24,6 +24,7 @@ export type CodeChunk = {
   opcode: OpCode;
   dataOffset?: Address;
   stackOffset?: Address;
+  functionOffset?: Address;
   addressOffset?: Address;
   value: number;
   reg1: Register;
@@ -32,7 +33,7 @@ export type CodeChunk = {
 };
 
 export const chunk = (opcode: OpCode, chunk: Partial<Omit<CodeChunk, "opcode">> = {}): CodeChunk => ({
-  value: 0,
+  value: 1 << 15,
   reg1: 0,
   reg2: 0,
   reg3: 0,
@@ -41,30 +42,30 @@ export const chunk = (opcode: OpCode, chunk: Partial<Omit<CodeChunk, "opcode">> 
 });
 
 export const chunkToByteCode =
-  (dataStart: Address, stackStart: Address) =>
+  (functionOffsets: Address[], dataOffsets: Address[], stackStart: Address) =>
   (chunk: CodeChunk, pc: number): number => {
     pc = pc + 1;
-    const { opcode, dataOffset, stackOffset, addressOffset, value: _value } = chunk;
-    const dataAddr = dataOffset !== undefined ? dataStart - pc + dataOffset : undefined;
+    const { opcode, functionOffset, dataOffset, stackOffset, addressOffset, value: _value } = chunk;
+    const functionAddr = functionOffset !== undefined ? functionOffsets[functionOffset] - pc : undefined;
+    const dataAddr = dataOffset !== undefined ? dataOffsets[dataOffset] - pc : undefined;
     const stackAddr = stackOffset !== undefined ? stackStart - pc + stackOffset : undefined;
     const offset = addressOffset !== undefined ? addressOffset - pc : 0;
-    const value = dataAddr ?? stackAddr ?? _value;
+    const value = functionAddr ?? dataAddr ?? stackAddr ?? _value;
 
     switch (opcode) {
       case OpCode.OP_ADD: {
         const { reg1, reg2, reg3 } = chunk;
-        const absValue = Math.abs(value);
-        const trimmedValue = absValue & 0x1f;
-        const imm = trimmedValue === absValue;
-        const params = imm ? addParamsImm(reg1, reg2, value) : addParamsReg(reg1, reg2, reg3);
+        const trimmedValue = value & 0x1f;
+
+        const imm = value !== undefined && signExtend(trimmedValue, 5) === value;
+        const params = imm ? addParamsImm(reg1, reg2, trimmedValue) : addParamsReg(reg1, reg2, reg3);
         return opCode(opcode, params);
       }
       case OpCode.OP_AND: {
         const { reg1, reg2, reg3 } = chunk;
-        const absValue = Math.abs(value);
-        const trimmedValue = absValue & 0x1f;
-        const imm = trimmedValue === absValue;
-        const params = imm ? andParamsImm(reg1, reg2, value) : andParamsReg(reg1, reg2, reg3);
+        const trimmedValue = value & 0x1f;
+        const imm = value !== undefined && signExtend(trimmedValue, 5) === value;
+        const params = imm ? andParamsImm(reg1, reg2, trimmedValue) : andParamsReg(reg1, reg2, reg3);
         return opCode(opcode, params);
       }
       case OpCode.OP_NOT: {

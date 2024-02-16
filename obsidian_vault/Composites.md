@@ -5,3 +5,5 @@ Can be categorized by these criteria:
 3. Heterogeneous\\Homogeneous
 4. Labeled
 5. Dynamic
+6. Finite
+7. Continuous

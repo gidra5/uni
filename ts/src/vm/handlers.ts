@@ -63,6 +63,7 @@ export enum TrapCode {
   TRAP_HALT = 0x25 /* halt the program */,
 }
 
+type OpCodeDecode = (instr: number) => string;
 type OpCodeHandler = (vm: VM, instr: number) => void;
 type TrapHandler = (vm: VM) => void;
 
@@ -340,10 +341,9 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
       vm.pc += offset;
     } else {
       const baseReg: Register = (instr >> 6) & 0b111;
-      const baseRegVal: Register = vm.registers[baseReg];
       // console.log("VM_OPCODE_JSR baser %d baser_val %d", baseReg, baseRegVal);
 
-      vm.pc = baseRegVal;
+      vm.pc = vm.registers[baseReg];
     }
 
     vm.registers[Register.R_R7] = originalPC;
@@ -469,3 +469,103 @@ export const trapHandlers: Record<number, TrapHandler> = {
     vm.memory[MemoryMappedRegisters.MSR] &= ~STATUS_BIT;
   },
 };
+
+export const opCodeDecode: Record<number, OpCodeDecode> = {
+  [OpCode.OP_ADD]: function (instr) {
+    const destReg = (instr >> 9) & 0b111;
+    const srcReg1 = (instr >> 6) & 0b111;
+    const immFlag = (instr & (1 << 5)) >> 5;
+    const value = immFlag ? signExtend(instr, 5) : "R" + (instr & 0b111);
+
+    return `ADD dest: R${destReg} src: R${srcReg1} immFlag: ${immFlag} value: ${value}`;
+  },
+  [OpCode.OP_AND]: function (instr) {
+    const destReg: Register = (instr >> 9) & 0b111;
+    const srcReg1: Register = (instr >> 6) & 0b111;
+    const immFlag: UInt16 = (instr & (1 << 5)) >> 5;
+    const value = immFlag ? signExtend(instr, 5) : "R" + (instr & 0b111);
+
+    return `AND dest: R${destReg} src: R${srcReg1} immFlag: ${immFlag} value: ${value}`;
+  },
+  [OpCode.OP_NOT]: function (instr) {
+    const destReg: Register = (instr >> 9) & 0b111;
+    const srcReg: Register = (instr >> 6) & 0b111;
+
+    return `NOT dest: R${destReg} src: R${srcReg}`;
+  },
+  [OpCode.OP_BR]: function (instr) {
+    const desiredCond: UInt16 = (instr >> 9) & 0b111;
+    const offset: Address = signExtend(instr, 9);
+
+    return `BR desired_cond: ${toBin(desiredCond, 3)} offset: ${offset}`;
+  },
+  [OpCode.OP_JMP]: function (instr) {
+    const baseReg: Register = (instr >> 6) & 0b111;
+
+    return `JMP base: R${baseReg}`;
+  },
+  [OpCode.OP_JSR]: function (instr) {
+    if (instr & (1 << 11)) {
+      const offset: Address = signExtend(instr, 11);
+
+      return `JSR long: 1 offset: ${offset}`;
+    } else {
+      const baseReg: Register = (instr >> 6) & 0b111;
+
+      return `JSR long: 0 baseReg: R${baseReg}`;
+    }
+  },
+  [OpCode.OP_LEA]: function (instr) {
+    const destReg: Register = (instr >> 9) & 0b111;
+    const offset: Address = signExtend(instr, 9);
+
+    return `LEA dest: R${destReg} offset: ${offset}`;
+  },
+  [OpCode.OP_LD]: function (instr) {
+    const destReg: Register = (instr >> 9) & 0b111;
+    const offset: Address = signExtend(instr, 9);
+
+    return `LD dest: R${destReg} offset: ${offset}`;
+  },
+  [OpCode.OP_LDI]: function (instr) {
+    const destReg: Register = (instr >> 9) & 0b111;
+    const offset: Address = signExtend(instr, 9);
+
+    return `LDI dest: R${destReg} offset: ${offset}`;
+  },
+  [OpCode.OP_LDR]: function (instr) {
+    const destReg: Register = (instr >> 9) & 0b111;
+    const baseReg: Register = (instr >> 6) & 0b111;
+    const offset: Address = signExtend(instr, 6);
+
+    return `LDR dest: R${destReg} base: R${baseReg} offset: ${offset}`;
+  },
+  [OpCode.OP_ST]: function (instr) {
+    const srcReg: Register = (instr >> 9) & 0b111;
+    const offset: Address = signExtend(instr, 9);
+
+    return `ST src: R${srcReg} offset: ${offset}`;
+  },
+  [OpCode.OP_STI]: function (instr) {
+    const srcReg: Register = (instr >> 9) & 0b111;
+    const offset: Address = signExtend(instr, 9);
+
+    return `STI src: R${srcReg} offset: ${offset}`;
+  },
+  [OpCode.OP_STR]: function (instr) {
+    const srcReg: Register = (instr >> 9) & 0b111;
+    const baseReg: Register = (instr >> 6) & 0b111;
+    const offset: Address = signExtend(instr, 6);
+
+    return `STR src: R${srcReg} base: R${baseReg} offset: ${offset}`;
+  },
+  [OpCode.OP_TRAP]: function (instr) {
+    const trapCode: Address = instr & 0xff;
+
+    return `TRAP trapCode: ${toHex(trapCode)}`;
+  },
+};
+
+export function disassemble(instruction: number): string {
+  return opCodeDecode[instruction >> 12](instruction);
+}
