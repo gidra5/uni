@@ -197,20 +197,25 @@ export class Compiler {
         return this.pushData([0]);
       } else if (ast.value === "parens") {
         return this.compileToChunks(ast.children[0]);
-      } else {
+      } else if (ast.value === "brackets") {
+        return this.compileToChunks(ast.children[0]);
       }
     } else if (ast.name === "operator") {
       if (ast.value === "->" || ast.value === "fn") {
-        const name: string = ast.children[0].value;
-        const expr = ast.children[1];
+        const body = ast.children[1];
         const codeIndex = this.context.chunks.length;
         const dataIndex = this.context.data.length;
-        const withName = this.resetStack().stackPush().stackAdd(name);
-        const compiled = withName
-          .compileToChunks(expr)
+        const compiled = this.resetStack()
+          .stackPush()
+          .update((c) => {
+            const name = ast.children[0];
+            if (name.name === "placeholder") return c.stackPush();
+            return c.stackAdd(name.value);
+          })
+          .compileToChunks(body)
           .stackPopInstruction(Register.R_R0) // pop return value
           .allocateRegisters(Register.R_R0)
-          .stackPop() // drop argument
+          .stackPop() // drop argument, it was consumed by body
           .stackPopInstruction(Register.R_R1) // pop return address
           .allocateRegisters(Register.R_R1)
           .stackPushInstruction(Register.R_R0) // push return value
