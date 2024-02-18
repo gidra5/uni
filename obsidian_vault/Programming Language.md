@@ -10,3 +10,6 @@ Scripts are "runnable" modules. As if you created module with one declaration th
 Project may be a library, in which case it must specify entry _module_ file, which exposes library's interface.
 Project may be an executable, in which case it must specify entry _script_ file, which defines executable's commands.
 Project also specifies what are dependency libraries, their version and where to get it (link to the repository or a library database).
+
+https://vekatze.github.io/neut/overview.html
+https://github.com/capy-language/capy/tree/master

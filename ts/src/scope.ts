@@ -31,6 +31,13 @@ export class Scope<T = any> {
     this.names = Scope.namesFromScope(this.scope);
   }
 
+  drop(n: number) {
+    const copied = this.copy();
+    copied.scope = copied.scope.slice(0, -n);
+    copied.updateNames();
+    return copied;
+  }
+
   relativeToIndex(index: number): number {
     return this.scope.length - index - 1;
   }

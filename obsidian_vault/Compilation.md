@@ -15,3 +15,4 @@ Compiler follows these steps:
    2. Generate bytecode for target architecture from chunks
    3. Generate buffer containing image, that can be accepted by [[Virtual Machine|VM]]
 
+https://wren.io/performance.html

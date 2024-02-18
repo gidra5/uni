@@ -101,6 +101,13 @@ export class Compiler {
     });
   }
 
+  stackDrop(n: number) {
+    return this.update((c) => {
+      c.context.stack = c.context.stack.drop(n);
+      return c;
+    });
+  }
+
   findFreeRegister() {
     return (
       Iterator.natural()
@@ -124,6 +131,41 @@ export class Compiler {
       for (const reg of regs) {
         if (c.context.registers[reg]) c.context.registers[reg].weak = true;
       }
+      return c;
+    });
+  }
+
+  freeRegister(reg: Register) {
+    return this.update((c) => {
+      c.context.registers[reg].weak = true;
+      return c;
+    });
+  }
+
+  setRegister(reg: Register) {
+    return this.update((c) => {
+      const register = c.context.registers[reg];
+      const dataOffset = register?.dataOffset;
+      const stackOffset = register?.stackOffset;
+      c.context.registers = Iterator.iterEntries(c.context.registers)
+        .filterValues((x) => x.dataOffset !== dataOffset && x.stackOffset !== stackOffset)
+        .toObject();
+      register.stale = true;
+      c.context.registers[reg] = register;
+      return c;
+    });
+  }
+
+  getRegister(reg: Register, ref: Partial<RegisterReference> = {}) {
+    return this.update((c) => {
+      c.context.registers[reg] = { ...ref, stale: false, weak: true };
+      return c;
+    });
+  }
+
+  syncRegister(reg: Register) {
+    return this.update((c) => {
+      c.context.registers[reg].stale = false;
       return c;
     });
   }
@@ -203,6 +245,92 @@ export class Compiler {
     });
   }
 
+  /**
+   * in `[..., retAddr, arg, fnAddr]`
+   *
+   * out `[..., retValue]`
+   */
+  callInstruction(returnAddrChunkIndex: number) {
+    const _reg = this.findFreeRegister();
+    const compiled = this.stackPopInstruction(_reg) // pop fn address, is consumed by operator
+      .stackPop() // pop argument, so it will be consumed by function
+      .stackPop() // pop return address, so it will be consumed by function
+      .pushStackFrameInstruction()
+      .pushChunk(chunk(OpCode.OP_JMP, { reg1: _reg }));
+    compiled.context.chunks[returnAddrChunkIndex].value =
+      compiled.context.chunks.length - 1 - this.context.chunks.length;
+    return compiled.popStackFrameInstruction();
+  }
+
+  /**
+   * in `[..., arg1, arg2]`
+   *
+   * out `[..., arg1 + arg2]`
+   */
+  addInstruction() {
+    const reg1 = this.findFreeRegister();
+    const reg2 = this.allocateRegisters(reg1).findFreeRegister();
+    return this.allocateRegisters(reg1, reg2)
+      .stackPopInstruction(reg1)
+      .stackPopInstruction(reg2)
+      .pushChunk(chunk(OpCode.OP_ADD, { reg1, reg2, reg3: reg1 }))
+      .freeRegisters(reg2)
+      .stackPushInstruction(reg1)
+      .freeRegisters(reg1);
+  }
+
+  /**
+   * in `[...]`
+   *
+   * out `[..., value]`
+   */
+  pushConstantInstruction(value: number) {
+    const reg = this.findFreeRegister();
+    return this.pushData([value])
+      .pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset: this.context.data.length }))
+      .stackPushInstruction(reg);
+  }
+
+  pushDataPointerInstruction(dataOffset: number) {
+    const reg = this.findFreeRegister();
+    return this.pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset })).stackPushInstruction(reg);
+  }
+
+  pushFunctionPointerInstruction(functionOffset: number) {
+    const reg = this.findFreeRegister();
+    return this.pushChunk(chunk(OpCode.OP_LEA, { reg1: reg, functionOffset })).stackPushInstruction(reg);
+  }
+
+  /**
+   * Copy value from reg1 to reg2
+   */
+  copyInstruction(fromReg: Register, toReg: Register) {
+    return this.pushChunk(chunk(OpCode.OP_ADD, { reg1: fromReg, reg2: toReg, value: 0 }));
+  }
+
+  stackSwapInstruction(index1: number, index2: number) {
+    const reg1 = this.findFreeRegister();
+    const reg2 = this.allocateRegisters(reg1).findFreeRegister();
+    return this.stackGetInstruction(reg1, index1)
+      .allocateRegisters(reg1)
+      .stackGetInstruction(reg2, index2)
+      .allocateRegisters(reg2)
+      .stackSetInstruction(reg1, index2)
+      .stackSetInstruction(reg2, index1)
+      .freeRegisters(reg1, reg2);
+  }
+
+  /**
+   * in `[..., value, returnAddr]`
+   *
+   * out `[..., value]`
+   */
+  returnInstruction() {
+    const reg = this.findFreeRegister();
+    return this.stackPopInstruction(reg) // pop return address
+      .pushChunk(chunk(OpCode.OP_JMP, { reg1: reg }));
+  }
+
   private compileToChunks(ast: AbstractSyntaxTree): Compiler {
     // console.log(ast, this);
     if (ast.name === "group") {
@@ -213,7 +341,12 @@ export class Compiler {
       } else if (ast.value === "parens") {
         return this.compileToChunks(ast.children[0]);
       } else if (ast.value === "brackets") {
-        return this.compileToChunks(ast.children[0]);
+        const stackSize = this.context.stack.size();
+        return this.compileToChunks(ast.children[0]).update((c) => {
+          const newSize = c.context.stack.size();
+          const toDrop = newSize - (stackSize + 1);
+          return c.stackSwapInstruction(stackSize, newSize - 1).stackDrop(toDrop);
+        });
       }
     } else if (ast.name === "operator") {
       if (ast.value === "->" || ast.value === "fn") {
@@ -228,46 +361,33 @@ export class Compiler {
             return c.stackAdd(name.value);
           })
           .compileToChunks(body)
-          .stackPopInstruction(Register.R_R0) // pop return value
-          .allocateRegisters(Register.R_R0)
-          .stackPop() // drop argument, it was consumed by body
-          .stackPopInstruction(Register.R_R1) // pop return address
-          .allocateRegisters(Register.R_R1)
-          .stackPushInstruction(Register.R_R0) // push return value
-          .pushChunk(chunk(OpCode.OP_JMP, { reg1: Register.R_R1 }))
-          .freeRegisters(Register.R_R0, Register.R_R1);
-        const functionOffset = this.context.functionChunks.length;
-        const reg = this.findFreeRegister();
+          .update((c) => {
+            const size = c.context.stack.size();
+            return c
+              .stackSwapInstruction(size - 1, size - 3) // swap return value and address
+              .stackSwapInstruction(size - 1, size - 2); // swap argument and address
+          })
+          .stackPop() // pop argument
+          .returnInstruction();
+
         return this.pushFunctionChunk(compiled.context.chunks.slice(codeIndex))
           .pushData(...compiled.context.data.slice(dataIndex))
-          .pushChunk(chunk(OpCode.OP_LEA, { reg1: reg, functionOffset }))
-          .stackPushInstruction(reg);
+          .pushFunctionPointerInstruction(this.context.functionChunks.length);
       } else if (ast.value === "application") {
         const fn = ast.children[0];
         const arg = ast.children[1];
         const reg = this.findFreeRegister();
         const leaChunkIndex = this.context.chunks.length;
-        const y = this.pushChunk(chunk(OpCode.OP_LEA, { reg1: reg, value: 0 }))
+        return this.pushChunk(chunk(OpCode.OP_LEA, { reg1: reg, value: 0 }))
           .stackPushInstruction(reg)
           .compileToChunks(arg)
           .compileToChunks(fn)
-          .stackPop() // pop fn address, is consumed by operator
-          .stackPop() // pop argument, so it will be in next stack frame
-          .stackPop() // pop return address, so it will be in next stack frame
-          .pushStackFrameInstruction()
-          .pushChunk(chunk(OpCode.OP_JMP, { reg1: reg }));
-        y.context.chunks[leaChunkIndex].value = y.context.chunks.length - 1 - this.context.chunks.length;
-        return y.popStackFrameInstruction();
+          .callInstruction(leaChunkIndex);
       } else if (ast.value === "print") {
         const expr = ast.children[0];
-        const dataOffset = this.context.data.length;
-        let compiled = this.compileToChunks(expr);
-        compiled = compiled.pushChunk(
-          chunk(OpCode.OP_LEA, { dataOffset, reg1: Register.R_R0 }),
-          chunk(OpCode.OP_TRAP, { value: TrapCode.TRAP_PUTS })
-        );
-
-        return compiled;
+        return this.compileToChunks(expr)
+          .stackPopInstruction(Register.R_R0)
+          .pushChunk(chunk(OpCode.OP_TRAP, { value: TrapCode.TRAP_PUTS }));
       } else if (ast.value === ";") {
         const left = ast.children[0];
         const right = ast.children[1];
@@ -275,17 +395,7 @@ export class Compiler {
       } else if (ast.value === "+") {
         const left = ast.children[0];
         const right = ast.children[1];
-        const reg1 = this.findFreeRegister();
-        const reg2 = this.allocateRegisters(reg1).findFreeRegister();
-        return this.compileToChunks(left)
-          .compileToChunks(right)
-          .allocateRegisters(reg1, reg2)
-          .stackPopInstruction(reg1)
-          .stackPopInstruction(reg2)
-          .pushChunk(chunk(OpCode.OP_ADD, { reg1, reg2, reg3: reg1 }))
-          .freeRegisters(reg2)
-          .stackPushInstruction(reg1)
-          .freeRegisters(reg1);
+        return this.compileToChunks(left).compileToChunks(right).addInstruction();
       } else if (ast.value === "*") {
         const left = ast.children[0];
         const right = ast.children[1];
@@ -300,15 +410,9 @@ export class Compiler {
       }
     } else if (ast.name === "float") {
       // TODO: encode float? because we are using 16-bit words, js uses 64-bit floats
-      const reg = this.findFreeRegister();
-      return this.pushData([ast.value])
-        .pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset: this.context.data.length }))
-        .stackPushInstruction(reg);
+      return this.pushConstantInstruction(ast.value);
     } else if (ast.name === "int") {
-      const reg = this.findFreeRegister();
-      return this.pushData([ast.value])
-        .pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset: this.context.data.length }))
-        .stackPushInstruction(reg);
+      return this.pushConstantInstruction(ast.value);
     } else if (ast.name === "string") {
       const string: string = ast.value;
       const data: number[] = [];
@@ -322,7 +426,7 @@ export class Compiler {
 
       const reg = this.findFreeRegister();
       return this.pushData(data)
-        .pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset: this.context.data.length }))
+        .pushChunk(chunk(OpCode.OP_LEA, { reg1: reg, dataOffset: this.context.data.length }))
         .stackPushInstruction(reg);
     } else if (ast.name === "name") {
       const name: string = ast.value;
