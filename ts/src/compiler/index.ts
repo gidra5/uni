@@ -320,12 +320,7 @@ export class Compiler {
   }
 
   static compile(ast: AbstractSyntaxTree, offset: number): Uint16Array {
-    const { context } = new Compiler()
-      .pushChunk(
-        chunk(OpCode.OP_LEA, { stackOffset: 0, reg1: Register.R_R0 }),
-        chunk(OpCode.OP_ST, { dataOffset: 0, reg1: Register.R_R0 })
-      )
-      .compileToChunks(ast);
+    const { context } = new Compiler().compileToChunks(ast);
     context.chunks.push(chunk(OpCode.OP_TRAP, { value: TrapCode.TRAP_HALT }));
 
     const functionOffsets = Iterator.iter(context.functionChunks)
@@ -342,9 +337,13 @@ export class Compiler {
       .toArray();
     const data = context.data.flat();
     const stackStart = dataStart + data.length;
+    data[0] = offset + stackStart;
+
     const code = context.chunks.map(chunkToByteCode(functionOffsets, dataOffsets, stackStart));
     console.log(code.map((instruction, i) => `${toHex(i)}   ${disassemble(instruction)}`).join("\n"));
-    console.log(data.map((x, i) => `${toHex(i + dataStart)}   ${x}`).join("\n"));
+    const dataToString = (x: number, i: number) =>
+      `${toHex(i + dataStart)}   ${toHex(x)} | ${String(x).padStart(6, " ")} | ${String.fromCharCode(x)}`;
+    console.log(data.map(dataToString).join("\n"));
     const _chunk = code.concat(data);
     _chunk.unshift(offset);
     return new Uint16Array(_chunk);

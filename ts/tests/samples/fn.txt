@@ -1,42 +1,40 @@
 (fn x -> x + x) 2
 /*
-0x0000   LEA dest: R0 offset: 38
-0x0001   ST src: R0 offset: 35
-0x0002   LD dest: R0 offset: 35
-0x0003   LD dest: R1 offset: 33
-0x0004   STR src: R0 base: R1 offset: 1
-0x0005   LEA dest: R0 offset: 9
-0x0006   LD dest: R1 offset: 30
-0x0007   STR src: R0 base: R1 offset: 2
-0x0008   LEA dest: R0 offset: 0
-0x0009   LD dest: R1 offset: 27
-0x000a   STR src: R0 base: R1 offset: 0
-0x000b   LD dest: R0 offset: 25
-0x000c   LDR dest: R0 base: R0 offset: 2
-0x000d   JMP base: R0
-0x000e   TRAP trapCode: 0x0025
-0x000f   LD dest: R0 offset: 21
-0x0010   LDR dest: R0 base: R0 offset: 1
-0x0011   LD dest: R1 offset: 19
-0x0012   STR src: R0 base: R1 offset: 2
-0x0013   LD dest: R0 offset: 17
-0x0014   LDR dest: R0 base: R0 offset: 1
-0x0015   LD dest: R1 offset: 15
-0x0016   STR src: R0 base: R1 offset: 3
-0x0017   LD dest: R0 offset: 13
-0x0018   LDR dest: R0 base: R0 offset: 3
-0x0019   LD dest: R1 offset: 11
-0x001a   LDR dest: R1 base: R1 offset: 2
-0x001b   ADD dest: R0 src: R1 immFlag: 0 value: R0
-0x001c   LD dest: R1 offset: 8
-0x001d   STR src: R0 base: R1 offset: 2
-0x001e   LD dest: R0 offset: 6
-0x001f   LDR dest: R0 base: R0 offset: 2
-0x0020   LD dest: R1 offset: 4
-0x0021   LDR dest: R1 base: R1 offset: 0
-0x0022   LD dest: R2 offset: 2
-0x0023   STR src: R0 base: R2 offset: 0
-0x0024   JMP base: R1
-0x0025   0
-0x0026   2
+0x0000   LD dest: R0 offset: 35
+0x0001   LD dest: R1 offset: 33
+0x0002   STR src: R0 base: R1 offset: 1
+0x0003   LEA dest: R0 offset: 9
+0x0004   LD dest: R1 offset: 30
+0x0005   STR src: R0 base: R1 offset: 2
+0x0006   LEA dest: R0 offset: 0
+0x0007   LD dest: R1 offset: 27
+0x0008   STR src: R0 base: R1 offset: 0
+0x0009   LD dest: R0 offset: 25
+0x000a   LDR dest: R0 base: R0 offset: 2
+0x000b   JMP base: R0
+0x000c   TRAP trapCode: 0x0025
+0x000d   LD dest: R0 offset: 21
+0x000e   LDR dest: R0 base: R0 offset: 1
+0x000f   LD dest: R1 offset: 19
+0x0010   STR src: R0 base: R1 offset: 2
+0x0011   LD dest: R0 offset: 17
+0x0012   LDR dest: R0 base: R0 offset: 1
+0x0013   LD dest: R1 offset: 15
+0x0014   STR src: R0 base: R1 offset: 3
+0x0015   LD dest: R0 offset: 13
+0x0016   LDR dest: R0 base: R0 offset: 3
+0x0017   LD dest: R1 offset: 11
+0x0018   LDR dest: R1 base: R1 offset: 2
+0x0019   ADD dest: R0 src: R1 immFlag: 0 value: R0
+0x001a   LD dest: R1 offset: 8
+0x001b   STR src: R0 base: R1 offset: 2
+0x001c   LD dest: R0 offset: 6
+0x001d   LDR dest: R0 base: R0 offset: 2
+0x001e   LD dest: R1 offset: 4
+0x001f   LDR dest: R1 base: R1 offset: 0
+0x0020   LD dest: R2 offset: 2
+0x0021   STR src: R0 base: R2 offset: 0
+0x0022   JMP base: R1
+0x0023   0x3025 |  12325 | 〥
+0x0024   0x0002 |      2 | ☻
 */
