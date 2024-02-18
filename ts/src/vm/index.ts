@@ -1,6 +1,6 @@
 import EventEmitter from "events";
 import { Device, MemoryMappedRegisters, displayDevice, keyboardDevice } from "./devices.js";
-import { OpCode, opCodeHandlers } from "./handlers.js";
+import { OpCode, disassemble, opCodeHandlers } from "./handlers.js";
 import {
   MEMORY_SIZE,
   R_COUNT,
@@ -13,6 +13,7 @@ import {
   signFlag,
   SUSPENDED_BIT,
   OS_LOADED_BIT,
+  toHex,
 } from "./utils.js";
 
 class SuspendedError extends Error {
@@ -84,10 +85,17 @@ export class VM extends EventEmitter {
   }
 
   run() {
+    // const initPC = this.pc;
     try {
       while (this.running && !this.suspended) {
         const instr = this.read(this.pc++);
         const op: OpCode = instr >> 12;
+        // console.log([...this.registers].map(toHex).join(", "));
+        // console.log([...this.memory.subarray(0x3027, 0x3027 + 10)].map(toHex).join(", "));
+        // console.log(disassemble(instr));
+
+        // if (this.pc > initPC + 60) break;
+
         const handler = opCodeHandlers[op];
 
         if (!handler) {

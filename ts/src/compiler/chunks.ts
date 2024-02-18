@@ -33,7 +33,7 @@ export type CodeChunk = {
 };
 
 export const chunk = (opcode: OpCode, chunk: Partial<Omit<CodeChunk, "opcode">> = {}): CodeChunk => ({
-  value: 1 << 15,
+  value: 1 << 16,
   reg1: 0,
   reg2: 0,
   reg3: 0,

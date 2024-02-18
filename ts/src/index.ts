@@ -38,6 +38,7 @@ program
     const image = fs.readFileSync(imageFile);
 
     const vm = new VM(osImage);
+    console.log("Os image loaded");
 
     input.setRawMode(true);
     readline.emitKeypressEvents(input);
@@ -49,9 +50,15 @@ program
     });
 
     vm.loadImage(image);
+    console.log("Image loaded");
+
     vm.on("halt", () => {
+      console.log("Halted");
+
       process.exit(0);
     });
+
+    console.log("Starting VM...");
     vm.run();
   });
 

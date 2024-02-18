@@ -30,7 +30,7 @@ export const loadRegParams = (destReg: Register, srcReg: Register, offset: Addre
 
 export const storeParams = (srcReg: Register, offset: Address) => (srcReg << 9) | offset;
 export const storeIndirectParams = (srcReg: Register, offset: Address) => (srcReg << 9) | offset;
-export const storeRegParams = (srcReg: Register, destReg: Register, offset: Address) =>
-  (srcReg << 9) | (destReg << 6) | offset;
+export const storeRegParams = (srcReg: Register, baseReg: Register, offset: Address) =>
+  (srcReg << 9) | (baseReg << 6) | offset;
 
 export const trapParams = (trapVector: TrapCode) => trapVector;

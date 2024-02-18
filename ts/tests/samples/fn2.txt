@@ -1,4 +1,4 @@
-(fn x, y -> y + 2 * x) 1 2
+(fn x -> fn y -> y + 2 * x) 1 2
 /*
 .code
 push c_2
