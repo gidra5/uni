@@ -7,15 +7,21 @@ import { CodeChunk, chunk, chunkToByteCode } from "./chunks.js";
 import { CopySymbol, copy } from "../utils/copy.js";
 import { omit } from "../utils/index.js";
 
-type StackEntryValue = { reg?: number };
+type StackEntryValue = {};
+type RegisterReference = {
+  dataOffset?: number;
+  stackOffset?: number;
+  stale: boolean; // needs to be written to memory before value is accessed
+  weak: boolean; // can be overwritten to store another value
+};
+
 type Context = {
   stack: Scope<StackEntryValue>;
   stackFrames: Scope[];
   chunks: CodeChunk[];
   functionChunks: CodeChunk[][];
   data: number[][];
-  occupiedRegisters: number[];
-  registerToStack: Record<number, number>;
+  registers: Record<number, RegisterReference>;
   maxRegisters: number;
 };
 
@@ -25,9 +31,8 @@ export class Compiler {
     stackFrames: [],
     chunks: [],
     data: [[0]],
-    occupiedRegisters: [],
     functionChunks: [],
-    registerToStack: {},
+    registers: {},
     maxRegisters: 8,
   };
   constructor(context?: Partial<Context>) {
@@ -88,46 +93,64 @@ export class Compiler {
     });
   }
 
-  findFreeRegister() {
-    const index = this.context.occupiedRegisters.findIndex((x, i) => x !== i);
-    // console.log(this.context.occupiedRegisters, index, this.context.occupiedRegisters.length);
+  resetStack() {
+    return this.update((c) => {
+      c.context.stack = new Scope();
+      c.context.registers = {};
+      return c;
+    });
+  }
 
-    return index === -1 ? this.context.occupiedRegisters.length : index;
+  findFreeRegister() {
+    return (
+      Iterator.natural()
+        .map((i) => ({ reg: i, ...(this.context.registers[i] ?? {}) }))
+        .find(({ weak }) => weak === undefined || weak)?.reg ?? Register.R_R0
+    );
   }
 
   allocateRegisters(...regs: Register[]) {
     return this.update((c) => {
-      for (const reg of regs.filter((reg) => c.context.occupiedRegisters[reg] !== reg))
-        c.context.occupiedRegisters.splice(reg, 0, reg);
+      for (const reg of regs) {
+        if (!c.context.registers[reg]) c.context.registers[reg] = { stale: false, weak: false };
+        else c.context.registers[reg].weak = false;
+      }
       return c;
     });
   }
 
   freeRegisters(...regs: Register[]) {
     return this.update((c) => {
-      c.context.occupiedRegisters = c.context.occupiedRegisters.filter((x) => !regs.includes(x));
+      for (const reg of regs) {
+        if (c.context.registers[reg]) c.context.registers[reg].weak = true;
+      }
       return c;
     });
   }
 
-  loadStackBaseInstruction(reg: Register) {
-    return this.pushChunk(chunk(OpCode.OP_LD, { dataOffset: 0, reg1: reg }));
+  getDataInstruction(reg: Register, dataOffset: number) {
+    // if (this.context.registers[reg]?.dataOffset === dataOffset) return this;
+    return this.pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset })).getRegister(reg, { dataOffset });
   }
 
-  stackSetInstruction(reg: Register, offset: number) {
+  setDataInstruction(reg: Register, dataOffset: number) {
+    // if (this.context.registers[reg]?.dataOffset === dataOffset) return this.setRegister(reg);
+
+    return this.pushChunk(chunk(OpCode.OP_ST, { reg1: reg, dataOffset })).setRegister(reg);
+  }
+
+  loadStackBaseInstruction(reg: Register) {
+    return this.getDataInstruction(reg, 0);
+  }
+
+  stackSetInstruction(reg: Register, index: number) {
     const _reg = this.allocateRegisters(reg).findFreeRegister();
 
-    return this.loadStackBaseInstruction(_reg).pushChunk(
-      chunk(OpCode.OP_STR, { value: offset, reg1: reg, reg2: _reg })
-    );
+    return this.loadStackBaseInstruction(_reg).pushChunk(chunk(OpCode.OP_STR, { value: index, reg1: reg, reg2: _reg }));
   }
 
-  stackGetInstruction(reg: Register, offset: number) {
-    if (this.context.stack.getByIndex(offset)?.value?.reg !== undefined) {
-      return this;
-    }
-
-    return this.loadStackBaseInstruction(reg).pushChunk(chunk(OpCode.OP_LDR, { value: offset, reg1: reg, reg2: reg }));
+  stackGetInstruction(reg: Register, index: number) {
+    return this.loadStackBaseInstruction(reg).pushChunk(chunk(OpCode.OP_LDR, { value: index, reg1: reg, reg2: reg }));
   }
 
   stackPushInstruction(reg: Register) {
@@ -139,13 +162,6 @@ export class Compiler {
 
   stackPopInstruction(reg: Register) {
     return this.stackPop().stackGetInstruction(reg, this.context.stack.size() - 1);
-  }
-
-  resetStack() {
-    return this.update((c) => {
-      c.context.stack = new Scope();
-      return c;
-    });
   }
 
   setStackBaseInstruction(stackSize: number) {
@@ -175,8 +191,7 @@ export class Compiler {
     return this.update((c) => {
       const stackSize = c.context.stack.size();
       c.context.stackFrames.push(c.context.stack);
-      c.context.stack = new Scope();
-      return c.setStackBaseInstruction(stackSize);
+      return c.resetStack().setStackBaseInstruction(stackSize);
     });
   }
 
