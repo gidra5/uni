@@ -231,19 +231,17 @@ export class Compiler {
         const fn = ast.children[0];
         const arg = ast.children[1];
         const reg = this.findFreeRegister();
-        const x = this.stackPush().compileToChunks(arg).compileToChunks(fn);
-        const leaChunk = chunk(OpCode.OP_LEA, { reg1: reg, value: 0 });
-        const y = x
-          .pushChunk(leaChunk)
-          .stackSetInstruction(reg, this.context.stack.size())
-          .stackPopInstruction(reg)
-          .allocateRegisters(reg)
+        const leaChunkIndex = this.context.chunks.length;
+        const y = this.pushChunk(chunk(OpCode.OP_LEA, { reg1: reg, value: 0 }))
+          .stackPushInstruction(reg)
+          .compileToChunks(arg)
+          .compileToChunks(fn)
+          .stackPop() // pop fn address, is consumed by operator
           .stackPop() // pop argument, so it will be in next stack frame
           .stackPop() // pop return address, so it will be in next stack frame
           .pushStackFrameInstruction()
-          .pushChunk(chunk(OpCode.OP_JMP, { reg1: reg }))
-          .freeRegisters(reg);
-        leaChunk.value = y.context.chunks.length - 1 - x.context.chunks.length;
+          .pushChunk(chunk(OpCode.OP_JMP, { reg1: reg }));
+        y.context.chunks[leaChunkIndex].value = y.context.chunks.length - 1 - this.context.chunks.length;
         return y.popStackFrameInstruction();
       } else if (ast.value === "print") {
         const expr = ast.children[0];
