@@ -4,15 +4,20 @@ import { Scope } from "../scope.js";
 import { OpCode, TrapCode, disassemble } from "../vm/handlers.js";
 import { Register, signExtend, toHex } from "../vm/utils.js";
 import { CodeChunk, chunk, chunkToByteCode } from "./chunks.js";
+import { CopySymbol, copy } from "../utils/copy.js";
+import { omit } from "../utils/index.js";
 
+type StackEntryValue = { reg?: number };
 type Context = {
   scope: Scope;
-  stack: Scope;
+  stack: Scope<StackEntryValue>;
   stackFrames: Scope[];
   chunks: CodeChunk[];
   functionChunks: CodeChunk[][];
   data: number[][];
   occupiedRegisters: number[];
+  registerToStack: Record<number, number>;
+  maxRegisters: number;
 };
 
 export class Compiler {
@@ -24,99 +29,108 @@ export class Compiler {
     data: [[0]],
     occupiedRegisters: [],
     functionChunks: [],
+    registerToStack: {},
+    maxRegisters: 8,
   };
-  constructor(context?: Context) {
-    if (context) this.context = context;
+  constructor(context?: Partial<Context>) {
+    if (context) this.context = { ...this.context, ...context };
+  }
+
+  [CopySymbol]() {
+    return new Compiler(copy(omit(this.context, ["maxRegisters"])));
   }
 
   copy() {
-    const context: Context = {
-      ...this.context,
-      scope: this.context.scope.copy(),
-      stack: this.context.stack.copy(),
-      chunks: [...this.context.chunks],
-      data: [...this.context.data],
-      stackFrames: [...this.context.stackFrames],
-      functionChunks: [...this.context.functionChunks],
-      occupiedRegisters: [...this.context.occupiedRegisters],
-    };
-    return new Compiler(context);
+    return copy(this);
   }
 
-  pushData(...data: number[][] | [(c: Compiler) => number[]]) {
-    const copy = this.copy();
-    const _data = (typeof data[0] === "function" ? data[0](copy) : data) as number[][];
-    copy.context.data.push(..._data);
-    return copy;
+  update(mapper: (c: Compiler) => Compiler) {
+    return mapper(this.copy());
   }
 
-  pushChunk(...code: CodeChunk[] | [(c: Compiler) => CodeChunk[]]) {
-    const copy = this.copy();
-    const chunks = (typeof code[0] === "function" ? code[0](copy) : code) as CodeChunk[];
-    copy.context.chunks.push(...chunks);
-    return copy;
+  pushData(...data: number[][]) {
+    return this.update((c) => {
+      c.context.data.push(...data);
+      return c;
+    });
+  }
+
+  pushChunk(...code: CodeChunk[]) {
+    return this.update((c) => {
+      c.context.chunks.push(...code);
+      return c;
+    });
   }
 
   pushFunctionChunk(...code: CodeChunk[][]) {
-    const copy = this.copy();
-    copy.context.functionChunks.push(...code);
-    return copy;
+    return this.update((c) => {
+      c.context.functionChunks.push(...code);
+      return c;
+    });
   }
 
   scopeAdd(name: string, value: any = {}) {
-    const copy = this.copy();
-    copy.context.scope = copy.context.scope.add(name, value);
-    return copy;
+    return this.update((c) => {
+      c.context.scope = c.context.scope.add(name, value);
+      return c;
+    });
   }
 
   scopePush(value: any = {}) {
-    const copy = this.copy();
-    copy.context.scope = copy.context.scope.push(value);
-    return copy;
+    return this.update((c) => {
+      c.context.scope = c.context.scope.push(value);
+      return c;
+    });
   }
 
   scopePop() {
-    const copy = this.copy();
-    copy.context.scope = copy.context.scope.removeByRelativeIndex(0);
-    return copy;
+    return this.update((c) => {
+      c.context.scope = c.context.scope.removeByRelativeIndex(0);
+      return c;
+    });
   }
 
-  stackAdd(name: string, value: any = {}) {
-    const copy = this.copy();
-    copy.context.stack = copy.context.stack.add(name, value);
-    return copy;
+  stackAdd(name: string, value: StackEntryValue = {}) {
+    return this.update((c) => {
+      c.context.stack = c.context.stack.add(name, value);
+      return c;
+    });
   }
 
-  stackPush(value: any = {}) {
-    const copy = this.copy();
-    copy.context.stack = copy.context.stack.push(value);
-    return copy;
+  stackPush(value: StackEntryValue = {}) {
+    return this.update((c) => {
+      c.context.stack = c.context.stack.push(value);
+      return c;
+    });
   }
 
   stackPop() {
-    const copy = this.copy();
-    copy.context.stack = copy.context.stack.removeByRelativeIndex(0);
-    return copy;
+    return this.update((c) => {
+      c.context.stack = c.context.stack.removeByRelativeIndex(0);
+      return c;
+    });
   }
 
   findFreeRegister() {
     const index = this.context.occupiedRegisters.findIndex((x, i) => x !== i);
-    console.log(this.context.occupiedRegisters, index, this.context.occupiedRegisters.length);
+    // console.log(this.context.occupiedRegisters, index, this.context.occupiedRegisters.length);
 
     return index === -1 ? this.context.occupiedRegisters.length : index;
   }
 
   allocateRegisters(...regs: Register[]) {
-    const copy = this.copy();
-    for (const reg of regs.filter((reg) => copy.context.occupiedRegisters[reg] !== reg))
-      copy.context.occupiedRegisters.splice(reg, 0, reg);
-    return copy;
+    return this.update((c) => {
+      for (const reg of regs.filter((reg) => c.context.occupiedRegisters[reg] !== reg))
+        c.context.occupiedRegisters.splice(reg, 0, reg);
+      return c;
+    });
   }
 
   freeRegisters(...regs: Register[]) {
-    const copy = this.copy();
-    copy.context.occupiedRegisters = copy.context.occupiedRegisters.filter((x) => !regs.includes(x));
-    return copy;
+    return this.update((c) => {
+      c.context.occupiedRegisters = c.context.occupiedRegisters.filter((x) => !regs.includes(x));
+      return c;
+    });
   }
 
   loadStackBaseInstruction(reg: Register) {
@@ -132,6 +146,10 @@ export class Compiler {
   }
 
   stackGetInstruction(reg: Register, offset: number) {
+    if (this.context.stack.getByIndex(offset)?.value?.reg !== undefined) {
+      return this;
+    }
+
     return this.loadStackBaseInstruction(reg).pushChunk(chunk(OpCode.OP_LDR, { value: offset, reg1: reg, reg2: reg }));
   }
 
@@ -147,9 +165,10 @@ export class Compiler {
   }
 
   resetStack() {
-    const copy = this.copy();
-    copy.context.stack = new Scope();
-    return copy;
+    return this.update((c) => {
+      c.context.stack = new Scope();
+      return c;
+    });
   }
 
   setStackBaseInstruction(stackSize: number) {
@@ -176,21 +195,24 @@ export class Compiler {
   }
 
   pushStackFrameInstruction() {
-    const stackSize = this.context.stack.size();
-    const copy = this.resetStack();
-    copy.context.stackFrames.push(this.context.stack);
-    return copy.setStackBaseInstruction(stackSize);
+    return this.update((c) => {
+      const stackSize = c.context.stack.size();
+      c.context.stackFrames.push(c.context.stack);
+      c.context.stack = new Scope();
+      return c.setStackBaseInstruction(stackSize);
+    });
   }
 
   popStackFrameInstruction() {
-    const copy = this.copy();
-    copy.context.stack = copy.context.stackFrames.pop()!;
-    const stackSize = -this.context.stack.size();
-    return copy.setStackBaseInstruction(stackSize);
+    return this.update((c) => {
+      c.context.stack = c.context.stackFrames.pop()!;
+      const stackSize = -c.context.stack.size();
+      return c.setStackBaseInstruction(stackSize);
+    });
   }
 
   private compileToChunks(ast: AbstractSyntaxTree): Compiler {
-    console.log(ast, this);
+    // console.log(ast, this);
     if (ast.name === "group") {
       if (ast.value === "true") {
         return this.pushData([-1]);
@@ -211,7 +233,7 @@ export class Compiler {
           .compileToChunks(expr)
           .stackPopInstruction(Register.R_R0) // pop return value
           .allocateRegisters(Register.R_R0)
-          .stackPopInstruction(Register.R_R1) // drop argument
+          .stackPop() // drop argument
           .stackPopInstruction(Register.R_R1) // pop return address
           .allocateRegisters(Register.R_R1)
           .stackPushInstruction(Register.R_R0) // push return value

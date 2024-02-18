@@ -1,4 +1,5 @@
 import { Iterator } from "iterator-js";
+import { CopySymbol, copy } from "./utils/copy.js";
 
 type ScopeInnerEntry<T> = { name?: string; value: T };
 export type ScopeEntry<T> = { name?: string; relativeIndex: number; index: number; value: T };
@@ -95,12 +96,12 @@ export class Scope<T = any> {
   }
 
   /** 0 is closest scope variable */
-  getByIndex(index: number): ScopeEntry<T> | undefined {
+  getByRelativeIndex(index: number): ScopeEntry<T> | undefined {
     return this.get({ relativeIndex: index });
   }
 
   /** 0 is top-level scope variable */
-  getByLevel(level: number): ScopeEntry<T> | undefined {
+  getByIndex(level: number): ScopeEntry<T> | undefined {
     return this.get({ index: level });
   }
 
@@ -180,6 +181,10 @@ export class Scope<T = any> {
     copied.scope = this.scope.slice();
     copied.names = { ...this.names };
     return copied;
+  }
+
+  [CopySymbol](): Scope<T> {
+    return this.copy();
   }
 
   size() {

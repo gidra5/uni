@@ -2,9 +2,9 @@ import { Iterator } from "iterator-js";
 
 export const CopySymbol = Symbol("Copy");
 
-export type Copyable<T> = {
-  [CopySymbol]: () => T;
-};
+export interface Copyable<T> {
+  [CopySymbol](): T;
+}
 
 export const copy = <T>(x: T | Copyable<T>): T => {
   if (!x) return x;
