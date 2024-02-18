@@ -9,7 +9,6 @@ import { omit } from "../utils/index.js";
 
 type StackEntryValue = { reg?: number };
 type Context = {
-  scope: Scope;
   stack: Scope<StackEntryValue>;
   stackFrames: Scope[];
   chunks: CodeChunk[];
@@ -22,7 +21,6 @@ type Context = {
 
 export class Compiler {
   private context: Context = {
-    scope: new Scope(),
     stack: new Scope(),
     stackFrames: [],
     chunks: [],
@@ -65,27 +63,6 @@ export class Compiler {
   pushFunctionChunk(...code: CodeChunk[][]) {
     return this.update((c) => {
       c.context.functionChunks.push(...code);
-      return c;
-    });
-  }
-
-  scopeAdd(name: string, value: any = {}) {
-    return this.update((c) => {
-      c.context.scope = c.context.scope.add(name, value);
-      return c;
-    });
-  }
-
-  scopePush(value: any = {}) {
-    return this.update((c) => {
-      c.context.scope = c.context.scope.push(value);
-      return c;
-    });
-  }
-
-  scopePop() {
-    return this.update((c) => {
-      c.context.scope = c.context.scope.removeByRelativeIndex(0);
       return c;
     });
   }
@@ -297,10 +274,10 @@ export class Compiler {
         return this.compileToChunks(left)
           .compileToChunks(right)
           .pushChunk(
-            chunk(OpCode.OP_LD, { stackOffset: this.context.scope.size(), reg1: Register.R_R0 }),
-            chunk(OpCode.OP_LD, { stackOffset: this.context.scope.size() + 1, reg1: Register.R_R1 }),
+            chunk(OpCode.OP_LD, { stackOffset: this.context.stack.size(), reg1: Register.R_R0 }),
+            chunk(OpCode.OP_LD, { stackOffset: this.context.stack.size() + 1, reg1: Register.R_R1 }),
 
-            chunk(OpCode.OP_ST, { stackOffset: this.context.scope.size(), reg1: Register.R_R2 })
+            chunk(OpCode.OP_ST, { stackOffset: this.context.stack.size(), reg1: Register.R_R2 })
           );
       }
     } else if (ast.name === "float") {

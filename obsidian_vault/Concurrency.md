@@ -25,3 +25,5 @@ All concurrent method calls on the same instance are pinned to the same thread a
 Any function can be pinned to some thread to guarantee that it will always be executed on the same thread.
 
 Also there are concurrency primitives such as atomics, mutexes and semaphores.
+
+https://stackoverflow.com/questions/980999/what-does-multicore-assembly-language-look-like
