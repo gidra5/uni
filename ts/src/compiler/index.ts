@@ -201,8 +201,9 @@ export class Compiler {
     const register = this.context.registers[reg];
     if (!register || !register.stale) return this;
     const { dataOffset, stackOffset } = register;
-    if (dataOffset !== undefined) return this.dataSetInstruction2(reg, dataOffset).syncedRegister(reg);
-    if (stackOffset !== undefined) return this.stackSetInstruction2(reg, stackOffset).syncedRegister(reg);
+    if (dataOffset !== undefined) return this.dataSetInstruction(reg, dataOffset).syncedRegister(reg);
+    if (stackOffset !== undefined) return this.stackSetInstruction(reg, stackOffset).syncedRegister(reg);
+    return this.syncedRegister(reg);
   }
 
   writeBackAllRegisters() {
@@ -214,28 +215,56 @@ export class Compiler {
     });
   }
 
+  dataGetDirectInstruction(reg: Register, dataOffset: number) {
+    return this.pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset }));
+  }
+
+  dataSetDirectInstruction(reg: Register, dataOffset: number) {
+    return this.pushChunk(chunk(OpCode.OP_ST, { reg1: reg, dataOffset }));
+  }
+
+  stackSetDirectInstruction(reg: Register, index: number) {
+    const _reg = this.allocateRegisters(reg).findFreeRegister("data", 0);
+
+    return this.dataGetInstruction(_reg, 0).pushChunk(chunk(OpCode.OP_STR, { value: index, reg1: reg, reg2: _reg }));
+  }
+
+  stackGetDirectInstruction(reg: Register, index: number) {
+    return this.dataGetInstruction(reg, 0).pushChunk(chunk(OpCode.OP_LDR, { value: index, reg1: reg, reg2: reg }));
+  }
+
   dataGetInstruction(reg: Register, dataOffset: number) {
     if (this.context.registers[reg]?.dataOffset === dataOffset) return this.getRegister(reg, { dataOffset });
-    return this.pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset })).getRegister(reg, { dataOffset });
+    // const register = this.context.registers[reg];
+    // if (!register || register.dataOffset === undefined || register.dataOffset === dataOffset)
+    //   return this.getRegister(reg, { dataOffset });
+
+    return this.dataGetDirectInstruction(reg, dataOffset).getRegister(reg, { dataOffset });
   }
 
   dataSetInstruction(reg: Register, dataOffset: number) {
     if (this.context.registers[reg]?.dataOffset === dataOffset) return this.setRegister(reg);
-    return this.pushChunk(chunk(OpCode.OP_ST, { reg1: reg, dataOffset })).setRegister(reg, { dataOffset });
+    // const register = this.context.registers[reg];
+    // if (!register || register.dataOffset === undefined || register.dataOffset === dataOffset)
+    //   return this.setRegister(reg, { dataOffset });
+
+    return this.dataSetDirectInstruction(reg, dataOffset).setRegister(reg, { dataOffset });
   }
 
   stackSetInstruction(reg: Register, index: number) {
-    const _reg = this.allocateRegisters(reg).findFreeRegister("data", 0);
+    // const register = this.context.registers[reg];
+    // if (!register || register.stackOffset === undefined || register.stackOffset === index)
+    //   return this.setRegister(reg, { stackOffset: index });
 
-    return this.dataGetInstruction(_reg, 0)
-      .pushChunk(chunk(OpCode.OP_STR, { value: index, reg1: reg, reg2: _reg }))
-      .setRegister(reg, { stackOffset: index });
+    return this.stackSetDirectInstruction(reg, index).setRegister(reg, { stackOffset: index });
   }
 
   stackGetInstruction(reg: Register, index: number) {
-    return this.dataGetInstruction(reg, 0)
-      .pushChunk(chunk(OpCode.OP_LDR, { value: index, reg1: reg, reg2: reg }))
-      .getRegister(reg, { stackOffset: index });
+    // const register = this.context.registers[reg];
+    // if (!register || register.stackOffset === undefined || register.stackOffset === index)
+    //   return this.getRegister(reg, { stackOffset: index });
+
+    return this.stackGetDirectInstruction(reg, index).getRegister(reg, { stackOffset: index });
   }
 
   stackPushInstruction(reg: Register) {
