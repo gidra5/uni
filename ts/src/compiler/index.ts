@@ -64,8 +64,9 @@ export class Compiler {
 
   pushChunk(...code: CodeChunk[]) {
     return this.update((c) => {
-      console.log(c.context.registers);
-      console.log(code.map(chunkToString).join("\n"));
+      // console.log(c.context.registers);
+      // console.log(code.map(chunkToString).join("\n"));
+      // console.log("");
 
       c.context.chunks.push(...code);
       return c;
@@ -99,7 +100,11 @@ export class Compiler {
 
   stackPop() {
     return this.update((c) => {
-      c.context.stack = c.context.stack.removeByRelativeIndex(0);
+      const index = c.context.stack.size() - 1;
+      c.context.stack = c.context.stack.removeByIndex(index);
+      c.context.registers = Iterator.iterEntries(c.context.registers)
+        .filterValues((x) => index !== x.stackOffset)
+        .toObject();
       return c;
     });
   }
@@ -184,7 +189,7 @@ export class Compiler {
 
   getRegister(reg: Register, ref: Partial<RegisterReference> = {}) {
     return this.update((c) => {
-      c.context.registers[reg] = { ...ref, stale: false, weak: true };
+      c.context.registers[reg] = { stale: false, ...ref, weak: true };
       return c;
     });
   }
@@ -208,6 +213,8 @@ export class Compiler {
   }
 
   writeBackAllRegisters() {
+    // console.log("write back all registers", this.context.registers);
+
     return this.update((c) => {
       for (const reg in c.context.registers) {
         c = c.writeBackRegister(Number(reg));
@@ -231,49 +238,53 @@ export class Compiler {
   }
 
   stackGetDirectInstruction(reg: Register, index: number) {
-    return this.dataGetInstruction(reg, 0).pushChunk(chunk(OpCode.OP_LDR, { value: index, reg1: reg, reg2: reg }));
+    const _reg = this.allocateRegisters(reg).findFreeRegister("data", 0);
+
+    return this.dataGetInstruction(_reg, 0).pushChunk(chunk(OpCode.OP_LDR, { value: index, reg1: reg, reg2: _reg }));
   }
 
   dataGetInstruction(reg: Register, dataOffset: number) {
-    if (this.context.registers[reg]?.dataOffset === dataOffset) return this.getRegister(reg, { dataOffset });
-    // const register = this.context.registers[reg];
-    // if (!register || register.dataOffset === undefined || register.dataOffset === dataOffset)
-    //   return this.getRegister(reg, { dataOffset });
+    const register = this.context.registers[reg];
+    // console.log("data get", register, reg, dataOffset);
+    if (!register)
+      return this.getRegister(reg, { dataOffset, stackOffset: undefined }).dataGetDirectInstruction(reg, dataOffset);
 
-    return this.dataGetDirectInstruction(reg, dataOffset).getRegister(reg, { dataOffset });
+    return this.getRegister(reg, { dataOffset, stackOffset: undefined });
   }
 
   dataSetInstruction(reg: Register, dataOffset: number) {
-    if (this.context.registers[reg]?.dataOffset === dataOffset) return this.setRegister(reg);
     // const register = this.context.registers[reg];
-    // if (!register || register.dataOffset === undefined || register.dataOffset === dataOffset)
-    //   return this.setRegister(reg, { dataOffset });
+    // console.log("data set", reg, dataOffset, this.context.registers, register);
 
-    return this.dataSetDirectInstruction(reg, dataOffset).setRegister(reg, { dataOffset });
+    return this.setRegister(reg, { dataOffset, stackOffset: undefined });
   }
 
   stackSetInstruction(reg: Register, index: number) {
     // const register = this.context.registers[reg];
-    // if (!register || register.stackOffset === undefined || register.stackOffset === index)
-    //   return this.setRegister(reg, { stackOffset: index });
-
-    return this.stackSetDirectInstruction(reg, index).setRegister(reg, { stackOffset: index });
+    // console.log("stack set", reg, index, this.context.registers, register);
+    return this.setRegister(reg, { stackOffset: index, dataOffset: undefined });
+    // .update(
+    //   (c) => (console.log("stack set 2", c.context.registers), c)
+    // );
   }
 
   stackGetInstruction(reg: Register, index: number) {
-    // const register = this.context.registers[reg];
-    // if (!register || register.stackOffset === undefined || register.stackOffset === index)
-    //   return this.getRegister(reg, { stackOffset: index });
+    const register = this.context.registers[reg];
+    // console.log("stack get", this.context.registers, register, reg, index);
+    if (!register)
+      return this.getRegister(reg, { stackOffset: index, dataOffset: undefined }).stackGetDirectInstruction(reg, index);
 
-    return this.stackGetDirectInstruction(reg, index).getRegister(reg, { stackOffset: index });
+    return this.getRegister(reg, { stackOffset: index, dataOffset: undefined });
   }
 
   stackPushInstruction(reg: Register) {
-    return this.stackSetInstruction(reg, this.context.stack.size()).stackPush();
+    return this.stackPush().stackSetInstruction(reg, this.context.stack.size());
   }
 
   stackPopInstruction(reg: Register) {
-    return this.stackPop().stackGetInstruction(reg, this.context.stack.size() - 1);
+    // console.log("stack pop", reg);
+
+    return this.stackGetInstruction(reg, this.context.stack.size() - 1).stackPop();
   }
 
   setStackBaseInstruction(stackSize: number) {
@@ -320,7 +331,10 @@ export class Compiler {
    */
   callInstruction(returnAddrChunkIndex: number) {
     const reg = this.findFreeRegister("stackPop");
+    // console.log("call", reg);
+
     const compiled = this.stackPopInstruction(reg) // pop fn address, is consumed by operator
+      .allocateRegisters(reg)
       .writeBackAllRegisters() // write back fn address
       .stackPop() // pop argument, so it will be consumed by function
       .stackPop() // pop return address, so it will be consumed by function
@@ -339,13 +353,19 @@ export class Compiler {
   addInstruction() {
     const reg1 = this.findFreeRegister("stackPop");
     const reg2 = this.allocateRegisters(reg1).stackPop().findFreeRegister("stackPop");
+    // console.log("add", reg1, reg2);
+
     return this.allocateRegisters(reg1, reg2)
       .stackPopInstruction(reg1)
       .stackPopInstruction(reg2)
-      .pushChunk(chunk(OpCode.OP_ADD, { reg1, reg2, reg3: reg1 }))
-      .freeRegisters(reg2)
-      .stackPushInstruction(reg1)
-      .freeRegisters(reg1);
+      .pushChunk(chunk(OpCode.OP_ADD, { reg1, reg2, reg3: reg2 }))
+      .freeRegisters(reg1)
+      .stackPushInstruction(reg2)
+      .freeRegisters(reg2);
+    // .update((c) => {
+    //   console.log("add 2", c.context.registers);
+    //   return c;
+    // });
   }
 
   /**
@@ -381,13 +401,38 @@ export class Compiler {
   stackSwapInstruction(index1: number, index2: number) {
     const reg1 = this.findFreeRegister("stack", index1);
     const reg2 = this.allocateRegisters(reg1).findFreeRegister("stack", index2);
-    return this.stackGetInstruction(reg1, index1)
-      .allocateRegisters(reg1)
-      .stackGetInstruction(reg2, index2)
-      .allocateRegisters(reg2)
-      .stackSetInstruction(reg1, index2)
-      .stackSetInstruction(reg2, index1)
-      .freeRegisters(reg1, reg2);
+    // console.log("swap", index1, index2);
+    // return this.update((c) => {
+    //   const register1 = c.context.registers[reg1] ?? { stale: true, weak: true };
+    //   const register2 = c.context.registers[reg2] ?? { stale: true, weak: true };
+    //   register1.stackOffset = index2;
+    //   register2.stackOffset = index1;
+    //   c.context.registers[reg1] = register1;
+    //   c.context.registers[reg2] = register2;
+    //   return c;
+    // });
+    return (
+      this.stackGetInstruction(reg1, index1)
+        .allocateRegisters(reg1)
+        .stackGetInstruction(reg2, index2)
+        .allocateRegisters(reg2)
+        .update((c) => {
+          const register1 = c.context.registers[reg1];
+          const register2 = c.context.registers[reg2];
+          register1.stackOffset = index2;
+          register2.stackOffset = index1;
+          register1.stale = true;
+          register2.stale = true;
+          c.context.registers[reg1] = register1;
+          c.context.registers[reg2] = register2;
+          // console.log("swap 2", c.context.registers);
+
+          return c;
+        })
+        // .stackSetInstruction(reg2, index1)
+        // .stackSetInstruction(reg1, index2)
+        .freeRegisters(reg1, reg2)
+    );
   }
 
   /**
@@ -397,7 +442,10 @@ export class Compiler {
    */
   returnInstruction() {
     const reg = this.findFreeRegister("stackPop");
+    // console.log("return", reg, this.context.registers, this.context.stack.size());
+
     return this.stackPopInstruction(reg) // pop return address
+      .allocateRegisters(reg)
       .writeBackAllRegisters() // write back rest of stack
       .pushChunk(chunk(OpCode.OP_JMP, { reg1: reg }));
   }
@@ -424,6 +472,8 @@ export class Compiler {
         const body = ast.children[1];
         const codeIndex = this.context.chunks.length;
         const dataIndex = this.context.data.length;
+        // console.log();
+
         const compiledBody = this.resetStack()
           .stackPush() // return address stack slot
           .update((c) => {
@@ -504,6 +554,8 @@ export class Compiler {
         return this;
       }
       const reg = this.findFreeRegister("stack", value.index);
+      // console.log("name", name, value, reg);
+
       return this.stackGetInstruction(reg, value.index).stackPushInstruction(reg);
     }
 
