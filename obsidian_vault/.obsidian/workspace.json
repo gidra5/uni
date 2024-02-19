@@ -25,14 +25,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Lambda Calculus/Pi Calculus.md",
+                "file": "Compilation.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "d9822c97c29aed1f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Compilation.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -98,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Lambda Calculus/Pi Calculus.md",
+                "file": "Compilation.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Lambda Calculus/Pi Calculus.md",
+                "file": "Compilation.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Lambda Calculus/Pi Calculus.md"
+                "file": "Compilation.md"
               }
             }
           },
@@ -182,11 +194,23 @@
       "bmo-chatbot:Chatbot (Clear Conversation)": false
     }
   },
-  "active": "5d1a5c9caf595230",
+  "active": "d9822c97c29aed1f",
   "lastOpenFiles": [
+    "Intermediate Representation.md",
+    "Concurrency.md",
+    "Data Normalization.md",
+    "Composites.md",
+    "Compiler Backend.md",
+    "Compilation.md",
     "Analysis.md",
-    "Lambda Calculus/Lambda calculus.md",
+    "chrome_MDKK1pYBB9_1693548495.png",
+    "Virtual Machine/Virtual Machine.md",
+    "Virtual Machine/Register-based VM.md",
+    "Virtual Machine/Stack-based VM.md",
+    "Untitled.md",
+    "Virtual Machine",
     "Lambda Calculus/Pi Calculus.md",
+    "Lambda Calculus/Lambda calculus.md",
     "Syntax Tree.md",
     "Parser.md",
     "Types.md",
@@ -201,19 +225,8 @@
     "Language Manager.md",
     "Syntax.md",
     "Token Tree.md",
-    "Tokenizer.md",
-    "Standart Library.md",
-    "Values.md",
-    "Zero-cost abstraction.md",
-    "Literals.md",
-    "Pattern matching.md",
     "Getting Started",
     "chrome_rmkcBFAW1x_1693548108.png",
-    "chrome_MDKK1pYBB9_1693548495.png",
-    "Modules.md",
-    "module.md",
-    "Optimizations.md",
-    "Operators.md",
     "Push",
     "rest",
     "Untitled.canvas"
