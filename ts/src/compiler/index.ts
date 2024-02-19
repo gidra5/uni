@@ -203,20 +203,16 @@ export class Compiler {
     return this.pushChunk(chunk(OpCode.OP_ST, { reg1: reg, dataOffset })).setRegister(reg, { dataOffset });
   }
 
-  loadStackBaseInstruction(reg: Register) {
-    return this.dataGetInstruction(reg, 0);
-  }
-
   stackSetInstruction(reg: Register, index: number) {
     const _reg = this.allocateRegisters(reg).findFreeRegister("data", 0);
 
-    return this.loadStackBaseInstruction(_reg)
+    return this.dataGetInstruction(_reg, 0)
       .pushChunk(chunk(OpCode.OP_STR, { value: index, reg1: reg, reg2: _reg }))
       .setRegister(reg, { stackOffset: index });
   }
 
   stackGetInstruction(reg: Register, index: number) {
-    return this.loadStackBaseInstruction(reg)
+    return this.dataGetInstruction(reg, 0)
       .pushChunk(chunk(OpCode.OP_LDR, { value: index, reg1: reg, reg2: reg }))
       .getRegister(reg, { stackOffset: index });
   }
