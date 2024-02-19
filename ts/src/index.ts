@@ -20,14 +20,19 @@ program
   .description("Compile a program into an image")
   .action((file, output) => {
     const code = fs.readFileSync(file, "utf-8");
+    console.log("File is read");
+
     // const [tokens, _errors] = parseTokens(code);
     // const [ast, __errors] = parse()(tokens);
     const [ast, _errors] = parseExprString(code);
+    console.log("File is parsed");
 
     const compiled = Compiler.compile(ast, 0x3000);
+    console.log("File is compiled");
     const buffer = Buffer.from(compiled.buffer);
 
     fs.writeFileSync(output, buffer.swap16(), { encoding: "binary" });
+    console.log("Compiled output is written to file");
   });
 
 program

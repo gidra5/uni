@@ -108,12 +108,19 @@ export class Compiler {
     });
   }
 
-  findFreeRegister() {
-    return (
-      Iterator.natural()
-        .map((i) => ({ reg: i, ...(this.context.registers[i] ?? {}) }))
-        .find(({ weak }) => weak === undefined || weak)?.reg ?? Register.R_R0
-    );
+  findFreeRegister(usecase: "data" | "stack" | "stackPop" | "free" = "free", value?: number): Register {
+    if (usecase === "stackPop") {
+      usecase = "stack";
+      value = this.context.stack.size() - 1;
+    }
+    const maxRegisters = this.context.maxRegisters;
+    const regs = Iterator.natural(maxRegisters).map((i) => ({ reg: i, ...(this.context.registers[i] ?? {}) }));
+
+    const dataReg = regs.find(({ dataOffset }) => usecase === "data" && dataOffset === value)?.reg;
+    const stackReg = regs.find(({ stackOffset }) => usecase === "stack" && stackOffset === value)?.reg;
+    const freeReg = regs.find(({ weak }) => weak === undefined || weak)?.reg;
+
+    return dataReg ?? stackReg ?? freeReg ?? Register.R_R0;
   }
 
   allocateRegisters(...regs: Register[]) {
@@ -142,9 +149,9 @@ export class Compiler {
     });
   }
 
-  setRegister(reg: Register) {
+  setRegister(reg: Register, ref: Partial<RegisterReference> = {}) {
     return this.update((c) => {
-      const register = c.context.registers[reg];
+      const register = c.context.registers[reg] ?? { ...ref, stale: true, weak: true };
       const dataOffset = register?.dataOffset;
       const stackOffset = register?.stackOffset;
       c.context.registers = Iterator.iterEntries(c.context.registers)
@@ -170,22 +177,23 @@ export class Compiler {
     });
   }
 
-  getDataInstruction(reg: Register, dataOffset: number) {
+  dataGetInstruction(reg: Register, dataOffset: number) {
     // if (this.context.registers[reg]?.dataOffset === dataOffset) return this;
     return this.pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset })).getRegister(reg, { dataOffset });
   }
 
-  setDataInstruction(reg: Register, dataOffset: number) {
+  dataSetInstruction(reg: Register, dataOffset: number) {
     // if (this.context.registers[reg]?.dataOffset === dataOffset) return this.setRegister(reg);
 
-    return this.pushChunk(chunk(OpCode.OP_ST, { reg1: reg, dataOffset })).setRegister(reg);
+    return this.pushChunk(chunk(OpCode.OP_ST, { reg1: reg, dataOffset })).setRegister(reg, { dataOffset });
   }
 
   loadStackBaseInstruction(reg: Register) {
-    return this.getDataInstruction(reg, 0);
+    return this.dataGetInstruction(reg, 0);
   }
 
   stackSetInstruction(reg: Register, index: number) {
+    // const _reg = this.allocateRegisters(reg).findFreeRegister("data", 0);
     const _reg = this.allocateRegisters(reg).findFreeRegister();
 
     return this.loadStackBaseInstruction(_reg).pushChunk(chunk(OpCode.OP_STR, { value: index, reg1: reg, reg2: _reg }));
@@ -209,24 +217,22 @@ export class Compiler {
   setStackBaseInstruction(stackSize: number) {
     if (stackSize === 0) return this;
     const reg1 = this.findFreeRegister();
-    const reg2 = this.allocateRegisters(reg1).findFreeRegister();
     const trimmedSize = stackSize & 0x1f;
     const imm = signExtend(trimmedSize, 5) === stackSize;
 
-    if (imm) {
-      return this.pushChunk(
-        chunk(OpCode.OP_LD, { dataOffset: 0, reg1 }),
-        chunk(OpCode.OP_ADD, { reg1, reg2: reg1, value: stackSize }),
-        chunk(OpCode.OP_ST, { dataOffset: 0, reg1 })
-      );
-    } else {
-      return this.pushData([stackSize]).pushChunk(
-        chunk(OpCode.OP_LD, { dataOffset: 0, reg1 }),
-        chunk(OpCode.OP_LD, { dataOffset: this.context.data.length, reg1: reg2 }),
-        chunk(OpCode.OP_ADD, { reg1, reg2, reg3: reg1 }),
-        chunk(OpCode.OP_ST, { dataOffset: 0, reg1 })
-      );
-    }
+    return this.dataGetInstruction(reg1, 0)
+      .update((c) => {
+        if (imm) {
+          return c.pushChunk(chunk(OpCode.OP_ADD, { reg1, reg2: reg1, value: stackSize }));
+        }
+        const dataOffset = this.context.data.length;
+        const reg2 = this.allocateRegisters(reg1).findFreeRegister();
+        return c
+          .pushData([stackSize])
+          .dataGetInstruction(reg2, dataOffset)
+          .pushChunk(chunk(OpCode.OP_ADD, { reg1, reg2, reg3: reg1 }));
+      })
+      .dataSetInstruction(reg1, 0);
   }
 
   pushStackFrameInstruction() {
