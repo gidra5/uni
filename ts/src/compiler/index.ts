@@ -7,7 +7,7 @@ import { CodeChunk, chunk, chunkToByteCode } from "./chunks.js";
 import { CopySymbol, copy } from "../utils/copy.js";
 import { omit } from "../utils/index.js";
 
-type StackEntryValue = {};
+type StackEntryValue = { offset: number; size: number };
 type RegisterReference = {
   dataOffset?: number;
   stackOffset?: number;
@@ -72,16 +72,20 @@ export class Compiler {
     });
   }
 
-  stackAdd(name: string, value: StackEntryValue = {}) {
+  stackAdd(name: string, value: Partial<StackEntryValue> = {}) {
+    const top = this.context.stack.getByRelativeIndex(0)?.value ?? { offset: 0, size: 0 };
+    const offset = top.offset + top.size;
     return this.update((c) => {
-      c.context.stack = c.context.stack.add(name, value);
+      c.context.stack = c.context.stack.add(name, { offset, size: 1, ...value });
       return c;
     });
   }
 
-  stackPush(value: StackEntryValue = {}) {
+  stackPush(value: Partial<StackEntryValue> = {}) {
+    const top = this.context.stack.getByRelativeIndex(0)?.value ?? { offset: 0, size: 0 };
+    const offset = top.offset + top.size;
     return this.update((c) => {
-      c.context.stack = c.context.stack.push(value);
+      c.context.stack = c.context.stack.push({ offset, size: 1, ...value });
       return c;
     });
   }
