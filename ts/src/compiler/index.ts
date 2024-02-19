@@ -155,14 +155,17 @@ export class Compiler {
 
   setRegister(reg: Register, ref: Partial<RegisterReference> = {}) {
     return this.update((c) => {
-      const register = c.context.registers[reg] ?? { ...ref, stale: true, weak: true };
+      const register = c.context.registers[reg] ?? { stale: true, weak: true };
       const dataOffset = register?.dataOffset;
       const stackOffset = register?.stackOffset;
-      c.context.registers = Iterator.iterEntries(c.context.registers)
-        .filterValues((x) => x.dataOffset !== dataOffset && x.stackOffset !== stackOffset)
-        .toObject();
+      let iter = Iterator.iterEntries(c.context.registers);
+
+      if (dataOffset !== undefined) iter = iter.filterValues((x) => x.dataOffset !== dataOffset);
+      if (stackOffset !== undefined) iter = iter.filterValues((x) => x.stackOffset !== stackOffset);
+      c.context.registers = iter.toObject();
+
       register.stale = true;
-      c.context.registers[reg] = register;
+      c.context.registers[reg] = { ...register, ...ref };
       return c;
     });
   }
