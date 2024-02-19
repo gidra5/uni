@@ -273,14 +273,14 @@ export class Compiler {
    * out `[..., retValue]`
    */
   callInstruction(returnAddrChunkIndex: number) {
-    const _reg = this.findFreeRegister("stackPop");
-    const compiled = this.stackPopInstruction(_reg) // pop fn address, is consumed by operator
+    const reg = this.findFreeRegister("stackPop");
+    const compiled = this.stackPopInstruction(reg) // pop fn address, is consumed by operator
       .stackPop() // pop argument, so it will be consumed by function
       .stackPop() // pop return address, so it will be consumed by function
       .pushStackFrameInstruction()
-      .pushChunk(chunk(OpCode.OP_JMP, { reg1: _reg }));
-    compiled.context.chunks[returnAddrChunkIndex].value =
-      compiled.context.chunks.length - 1 - this.context.chunks.length;
+      .pushChunk(chunk(OpCode.OP_JMP, { reg1: reg }));
+    compiled.context.chunks[returnAddrChunkIndex].value = compiled.context.chunks.length - 1 - returnAddrChunkIndex;
+
     return compiled.popStackFrameInstruction();
   }
 
