@@ -119,7 +119,7 @@ export class Compiler {
     });
   }
 
-  findFreeRegister(usecase: "data" | "stack" | "stackPop" | "free" = "free", value?: number): Register {
+  findFreeRegister(usecase: "data" | "stack" | "stackPop" | "stackPush" | "weak" = "weak", value?: number): Register {
     if (usecase === "stackPop") {
       usecase = "stack";
       value = this.context.stack.size() - 1;
@@ -130,12 +130,13 @@ export class Compiler {
 
     const dataReg = regs.find(({ dataOffset }) => usecase === "data" && dataOffset === value)?.reg;
     const stackReg = regs.find(({ stackOffset }) => usecase === "stack" && stackOffset === value)?.reg;
-    const weakReg = regs.find(({ weak }) => weak === undefined || weak)?.reg;
+    const freeReg = regs.find(({ weak }) => weak === undefined)?.reg;
+    const weakReg = regs.find(({ weak }) => weak)?.reg;
 
     // const newLocal = dataReg ?? stackReg ?? weakReg ?? Register.R_R0;
     // console.log(usecase, value, this.context.registers, newLocal, new Error().stack);
     // return newLocal;
-    return dataReg ?? stackReg ?? weakReg ?? Register.R_R0;
+    return dataReg ?? stackReg ?? freeReg ?? weakReg ?? Register.R_R0;
   }
 
   allocateRegisters(...regs: Register[]) {
@@ -201,15 +202,15 @@ export class Compiler {
     const register = this.context.registers[reg];
     if (!register || !register.stale) return this;
     const { dataOffset, stackOffset } = register;
-    if (dataOffset !== undefined) return this.dataSetInstruction(reg, dataOffset).syncedRegister(reg);
-    if (stackOffset !== undefined) return this.stackSetInstruction(reg, stackOffset).syncedRegister(reg);
+    if (dataOffset !== undefined) return this.dataSetDirectInstruction(reg, dataOffset).syncedRegister(reg);
+    if (stackOffset !== undefined) return this.stackSetDirectInstruction(reg, stackOffset).syncedRegister(reg);
     return this.syncedRegister(reg);
   }
 
   writeBackAllRegisters() {
     return this.update((c) => {
       for (const reg in c.context.registers) {
-        c.writeBackRegister(Number(reg));
+        c = c.writeBackRegister(Number(reg));
       }
       return c;
     });
@@ -268,10 +269,7 @@ export class Compiler {
   }
 
   stackPushInstruction(reg: Register) {
-    return this.allocateRegisters(reg)
-      .stackSetInstruction(reg, this.context.stack.size())
-      .stackPush()
-      .freeRegisters(reg);
+    return this.stackSetInstruction(reg, this.context.stack.size()).stackPush();
   }
 
   stackPopInstruction(reg: Register) {
@@ -323,6 +321,7 @@ export class Compiler {
   callInstruction(returnAddrChunkIndex: number) {
     const reg = this.findFreeRegister("stackPop");
     const compiled = this.stackPopInstruction(reg) // pop fn address, is consumed by operator
+      .writeBackAllRegisters() // write back fn address
       .stackPop() // pop argument, so it will be consumed by function
       .stackPop() // pop return address, so it will be consumed by function
       .pushStackFrameInstruction()
@@ -399,6 +398,7 @@ export class Compiler {
   returnInstruction() {
     const reg = this.findFreeRegister("stackPop");
     return this.stackPopInstruction(reg) // pop return address
+      .writeBackAllRegisters() // write back rest of stack
       .pushChunk(chunk(OpCode.OP_JMP, { reg1: reg }));
   }
 
@@ -424,9 +424,10 @@ export class Compiler {
         const body = ast.children[1];
         const codeIndex = this.context.chunks.length;
         const dataIndex = this.context.data.length;
-        const compiled = this.resetStack()
-          .stackPush()
+        const compiledBody = this.resetStack()
+          .stackPush() // return address stack slot
           .update((c) => {
+            // argument stack slot
             const name = ast.children[0];
             if (name.name === "placeholder") return c.stackPush();
             return c.stackAdd(name.value);
@@ -441,8 +442,8 @@ export class Compiler {
           .stackPop() // pop argument
           .returnInstruction();
 
-        return this.pushFunctionChunk(compiled.context.chunks.slice(codeIndex))
-          .pushData(...compiled.context.data.slice(dataIndex))
+        return this.pushFunctionChunk(compiledBody.context.chunks.slice(codeIndex))
+          .pushData(...compiledBody.context.data.slice(dataIndex))
           .pushFunctionPointerInstruction(this.context.functionChunks.length);
       } else if (ast.value === "application") {
         const fn = ast.children[0];
