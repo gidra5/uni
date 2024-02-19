@@ -191,13 +191,12 @@ export class Compiler {
   }
 
   dataGetInstruction(reg: Register, dataOffset: number) {
-    // if (this.context.registers[reg]?.dataOffset === dataOffset) return this;
+    if (this.context.registers[reg]?.dataOffset === dataOffset) return this.getRegister(reg, { dataOffset });
     return this.pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset })).getRegister(reg, { dataOffset });
   }
 
   dataSetInstruction(reg: Register, dataOffset: number) {
-    // if (this.context.registers[reg]?.dataOffset === dataOffset) return this.setRegister(reg);
-
+    if (this.context.registers[reg]?.dataOffset === dataOffset) return this.setRegister(reg);
     return this.pushChunk(chunk(OpCode.OP_ST, { reg1: reg, dataOffset })).setRegister(reg, { dataOffset });
   }
 
