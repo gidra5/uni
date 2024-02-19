@@ -25,6 +25,10 @@ type Context = {
   maxRegisters: number;
 };
 
+const chunkToString = (chunk: CodeChunk): string => {
+  return disassemble(chunkToByteCode([], [], 0)(chunk, 0));
+};
+
 export class Compiler {
   private context: Context = {
     stack: new Scope(),
@@ -60,6 +64,9 @@ export class Compiler {
 
   pushChunk(...code: CodeChunk[]) {
     return this.update((c) => {
+      console.log(c.context.registers);
+      console.log(code.map(chunkToString).join("\n"));
+
       c.context.chunks.push(...code);
       return c;
     });
@@ -117,14 +124,18 @@ export class Compiler {
       usecase = "stack";
       value = this.context.stack.size() - 1;
     }
+
     const maxRegisters = this.context.maxRegisters;
     const regs = Iterator.natural(maxRegisters).map((i) => ({ reg: i, ...(this.context.registers[i] ?? {}) }));
 
     const dataReg = regs.find(({ dataOffset }) => usecase === "data" && dataOffset === value)?.reg;
     const stackReg = regs.find(({ stackOffset }) => usecase === "stack" && stackOffset === value)?.reg;
-    const freeReg = regs.find(({ weak }) => weak === undefined || weak)?.reg;
+    const weakReg = regs.find(({ weak }) => weak === undefined || weak)?.reg;
 
-    return dataReg ?? stackReg ?? freeReg ?? Register.R_R0;
+    // const newLocal = dataReg ?? stackReg ?? weakReg ?? Register.R_R0;
+    // console.log(usecase, value, this.context.registers, newLocal, new Error().stack);
+    // return newLocal;
+    return dataReg ?? stackReg ?? weakReg ?? Register.R_R0;
   }
 
   allocateRegisters(...regs: Register[]) {
@@ -179,7 +190,7 @@ export class Compiler {
 
   syncedRegister(reg: Register) {
     const register = this.context.registers[reg];
-    if (!register) return this;
+    if (!register || !register.stale) return this;
     return this.update((c) => {
       c.context.registers[reg].stale = false;
       return c;
@@ -188,9 +199,19 @@ export class Compiler {
 
   writeBackRegister(reg: Register) {
     const register = this.context.registers[reg];
-    if (!register) return this;
+    if (!register || !register.stale) return this;
     const { dataOffset, stackOffset } = register;
-    return this.pushChunk(chunk(OpCode.OP_ST, { reg1: reg, dataOffset, stackOffset })).syncedRegister(reg);
+    if (dataOffset !== undefined) return this.dataSetInstruction2(reg, dataOffset).syncedRegister(reg);
+    if (stackOffset !== undefined) return this.stackSetInstruction2(reg, stackOffset).syncedRegister(reg);
+  }
+
+  writeBackAllRegisters() {
+    return this.update((c) => {
+      for (const reg in c.context.registers) {
+        c.writeBackRegister(Number(reg));
+      }
+      return c;
+    });
   }
 
   dataGetInstruction(reg: Register, dataOffset: number) {
