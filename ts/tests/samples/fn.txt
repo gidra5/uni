@@ -36,14 +36,14 @@
 0x0021   STR src: R0 base: R2 offset: 0
 0x0022   LD dest: R2 offset: 12
 0x0023   STR src: R1 base: R2 offset: 2
-0x0024   LD dest: R0 offset: 10
-0x0025   LDR dest: R0 base: R0 offset: 2
-0x0026   LD dest: R1 offset: 8
-0x0027   LDR dest: R1 base: R1 offset: 1
+0x0024   LD dest: R1 offset: 10
+0x0025   LDR dest: R1 base: R1 offset: 2
+0x0026   LD dest: R0 offset: 8
+0x0027   LDR dest: R0 base: R0 offset: 1
 0x0028   LD dest: R2 offset: 6
-0x0029   STR src: R0 base: R2 offset: 1
+0x0029   STR src: R1 base: R2 offset: 1
 0x002a   LD dest: R2 offset: 4
-0x002b   STR src: R1 base: R2 offset: 2
+0x002b   STR src: R0 base: R2 offset: 2
 0x002c   LD dest: R0 offset: 2
 0x002d   LDR dest: R0 base: R0 offset: 1
 0x002e   JMP base: R0
