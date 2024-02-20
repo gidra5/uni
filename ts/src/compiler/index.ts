@@ -8,12 +8,83 @@ import { CopySymbol, copy } from "../utils/copy.js";
 import { omit } from "../utils/index.js";
 
 type StackEntryValue = { offset: number; size: number };
-type RegisterReference = {
-  dataOffset?: number;
-  stackOffset?: number;
+type RegisterValue<T> = {
+  value: T;
   stale: boolean; // needs to be written to memory before value is accessed
   weak: boolean; // can be overwritten to store another value
 };
+type RegisterReference = {
+  dataOffset?: number;
+  stackOffset?: number;
+};
+
+class RegisterState<T> {
+  state: (RegisterValue<T> | null)[];
+  constructor(size: number) {
+    this.state = Array(size).fill(null);
+  }
+
+  [CopySymbol]() {
+    return this.copy();
+  }
+
+  copy() {
+    const copied = new RegisterState(0);
+    copied.state = copy(this.state);
+    return copied;
+  }
+
+  clear(f?: (x: RegisterValue<T> | null) => boolean) {
+    if (f) this.state = this.state.map((x) => (f(x) ? null : x));
+    else this.state = this.state.map(() => null);
+  }
+
+  find(f: (x: RegisterValue<T> | null) => boolean): Register | null {
+    const index = this.state.findIndex(f);
+    return index === -1 ? null : index;
+  }
+
+  get(register: Register): RegisterValue<T> | null {
+    return this.state[register];
+  }
+
+  set(register: Register, value: T) {
+    this.state[register] = { value, stale: true, weak: true };
+  }
+
+  unset(register: Register) {
+    this.state[register] = null;
+  }
+
+  update(register: Register, value: T) {
+    const _register = this.state[register];
+    if (!_register) {
+      this.set(register, value);
+      return;
+    }
+    _register.value = value;
+  }
+
+  stale(register: Register) {
+    const _register = this.state[register];
+    if (_register) _register.stale = true;
+  }
+
+  synced(register: Register) {
+    const _register = this.state[register];
+    if (_register) _register.stale = false;
+  }
+
+  free(register: Register) {
+    const _register = this.state[register];
+    if (_register) _register.weak = true;
+  }
+
+  allocate(register: Register) {
+    const _register = this.state[register];
+    if (_register) _register.weak = false;
+  }
+}
 
 type Context = {
   stack: Scope<StackEntryValue>;
@@ -21,8 +92,8 @@ type Context = {
   chunks: CodeChunk[];
   functionChunks: CodeChunk[][];
   data: number[][];
-  registers: Record<number, RegisterReference>;
-  maxRegisters: number;
+  registerState: RegisterState<RegisterReference>;
+  // registers: any[];
 };
 
 const chunkToString = (chunk: CodeChunk): string => {
@@ -36,11 +107,21 @@ export class Compiler {
     chunks: [],
     data: [[0]],
     functionChunks: [],
-    registers: {},
-    maxRegisters: 8,
+    registerState: new RegisterState(8),
+    // get registers() {
+    //   return this.registerState.state.flatMap((x, i) => (x ? { reg: i, ...x } : []));
+    // },
   };
+
   constructor(context?: Partial<Context>) {
-    if (context) this.context = { ...this.context, ...context };
+    if (context)
+      this.context = {
+        ...this.context,
+        ...context,
+        // get registers() {
+        //   return this.registerState.state.flatMap((x, i) => (x ? { ...x, reg: i } : []));
+        // },
+      };
   }
 
   [CopySymbol]() {
@@ -102,9 +183,7 @@ export class Compiler {
     return this.update((c) => {
       const index = c.context.stack.size() - 1;
       c.context.stack = c.context.stack.removeByIndex(index);
-      c.context.registers = Iterator.iterEntries(c.context.registers)
-        .filterValues((x) => index !== x.stackOffset)
-        .toObject();
+      c.context.registerState.clear((x) => x?.value.stackOffset === index);
       return c;
     });
   }
@@ -112,7 +191,7 @@ export class Compiler {
   resetStack() {
     return this.update((c) => {
       c.context.stack = new Scope();
-      c.context.registers = {};
+      c.context.registerState.clear();
       return c;
     });
   }
@@ -130,25 +209,26 @@ export class Compiler {
       value = this.context.stack.size() - 1;
     }
 
-    const maxRegisters = this.context.maxRegisters;
-    const regs = Iterator.natural(maxRegisters).map((i) => ({ reg: i, ...(this.context.registers[i] ?? {}) }));
+    const freeReg = this.context.registerState.find((x) => x === null);
+    const weakReg = this.context.registerState.find((x) => !!x?.weak);
+    if (usecase === "data") {
+      const dataReg = this.context.registerState.find((x) => x?.value.dataOffset === value);
+      return dataReg ?? freeReg ?? weakReg ?? Register.R_R0;
+    }
+    if (usecase === "stack") {
+      const stackReg = this.context.registerState.find((x) => x?.value.stackOffset === value);
+      return stackReg ?? freeReg ?? weakReg ?? Register.R_R0;
+    }
 
-    const dataReg = regs.find(({ dataOffset }) => usecase === "data" && dataOffset === value)?.reg;
-    const stackReg = regs.find(({ stackOffset }) => usecase === "stack" && stackOffset === value)?.reg;
-    const freeReg = regs.find(({ weak }) => weak === undefined)?.reg;
-    const weakReg = regs.find(({ weak }) => weak)?.reg;
-
-    // const newLocal = dataReg ?? stackReg ?? weakReg ?? Register.R_R0;
-    // console.log(usecase, value, this.context.registers, newLocal, new Error().stack);
-    // return newLocal;
-    return dataReg ?? stackReg ?? freeReg ?? weakReg ?? Register.R_R0;
+    return freeReg ?? weakReg ?? Register.R_R0;
   }
 
   allocateRegisters(...regs: Register[]) {
     return this.update((c) => {
       for (const reg of regs) {
-        if (!c.context.registers[reg]) c.context.registers[reg] = { stale: false, weak: false };
-        else c.context.registers[reg].weak = false;
+        const register = c.context.registerState.get(reg);
+        if (!register) c.context.registerState.set(reg, {});
+        c.context.registerState.allocate(reg);
       }
       return c;
     });
@@ -157,7 +237,7 @@ export class Compiler {
   freeRegisters(...regs: Register[]) {
     return this.update((c) => {
       for (const reg of regs) {
-        if (c.context.registers[reg]) c.context.registers[reg].weak = true;
+        c.context.registerState.free(reg);
       }
       return c;
     });
@@ -165,48 +245,47 @@ export class Compiler {
 
   freeRegister(reg: Register) {
     return this.update((c) => {
-      c.context.registers[reg].weak = true;
+      c.context.registerState.free(reg);
       return c;
     });
   }
 
-  setRegister(reg: Register, ref: Partial<RegisterReference> = {}) {
+  setRegister(reg: Register, value: RegisterReference) {
     return this.update((c) => {
-      const register = c.context.registers[reg] ?? { stale: true, weak: true };
-      const dataOffset = register?.dataOffset;
-      const stackOffset = register?.stackOffset;
-      let iter = Iterator.iterEntries(c.context.registers);
+      const register = c.context.registerState.get(reg) ?? { value, stale: true, weak: true };
+      const dataOffset = register.value.dataOffset;
+      const stackOffset = register.value.stackOffset;
 
-      if (dataOffset !== undefined) iter = iter.filterValues((x) => x.dataOffset !== dataOffset);
-      if (stackOffset !== undefined) iter = iter.filterValues((x) => x.stackOffset !== stackOffset);
-      c.context.registers = iter.toObject();
+      if (dataOffset !== undefined) c.context.registerState.clear((x) => x?.value.dataOffset === dataOffset);
+      if (stackOffset !== undefined) c.context.registerState.clear((x) => x?.value.stackOffset === stackOffset);
 
-      register.stale = true;
-      c.context.registers[reg] = { ...register, ...ref };
+      c.context.registerState.update(reg, { ...register.value, ...value });
+      c.context.registerState.stale(reg);
       return c;
     });
   }
 
-  getRegister(reg: Register, ref: Partial<RegisterReference> = {}) {
+  getRegister(reg: Register, value: RegisterReference) {
     return this.update((c) => {
-      c.context.registers[reg] = { stale: false, ...ref, weak: true };
+      c.context.registerState.update(reg, value);
+      c.context.registerState.synced(reg);
       return c;
     });
   }
 
   syncedRegister(reg: Register) {
-    const register = this.context.registers[reg];
+    const register = this.context.registerState.get(reg);
     if (!register || !register.stale) return this;
     return this.update((c) => {
-      c.context.registers[reg].stale = false;
+      c.context.registerState.synced(reg);
       return c;
     });
   }
 
   writeBackRegister(reg: Register) {
-    const register = this.context.registers[reg];
+    const register = this.context.registerState.get(reg);
     if (!register || !register.stale) return this;
-    const { dataOffset, stackOffset } = register;
+    const { dataOffset, stackOffset } = register.value;
     if (dataOffset !== undefined) return this.dataSetDirectInstruction(reg, dataOffset).syncedRegister(reg);
     if (stackOffset !== undefined) return this.stackSetDirectInstruction(reg, stackOffset).syncedRegister(reg);
     return this.syncedRegister(reg);
@@ -216,9 +295,7 @@ export class Compiler {
     // console.log("write back all registers", this.context.registers);
 
     return this.update((c) => {
-      for (const reg in c.context.registers) {
-        c = c.writeBackRegister(Number(reg));
-      }
+      c.context.registerState.state.forEach((_, i) => (c = c.writeBackRegister(i)));
       return c;
     });
   }
@@ -244,7 +321,7 @@ export class Compiler {
   }
 
   dataGetInstruction(reg: Register, dataOffset: number) {
-    const register = this.context.registers[reg];
+    const register = this.context.registerState.get(reg);
     // console.log("data get", register, reg, dataOffset);
     if (!register)
       return this.getRegister(reg, { dataOffset, stackOffset: undefined }).dataGetDirectInstruction(reg, dataOffset);
@@ -253,14 +330,14 @@ export class Compiler {
   }
 
   dataSetInstruction(reg: Register, dataOffset: number) {
-    // const register = this.context.registers[reg];
+    // const register = this.context.registerState.get(reg);
     // console.log("data set", reg, dataOffset, this.context.registers, register);
 
     return this.setRegister(reg, { dataOffset, stackOffset: undefined });
   }
 
   stackSetInstruction(reg: Register, index: number) {
-    // const register = this.context.registers[reg];
+    // const register = this.context.registerState.get(reg);
     // console.log("stack set", reg, index, this.context.registers, register);
     return this.setRegister(reg, { stackOffset: index, dataOffset: undefined });
     // .update(
@@ -269,7 +346,7 @@ export class Compiler {
   }
 
   stackGetInstruction(reg: Register, index: number) {
-    const register = this.context.registers[reg];
+    const register = this.context.registerState.get(reg);
     // console.log("stack get", this.context.registers, register, reg, index);
     if (!register)
       return this.getRegister(reg, { stackOffset: index, dataOffset: undefined }).stackGetDirectInstruction(reg, index);
@@ -402,29 +479,18 @@ export class Compiler {
     const reg1 = this.findFreeRegister("stack", index1);
     const reg2 = this.allocateRegisters(reg1).findFreeRegister("stack", index2);
     // console.log("swap", index1, index2);
-    // return this.update((c) => {
-    //   const register1 = c.context.registers[reg1] ?? { stale: true, weak: true };
-    //   const register2 = c.context.registers[reg2] ?? { stale: true, weak: true };
-    //   register1.stackOffset = index2;
-    //   register2.stackOffset = index1;
-    //   c.context.registers[reg1] = register1;
-    //   c.context.registers[reg2] = register2;
-    //   return c;
-    // });
+
     return (
       this.stackGetInstruction(reg1, index1)
         .allocateRegisters(reg1)
         .stackGetInstruction(reg2, index2)
         .allocateRegisters(reg2)
         .update((c) => {
-          const register1 = c.context.registers[reg1];
-          const register2 = c.context.registers[reg2];
-          register1.stackOffset = index2;
-          register2.stackOffset = index1;
-          register1.stale = true;
-          register2.stale = true;
-          c.context.registers[reg1] = register1;
-          c.context.registers[reg2] = register2;
+          c.context.registerState.update(reg1, { stackOffset: index2 });
+          c.context.registerState.update(reg2, { stackOffset: index1 });
+          c.context.registerState.stale(reg1);
+          c.context.registerState.stale(reg2);
+
           // console.log("swap 2", c.context.registers);
 
           return c;
@@ -472,7 +538,7 @@ export class Compiler {
         const body = ast.children[1];
         const codeIndex = this.context.chunks.length;
         const dataIndex = this.context.data.length;
-        // console.log();
+        // console.log("fn", this.context.registers);
 
         const compiledBody = this.resetStack()
           .stackPush() // return address stack slot
@@ -491,6 +557,7 @@ export class Compiler {
           })
           .stackPop() // pop argument
           .returnInstruction();
+        // console.log("fn 2", this.context.registers);
 
         return this.pushFunctionChunk(compiledBody.context.chunks.slice(codeIndex))
           .pushData(...compiledBody.context.data.slice(dataIndex))
