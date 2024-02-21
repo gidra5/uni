@@ -27,7 +27,7 @@ export class Scope<T = any> {
       .toObject();
   }
 
-  private updateNames() {
+  updateNames() {
     this.names = Scope.namesFromScope(this.scope);
   }
 

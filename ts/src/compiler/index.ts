@@ -29,7 +29,7 @@ class RegisterState<T> {
   }
 
   copy() {
-    const copied = new RegisterState(0);
+    const copied = new RegisterState<T>(0);
     copied.state = copy(this.state);
     return copied;
   }
@@ -475,6 +475,14 @@ export class Compiler {
     return this.pushChunk(chunk(OpCode.OP_ADD, { reg1: fromReg, reg2: toReg, value: 0 }));
   }
 
+  /**
+   * Copy stack value from index and push onto stack
+   */
+  copyStackInstruction(index: number) {
+    const reg = this.findRegister("stack", index);
+    return this.stackGetInstruction(reg, index).allocateRegisters(reg).stackPushInstruction(reg).freeRegisters(reg);
+  }
+
   stackSwapInstruction(index1: number, index2: number) {
     const reg1 = this.findRegister("stack", index1);
     const reg2 = this.allocateRegisters(reg1).findRegister("stack", index2);
@@ -593,7 +601,6 @@ export class Compiler {
           .pushChunk(
             chunk(OpCode.OP_LD, { stackOffset: this.context.stack.size(), reg1: Register.R_R0 }),
             chunk(OpCode.OP_LD, { stackOffset: this.context.stack.size() + 1, reg1: Register.R_R1 }),
-
             chunk(OpCode.OP_ST, { stackOffset: this.context.stack.size(), reg1: Register.R_R2 })
           );
       }
@@ -620,10 +627,9 @@ export class Compiler {
       if (value === undefined) {
         return this;
       }
-      const reg = this.findRegister("stack", value.index);
       // console.log("name", name, value, reg);
 
-      return this.stackGetInstruction(reg, value.index).stackPushInstruction(reg);
+      return this.copyStackInstruction(value.index);
     }
 
     return this;
