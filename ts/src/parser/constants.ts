@@ -34,6 +34,7 @@ export const comparisonOps = Iterator.iter(["<", "<=", ">=", ">"]);
 
 const arithmeticPrecedence = 5;
 const booleanPrecedence = 2;
+const semicolonPrecedence = 1;
 
 export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   false: { separators: matchSeparators(["false"]), precedence: [null, null] },
@@ -79,7 +80,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   mut: { separators: matchSeparators(["mut"]), precedence: [null, 3] },
   "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 2] },
   fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
-  ";": { separators: matchSeparators([";", "\n"]), precedence: [1, 1] },
+  ";": { separators: matchSeparators([";", "\n"]), precedence: [semicolonPrecedence, semicolonPrecedence] },
   "#": { separators: matchSeparators(["#"]), precedence: [null, 4] },
   pin: { separators: matchSeparators(["^"]), precedence: [null, 4] },
   "...": { separators: matchSeparators(["..."]), precedence: [null, 4] },
@@ -107,15 +108,42 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     separators: matchSeparators(["while"], [":", "\n"]),
     precedence: [null, 2],
   },
+  ifBlock: {
+    separators: matchSeparators(["if"], ["{"], ["}"]),
+    precedence: [null, 2],
+  },
+  ifElseBlock: {
+    separators: matchSeparators(["if"], [":", "\n"], ["else"], ["{"], ["}"]),
+    precedence: [null, 2],
+  },
+  ifBlockElseBlock: {
+    separators: matchSeparators(["if"], ["{"], ["}"], ["else"], ["{"], ["}"]),
+    precedence: [null, 2],
+  },
+  forBlock: {
+    separators: matchSeparators(["for"], ["in"], ["{"], ["}"]),
+    precedence: [null, 2],
+  },
+  whileBlock: {
+    separators: matchSeparators(["while"], ["{"], ["}"]),
+    precedence: [null, 2],
+  },
   break: { separators: matchSeparators(["break"]), precedence: [null, 2] },
   continue: {
     separators: matchSeparators(["continue"]),
     precedence: [null, 2],
   },
   return: { separators: matchSeparators(["return"]), precedence: [null, 2] },
+  yield: { separators: matchSeparators(["yield"]), precedence: [null, 2] },
+  async: { separators: matchSeparators(["async"]), precedence: [null, 2] },
+  await: { separators: matchSeparators(["await"]), precedence: [null, 2] },
+  parallel: { separators: matchSeparators(["|"]), precedence: [2, 2] },
+  pipe: { separators: matchSeparators(["|>"]), precedence: [2, 2] },
+  feed: { separators: matchSeparators(["<-"]), precedence: [2, 2] },
   "=": { separators: matchSeparators(["="]), precedence: [2, 2] },
   ":=": { separators: matchSeparators([":="]), precedence: [2, 2] },
-  symbol: { separators: matchSeparators(["symbol"]), precedence: [null, 1] },
+  symbol: { separators: matchSeparators(["symbol"]), precedence: [null, null] },
+  channel: { separators: matchSeparators(["channel"]), precedence: [null, null] },
   record: {
     separators: matchSeparators(["record"], ["{"], ["}"]),
     precedence: [null, null],

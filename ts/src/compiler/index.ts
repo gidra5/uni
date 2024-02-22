@@ -291,12 +291,10 @@ class StackToRegisterAdapter {
 }
 
 type Context = {
-  stack: Scope<StackEntryValue>;
-  stackFrames: Scope[];
+  adapter: StackToRegisterAdapter;
   chunks: CodeChunk[];
   functionChunks: CodeChunk[][];
   data: number[][];
-  registerState: RegisterState<RegisterReference>;
   // registers: any[];
 };
 
@@ -306,12 +304,10 @@ const chunkToString = (chunk: CodeChunk): string => {
 
 export class Compiler {
   private context: Context = {
-    stack: new Scope(),
-    stackFrames: [],
     chunks: [],
     data: [[0]],
     functionChunks: [],
-    registerState: new RegisterState(8),
+    adapter: new StackToRegisterAdapter(),
     // get registers() {
     //   return this.registerState.state.flatMap((x, i) => (x ? { reg: i, ...x } : []));
     // },
@@ -329,7 +325,7 @@ export class Compiler {
   }
 
   [CopySymbol]() {
-    return new Compiler(copy(omit(this.context, ["maxRegisters"])));
+    return new Compiler(copy(this.context));
   }
 
   copy() {
