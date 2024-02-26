@@ -1,5 +1,7 @@
 1. Download [[Language Manager|language manager]]
-2. Install through it latest version of a compiler and/or interpreter for your platform and, if needed, for other platforms
-3. Use it to initiate new project (executable or library) in given folder
+2. the latest version of a compiler and/or interpreter for your platform will be installed, for other platforms manual install via cli is needed
+3. Use it to initiate new project in given folder
 4. Install dependencies using [[Language Manager|language manager]]
 5. Compile project or run files with interpreter using [[Language Manager|the manager]]
+6. Test your code with test runner from [[Language Manager|the manager]]
+7. Format your code with [[Language Manager|the manager]]
