@@ -108,7 +108,7 @@ class StackToRegisterAdapter {
    */
   findRegister(): Register;
   findRegister(usecase: "data" | "stack", value: number): Register | null;
-  findRegister(usecase: "data" | "stack" | "weak" = "weak", value?: number): Register | null {
+  findRegister(usecase?: "data" | "stack", value?: number): Register | null {
     const freeReg = this.registers.find((x) => x === null);
     const weakReg = this.registers.find((x) => !!x?.weak);
     if (usecase === "data") {
@@ -421,27 +421,18 @@ export class Compiler {
     });
   }
 
-  private findRegister(
-    usecase: "data" | "stack" | "stackPop" | "stackPush" | "weak" = "weak",
-    value?: number
-  ): Register {
+  private findRegister(usecase?: "data" | "stack" | "stackPop" | "stackPush", value?: number): Register {
     if (usecase === "stackPop") {
       usecase = "stack";
       value = this.adapter.stack.size() - 1;
     }
 
-    const freeReg = this.adapter.registers.find((x) => x === null);
-    const weakReg = this.adapter.registers.find((x) => !!x?.weak);
-    if (usecase === "data") {
-      const dataReg = this.adapter.registers.find((x) => x?.value.dataOffset === value);
-      return dataReg ?? freeReg ?? weakReg ?? Register.R_R0;
-    }
-    if (usecase === "stack") {
-      const stackReg = this.adapter.registers.find((x) => x?.value.stackOffset === value);
-      return stackReg ?? freeReg ?? weakReg ?? Register.R_R0;
+    if (usecase === "stackPush") {
+      usecase = "stack";
+      value = this.adapter.stack.size();
     }
 
-    return freeReg ?? weakReg ?? Register.R_R0;
+    return this.adapter.findRegister(usecase!, value!) ?? Register.R_R0;
   }
 
   private allocateRegisters(...regs: Register[]) {
@@ -491,8 +482,7 @@ export class Compiler {
     // console.log("write back all registers", this.context.registers);
 
     return this.update((c) => {
-      const chunks = c.adapter.writeBack();
-      return c.pushChunk(...chunks);
+      return c.pushChunk(...c.adapter.writeBack());
     });
   }
 
