@@ -291,7 +291,6 @@ class StackToRegisterAdapter {
 }
 
 type Context = {
-  adapter: StackToRegisterAdapter;
   chunks: CodeChunk[];
   functionChunks: CodeChunk[][];
   data: number[][];
@@ -303,11 +302,11 @@ const chunkToString = (chunk: CodeChunk): string => {
 };
 
 export class Compiler {
+  adapter = new StackToRegisterAdapter();
   private context: Context = {
     chunks: [],
     data: [[0]],
     functionChunks: [],
-    adapter: new StackToRegisterAdapter(),
     // get registers() {
     //   return this.registerState.state.flatMap((x, i) => (x ? { reg: i, ...x } : []));
     // },
@@ -325,11 +324,13 @@ export class Compiler {
   }
 
   [CopySymbol]() {
-    return new Compiler(copy(this.context));
+    return this.copy();
   }
 
   copy() {
-    return copy(this);
+    const copied = new Compiler(copy(this.context));
+    copied.adapter = copy(this.adapter);
+    return copied;
   }
 
   update(mapper: (c: Compiler) => Compiler) {
@@ -361,129 +362,125 @@ export class Compiler {
     });
   }
 
-  stackAdd(name: string, value: Partial<StackEntryValue> = {}) {
-    const top = this.context.stack.getByRelativeIndex(0)?.value ?? { offset: 0, size: 0 };
+  private stackAdd(name: string, value: Partial<StackEntryValue> = {}) {
+    const top = this.adapter.stack.getByRelativeIndex(0)?.value ?? { offset: 0, size: 0 };
     const offset = top.offset + top.size;
     return this.update((c) => {
-      c.context.stack = c.context.stack.add(name, { offset, size: 1, ...value });
+      c.adapter.stack = c.adapter.stack.add(name, { offset, size: 1, ...value });
       return c;
     });
   }
 
-  stackPush(value: Partial<StackEntryValue> = {}) {
-    const top = this.context.stack.getByRelativeIndex(0)?.value ?? { offset: 0, size: 0 };
+  private stackPush(value: Partial<StackEntryValue> = {}) {
+    const top = this.adapter.stack.getByRelativeIndex(0)?.value ?? { offset: 0, size: 0 };
     const offset = top.offset + top.size;
     return this.update((c) => {
-      c.context.stack = c.context.stack.push({ offset, size: 1, ...value });
+      c.adapter.stack = c.adapter.stack.push({ offset, size: 1, ...value });
       return c;
     });
   }
 
-  stackPop() {
+  private stackPop() {
     return this.update((c) => {
-      const index = c.context.stack.size() - 1;
-      c.context.stack = c.context.stack.removeByIndex(index);
-      c.context.registerState.clear((x) => x?.value.stackOffset === index);
+      const index = c.adapter.stack.size() - 1;
+      c.adapter.stack = c.adapter.stack.removeByIndex(index);
+      c.adapter.registers.clear((x) => x?.value.stackOffset === index);
       return c;
     });
   }
 
-  resetStack() {
+  private resetStack() {
     return this.update((c) => {
-      c.context.stack = new Scope();
-      c.context.registerState.clear();
+      c.adapter.stack = new Scope();
+      c.adapter.registers.clear();
       return c;
     });
   }
 
-  stackDrop(n: number) {
+  private stackDrop(n: number) {
     return this.update((c) => {
-      c.context.stack = c.context.stack.drop(n);
+      c.adapter.stack = c.adapter.stack.drop(n);
       return c;
     });
   }
 
-  findRegister(usecase: "data" | "stack" | "stackPop" | "stackPush" | "weak" = "weak", value?: number): Register {
+  private findRegister(
+    usecase: "data" | "stack" | "stackPop" | "stackPush" | "weak" = "weak",
+    value?: number
+  ): Register {
     if (usecase === "stackPop") {
       usecase = "stack";
-      value = this.context.stack.size() - 1;
+      value = this.adapter.stack.size() - 1;
     }
 
-    const freeReg = this.context.registerState.find((x) => x === null);
-    const weakReg = this.context.registerState.find((x) => !!x?.weak);
+    const freeReg = this.adapter.registers.find((x) => x === null);
+    const weakReg = this.adapter.registers.find((x) => !!x?.weak);
     if (usecase === "data") {
-      const dataReg = this.context.registerState.find((x) => x?.value.dataOffset === value);
+      const dataReg = this.adapter.registers.find((x) => x?.value.dataOffset === value);
       return dataReg ?? freeReg ?? weakReg ?? Register.R_R0;
     }
     if (usecase === "stack") {
-      const stackReg = this.context.registerState.find((x) => x?.value.stackOffset === value);
+      const stackReg = this.adapter.registers.find((x) => x?.value.stackOffset === value);
       return stackReg ?? freeReg ?? weakReg ?? Register.R_R0;
     }
 
     return freeReg ?? weakReg ?? Register.R_R0;
   }
 
-  allocateRegisters(...regs: Register[]) {
+  private allocateRegisters(...regs: Register[]) {
     return this.update((c) => {
       for (const reg of regs) {
-        const register = c.context.registerState.get(reg);
-        if (!register) c.context.registerState.set(reg, {});
-        c.context.registerState.allocate(reg);
+        const register = c.adapter.registers.get(reg);
+        if (!register) c.adapter.registers.set(reg, {});
+        c.adapter.registers.allocate(reg);
       }
       return c;
     });
   }
 
-  freeRegisters(...regs: Register[]) {
+  private freeRegisters(...regs: Register[]) {
     return this.update((c) => {
       for (const reg of regs) {
-        c.context.registerState.free(reg);
+        c.adapter.registers.free(reg);
       }
       return c;
     });
   }
 
-  freeRegister(reg: Register) {
+  private setRegister(reg: Register, value: RegisterReference) {
     return this.update((c) => {
-      c.context.registerState.free(reg);
-      return c;
-    });
-  }
-
-  setRegister(reg: Register, value: RegisterReference) {
-    return this.update((c) => {
-      const register = c.context.registerState.get(reg) ?? { value, stale: true, weak: true };
+      const register = c.adapter.registers.get(reg) ?? { value, stale: true, weak: true };
       const dataOffset = register.value.dataOffset;
       const stackOffset = register.value.stackOffset;
 
-      if (dataOffset !== undefined) c.context.registerState.clear((x) => x?.value.dataOffset === dataOffset);
-      if (stackOffset !== undefined) c.context.registerState.clear((x) => x?.value.stackOffset === stackOffset);
+      if (dataOffset !== undefined) c.adapter.registers.clear((x) => x?.value.dataOffset === dataOffset);
+      if (stackOffset !== undefined) c.adapter.registers.clear((x) => x?.value.stackOffset === stackOffset);
 
-      c.context.registerState.update(reg, { ...register.value, ...value });
-      c.context.registerState.stale(reg);
+      c.adapter.registers.update(reg, { ...register.value, ...value });
+      c.adapter.registers.stale(reg);
       return c;
     });
   }
 
-  getRegister(reg: Register, value: RegisterReference) {
+  private getRegister(reg: Register, value: RegisterReference) {
     return this.update((c) => {
-      c.context.registerState.update(reg, value);
-      c.context.registerState.synced(reg);
+      c.adapter.registers.update(reg, value);
+      c.adapter.registers.synced(reg);
       return c;
     });
   }
 
-  syncedRegister(reg: Register) {
-    const register = this.context.registerState.get(reg);
+  private syncedRegister(reg: Register) {
+    const register = this.adapter.registers.get(reg);
     if (!register || !register.stale) return this;
     return this.update((c) => {
-      c.context.registerState.synced(reg);
+      c.adapter.registers.synced(reg);
       return c;
     });
   }
 
-  writeBackRegister(reg: Register) {
-    const register = this.context.registerState.get(reg);
+  private writeBackRegister(reg: Register) {
+    const register = this.adapter.registers.get(reg);
     if (!register || !register.stale) return this;
     const { dataOffset, stackOffset } = register.value;
     if (dataOffset !== undefined) return this.dataSetDirectInstruction(reg, dataOffset).syncedRegister(reg);
@@ -491,37 +488,37 @@ export class Compiler {
     return this.syncedRegister(reg);
   }
 
-  writeBackAllRegisters() {
+  private writeBackAllRegisters() {
     // console.log("write back all registers", this.context.registers);
 
     return this.update((c) => {
-      c.context.registerState.state.forEach((_, i) => (c = c.writeBackRegister(i)));
+      c.adapter.registers.state.forEach((_, i) => (c = c.writeBackRegister(i)));
       return c;
     });
   }
 
-  dataGetDirectInstruction(reg: Register, dataOffset: number) {
+  private dataGetDirectInstruction(reg: Register, dataOffset: number) {
     return this.pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset }));
   }
 
-  dataSetDirectInstruction(reg: Register, dataOffset: number) {
+  private dataSetDirectInstruction(reg: Register, dataOffset: number) {
     return this.pushChunk(chunk(OpCode.OP_ST, { reg1: reg, dataOffset }));
   }
 
-  stackSetDirectInstruction(reg: Register, index: number) {
+  private stackSetDirectInstruction(reg: Register, index: number) {
     const _reg = this.allocateRegisters(reg).findRegister("data", 0);
 
     return this.dataGetInstruction(_reg, 0).pushChunk(chunk(OpCode.OP_STR, { value: index, reg1: reg, reg2: _reg }));
   }
 
-  stackGetDirectInstruction(reg: Register, index: number) {
+  private stackGetDirectInstruction(reg: Register, index: number) {
     const _reg = this.allocateRegisters(reg).findRegister("data", 0);
 
     return this.dataGetInstruction(_reg, 0).pushChunk(chunk(OpCode.OP_LDR, { value: index, reg1: reg, reg2: _reg }));
   }
 
-  dataGetInstruction(reg: Register, dataOffset: number) {
-    const register = this.context.registerState.get(reg);
+  private dataGetInstruction(reg: Register, dataOffset: number) {
+    const register = this.adapter.registers.get(reg);
     // console.log("data get", register, reg, dataOffset);
     if (!register)
       return this.getRegister(reg, { dataOffset, stackOffset: undefined }).dataGetDirectInstruction(reg, dataOffset);
@@ -529,15 +526,15 @@ export class Compiler {
     return this.getRegister(reg, { dataOffset, stackOffset: undefined });
   }
 
-  dataSetInstruction(reg: Register, dataOffset: number) {
-    // const register = this.context.registerState.get(reg);
+  private dataSetInstruction(reg: Register, dataOffset: number) {
+    // const register = this.adapter.registers.get(reg);
     // console.log("data set", reg, dataOffset, this.context.registers, register);
 
     return this.setRegister(reg, { dataOffset, stackOffset: undefined });
   }
 
-  stackSetInstruction(reg: Register, index: number) {
-    // const register = this.context.registerState.get(reg);
+  private stackSetInstruction(reg: Register, index: number) {
+    // const register = this.adapter.registers.get(reg);
     // console.log("stack set", reg, index, this.context.registers, register);
     return this.setRegister(reg, { stackOffset: index, dataOffset: undefined });
     // .update(
@@ -545,8 +542,8 @@ export class Compiler {
     // );
   }
 
-  stackGetInstruction(reg: Register, index: number) {
-    const register = this.context.registerState.get(reg);
+  private stackGetInstruction(reg: Register, index: number) {
+    const register = this.adapter.registers.get(reg);
     // console.log("stack get", this.context.registers, register, reg, index);
     if (!register)
       return this.getRegister(reg, { stackOffset: index, dataOffset: undefined }).stackGetDirectInstruction(reg, index);
@@ -554,17 +551,17 @@ export class Compiler {
     return this.getRegister(reg, { stackOffset: index, dataOffset: undefined });
   }
 
-  stackPushInstruction(reg: Register) {
-    return this.stackPush().stackSetInstruction(reg, this.context.stack.size());
+  private stackPushInstruction(reg: Register) {
+    return this.stackPush().stackSetInstruction(reg, this.adapter.stack.size());
   }
 
-  stackPopInstruction(reg: Register) {
+  private stackPopInstruction(reg: Register) {
     // console.log("stack pop", reg);
 
-    return this.stackGetInstruction(reg, this.context.stack.size() - 1).stackPop();
+    return this.stackGetInstruction(reg, this.adapter.stack.size() - 1).stackPop();
   }
 
-  setStackBaseInstruction(stackSize: number) {
+  private setStackBaseInstruction(stackSize: number) {
     if (stackSize === 0) return this;
     const reg1 = this.findRegister("data", 0);
     const trimmedSize = stackSize & 0x1f;
@@ -585,18 +582,18 @@ export class Compiler {
       .dataSetInstruction(reg1, 0);
   }
 
-  pushStackFrameInstruction() {
+  private pushStackFrameInstruction() {
     return this.update((c) => {
-      const stackSize = c.context.stack.size();
-      c.context.stackFrames.push(c.context.stack);
+      const stackSize = c.adapter.stack.size();
+      c.adapter.stackFrames.push(c.adapter.stack);
       return c.setStackBaseInstruction(stackSize).resetStack();
     });
   }
 
-  popStackFrameInstruction() {
+  private popStackFrameInstruction() {
     return this.update((c) => {
-      c.context.stack = c.context.stackFrames.pop()!;
-      const stackSize = -c.context.stack.size();
+      c.adapter.stack = c.adapter.stackFrames.pop()!;
+      const stackSize = -c.adapter.stack.size();
       return c.setStackBaseInstruction(stackSize);
     });
   }
@@ -606,7 +603,7 @@ export class Compiler {
    *
    * out `[..., retValue]`
    */
-  callInstruction(returnAddrChunkIndex: number) {
+  private callInstruction(returnAddrChunkIndex: number) {
     const reg = this.findRegister("stackPop");
     // console.log("call", reg);
 
@@ -627,7 +624,7 @@ export class Compiler {
    *
    * out `[..., arg1 + arg2]`
    */
-  addInstruction() {
+  private addInstruction() {
     const reg1 = this.findRegister("stackPop");
     const reg2 = this.allocateRegisters(reg1).stackPop().findRegister("stackPop");
     // console.log("add", reg1, reg2);
@@ -650,7 +647,7 @@ export class Compiler {
    *
    * out `[..., value]`
    */
-  pushConstantInstruction(value: number) {
+  private pushConstantInstruction(value: number) {
     const dataOffset = this.context.data.length;
     const reg = this.findRegister("data", dataOffset);
     return this.pushData([value])
@@ -658,12 +655,12 @@ export class Compiler {
       .stackPushInstruction(reg);
   }
 
-  pushDataPointerInstruction(dataOffset: number) {
+  private pushDataPointerInstruction(dataOffset: number) {
     const reg = this.findRegister("data", dataOffset);
     return this.pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset })).stackPushInstruction(reg);
   }
 
-  pushFunctionPointerInstruction(functionOffset: number) {
+  private pushFunctionPointerInstruction(functionOffset: number) {
     const reg = this.findRegister();
     return this.pushChunk(chunk(OpCode.OP_LEA, { reg1: reg, functionOffset })).stackPushInstruction(reg);
   }
@@ -671,19 +668,19 @@ export class Compiler {
   /**
    * Copy value from reg1 to reg2
    */
-  copyInstruction(fromReg: Register, toReg: Register) {
+  private copyInstruction(fromReg: Register, toReg: Register) {
     return this.pushChunk(chunk(OpCode.OP_ADD, { reg1: fromReg, reg2: toReg, value: 0 }));
   }
 
   /**
    * Copy stack value from index and push onto stack
    */
-  copyStackInstruction(index: number) {
+  private copyStackInstruction(index: number) {
     const reg = this.findRegister("stack", index);
     return this.stackGetInstruction(reg, index).allocateRegisters(reg).stackPushInstruction(reg).freeRegisters(reg);
   }
 
-  stackSwapInstruction(index1: number, index2: number) {
+  private stackSwapInstruction(index1: number, index2: number) {
     const reg1 = this.findRegister("stack", index1);
     const reg2 = this.allocateRegisters(reg1).findRegister("stack", index2);
     // console.log("swap", index1, index2);
@@ -694,10 +691,10 @@ export class Compiler {
         .stackGetInstruction(reg2, index2)
         .allocateRegisters(reg2)
         .update((c) => {
-          c.context.registerState.update(reg1, { stackOffset: index2 });
-          c.context.registerState.update(reg2, { stackOffset: index1 });
-          c.context.registerState.stale(reg1);
-          c.context.registerState.stale(reg2);
+          c.adapter.registers.update(reg1, { stackOffset: index2 });
+          c.adapter.registers.update(reg2, { stackOffset: index1 });
+          c.adapter.registers.stale(reg1);
+          c.adapter.registers.stale(reg2);
 
           // console.log("swap 2", c.context.registers);
 
@@ -714,9 +711,9 @@ export class Compiler {
    *
    * out `[..., value]`
    */
-  returnInstruction() {
+  private returnInstruction() {
     const reg = this.findRegister("stackPop");
-    // console.log("return", reg, this.context.registers, this.context.stack.size());
+    // console.log("return", reg, this.context.registers, this.adapter.stack.size());
 
     return this.stackPopInstruction(reg) // pop return address
       .allocateRegisters(reg)
@@ -734,9 +731,9 @@ export class Compiler {
       } else if (ast.value === "parens") {
         return this.compileToChunks(ast.children[0]);
       } else if (ast.value === "brackets") {
-        const stackSize = this.context.stack.size();
+        const stackSize = this.adapter.stack.size();
         return this.compileToChunks(ast.children[0]).update((c) => {
-          const newSize = c.context.stack.size();
+          const newSize = c.adapter.stack.size();
           const toDrop = newSize - (stackSize + 1);
           return c.stackSwapInstruction(stackSize, newSize - 1).stackDrop(toDrop);
         });
@@ -758,7 +755,7 @@ export class Compiler {
           })
           .compileToChunks(body)
           .update((c) => {
-            const size = c.context.stack.size();
+            const size = c.adapter.stack.size();
             return c
               .stackSwapInstruction(size - 1, size - 3) // swap return value and address
               .stackSwapInstruction(size - 1, size - 2); // swap argument and address
@@ -799,9 +796,9 @@ export class Compiler {
         return this.compileToChunks(left)
           .compileToChunks(right)
           .pushChunk(
-            chunk(OpCode.OP_LD, { stackOffset: this.context.stack.size(), reg1: Register.R_R0 }),
-            chunk(OpCode.OP_LD, { stackOffset: this.context.stack.size() + 1, reg1: Register.R_R1 }),
-            chunk(OpCode.OP_ST, { stackOffset: this.context.stack.size(), reg1: Register.R_R2 })
+            chunk(OpCode.OP_LD, { stackOffset: this.adapter.stack.size(), reg1: Register.R_R0 }),
+            chunk(OpCode.OP_LD, { stackOffset: this.adapter.stack.size() + 1, reg1: Register.R_R1 }),
+            chunk(OpCode.OP_ST, { stackOffset: this.adapter.stack.size(), reg1: Register.R_R2 })
           );
       }
     } else if (ast.name === "float") {
@@ -823,7 +820,7 @@ export class Compiler {
       return this.pushData(data).pushDataPointerInstruction(this.context.data.length);
     } else if (ast.name === "name") {
       const name: string = ast.value;
-      const value = this.context.stack.get({ name });
+      const value = this.adapter.stack.get({ name });
       if (value === undefined) {
         return this;
       }
