@@ -168,8 +168,11 @@ class StackToRegisterAdapter {
 
       _chunks.push(...this.writeBack(reg));
     }
-    if (!this.registers.get(reg))
+    if (!this.registers.get(reg)) {
       _chunks.push(...this.dataGet(0, (reg2) => [chunk(OpCode.OP_LDR, { value: index, reg1: reg!, reg2 })]));
+      this.registers.set(reg, { stackOffset: index });
+      this.registers.synced(reg);
+    }
 
     this.registers.allocate(reg);
     _chunks.push(...chunks(reg));
@@ -222,12 +225,19 @@ class StackToRegisterAdapter {
 
       _chunks.push(...this.writeBack(reg));
     }
-    if (!this.registers.get(reg)) _chunks.push(chunk(OpCode.OP_LD, { reg1: reg, dataOffset: index }));
+    // console.log("data get", index, reg, transformRegisterState(this.registers.state));
+
+    if (!this.registers.get(reg)) {
+      _chunks.push(chunk(OpCode.OP_LD, { reg1: reg, dataOffset: index }));
+      this.registers.set(reg, { dataOffset: index });
+      this.registers.synced(reg);
+    }
 
     this.registers.allocate(reg);
     _chunks.push(...chunks(reg));
     this.registers.free(reg);
 
+    // console.log("data get end", index, reg, transformRegisterState(this.registers.state));
     return _chunks;
   }
 
@@ -299,6 +309,13 @@ type Context = {
 
 const chunkToString = (chunk: CodeChunk): string => {
   return disassemble(chunkToByteCode([], [], 0)(chunk, 0));
+};
+const transformRegisterState = <T>(state: RegisterState<T>["state"]) => {
+  return Iterator.iter(state)
+    .enumerate()
+    .flatMap(([x, i]) => (x ? [{ reg: i, ...x }] : []))
+    .map<[number, any]>(({ reg, ...rest }) => [reg, rest])
+    .toObject();
 };
 
 export class Compiler {
@@ -470,67 +487,30 @@ export class Compiler {
     });
   }
 
-  private syncedRegister(reg: Register) {
-    const register = this.adapter.registers.get(reg);
-    if (!register || !register.stale) return this;
-    return this.update((c) => {
-      c.adapter.registers.synced(reg);
-      return c;
-    });
-  }
-
-  private writeBackRegister(reg: Register) {
-    const register = this.adapter.registers.get(reg);
-    if (!register || !register.stale) return this;
-    const { dataOffset, stackOffset } = register.value;
-    if (dataOffset !== undefined) return this.dataSetDirectInstruction(reg, dataOffset).syncedRegister(reg);
-    if (stackOffset !== undefined) return this.stackSetDirectInstruction(reg, stackOffset).syncedRegister(reg);
-    return this.syncedRegister(reg);
-  }
-
   private writeBackAllRegisters() {
     // console.log("write back all registers", this.context.registers);
 
     return this.update((c) => {
-      c.adapter.registers.state.forEach((_, i) => (c = c.writeBackRegister(i)));
-      return c;
+      const chunks = c.adapter.writeBack();
+      return c.pushChunk(...chunks);
     });
   }
 
-  private dataGetDirectInstruction(reg: Register, dataOffset: number) {
-    return this.pushChunk(chunk(OpCode.OP_LD, { reg1: reg, dataOffset }));
-  }
-
-  private dataSetDirectInstruction(reg: Register, dataOffset: number) {
-    return this.pushChunk(chunk(OpCode.OP_ST, { reg1: reg, dataOffset }));
-  }
-
-  private stackSetDirectInstruction(reg: Register, index: number) {
-    const _reg = this.allocateRegisters(reg).findRegister("data", 0);
-
-    return this.dataGetInstruction(_reg, 0).pushChunk(chunk(OpCode.OP_STR, { value: index, reg1: reg, reg2: _reg }));
-  }
-
   private stackGetDirectInstruction(reg: Register, index: number) {
-    const _reg = this.allocateRegisters(reg).findRegister("data", 0);
-
-    return this.dataGetInstruction(_reg, 0).pushChunk(chunk(OpCode.OP_LDR, { value: index, reg1: reg, reg2: _reg }));
+    return this.dataGetInstruction(0, (_reg) => [chunk(OpCode.OP_LDR, { value: index, reg1: reg, reg2: _reg })]);
   }
 
-  private dataGetInstruction(reg: Register, dataOffset: number) {
-    const register = this.adapter.registers.get(reg);
-    // console.log("data get", register, reg, dataOffset);
-    if (!register)
-      return this.getRegister(reg, { dataOffset, stackOffset: undefined }).dataGetDirectInstruction(reg, dataOffset);
-
-    return this.getRegister(reg, { dataOffset, stackOffset: undefined });
-  }
-
-  private dataSetInstruction(reg: Register, dataOffset: number) {
+  private dataGetInstruction(dataOffset: number, y: (reg: Register) => CodeChunk[]) {
     // const register = this.adapter.registers.get(reg);
-    // console.log("data set", reg, dataOffset, this.context.registers, register);
+    // // console.log("data get", register, reg, dataOffset);
+    // if (!register)
+    //   return this.getRegister(reg, { dataOffset, stackOffset: undefined }).dataGetDirectInstruction(reg, dataOffset);
 
-    return this.setRegister(reg, { dataOffset, stackOffset: undefined });
+    // return this.getRegister(reg, { dataOffset, stackOffset: undefined });
+    return this.update((c) => {
+      const x = c.adapter.dataGet(dataOffset, y);
+      return c.pushChunk(...x);
+    });
   }
 
   private stackSetInstruction(reg: Register, index: number) {
@@ -563,23 +543,22 @@ export class Compiler {
 
   private setStackBaseInstruction(stackSize: number) {
     if (stackSize === 0) return this;
-    const reg1 = this.findRegister("data", 0);
+    // const reg1 = this.findRegister("data", 0);
     const trimmedSize = stackSize & 0x1f;
     const imm = signExtend(trimmedSize, 5) === stackSize;
 
-    return this.dataGetInstruction(reg1, 0)
-      .update((c) => {
-        if (imm) {
-          return c.pushChunk(chunk(OpCode.OP_ADD, { reg1, reg2: reg1, value: stackSize }));
-        }
-        const dataOffset = this.context.data.length;
-        const reg2 = this.allocateRegisters(reg1).findRegister("data", dataOffset);
-        return c
-          .pushData([stackSize])
-          .dataGetInstruction(reg2, dataOffset)
-          .pushChunk(chunk(OpCode.OP_ADD, { reg1, reg2, reg3: reg1 }));
-      })
-      .dataSetInstruction(reg1, 0);
+    return this.dataGetInstruction(0, (reg1) => {
+      if (imm) {
+        return [chunk(OpCode.OP_ADD, { reg1, reg2: reg1, value: stackSize })];
+      }
+      const dataOffset = this.context.data.length;
+      return this.adapter.dataGet(dataOffset, (reg2) => [chunk(OpCode.OP_ADD, { reg1, reg2, reg3: reg1 })]);
+    }).update((c) => {
+      if (imm) {
+        return c;
+      }
+      return c.pushData([stackSize]);
+    });
   }
 
   private pushStackFrameInstruction() {

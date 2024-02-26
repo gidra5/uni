@@ -17,5 +17,5 @@
 0x000e   STR src: R0 base: R1 offset: 0
 0x000f   JMP base: R2
 0x0010   0x3012 |  12306 | 〒
-0x0011   0x0002 |      2 | ☻
+0x0011   0x0002 |      2 |
 */
