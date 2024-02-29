@@ -14,22 +14,17 @@ type Context = {
 };
 
 export class Compiler {
-  adapter = new InstructionFactory();
-  private context: Context = {
-    chunks: [],
-    data: [[0]],
-    functionChunks: [],
-  };
+  factory = new InstructionFactory((data) => {
+    const dataOffset = this.context.data.length;
+    this.context.data.push(data);
+    return dataOffset;
+  }, this.pushChunk);
+
+  private context: Context = { chunks: [], data: [[0]], functionChunks: [] };
 
   constructor(context?: Partial<Context>) {
-    if (context)
-      this.context = {
-        ...this.context,
-        ...context,
-        // get registers() {
-        //   return this.registerState.state.flatMap((x, i) => (x ? { ...x, reg: i } : []));
-        // },
-      };
+    if (!context) return;
+    this.context = { ...this.context, ...context };
   }
 
   get functionOffsets() {
@@ -55,7 +50,7 @@ export class Compiler {
 
   copy() {
     const copied = new Compiler(copy(this.context));
-    copied.adapter = copy(this.adapter);
+    copied.factory = copy(this.factory);
     return copied;
   }
 
@@ -157,7 +152,7 @@ export class Compiler {
       return this.pushData(data);
     } else if (ast.name === "name") {
       const name: string = ast.value;
-      const value = this.adapter.stack.get({ name });
+      const value = this.factory.stack.get({ name });
       if (value === undefined) {
         return this;
       }
@@ -183,13 +178,11 @@ export class Compiler {
     data[0] = dataStart + data.length;
 
     const code = context.chunks.map(chunkToByteCode(functionOffsets, dataOffsets));
-    const asm = code.map((instruction, i) => `${toHex(i)}   ${disassemble(instruction)}`);
+    const asm = code.map(disassemble);
 
-    const dataToString = (x: number, i: number) =>
-      `${toHex(i + dataStart)}   ${toHex(x)} | ${String(x).padStart(6, " ")} | ${String.fromCharCode(x)}`;
-    asm.push(...data.map(dataToString));
+    asm.push(...data.map((x: number) => `${toHex(x)} | ${String(x).padStart(6, " ")} | ${String.fromCharCode(x)}`));
 
-    return asm.join("\n");
+    return asm.map((x, i) => `${toHex(i)}    ${x}`).join("\n");
   }
 
   static compile(ast: AbstractSyntaxTree, offset: number): Uint16Array {

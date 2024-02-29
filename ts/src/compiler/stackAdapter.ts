@@ -17,12 +17,14 @@ export class InstructionFactory {
   stack: Scope<StackEntryValue> = new Scope();
   stackFrames: Scope[] = [];
 
+  constructor(public pushData: (x: number[]) => number, public pushChunks: (...chunks: CodeChunk[]) => void) {}
+
   [CopySymbol]() {
     return this.copyAdapter();
   }
 
   copyAdapter() {
-    const copied = new InstructionFactory();
+    const copied = new InstructionFactory(this.pushData, this.pushChunks);
     copied.registers = this.registers.copy();
     copied.stack = this.stack.copy();
     copied.stackFrames = copy(this.stackFrames);
