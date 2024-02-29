@@ -12,7 +12,7 @@ type RegisterReference = {
   stackOffset?: number;
 };
 
-export class StackToRegisterAdapter {
+export class InstructionFactory {
   registers = new RegisterState<RegisterReference>(8);
   stack: Scope<StackEntryValue> = new Scope();
   stackFrames: Scope[] = [];
@@ -22,7 +22,7 @@ export class StackToRegisterAdapter {
   }
 
   copyAdapter() {
-    const copied = new StackToRegisterAdapter();
+    const copied = new InstructionFactory();
     copied.registers = this.registers.copy();
     copied.stack = this.stack.copy();
     copied.stackFrames = copy(this.stackFrames);
