@@ -73,20 +73,20 @@ export class StackToRegisterAdapter {
     this.stack = stack;
   }
 
-  push<T>(chunks: (reg: Register, chunks: CodeChunk[]) => T): T {
+  push(chunks: (reg: Register) => CodeChunk[]): CodeChunk[] {
     const index = this.stack.size();
     this.stack = this.stack.push({ offset: 0, size: 1 });
     return this.set(index, chunks);
   }
 
-  pop<T>(chunks: (reg: Register, chunks: CodeChunk[]) => T): T {
+  pop(chunks: (reg: Register) => CodeChunk[]): CodeChunk[] {
     const index = this.stack.size() - 1;
     const res = this.get(index, chunks);
     this.stack = this.stack.removeByIndex(index);
     return res;
   }
 
-  get<T>(index: number, chunks: (reg: Register, chunks: CodeChunk[]) => T): T {
+  get(index: number, chunks: (reg: Register) => CodeChunk[]): CodeChunk[] {
     let reg = this.findRegister("stack", index);
     const _chunks: CodeChunk[] = [];
     if (!reg) {
@@ -95,21 +95,19 @@ export class StackToRegisterAdapter {
       _chunks.push(...this.writeBack(reg));
     }
     if (!this.registers.get(reg)) {
-      _chunks.push(
-        ...this.dataGet(0, (reg2, rest) => [...rest, chunk(OpCode.LOAD_REG, { value: index, reg1: reg!, reg2 })])
-      );
+      _chunks.push(...this.dataGet(0, (reg2) => [chunk(OpCode.LOAD_REG, { value: index, reg1: reg!, reg2 })]));
       this.registers.set(reg, { stackOffset: index });
       this.registers.synced(reg);
     }
 
     this.registers.allocate(reg);
-    const res = chunks(reg, _chunks);
+    const res = chunks(reg);
     this.registers.free(reg);
 
     return res;
   }
 
-  set<T>(index: number, chunks: (reg: Register, chunks: CodeChunk[]) => T): T {
+  set(index: number, chunks: (reg: Register) => CodeChunk[]): CodeChunk[] {
     let reg = this.findRegister("stack", index);
     const _chunks: CodeChunk[] = [];
     if (!reg) {
@@ -120,7 +118,7 @@ export class StackToRegisterAdapter {
     this.registers.set(reg, { stackOffset: index });
 
     this.registers.allocate(reg);
-    const res = chunks(reg, _chunks);
+    const res = chunks(reg);
     this.registers.free(reg);
 
     return res;
@@ -130,28 +128,24 @@ export class StackToRegisterAdapter {
     const chunks: CodeChunk[] = [];
 
     chunks.push(
-      ...this.get(index1, (reg1, rest) => [
-        ...rest,
-        ...this.get(index2, (reg2, rest) => {
+      ...this.get(index1, (reg1) =>
+        this.get(index2, (reg2) => {
           this.registers.update(reg1, { stackOffset: index2 });
           this.registers.update(reg2, { stackOffset: index1 });
           this.registers.stale(reg1);
           this.registers.stale(reg2);
-          return rest;
-        }),
-      ])
+          return [];
+        })
+      )
     );
     return chunks;
   }
 
   copy(index: number) {
-    return this.get(index, (reg2, rest) => [
-      ...rest,
-      ...this.push((reg1, rest) => [...rest, chunk(OpCode.ADD, { reg1, reg2, value: 0 })]),
-    ]);
+    return this.get(index, (reg2) => this.push((reg1) => [chunk(OpCode.ADD, { reg1, reg2, value: 0 })]));
   }
 
-  dataGet<T>(index: number, chunks: (reg: Register, chunks: CodeChunk[]) => T): T {
+  dataGet(index: number, chunks: (reg: Register) => CodeChunk[]): CodeChunk[] {
     let reg = this.findRegister("data", index);
     const _chunks: CodeChunk[] = [];
     if (!reg) {
@@ -168,14 +162,14 @@ export class StackToRegisterAdapter {
     }
 
     this.registers.allocate(reg);
-    const res = chunks(reg, _chunks);
+    const res = chunks(reg);
     this.registers.free(reg);
 
     // console.log("data get end", index, reg, transformRegisterState(this.registers.state));
     return res;
   }
 
-  dataSet<T>(index: number, chunks: (reg: Register, chunks: CodeChunk[]) => T): T {
+  dataSet(index: number, chunks: (reg: Register) => CodeChunk[]): CodeChunk[] {
     let reg = this.findRegister("data", index);
     const _chunks: CodeChunk[] = [];
     if (!reg) {
@@ -186,7 +180,7 @@ export class StackToRegisterAdapter {
     this.registers.set(reg, { dataOffset: index });
 
     this.registers.allocate(reg);
-    const res = chunks(reg, _chunks);
+    const res = chunks(reg);
     this.registers.free(reg);
 
     return res;
@@ -202,10 +196,7 @@ export class StackToRegisterAdapter {
       this.registers.synced(reg);
       if (dataOffset !== undefined) return [chunk(OpCode.STORE, { reg1: reg, dataOffset })];
       if (stackOffset !== undefined)
-        return this.dataGet(0, (reg2, rest) => [
-          ...rest,
-          chunk(OpCode.STORE_REG, { value: stackOffset, reg1: reg, reg2 }),
-        ]);
+        return this.dataGet(0, (reg2) => [chunk(OpCode.STORE_REG, { value: stackOffset, reg1: reg, reg2 })]);
       return [];
     });
   }
@@ -229,11 +220,10 @@ export class StackToRegisterAdapter {
     const imm = signExtend(trimmedSize, 5) === stackSize;
 
     if (imm) {
-      return this.dataSet(0, (reg1, rest) => [...rest, chunk(OpCode.ADD, { reg1, reg2: reg1, value: stackSize })]);
+      return this.dataSet(0, (reg1) => [chunk(OpCode.ADD, { reg1, reg2: reg1, value: stackSize })]);
     }
-    return this.dataGet(pushData(stackSize), (reg1, rest) => [
-      ...rest,
-      ...this.dataSet(0, (reg2, rest) => [...rest, chunk(OpCode.ADD, { reg1, reg2, reg3: reg1 })]),
-    ]);
+    return this.dataGet(pushData(stackSize), (reg1) =>
+      this.dataSet(0, (reg2) => [chunk(OpCode.ADD, { reg1, reg2, reg3: reg1 })])
+    );
   }
 }
