@@ -475,3 +475,12 @@ tuple_n = fn N ->
 	in construct_tuple N (fn x -> x) 
 end
 ```
+
+Nominal types useful to describe "measures" - they are described by the same underlying type (`number`), but carry different semantics (`cm != mm`). By making them nominal, we can then define particular behavior to them, like conversion between measures (`1 cm => 10 mm`).
+That may as well be used for library developers, that may use the same terminology as others (`Request` in `http` module and `Request` in `websocket` module mean different things and should not be mixed, probably, even if they happen to have the same structure), but mean different thing by it. It can be views as means to distinguish between synonyms and ambiguous values
+
+Set theoretic types: https://www.irif.fr/~gc/papers/set-theoretic-types-2022.pdf 
+Types that allow set-theoretic operations to be performed with them, such as `union`, `intersetion`, `negation` of some types
+
+Gradual typing explained: https://elixir-lang.org/blog/2023/09/20/strong-arrows-gradual-typing/ 
+We introduce type `any` which means we can't know type of its value until runtime, thus requiring runtime checks to verify its type, unless we can statically analyze how it is used and avoid checks

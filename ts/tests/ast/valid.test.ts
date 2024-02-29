@@ -387,11 +387,6 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
-    test("expression-label", () => {
-      const src = `123+456: 789`;
-      treeTestCase(src);
-    });
-
     test("return", () => {
       const src = `() -> { return 123 }`;
       treeTestCase(src);
@@ -431,27 +426,42 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
+    test("channel", () => {
+      const src = `channel`;
+      treeTestCase(src);
+    });
+
+    test("atom (global symbol)", () => {
+      const src = `:atom`;
+      treeTestCase(src);
+    });
+
     test("tuple", () => {
       const src = `1, 2`;
       treeTestCase(src);
     });
 
     test("record", () => {
-      const src = `record { a: 1; b: 2 }`;
+      const src = `a: 1; b: 2`;
       treeTestCase(src);
     });
 
     test("set", () => {
-      const src = `set { 1; 2 }`;
+      const src = `set (1, 2)`;
       treeTestCase(src);
     });
 
     test("map", () => {
-      const src = `map { 1: 2; 3: 4 }`;
+      const src = `[1]: 2; [3]: 4`;
       treeTestCase(src);
     });
 
-    test("field access", () => {
+    test("map without braces", () => {
+      const src = `1+2: 3, 4+5: 6`;
+      treeTestCase(src);
+    });
+
+    test("field access static", () => {
       const src = `x.y`;
       treeTestCase(src);
     });
@@ -552,19 +562,21 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
-    test("negated type", () => {
-      const src = `!number`;
-      treeTestCase(src);
-    });
+    describe("set-theoretic types", () => {
+      test("negated type", () => {
+        const src = `!number`;
+        treeTestCase(src);
+      });
 
-    test("type intersection", () => {
-      const src = `number and string`;
-      treeTestCase(src);
-    });
+      test("type intersection", () => {
+        const src = `number and string`;
+        treeTestCase(src);
+      });
 
-    test("type union", () => {
-      const src = `number or string`;
-      treeTestCase(src);
+      test("type union", () => {
+        const src = `number or string`;
+        treeTestCase(src);
+      });
     });
 
     test("discriminated union from record type", () => {
@@ -595,6 +607,16 @@ describe("expressions", () => {
 
       test("dependent function type", () => {
         const src = `fn x: boolean -> if x: string else number`;
+        treeTestCase(src);
+      });
+
+      test("parametric function type", () => {
+        const src = `fn x: infer y -> y or number`;
+        treeTestCase(src);
+      });
+
+      test("higher order type", () => {
+        const src = `fn t: type -> fn x: t -> t or number`;
         treeTestCase(src);
       });
     });
