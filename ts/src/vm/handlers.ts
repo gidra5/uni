@@ -42,7 +42,7 @@ export enum OpCode {
    *
    * opcode XXXX | dest XXX | offset X_XXXX_XXXX
    */
-  LD,
+  LOAD,
 
   /**
    * store
@@ -180,7 +180,7 @@ export const opCodeHandlers4: Record<number, OpCodeHandler> = {
 
     vm.updateFlags(srcReg);
   },
-  [OpCode.LD]: function (vm, instr) {
+  [OpCode.LOAD]: function (vm, instr) {
     /* opcode XX | dest XXX | addrReg XXX */
     const destReg: Register = (instr >> 3) & 0b111;
     const addrReg: Register = instr & 0b111;
@@ -220,7 +220,7 @@ export const opCodeHandlers3: Record<number, OpCodeHandler> = {
 
     vm.updateFlags(destReg);
   },
-  [OpCode.LD]: function (vm, instr) {
+  [OpCode.LOAD]: function (vm, instr) {
     /* opcode XX | dest XX | baseReg XX | offsetReg XX */
     const destReg: Register = (instr >> 4) & 0b11;
     const baseReg: Register = (instr >> 2) & 0b11;
@@ -308,7 +308,7 @@ export const opCodeHandlers2: Record<number, OpCodeHandler> = {
 
     vm.updateFlags(destReg);
   },
-  [OpCode.LD]: function (vm, instr) {
+  [OpCode.LOAD]: function (vm, instr) {
     /* opcode XXX | dest XXX | pcBase 1 | offset XXXXXXXXX */
     /* opcode XXX | dest XXX | pcBase 0 | baseReg XXX | imm 1 | offset XXXXX */
     /* opcode XXX | dest XXX | pcBase 0 | baseReg XXX | imm 0 | XX | offsetReg XXX */
@@ -440,7 +440,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     vm.registers[destReg] = vm.pc + offset;
     vm.updateFlags(destReg);
   },
-  [OpCode.LD]: function (vm, instr) {
+  [OpCode.LOAD]: function (vm, instr) {
     const destReg: Register = (instr >> 9) & 0b111;
     const offset: Address = signExtend(instr, 9);
     // console.log("VM_OPCODE_LD dr %d pc_offset9 %d", destReg, offset);
@@ -597,7 +597,7 @@ export const opCodeDecode: Record<number, OpCodeDecode> = {
 
     return `LEA dest: R${destReg} offset: ${offset}`;
   },
-  [OpCode.LD]: function (instr) {
+  [OpCode.LOAD]: function (instr) {
     const destReg: Register = (instr >> 9) & 0b111;
     const offset: Address = signExtend(instr, 9);
 

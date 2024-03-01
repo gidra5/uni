@@ -71,7 +71,7 @@ export const chunkToByteCode =
         const { reg1, reg2 } = chunk;
         return opCode(opcode, notParams(reg1, reg2));
       }
-      case OpCode.LD: {
+      case OpCode.LOAD: {
         const { reg1 } = chunk;
         const trimmedValue = value & 0x1ff;
         const params = loadParams(reg1, trimmedValue);

@@ -158,7 +158,7 @@ export class InstructionFactory {
     // console.log("data get", index, reg, transformRegisterState(this.registers.state));
 
     if (!this.registers.get(reg)) {
-      _chunks.push(chunk(OpCode.LD, { reg1: reg, dataOffset: index }));
+      _chunks.push(chunk(OpCode.LOAD, { reg1: reg, dataOffset: index }));
       this.registers.set(reg, { dataOffset: index });
       this.registers.synced(reg);
     }
