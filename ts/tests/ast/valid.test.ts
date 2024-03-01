@@ -535,14 +535,9 @@ describe("expressions", () => {
       });
     });
 
-    describe("composite", () => {
+    describe("algebraic types", () => {
       test("record", () => {
         const src = `(a: number; b: string)`;
-        treeTestCase(src);
-      });
-
-      test("set", () => {
-        const src = `set number`;
         treeTestCase(src);
       });
 
@@ -551,7 +546,7 @@ describe("expressions", () => {
         treeTestCase(src);
       });
 
-      test("map with key dependency", () => { 
+      test("map with key dependency", () => {
         const src = `([x: number]: (x, string))`;
         treeTestCase(src);
       });
@@ -560,21 +555,26 @@ describe("expressions", () => {
         const src = `number, string`;
         treeTestCase(src);
       });
-      
+
       test("type key access", () => {
         const src = `type[number]`;
         treeTestCase(src);
       });
-      
+
       test("type key access static", () => {
         const src = `type.key`;
         treeTestCase(src);
       });
-    });
 
-    test("typeof", () => {
-      const src = `typeof x`;
-      treeTestCase(src);
+      test("discriminated union from record type", () => {
+        const src = `enum (a: number; b: string)`;
+        treeTestCase(src);
+      });
+
+      test("discriminated by order union from tuple", () => {
+        const src = `enum (number, string)`;
+        treeTestCase(src);
+      });
     });
 
     describe("set-theoretic types", () => {
@@ -592,16 +592,6 @@ describe("expressions", () => {
         const src = `number or string`;
         treeTestCase(src);
       });
-    });
-
-    test("discriminated union from record type", () => {
-      const src = `union (a: number; b: string)`;
-      treeTestCase(src);
-    });
-
-    test("discriminated by order union from tuple", () => {
-      const src = `union (number, string)`;
-      treeTestCase(src);
     });
 
     describe("functions", () => {
@@ -636,6 +626,11 @@ describe("expressions", () => {
       });
     });
 
+    test("typeof", () => {
+      const src = `typeof x`;
+      treeTestCase(src);
+    });
+
     test("type cast", () => {
       const src = `x as number`;
       treeTestCase(src);
@@ -647,7 +642,7 @@ describe("expressions", () => {
     });
 
     test("subtyping check", () => {
-      const src = `my_type < number`;
+      const src = `my_type <= number`;
       treeTestCase(src);
     });
   });
