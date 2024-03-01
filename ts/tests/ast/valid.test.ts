@@ -537,7 +537,7 @@ describe("expressions", () => {
 
     describe("composite", () => {
       test("record", () => {
-        const src = `record { a: number; b: string }`;
+        const src = `(a: number; b: string)`;
         treeTestCase(src);
       });
 
@@ -547,12 +547,27 @@ describe("expressions", () => {
       });
 
       test("map", () => {
-        const src = `map (number, string)`;
+        const src = `([number]: string)`;
+        treeTestCase(src);
+      });
+
+      test("map with key dependency", () => { 
+        const src = `([x: number]: (x, string))`;
         treeTestCase(src);
       });
 
       test("tuple", () => {
         const src = `number, string`;
+        treeTestCase(src);
+      });
+      
+      test("type key access", () => {
+        const src = `type[number]`;
+        treeTestCase(src);
+      });
+      
+      test("type key access static", () => {
+        const src = `type.key`;
         treeTestCase(src);
       });
     });
@@ -580,7 +595,7 @@ describe("expressions", () => {
     });
 
     test("discriminated union from record type", () => {
-      const src = `union (record { a: number; b: string })`;
+      const src = `union (a: number; b: string)`;
       treeTestCase(src);
     });
 
