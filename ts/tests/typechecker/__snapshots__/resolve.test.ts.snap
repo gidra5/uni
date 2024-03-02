@@ -32,73 +32,790 @@ exports[`expressions > function expressions > function multiple params 1`] = `
 
 exports[`expressions > function expressions > function with deep shadowed name access 1`] = `
 {
-  "children": [],
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "scope": Scope {
+          "names": {
+            "#": 1,
+            "fn": 0,
+          },
+          "scope": [
+            {
+              "name": "fn",
+              "value": {
+                "precedence": [
+                  null,
+                  2,
+                ],
+                "separators": [Function],
+              },
+            },
+            {
+              "name": "#",
+              "value": {
+                "precedence": [
+                  null,
+                  4,
+                ],
+                "separators": [Function],
+              },
+            },
+          ],
+        },
+      },
+      "name": "name",
+      "value": "a",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "scope": Scope {
+              "names": {
+                "#": 1,
+                "a": 2,
+                "fn": 0,
+              },
+              "scope": [
+                {
+                  "name": "fn",
+                  "value": {
+                    "precedence": [
+                      null,
+                      2,
+                    ],
+                    "separators": [Function],
+                  },
+                },
+                {
+                  "name": "#",
+                  "value": {
+                    "precedence": [
+                      null,
+                      4,
+                    ],
+                    "separators": [Function],
+                  },
+                },
+                {
+                  "name": "a",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "scope": Scope {
+                  "names": {
+                    "#": 1,
+                    "a": 3,
+                    "fn": 0,
+                  },
+                  "scope": [
+                    {
+                      "name": "fn",
+                      "value": {
+                        "precedence": [
+                          null,
+                          2,
+                        ],
+                        "separators": [Function],
+                      },
+                    },
+                    {
+                      "name": "#",
+                      "value": {
+                        "precedence": [
+                          null,
+                          4,
+                        ],
+                        "separators": [Function],
+                      },
+                    },
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                  ],
+                },
+              },
+              "name": "name",
+              "value": "a",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "relativeIndex": 0,
+                        "scope": Scope {
+                          "names": {
+                            "#": 1,
+                            "a": 4,
+                            "fn": 0,
+                          },
+                          "scope": [
+                            {
+                              "name": "fn",
+                              "value": {
+                                "precedence": [
+                                  null,
+                                  2,
+                                ],
+                                "separators": [Function],
+                              },
+                            },
+                            {
+                              "name": "#",
+                              "value": {
+                                "precedence": [
+                                  null,
+                                  4,
+                                ],
+                                "separators": [Function],
+                              },
+                            },
+                            {
+                              "name": "a",
+                              "value": {},
+                            },
+                            {
+                              "name": "a",
+                              "value": {},
+                            },
+                            {
+                              "name": "a",
+                              "value": {},
+                            },
+                          ],
+                        },
+                      },
+                      "name": "name",
+                      "value": "a",
+                    },
+                  ],
+                  "data": {
+                    "relativeIndex": 1,
+                    "scope": Scope {
+                      "names": {
+                        "#": 1,
+                        "a": 4,
+                        "fn": 0,
+                      },
+                      "scope": [
+                        {
+                          "name": "fn",
+                          "value": {
+                            "precedence": [
+                              null,
+                              2,
+                            ],
+                            "separators": [Function],
+                          },
+                        },
+                        {
+                          "name": "#",
+                          "value": {
+                            "precedence": [
+                              null,
+                              4,
+                            ],
+                            "separators": [Function],
+                          },
+                        },
+                        {
+                          "name": "a",
+                          "value": {},
+                        },
+                        {
+                          "name": "a",
+                          "value": {},
+                        },
+                        {
+                          "name": "a",
+                          "value": {},
+                        },
+                      ],
+                    },
+                  },
+                  "name": "operator",
+                  "value": "#",
+                },
+              ],
+              "data": {
+                "relativeIndex": 2,
+                "scope": Scope {
+                  "names": {
+                    "#": 1,
+                    "a": 4,
+                    "fn": 0,
+                  },
+                  "scope": [
+                    {
+                      "name": "fn",
+                      "value": {
+                        "precedence": [
+                          null,
+                          2,
+                        ],
+                        "separators": [Function],
+                      },
+                    },
+                    {
+                      "name": "#",
+                      "value": {
+                        "precedence": [
+                          null,
+                          4,
+                        ],
+                        "separators": [Function],
+                      },
+                    },
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                  ],
+                },
+              },
+              "name": "operator",
+              "value": "#",
+            },
+          ],
+          "data": {
+            "scope": Scope {
+              "names": {
+                "#": 1,
+                "a": 3,
+                "fn": 0,
+              },
+              "scope": [
+                {
+                  "name": "fn",
+                  "value": {
+                    "precedence": [
+                      null,
+                      2,
+                    ],
+                    "separators": [Function],
+                  },
+                },
+                {
+                  "name": "#",
+                  "value": {
+                    "precedence": [
+                      null,
+                      4,
+                    ],
+                    "separators": [Function],
+                  },
+                },
+                {
+                  "name": "a",
+                  "value": {},
+                },
+                {
+                  "name": "a",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "operator",
+          "value": "fn",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {
+            "#": 1,
+            "a": 2,
+            "fn": 0,
+          },
+          "scope": [
+            {
+              "name": "fn",
+              "value": {
+                "precedence": [
+                  null,
+                  2,
+                ],
+                "separators": [Function],
+              },
+            },
+            {
+              "name": "#",
+              "value": {
+                "precedence": [
+                  null,
+                  4,
+                ],
+                "separators": [Function],
+              },
+            },
+            {
+              "name": "a",
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "operator",
+      "value": "fn",
+    },
+  ],
   "data": {
-    "relativeIndex": -1,
     "scope": Scope {
-      "names": {},
-      "scope": [],
+      "names": {
+        "#": 1,
+        "fn": 0,
+      },
+      "scope": [
+        {
+          "name": "fn",
+          "value": {
+            "precedence": [
+              null,
+              2,
+            ],
+            "separators": [Function],
+          },
+        },
+        {
+          "name": "#",
+          "value": {
+            "precedence": [
+              null,
+              4,
+            ],
+            "separators": [Function],
+          },
+        },
+      ],
     },
   },
-  "name": "name",
-  "value": "fn",
-}
-`;
-
-exports[`expressions > function expressions > function with name shadowing 1`] = `
-{
-  "children": [],
-  "data": {
-    "relativeIndex": -1,
-    "scope": Scope {
-      "names": {},
-      "scope": [],
-    },
-  },
-  "name": "name",
-  "value": "fn",
-}
-`;
-
-exports[`expressions > function expressions > function with no arg 1`] = `
-{
-  "children": [],
-  "data": {
-    "relativeIndex": -1,
-    "scope": Scope {
-      "names": {},
-      "scope": [],
-    },
-  },
-  "name": "name",
+  "name": "operator",
   "value": "fn",
 }
 `;
 
 exports[`expressions > function expressions > function with placeholder arg 1`] = `
 {
-  "children": [],
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "scope": Scope {
+          "names": {
+            "#": 1,
+            "->": 0,
+          },
+          "scope": [
+            {
+              "name": "->",
+              "value": {
+                "precedence": [
+                  Infinity,
+                  2,
+                ],
+                "separators": [Function],
+              },
+            },
+            {
+              "name": "#",
+              "value": {
+                "precedence": [
+                  null,
+                  4,
+                ],
+                "separators": [Function],
+              },
+            },
+          ],
+        },
+      },
+      "name": "placeholder",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "scope": Scope {
+              "names": {
+                "#": 1,
+                "->": 0,
+              },
+              "scope": [
+                {
+                  "name": "->",
+                  "value": {
+                    "precedence": [
+                      Infinity,
+                      2,
+                    ],
+                    "separators": [Function],
+                  },
+                },
+                {
+                  "name": "#",
+                  "value": {
+                    "precedence": [
+                      null,
+                      4,
+                    ],
+                    "separators": [Function],
+                  },
+                },
+                {
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "int",
+          "value": 0,
+        },
+      ],
+      "data": {
+        "relativeIndex": 0,
+        "scope": Scope {
+          "names": {
+            "#": 1,
+            "->": 0,
+          },
+          "scope": [
+            {
+              "name": "->",
+              "value": {
+                "precedence": [
+                  Infinity,
+                  2,
+                ],
+                "separators": [Function],
+              },
+            },
+            {
+              "name": "#",
+              "value": {
+                "precedence": [
+                  null,
+                  4,
+                ],
+                "separators": [Function],
+              },
+            },
+            {
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "operator",
+      "value": "#",
+    },
+  ],
   "data": {
     "scope": Scope {
-      "names": {},
-      "scope": [],
+      "names": {
+        "#": 1,
+        "->": 0,
+      },
+      "scope": [
+        {
+          "name": "->",
+          "value": {
+            "precedence": [
+              Infinity,
+              2,
+            ],
+            "separators": [Function],
+          },
+        },
+        {
+          "name": "#",
+          "value": {
+            "precedence": [
+              null,
+              4,
+            ],
+            "separators": [Function],
+          },
+        },
+      ],
     },
   },
-  "name": "placeholder",
+  "name": "operator",
+  "value": "->",
 }
 `;
 
 exports[`expressions > function expressions > function with shadowed name access 1`] = `
 {
-  "children": [],
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "scope": Scope {
+          "names": {
+            "#": 1,
+            "fn": 0,
+          },
+          "scope": [
+            {
+              "name": "fn",
+              "value": {
+                "precedence": [
+                  null,
+                  2,
+                ],
+                "separators": [Function],
+              },
+            },
+            {
+              "name": "#",
+              "value": {
+                "precedence": [
+                  null,
+                  4,
+                ],
+                "separators": [Function],
+              },
+            },
+          ],
+        },
+      },
+      "name": "name",
+      "value": "a",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "scope": Scope {
+              "names": {
+                "#": 1,
+                "a": 2,
+                "fn": 0,
+              },
+              "scope": [
+                {
+                  "name": "fn",
+                  "value": {
+                    "precedence": [
+                      null,
+                      2,
+                    ],
+                    "separators": [Function],
+                  },
+                },
+                {
+                  "name": "#",
+                  "value": {
+                    "precedence": [
+                      null,
+                      4,
+                    ],
+                    "separators": [Function],
+                  },
+                },
+                {
+                  "name": "a",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "relativeIndex": 0,
+                "scope": Scope {
+                  "names": {
+                    "#": 1,
+                    "a": 3,
+                    "fn": 0,
+                  },
+                  "scope": [
+                    {
+                      "name": "fn",
+                      "value": {
+                        "precedence": [
+                          null,
+                          2,
+                        ],
+                        "separators": [Function],
+                      },
+                    },
+                    {
+                      "name": "#",
+                      "value": {
+                        "precedence": [
+                          null,
+                          4,
+                        ],
+                        "separators": [Function],
+                      },
+                    },
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                    {
+                      "name": "a",
+                      "value": {},
+                    },
+                  ],
+                },
+              },
+              "name": "name",
+              "value": "a",
+            },
+          ],
+          "data": {
+            "relativeIndex": 1,
+            "scope": Scope {
+              "names": {
+                "#": 1,
+                "a": 3,
+                "fn": 0,
+              },
+              "scope": [
+                {
+                  "name": "fn",
+                  "value": {
+                    "precedence": [
+                      null,
+                      2,
+                    ],
+                    "separators": [Function],
+                  },
+                },
+                {
+                  "name": "#",
+                  "value": {
+                    "precedence": [
+                      null,
+                      4,
+                    ],
+                    "separators": [Function],
+                  },
+                },
+                {
+                  "name": "a",
+                  "value": {},
+                },
+                {
+                  "name": "a",
+                  "value": {},
+                },
+              ],
+            },
+          },
+          "name": "operator",
+          "value": "#",
+        },
+      ],
+      "data": {
+        "scope": Scope {
+          "names": {
+            "#": 1,
+            "a": 2,
+            "fn": 0,
+          },
+          "scope": [
+            {
+              "name": "fn",
+              "value": {
+                "precedence": [
+                  null,
+                  2,
+                ],
+                "separators": [Function],
+              },
+            },
+            {
+              "name": "#",
+              "value": {
+                "precedence": [
+                  null,
+                  4,
+                ],
+                "separators": [Function],
+              },
+            },
+            {
+              "name": "a",
+              "value": {},
+            },
+          ],
+        },
+      },
+      "name": "operator",
+      "value": "fn",
+    },
+  ],
   "data": {
-    "relativeIndex": -1,
     "scope": Scope {
-      "names": {},
-      "scope": [],
+      "names": {
+        "#": 1,
+        "fn": 0,
+      },
+      "scope": [
+        {
+          "name": "fn",
+          "value": {
+            "precedence": [
+              null,
+              2,
+            ],
+            "separators": [Function],
+          },
+        },
+        {
+          "name": "#",
+          "value": {
+            "precedence": [
+              null,
+              4,
+            ],
+            "separators": [Function],
+          },
+        },
+      ],
     },
   },
-  "name": "name",
+  "name": "operator",
   "value": "fn",
 }
 `;

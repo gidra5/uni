@@ -32,22 +32,23 @@ export const prefixArithmeticOps = Iterator.iterEntries({
 
 export const comparisonOps = Iterator.iter(["<", "<=", ">=", ">"]);
 
-const arithmeticPrecedence = 5;
-const booleanPrecedence = 2;
 const semicolonPrecedence = 1;
+const tuplePrecedence = semicolonPrecedence + 2;
+const booleanPrecedence = tuplePrecedence + 1;
+const arithmeticPrecedence = booleanPrecedence + 3;
 
 export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   false: { separators: matchSeparators(["false"]), precedence: [null, null] },
   true: { separators: matchSeparators(["true"]), precedence: [null, null] },
-  print: { separators: matchSeparators(["print"]), precedence: [null, 1] },
-  "@": { separators: matchSeparators(["@"]), precedence: [1, 1] },
+  print: { separators: matchSeparators(["print"]), precedence: [null, semicolonPrecedence + 1] },
+  "@": { separators: matchSeparators(["@"]), precedence: [tuplePrecedence + 1, tuplePrecedence + 1] },
   "+": { separators: matchSeparators(["+"]), precedence: [arithmeticPrecedence, arithmeticPrecedence + 1] },
   "-": { separators: matchSeparators(["-"]), precedence: [arithmeticPrecedence, arithmeticPrecedence + 1] },
   "*": { separators: matchSeparators(["*"]), precedence: [arithmeticPrecedence + 2, arithmeticPrecedence + 3] },
   "/": { separators: matchSeparators(["/"]), precedence: [arithmeticPrecedence + 2, arithmeticPrecedence + 3] },
   "%": { separators: matchSeparators(["%"]), precedence: [arithmeticPrecedence + 2, arithmeticPrecedence + 3] },
   "^": { separators: matchSeparators(["^"]), precedence: [arithmeticPrecedence + 4, arithmeticPrecedence + 5] },
-  ",": { separators: matchSeparators([","]), precedence: [3, 4] },
+  ",": { separators: matchSeparators([","]), precedence: [tuplePrecedence, tuplePrecedence + 1] },
   in: { separators: matchSeparators(["in"]), precedence: [booleanPrecedence, booleanPrecedence] },
   is: { separators: matchSeparators(["is"]), precedence: [booleanPrecedence, Infinity] },
   and: { separators: matchSeparators(["and"]), precedence: [booleanPrecedence + 1, booleanPrecedence + 1] },
@@ -141,20 +142,12 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   pipe: { separators: matchSeparators(["|>"]), precedence: [2, 2] },
   feed: { separators: matchSeparators(["<-"]), precedence: [2, 2] },
   "=": { separators: matchSeparators(["="]), precedence: [2, 2] },
-  ":=": { separators: matchSeparators([":="]), precedence: [2, 2] },
+  ":=": { separators: matchSeparators([":="]), precedence: [semicolonPrecedence + 1, semicolonPrecedence + 1] },
   symbol: { separators: matchSeparators(["symbol"]), precedence: [null, null] },
   channel: { separators: matchSeparators(["channel"]), precedence: [null, null] },
-  record: {
-    separators: matchSeparators(["record"], ["{"], ["}"]),
-    precedence: [null, null],
-  },
   set: {
-    separators: matchSeparators(["set"], ["{"], ["}"]),
-    precedence: [null, null],
-  },
-  map: {
-    separators: matchSeparators(["map"], ["{"], ["}"]),
-    precedence: [null, null],
+    separators: matchSeparators(["set"]),
+    precedence: [null, 1],
   },
   access: {
     separators: matchSeparators(["."]),
@@ -186,14 +179,14 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     separators: matchSeparators(["external"]),
     precedence: [null, 2],
   },
-  label: { separators: matchSeparators([":"]), precedence: [2, 2] },
+  label: { separators: matchSeparators([":"]), precedence: [tuplePrecedence + 1, tuplePrecedence + 1] },
   operator: {
     separators: matchSeparators(["operator"]),
     precedence: [null, 3],
   },
   operatorPrecedence: {
     separators: matchSeparators(["operator"], ["precedence"]),
-    precedence: [null, 3],
+    precedence: [null, semicolonPrecedence + 2],
   },
   negate: {
     separators: matchSeparators(["-"]),
