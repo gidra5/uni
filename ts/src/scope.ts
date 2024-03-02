@@ -46,6 +46,14 @@ export class Scope<T = any> {
     return this.scope.length - level - 1;
   }
 
+  assignName(entry: ScopeEntryIdentifier, name: string) {
+    const copied = this.copy();
+    const index = copied.toIndex(entry);
+    copied.scope[index].name = name;
+    copied.names[name] = index;
+    return copied;
+  }
+
   iter() {
     return Iterator.iter(this.scope)
       .enumerate()

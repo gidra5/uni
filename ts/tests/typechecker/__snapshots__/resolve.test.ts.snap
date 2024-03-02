@@ -103,6 +103,36 @@ exports[`expressions > function expressions > function with shadowed name access
 }
 `;
 
+exports[`expressions > pattern matching > arrow function pattern union 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "(",
+}
+`;
+
+exports[`expressions > pattern matching > binding visible in scope where it is true 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "x",
+}
+`;
+
 exports[`expressions > pattern matching > in function parameters 1`] = `
 {
   "children": [],
@@ -118,7 +148,187 @@ exports[`expressions > pattern matching > in function parameters 1`] = `
 }
 `;
 
+exports[`expressions > pattern matching > pattern intersection 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "match",
+}
+`;
+
+exports[`expressions > pattern matching > pattern union 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "match",
+}
+`;
+
+exports[`expressions > pattern matching > with 'is' operator 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "x",
+}
+`;
+
+exports[`expressions > pattern matching > with default value 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "x",
+}
+`;
+
+exports[`expressions > pattern matching > with name for match 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "x",
+}
+`;
+
+exports[`expressions > pattern matching > with placeholder 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "x",
+}
+`;
+
+exports[`expressions > pattern matching > with rename 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "x",
+}
+`;
+
+exports[`expressions > pattern matching > with rest value 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "x",
+}
+`;
+
+exports[`expressions > pattern matching > with rest value first 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "x",
+}
+`;
+
+exports[`expressions > pattern matching > with variable value 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "x",
+}
+`;
+
 exports[`expressions > structured programming > block mutable variable declaration 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "{",
+}
+`;
+
+exports[`expressions > structured programming > block pattern matching 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "{",
+}
+`;
+
+exports[`expressions > structured programming > block variable assignment 1`] = `
 {
   "children": [],
   "data": {
@@ -145,5 +355,65 @@ exports[`expressions > structured programming > block variable declaration 1`] =
   },
   "name": "name",
   "value": "{",
+}
+`;
+
+exports[`expressions > structured programming > for loop 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "for",
+}
+`;
+
+exports[`expressions > structured programming > if-then 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "if",
+}
+`;
+
+exports[`expressions > structured programming > if-then-else 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "if",
+}
+`;
+
+exports[`expressions > structured programming > while loop 1`] = `
+{
+  "children": [],
+  "data": {
+    "relativeIndex": -1,
+    "scope": Scope {
+      "names": {},
+      "scope": [],
+    },
+  },
+  "name": "name",
+  "value": "while",
 }
 `;

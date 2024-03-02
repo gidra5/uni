@@ -1,7 +1,7 @@
 import { Iterator } from "iterator-js";
 import { AbstractSyntaxTree } from "../parser/ast.js";
 import { OpCode, TrapCode, disassemble } from "../vm/handlers.js";
-import { toHex } from "../vm/utils.js";
+import { Register, toHex } from "../vm/utils.js";
 import { CodeChunk, chunk, chunkToByteCode } from "./chunks.js";
 import { CopySymbol, copy } from "../utils/copy.js";
 import { omit } from "../utils/index.js";
@@ -83,12 +83,26 @@ export class Compiler {
     });
   }
 
-  private stackDrop(count: number) {
-    return this.update((c) => c);
+  private stackJoin(index: number, count: number) {
+    return this.update((c) => {
+      c.factory.join(index, count);
+      return c;
+    });
   }
 
-  private push(f: (reg: number) => CodeChunk[]) {
+  private stackDrop(count: number) {
+    return this.update((c) => {
+      c.factory.stack = c.factory.stack.drop(count);
+      return c;
+    });
+  }
+
+  private push(f: Register | ((reg: Register) => CodeChunk[])) {
     return this.update((c) => c.chunkPush(...c.factory.push(f)));
+  }
+
+  private pop(f: Register | ((reg: Register) => CodeChunk[])) {
+    return this.update((c) => c.chunkPush(...c.factory.pop(f)));
   }
 
   private pushConstant(value: number) {
@@ -108,32 +122,36 @@ export class Compiler {
     ]);
   }
 
-  private copy(reg: number) {
+  private copy(reg: Register) {
     return this.update((c) => c.chunkPush(...c.factory.copy(reg)));
   }
 
-  private return() {
-    return this.update((c) => c);
+  private replace(reg: Register) {
+    return this.update((c) => c.chunkPush(...c.factory.replace(reg)));
   }
 
   private add() {
-    return this.update((c) => c);
-  }
-
-  private multiply() {
-    return this.update((c) => c);
-  }
-
-  private pushStackFrame() {
-    return this.update((c) => c);
-  }
-
-  private popStackFrame() {
-    return this.update((c) => c);
+    return this.update((c) => c.chunkPush(...c.factory.add()));
   }
 
   private call() {
-    return this.update((c) => c);
+    return this.update((c) => c.chunkPush(...c.factory.call()));
+  }
+
+  private entry(closureSize: number = 0) {
+    return this.update((c) => c.chunkPush(...c.factory.entry(closureSize)));
+  }
+
+  private return() {
+    return this.update((c) => c.chunkPush(...c.factory.return()));
+  }
+
+  private yield() {
+    return this.update((c) => c.chunkPush(...c.factory.yield()));
+  }
+
+  private print() {
+    return this.pop(Register.R_R0).chunkPush(chunk(OpCode.TRAP, { value: TrapCode.TRAP_PUTS }));
   }
 
   private compileToChunks(ast: AbstractSyntaxTree): Compiler {
@@ -159,18 +177,20 @@ export class Compiler {
         const body = ast.children[1];
         // console.log("fn", this.context.registers);
 
-        const bodyCompiler = new Compiler(omit(this.context, ["chunks"]));
-        const compiledBody = bodyCompiler.compileToChunks(body).return();
+        return this.update((c) => {
+          const bodyCompiler = new Compiler(omit(c.context, ["chunks"]));
+          const compiledBody = bodyCompiler.entry().compileToChunks(body).return();
 
-        return this.pushFunctionPointer(compiledBody.context.chunks);
+          return c.pushFunctionPointer(compiledBody.context.chunks);
+        });
       } else if (ast.value === "application") {
         const fn = ast.children[0];
         const arg = ast.children[1];
 
-        return this.compileToChunks(arg).compileToChunks(fn).pushStackFrame().call().popStackFrame();
+        return this.compileToChunks(arg).compileToChunks(fn).call();
       } else if (ast.value === "print") {
         const expr = ast.children[0];
-        return this;
+        return this.compileToChunks(expr).print();
       } else if (ast.value === ";") {
         const left = ast.children[0];
         const right = ast.children[1];
@@ -179,10 +199,39 @@ export class Compiler {
         const left = ast.children[0];
         const right = ast.children[1];
         return this.compileToChunks(left).compileToChunks(right).add();
-      } else if (ast.value === "*") {
+      } else if (ast.value === ",") {
         const left = ast.children[0];
         const right = ast.children[1];
-        return this.compileToChunks(left).compileToChunks(right).multiply();
+        const index = this.factory.stack.size();
+        return this.compileToChunks(left).compileToChunks(right).stackJoin(index, 2);
+      } else if (ast.value === "yield") {
+        const expr = ast.children[0];
+        return this.compileToChunks(expr).yield();
+      } else if (ast.value === "return") {
+        const expr = ast.children[0];
+        return this.compileToChunks(expr).return();
+      } else if (ast.value === "=") {
+        const left = ast.children[0];
+        const right = ast.children[1];
+        const name: string = left.value;
+        const value = this.factory.stack.get({ name });
+        if (value === undefined) {
+          return this;
+        }
+        // console.log("name", name, value, reg);
+
+        return this.compileToChunks(right).replace(value.index);
+      } else if (ast.value === ":=") {
+        const left = ast.children[0];
+        const right = ast.children[1];
+        const name: string = left.value;
+        // console.log("name", name, value, reg);
+
+        return this.compileToChunks(right).update((c) => {
+          const index = c.factory.stack.size() - 1;
+          c.factory.stack = c.factory.stack.assignName({ index }, name);
+          return c;
+        });
       }
     } else if (ast.name === "float") {
       // TODO: encode float? because we are using 16-bit words, js uses 64-bit floats

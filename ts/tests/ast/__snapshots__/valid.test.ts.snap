@@ -1440,6 +1440,37 @@ exports[`expressions > boolean expressions > or 1`] = `
 }
 `;
 
+exports[`expressions > data structures > atom (global symbol) 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": ":",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "atom",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "application",
+}
+`;
+
+exports[`expressions > data structures > channel 1`] = `
+{
+  "children": [],
+  "data": {},
+  "name": "group",
+  "value": "channel",
+}
+`;
+
 exports[`expressions > data structures > field access 1`] = `
 {
   "children": [
@@ -1481,6 +1512,28 @@ exports[`expressions > data structures > field access dynamic 1`] = `
   "data": {},
   "name": "operator",
   "value": "accessDynamic",
+}
+`;
+
+exports[`expressions > data structures > field access static 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "x",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "y",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "access",
 }
 `;
 
@@ -1541,6 +1594,80 @@ exports[`expressions > data structures > map 1`] = `
   "data": {},
   "name": "group",
   "value": "map",
+}
+`;
+
+exports[`expressions > data structures > map without braces 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 1,
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 2,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "+",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "int",
+              "value": 3,
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 4,
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 5,
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": "+",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": ",",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 6,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "label",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "label",
 }
 `;
 
@@ -3808,6 +3935,70 @@ exports[`expressions > pattern matching > with variable value 1`] = `
   "data": {},
   "name": "operator",
   "value": "is",
+}
+`;
+
+exports[`expressions > signals > derived 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "signal",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "+",
+        },
+      ],
+      "data": {},
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "application",
+}
+`;
+
+exports[`expressions > signals > value 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "signal",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 123,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "application",
 }
 `;
 
