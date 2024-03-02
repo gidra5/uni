@@ -4,6 +4,7 @@ import { OpCode } from "../vm/handlers";
 import { Register, signExtend } from "../vm/utils";
 import { CodeChunk, chunk } from "./chunks";
 import { RegisterState } from "./registers";
+import { registerStateToObject } from "./utils";
 
 type StackEntryValue = { offset: number; size: number };
 
@@ -77,7 +78,8 @@ export class InstructionFactory {
 
   push(chunks: Register | ((reg: Register) => CodeChunk[])): CodeChunk[] {
     const index = this.stack.size();
-    this.stack = this.stack.push({ offset: 0, size: 1 });
+    const prev = this.stack.get({ index: index - 1 })?.value ?? { offset: 0, size: 0 };
+    this.stack = this.stack.push({ offset: prev.offset + prev.size, size: 1 });
     return this.set(index, chunks);
   }
 
@@ -89,12 +91,15 @@ export class InstructionFactory {
   }
 
   get(index: number, chunks: Register | ((reg: Register) => CodeChunk[])): CodeChunk[] {
+    console.log("get", index, chunks, registerStateToObject(this.registers.state), this.stack);
+
     if (typeof chunks === "number") {
       const reg = chunks;
       const _chunks = this.writeBack(reg);
 
       if (!this.registers.get(reg) || this.registers.get(reg)?.value.stackOffset !== index) {
-        _chunks.push(...this.dataGet(0, (reg2) => [chunk(OpCode.LOAD_REG, { value: index, reg1: reg!, reg2 })]));
+        const value = this.stack.get({ index })?.value ?? { offset: index, size: 0 };
+        _chunks.push(...this.dataGet(0, (reg2) => [chunk(OpCode.LOAD_REG, { value: value.offset, reg1: reg!, reg2 })]));
         this.registers.set(reg, { stackOffset: index });
         this.registers.synced(reg);
       }
@@ -111,7 +116,8 @@ export class InstructionFactory {
     }
 
     if (!this.registers.get(reg) || this.registers.get(reg)?.value.stackOffset !== index) {
-      _chunks.push(...this.dataGet(0, (reg2) => [chunk(OpCode.LOAD_REG, { value: index, reg1: reg!, reg2 })]));
+      const value = this.stack.get({ index })?.value ?? { offset: index, size: 0 };
+      _chunks.push(...this.dataGet(0, (reg2) => [chunk(OpCode.LOAD_REG, { value: value.offset, reg1: reg!, reg2 })]));
       this.registers.set(reg, { stackOffset: index });
       this.registers.synced(reg);
     }
@@ -194,17 +200,19 @@ export class InstructionFactory {
       chunk(OpCode.LOAD_EFFECTIVE_ADDRESS, { reg1: Register.R_R0, value: 0 }),
     ];
     this.registers.allocate(Register.R_R0);
+    this.registers.synced(Register.R_R0);
 
     chunks.push(...this.get(this.stack.size() - 3, Register.R_R1));
     this.registers.allocate(Register.R_R1);
 
     chunks.push(
-      ...this.pop((reg1) => [
-        ...this.writeBack(),
-        ...this.pushStackFrame(),
-        chunk(OpCode.JUMP, { reg1 }),
-        ...this.popStackFrame(),
-      ])
+      ...this.pop((reg1) => {
+        const chunks = this.writeBack();
+        console.dir(this, { depth: null });
+
+        this.stack = this.stack.drop(3);
+        return [...chunks, ...this.pushStackFrame(), chunk(OpCode.JUMP, { reg1 }), ...this.popStackFrame()];
+      })
     );
 
     chunks[0].value = chunks.length;

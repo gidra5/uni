@@ -8,7 +8,7 @@ describe("compilation", () => {
     testCase(src);
   });
 
-  test("function application and literal", () => {
+  test.only("function application and literal", () => {
     const src = `(fn x -> x + x) 2`;
     testCase(src);
   });

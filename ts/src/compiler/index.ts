@@ -36,7 +36,7 @@ export class Compiler {
   }
 
   get dataOffsets() {
-    const dataStart = this.context.chunks.length + this.context.functionChunks.flat().length;
+    const dataStart = this.context.chunks.length + this.context.functionChunks.flat().length + 1;
     return Iterator.iter(this.context.data)
       .map((data) => data.length)
       .prepend(dataStart)
@@ -56,6 +56,11 @@ export class Compiler {
 
   update(mapper: (c: Compiler) => Compiler) {
     return mapper(this.copyThis());
+  }
+
+  inspect(f: (c: Compiler) => void) {
+    f(this);
+    return this;
   }
 
   dataPush(...data: number[][]) {
@@ -271,6 +276,7 @@ export class Compiler {
 
   static compileToAsm(ast: AbstractSyntaxTree): string {
     const compiled = new Compiler().compileToChunks(ast);
+    // console.dir(compiled, { depth: null });
     const { context } = compiled;
     const chunks = [...context.chunks];
     chunks.push(chunk(OpCode.TRAP, { value: TrapCode.TRAP_HALT }));
@@ -282,7 +288,7 @@ export class Compiler {
     const data = context.data.flat();
     data[0] = dataStart + data.length;
 
-    const code = context.chunks.map(chunkToByteCode(functionOffsets, dataOffsets));
+    const code = chunks.map(chunkToByteCode(functionOffsets, dataOffsets));
     const asm = code.map(disassemble);
 
     asm.push(...data.map((x: number) => `${toHex(x)} | ${String(x).padStart(6, " ")} | ${String.fromCharCode(x)}`));
