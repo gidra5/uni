@@ -18,7 +18,7 @@ export class Compiler {
     const dataOffset = this.context.data.length;
     this.context.data.push(data);
     return dataOffset;
-  }, this.pushChunk);
+  }, this.chunkPush);
 
   private context: Context = { chunks: [], data: [[0]], functionChunks: [] };
 
@@ -45,27 +45,27 @@ export class Compiler {
   }
 
   [CopySymbol]() {
-    return this.copy();
+    return this.copyThis();
   }
 
-  copy() {
+  copyThis() {
     const copied = new Compiler(copy(this.context));
     copied.factory = copy(this.factory);
     return copied;
   }
 
   update(mapper: (c: Compiler) => Compiler) {
-    return mapper(this.copy());
+    return mapper(this.copyThis());
   }
 
-  pushData(...data: number[][]) {
+  dataPush(...data: number[][]) {
     return this.update((c) => {
       c.context.data.push(...data);
       return c;
     });
   }
 
-  pushChunk(...code: CodeChunk[]) {
+  chunkPush(...code: CodeChunk[]) {
     return this.update((c) => {
       // console.log(c.context.registers);
       // console.log(code.map(chunkToString).join("\n"));
@@ -76,47 +76,98 @@ export class Compiler {
     });
   }
 
-  pushFunctionChunk(...code: CodeChunk[][]) {
+  functionChunkPush(...code: CodeChunk[][]) {
     return this.update((c) => {
       c.context.functionChunks.push(...code);
       return c;
     });
   }
 
+  private stackDrop(count: number) {
+    return this.update((c) => c);
+  }
+
+  private push(f: (reg: number) => CodeChunk[]) {
+    return this.update((c) => c.chunkPush(...c.factory.push(f)));
+  }
+
+  private pushConstant(value: number) {
+    const dataOffset = this.context.data.length;
+    return this.dataPush([value]).push((reg1) => [chunk(OpCode.LOAD, { reg1, dataOffset })]);
+  }
+
+  private pushPointer(...value: number[]) {
+    const dataOffset = this.context.data.length;
+    return this.dataPush(value).push((reg1) => [chunk(OpCode.LOAD_EFFECTIVE_ADDRESS, { reg1, dataOffset })]);
+  }
+
+  pushFunctionPointer(chunks: CodeChunk[]) {
+    const functionOffset = this.context.functionChunks.length;
+    return this.functionChunkPush(chunks).push((reg1) => [
+      chunk(OpCode.LOAD_EFFECTIVE_ADDRESS, { reg1, functionOffset }),
+    ]);
+  }
+
+  private copy(reg: number) {
+    return this.update((c) => c.chunkPush(...c.factory.copy(reg)));
+  }
+
+  private return() {
+    return this.update((c) => c);
+  }
+
+  private add() {
+    return this.update((c) => c);
+  }
+
+  private multiply() {
+    return this.update((c) => c);
+  }
+
+  private pushStackFrame() {
+    return this.update((c) => c);
+  }
+
+  private popStackFrame() {
+    return this.update((c) => c);
+  }
+
+  private call() {
+    return this.update((c) => c);
+  }
+
   private compileToChunks(ast: AbstractSyntaxTree): Compiler {
     // console.log(ast, this);
     if (ast.name === "group") {
       if (ast.value === "true") {
-        return this.pushData([-1]);
+        return this.pushConstant(-1);
       } else if (ast.value === "false") {
-        return this.pushData([0]);
+        return this.pushConstant(0);
       } else if (ast.value === "parens") {
         return this.compileToChunks(ast.children[0]);
       } else if (ast.value === "brackets") {
-        // const stackSize = this.adapter.stack.size();
+        const stackSize = this.factory.stack.size();
         return this.compileToChunks(ast.children[0]).update((c) => {
-          // const newSize = c.adapter.stack.size();
-          // const toDrop = newSize - (stackSize + 1);
-          return c;
+          const newSize = c.factory.stack.size();
+          const toDrop = newSize - (stackSize + 1);
+
+          return c.stackDrop(toDrop);
         });
       }
     } else if (ast.name === "operator") {
-      if (ast.value === "->" || ast.value === "fn") {
+      if (ast.value === "fn") {
         const body = ast.children[1];
-        const codeIndex = this.context.chunks.length;
-        const dataIndex = this.context.data.length;
         // console.log("fn", this.context.registers);
 
-        const compiledBody = new Compiler().compileToChunks(body);
+        const bodyCompiler = new Compiler(omit(this.context, ["chunks"]));
+        const compiledBody = bodyCompiler.compileToChunks(body).return();
 
-        return this.pushFunctionChunk(compiledBody.context.chunks.slice(codeIndex)).pushData(
-          ...compiledBody.context.data.slice(dataIndex)
-        );
+        return this.pushFunctionPointer(compiledBody.context.chunks);
       } else if (ast.value === "application") {
         const fn = ast.children[0];
         const arg = ast.children[1];
 
-        return this.compileToChunks(arg).compileToChunks(fn);
+        return this.compileToChunks(arg).compileToChunks(fn).pushStackFrame().call().popStackFrame();
       } else if (ast.value === "print") {
         const expr = ast.children[0];
         return this;
@@ -127,17 +178,17 @@ export class Compiler {
       } else if (ast.value === "+") {
         const left = ast.children[0];
         const right = ast.children[1];
-        return this.compileToChunks(left).compileToChunks(right);
+        return this.compileToChunks(left).compileToChunks(right).add();
       } else if (ast.value === "*") {
         const left = ast.children[0];
         const right = ast.children[1];
-        return this.compileToChunks(left).compileToChunks(right);
+        return this.compileToChunks(left).compileToChunks(right).multiply();
       }
     } else if (ast.name === "float") {
       // TODO: encode float? because we are using 16-bit words, js uses 64-bit floats
-      return this;
+      return this.pushConstant(ast.value);
     } else if (ast.name === "int") {
-      return this;
+      return this.pushConstant(ast.value);
     } else if (ast.name === "string") {
       const string: string = ast.value;
       const data: number[] = [];
@@ -149,7 +200,7 @@ export class Compiler {
       }
       data.push(0);
 
-      return this.pushData(data);
+      return this.pushPointer(...data);
     } else if (ast.name === "name") {
       const name: string = ast.value;
       const value = this.factory.stack.get({ name });
@@ -158,7 +209,7 @@ export class Compiler {
       }
       // console.log("name", name, value, reg);
 
-      return this;
+      return this.copy(value.index);
     }
 
     return this;
