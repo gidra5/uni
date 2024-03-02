@@ -230,9 +230,10 @@ export class InstructionFactory {
   entry(closureSize: number): CodeChunk[] {
     const chunks = [];
 
-    this.stack.push({ offset: 0, size: 1 }); // return address
-    this.stack.push({ offset: 0, size: 1 }); // argument
-    this.stack.push({ offset: 0, size: closureSize }); // closure
+    this.stack = this.stack
+      .push({ offset: 0, size: 1 }) // return address
+      .push({ offset: 0, size: 1 }) // argument
+      .push({ offset: 0, size: closureSize }); // closure
 
     // expect R0 and R1 to be already occupied by the return address and the argument
     this.registers.set(Register.R_R0, { stackOffset: 0 });

@@ -74,21 +74,21 @@ export class Scope<T = any> {
     }));
   }
 
-  toLevel(identifier: ScopeEntryIdentifier): number {
+  toIndex(identifier: ScopeEntryIdentifier): number {
     if ("index" in identifier) return identifier.index;
     if ("relativeIndex" in identifier) return this.relativeToIndex(identifier.relativeIndex);
     return this.names[identifier.name] ?? -1;
   }
 
-  toIndex(identifier: ScopeEntryIdentifier): number {
+  toRelativeIndex(identifier: ScopeEntryIdentifier): number {
     if ("relativeIndex" in identifier) return identifier.relativeIndex;
-    const level = this.toLevel(identifier);
+    const level = this.toIndex(identifier);
     return this.indexToRelative(level);
   }
 
   toName(identifier: ScopeEntryIdentifier): string | undefined {
     if ("name" in identifier) return identifier.name;
-    const level = this.toLevel(identifier);
+    const level = this.toIndex(identifier);
     if (level === -1) return;
     return this.scope[level].name;
   }
@@ -100,7 +100,7 @@ export class Scope<T = any> {
   }
 
   get(identifier: ScopeEntryIdentifier): ScopeEntry<T> | undefined {
-    const level = this.toLevel(identifier);
+    const level = this.toIndex(identifier);
     if (level === -1) return;
 
     return { ...this.scope[level], index: level, relativeIndex: this.indexToRelative(level) };
@@ -120,12 +120,12 @@ export class Scope<T = any> {
     return this.get({ index: level });
   }
 
-  getLevel(name: string): number {
-    return this.toLevel({ name });
-  }
-
   getIndex(name: string): number {
     return this.toIndex({ name });
+  }
+
+  getRelativeIndex(name: string): number {
+    return this.toRelativeIndex({ name });
   }
 
   push(value: T): Scope<T> {
@@ -152,7 +152,7 @@ export class Scope<T = any> {
   }
 
   remove(identifier: ScopeEntryIdentifier): Scope<T> {
-    const level = this.toLevel(identifier);
+    const level = this.toIndex(identifier);
     if (level === undefined) return this;
     const copied = this.copy();
     copied.scope.splice(level, 1);

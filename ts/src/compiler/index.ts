@@ -154,6 +154,13 @@ export class Compiler {
     return this.pop(Register.R_R0).chunkPush(chunk(OpCode.TRAP, { value: TrapCode.TRAP_PUTS }));
   }
 
+  private assignName(name: string, index: number) {
+    return this.update((c) => {
+      c.factory.stack = c.factory.stack.assignName({ index }, name);
+      return c;
+    });
+  }
+
   private compileToChunks(ast: AbstractSyntaxTree): Compiler {
     // console.log(ast, this);
     if (ast.name === "group") {
@@ -175,11 +182,12 @@ export class Compiler {
     } else if (ast.name === "operator") {
       if (ast.value === "fn") {
         const body = ast.children[1];
+        const name = ast.children[0].value;
         // console.log("fn", this.context.registers);
 
         return this.update((c) => {
           const bodyCompiler = new Compiler(omit(c.context, ["chunks"]));
-          const compiledBody = bodyCompiler.entry().compileToChunks(body).return();
+          const compiledBody = bodyCompiler.entry().assignName(name, 1).compileToChunks(body).return();
 
           return c.pushFunctionPointer(compiledBody.context.chunks);
         });
@@ -225,13 +233,10 @@ export class Compiler {
         const left = ast.children[0];
         const right = ast.children[1];
         const name: string = left.value;
+        const index = this.factory.stack.size();
         // console.log("name", name, value, reg);
 
-        return this.compileToChunks(right).update((c) => {
-          const index = c.factory.stack.size() - 1;
-          c.factory.stack = c.factory.stack.assignName({ index }, name);
-          return c;
-        });
+        return this.compileToChunks(right).assignName(name, index);
       }
     } else if (ast.name === "float") {
       // TODO: encode float? because we are using 16-bit words, js uses 64-bit floats

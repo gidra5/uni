@@ -29,7 +29,7 @@ export const exampleTestCase = (src, expectedTree?, scope = scopeDictionary) => 
 export const testCase = (src, expectedAsm?, scope = scopeDictionary) => {
   const [ast, errors] = parseExprString(src);
   const asm = Compiler.compileToAsm(ast);
-  // console.dir(tree, { depth: null });
+  console.dir(asm, { depth: null });
   expect(errors).toEqual([]);
   if (expectedAsm) expect(asm).toEqual(expectedAsm);
   expect(asm).toMatchSnapshot();
