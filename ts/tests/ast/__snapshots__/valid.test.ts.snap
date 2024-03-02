@@ -1471,28 +1471,6 @@ exports[`expressions > data structures > channel 1`] = `
 }
 `;
 
-exports[`expressions > data structures > field access 1`] = `
-{
-  "children": [
-    {
-      "children": [],
-      "data": {},
-      "name": "name",
-      "value": "x",
-    },
-    {
-      "children": [],
-      "data": {},
-      "name": "name",
-      "value": "y",
-    },
-  ],
-  "data": {},
-  "name": "operator",
-  "value": "access",
-}
-`;
-
 exports[`expressions > data structures > field access dynamic 1`] = `
 {
   "children": [
@@ -1541,10 +1519,67 @@ exports[`expressions > data structures > map 1`] = `
 {
   "children": [
     {
-      "children": [],
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "int",
+              "value": 1,
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "brackets",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 2,
+        },
+      ],
       "data": {},
-      "name": "placeholder",
+      "name": "operator",
+      "value": "label",
     },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "int",
+              "value": 3,
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "brackets",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 4,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "label",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ",",
+}
+`;
+
+exports[`expressions > data structures > map without braces 1`] = `
+{
+  "children": [
     {
       "children": [
         {
@@ -1564,94 +1599,39 @@ exports[`expressions > data structures > map 1`] = `
           ],
           "data": {},
           "name": "operator",
-          "value": "label",
+          "value": "+",
         },
         {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 3,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "label",
+    },
+    {
+      "children": [
+        {
           "children": [
-            {
-              "children": [],
-              "data": {},
-              "name": "int",
-              "value": 3,
-            },
             {
               "children": [],
               "data": {},
               "name": "int",
               "value": 4,
             },
-          ],
-          "data": {},
-          "name": "operator",
-          "value": "label",
-        },
-      ],
-      "data": {},
-      "name": "operator",
-      "value": ";",
-    },
-  ],
-  "data": {},
-  "name": "group",
-  "value": "map",
-}
-`;
-
-exports[`expressions > data structures > map without braces 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [],
-          "data": {},
-          "name": "int",
-          "value": 1,
-        },
-        {
-          "children": [],
-          "data": {},
-          "name": "int",
-          "value": 2,
-        },
-      ],
-      "data": {},
-      "name": "operator",
-      "value": "+",
-    },
-    {
-      "children": [
-        {
-          "children": [
             {
               "children": [],
               "data": {},
               "name": "int",
-              "value": 3,
-            },
-            {
-              "children": [
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "int",
-                  "value": 4,
-                },
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "int",
-                  "value": 5,
-                },
-              ],
-              "data": {},
-              "name": "operator",
-              "value": "+",
+              "value": 5,
             },
           ],
           "data": {},
           "name": "operator",
-          "value": ",",
+          "value": "+",
         },
         {
           "children": [],
@@ -1667,7 +1647,7 @@ exports[`expressions > data structures > map without braces 1`] = `
   ],
   "data": {},
   "name": "operator",
-  "value": "label",
+  "value": ",",
 }
 `;
 
@@ -1770,77 +1750,31 @@ exports[`expressions > data structures > record 1`] = `
 {
   "children": [
     {
-      "children": [],
-      "data": {},
-      "name": "placeholder",
-    },
-    {
       "children": [
         {
-          "children": [
-            {
-              "children": [],
-              "data": {},
-              "name": "name",
-              "value": "a",
-            },
-            {
-              "children": [],
-              "data": {},
-              "name": "int",
-              "value": 1,
-            },
-          ],
+          "children": [],
           "data": {},
-          "name": "operator",
-          "value": "label",
+          "name": "name",
+          "value": "a",
         },
         {
-          "children": [
-            {
-              "children": [],
-              "data": {},
-              "name": "name",
-              "value": "b",
-            },
-            {
-              "children": [],
-              "data": {},
-              "name": "int",
-              "value": 2,
-            },
-          ],
+          "children": [],
           "data": {},
-          "name": "operator",
-          "value": "label",
+          "name": "int",
+          "value": 1,
         },
       ],
       "data": {},
       "name": "operator",
-      "value": ";",
-    },
-  ],
-  "data": {},
-  "name": "group",
-  "value": "record",
-}
-`;
-
-exports[`expressions > data structures > set 1`] = `
-{
-  "children": [
-    {
-      "children": [],
-      "data": {},
-      "name": "placeholder",
+      "value": "label",
     },
     {
       "children": [
         {
           "children": [],
           "data": {},
-          "name": "int",
-          "value": 1,
+          "name": "name",
+          "value": "b",
         },
         {
           "children": [],
@@ -1851,27 +1785,56 @@ exports[`expressions > data structures > set 1`] = `
       ],
       "data": {},
       "name": "operator",
-      "value": ";",
+      "value": "label",
     },
   ],
   "data": {},
-  "name": "group",
+  "name": "operator",
+  "value": ",",
+}
+`;
+
+exports[`expressions > data structures > set 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "int",
+              "value": 1,
+            },
+            {
+              "children": [],
+              "data": {},
+              "name": "int",
+              "value": 2,
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": ",",
+        },
+      ],
+      "data": {},
+      "name": "group",
+      "value": "parens",
+    },
+  ],
+  "data": {},
+  "name": "operator",
   "value": "set",
 }
 `;
 
 exports[`expressions > data structures > symbol 1`] = `
 {
-  "children": [
-    {
-      "children": [],
-      "data": {},
-      "name": "name",
-      "value": "x",
-    },
-  ],
+  "children": [],
   "data": {},
-  "name": "operator",
+  "name": "group",
   "value": "symbol",
 }
 `;
@@ -2731,7 +2694,7 @@ exports[`expressions > function expressions > function multiple params 1`] = `
       ],
       "data": {},
       "name": "operator",
-      "value": "application",
+      "value": ",",
     },
     {
       "children": [
@@ -2916,98 +2879,6 @@ exports[`expressions > function expressions > function with shadowed name access
   "data": {},
   "name": "operator",
   "value": "fn",
-}
-`;
-
-exports[`expressions > pattern matching > arrow function pattern union 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [
-            {
-              "children": [
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "placeholder",
-                },
-                {
-                  "children": [
-                    {
-                      "children": [],
-                      "data": {},
-                      "name": "name",
-                      "value": "y",
-                    },
-                    {
-                      "children": [],
-                      "data": {},
-                      "name": "name",
-                      "value": "z",
-                    },
-                  ],
-                  "data": {},
-                  "name": "operator",
-                  "value": ",",
-                },
-              ],
-              "data": {},
-              "name": "group",
-              "value": "record",
-            },
-            {
-              "children": [
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "placeholder",
-                },
-                {
-                  "children": [
-                    {
-                      "children": [],
-                      "data": {},
-                      "name": "name",
-                      "value": "y",
-                    },
-                    {
-                      "children": [],
-                      "data": {},
-                      "name": "name",
-                      "value": "z",
-                    },
-                  ],
-                  "data": {},
-                  "name": "operator",
-                  "value": ",",
-                },
-              ],
-              "data": {},
-              "name": "group",
-              "value": "record",
-            },
-          ],
-          "data": {},
-          "name": "operator",
-          "value": "or",
-        },
-      ],
-      "data": {},
-      "name": "group",
-      "value": "parens",
-    },
-    {
-      "children": [],
-      "data": {},
-      "name": "name",
-      "value": "y",
-    },
-  ],
-  "data": {},
-  "name": "operator",
-  "value": "->",
 }
 `;
 
@@ -3290,15 +3161,9 @@ exports[`expressions > pattern matching > match that accepts tuple 1`] = `
 }
 `;
 
-exports[`expressions > pattern matching > pattern intersection 1`] = `
+exports[`expressions > pattern matching > set-theoretic patterns > pattern intersection 1`] = `
 {
   "children": [
-    {
-      "children": [],
-      "data": {},
-      "name": "name",
-      "value": "a",
-    },
     {
       "children": [
         {
@@ -3312,54 +3177,43 @@ exports[`expressions > pattern matching > pattern intersection 1`] = `
                         {
                           "children": [],
                           "data": {},
-                          "name": "placeholder",
-                        },
-                        {
-                          "children": [
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "name",
-                              "value": "x",
-                            },
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "name",
-                              "value": "y",
-                            },
-                          ],
-                          "data": {},
-                          "name": "operator",
-                          "value": ",",
-                        },
-                      ],
-                      "data": {},
-                      "name": "group",
-                      "value": "record",
-                    },
-                    {
-                      "children": [
-                        {
-                          "children": [],
-                          "data": {},
-                          "name": "placeholder",
+                          "name": "name",
+                          "value": "x",
                         },
                         {
                           "children": [],
                           "data": {},
                           "name": "name",
-                          "value": "z",
+                          "value": "x",
                         },
                       ],
                       "data": {},
-                      "name": "group",
-                      "value": "record",
+                      "name": "operator",
+                      "value": "label",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "y",
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "y",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "label",
                     },
                   ],
                   "data": {},
                   "name": "operator",
-                  "value": "and",
+                  "value": ",",
                 },
               ],
               "data": {},
@@ -3374,140 +3228,43 @@ exports[`expressions > pattern matching > pattern intersection 1`] = `
                       "children": [],
                       "data": {},
                       "name": "name",
-                      "value": "x",
+                      "value": "z",
                     },
                     {
                       "children": [],
                       "data": {},
                       "name": "name",
-                      "value": "y",
+                      "value": "z",
                     },
                   ],
                   "data": {},
                   "name": "operator",
-                  "value": "+",
-                },
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "name",
-                  "value": "z",
+                  "value": "label",
                 },
               ],
               "data": {},
-              "name": "operator",
-              "value": "+",
+              "name": "group",
+              "value": "parens",
             },
           ],
           "data": {},
           "name": "operator",
-          "value": "->",
-        },
-        {
-          "children": [],
-          "data": {},
-          "name": "placeholder",
+          "value": "and",
         },
       ],
       "data": {},
-      "name": "operator",
-      "value": ";",
-    },
-  ],
-  "data": {},
-  "name": "group",
-  "value": "match",
-}
-`;
-
-exports[`expressions > pattern matching > pattern union 1`] = `
-{
-  "children": [
-    {
-      "children": [],
-      "data": {},
-      "name": "name",
-      "value": "a",
+      "name": "group",
+      "value": "parens",
     },
     {
       "children": [
         {
           "children": [
             {
-              "children": [
-                {
-                  "children": [
-                    {
-                      "children": [
-                        {
-                          "children": [],
-                          "data": {},
-                          "name": "placeholder",
-                        },
-                        {
-                          "children": [
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "name",
-                              "value": "y",
-                            },
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "name",
-                              "value": "z",
-                            },
-                          ],
-                          "data": {},
-                          "name": "operator",
-                          "value": ",",
-                        },
-                      ],
-                      "data": {},
-                      "name": "group",
-                      "value": "record",
-                    },
-                    {
-                      "children": [
-                        {
-                          "children": [],
-                          "data": {},
-                          "name": "placeholder",
-                        },
-                        {
-                          "children": [
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "name",
-                              "value": "y",
-                            },
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "name",
-                              "value": "z",
-                            },
-                          ],
-                          "data": {},
-                          "name": "operator",
-                          "value": ",",
-                        },
-                      ],
-                      "data": {},
-                      "name": "group",
-                      "value": "record",
-                    },
-                  ],
-                  "data": {},
-                  "name": "operator",
-                  "value": "or",
-                },
-              ],
+              "children": [],
               "data": {},
-              "name": "group",
-              "value": "parens",
+              "name": "name",
+              "value": "x",
             },
             {
               "children": [],
@@ -3518,22 +3275,265 @@ exports[`expressions > pattern matching > pattern union 1`] = `
           ],
           "data": {},
           "name": "operator",
-          "value": "->",
+          "value": "+",
         },
         {
           "children": [],
           "data": {},
-          "name": "placeholder",
+          "name": "name",
+          "value": "z",
         },
       ],
       "data": {},
       "name": "operator",
-      "value": ";",
+      "value": "+",
     },
   ],
   "data": {},
-  "name": "group",
-  "value": "match",
+  "name": "operator",
+  "value": "->",
+}
+`;
+
+exports[`expressions > pattern matching > set-theoretic patterns > pattern negation 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "x",
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "x",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "label",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "y",
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "y",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "label",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": ",",
+                },
+              ],
+              "data": {},
+              "name": "group",
+              "value": "parens",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "!",
+        },
+      ],
+      "data": {},
+      "name": "group",
+      "value": "parens",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "+",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "z",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "+",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "->",
+}
+`;
+
+exports[`expressions > pattern matching > set-theoretic patterns > pattern union 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "x",
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "x",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "label",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "y",
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "y",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "label",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": ",",
+                },
+              ],
+              "data": {},
+              "name": "group",
+              "value": "parens",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "y",
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "y",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "label",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "z",
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "z",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "label",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": ",",
+                },
+              ],
+              "data": {},
+              "name": "group",
+              "value": "parens",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "or",
+        },
+      ],
+      "data": {},
+      "name": "group",
+      "value": "parens",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "y",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "->",
 }
 `;
 
@@ -3756,33 +3756,41 @@ exports[`expressions > pattern matching > with rename 1`] = `
     {
       "children": [
         {
-          "children": [],
-          "data": {},
-          "name": "placeholder",
-        },
-        {
           "children": [
             {
-              "children": [],
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "a",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "b",
+                },
+              ],
               "data": {},
-              "name": "name",
-              "value": "b",
+              "name": "operator",
+              "value": "@",
             },
             {
               "children": [],
               "data": {},
               "name": "name",
-              "value": "a",
+              "value": "c",
             },
           ],
           "data": {},
           "name": "operator",
-          "value": "@",
+          "value": ",",
         },
       ],
       "data": {},
       "name": "group",
-      "value": "record",
+      "value": "parens",
     },
   ],
   "data": {},
@@ -4164,41 +4172,6 @@ exports[`expressions > structured programming > block variable declaration 1`] =
   "data": {},
   "name": "group",
   "value": "braces",
-}
-`;
-
-exports[`expressions > structured programming > expression-label 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [],
-          "data": {},
-          "name": "int",
-          "value": 123,
-        },
-        {
-          "children": [],
-          "data": {},
-          "name": "int",
-          "value": 456,
-        },
-      ],
-      "data": {},
-      "name": "operator",
-      "value": "+",
-    },
-    {
-      "children": [],
-      "data": {},
-      "name": "int",
-      "value": 789,
-    },
-  ],
-  "data": {},
-  "name": "operator",
-  "value": "label",
 }
 `;
 

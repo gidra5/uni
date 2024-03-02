@@ -241,23 +241,21 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
-    test("pattern union", () => {
-      const src = `match a {
-        (record { x, y } or record { y, z }) -> y
-      }`;
-      treeTestCase(src);
-    });
+    describe("set-theoretic patterns", () => {
+      test("pattern union", () => {
+        const src = `((x:x, y:y) or (y:y, z:z)) -> y`;
+        treeTestCase(src);
+      });
 
-    test("pattern intersection", () => {
-      const src = `match a {
-        (record { x, y } and record { z }) -> x + y + z
-      }`;
-      treeTestCase(src);
-    });
+      test("pattern intersection", () => {
+        const src = `((x:x, y:y) and (z:z)) -> x + y + z`;
+        treeTestCase(src);
+      });
 
-    test("arrow function pattern union", () => {
-      const src = `(record { x, y } or record { y, z }) -> y`;
-      treeTestCase(src);
+      test("pattern negation", () => {
+        const src = `(!(x:x, y:y)) -> x + y + z`;
+        treeTestCase(src);
+      });
     });
 
     test("with 'is' operator", () => {
@@ -291,7 +289,7 @@ describe("expressions", () => {
     });
 
     test("with rename", () => {
-      const src = `x is record { b @ a }`;
+      const src = `x is (a @ b, c)`;
       treeTestCase(src);
     });
 
@@ -301,7 +299,7 @@ describe("expressions", () => {
     });
 
     test.todo("with type", () => {
-      const src = `x is ((b: number), a)`;
+      const src = `x is (b as number, a)`;
       treeTestCase(src);
     });
 
@@ -442,7 +440,7 @@ describe("expressions", () => {
     });
 
     test("record", () => {
-      const src = `a: 1; b: 2`;
+      const src = `a: 1, b: 2`;
       treeTestCase(src);
     });
 
@@ -452,7 +450,7 @@ describe("expressions", () => {
     });
 
     test("map", () => {
-      const src = `[1]: 2; [3]: 4`;
+      const src = `[1]: 2, [3]: 4`;
       treeTestCase(src);
     });
 
