@@ -416,6 +416,48 @@ describe("expressions", () => {
     });
   });
 
+  describe("concurrent programming", () => {
+    test("channel send", () => {
+      const src = `c <- 123`;
+      treeTestCase(src);
+    });
+
+    test("channel receive", () => {
+      const src = `<- c`;
+      treeTestCase(src);
+    });
+
+    test("parallel value", () => {
+      const src = `123 | 456`;
+      treeTestCase(src);
+    });
+
+    test("parallel with channels", () => {
+      const src = `c <- 123 | <- c`;
+      treeTestCase(src);
+    });
+
+    test("async", () => {
+      const src = `async f x`;
+      treeTestCase(src);
+    });
+
+    test("await async", () => {
+      const src = `await async f x`;
+      treeTestCase(src);
+    });
+
+    test("await", () => {
+      const src = `await x + 1`;
+      treeTestCase(src);
+    });
+
+    test("yield", () => {
+      const src = `yield 123`;
+      treeTestCase(src);
+    });
+  });
+
   describe("data structures", () => {
     it(...treeTestCaseArgs("(-(2+7)/A,j, i, 127.0 )"));
 

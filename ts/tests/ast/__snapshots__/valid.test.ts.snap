@@ -1483,6 +1483,218 @@ exports[`expressions > boolean expressions > or 1`] = `
 }
 `;
 
+exports[`expressions > concurrent programming > async 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "f",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "async",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "x",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "application",
+}
+`;
+
+exports[`expressions > concurrent programming > await 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "await",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 1,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "+",
+}
+`;
+
+exports[`expressions > concurrent programming > await async 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "f",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "async",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "x",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "application",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "await",
+}
+`;
+
+exports[`expressions > concurrent programming > channel receive 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "c",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "receive",
+}
+`;
+
+exports[`expressions > concurrent programming > channel send 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "c",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 123,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "send",
+}
+`;
+
+exports[`expressions > concurrent programming > parallel value 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 123,
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 456,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "parallel",
+}
+`;
+
+exports[`expressions > concurrent programming > parallel with channels 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "c",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 123,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "send",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "c",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "receive",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "parallel",
+}
+`;
+
+exports[`expressions > concurrent programming > yield 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 123,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "yield",
+}
+`;
+
 exports[`expressions > data structures > atom (global symbol) 1`] = `
 {
   "children": [

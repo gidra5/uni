@@ -85,12 +85,12 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
       return [`inRange_${op1}_${op2}`, definition] as [string, TokenGroupDefinition];
     })
     .toObject(),
-  
+
   as: { separators: matchSeparators(["as"]), precedence: [1, 1] },
   mut: { separators: matchSeparators(["mut"]), precedence: [null, 3] },
   "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 2] },
   fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
-  ";": { separators: matchSeparators([";", "\n"]), precedence: rightAssociative(semicolonPrecedence) },
+  ";": { separators: matchSeparators([";", "\n"]), precedence: associative(semicolonPrecedence) },
   "#": { separators: matchSeparators(["#"]), precedence: [null, 4] },
   pin: { separators: matchSeparators(["^"]), precedence: [null, 4] },
   "...": { separators: matchSeparators(["..."]), precedence: [null, 4] },
@@ -145,13 +145,16 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   },
   return: { separators: matchSeparators(["return"]), precedence: [null, 2] },
   yield: { separators: matchSeparators(["yield"]), precedence: [null, 2] },
-  async: { separators: matchSeparators(["async"]), precedence: [null, 2] },
-  await: { separators: matchSeparators(["await"]), precedence: [null, 2] },
-  parallel: { separators: matchSeparators(["|"]), precedence: [2, 2] },
-  pipe: { separators: matchSeparators(["|>"]), precedence: [2, 2] },
-  feed: { separators: matchSeparators(["<-"]), precedence: [2, 2] },
-  "=": { separators: matchSeparators(["="]), precedence: [2, 2] },
+  async: { separators: matchSeparators(["async"]), precedence: [null, maxPrecedence] },
+  await: { separators: matchSeparators(["await"]), precedence: [null, maxPrecedence - 1] },
+  parallel: { separators: matchSeparators(["|"]), precedence: associative(semicolonPrecedence + 1) },
+  pipe: { separators: matchSeparators(["|>"]), precedence: leftAssociative(2) },
+  send: { separators: matchSeparators(["<-"]), precedence: rightAssociative(2) },
+  receive: { separators: matchSeparators(["<-"]), precedence: [null, 2] },
+
+  "=": { separators: matchSeparators(["="]), precedence: rightAssociative(semicolonPrecedence + 1) },
   ":=": { separators: matchSeparators([":="]), precedence: [semicolonPrecedence + 1, semicolonPrecedence + 1] },
+
   symbol: { separators: matchSeparators(["symbol"]), precedence: [null, null] },
   channel: { separators: matchSeparators(["channel"]), precedence: [null, null] },
   set: {
@@ -160,7 +163,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   },
   access: {
     separators: matchSeparators(["."]),
-    precedence: [Infinity, Infinity],
+    precedence: leftAssociative(maxPrecedence),
   },
   accessDynamic: {
     separators: matchSeparators(["["], ["]"]),
@@ -262,6 +265,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
 export const scope = new Scope(scopeDictionary);
 
 export const symbols = Iterator.iter([
+  "<-",
   "->",
   "--",
   "++",
