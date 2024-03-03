@@ -5,7 +5,7 @@ import { Register, toHex } from "../vm/utils.js";
 import { CodeChunk, chunk, chunkToByteCode } from "./chunks.js";
 import { CopySymbol, copy } from "../utils/copy.js";
 import { omit } from "../utils/index.js";
-import { InstructionFactory } from "./stackAdapter.js";
+import { InstructionFactory } from "./instructionsFactory.js";
 
 type Context = {
   chunks: CodeChunk[];
