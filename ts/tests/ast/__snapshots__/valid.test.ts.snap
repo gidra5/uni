@@ -499,40 +499,210 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                     {
                       "children": [
                         {
+                          "children": [],
+                          "data": {},
+                          "name": "int",
+                          "value": 2,
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "int",
+                          "value": 2,
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "^",
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "int",
+                      "value": 5,
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": "-",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 7,
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": "+",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "i",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": "negate",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "-",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "j",
+                },
+              ],
+              "data": {},
+              "name": "group",
+              "value": "parens",
+            },
+            {
+              "children": [],
+              "data": {},
+              "name": "int",
+              "value": 0,
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "/",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "int",
+              "value": 1,
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "int",
+                      "value": 1,
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "f",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": "*",
+                },
+              ],
+              "data": {},
+              "name": "group",
+              "value": "parens",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "*",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "-",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 27,
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "x",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": "-",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "q",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "/",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "send",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
                           "children": [
                             {
                               "children": [
                                 {
-                                  "children": [
-                                    {
-                                      "children": [
-                                        {
-                                          "children": [],
-                                          "data": {},
-                                          "name": "int",
-                                          "value": 2,
-                                        },
-                                        {
-                                          "children": [],
-                                          "data": {},
-                                          "name": "int",
-                                          "value": 2,
-                                        },
-                                      ],
-                                      "data": {},
-                                      "name": "operator",
-                                      "value": "^",
-                                    },
-                                    {
-                                      "children": [],
-                                      "data": {},
-                                      "name": "int",
-                                      "value": 5,
-                                    },
-                                  ],
+                                  "children": [],
                                   "data": {},
-                                  "name": "operator",
-                                  "value": "-",
+                                  "name": "int",
+                                  "value": 2,
                                 },
                                 {
                                   "children": [],
@@ -550,259 +720,54 @@ exports[`expressions > arithmetics > produces correct tree for '(2^2-5+7)-(-i)+ 
                           "name": "group",
                           "value": "parens",
                         },
-                        {
-                          "children": [
-                            {
-                              "children": [
-                                {
-                                  "children": [],
-                                  "data": {},
-                                  "name": "name",
-                                  "value": "i",
-                                },
-                              ],
-                              "data": {},
-                              "name": "operator",
-                              "value": "negate",
-                            },
-                          ],
-                          "data": {},
-                          "name": "group",
-                          "value": "parens",
-                        },
                       ],
                       "data": {},
                       "name": "operator",
-                      "value": "-",
+                      "value": "negate",
                     },
-                    {
-                      "children": [
-                        {
-                          "children": [
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "name",
-                              "value": "j",
-                            },
-                          ],
-                          "data": {},
-                          "name": "group",
-                          "value": "parens",
-                        },
-                        {
-                          "children": [],
-                          "data": {},
-                          "name": "int",
-                          "value": 0,
-                        },
-                      ],
-                      "data": {},
-                      "name": "operator",
-                      "value": "/",
-                    },
-                  ],
-                  "data": {},
-                  "name": "operator",
-                  "value": "+",
-                },
-                {
-                  "children": [
                     {
                       "children": [],
                       "data": {},
-                      "name": "int",
-                      "value": 1,
-                    },
-                    {
-                      "children": [
-                        {
-                          "children": [
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "int",
-                              "value": 1,
-                            },
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "name",
-                              "value": "f",
-                            },
-                          ],
-                          "data": {},
-                          "name": "operator",
-                          "value": "*",
-                        },
-                      ],
-                      "data": {},
-                      "name": "group",
-                      "value": "parens",
+                      "name": "name",
+                      "value": "A",
                     },
                   ],
                   "data": {},
                   "name": "operator",
-                  "value": "*",
-                },
-              ],
-              "data": {},
-              "name": "operator",
-              "value": "-",
-            },
-            {
-              "children": [
-                {
-                  "children": [
-                    {
-                      "children": [
-                        {
-                          "children": [],
-                          "data": {},
-                          "name": "int",
-                          "value": 27,
-                        },
-                        {
-                          "children": [],
-                          "data": {},
-                          "name": "name",
-                          "value": "x",
-                        },
-                      ],
-                      "data": {},
-                      "name": "operator",
-                      "value": "-",
-                    },
-                  ],
-                  "data": {},
-                  "name": "group",
-                  "value": "parens",
+                  "value": "/",
                 },
                 {
                   "children": [],
                   "data": {},
                   "name": "name",
-                  "value": "q",
+                  "value": "j",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "i",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "float",
+                  "value": 127,
                 },
               ],
               "data": {},
               "name": "operator",
-              "value": "/",
+              "value": ",",
             },
           ],
           "data": {},
-          "name": "operator",
-          "value": "+",
-        },
-        {
-          "children": [
-            {
-              "children": [],
-              "data": {},
-              "name": "name",
-              "value": "send",
-            },
-            {
-              "children": [
-                {
-                  "children": [
-                    {
-                      "children": [
-                        {
-                          "children": [
-                            {
-                              "children": [
-                                {
-                                  "children": [
-                                    {
-                                      "children": [
-                                        {
-                                          "children": [
-                                            {
-                                              "children": [],
-                                              "data": {},
-                                              "name": "int",
-                                              "value": 2,
-                                            },
-                                            {
-                                              "children": [],
-                                              "data": {},
-                                              "name": "int",
-                                              "value": 7,
-                                            },
-                                          ],
-                                          "data": {},
-                                          "name": "operator",
-                                          "value": "+",
-                                        },
-                                      ],
-                                      "data": {},
-                                      "name": "group",
-                                      "value": "parens",
-                                    },
-                                  ],
-                                  "data": {},
-                                  "name": "operator",
-                                  "value": "negate",
-                                },
-                                {
-                                  "children": [],
-                                  "data": {},
-                                  "name": "name",
-                                  "value": "A",
-                                },
-                              ],
-                              "data": {},
-                              "name": "operator",
-                              "value": "/",
-                            },
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "name",
-                              "value": "j",
-                            },
-                          ],
-                          "data": {},
-                          "name": "operator",
-                          "value": ",",
-                        },
-                        {
-                          "children": [],
-                          "data": {},
-                          "name": "name",
-                          "value": "i",
-                        },
-                      ],
-                      "data": {},
-                      "name": "operator",
-                      "value": ",",
-                    },
-                    {
-                      "children": [],
-                      "data": {},
-                      "name": "float",
-                      "value": 127,
-                    },
-                  ],
-                  "data": {},
-                  "name": "operator",
-                  "value": ",",
-                },
-              ],
-              "data": {},
-              "name": "group",
-              "value": "parens",
-            },
-          ],
-          "data": {},
-          "name": "operator",
-          "value": "application",
+          "name": "group",
+          "value": "parens",
         },
       ],
       "data": {},
       "name": "operator",
-      "value": "+",
+      "value": "application",
     },
     {
       "children": [
@@ -955,6 +920,84 @@ exports[`expressions > boolean expressions > and 1`] = `
   "data": {},
   "name": "operator",
   "value": "and",
+}
+`;
+
+exports[`expressions > boolean expressions > and and or associativity 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "a",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "b",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "c",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "and",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "d",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "e",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "f",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "g",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "and",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "h",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "i",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "or",
 }
 `;
 
@@ -1665,68 +1708,54 @@ exports[`expressions > data structures > produces correct tree for '(-(2+7)/A,j,
                     {
                       "children": [
                         {
-                          "children": [
-                            {
-                              "children": [
-                                {
-                                  "children": [],
-                                  "data": {},
-                                  "name": "int",
-                                  "value": 2,
-                                },
-                                {
-                                  "children": [],
-                                  "data": {},
-                                  "name": "int",
-                                  "value": 7,
-                                },
-                              ],
-                              "data": {},
-                              "name": "operator",
-                              "value": "+",
-                            },
-                          ],
+                          "children": [],
                           "data": {},
-                          "name": "group",
-                          "value": "parens",
+                          "name": "int",
+                          "value": 2,
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "int",
+                          "value": 7,
                         },
                       ],
                       "data": {},
                       "name": "operator",
-                      "value": "negate",
-                    },
-                    {
-                      "children": [],
-                      "data": {},
-                      "name": "name",
-                      "value": "A",
+                      "value": "+",
                     },
                   ],
                   "data": {},
-                  "name": "operator",
-                  "value": "/",
-                },
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "name",
-                  "value": "j",
+                  "name": "group",
+                  "value": "parens",
                 },
               ],
               "data": {},
               "name": "operator",
-              "value": ",",
+              "value": "negate",
             },
             {
               "children": [],
               "data": {},
               "name": "name",
-              "value": "i",
+              "value": "A",
             },
           ],
           "data": {},
           "name": "operator",
-          "value": ",",
+          "value": "/",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "j",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "i",
         },
         {
           "children": [],
@@ -2365,36 +2394,29 @@ exports[`expressions > function expressions > application > produces correct tre
 {
   "children": [
     {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "a",
+    },
+    {
       "children": [
         {
           "children": [],
           "data": {},
           "name": "name",
-          "value": "a",
+          "value": "send",
         },
         {
-          "children": [
-            {
-              "children": [],
-              "data": {},
-              "name": "name",
-              "value": "send",
-            },
-            {
-              "children": [],
-              "data": {},
-              "name": "int",
-              "value": 1,
-            },
-          ],
+          "children": [],
           "data": {},
-          "name": "operator",
-          "value": "application",
+          "name": "int",
+          "value": 1,
         },
       ],
       "data": {},
       "name": "operator",
-      "value": "+",
+      "value": "application",
     },
     {
       "children": [],
@@ -3259,23 +3281,16 @@ exports[`expressions > pattern matching > set-theoretic patterns > pattern inter
     {
       "children": [
         {
-          "children": [
-            {
-              "children": [],
-              "data": {},
-              "name": "name",
-              "value": "x",
-            },
-            {
-              "children": [],
-              "data": {},
-              "name": "name",
-              "value": "y",
-            },
-          ],
+          "children": [],
           "data": {},
-          "name": "operator",
-          "value": "+",
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "y",
         },
         {
           "children": [],
@@ -3367,23 +3382,16 @@ exports[`expressions > pattern matching > set-theoretic patterns > pattern negat
     {
       "children": [
         {
-          "children": [
-            {
-              "children": [],
-              "data": {},
-              "name": "name",
-              "value": "x",
-            },
-            {
-              "children": [],
-              "data": {},
-              "name": "name",
-              "value": "y",
-            },
-          ],
+          "children": [],
           "data": {},
-          "name": "operator",
-          "value": "+",
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "y",
         },
         {
           "children": [],
@@ -4189,23 +4197,16 @@ exports[`expressions > structured programming > for loop 1`] = `
         {
           "children": [
             {
-              "children": [
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "int",
-                  "value": 1,
-                },
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "int",
-                  "value": 2,
-                },
-              ],
+              "children": [],
               "data": {},
-              "name": "operator",
-              "value": ",",
+              "name": "int",
+              "value": 1,
+            },
+            {
+              "children": [],
+              "data": {},
+              "name": "int",
+              "value": 2,
             },
             {
               "children": [],
@@ -4250,23 +4251,16 @@ exports[`expressions > structured programming > for loop newline 1`] = `
         {
           "children": [
             {
-              "children": [
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "int",
-                  "value": 1,
-                },
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "int",
-                  "value": 2,
-                },
-              ],
+              "children": [],
               "data": {},
-              "name": "operator",
-              "value": ",",
+              "name": "int",
+              "value": 1,
+            },
+            {
+              "children": [],
+              "data": {},
+              "name": "int",
+              "value": 2,
             },
             {
               "children": [],
@@ -4799,33 +4793,26 @@ exports[`newline handling > block newline at the end 1`] = `
         {
           "children": [
             {
-              "children": [
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "name",
-                  "value": "b",
-                },
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "int",
-                  "value": 2,
-                },
-              ],
+              "children": [],
               "data": {},
-              "name": "operator",
-              "value": ":=",
+              "name": "name",
+              "value": "b",
             },
             {
               "children": [],
               "data": {},
-              "name": "placeholder",
+              "name": "int",
+              "value": 2,
             },
           ],
           "data": {},
           "name": "operator",
-          "value": ";",
+          "value": ":=",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "placeholder",
         },
       ],
       "data": {},
@@ -4976,33 +4963,26 @@ exports[`newline handling > block semicolon newline at the end 1`] = `
         {
           "children": [
             {
-              "children": [
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "name",
-                  "value": "b",
-                },
-                {
-                  "children": [],
-                  "data": {},
-                  "name": "int",
-                  "value": 2,
-                },
-              ],
+              "children": [],
               "data": {},
-              "name": "operator",
-              "value": ":=",
+              "name": "name",
+              "value": "b",
             },
             {
               "children": [],
               "data": {},
-              "name": "placeholder",
+              "name": "int",
+              "value": 2,
             },
           ],
           "data": {},
           "name": "operator",
-          "value": ";",
+          "value": ":=",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "placeholder",
         },
       ],
       "data": {},

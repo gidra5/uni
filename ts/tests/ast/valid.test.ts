@@ -149,6 +149,11 @@ describe("expressions", () => {
         });
       }
     });
+
+    test("and and or associativity", () => {
+      const src = `a and b and c or d or e and f and g or h or i`;
+      treeTestCase(src, null, pick(scopeDictionary, ["and", "or"]));
+    });
   });
 
   describe("function expressions", () => {

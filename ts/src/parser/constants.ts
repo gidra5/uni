@@ -46,18 +46,21 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   free: { separators: matchSeparators(["free"]), precedence: [null, semicolonPrecedence + 1] },
   ref: { separators: matchSeparators(["&"]), precedence: [null, 3] },
   deref: { separators: matchSeparators(["*"]), precedence: [null, 3] },
-  "@": { separators: matchSeparators(["@"]), precedence: rightAssociative(tuplePrecedence + 2) },
-  "+": { separators: matchSeparators(["+"]), precedence: leftAssociative(arithmeticPrecedence) },
-  "-": { separators: matchSeparators(["-"]), precedence: leftAssociative(arithmeticPrecedence) },
-  "*": { separators: matchSeparators(["*"]), precedence: leftAssociative(arithmeticPrecedence + 2) },
-  "/": { separators: matchSeparators(["/"]), precedence: leftAssociative(arithmeticPrecedence + 2) },
-  "%": { separators: matchSeparators(["%"]), precedence: leftAssociative(arithmeticPrecedence + 2) },
-  "^": { separators: matchSeparators(["^"]), precedence: leftAssociative(arithmeticPrecedence + 4) },
-  ",": { separators: matchSeparators([","]), precedence: leftAssociative(tuplePrecedence) },
+  "@": { separators: matchSeparators(["@"]), precedence: leftAssociative(tuplePrecedence + 2) },
+
+  "+": { separators: matchSeparators(["+"]), precedence: associative(arithmeticPrecedence) },
+  "-": { separators: matchSeparators(["-"]), precedence: leftAssociative(arithmeticPrecedence + 1) },
+  "*": { separators: matchSeparators(["*"]), precedence: associative(arithmeticPrecedence + 3) },
+  "/": { separators: matchSeparators(["/"]), precedence: leftAssociative(arithmeticPrecedence + 4) },
+  "%": { separators: matchSeparators(["%"]), precedence: leftAssociative(arithmeticPrecedence + 4) },
+  "^": { separators: matchSeparators(["^"]), precedence: leftAssociative(arithmeticPrecedence + 6) },
+
+  ",": { separators: matchSeparators([","]), precedence: associative(tuplePrecedence) },
+
   in: { separators: matchSeparators(["in"]), precedence: rightAssociative(booleanPrecedence) },
   is: { separators: matchSeparators(["is"]), precedence: [booleanPrecedence, Infinity] },
-  and: { separators: matchSeparators(["and"]), precedence: [booleanPrecedence + 1, booleanPrecedence + 1] },
-  or: { separators: matchSeparators(["or"]), precedence: rightAssociative(booleanPrecedence) },
+  and: { separators: matchSeparators(["and"]), precedence: associative(booleanPrecedence + 1) },
+  or: { separators: matchSeparators(["or"]), precedence: associative(booleanPrecedence) },
   "==": { separators: matchSeparators(["=="]), precedence: rightAssociative(booleanPrecedence + 2) },
   "!=": { separators: matchSeparators(["!="]), precedence: rightAssociative(booleanPrecedence + 2) },
   "===": { separators: matchSeparators(["==="]), precedence: rightAssociative(booleanPrecedence + 2) },
@@ -67,7 +70,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     .map((op) => {
       const definition = {
         separators: matchSeparators([op]),
-        precedence: [booleanPrecedence + 3, booleanPrecedence + 3],
+        precedence: rightAssociative(booleanPrecedence + 3),
       };
       return [op, definition] as [string, TokenGroupDefinition];
     })
@@ -77,11 +80,12 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     .map<[string, TokenGroupDefinition]>(([op1, op2]) => {
       const definition = {
         separators: matchSeparators([op1], [op2]),
-        precedence: [booleanPrecedence + 3, booleanPrecedence + 3],
+        precedence: rightAssociative(booleanPrecedence + 3),
       };
       return [`inRange_${op1}_${op2}`, definition] as [string, TokenGroupDefinition];
     })
     .toObject(),
+  
   as: { separators: matchSeparators(["as"]), precedence: [1, 1] },
   mut: { separators: matchSeparators(["mut"]), precedence: [null, 3] },
   "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 2] },
