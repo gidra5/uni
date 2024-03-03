@@ -33,7 +33,8 @@ export const prefixArithmeticOps = Iterator.iterEntries({
 export const comparisonOps = Iterator.iter(["<", "<=", ">=", ">"]);
 
 const semicolonPrecedence = 1;
-const tuplePrecedence = semicolonPrecedence + 2;
+const assignmentPrecedence = semicolonPrecedence + 1;
+const tuplePrecedence = assignmentPrecedence + 2;
 const booleanPrecedence = tuplePrecedence + 2;
 const arithmeticPrecedence = booleanPrecedence + 3;
 const maxPrecedence = Number.MAX_SAFE_INTEGER;
@@ -70,7 +71,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     .map((op) => {
       const definition = {
         separators: matchSeparators([op]),
-        precedence: rightAssociative(booleanPrecedence + 3),
+        precedence: rightAssociative(booleanPrecedence + 4),
       };
       return [op, definition] as [string, TokenGroupDefinition];
     })
@@ -80,14 +81,14 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     .map<[string, TokenGroupDefinition]>(([op1, op2]) => {
       const definition = {
         separators: matchSeparators([op1], [op2]),
-        precedence: rightAssociative(booleanPrecedence + 3),
+        precedence: rightAssociative(booleanPrecedence + 4),
       };
       return [`inRange_${op1}_${op2}`, definition] as [string, TokenGroupDefinition];
     })
     .toObject(),
 
   as: { separators: matchSeparators(["as"]), precedence: [1, 1] },
-  mut: { separators: matchSeparators(["mut"]), precedence: [null, 3] },
+  mut: { separators: matchSeparators(["mut"]), precedence: [null, assignmentPrecedence + 1] },
   "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 2] },
   fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
   ";": { separators: matchSeparators([";", "\n"]), precedence: associative(semicolonPrecedence) },
@@ -120,23 +121,23 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   },
   ifBlock: {
     separators: matchSeparators(["if"], ["{"], ["}"]),
-    precedence: [null, 2],
+    precedence: [null, null],
   },
   ifElseBlock: {
     separators: matchSeparators(["if"], [":", "\n"], ["else"], ["{"], ["}"]),
-    precedence: [null, 2],
+    precedence: [null, null],
   },
   ifBlockElseBlock: {
     separators: matchSeparators(["if"], ["{"], ["}"], ["else"], ["{"], ["}"]),
-    precedence: [null, 2],
+    precedence: [null, null],
   },
   forBlock: {
     separators: matchSeparators(["for"], ["in"], ["{"], ["}"]),
-    precedence: [null, 2],
+    precedence: [null, null],
   },
   whileBlock: {
     separators: matchSeparators(["while"], ["{"], ["}"]),
-    precedence: [null, 2],
+    precedence: [null, null],
   },
   break: { separators: matchSeparators(["break"]), precedence: [null, 2] },
   continue: {
@@ -153,7 +154,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   receive: { separators: matchSeparators(["<-"]), precedence: [null, 2] },
 
   "=": { separators: matchSeparators(["="]), precedence: rightAssociative(semicolonPrecedence + 1) },
-  ":=": { separators: matchSeparators([":="]), precedence: [semicolonPrecedence + 1, semicolonPrecedence + 1] },
+  ":=": { separators: matchSeparators([":="]), precedence: rightAssociative(semicolonPrecedence + 1) },
 
   symbol: { separators: matchSeparators(["symbol"]), precedence: [null, null] },
   channel: { separators: matchSeparators(["channel"]), precedence: [null, null] },
@@ -194,11 +195,11 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   label: { separators: matchSeparators([":"]), precedence: rightAssociative(tuplePrecedence + 2) },
   operator: {
     separators: matchSeparators(["operator"]),
-    precedence: [null, 3],
+    precedence: [null, assignmentPrecedence + 1],
   },
   operatorPrecedence: {
     separators: matchSeparators(["operator"], ["precedence"]),
-    precedence: [null, semicolonPrecedence + 1],
+    precedence: [null, assignmentPrecedence + 1],
   },
   negate: {
     separators: matchSeparators(["-"]),
