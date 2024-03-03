@@ -3,7 +3,7 @@ import { Iterator } from "iterator-js";
 import { DefaultVisitor, Tree, Visitor } from "../tree.js";
 import { isEqual } from "../utils/index.js";
 import { AbstractSyntaxTree } from "./ast.js";
-import { ParsingResult, TokenParser } from "./types.js";
+import { ParsingResult, Precedence, TokenParser } from "./types.js";
 
 export type TemplateValues = AbstractSyntaxTree[] | Record<string, AbstractSyntaxTree>;
 export const template = (tree: AbstractSyntaxTree, values: TemplateValues) => {
@@ -100,3 +100,11 @@ const parseOperands =
     const index = context.groupNodes?.length ?? 0;
     return parsers[index - 1](context);
   };
+
+// if two same operators are next to each other, which one will take precedence
+// left associative - left one will take precedence
+// right associative - right one will take precedence
+// associative - does not matter, can be grouped in any order
+export const leftAssociative = (precedence: number): Precedence => [precedence, precedence + 1];
+export const rightAssociative = (precedence: number): Precedence => [precedence + 1, precedence];
+export const associative = (precedence: number): Precedence => [precedence, precedence];

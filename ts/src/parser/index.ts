@@ -2,13 +2,12 @@ import { endOfTokensError, error } from "../errors.js";
 import { Iterator } from "iterator-js";
 import { indexPosition, position } from "../position.js";
 import { AbstractSyntaxTree, group, infix, operator, placeholder, postfix, prefix, program, token } from "./ast.js";
-import { ParsingError, ParsingResult, TokenParser } from "./types.js";
+import { ParsingError, ParsingResult, Precedence, TokenParser } from "./types.js";
 import { mapField, omit, pushField, setField } from "../utils/index.js";
 import { matchString, templateString } from "./string.js";
 import { scope } from "./constants.js";
 import { Scope as ScopeClass } from "../scope.js";
 
-export type Precedence = [prefix: number | null, postfix: number | null];
 export type TokenGroupDefinition = {
   separators: TokenParserWithContext<"done" | "noMatch" | "match">;
   precedence: Precedence;
@@ -75,7 +74,7 @@ export const parseGroup: TokenParserWithContext<AbstractSyntaxTree> =
         //   precedence[0] === null || precedence[0] >= context.precedence
         // );
 
-        return precedence[0] === null || precedence[0] >= context.precedence;
+        return precedence[0] === null || precedence[0] > context.precedence;
       })
       // .inspect((x) => console.log(3, x))
       .filter(({ separators }) => {
@@ -101,10 +100,11 @@ export const parseGroup: TokenParserWithContext<AbstractSyntaxTree> =
       const _token = src[index];
 
       const _context = setField(path, [])(context);
+      const applicationPrecedence = scope.getByName("application")!.value.precedence;
       const isStartOfGroup = scopeEntries.some(
         ({ separators, precedence }) => precedence[0] !== null && separators(_context)(src, index)[1] !== "noMatch"
       );
-      if (context.lhs && !isStartOfGroup && context.precedence !== Infinity)
+      if (context.lhs && !isStartOfGroup && applicationPrecedence[0]! > context.precedence)
         return [index, group("application"), errors];
 
       if (_token.type === "newline") return [index, placeholder(), errors];

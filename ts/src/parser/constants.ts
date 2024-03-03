@@ -1,5 +1,5 @@
 import { Iterator } from "iterator-js";
-import { matchSeparators } from "./utils.js";
+import { associative, leftAssociative, matchSeparators, rightAssociative } from "./utils.js";
 import { placeholder } from "./ast.js";
 import { TokenGroupDefinition } from "./index.js";
 import { Scope } from "../scope.js";
@@ -34,29 +34,34 @@ export const comparisonOps = Iterator.iter(["<", "<=", ">=", ">"]);
 
 const semicolonPrecedence = 1;
 const tuplePrecedence = semicolonPrecedence + 2;
-const booleanPrecedence = tuplePrecedence + 1;
+const booleanPrecedence = tuplePrecedence + 2;
 const arithmeticPrecedence = booleanPrecedence + 3;
+const maxPrecedence = Number.MAX_SAFE_INTEGER;
 
 export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   false: { separators: matchSeparators(["false"]), precedence: [null, null] },
   true: { separators: matchSeparators(["true"]), precedence: [null, null] },
   print: { separators: matchSeparators(["print"]), precedence: [null, semicolonPrecedence + 1] },
-  "@": { separators: matchSeparators(["@"]), precedence: [tuplePrecedence + 1, tuplePrecedence + 1] },
-  "+": { separators: matchSeparators(["+"]), precedence: [arithmeticPrecedence, arithmeticPrecedence + 1] },
-  "-": { separators: matchSeparators(["-"]), precedence: [arithmeticPrecedence, arithmeticPrecedence + 1] },
-  "*": { separators: matchSeparators(["*"]), precedence: [arithmeticPrecedence + 2, arithmeticPrecedence + 3] },
-  "/": { separators: matchSeparators(["/"]), precedence: [arithmeticPrecedence + 2, arithmeticPrecedence + 3] },
-  "%": { separators: matchSeparators(["%"]), precedence: [arithmeticPrecedence + 2, arithmeticPrecedence + 3] },
-  "^": { separators: matchSeparators(["^"]), precedence: [arithmeticPrecedence + 4, arithmeticPrecedence + 5] },
-  ",": { separators: matchSeparators([","]), precedence: [tuplePrecedence, tuplePrecedence + 1] },
-  in: { separators: matchSeparators(["in"]), precedence: [booleanPrecedence, booleanPrecedence] },
+  allocate: { separators: matchSeparators(["allocate"]), precedence: [null, semicolonPrecedence + 1] },
+  free: { separators: matchSeparators(["free"]), precedence: [null, semicolonPrecedence + 1] },
+  ref: { separators: matchSeparators(["&"]), precedence: [null, 3] },
+  deref: { separators: matchSeparators(["*"]), precedence: [null, 3] },
+  "@": { separators: matchSeparators(["@"]), precedence: associative(tuplePrecedence + 2) },
+  "+": { separators: matchSeparators(["+"]), precedence: leftAssociative(arithmeticPrecedence) },
+  "-": { separators: matchSeparators(["-"]), precedence: leftAssociative(arithmeticPrecedence) },
+  "*": { separators: matchSeparators(["*"]), precedence: leftAssociative(arithmeticPrecedence + 2) },
+  "/": { separators: matchSeparators(["/"]), precedence: leftAssociative(arithmeticPrecedence + 2) },
+  "%": { separators: matchSeparators(["%"]), precedence: leftAssociative(arithmeticPrecedence + 2) },
+  "^": { separators: matchSeparators(["^"]), precedence: leftAssociative(arithmeticPrecedence + 4) },
+  ",": { separators: matchSeparators([","]), precedence: leftAssociative(tuplePrecedence) },
+  in: { separators: matchSeparators(["in"]), precedence: associative(booleanPrecedence) },
   is: { separators: matchSeparators(["is"]), precedence: [booleanPrecedence, Infinity] },
   and: { separators: matchSeparators(["and"]), precedence: [booleanPrecedence + 1, booleanPrecedence + 1] },
-  or: { separators: matchSeparators(["or"]), precedence: [booleanPrecedence, booleanPrecedence] },
-  "==": { separators: matchSeparators(["=="]), precedence: [booleanPrecedence + 2, booleanPrecedence + 2] },
-  "!=": { separators: matchSeparators(["!="]), precedence: [booleanPrecedence + 2, booleanPrecedence + 2] },
-  "===": { separators: matchSeparators(["==="]), precedence: [booleanPrecedence + 2, booleanPrecedence + 2] },
-  "!==": { separators: matchSeparators(["!=="]), precedence: [booleanPrecedence + 2, booleanPrecedence + 2] },
+  or: { separators: matchSeparators(["or"]), precedence: associative(booleanPrecedence) },
+  "==": { separators: matchSeparators(["=="]), precedence: associative(booleanPrecedence + 2) },
+  "!=": { separators: matchSeparators(["!="]), precedence: associative(booleanPrecedence + 2) },
+  "===": { separators: matchSeparators(["==="]), precedence: associative(booleanPrecedence + 2) },
+  "!==": { separators: matchSeparators(["!=="]), precedence: associative(booleanPrecedence + 2) },
   "!": { separators: matchSeparators(["!"]), precedence: [null, 4] },
   ...comparisonOps
     .map((op) => {
@@ -81,7 +86,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   mut: { separators: matchSeparators(["mut"]), precedence: [null, 3] },
   "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 2] },
   fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
-  ";": { separators: matchSeparators([";", "\n"]), precedence: [semicolonPrecedence, semicolonPrecedence] },
+  ";": { separators: matchSeparators([";", "\n"]), precedence: rightAssociative(semicolonPrecedence) },
   "#": { separators: matchSeparators(["#"]), precedence: [null, 4] },
   pin: { separators: matchSeparators(["^"]), precedence: [null, 4] },
   "...": { separators: matchSeparators(["..."]), precedence: [null, 4] },
@@ -179,26 +184,26 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     separators: matchSeparators(["external"]),
     precedence: [null, 2],
   },
-  label: { separators: matchSeparators([":"]), precedence: [tuplePrecedence + 1, tuplePrecedence + 1] },
+  label: { separators: matchSeparators([":"]), precedence: associative(tuplePrecedence + 2) },
   operator: {
     separators: matchSeparators(["operator"]),
     precedence: [null, 3],
   },
   operatorPrecedence: {
     separators: matchSeparators(["operator"], ["precedence"]),
-    precedence: [null, semicolonPrecedence + 2],
+    precedence: [null, semicolonPrecedence + 1],
   },
   negate: {
     separators: matchSeparators(["-"]),
-    precedence: [null, Number.MAX_SAFE_INTEGER],
+    precedence: [null, maxPrecedence],
   },
   prefixDecrement: {
     separators: matchSeparators(["--"]),
-    precedence: [null, Number.MAX_SAFE_INTEGER],
+    precedence: [null, maxPrecedence],
   },
   prefixIncrement: {
     separators: matchSeparators(["++"]),
-    precedence: [null, Number.MAX_SAFE_INTEGER],
+    precedence: [null, maxPrecedence],
   },
   postfixDecrement: {
     separators: matchSeparators(["--"]),
@@ -246,7 +251,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   },
   application: {
     separators: matchSeparators(),
-    precedence: [Infinity, Infinity],
+    precedence: leftAssociative(maxPrecedence),
   },
 };
 
