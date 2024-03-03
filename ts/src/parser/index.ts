@@ -318,12 +318,30 @@ export const parseExpr: TokenParserWithContext<AbstractSyntaxTree> =
       let _context = { ...context, precedence: right };
 
       let rhs: AbstractSyntaxTree;
-      // console.dir({ msg: "parseExpr 4", index, src: src[index], context });
+      // console.dir({ msg: "parseExpr 4", index, src: src[index], context, group });
 
       [index, rhs, _errors] = parseExpr(_context)(src, index);
       rhs.data.scope = context.scope;
       errors.push(..._errors);
-      context.lhs = infix(group, context.lhs, rhs);
+
+      // console.dir({
+      //   msg: "parseExpr 5",
+      //   index,
+      //   src: src[index],
+      //   context,
+      //   group,
+      //   res: [index, rhs, _errors],
+      //   precedence: [left, right],
+      // });
+
+      // if two same operators are next to each other, and their precedence is the same on both sides - it is both left and right associative
+      // which means we can put all arguments into one group
+      if (left === right && group.value === context.lhs.value) {
+        context.lhs.children.push(rhs);
+      } else {
+        context.lhs = infix(group, context.lhs, rhs);
+      }
+
       context.lhs.data.scope = context.scope;
     }
 
