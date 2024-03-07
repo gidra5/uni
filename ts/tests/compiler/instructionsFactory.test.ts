@@ -52,9 +52,9 @@ describe("instructionFactory", () => {
     expect(pushData).toBeCalledTimes(0);
     expect(pushChunks).toBeCalledTimes(0);
     expect(registerStateToObject(factory.registers.state)).toEqual({
-      0: { value: { stackOffset: new Set([0, 2]) }, stale: true, weak: true },
+      0: { value: { stackOffset: new Set([2]) }, stale: true, weak: true },
       1: { value: { stackOffset: new Set([1]) }, stale: true, weak: true },
-      2: { value: { stackOffset: new Set([0]) }, stale: false, weak: true },
+      2: { value: { stackOffset: new Set([0]) }, stale: true, weak: true },
     });
     expect(factory.stack.scope).toEqual([
       { value: { offset: 0, size: 1 } },
