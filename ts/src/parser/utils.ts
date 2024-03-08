@@ -1,62 +1,65 @@
 import { TokenParserWithContext } from "./index.js";
 import { Iterator } from "iterator-js";
-import { DefaultVisitor, Tree, Visitor } from "../tree.js";
-import { isEqual } from "../utils/index.js";
+import { DefaultVisitor, Tree, traverse } from "../tree.js";
+import { isEqual, omit } from "../utils/index.js";
 import { AbstractSyntaxTree } from "./ast.js";
 import { ParsingResult, Precedence, TokenParser } from "./types.js";
 
-export type TemplateValues = AbstractSyntaxTree[] | Record<string, AbstractSyntaxTree>;
+export type TemplateValues = AbstractSyntaxTree[] & Record<string, AbstractSyntaxTree>;
 export const template = (tree: AbstractSyntaxTree, values: TemplateValues) => {
-  const visitor: Visitor<Tree, AbstractSyntaxTree> = new Visitor<Tree, AbstractSyntaxTree>({
-    [DefaultVisitor]: (tree) => {
-      const children = visitor.visitChildren(tree).toArray();
-      return { ...tree, children };
-    },
+  return traverse(tree, (node) => node.name, {
     placeholder: (tree) => {
-      return (values as any[]).pop() ?? tree;
+      return [true, values.shift() ?? tree];
     },
     name: (tree) => {
-      return values[tree.value as string] ?? tree;
+      return [true, values[tree.value as string] ?? tree];
     },
   });
-  return visitor.visitNode(tree);
 };
 
 type MatchTree = { name: string; value?: any; children: MatchTree[] };
-export const match = <T extends MatchTree>(
+type MatchTree2<T> = { name: string; value?: any; children: T[] };
+export const match = <T extends MatchTree2<T>>(
   tree: T,
   pattern: MatchTree,
-  matches: Record<string, T> = {}
-): [boolean, Record<string, T>] => {
-  type ReturnType = [boolean, Record<string, T>];
+  matches: T[] & Record<string, T> = [] as unknown as T[] & Record<string, T>
+): [boolean, T[] & Record<string, T>] => {
   // console.dir({ msg: "match", tree, pattern, matches }, { depth: null });
 
-  const visitor: Visitor<ReturnType, MatchTree> = new Visitor({
-    [DefaultVisitor]: (pattern) => {
-      if (tree.name !== pattern.name) return [false, matches];
-      if (tree.value !== pattern.value) return [false, matches];
-      if (tree.children.length !== pattern.children.length) return [false, matches];
-      return Iterator.iter(tree.children as T[])
-        .zip(pattern.children)
-        .reduce<ReturnType>(
-          (acc, args) => {
-            const [result, matches] = acc;
-            const [nextResult, newMatches] = match(...args, matches);
-            return [result && nextResult, newMatches];
-          },
-          [true, matches]
-        );
+  const result: [boolean, T[] & Record<string, T>] = [true, matches];
+
+  traverse<any>({ ...pattern, tree }, (node) => node.name, {
+    [DefaultVisitor]: ({ ...pattern }) => {
+      const tree = pattern.tree;
+      // console.log({ msg: "DefaultVisitor", tree, pattern, matches }, { depth: null });
+
+      if (tree.name !== pattern.name) result[0] = false;
+      if (tree.value !== pattern.value) result[0] = false;
+      if (tree.children.length !== pattern.children.length) result[0] = false;
+      if (!result[0]) return { ...pattern, children: [] };
+
+      for (const [[child, _tree], i] of Iterator.iter<any>(pattern.children).zip(tree.children).enumerate()) {
+        pattern.children[i] = { ...child, tree: _tree };
+      }
+
+      return pattern;
     },
-    placeholder: () => [true, matches] as ReturnType,
-    name: (pattern: MatchTree): ReturnType => {
+    placeholder: (pattern) => {
+      result[1].push(pattern.tree);
+    },
+    name: (pattern) => {
+      pattern = omit(pattern, ["data"]);
+      // console.dir({ msg: "name", pattern, matches }, { depth: null });
       const name = pattern.value as string;
       if (name in matches) {
-        return [isEqual(tree, matches[name]), matches];
+        result[0] = isEqual(pattern.tree, matches[name]);
+        return;
       }
-      return [true, { ...matches, [name]: tree }];
+      result[1][name] = pattern.tree;
     },
   });
-  return visitor.visitNode(pattern);
+
+  return result;
 };
 
 export const matchTokens =

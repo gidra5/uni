@@ -92,7 +92,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 2] },
   fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
   ";": { separators: matchSeparators([";", "\n"]), precedence: associative(semicolonPrecedence) },
-  "#": { separators: matchSeparators(["#"]), precedence: [null, 4] },
+  "#": { separators: matchSeparators(["#"]), precedence: [null, maxPrecedence] },
   pin: { separators: matchSeparators(["^"]), precedence: [null, 4] },
   "...": { separators: matchSeparators(["..."]), precedence: [null, 4] },
   match: {
@@ -118,6 +118,14 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   while: {
     separators: matchSeparators(["while"], [":", "\n"]),
     precedence: [null, 2],
+  },
+  loop: {
+    separators: matchSeparators(["loop"], [":", "\n"]),
+    precedence: [null, 2],
+  },
+  loopBlock: {
+    separators: matchSeparators(["loop"], ["{"], ["}"]),
+    precedence: [null, null],
   },
   ifBlock: {
     separators: matchSeparators(["if"], ["{"], ["}"]),
@@ -157,6 +165,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   ":=": { separators: matchSeparators([":="]), precedence: rightAssociative(semicolonPrecedence + 1) },
 
   symbol: { separators: matchSeparators(["symbol"]), precedence: [null, null] },
+  atom: { separators: matchSeparators([":"]), precedence: [null, maxPrecedence] },
   channel: { separators: matchSeparators(["channel"]), precedence: [null, null] },
   set: {
     separators: matchSeparators(["set"]),
@@ -168,7 +177,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   },
   accessDynamic: {
     separators: matchSeparators(["["], ["]"]),
-    precedence: [Infinity, null],
+    precedence: [maxPrecedence, null],
   },
   import: {
     separators: matchSeparators(["import"], ["as"]),

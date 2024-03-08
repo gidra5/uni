@@ -28,7 +28,7 @@ export const templateString = (templateStr: string, values: TemplateValues) => {
 export const matchString = (
   tree: AbstractSyntaxTree,
   pattern: string,
-  matches: Record<string, AbstractSyntaxTree> = {}
+  matches?: AbstractSyntaxTree[] & Record<string, AbstractSyntaxTree>
 ) => {
   const [patternParsed] = parseExprString(pattern);
   // console.dir({ msg: "patternParsed", patternParsed, tree }, { depth: null });

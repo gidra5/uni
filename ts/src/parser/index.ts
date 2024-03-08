@@ -3,10 +3,11 @@ import { Iterator } from "iterator-js";
 import { indexPosition, position } from "../position.js";
 import { AbstractSyntaxTree, group, infix, operator, placeholder, postfix, prefix, program, token } from "./ast.js";
 import { ParsingError, ParsingResult, Precedence, TokenParser } from "./types.js";
-import { mapField, omit, pushField, setField } from "../utils/index.js";
+import { mapField, omit, pushField, setField, omitASTDataScope } from "../utils/index.js";
 import { matchString, templateString } from "./string.js";
 import { scope } from "./constants.js";
 import { Scope as ScopeClass } from "../scope.js";
+import { TemplateValues } from "./utils.js";
 
 export type TokenGroupDefinition = {
   separators: TokenParserWithContext<"done" | "noMatch" | "match">;
@@ -280,7 +281,16 @@ export const parseExpr: TokenParserWithContext<AbstractSyntaxTree> =
     let index = i;
     const errors: ParsingError[] = [];
     let _errors: ParsingError[];
-    // console.dir({ msg: "parseExpr 1", index, src: src[index], context: omit(context, ["scope"]) });
+    // console.dir(
+    //   {
+    //     msg: "parseExpr 1",
+    //     index,
+    //     src: src[index],
+    //     context: omit(context, ["scope", "lhs"]),
+    //     lhs: context.lhs && omitASTDataScope(context.lhs),
+    //   },
+    //   { depth: null }
+    // );
 
     [index, context.lhs, _errors] = parsePrefix(context)(src, index);
     context.lhs.data.scope = context.scope;
@@ -292,18 +302,32 @@ export const parseExpr: TokenParserWithContext<AbstractSyntaxTree> =
       //   index++;
       //   continue;
       // }
-      // console.dir({ msg: "parseExpr 2", index, src: src[index], context: omit(context, ["scope"]) });
+      // console.dir(
+      //   {
+      //     msg: "parseExpr 2",
+      //     index,
+      //     src: src[index],
+      //     context: omit(context, ["scope", "lhs"]),
+      //     lhs: context.lhs && omitASTDataScope(context.lhs),
+      //   },
+      //   { depth: null }
+      // );
 
       let [nextIndex, group, _errors] = parseGroup(context)(src, index);
       group.data.scope = context.scope;
-      // console.dir({
-      //   msg: "parseExpr 3",
-      //   index,
-      //   src: src[index],
-      //   context: omit(context, ["scope"]),
-      //   res: [nextIndex, group, _errors],
-      //   break: group.value === undefined || group.name !== "group",
-      // });
+      // console.dir(
+      //   {
+      //     msg: "parseExpr 3",
+      //     index,
+      //     src: src[index],
+      //     context: omit(context, ["scope", "lhs"]),
+      //     lhs: context.lhs && omitASTDataScope(context.lhs),
+      //     res: [nextIndex, omitASTDataScope(group), _errors],
+      //     break: group.value === undefined || group.name !== "group",
+      //     precedence: getPrecedence(group, context.scope),
+      //   },
+      //   { depth: null }
+      // );
 
       errors.push(..._errors);
       const [left, right] = getPrecedence(group, context.scope);
@@ -313,12 +337,19 @@ export const parseExpr: TokenParserWithContext<AbstractSyntaxTree> =
       if (right === null) {
         context.lhs = postfix(group, context.lhs);
         context.lhs.data.scope = context.scope;
-        break;
+        continue;
       }
       let _context = { ...context, precedence: right };
 
       let rhs: AbstractSyntaxTree;
-      // console.dir({ msg: "parseExpr 4", index, src: src[index], context, group });
+      // console.dir({
+      //   msg: "parseExpr 4",
+      //   index,
+      //   src: src[index],
+      //   context: omit(context, ["scope", "lhs"]),
+      //   lhs: context.lhs && omitASTDataScope(context.lhs),
+      //   group: omitASTDataScope(group),
+      // });
 
       [index, rhs, _errors] = parseExpr(_context)(src, index);
       rhs.data.scope = context.scope;
@@ -364,8 +395,8 @@ export const parse =
       errors.push(..._errors);
     }
 
-    return [postprocess(program(...children)), []];
-    // return [program(...children), []];
+    // return [postprocess(program(...children)), []];
+    return [program(...children), []];
   };
 
 const postprocess = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
@@ -378,7 +409,7 @@ const postprocess = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     const [match, matchedValues] = matchString(ast, "rest b c");
     if (match) {
       const { rest, b, c } = matchedValues;
-      const { children } = postprocess(templateString("rest b", { rest, b }));
+      const { children } = postprocess(templateString("_ _", [rest, b] as TemplateValues));
       return operator("application", ...children, postprocess(c));
     }
   }
@@ -388,7 +419,7 @@ const postprocess = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     const [match, matchedValues] = matchString(ast, "rest, b, c");
     if (match) {
       const { rest, b, c } = matchedValues;
-      const { children } = postprocess(templateString("rest, b", { rest, b }));
+      const { children } = postprocess(templateString("_, _", [rest, b] as TemplateValues));
       if (c.name === "placeholder") return operator("tuple", ...children);
       return operator("tuple", ...children, postprocess(c));
     }
@@ -399,7 +430,7 @@ const postprocess = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     const [match, matchedValues] = matchString(ast, "rest; b; c");
     if (match) {
       const { rest, b, c } = matchedValues;
-      const { children } = postprocess(templateString("rest; b", { rest, b }));
+      const { children } = postprocess(templateString("_; _", [rest, b] as TemplateValues));
       if (c.name === "placeholder") return operator("sequence", ...children);
       return operator("sequence", ...children, postprocess(c));
     }

@@ -13,6 +13,8 @@ export const copy = <T>(x: T | Copyable<T>): T => {
   if (typeof x === "boolean") return x;
   if (typeof x === "bigint") return x;
   if (Array.isArray(x)) return x.map(copy) as T;
+  if (x instanceof Set) return new Set([...x].map(copy)) as T;
+  if (x instanceof Map) return new Map([...x].map(([k, v]) => [copy(k), copy(v)])) as T;
 
   if (typeof (x as any)[CopySymbol] === "function") {
     return (x as any)[CopySymbol]();
