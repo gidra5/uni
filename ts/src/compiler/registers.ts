@@ -1,5 +1,5 @@
-import { CopySymbol, copy } from "../utils/copy";
-import { Register } from "../vm/utils";
+import { CopySymbol, copy } from "../utils/copy.js";
+import { Register } from "../vm/utils.js";
 
 type RegisterValue<T> = {
   value: T;

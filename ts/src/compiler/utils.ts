@@ -1,7 +1,7 @@
 import { Iterator } from "iterator-js";
-import { disassemble } from "../vm/handlers";
-import { CodeChunk, chunkToByteCode } from "./chunks";
-import { RegisterState } from "./registers";
+import { disassemble } from "../vm/handlers.js";
+import { CodeChunk, chunkToByteCode } from "./chunks.js";
+import { RegisterState } from "./registers.js";
 
 export const chunkToString = (chunk: CodeChunk): string => {
   return disassemble(chunkToByteCode([], [])(chunk, 0));
