@@ -7,13 +7,50 @@ import { parseTokens } from "./parser/tokens.js";
 import { parse } from "./parser/index.js";
 import { Compiler } from "./compiler/index.js";
 import { parseExprString } from "./parser/string.js";
+import { evaluate, initialContext } from "./evaluation/index.js";
 
 program.option("-i, --interactive");
 
 program
   .command("repl [file]")
   .description("Run interactive environment with optional initial script/module")
-  .action(() => {});
+  .action((file) => {
+    const context = initialContext();
+    if (file) {
+      const code = fs.readFileSync(file, "utf-8");
+      const [tokens, tokenErrors] = parseTokens(code);
+      const [ast, astErrors] = parse()(tokens);
+      const result = evaluate(ast, context);
+      console.log(result);
+    }
+    const rl = readline.createInterface({ input, output, prompt: ">> " });
+    rl.prompt();
+
+    rl.on("line", (_line) => {
+      const line = _line.trim();
+      switch (line) {
+        case "exit":
+          rl.close();
+          break;
+        default: {
+          try {
+            const [tokens, tokenErrors] = parseTokens(line);
+            const [ast, astErrors] = parse()(tokens);
+            const result = evaluate(ast, context);
+            console.log(result);
+          } catch (e) {
+            console.error(e);
+          }
+          break;
+        }
+      }
+
+      rl.prompt();
+    }).on("close", () => {
+      console.log("Have a great day!");
+      process.exit(0);
+    });
+  });
 
 program
   .command("build <file> <output>")
@@ -75,28 +112,5 @@ const [file] = program.args;
 // const ctx: Context = {};
 
 if (interactive) {
-  const rl = readline.createInterface({ input, output, prompt: ">> " });
-  rl.prompt();
-
-  rl.on("line", (_line) => {
-    const line = _line.trim();
-    switch (line) {
-      case "hello":
-        console.log("world!");
-        break;
-      case "exit":
-        rl.close();
-        break;
-      default: {
-        // const [tokens, tokenErrors] = parseTokens(line);
-
-        break;
-      }
-    }
-    rl.prompt();
-  }).on("close", () => {
-    console.log("Have a great day!");
-    process.exit(0);
-  });
 } else {
 }
