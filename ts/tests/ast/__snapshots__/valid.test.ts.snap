@@ -1702,18 +1702,12 @@ exports[`expressions > data structures > atom (global symbol) 1`] = `
       "children": [],
       "data": {},
       "name": "name",
-      "value": ":",
-    },
-    {
-      "children": [],
-      "data": {},
-      "name": "name",
       "value": "atom",
     },
   ],
   "data": {},
   "name": "operator",
-  "value": "application",
+  "value": "atom",
 }
 `;
 
@@ -1767,6 +1761,76 @@ exports[`expressions > data structures > field access static 1`] = `
   "data": {},
   "name": "operator",
   "value": "access",
+}
+`;
+
+exports[`expressions > data structures > field assignment 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "access",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 123,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "=",
+}
+`;
+
+exports[`expressions > data structures > field assignment dynamic 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "x",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "y",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "accessDynamic",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 123,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "=",
 }
 `;
 

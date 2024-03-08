@@ -10,10 +10,10 @@ describe("instructionFactory", () => {
   });
 
   it("works", () => {
-    state.set(0, { stackOffset: [0] });
+    state.set(0, { stackOffset: new Set([0]) });
 
     expect(registerStateToObject(state.state)).toEqual({
-      0: { value: { stackOffset: [0] }, stale: true, weak: true },
+      0: { value: { stackOffset: new Set([0]) }, stale: true, weak: true },
     });
   });
 });
