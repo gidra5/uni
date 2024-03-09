@@ -34,9 +34,9 @@ export const comparisonOps = Iterator.iter(["<", "<=", ">=", ">"]);
 
 const semicolonPrecedence = 1;
 const assignmentPrecedence = semicolonPrecedence + 1;
-const tuplePrecedence = assignmentPrecedence + 2;
-const booleanPrecedence = tuplePrecedence + 2;
-const arithmeticPrecedence = booleanPrecedence + 3;
+const booleanPrecedence = assignmentPrecedence + 2;
+const tuplePrecedence = booleanPrecedence + 4;
+const arithmeticPrecedence = tuplePrecedence + 3;
 const maxPrecedence = Number.MAX_SAFE_INTEGER;
 
 export const scopeDictionary: Record<string, TokenGroupDefinition> = {

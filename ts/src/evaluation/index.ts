@@ -227,21 +227,27 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           while (true) {
             try {
               context.scope = scope;
-              const result = evaluate(ast.children[0], context);
+              const result = evaluate(ast.children[1], context);
+              // console.log("loop result", result);
+
               values.push(result);
             } catch (error) {
               if (error instanceof BreakError) {
                 if (error.label !== undefined && error.label !== ast.data.label) {
                   throw error;
                 }
+                if (error.value !== null) {
                 values.push(error.value);
+                }
                 break;
               }
               if (error instanceof ContinueError) {
                 if (error.label !== undefined && error.label !== ast.data.label) {
                   throw error;
                 }
+                if (error.value !== null) {
                 values.push(error.value);
+                }
                 continue;
               }
               throw error;
@@ -286,7 +292,7 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
             const accessor = ast.children[0];
             const recordFieldNode = accessor.children[1];
             const record = evaluate(accessor.children[0], context) as RecordValue;
-            const key = recordFieldNode.name === "name" ? recordFieldNode.value : evaluate(recordFieldNode, context);
+            const key = accessor.name === "access" ? recordFieldNode.value : evaluate(recordFieldNode, context);
             record?.set(key, value);
           }
 
@@ -373,9 +379,12 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
     }
     case "group": {
       switch (ast.value) {
-        case "symbol": {
+        case "true":
+          return true;
+        case "false":
+          return false;
+        case "symbol":
           return Symbol();
-        }
         case "parens": {
           return evaluate(ast.children[0], context);
         }

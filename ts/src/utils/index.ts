@@ -36,6 +36,22 @@ export const isEqual = (a, b) => {
     return true;
   }
 
+  if (a instanceof Set && b instanceof Set) {
+    if (a.size !== b.size) return false;
+    for (const value of a) {
+      if (!b.has(value)) return false;
+    }
+    return true;
+  }
+
+  if (a instanceof Map && b instanceof Map) {
+    if (a.size !== b.size) return false;
+    for (const [key, value] of a) {
+      if (!b.has(key) || !isEqual(value, b.get(key))) return false;
+    }
+    return true;
+  }
+
   if (Object.keys(a).length !== Object.keys(b).length) return false;
   for (const key in a) {
     if (!(key in b)) return false;
