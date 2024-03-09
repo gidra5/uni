@@ -395,46 +395,5 @@ export const parse =
       errors.push(..._errors);
     }
 
-    // return [postprocess(program(...children)), []];
     return [program(...children), []];
   };
-
-const postprocess = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
-  if (ast.name === "program") {
-    return mapField(["children"], (children) => children.map(postprocess))(ast);
-  }
-
-  // application chain
-  {
-    const [match, matchedValues] = matchString(ast, "rest b c");
-    if (match) {
-      const { rest, b, c } = matchedValues;
-      const { children } = postprocess(templateString("_ _", [rest, b] as TemplateValues));
-      return operator("application", ...children, postprocess(c));
-    }
-  }
-
-  // tuple chain
-  {
-    const [match, matchedValues] = matchString(ast, "rest, b, c");
-    if (match) {
-      const { rest, b, c } = matchedValues;
-      const { children } = postprocess(templateString("_, _", [rest, b] as TemplateValues));
-      if (c.name === "placeholder") return operator("tuple", ...children);
-      return operator("tuple", ...children, postprocess(c));
-    }
-  }
-
-  // statement chain
-  {
-    const [match, matchedValues] = matchString(ast, "rest; b; c");
-    if (match) {
-      const { rest, b, c } = matchedValues;
-      const { children } = postprocess(templateString("_; _", [rest, b] as TemplateValues));
-      if (c.name === "placeholder") return operator("sequence", ...children);
-      return operator("sequence", ...children, postprocess(c));
-    }
-  }
-
-  return ast;
-};

@@ -1,17 +1,11 @@
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { Iterator } from "iterator-js";
-import { infixArithmeticOps, infixBooleanOps, prefixArithmeticOps, scopeDictionary } from "../../src/parser/constants";
-import { group, infix, name, placeholder, prefix, string } from "../../src/parser/ast";
-import { matchSeparators } from "../../src/parser/utils";
-import { exampleTestCase, treeTestCase, treeTestCaseArgs } from "./utils";
-import { pick } from "../../src/utils";
-import { expect, it } from "vitest";
-import { parseExprString, parseProgramString } from "../../src/parser/string";
-import { defaultParsingContext, parseExpr } from "../../src/parser";
-import { Scope } from "../../src/scope";
-import { parseTokens } from "../../src/parser/tokens";
-import { scopeDictionary } from "../../src/parser/constants";
+import { infixArithmeticOps, infixBooleanOps, prefixArithmeticOps, scopeDictionary } from "../src/parser/constants";
+import { parseExprString } from "../src/parser/string";
+import { parseTokens } from "../src/parser/tokens";
+import { parse } from "../src/parser";
+import { pick, omitASTDataScope } from "../src/utils";
 
 export const errorsTestCase = (src, expectedErrors, _it: any = it) =>
   _it(`finds all errors in example '${src}'`, () => {
@@ -19,46 +13,30 @@ export const errorsTestCase = (src, expectedErrors, _it: any = it) =>
     expect(errors).toEqual(expectedErrors);
   });
 
-const dropScope = (tree) => {
-  if (tree.data.scope) delete tree.data.scope;
-  tree.children.forEach(dropScope);
-};
-
-export const exampleTestCase = (src, expectedTree?, scope = scopeDictionary) => {
-  const [tree, errors] = parseProgramString(src, scope);
-  // console.dir(tree, { depth: null });
-  expect(errors).toEqual([]);
-  dropScope(tree);
-  if (expectedTree) expect(tree).toEqual(expectedTree);
-  expect(tree).toMatchSnapshot();
-};
-
-export const treeTestCase = (src, expectedTree?, scope = scopeDictionary) => {
+export const evalTestCase = (src, expectedTree?) => {
   const [tokens] = parseTokens(src);
-  const context = defaultParsingContext();
-  context.scope = new Scope(scope);
-  const [tree, errors] = parseExpr(context)(tokens).slice(1);
+  const [tree, errors] = parse()(tokens);
   // console.dir(tree, { depth: null });
   expect(errors).toEqual([]);
-  dropScope(tree);
-  if (expectedTree) expect(tree).toEqual(expectedTree);
-  expect(tree).toMatchSnapshot();
+  const _tree = omitASTDataScope(tree);
+  if (expectedTree) expect(_tree).toEqual(expectedTree);
+  expect(_tree).toMatchSnapshot();
 };
 
-export const treeTestCaseArgs = (src, expectedTree?, scope = scopeDictionary) =>
-  [`produces correct tree for '${src}'`, () => treeTestCase(src, expectedTree, scope)] as const;
+export const evalTestCaseArgs = (src, expectedTree?) =>
+  [`produces correct tree for '${src}'`, () => evalTestCase(src, expectedTree)] as const;
 
 /* one test per example of a language construct  */
 
 describe("comments", () => {
   test("comment", () => {
     const src = `// comment\n123`;
-    treeTestCase(src, null, pick(scopeDictionary, ["comment"]));
+    evalTestCase(src);
   });
 
   test("comment block", () => {
     const src = `/* comment block */123`;
-    treeTestCase(src, null, pick(scopeDictionary, ["commentBlock"]));
+    evalTestCase(src);
   });
 });
 
@@ -66,63 +44,27 @@ describe("expressions", () => {
   describe("values", () => {
     test("integer", () => {
       const src = `123`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("float", () => {
       const src = `123.456`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("string", () => {
       const src = `"string"`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("true", () => {
       const src = `true`;
-      treeTestCase(src, null, pick(scopeDictionary, ["true"]));
+      evalTestCase(src);
     });
 
     test("false", () => {
       const src = `false`;
-      treeTestCase(src, null, pick(scopeDictionary, ["false"]));
-    });
-  });
-
-  describe("fixity expressions", () => {
-    test("name", () => {
-      const src = `name`;
-      treeTestCase(src);
-    });
-
-    test.todo("operator", () => {
-      const src = `+`;
-    });
-
-    test("group", () => {
-      const src = `(1)`;
-      treeTestCase(src, null, pick(scopeDictionary, ["parens"]));
-    });
-
-    test("prefix", () => {
-      const src = `-123`;
-      treeTestCase(src, null, pick(scopeDictionary, ["negate"]));
-    });
-
-    test("postfix", () => {
-      const src = `123--`;
-      treeTestCase(src, null, pick(scopeDictionary, ["postfixDecrement"]));
-    });
-
-    test("infix", () => {
-      const src = `123+456`;
-      treeTestCase(src, null, pick(scopeDictionary, ["+"]));
-    });
-
-    test("mixfix", () => {
-      const src = `123 < 456 < 789`;
-      treeTestCase(src, null, pick(scopeDictionary, ["inRange_<_<"]));
+      evalTestCase(src);
     });
   });
 
@@ -130,44 +72,24 @@ describe("expressions", () => {
     for (const [opName, op] of infixArithmeticOps) {
       test(opName, () => {
         const src = `123 ${op} 456`;
-        treeTestCase(src, null, pick(scopeDictionary, [op]));
+        evalTestCase(src);
       });
     }
 
     for (const [opName, op] of prefixArithmeticOps) {
       test(opName, () => {
         const src = `${op}123`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
     }
 
-    test("postfix decrement", () => {
-      const src = `123--`;
-      treeTestCase(src, null, pick(scopeDictionary, ["postfixDecrement"]));
-    });
-
-    test("postfix increment", () => {
-      const src = `123++`;
-      treeTestCase(src, null, pick(scopeDictionary, ["postfixIncrement"]));
-    });
-
-    it(...treeTestCaseArgs("1 + 2^3 * 4", null, pick(scopeDictionary, ["+", "*", "^"])));
-    it(...treeTestCaseArgs("-(a+b)", null, pick(scopeDictionary, ["negate", "+", "parens"])));
-
-    it(...treeTestCaseArgs("(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1"));
+    it(...evalTestCaseArgs("1 + 2^3 * 4 - 5 / 6 % 7"));
   });
 
   describe("boolean expressions", () => {
-    for (const [opName, op] of infixBooleanOps) {
-      test(opName, () => {
-        const src = `123 ${op} 456`;
-        treeTestCase(src, null, pick(scopeDictionary, [op]));
-      });
-    }
-
     test("not", () => {
       const src = `!123`;
-      treeTestCase(src, null, pick(scopeDictionary, ["!"]));
+      evalTestCase(src, null, pick(scopeDictionary, ["!"]));
     });
 
     describe("comparators", () => {
@@ -179,382 +101,332 @@ describe("expressions", () => {
       for (const op of Iterator.iter(comparators).flat()) {
         test(`comparator ${op}`, () => {
           const src = `123 ${op} 456`;
-          treeTestCase(src, null, pick(scopeDictionary, [op]));
+          evalTestCase(src, null, pick(scopeDictionary, [op]));
         });
       }
 
       for (const [op1, op2] of Iterator.iter(comparators).flatMap((pair) => Iterator.iter(pair).power(2))) {
         test(`range ${op1} ${op2}`, () => {
           const src = `123 ${op1} x ${op2} 456`;
-          treeTestCase(src, null, pick(scopeDictionary, [`inRange_${op1}_${op2}`]));
+          evalTestCase(src, null, pick(scopeDictionary, [`inRange_${op1}_${op2}`]));
         });
       }
-    });
-
-    test("and and or associativity", () => {
-      const src = `a and b and c or d or e and f and g or h or i`;
-      treeTestCase(src, null, pick(scopeDictionary, ["and", "or"]));
     });
   });
 
   describe("function expressions", () => {
-    test("function multiple params", () => {
-      const src = `fn x, y -> x + y`;
-      treeTestCase(src);
-    });
-
-    test("function", () => {
-      const src = `x -> x`;
-      treeTestCase(src);
-    });
-
-    test("function with placeholder arg", () => {
-      const src = `_ -> #0`;
-      treeTestCase(src, null, pick(scopeDictionary, ["->", "#"]));
-    });
-
     test("function with no arg", () => {
       const src = `fn -> #0`;
-      treeTestCase(src, null, pick(scopeDictionary, ["fn", "#"]));
+      evalTestCase(src, null, pick(scopeDictionary, ["fn", "#"]));
     });
 
     test("function with shadowed name access", () => {
       const src = `fn a -> fn a -> #a`;
-      treeTestCase(src, null, pick(scopeDictionary, ["fn", "#"]));
+      evalTestCase(src, null, pick(scopeDictionary, ["fn", "#"]));
     });
 
     test("function with deep shadowed name access", () => {
       const src = `fn a -> fn a -> fn a -> ##a`;
-      treeTestCase(src, null, pick(scopeDictionary, ["fn", "#"]));
+      evalTestCase(src, null, pick(scopeDictionary, ["fn", "#"]));
     });
 
     describe("application", () => {
       test("function call", () => {
         const src = `f x`;
-        treeTestCase(src, null, pick(scopeDictionary, ["application"]));
+        evalTestCase(src, null, pick(scopeDictionary, ["application"]));
       });
 
       test("function call multiple args", () => {
         const src = `f x y`;
-        treeTestCase(src, null, pick(scopeDictionary, ["application"]));
+        evalTestCase(src, null, pick(scopeDictionary, ["application"]));
       });
-
-      test("function call placeholder arg", () => {
-        const src = `f _ y`;
-        treeTestCase(src, null, pick(scopeDictionary, ["application"]));
-      });
-
-      test("function call placeholder args", () => {
-        const src = `f _ y _`;
-        treeTestCase(src, null, pick(scopeDictionary, ["application"]));
-      });
-
-      it(
-        ...treeTestCaseArgs("send((1+2), 3)", null, {
-          send: {
-            separators: matchSeparators(["send"]),
-            precedence: [null, Infinity],
-          },
-          ...pick(scopeDictionary, ["+", "parens", ","]),
-        })
-      );
-
-      it(...treeTestCaseArgs("send(2, 3)", null, pick(scopeDictionary, ["application", "parens", ","])));
-      it(...treeTestCaseArgs("(send)(2, 3)", null, pick(scopeDictionary, ["application", "parens", ","])));
-      it(...treeTestCaseArgs("(send 1)(2, 3)", null, pick(scopeDictionary, ["application", "parens", ","])));
-      it(...treeTestCaseArgs("(send 1 2)(2, 3)", null, pick(scopeDictionary, ["application", "parens", ","])));
-      it(...treeTestCaseArgs("send 1 + 2", null, pick(scopeDictionary, ["application", "+"])));
-      it(...treeTestCaseArgs("send 1 (2, 3)", null, pick(scopeDictionary, ["application", "parens", ","])));
-      it(...treeTestCaseArgs("send a (2, 3)", null, pick(scopeDictionary, ["application", "parens", ","])));
-      it(...treeTestCaseArgs("a + send (2, 3)", null, pick(scopeDictionary, ["application", "+", "parens", ","])));
-      it(...treeTestCaseArgs("a + send 1 + 2", null, pick(scopeDictionary, ["application", "+", ","])));
     });
   });
 
   describe("pattern matching", () => {
     test("match", () => {
       const src = `match x { 1 -> 2; 3 -> 4 }`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("match that accepts tuple", () => {
       const src = `match x: ((1 -> 2), (3 -> 4))`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("in function parameters", () => {
       const src = `(x, y) -> x + y`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     describe("set-theoretic patterns", () => {
       test("pattern union", () => {
         const src = `((x:x, y:y) or (y:y, z:z)) -> y`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("pattern intersection", () => {
         const src = `((x:x, y:y) and (z:z)) -> x + y + z`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("pattern negation", () => {
         const src = `(!(x:x, y:y)) -> x + y + z`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
     });
 
     test("with 'is' operator", () => {
       const src = `x is (a, b)`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("with placeholder", () => {
       const src = `x is (_, b)`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("with variable value", () => {
       const src = `x is (^a, b)`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("with rest value", () => {
       const src = `x is (a, ...b)`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("with rest value first", () => {
       const src = `x is (...b, a)`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("with default value", () => {
       const src = `x is ((b = 4), a)`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("with rename", () => {
       const src = `x is (a @ b, c)`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("with name for match", () => {
       const src = `x is ((a, b) @ c)`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test.todo("with type", () => {
       const src = `x is (b as number, a)`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("binding visible in scope where it is true", () => {
       const src = `x is (a, b) and a == b + 1`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
   });
 
   describe("structured programming", () => {
     test("if-then", () => {
       const src = `if true: 123`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("if-then newline", () => {
       const src = `if true\n 123`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("if-then-else", () => {
       const src = `if true: 123 else 456`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("if-then-elseif-then-else", () => {
       const src = `if true: 123 else if false: 789 else 456`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("if-then newline-else", () => {
       const src = `if true\n 123 else 456`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("if-then newline-else newline", () => {
       const src = `if true\n 123 else\n 456`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("block", () => {
       const src = `{ 123 }`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("for loop", () => {
       const src = `for x in [1, 2, 3]: x`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("for loop newline", () => {
       const src = `for x in [1, 2, 3]\n x`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("while loop", () => {
       const src = `while true: 123`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("while loop break", () => {
       const src = `while true: break _`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("while loop break value", () => {
       const src = `while true: break 1`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("while loop continue", () => {
       const src = `while true: continue _`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("while loop continue value", () => {
       const src = `while true: continue 1`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("labeled expression", () => {
       const src = `label: 123`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("return", () => {
       const src = `() -> { return 123 }`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("block variable declaration", () => {
       const src = `{ x := 123 }`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("block mutable variable declaration", () => {
       const src = `{ mut x := 123 }`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("block variable assignment", () => {
       const src = `{ x = 123 }`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("block pattern matching", () => {
       const src = `{ x, y = 123, 456 }`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
   });
 
   describe("concurrent programming", () => {
     test("channel send", () => {
       const src = `c <- 123`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("channel receive", () => {
       const src = `<- c`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("parallel value", () => {
       const src = `123 | 456`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("parallel with channels", () => {
       const src = `c <- 123 | <- c`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("async", () => {
       const src = `async f x`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("await async", () => {
       const src = `await async f x`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("await", () => {
       const src = `await x + 1`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("yield", () => {
       const src = `yield 123`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
   });
 
   describe("data structures", () => {
-    it(...treeTestCaseArgs("(-(2+7)/A,j, i, 127.0 )"));
+    it(...evalTestCaseArgs("(-(2+7)/A,j, i, 127.0 )"));
 
     test("unit", () => {
       const src = `()`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("symbol", () => {
       const src = `symbol`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("channel", () => {
       const src = `channel`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("atom (global symbol)", () => {
       const src = `:atom`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("tuple", () => {
       const src = `1, 2`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("record", () => {
       const src = `a: 1, b: 2`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("set", () => {
       const src = `set (1, 2)`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("map", () => {
       const src = `[1]: 2, [3]: 4`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("map without braces", () => {
       const src = `1+2: 3, 4+5: 6`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("field access static", () => {
       const src = `x.y`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("field access dynamic", () => {
       const src = `x[y]`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
   });
 
@@ -562,186 +434,186 @@ describe("expressions", () => {
     describe("primitives", () => {
       test("number", () => {
         const src = `number`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("int", () => {
         const src = `int`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("float", () => {
         const src = `float`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("string", () => {
         const src = `string`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("char", () => {
         const src = `char`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("boolean", () => {
         const src = `boolean`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("unit", () => {
         const src = `unit`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("unknown", () => {
         const src = `unknown`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("void", () => {
         const src = `void`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("type", () => {
         const src = `type`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("type with order", () => {
         const src = `type[1]`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("value type", () => {
         const src = `value 1`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
     });
 
     describe("algebraic types", () => {
       test("record", () => {
         const src = `(a: number; b: string)`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("map", () => {
         const src = `([number]: string)`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("map with key dependency", () => {
         const src = `([x: number]: (x, string))`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("tuple", () => {
         const src = `number, string`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("type key access", () => {
         const src = `type[number]`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("type key access static", () => {
         const src = `type.key`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("discriminated union from record type", () => {
         const src = `enum (a: number; b: string)`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("discriminated by order union from tuple", () => {
         const src = `enum (number, string)`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
     });
 
     describe("set-theoretic types", () => {
       test("negated type", () => {
         const src = `!number`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("type intersection", () => {
         const src = `number and string`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("type union", () => {
         const src = `number or string`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
     });
 
     describe("functions", () => {
       test("function type", () => {
         const src = `number -> string`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("function type with multiple args", () => {
         const src = `fn number, string -> string`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("function type with named args", () => {
         const src = `fn x: number, y: string -> string`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("dependent function type", () => {
         const src = `fn x: boolean -> if x: string else number`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("parametric function type", () => {
         const src = `fn x: infer y -> y or number`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
 
       test("higher order type", () => {
         const src = `fn t: type -> fn x: t -> t or number`;
-        treeTestCase(src);
+        evalTestCase(src);
       });
     });
 
     test("typeof", () => {
       const src = `typeof x`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("type cast", () => {
       const src = `x as number`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("type coalesce", () => {
       const src = `x :> number`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("subtyping check", () => {
       const src = `my_type <= number`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
   });
 
   describe("signals", () => {
     test("value", () => {
       const src = `signal 123`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("derived", () => {
       const src = `signal (x + y)`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
   });
 });
@@ -750,79 +622,79 @@ describe("programs", () => {
   describe("script", () => {
     test("use", () => {
       const src = `use "a" as b`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("use with", () => {
       const src = `use "a" as b with x`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("export", () => {
       const src = `export x`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("export as", () => {
       const src = `export x as y`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
 
     test("variable use", () => {
       const src = `x := 123;  use "a" as b`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("variable use with", () => {
       const src = `x := 123;  use "a" as b with x`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("variable export", () => {
       const src = `x := 123; export x`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("variable export as", () => {
       const src = `x := 123; export x as y`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
   });
 
   describe("module", () => {
     test("import", () => {
       const src = `import "a" as b`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("import with", () => {
       const src = `import "a" as b with c`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("import with external", () => {
       const src = `import "a" as b with external c`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("external", () => {
       const src = `external y`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("private declare", () => {
       const src = `z := y+1`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("public declare", () => {
       const src = `export x := z+123`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("export main", () => {
       const src = `export args -> {}`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("operator", () => {
       const src = `operator _+_ := fn x, y -> x + y`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("operator with precedence", () => {
       const src = `operator _+_ precedence 1 := fn x, y -> x + y`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
     test("operator with tuple precedence", () => {
       const src = `operator _+_ precedence 1, 2 := fn x, y -> x + y`;
-      treeTestCase(src);
+      evalTestCase(src);
     });
   });
 });
@@ -830,27 +702,27 @@ describe("programs", () => {
 describe("newline handling", () => {
   test("block newline in the middle", () => {
     const src = `{ a := 1\n b := 2 }`;
-    treeTestCase(src);
+    evalTestCase(src);
   });
 
   test("block newline at the end", () => {
     const src = `{ a := 1\n b := 2\n }`;
-    treeTestCase(src);
+    evalTestCase(src);
   });
 
   test("block newline at the beginning", () => {
     const src = `{\n a := 1\n b := 2 }`;
-    treeTestCase(src);
+    evalTestCase(src);
   });
 
   test("block semicolon newline", () => {
     const src = `{ a := 1;\n b := 2 }`;
-    treeTestCase(src);
+    evalTestCase(src);
   });
 
   test("block semicolon newline at the end", () => {
     const src = `{ a := 1;\n b := 2;\n }`;
-    treeTestCase(src);
+    evalTestCase(src);
   });
 });
 

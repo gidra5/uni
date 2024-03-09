@@ -203,8 +203,4 @@ export const pattern = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
   return { name: "pattern", data: {}, children };
 };
 
-export const program = (...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
-  name: "program",
-  data: {},
-  children,
-});
+export const program = (...children: AbstractSyntaxTree[]): AbstractSyntaxTree => operator(";", ...children);

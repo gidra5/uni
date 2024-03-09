@@ -14,14 +14,14 @@ export const initialContext = (): Context => ({ scope: new Scope<Value>() });
 const atoms: Record<string, symbol> = {};
 
 export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): Value => {
-  console.dir(
-    {
-      msg: "evaluate",
-      ast: omitASTDataScope(ast),
-      context,
-    },
-    { depth: null }
-  );
+  //   console.dir(
+  //   {
+  //     msg: "evaluate",
+  //     ast: omitASTDataScope(ast),
+  //     context,
+  //   },
+  //   { depth: null }
+  // );
 
   switch (ast.name) {
     case "program":
@@ -61,7 +61,16 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         }
 
         case ",": {
-          return new Map(ast.children.map((child) => evaluate(child, context)).entries());
+          return new Map(
+            ast.children.map((child, i) => {
+              if (child.name === "label") {
+                const key =
+                  child.children[0].name === "name" ? child.children[0].value : evaluate(child.children[0], context);
+                return [key, evaluate(child.children[1], context)];
+              }
+              return [i, evaluate(child, context)];
+            })
+          );
         }
 
         case "in": {
@@ -110,48 +119,6 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
 
         case ">=": {
           return (evaluate(ast.children[0], context) as number) >= (evaluate(ast.children[1], context) as number);
-        }
-
-        case "inRange_<_<":
-        case "inRange_<=_<":
-        case "inRange_<_<=":
-        case "inRange_<=_<=":
-        case "inRange_>_>":
-        case "inRange_>=_>":
-        case "inRange_>_>=":
-        case "inRange_>=_>=":
-        case "inRange_<_>":
-        case "inRange_<=_>":
-        case "inRange_<_>=":
-        case "inRange_<=_>=":
-        case "inRange_>_<":
-        case "inRange_>=_<":
-        case "inRange_>_<=":
-        case "inRange_>=_<=": {
-          const left = evaluate(ast.children[0], context) as number;
-          const middle = evaluate(ast.children[1], context) as number;
-          const right = evaluate(ast.children[2], context) as number;
-          const [leftComparison, rightComparison] = ast.value.split("_").slice(1);
-
-          const leftResult =
-            leftComparison === "<"
-              ? left < middle
-              : leftComparison === "<="
-              ? left <= middle
-              : leftComparison === ">"
-              ? left > middle
-              : left >= middle;
-
-          const rightResult =
-            rightComparison === "<"
-              ? middle < right
-              : rightComparison === "<="
-              ? middle <= right
-              : rightComparison === ">"
-              ? middle > right
-              : middle >= right;
-
-          return leftResult && rightResult;
         }
 
         case "fn": {
@@ -225,38 +192,33 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           const scope = context.scope;
           const values: Value[] = [];
           while (true) {
+            let value: Value;
             try {
               context.scope = scope;
-              const result = evaluate(ast.children[1], context);
+              value = evaluate(ast.children[1], context);
               // console.log("loop result", result);
-
-              values.push(result);
             } catch (error) {
-              if (error instanceof BreakError) {
-                if (error.label !== undefined && error.label !== ast.data.label) {
-                  throw error;
-                }
-                if (error.value !== null) {
-                values.push(error.value);
-                }
-                break;
+              if (!(error instanceof BreakError) && !(error instanceof ContinueError)) throw error;
+              if (error.label !== undefined && error.label !== ast.data.label) {
+                throw error;
               }
-              if (error instanceof ContinueError) {
-                if (error.label !== undefined && error.label !== ast.data.label) {
-                  throw error;
-                }
-                if (error.value !== null) {
-                values.push(error.value);
-                }
-                continue;
-              }
-              throw error;
+
+              value = error.value;
+
+              if (error instanceof BreakError) break;
+              if (error instanceof ContinueError) continue;
+            }
+
+            if (value !== null) {
+              values.push(value);
             }
           }
           return new Map(values.entries());
         }
 
         case "break": {
+          // console.dir(["break", omitASTDataScope(ast)], { depth: null });
+
           throw new BreakError(ast.data.label, evaluate(ast.children[0], context));
         }
 
@@ -335,11 +297,11 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           return func(evaluate(ast.children[1], context));
         }
 
-        case "async":
-        case "await":
         case "parallel":
         case "send":
         case "receive":
+        case "peekSend":
+        case "peekReceive":
         case "channel":
         case "set":
         case "import":
@@ -351,6 +313,24 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         case "external":
 
         // must be eliminated by that point
+        case "inRange_<_<":
+        case "inRange_<=_<":
+        case "inRange_<_<=":
+        case "inRange_<=_<=":
+        case "inRange_>_>":
+        case "inRange_>=_>":
+        case "inRange_>_>=":
+        case "inRange_>=_>=":
+        case "inRange_<_>":
+        case "inRange_<=_>":
+        case "inRange_<_>=":
+        case "inRange_<=_>=":
+        case "inRange_>_<":
+        case "inRange_>=_<":
+        case "inRange_>_<=":
+        case "inRange_>=_<=":
+        case "async":
+        case "await":
         case "is":
         case "as":
         case "mut":

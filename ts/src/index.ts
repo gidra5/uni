@@ -9,7 +9,16 @@ import { Compiler } from "./compiler/index.js";
 import { parseExprString } from "./parser/string.js";
 import { evaluate, initialContext } from "./evaluation/index.js";
 
-program.option("-i, --interactive");
+program
+  .command("run <file>")
+  .description("Run script from a file")
+  .action((file) => {
+    const context = initialContext();
+    const code = fs.readFileSync(file, "utf-8");
+    const [tokens, tokenErrors] = parseTokens(code);
+    const [ast, astErrors] = parse()(tokens);
+    evaluate(ast, context);
+  });
 
 program
   .command("repl [file]")
@@ -105,12 +114,3 @@ program
   });
 
 program.parse();
-
-const { interactive } = program.opts();
-const [file] = program.args;
-// let map = new FileMap();
-// const ctx: Context = {};
-
-if (interactive) {
-} else {
-}
