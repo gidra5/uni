@@ -37,25 +37,19 @@ float32
 
 Number literals consist of digits `_` as separator and optional `.` as fraction separator. Lead and tail zero both optional.
 ## Symbols
-Symbols are unique scoped identifiers. That means that any instance of symbol is identified by its name and scope of definition. For example:
+Symbols are unique identifiers. For example:
 
 ```
->> x := #x // assign symbol to variable
+>> x := symbol // assign symbol to variable
 #x
->> { #x } == #x // symbol literals from different scopes are unequal
+>> symbol == x // symbols are unique values
 false
 ```
 
-Symbols can be lifted with multiple `#`, which means they can refer to the symbol in scopes above:
-
-```
->> { ##x } == #x // true because ##x is lifted to the outer scope
-true
-```
 ## Booleans
 Booleans are simplest datatype defined as union of two possible values `true` and `false`, which are themselves global symbolic constants.
 
 ## Strings
-Strings are sequences of characters delimited by `"`. They can be any characters encodable in utf-8. Strings with single character are considered to be `char`s, that can be converted back to string when needed.
+Strings are sequences of characters delimited by `"`. They can be any characters encodable in utf-8. Strings with single character are considered to be `char`s, which is a "single char" string
 
    

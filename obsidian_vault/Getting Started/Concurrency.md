@@ -6,3 +6,6 @@ Available tools to model concurrent work:
 `await` - await `async` function call result
 `<- c` - receive from channel
 `c <- x` - send to a channel
+`<-? c` - peek a channel state without blocking, is it emply, closed, or pending.
+`c ?<- x` - try pushing value into channel. will return status instead of blocking if noone ready to receive.
+`select c1 c2 c3` - wait for receiving of either of channels.
