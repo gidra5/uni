@@ -437,6 +437,16 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
+    test("channel try send", () => {
+      const src = `c ?<- 123`;
+      treeTestCase(src);
+    });
+
+    test("channel try receive", () => {
+      const src = `<-? c`;
+      treeTestCase(src);
+    });
+
     test("parallel value", () => {
       const src = `123 | 456`;
       treeTestCase(src);

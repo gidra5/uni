@@ -1617,6 +1617,44 @@ exports[`expressions > concurrent programming > channel send 1`] = `
 }
 `;
 
+exports[`expressions > concurrent programming > channel try receive 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "c",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "peekReceive",
+}
+`;
+
+exports[`expressions > concurrent programming > channel try send 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "name",
+      "value": "c",
+    },
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 123,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "peekSend",
+}
+`;
+
 exports[`expressions > concurrent programming > parallel value 1`] = `
 {
   "children": [
@@ -4630,39 +4668,90 @@ exports[`expressions > structured programming > if-then 2 1`] = `
                     {
                       "children": [
                         {
-                          "children": [
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "name",
-                              "value": "x",
-                            },
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "int",
-                              "value": 0,
-                            },
-                          ],
+                          "children": [],
                           "data": {},
-                          "name": "operator",
-                          "value": "<",
+                          "name": "name",
+                          "value": "x",
                         },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "int",
+                          "value": 0,
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "<",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "x",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "break",
+                    },
+                    {
+                      "children": [
                         {
                           "children": [
                             {
-                              "children": [],
+                              "children": [
+                                {
+                                  "children": [],
+                                  "data": {},
+                                  "name": "name",
+                                  "value": "y",
+                                },
+                                {
+                                  "children": [],
+                                  "data": {},
+                                  "name": "name",
+                                  "value": "x",
+                                },
+                              ],
                               "data": {},
-                              "name": "name",
-                              "value": "x",
+                              "name": "operator",
+                              "value": ":=",
                             },
-                          ],
-                          "data": {},
-                          "name": "operator",
-                          "value": "break",
-                        },
-                        {
-                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "data": {},
+                                  "name": "name",
+                                  "value": "x",
+                                },
+                                {
+                                  "children": [
+                                    {
+                                      "children": [],
+                                      "data": {},
+                                      "name": "name",
+                                      "value": "x",
+                                    },
+                                    {
+                                      "children": [],
+                                      "data": {},
+                                      "name": "int",
+                                      "value": 1,
+                                    },
+                                  ],
+                                  "data": {},
+                                  "name": "operator",
+                                  "value": "-",
+                                },
+                              ],
+                              "data": {},
+                              "name": "operator",
+                              "value": "=",
+                            },
                             {
                               "children": [
                                 {
@@ -4676,110 +4765,52 @@ exports[`expressions > structured programming > if-then 2 1`] = `
                                     {
                                       "children": [],
                                       "data": {},
-                                      "name": "name",
-                                      "value": "x",
+                                      "name": "int",
+                                      "value": 19,
                                     },
                                   ],
                                   "data": {},
                                   "name": "operator",
-                                  "value": ":=",
+                                  "value": "==",
                                 },
                                 {
                                   "children": [
                                     {
                                       "children": [],
                                       "data": {},
-                                      "name": "name",
-                                      "value": "x",
-                                    },
-                                    {
-                                      "children": [
-                                        {
-                                          "children": [],
-                                          "data": {},
-                                          "name": "name",
-                                          "value": "x",
-                                        },
-                                        {
-                                          "children": [],
-                                          "data": {},
-                                          "name": "int",
-                                          "value": 1,
-                                        },
-                                      ],
-                                      "data": {},
-                                      "name": "operator",
-                                      "value": "-",
+                                      "name": "int",
+                                      "value": 69,
                                     },
                                   ],
                                   "data": {},
                                   "name": "operator",
-                                  "value": "=",
-                                },
-                                {
-                                  "children": [
-                                    {
-                                      "children": [
-                                        {
-                                          "children": [],
-                                          "data": {},
-                                          "name": "name",
-                                          "value": "y",
-                                        },
-                                        {
-                                          "children": [],
-                                          "data": {},
-                                          "name": "int",
-                                          "value": 19,
-                                        },
-                                      ],
-                                      "data": {},
-                                      "name": "operator",
-                                      "value": "==",
-                                    },
-                                    {
-                                      "children": [
-                                        {
-                                          "children": [],
-                                          "data": {},
-                                          "name": "int",
-                                          "value": 69,
-                                        },
-                                      ],
-                                      "data": {},
-                                      "name": "operator",
-                                      "value": "continue",
-                                    },
-                                  ],
-                                  "data": {},
-                                  "name": "operator",
-                                  "value": "if",
-                                },
-                                {
-                                  "children": [],
-                                  "data": {},
-                                  "name": "name",
-                                  "value": "y",
+                                  "value": "continue",
                                 },
                               ],
                               "data": {},
                               "name": "operator",
-                              "value": ";",
+                              "value": "if",
+                            },
+                            {
+                              "children": [],
+                              "data": {},
+                              "name": "name",
+                              "value": "y",
                             },
                           ],
                           "data": {},
-                          "name": "group",
-                          "value": "braces",
+                          "name": "operator",
+                          "value": ";",
                         },
                       ],
                       "data": {},
-                      "name": "operator",
-                      "value": "ifElse",
+                      "name": "group",
+                      "value": "braces",
                     },
                   ],
                   "data": {},
                   "name": "operator",
-                  "value": "atom",
+                  "value": "ifElse",
                 },
               ],
               "data": {},

@@ -152,7 +152,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   pipe: { separators: matchSeparators(["|>"]), precedence: leftAssociative(2) },
   send: { separators: matchSeparators(["<-"]), precedence: rightAssociative(2) },
   receive: { separators: matchSeparators(["<-"]), precedence: [null, 2] },
-  peekReceive: { separators: matchSeparators(["<-?"]), precedence: rightAssociative(2) },
+  peekReceive: { separators: matchSeparators(["<-?"]), precedence: [null, 2] },
   peekSend: { separators: matchSeparators(["?<-"]), precedence: rightAssociative(2) },
 
   "=": { separators: matchSeparators(["="]), precedence: rightAssociative(semicolonPrecedence + 1) },
@@ -270,6 +270,8 @@ export const scope = new Scope(scopeDictionary);
 
 export const symbols = Iterator.iter([
   "<-",
+  "?<-",
+  "<-?",
   "->",
   "--",
   "++",
