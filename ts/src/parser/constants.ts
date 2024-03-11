@@ -93,51 +93,43 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
   ";": { separators: matchSeparators([";", "\n"]), precedence: associative(semicolonPrecedence) },
   "#": { separators: matchSeparators(["#"]), precedence: [null, maxPrecedence] },
-  pin: { separators: matchSeparators(["^"]), precedence: [null, 4] },
-  "...": { separators: matchSeparators(["..."]), precedence: [null, 4] },
+  pin: { separators: matchSeparators(["^"]), precedence: [null, tuplePrecedence + 1] },
+  "...": { separators: matchSeparators(["..."]), precedence: [null, tuplePrecedence + 1] },
   match: {
     separators: matchSeparators(["match"], ["{"], ["}"]),
     precedence: [null, null],
   },
   matchColon: {
     separators: matchSeparators(["match"], [":", "\n"]),
-    precedence: [null, 2],
+    precedence: [null, semicolonPrecedence + 1],
   },
   if: {
     separators: matchSeparators(["if"], [":", "\n"]),
-    precedence: [null, 2],
+    precedence: [null, semicolonPrecedence + 1],
   },
   ifElse: {
     separators: matchSeparators(["if"], [":", "\n"], ["else"]),
-    precedence: [null, 2],
+    precedence: [null, semicolonPrecedence + 1],
   },
   for: {
     separators: matchSeparators(["for"], ["in"], [":", "\n"]),
-    precedence: [null, 2],
+    precedence: [null, semicolonPrecedence + 1],
   },
   while: {
     separators: matchSeparators(["while"], [":", "\n"]),
-    precedence: [null, 2],
+    precedence: [null, semicolonPrecedence + 1],
   },
   loop: {
-    separators: matchSeparators(["loop"], [":", "\n"]),
-    precedence: [null, 2],
-  },
-  loopBlock: {
-    separators: matchSeparators(["loop"], ["{"], ["}"]),
-    precedence: [null, null],
+    separators: matchSeparators(["loop"]),
+    precedence: [null, semicolonPrecedence + 1],
   },
   ifBlock: {
     separators: matchSeparators(["if"], ["{"], ["}"]),
     precedence: [null, null],
   },
-  ifElseBlock: {
-    separators: matchSeparators(["if"], [":", "\n"], ["else"], ["{"], ["}"]),
-    precedence: [null, null],
-  },
-  ifBlockElseBlock: {
-    separators: matchSeparators(["if"], ["{"], ["}"], ["else"], ["{"], ["}"]),
-    precedence: [null, null],
+  ifBlockElse: {
+    separators: matchSeparators(["if"], ["{"], ["}"], ["else"]),
+    precedence: [null, semicolonPrecedence + 1],
   },
   forBlock: {
     separators: matchSeparators(["for"], ["in"], ["{"], ["}"]),
@@ -147,13 +139,13 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     separators: matchSeparators(["while"], ["{"], ["}"]),
     precedence: [null, null],
   },
-  break: { separators: matchSeparators(["break"]), precedence: [null, 2] },
+  break: { separators: matchSeparators(["break"]), precedence: [null, semicolonPrecedence + 1] },
   continue: {
     separators: matchSeparators(["continue"]),
-    precedence: [null, 2],
+    precedence: [null, semicolonPrecedence + 1],
   },
-  return: { separators: matchSeparators(["return"]), precedence: [null, 2] },
-  yield: { separators: matchSeparators(["yield"]), precedence: [null, 2] },
+  return: { separators: matchSeparators(["return"]), precedence: [null, semicolonPrecedence + 1] },
+  yield: { separators: matchSeparators(["yield"]), precedence: [null, semicolonPrecedence + 1] },
   async: { separators: matchSeparators(["async"]), precedence: [null, maxPrecedence] },
   await: { separators: matchSeparators(["await"]), precedence: [null, maxPrecedence - 1] },
   parallel: { separators: matchSeparators(["|"]), precedence: associative(semicolonPrecedence + 1) },

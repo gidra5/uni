@@ -7,21 +7,29 @@
 4. "Отправка данных" - `x(y) rest`. Ждет пока получатель примет данные через канал `x`, и потом выполнить `rest`.
 5. "Одновременное выполнение" - `x | y`. Выполняет `х` и `у` "одновременно".
 6. "Нулевой процесс" - `0`. Процесс который уже закончился.
+7. "Сумма процессов" - `x + y`. Процесс, который выбирает один из процессов `x` или `y` для продолжения вычисления.
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
 * `(x | y) | z === x | (y | z)` - асоциативность
 * `ch x -> (y | z) === (ch x -> y) | z` если `x` не используется в `z`
 * `x | 0 === x`
+* `x + y === y + x`
+* `(x + y) + z === x + (y + z)`
+* `x + 0 === x`
 
 ## Редукция
 Выражения можно упростить следуя следующим правилам:
-* `ch x -> x[y] -> A | x(z) B => ch x -> A[y=z] | B` 
+* `w + (x[y] -> A) | (x(z) B) + v => A[y=z] | B` 
 * Если `A => B` то и `A | C => B | C`
 * Если `A => B` то и `ch x -> A => ch x -> B`
 * Если `A => B`, `A === A'`, `B === B'` то и `A' => B'`
 
 Можно сказать данное исчисление моделирует паралельные системы как набор потоков, которые передают друг другу данные пользуясь некоторым каналом передачи данных. 
+
+Данное исчисление может описывать класическое лямбда исчисление:
+* `fn x -> body === ch fn -> fn[x] -> fn(body)` - принимает аргумент и сразу отдает результат обратно.
+* `x y === ch fn -> x | fn(y) fn[body] -> body` - передает аргумент и сражу ожидает ответ.
 
 Можно сделать гибрид лямбда исчисления и пи исчисления используя такие конструкции:
 1. Переменная `x`, `y` и тд. 
@@ -32,17 +40,27 @@
 6. "Отправка данных" - `x.send y rest`. Ждет пока получатель примет данные через канал `x`, и вернет `rest`.
 7. "Одновременное выполнение" - `x | y`. Выполняет `х` и `у` "одновременно".
 6. "Нулевой процесс" - `void`. Процесс который уже закончился. Так же можно интерпретировтаь как значение которое нельзя использовать как функцию или аргумент.
+7. "сумма процессов" - `x + y`. Выбирает лишь один из процессов для продолжения выполнения.
 
 Правила редукции тогда таковы:
 1. `(fn x -> A) y => A[x=y]`
 2. `fn x -> f x => f`
-3. `... | (сh#n.send A B) | (сh#n.receive fn x -> C) => ... | B | C[x=A]`
+3. `(сh#n.send A B) | (сh#n.receive fn x -> C) => B | C[x=A]`
 4. `A | void => A`
-5. `A | B => A | C` если `B => C`
-6. `A (B | C) => (A B) | (A C)`
-7.  `(A | B) C => (A C) | (B C)`
-8.  `(fn x -> A) ch => A[x=ch#n]`, где `n` это порядковый номер появления канала в изначальном выражении
-9.  `fn x -> (A | B) => A | fn x -> B` если `x` не используется в `A`
+5. `A + void => A`
+6. `A | B => A | C` если `B => C`
+6. `A + B => A + C` если `B => C`
+7. `A (B | C) => (A B) | (A C)`
+8.  `(A | B) C => (A C) | (B C)`
+9.  `(fn x -> A) ch => A[x=ch#n]`, где `n` это уникальный номер канала
+10. `fn x -> (A | B) => A | fn x -> B` если `x` не используется в `A`
+11. `(E + (сh#n.send A B)) | ((сh#n.receive fn x -> C) + F) => B | C[x=A]`
+12. `A (B + C) => A B + A C`
+13. `(A + B) C => A C + B C`
+14. `A void => void`
+15. `void A => void`
+
+Можно заметить, что каналы и функции дуальны - если фокусироваться на получателях и отправителях в вычислениях, то будем иметь функции, передача данных в которые есть атомарным действием. Если же фокусироваться на передаче данных как на атоме, то будем иметь каналы, в которых получатели и отправитель в некотором вычислении разделены и независимы теперь, и лишь само действие передачи данных атомарно.
 
 Примеры таких выражений и их редукций:
 1. `(fn x -> (x.receive fn y -> y 2) | (x.send (fn z -> z + 1) 0)) ch`
@@ -51,7 +69,7 @@
 	`(fn z -> z + 1) 2)`
 	`2 + 1`
 	`3`
-1. `(fn x -> (x.receive fn y -> x.send (y 2) ((y 3) * 2)) | (x.send (fn z -> z + 1) (x.receive fn x -> x * 2))) ch`
+2. `(fn x -> (x.receive fn y -> x.send (y 2) ((y 3) * 2)) | (x.send (fn z -> z + 1) (x.receive fn x -> x * 2))) ch`
 	`(ch#0.receive fn y -> ch#0.send (y 2) ((y 3) * 4)) | (ch#0.send (fn z -> z + 1) (ch#0.receive fn x -> x * 2))`
 	`ch#0.send ((fn z -> z + 1) 2) (((fn z -> z + 1) 3) * 4) | ch#0.receive fn x -> x * 2`
 	`(((fn z -> z + 1) 3) * 4) | ((fn z -> z + 1) 2) * 2`
@@ -301,3 +319,9 @@
 Оператор `|` достаточно удобен в такой интерпретации - позволяет нативно описывать подобие множеств (set) или случаи когда может быть несколько вариантов значений, как в юнионе типов.
   
 [Pi-calculus](https://en.wikipedia.org/wiki/%CE%A0-calculus)
+[concurrent lambda calculus](https://www.researchgate.net/publication/2647424_From_a_Concurrent_lambda-calculus_to_the_pi-calculus)
+[synchronous pi calculus](https://www.cse.iitd.ac.in/~sak/courses/stc/Milner-SCCS.pdf)
+[pi calculus and linear logic](https://pdf.sciencedirectassets.com/271538/1-s2.0-S0304397500X03039/1-s2.0-0304397594001049/main.pdf?X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAwaCXVzLWVhc3QtMSJHMEUCIQCwj%2BbWwEQRLGrZ%2F1FLb8m%2BO5Bto%2BwEQsH1iJQZcnOZ2AIgBhF6bB0vPY%2FDR8WfrZjSsd3%2FqogJ3xXlIOx59BNSxG0qsgUIFBAFGgwwNTkwMDM1NDY4NjUiDIkMRiQEK0naC%2BYZfyqPBWlM0utgCZnB3%2FJKp6PtFoqdA%2FKHXOpKJC6L49yFEB4pvmwyJTIUMUWOWJkJdA0HdhOmaBdkVhLuRfqKZTJfJQXaUtKF%2BMRkddvy1Eg6XLxQXtquydxtPyX8Z6Z2h2ujn4UbKergPCzOo6OXVkiLxMH%2FLQbFqwmURL5tNq0i2gvSFu%2BXkVPHr75UDgxxD6Lj3OWP8fGB3ParvkcbAYY1Y%2Br0kCYLGynMq22%2Bg9D8SXu8MGF2GoKUFcffhMUJAADEk22Ji7LfIHh7AabH5YZyq%2BeqNDIRbd16Y%2BenYn%2Fry9lsZEWaGLzRNV951RX7G%2FzR%2Fk%2BUq7b4c8EUbniefrc9pjK1j0s5P%2Fch0BHTpbCRtF68A1z7GkdfWl3ohpsHZdOgITxtRSBnp3hei5Lspr1ra4A86RLWraQ56H5dtoTSBnSdLss7TEqKOS9OGhwgQrd%2Bqfp0AZExmVaXdDv8Grnlx%2FbZ5dz5b6Cn0s585OdrLIHOZ6UJ7bPrTHFQCaSuTOrs1rATKbQabBUu1hQ1DYilZXvXVCpTNzOMrLOBZOhxdSPcYeyx2LLCUMVQdJ2GXuX2yBAC1lxhz4QPAOD94w1KLYIAD7YFMAAY3Mo9ATgHWqXt4dPj6k2XWDe%2B8iP4VB6jMQEHeXeZIGbLj0mDksHnaJl4WvoDgvS24N9VDjC%2FEduMvBqRlGztM%2BdWt8K2JtJf38pYcFRJYYgxdE4k%2FILBaiW7ps7LQqX1URmM6dAOnOK4MSIeuHavNqjmcDLqVdXeEdUbSeBlo98oDC0QtqbhNquwSnAoTThmGM8pBGvHAHiWfkmv8fqMqFt5eVXJQVf9Mi8jpx2ycAeWmPM%2F0RYEO4vG9i%2BHhWGrlhzNzROu294w3qq2rwY6sQEzo2%2FJhE0MaoVS0ItpYIid2ehNeSLBgoHEq7BWbpVcKn9eMov47krbzXLXWrrf2N%2B3mHO4HflVNr9tvdJdg5ucWOSYXtvp9yDecBLulaOKBAGbhAWRHuxASVpxazW7zVZigO5H%2BacSTdd1UE%2BY771%2FtKAuFZ9JUB5oprnmipCHkVezJRHCzaizR3oNJ6cltD7R2OAzzVho0k2h8oGaRHV1t5xK0qS15Jm13upN3ckpkRw%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240310T113751Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAQ3PHCVTY5FC7HLNU%2F20240310%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=a99d72d99036c271dad0e2fd7cac90e997cf86f842df8b4311f64fcefa32d3a2&hash=610fec9c745a3e6b252a1692b2324ce07bf50bc9a4afdd9db899ced1c0cb49d1&host=68042c943591013ac2b2430a89b270f6af2c76d8dfd086a07176afe7c76c2c61&pii=0304397594001049&tid=spdf-9d4521b4-6aad-457b-a6d7-aaa2e44c21cb&sid=544ee4f79aa62043146b2cc5131d3b59cf4cgxrqb&type=client&tsoh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&ua=0f055c535154565c0604&rr=862303dcdc8824b6&cc=ua)
+[type system for pi calculus](https://pdf.sciencedirectassets.com/271538/1-s2.0-S0304397500X05348/1-s2.0-S0304397503003256/main.pdf?X-Amz-Security-Token=IQoJb3JpZ2luX2VjEA0aCXVzLWVhc3QtMSJGMEQCIH6styyrG3%2F2SgSWfMKJ4wJMZ3HsH%2Bh%2F1LyTkX2ywoANAiAgtH2tGJNe%2FBQpRqGdGOdporiegHPsVHT%2B%2Bt23XqdaPyqzBQgWEAUaDDA1OTAwMzU0Njg2NSIMMOauIM5W6yLYIC4yKpAFiGbJPWwn4C85egTFf2pOVt2UCMFiLNANXU3FLE7cVoC7ZZQUAwhslwhiQPh2K6GgaiUSG8DxXmlefTWhKZTG23%2FDLqzCWS2KDo%2B7ZxGnnv0zjKbN32RkOu15xqcCp%2Fu2%2Bm0i1n2bH2nWn%2Fk4gH3dP4UW40eZ4i9CjL8ET%2FkhF6aaj%2FqdJojqMa1rgttgJnsxgOTyBoLqbMZGwla0IQMDn9oLf6tyDZ0gzTBjwJgynol6GYkdRF5CL6gORvALXetP7NK8AJqn58vboDjybYw0O6nTcXtaf1d9xQJAdJH3JsNIU1Ck5jy%2BWnZ07RdBhpWotRnvzICIhxuVT4iziNFa2X6qg%2F797DPat9H9qS1ibCD3nJTSEjCHGupcsf%2Fr3NY3WKNcVwZBsQml2JmtvLXw4mQgM%2BxSEZt9HZglMSJt%2FtTL%2B3iumGPsgc8EuQ27KXkqdFvD%2FZyuVTPgbk%2FogvDEM%2FjYVQa%2FcQtrwKLrV7LWyX3WZZJqCQwwO0zVUBZldVgKjLVsfe9udb%2F2pU3TfMnsg1lZGv2XoS3OBcTte2dCn8njsVvOBpTaNo%2F%2B1EcBYYAOtnM2yUwAby4srUy1L16yyikrqcA0S3hupHM%2FjspXYF48FQ7QtXugCP9WswKN0gPutIpUnHz%2B1vt8QI94Lut7lefsRTd%2B%2BjH5agCQEwaILIrcj0IMDzZOexqn49uUTYZHD%2BdYat4euE5TlXct0zkT0NJ0%2FY0zrx%2Bbty578c1sA87FGn5qC5IO2JnDHrzSDiuuNFdBCmIbpkhvjqTKHIoSOb8tDRMhj%2FO1fRBbGZzdU7qxlzm3iC0QAdBsRI5Eq6IRa%2F7IJhxhiYNw0QjRUDAkMpyg9KkOb2ZeX9XwC%2FxNt5Qw%2Fc62rwY6sgHSTexLUM%2F82UHM1Nbggi2quB4ogk5nhclYjpOeWScehRvSBz%2BnDAoU3ypzY8XMXBp6Lv4HTKbGvfqR4RWw86cnd7zCKs%2FER8uxvayWoAv77cQYF6xdwwnwYZROAnbcNfYOc%2Bmk5nzM%2FNsYzTb2ThSe3NxVqh%2FybAvG37c45KDt6%2FbwxoTokAJRyHDWCtwy1id3kS7lL176eQO9kiPRQp1LnqWMTVB1zBxKBD6Zlpj1l0eN&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240310T135437Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAQ3PHCVTY4E7SQHAN%2F20240310%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=efa1484896ab0f1312b8866f312d213fc62ada1af74fe98542a5bfb6a50b95fe&hash=1c7f9e12ea912b5a1f4699994f4b88a6d7b5911f6e2be1bc7d2c5cf76de28102&host=68042c943591013ac2b2430a89b270f6af2c76d8dfd086a07176afe7c76c2c61&pii=S0304397503003256&tid=spdf-2c7284ea-ad4b-46c7-b586-46ddda3ddec2&sid=544ee4f79aa62043146b2cc5131d3b59cf4cgxrqb&type=client&tsoh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&ua=0f055c535154050c5153&rr=8623cc344c3f2d7f&cc=ua)
+[another type system](https://www.lacl.fr/~dvaracca/papers/es-pi-mfps.pdf)
+[even more type systems](https://hal.science/tel-03920089v2/preview/PREBET_Enguerrand_2022ENSL0017_These.pdf#page=2)

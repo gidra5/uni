@@ -1,7 +1,6 @@
 import { AbstractSyntaxTree } from "../parser/ast";
 import { Scope } from "../scope.js";
-import { traverse } from "../tree.js";
-import { isEqual, omit, omitASTDataScope } from "../utils/index.js";
+import { isEqual } from "../utils/index.js";
 
 type SymbolValue = symbol;
 type RecordValue = Map<Value, Value>;
@@ -191,7 +190,8 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         case "loop": {
           const scope = context.scope;
           const values: Value[] = [];
-          while (true) {
+          let i = 0;
+          while (i < 100) {
             let value: Value;
             try {
               context.scope = scope;
@@ -212,6 +212,7 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
             if (value !== null) {
               values.push(value);
             }
+            i++;
           }
           return new Map(values.entries());
         }
@@ -354,7 +355,7 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         case "postfixDecrement":
         case "postfixIncrement":
         default:
-          return null;
+          throw new Error(`Operator ${ast.value} not implemented`);
       }
     }
     case "group": {

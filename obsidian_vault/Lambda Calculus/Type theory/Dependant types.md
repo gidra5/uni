@@ -1,42 +1,3 @@
-
-Basic algebraic types:
-1. Tagged union type with `union` applied to record
-2. Untagged union with `union` applied to tuple, aliased with `or`
-3. Tuple types with `(type, ...)`
-4. Record types with `(label: type, ...)`
-5. Function types with `fn label: type => type`
-6. Nominal types with `nominal` operator
-7. Unit type with `()`
-8. Void type with `void`. Unit wrt `or` operator.
-9.  Unit wrt `and` operator - `unknown`. Any unlabeled param is considered `unknown`
-10. Convention: Identifier with `'` are type parameters
-
-Primitives:
-1. `number`
-2. `string`
-3. `boolean`
-4. `symbol`
-
-Subtyping relation `<` is defined:
-1. `a < unknown`
-1. `Value < Type`
-1. `a < a`
-3. `a and b < a` and `a and b < b`
-4. `a, b1, b2, (fn x: a => b1) and (fn x: a => b2) < fn x: a -> (b1 and b2)`
-5. `a, b1, b2, (fn x: b1 => a) and (fn x: b2 => a) < fn x: b1 or b2 -> a`
-6. `a, b1, b2, a < b1, a < b2, a < b1 and b2`
-7. 
-```
-a1, a2, b1, b2, 
-a1 < a2, b1 < b2, 
-(fn x: a2 => b1) < (fn x: a1 => b2)
-```
-7. 
-```
-for all x, (fn x: a1 -> b1) x < (fn x: a2 -> b2) x then 
-(fn x: a1 -> b1) < (fn x: a2 -> b2)
-```
-
 Basis of type system is Calculus of Constructions:
 
 1. There is a *Value* which is **Type of propositions**.
@@ -259,7 +220,7 @@ fn a': Type -> fn b': Type -> fn x: (fn x: a' -> b') -> fn y: 'a -> b'
 ```
 
 Inductive types are translated as follows:
-1.  if definition of `Type` references to the type itself - actual definition is wrapped in `fn _Type: typeof Type => definition(_Type)`
+1. if definition of `Type` references to the type itself - actual definition is wrapped in `fn _Type: typeof Type => definition(_Type)`
 2. if definition is a tagged union then define "constructor" for each of them 
 ```
 type Tree = fn node: Value => fn leaf: Value => union (Node: (left: Tree node leaf, n: node, right: Tree node leaf), Leaf: leaf)
@@ -475,14 +436,5 @@ tuple_n = fn N ->
 	in construct_tuple N (fn x -> x) 
 end
 ```
-
-Nominal types useful to describe "measures" - they are described by the same underlying type (`number`), but carry different semantics (`cm != mm`). By making them nominal, we can then define particular behavior to them, like conversion between measures (`1 cm => 10 mm`).
-That may as well be used for library developers, that may use the same terminology as others (`Request` in `http` module and `Request` in `websocket` module mean different things and should not be mixed, probably, even if they happen to have the same structure), but mean different thing by it. It can be views as means to distinguish between synonyms and ambiguous values
-
-Set theoretic types: https://www.irif.fr/~gc/papers/set-theoretic-types-2022.pdf 
-Types that allow set-theoretic operations to be performed with them, such as `union`, `intersetion`, `negation` of some types
-
-Gradual typing explained: https://elixir-lang.org/blog/2023/09/20/strong-arrows-gradual-typing/ 
-We introduce type `any` which means we can't know type of its value until runtime, thus requiring runtime checks to verify its type, unless we can statically analyze how it is used and avoid checks
 
 [dependant types impl](https://www.andres-loeh.de/LambdaPi/LambdaPi.pdf)

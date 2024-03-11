@@ -1,11 +1,12 @@
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { Iterator } from "iterator-js";
-import { infixArithmeticOps, infixBooleanOps, prefixArithmeticOps, scopeDictionary } from "../src/parser/constants";
+import { infixArithmeticOps, prefixArithmeticOps } from "../src/parser/constants";
 import { parseExprString } from "../src/parser/string";
 import { parseTokens } from "../src/parser/tokens";
 import { parse } from "../src/parser";
-import { pick, omitASTDataScope } from "../src/utils";
+import { omitASTDataScope } from "../src/utils";
+import { evaluate } from "../src/evaluation";
 
 export const errorsTestCase = (src, expectedErrors, _it: any = it) =>
   _it(`finds all errors in example '${src}'`, () => {
@@ -13,14 +14,18 @@ export const errorsTestCase = (src, expectedErrors, _it: any = it) =>
     expect(errors).toEqual(expectedErrors);
   });
 
-export const evalTestCase = (src, expectedValue?) => {
+export const evalTestCase = (src, expectedValue?, expectedTree?) => {
   const [tokens] = parseTokens(src);
   const [tree, errors] = parse()(tokens);
   // console.dir(tree, { depth: null });
   expect(errors).toEqual([]);
   const _tree = omitASTDataScope(tree);
-  if (expectedValue) expect(_tree).toEqual(expectedValue);
+  if (expectedTree) expect(_tree).toEqual(expectedTree);
   expect(_tree).toMatchSnapshot();
+
+  const result = evaluate(tree);
+  if (expectedValue) expect(result).toEqual(expectedValue);
+  expect(result).toMatchSnapshot();
 };
 
 export const evalTestCaseArgs = (src, expectedValue?) =>
@@ -228,6 +233,11 @@ describe("expressions", () => {
   });
 
   describe("structured programming", () => {
+    test.only("if-then", () => {
+      const src = `y := (x := 25; loop: (if x < 0: break x else { y := x; x = x - 1; if y == 19: continue 69; y }))`;
+      evalTestCase(src);
+    });
+
     test("if-then", () => {
       const src = `if true: 123`;
       evalTestCase(src);
