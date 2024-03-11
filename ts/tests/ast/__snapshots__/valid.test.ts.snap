@@ -4978,6 +4978,22 @@ exports[`expressions > structured programming > labeled expression 1`] = `
 }
 `;
 
+exports[`expressions > structured programming > loop 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 123,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": "loop",
+}
+`;
+
 exports[`expressions > structured programming > return 1`] = `
 {
   "children": [

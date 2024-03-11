@@ -234,7 +234,7 @@ describe("expressions", () => {
 
   describe("structured programming", () => {
     test.only("if-then", () => {
-      const src = `y := (x := 25; loop: (if x < 0: break x else { y := x; x = x - 1; if y == 19: continue 69; y }))`;
+      const src = `y := (x := 25; loop if x <= 0: break x else { y := x; x = x - 1; if y == 19: continue 69; y })`;
       evalTestCase(src);
     });
 

@@ -316,7 +316,7 @@ describe("expressions", () => {
 
   describe("structured programming", () => {
     test("if-then 2", () => {
-      const src = `y := (x := 25; loop: if x < 0: break x else { y := x; x = x - 1; if y == 19: continue 69; y })`;
+      const src = `y := (x := 25; loop if x < 0: break x else { y := x; x = x - 1; if y == 19: continue 69; y })`;
       treeTestCase(src);
     });
 
@@ -387,6 +387,11 @@ describe("expressions", () => {
 
     test("while loop continue value", () => {
       const src = `while true: continue 1`;
+      treeTestCase(src);
+    });
+
+    test("loop", () => {
+      const src = `loop 123`;
       treeTestCase(src);
     });
 

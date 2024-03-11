@@ -1,6 +1,6 @@
 import { AbstractSyntaxTree } from "../parser/ast";
 import { Scope } from "../scope.js";
-import { isEqual } from "../utils/index.js";
+import { isEqual, omitASTDataScope } from "../utils/index.js";
 
 type SymbolValue = symbol;
 type RecordValue = Map<Value, Value>;
@@ -13,14 +13,14 @@ export const initialContext = (): Context => ({ scope: new Scope<Value>() });
 const atoms: Record<string, symbol> = {};
 
 export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): Value => {
-  //   console.dir(
-  //   {
-  //     msg: "evaluate",
-  //     ast: omitASTDataScope(ast),
-  //     context,
-  //   },
-  //   { depth: null }
-  // );
+  console.dir(
+    {
+      msg: "evaluate",
+      ast: omitASTDataScope(ast),
+      context,
+    },
+    { depth: null }
+  );
 
   switch (ast.name) {
     case "program":
@@ -195,22 +195,25 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
             let value: Value;
             try {
               context.scope = scope;
-              value = evaluate(ast.children[1], context);
+              value = evaluate(ast.children[0], context);
               // console.log("loop result", result);
+
+              if (value !== null) {
+                values.push(value);
+              }
             } catch (error) {
               if (!(error instanceof BreakError) && !(error instanceof ContinueError)) throw error;
               if (error.label !== undefined && error.label !== ast.data.label) {
                 throw error;
               }
 
-              value = error.value;
+              const value = error.value;
+              if (value !== null) {
+                values.push(value);
+              }
 
               if (error instanceof BreakError) break;
               if (error instanceof ContinueError) continue;
-            }
-
-            if (value !== null) {
-              values.push(value);
             }
             i++;
           }
