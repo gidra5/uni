@@ -1,6 +1,7 @@
 
 Basic algebraic types:
-1. *Tagged union* type with `union` operator applied to record (for names variants) or tuple (for indexed variants)
+1. *Function* type with `fn name: type -> type` or `type -> type`
+2. *Tagged union* type with `union` operator applied to record (for names variants) or tuple (for indexed variants)
 3. *Tuple* types with `type, ...`
 4. *Record* types with `label: type, ...`
 5. *Join* tuples and records, or extend unions `...tuple1, ...tuple2`

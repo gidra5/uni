@@ -73,7 +73,9 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         }
 
         case "in": {
-          return (evaluate(ast.children[0], context) as RecordValue).has(evaluate(ast.children[1], context));
+          const value = evaluate(ast.children[0], context);
+          if (value instanceof Map) return value.has(evaluate(ast.children[1], context));
+          return null;
         }
 
         case "and": {
@@ -101,7 +103,9 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         }
 
         case "!": {
-          return !evaluate(ast.children[0], context);
+          const value = evaluate(ast.children[0], context);
+          if (typeof value !== "boolean") return null;
+          return !value;
         }
 
         case "<": {
@@ -369,6 +373,7 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           return false;
         case "symbol":
           return Symbol();
+        case "brackets":
         case "parens": {
           return evaluate(ast.children[0], context);
         }

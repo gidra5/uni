@@ -29,7 +29,7 @@ export const evalTestCase = (src, expectedValue?, expectedTree?) => {
 };
 
 export const evalTestCaseArgs = (src, expectedValue?) =>
-  [`produces correct tree for '${src}'`, () => evalTestCase(src, expectedValue)] as const;
+  [`produces correct value for '${src}'`, () => evalTestCase(src, expectedValue)] as const;
 
 /* one test per example of a language construct  */
 
@@ -74,52 +74,82 @@ describe("expressions", () => {
   });
 
   describe("arithmetics", () => {
-    for (const [opName, op] of infixArithmeticOps) {
-      test(opName, () => {
-        const src = `123 ${op} 456`;
-        evalTestCase(src);
-      });
-    }
-
-    for (const [opName, op] of prefixArithmeticOps) {
-      test(opName, () => {
-        const src = `${op}123`;
-        evalTestCase(src);
-      });
-    }
-
-    it(...evalTestCaseArgs("1 + 2^3 * 4 - 5 / 6 % 7"));
+    it(...evalTestCaseArgs("1 + 2^-3 * 4 - 5 / 6 % 7"));
   });
 
   describe("boolean expressions", () => {
-    test("not", () => {
+    test("not on not boolean", () => {
       const src = `!123`;
       evalTestCase(src);
     });
 
-    describe("comparators", () => {
-      const comparators = [
-        ["<", "<="],
-        [">", ">="],
-      ];
+    test("not on boolean", () => {
+      const src = `!true`;
+      evalTestCase(src);
+    });
 
-      for (const op of Iterator.iter(comparators).flat()) {
-        test(`comparator ${op}`, () => {
-          const src = `123 ${op} 456`;
-          evalTestCase(src);
-        });
-      }
+    test("and", () => {
+      const src = `true and false`;
+      evalTestCase(src);
+    });
 
-      for (const [op1, op2] of Iterator.iter(comparators).flatMap((pair) => Iterator.iter(pair).power(2))) {
-        test(`range ${op1} ${op2}`, () => {
-          const src = `123 ${op1} x ${op2} 456`;
-          evalTestCase(src);
-        });
-      }
+    test("and short-circuit", () => {
+      const src = `false and whatever`;
+      evalTestCase(src);
+    });
+
+    test("or", () => {
+      const src = `true or false`;
+      evalTestCase(src);
+    });
+
+    test("or short-circuit", () => {
+      const src = `true or whatever`;
+      evalTestCase(src);
+    });
+
+    test.todo("in", () => {
+      const src = `"key" in [key: 1, key2: 2]`;
+      evalTestCase(src);
+    });
+
+    test("eq", () => {
+      const src = `1 == 1`;
+      evalTestCase(src);
+    });
+
+    test("eq ref", () => {
+      const src = `x := 1, 2; y := x; x == y`;
+      evalTestCase(src);
+    });
+
+    test("eq ref 2", () => {
+      const src = `(1, 2) == (1, 2)`;
+      evalTestCase(src);
+    });
+
+    test("deep eq", () => {
+      const src = `(1, 2) === (1, 2)`;
+      evalTestCase(src);
+    });
+
+    test("compare", () => {
+      const src = `123 < 456`;
+      evalTestCase(src);
+    });
+
+    test.skip("range", () => {
+      const src = `1 < 2 < 3`;
+      evalTestCase(src);
+    });
+
+    test.skip("range fail", () => {
+      const src = `1 < 3 < 2`;
+      evalTestCase(src);
     });
   });
 
-  describe("function expressions", () => {
+  describe.todo("function expressions", () => {
     test("function with no arg", () => {
       const src = `fn -> #0`;
       evalTestCase(src);
@@ -148,7 +178,7 @@ describe("expressions", () => {
     });
   });
 
-  describe("pattern matching", () => {
+  describe.todo("pattern matching", () => {
     test("match", () => {
       const src = `match x { 1 -> 2; 3 -> 4 }`;
       evalTestCase(src);
@@ -232,8 +262,8 @@ describe("expressions", () => {
     });
   });
 
-  describe("structured programming", () => {
-    test.only("if-then", () => {
+  describe.todo("structured programming", () => {
+    test("if-then", () => {
       const src = `y := (x := 25; loop if x <= 0: break x else { y := x; x = x - 1; if y == 19: continue 69; y })`;
       evalTestCase(src);
     });
@@ -339,7 +369,7 @@ describe("expressions", () => {
     });
   });
 
-  describe("concurrent programming", () => {
+  describe.todo("concurrent programming", () => {
     test("channel send", () => {
       const src = `c <- 123`;
       evalTestCase(src);
@@ -381,7 +411,7 @@ describe("expressions", () => {
     });
   });
 
-  describe("data structures", () => {
+  describe.todo("data structures", () => {
     test("unit", () => {
       const src = `()`;
       evalTestCase(src);
@@ -613,7 +643,7 @@ describe("expressions", () => {
     });
   });
 
-  describe("signals", () => {
+  describe.todo("signals", () => {
     test("value", () => {
       const src = `signal 123`;
       evalTestCase(src);

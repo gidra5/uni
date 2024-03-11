@@ -1,6 +1,42 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`expressions > structured programming > if-then 1`] = `
+exports[`comments > comment 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 123,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`comments > comment 2`] = `123`;
+
+exports[`comments > comment block 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 123,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`comments > comment block 2`] = `123`;
+
+exports[`expressions > arithmetics > produces correct value for '1 + 2^-3 * 4 - 5 / 6 % 7' 1`] = `
 {
   "children": [
     {
@@ -8,8 +44,8 @@ exports[`expressions > structured programming > if-then 1`] = `
         {
           "children": [],
           "data": {},
-          "name": "name",
-          "value": "y",
+          "name": "int",
+          "value": 1,
         },
         {
           "children": [
@@ -20,180 +56,233 @@ exports[`expressions > structured programming > if-then 1`] = `
                     {
                       "children": [],
                       "data": {},
-                      "name": "name",
-                      "value": "x",
+                      "name": "int",
+                      "value": 2,
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "int",
+                          "value": 3,
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": "negate",
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": "^",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 4,
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": "*",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "int",
+                      "value": 5,
                     },
                     {
                       "children": [],
                       "data": {},
                       "name": "int",
-                      "value": 25,
+                      "value": 6,
                     },
                   ],
                   "data": {},
                   "name": "operator",
-                  "value": ":=",
+                  "value": "/",
                 },
                 {
-                  "children": [
-                    {
-                      "children": [
-                        {
-                          "children": [
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "name",
-                              "value": "x",
-                            },
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "int",
-                              "value": 0,
-                            },
-                          ],
-                          "data": {},
-                          "name": "operator",
-                          "value": "<=",
-                        },
-                        {
-                          "children": [
-                            {
-                              "children": [],
-                              "data": {},
-                              "name": "name",
-                              "value": "x",
-                            },
-                          ],
-                          "data": {},
-                          "name": "operator",
-                          "value": "break",
-                        },
-                        {
-                          "children": [
-                            {
-                              "children": [
-                                {
-                                  "children": [
-                                    {
-                                      "children": [],
-                                      "data": {},
-                                      "name": "name",
-                                      "value": "y",
-                                    },
-                                    {
-                                      "children": [],
-                                      "data": {},
-                                      "name": "name",
-                                      "value": "x",
-                                    },
-                                  ],
-                                  "data": {},
-                                  "name": "operator",
-                                  "value": ":=",
-                                },
-                                {
-                                  "children": [
-                                    {
-                                      "children": [],
-                                      "data": {},
-                                      "name": "name",
-                                      "value": "x",
-                                    },
-                                    {
-                                      "children": [
-                                        {
-                                          "children": [],
-                                          "data": {},
-                                          "name": "name",
-                                          "value": "x",
-                                        },
-                                        {
-                                          "children": [],
-                                          "data": {},
-                                          "name": "int",
-                                          "value": 1,
-                                        },
-                                      ],
-                                      "data": {},
-                                      "name": "operator",
-                                      "value": "-",
-                                    },
-                                  ],
-                                  "data": {},
-                                  "name": "operator",
-                                  "value": "=",
-                                },
-                                {
-                                  "children": [
-                                    {
-                                      "children": [
-                                        {
-                                          "children": [],
-                                          "data": {},
-                                          "name": "name",
-                                          "value": "y",
-                                        },
-                                        {
-                                          "children": [],
-                                          "data": {},
-                                          "name": "int",
-                                          "value": 19,
-                                        },
-                                      ],
-                                      "data": {},
-                                      "name": "operator",
-                                      "value": "==",
-                                    },
-                                    {
-                                      "children": [
-                                        {
-                                          "children": [],
-                                          "data": {},
-                                          "name": "int",
-                                          "value": 69,
-                                        },
-                                      ],
-                                      "data": {},
-                                      "name": "operator",
-                                      "value": "continue",
-                                    },
-                                  ],
-                                  "data": {},
-                                  "name": "operator",
-                                  "value": "if",
-                                },
-                                {
-                                  "children": [],
-                                  "data": {},
-                                  "name": "name",
-                                  "value": "y",
-                                },
-                              ],
-                              "data": {},
-                              "name": "operator",
-                              "value": ";",
-                            },
-                          ],
-                          "data": {},
-                          "name": "group",
-                          "value": "braces",
-                        },
-                      ],
-                      "data": {},
-                      "name": "operator",
-                      "value": "ifElse",
-                    },
-                  ],
+                  "children": [],
                   "data": {},
-                  "name": "operator",
-                  "value": "loop",
+                  "name": "int",
+                  "value": 7,
                 },
               ],
               "data": {},
               "name": "operator",
-              "value": ";",
+              "value": "%",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "-",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "+",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > arithmetics > produces correct value for '1 + 2^-3 * 4 - 5 / 6 % 7' 2`] = `0.6666666666666666`;
+
+exports[`expressions > boolean expressions > and 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "group",
+          "value": "true",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "group",
+          "value": "false",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "and",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > boolean expressions > and 2`] = `false`;
+
+exports[`expressions > boolean expressions > and short-circuit 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "group",
+          "value": "false",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "whatever",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "and",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > boolean expressions > and short-circuit 2`] = `false`;
+
+exports[`expressions > boolean expressions > compare 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 123,
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 456,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "<",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > boolean expressions > compare 2`] = `true`;
+
+exports[`expressions > boolean expressions > deep eq 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 1,
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 2,
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": ",",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 1,
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 2,
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": ",",
             },
           ],
           "data": {},
@@ -203,7 +292,7 @@ exports[`expressions > structured programming > if-then 1`] = `
       ],
       "data": {},
       "name": "operator",
-      "value": ":=",
+      "value": "===",
     },
   ],
   "data": {},
@@ -212,33 +301,467 @@ exports[`expressions > structured programming > if-then 1`] = `
 }
 `;
 
-exports[`expressions > structured programming > if-then 2`] = `
-Map {
-  0 => 25,
-  1 => 24,
-  2 => 23,
-  3 => 22,
-  4 => 21,
-  5 => 20,
-  6 => 69,
-  7 => 18,
-  8 => 17,
-  9 => 16,
-  10 => 15,
-  11 => 14,
-  12 => 13,
-  13 => 12,
-  14 => 11,
-  15 => 10,
-  16 => 9,
-  17 => 8,
-  18 => 7,
-  19 => 6,
-  20 => 5,
-  21 => 4,
-  22 => 3,
-  23 => 2,
-  24 => 1,
-  25 => 0,
+exports[`expressions > boolean expressions > deep eq 2`] = `true`;
+
+exports[`expressions > boolean expressions > eq 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 1,
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 1,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "==",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
 }
 `;
+
+exports[`expressions > boolean expressions > eq 2`] = `true`;
+
+exports[`expressions > boolean expressions > eq ref 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 1,
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 2,
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": ",",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": ":=",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "y",
+            },
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "x",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": ":=",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "x",
+            },
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "y",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "==",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": ";",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > boolean expressions > eq ref 2`] = `true`;
+
+exports[`expressions > boolean expressions > eq ref 2 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 1,
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 2,
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": ",",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 1,
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "int",
+                  "value": 2,
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": ",",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "==",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > boolean expressions > eq ref 2 2`] = `false`;
+
+exports[`expressions > boolean expressions > not on boolean 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "group",
+          "value": "true",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "!",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > boolean expressions > not on boolean 2`] = `false`;
+
+exports[`expressions > boolean expressions > not on not boolean 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 123,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "!",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > boolean expressions > not on not boolean 2`] = `null`;
+
+exports[`expressions > boolean expressions > or 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "group",
+          "value": "true",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "group",
+          "value": "false",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "or",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > boolean expressions > or 2`] = `true`;
+
+exports[`expressions > boolean expressions > or short-circuit 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "group",
+          "value": "true",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "name",
+          "value": "whatever",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "or",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > boolean expressions > or short-circuit 2`] = `true`;
+
+exports[`expressions > boolean expressions > range 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 1,
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 2,
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 3,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "inRange_<_<",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > boolean expressions > range fail 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 1,
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 3,
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 2,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "inRange_<_<",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > values > false 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "group",
+      "value": "false",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > values > false 2`] = `false`;
+
+exports[`expressions > values > float 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "float",
+      "value": 123.456,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > values > float 2`] = `123.456`;
+
+exports[`expressions > values > integer 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "int",
+      "value": 123,
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > values > integer 2`] = `123`;
+
+exports[`expressions > values > string 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "string",
+      "value": "string",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > values > string 2`] = `"string"`;
+
+exports[`expressions > values > true 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {},
+      "name": "group",
+      "value": "true",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > values > true 2`] = `true`;
