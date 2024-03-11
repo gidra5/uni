@@ -27,3 +27,12 @@ Any function can be pinned to some thread to guarantee that it will always be ex
 Also there are concurrency primitives such as atomics, mutexes and semaphores.
 
 https://stackoverflow.com/questions/980999/what-does-multicore-assembly-language-look-like
+
+https://openjdk.org/jeps/453 - structured concurrency.
+In structured concurrency all tasks have hierarchy.
+If task is cancelled, all its child tasks are cancelled as well
+A group of tasks may adhere to some execution policy.
+Execution policy may differently handle success or failure of individual tasks.
+For example:
+1. upon failure of any one task cancel siblings and return error.
+2. upon success of any one task cancel siblings and return result.
