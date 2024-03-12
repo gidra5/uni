@@ -135,7 +135,7 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         case ",": {
           return ast.children.reduce<RecordValue>(
             (val, child) => {
-              if (child.name === "label") {
+              if (child.value === "label") {
                 const isRecordKey = child.children[0].name === "name";
                 if (isRecordKey) {
                   const key = child.children[0].value;
@@ -162,9 +162,12 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         }
 
         case "in": {
-          const value = evaluate(ast.children[0], context);
-          if (value instanceof Map) return value.has(evaluate(ast.children[1], context));
-          return null;
+          const value = evaluate(ast.children[1], context);
+          if (value === null) return null;
+          if (typeof value !== "object") return null;
+          if (value.kind !== "record") return null;
+          const key = evaluate(ast.children[0], context);
+          return recordGet(value, key) !== null;
         }
 
         case "and": {

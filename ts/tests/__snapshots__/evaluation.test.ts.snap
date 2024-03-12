@@ -494,6 +494,90 @@ exports[`expressions > boolean expressions > eq ref 2 1`] = `
 
 exports[`expressions > boolean expressions > eq ref 2 2`] = `false`;
 
+exports[`expressions > boolean expressions > in 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "name",
+              "value": "key",
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "atom",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "key",
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "int",
+                      "value": 1,
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": "label",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "name",
+                      "value": "key2",
+                    },
+                    {
+                      "children": [],
+                      "data": {},
+                      "name": "int",
+                      "value": 2,
+                    },
+                  ],
+                  "data": {},
+                  "name": "operator",
+                  "value": "label",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": ",",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "in",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > boolean expressions > in 2`] = `null`;
+
 exports[`expressions > boolean expressions > not on boolean 1`] = `
 {
   "children": [

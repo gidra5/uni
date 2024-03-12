@@ -108,8 +108,8 @@ describe("expressions", () => {
       evalTestCase(src);
     });
 
-    test.todo("in", () => {
-      const src = `"key" in [key: 1, key2: 2]`;
+    test("in", () => {
+      const src = `:key in (key: 1, key2: 2)`;
       evalTestCase(src);
     });
 
