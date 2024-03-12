@@ -89,8 +89,9 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
 
   as: { separators: matchSeparators(["as"]), precedence: [1, 1] },
   mut: { separators: matchSeparators(["mut"]), precedence: [null, assignmentPrecedence + 1] },
-  "->": { separators: matchSeparators(["->"]), precedence: [Infinity, 2] },
+  "->": { separators: matchSeparators(["->"]), precedence: rightAssociative(semicolonPrecedence + 1) },
   fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
+  macro: { separators: matchSeparators(["macro"], ["->"]), precedence: [null, 2] },
   ";": { separators: matchSeparators([";", "\n"]), precedence: associative(semicolonPrecedence) },
   "#": { separators: matchSeparators(["#"]), precedence: [null, maxPrecedence] },
   pin: { separators: matchSeparators(["^"]), precedence: [null, tuplePrecedence + 1] },

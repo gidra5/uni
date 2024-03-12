@@ -128,9 +128,9 @@ export class Scope<T = any> {
     return this.toRelativeIndex({ name });
   }
 
-  push(value: T): Scope<T> {
+  push(...values: T[]): Scope<T> {
     const copied = this.copy();
-    copied.scope.push({ value });
+    copied.scope.push(...values.map((value) => ({ value })));
     // console.dir(
     //   {
     //     msg: "scope push",
