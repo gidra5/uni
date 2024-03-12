@@ -1,8 +1,9 @@
 import { Iterator } from "iterator-js";
-import { AbstractSyntaxTree } from "../parser/ast";
+import { AbstractSyntaxTree } from "../parser/ast.js";
 import { Scope } from "../scope.js";
 import { isEqual, omitASTDataScope } from "../utils/index.js";
-import { match, template } from "../parser/utils";
+import { match, template } from "../parser/utils.js";
+import { parseExprString } from "../parser/string.js";
 
 type SymbolValue = symbol;
 type RecordValue = { kind: "record"; tuple: Value[]; record: { [key: string]: Value }; map: Map<Value, Value> };
@@ -33,6 +34,32 @@ const getAtom = (name: string): symbol => {
   return atoms[name];
 };
 
+const isRecord = (value: Value): value is RecordValue =>
+  !!value && typeof value === "object" && value.kind === "record";
+const isExpr = (value: Value): value is ExprValue => !!value && typeof value === "object" && value.kind === "expr";
+
+const record = (
+  tuple: Value[] = [],
+  record: { [key: string]: Value } = {},
+  map: Map<Value, Value> = new Map()
+): RecordValue => ({
+  kind: "record",
+  tuple,
+  record,
+  map,
+});
+const expr = (ast: AbstractSyntaxTree, scope: Scope<ScopeValue>): ExprValue => ({
+  kind: "expr",
+  ast: omitASTDataScope(ast),
+  scope,
+});
+const fn =
+  <T extends Value>(value: (arg: T) => Value): FunctionValue =>
+  (arg) => {
+    const evaluatedArg = evaluate(arg.ast, { scope: arg.scope });
+    return value(evaluatedArg as T);
+  };
+
 const recordSet = (record: RecordValue, key: Value, value: Value): void => {
   if (key === null) return;
 
@@ -61,39 +88,101 @@ const recordGet = (record: RecordValue, key: Value): Value => {
   if (typeof key === "symbol" && key.description) return record.record[key.description] ?? null;
   return record.map.get(key) ?? null;
 };
-export const initialContext = (): Context => ({
-  scope: new Scope<ScopeValue>({
-    bind: {
-      value: (expr) => (_names) => {
-        const names = evaluate(_names.ast, { scope: _names.scope }) as RecordValue;
-        const scope = _names.scope.push(...names.tuple.map((value) => ({ value }))).append(
-          new Scope(
-            Iterator.iterEntries(names.record)
-              .map<[string, ScopeValue]>(([name, value]) => [name, { value }])
-              .toObject()
-          )
-        );
-        return { kind: "expr", ast: expr.ast, scope };
+const recordHas = (record: RecordValue, key: Value): boolean => {
+  if (key === null) return false;
+  if (typeof key === "number") return key in record.tuple;
+  if (typeof key === "symbol" && key.description) return key.description in record.record;
+  return record.map.has(key);
+};
+export const initialContext = (): Context => {
+  const context = {
+    scope: new Scope<ScopeValue>({
+      bind: {
+        value: fn((_expr: ExprValue) =>
+          fn((names: RecordValue) => {
+            const scope = _expr.scope
+              .push(...names.tuple.map((value) => ({ value })))
+              .append(
+                new Scope(
+                  Iterator.iterEntries(names.record)
+                    .map<[string, ScopeValue]>(([name, value]) => [name, { value }])
+                    .toObject()
+                )
+              )
+              .append(
+                new Scope(
+                  Iterator.iter(names.map)
+                    .filter<[string, Value]>((x): x is [string, Value] => typeof x[0] === "string")
+                    .map<[string, ScopeValue]>(([key, value]) => [key, { value }])
+                    .toObject()
+                )
+              );
+            // console.dir({ names, _expr, scope }, { depth: null });
+            return expr(_expr.ast, scope);
+          })
+        ),
       },
-    },
-    // match_expr: {
-    //   value: (pattern) => (expr) => {
-    //     const matched = match(expr.ast, pattern.ast);
-    // } },
-    eval: { value: (expr) => evaluate(expr.ast, { scope: expr.scope }) },
-    quote: { value: (expr) => expr },
-  }),
-});
+      node: {
+        value: fn((_expr: ExprValue) => {
+          const _record: RecordValue = record();
+          const children = _expr.ast.children.map<ExprValue>((child) => expr(child, _expr.scope));
+
+          _record.record.children = record(children);
+          _record.record.name = _expr.ast.name;
+          _record.record.value = _expr.ast.value;
+          _record.record.data = record([], _expr.ast.data);
+          return _record;
+        }),
+      },
+      eval: {
+        value: fn((value) => {
+          if (!isExpr(value)) return null;
+          return evaluate(value.ast, { scope: value.scope });
+        }),
+      },
+      quote: { value: (expr) => expr },
+    }),
+  };
+  context.scope = context.scope.add("fn", {
+    value: evaluate(
+      parseExprString(
+        `macro name_expr -> macro body_expr -> {
+          returnLabel := symbol
+          name_node := node name_expr 
+          name := if (:value) in name_node: name_node.value else 0
+          body_expr := bind body_expr (["return"]: (macro value -> {
+            expr := quote break eval value
+            expr_node := node expr
+            expr_node.data.label = returnLabel
+            eval expr
+          }))
+
+          macro arg_expr -> {
+            arg := eval arg_expr
+            body := quote { eval (bind body_expr ([name]: arg)) }
+            body_node := node body
+            body_node.data.label = returnLabel
+            eval body
+          }
+        }`
+      )[0],
+      context
+    ),
+  });
+  console.dir(["initialContext", context], { depth: null });
+
+  return context;
+};
 
 export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): Value => {
-  console.dir(
-    {
-      msg: "evaluate",
-      ast: omitASTDataScope(ast),
-      context,
-    },
-    { depth: null }
-  );
+  // console.dir(
+  //   {
+  //     msg: "evaluate",
+  //     ast: omitASTDataScope(ast),
+  //     context,
+  //   },
+  //   { depth: null }
+  // );
 
   switch (ast.name) {
     case "program":
@@ -102,7 +191,7 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
       switch (ast.value) {
         case "print": {
           const result = evaluate(ast.children[0], context);
-          console.log(result);
+          console.dir(result, { depth: null });
           return result;
         }
 
@@ -132,42 +221,43 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           return Math.pow(evaluate(ast.children[0], context) as number, evaluate(ast.children[1], context) as number);
         }
 
+        case "label": {
+          const _record: RecordValue = record();
+          const isRecordKey = ast.children[0].name === "name";
+          const key = isRecordKey ? getAtom(ast.children[0].value) : evaluate(ast.children[0], context);
+          const value = evaluate(ast.children[1], context);
+          recordSet(_record, key, value);
+          return _record;
+        }
+
         case ",": {
-          return ast.children.reduce<RecordValue>(
-            (val, child) => {
-              if (child.value === "label") {
-                const isRecordKey = child.children[0].name === "name";
-                if (isRecordKey) {
-                  const key = child.children[0].value;
-                  val.record[key] = evaluate(child.children[1], context);
-                } else {
-                  const key = evaluate(child.children[0], context);
-                  if (key === null) {
-                    return val;
-                  } else if (typeof key === "number") {
-                    val.tuple[key] = evaluate(child.children[1], context);
-                  } else if (typeof key === "string") {
-                    val.record[key] = evaluate(child.children[1], context);
-                  } else {
-                    val.map.set(key, evaluate(child.children[1], context));
-                  }
-                }
-              } else {
-                val.tuple.push(evaluate(child, context));
-              }
+          return ast.children.reduce<RecordValue>((val, child) => {
+            if (child.value === "label") {
+              const isRecordKey = child.children[0].name === "name";
+              const key = isRecordKey ? getAtom(child.children[0].value) : evaluate(child.children[0], context);
+              const value = evaluate(child.children[1], context);
+              recordSet(val, key, value);
               return val;
-            },
-            { kind: "record", map: new Map(), record: {}, tuple: [] }
-          );
+            } else if (child.value === "...") {
+              const value = evaluate(child.children[0], context);
+              if (!isRecord(value)) return val;
+              val.tuple.forEach((value) => val.tuple.push(value));
+              val.map.forEach((value, key) => val.map.set(key, value));
+              Object.assign(val.record, value.record);
+              return val;
+            }
+
+            const value = evaluate(child, context);
+            if (!value) return val;
+
+            val.tuple.push(value);
+            return val;
+          }, record());
         }
 
         case "in": {
-          const value = evaluate(ast.children[1], context);
-          if (value === null) return null;
-          if (typeof value !== "object") return null;
-          if (value.kind !== "record") return null;
-          const key = evaluate(ast.children[0], context);
-          return recordGet(value, key) !== null;
+          const value = evaluate(ast.children[0], context);
+          return recordHas(evaluate(ast.children[1], context) as RecordValue, value);
         }
 
         case "and": {
@@ -216,12 +306,10 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           return (evaluate(ast.children[0], context) as number) >= (evaluate(ast.children[1], context) as number);
         }
 
-        case "macro":
-        case "fn": {
+        case "macro": {
           const scope = context.scope;
           const name = ast.children[0].value;
           return (arg: ExprValue) => {
-            if (ast.value === "fn") arg = evaluate(arg.ast, { scope: arg.scope }) as ExprValue;
             try {
               const boundScope = name !== undefined ? scope.add(name, { value: arg }) : scope.push({ value: arg });
               return evaluate(ast.children[1], { scope: boundScope });
@@ -235,7 +323,9 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         }
 
         case ";": {
-          return ast.children.reduce<Value>((_, child) => evaluate(child, context), null);
+          return ast.children
+            .filter((x) => x.name !== "placeholder")
+            .reduce<Value>((_, child) => evaluate(child, context), null);
         }
 
         case "#": {
@@ -285,39 +375,6 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           return result;
         }
 
-        case "loop": {
-          const scope = context.scope;
-          const values: Value[] = [];
-          let i = 0;
-          while (i < 100) {
-            let value: Value;
-            try {
-              context.scope = scope;
-              value = evaluate(ast.children[0], context);
-              // console.log("loop result", result);
-
-              if (value !== null) {
-                values.push(value);
-              }
-            } catch (error) {
-              if (!(error instanceof BreakError) && !(error instanceof ContinueError)) throw error;
-              if (error.label !== undefined && error.label !== ast.data.label) {
-                throw error;
-              }
-
-              const value = error.value;
-              if (value !== null) {
-                values.push(value);
-              }
-
-              if (error instanceof BreakError) break;
-              if (error instanceof ContinueError) continue;
-            }
-            i++;
-          }
-          return { kind: "record", map: new Map(), record: {}, tuple: values };
-        }
-
         case "break": {
           // console.dir(["break", omitASTDataScope(ast)], { depth: null });
 
@@ -328,16 +385,16 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           throw new ContinueError(ast.data.label, evaluate(ast.children[0], context));
         }
 
-        case "return": {
-          throw new ReturnError(evaluate(ast.children[0], context));
-        }
+        // case "return": {
+        //   throw new ReturnError(evaluate(ast.children[0], context));
+        // }
 
         case "yield": {
           throw new YieldError(evaluate(ast.children[0], context));
         }
 
         case "pipe": {
-          const value: ExprValue = { kind: "expr", ast: ast.children[0], scope: context.scope };
+          const value: ExprValue = expr(ast.children[0], context.scope);
           const func = evaluate(ast.children[1], context) as FunctionValue;
           return func(value);
         }
@@ -393,7 +450,7 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
 
         case "application": {
           const func = evaluate(ast.children[0], context) as FunctionValue;
-          return func({ kind: "expr", ast: ast.children[1], scope: context.scope });
+          return func(expr(ast.children[1], context.scope));
         }
 
         case "parallel":
@@ -445,7 +502,7 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         case "loopBlock":
         case "while":
         case "for":
-        case "label":
+        case "loop":
         case "operator":
         case "operatorPrecedence":
         case "prefixDecrement":
@@ -453,6 +510,13 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         case "postfixDecrement":
         case "postfixIncrement":
         default:
+          const impl = context.scope.getByName(ast.value);
+          if (impl !== undefined) {
+            return ast.children.reduce(
+              (acc, child) => acc(expr(child, context.scope)) as FunctionValue,
+              impl.value.value as FunctionValue
+            ) as Value;
+          }
           throw new Error(`Operator ${ast.value} not implemented`);
       }
     }
@@ -470,23 +534,29 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         }
         case "braces": {
           const scope = context.scope;
-          try {
-            const result = evaluate(ast.children[0], context);
-            context.scope = scope;
-            return result;
-          } catch (error) {
-            context.scope = scope;
-            if (error instanceof BreakError) {
-              if (error.label !== undefined && error.label !== ast.data.label) {
-                throw error;
-              }
-              return error.value;
+          while (true) {
+            try {
+              const result = evaluate(ast.children[0], context);
+              context.scope = scope;
+              return result;
+            } catch (error) {
+              context.scope = scope;
+              if (!(error instanceof BreakError) && !(error instanceof ContinueError)) throw error;
+              if (error.label !== undefined && error.label !== ast.data.label) throw error;
+
+              if (error instanceof BreakError) return error.value;
+              if (error instanceof ContinueError) continue;
             }
-            throw error;
           }
         }
-        case "brackets":
         default:
+          const impl = context.scope.getByName(ast.value);
+          if (impl !== undefined) {
+            return ast.children.reduce(
+              (acc, child) => acc(expr(child, context.scope)) as FunctionValue,
+              impl.value.value as FunctionValue
+            ) as Value;
+          }
           return null;
       }
     }

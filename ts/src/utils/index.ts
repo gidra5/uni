@@ -13,7 +13,7 @@ export function assert(condition: any, msg?: string): asserts condition {
 
 export const omit = <T extends {}, K extends string>(obj: T, keys: K[]): Omit<T, K> => {
   return Iterator.iterEntries(obj)
-    .filter(([key]) => !keys.includes(key as K))
+    .filter(([key]) => !keys.includes(key as unknown as K))
     .toObject() as Omit<T, K>;
 };
 

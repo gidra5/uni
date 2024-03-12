@@ -576,7 +576,7 @@ exports[`expressions > boolean expressions > in 1`] = `
 }
 `;
 
-exports[`expressions > boolean expressions > in 2`] = `null`;
+exports[`expressions > boolean expressions > in 2`] = `true`;
 
 exports[`expressions > boolean expressions > not on boolean 1`] = `
 {
@@ -752,6 +752,190 @@ exports[`expressions > boolean expressions > range fail 1`] = `
       "data": {},
       "name": "operator",
       "value": "inRange_<_<",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > function expressions > function with no arg 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "name": "placeholder",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "name": "int",
+              "value": 0,
+            },
+          ],
+          "data": {},
+          "name": "operator",
+          "value": "#",
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "fn",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > function expressions > function with no arg 2`] = `[Function]`;
+
+exports[`expressions > function expressions > immediately invoked function expression (iife) 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "x",
+                },
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "x",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": "fn",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 1,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "application",
+    },
+  ],
+  "data": {},
+  "name": "operator",
+  "value": ";",
+}
+`;
+
+exports[`expressions > function expressions > immediately invoked function expression (iife) 2`] = `1`;
+
+exports[`expressions > function expressions > return from function 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "name": "name",
+                  "value": "x",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [
+                                    {
+                                      "children": [],
+                                      "data": {},
+                                      "name": "name",
+                                      "value": "x",
+                                    },
+                                    {
+                                      "children": [],
+                                      "data": {},
+                                      "name": "int",
+                                      "value": 1,
+                                    },
+                                  ],
+                                  "data": {},
+                                  "name": "operator",
+                                  "value": "+",
+                                },
+                              ],
+                              "data": {},
+                              "name": "group",
+                              "value": "parens",
+                            },
+                          ],
+                          "data": {},
+                          "name": "operator",
+                          "value": "return",
+                        },
+                        {
+                          "children": [],
+                          "data": {},
+                          "name": "name",
+                          "value": "x",
+                        },
+                      ],
+                      "data": {},
+                      "name": "operator",
+                      "value": ";",
+                    },
+                  ],
+                  "data": {},
+                  "name": "group",
+                  "value": "braces",
+                },
+              ],
+              "data": {},
+              "name": "operator",
+              "value": "fn",
+            },
+          ],
+          "data": {},
+          "name": "group",
+          "value": "parens",
+        },
+        {
+          "children": [],
+          "data": {},
+          "name": "int",
+          "value": 1,
+        },
+      ],
+      "data": {},
+      "name": "operator",
+      "value": "application",
     },
   ],
   "data": {},

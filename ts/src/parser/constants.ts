@@ -197,6 +197,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     precedence: [null, 2],
   },
   label: { separators: matchSeparators([":"]), precedence: rightAssociative(tuplePrecedence + 2) },
+  codeLabel: { separators: matchSeparators(["::"]), precedence: leftAssociative(semicolonPrecedence + 1) },
   operator: {
     separators: matchSeparators(["operator"]),
     precedence: [null, assignmentPrecedence + 1],
@@ -270,6 +271,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
 export const scope = new Scope(scopeDictionary);
 
 export const symbols = Iterator.iter([
+  "::",
   "<-",
   "?<-",
   "<-?",

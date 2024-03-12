@@ -149,23 +149,33 @@ describe("expressions", () => {
     });
   });
 
-  describe.todo("function expressions", () => {
+  describe("function expressions", () => {
     test("function with no arg", () => {
       const src = `fn -> #0`;
       evalTestCase(src);
     });
 
-    test("function with shadowed name access", () => {
+    test("immediately invoked function expression (iife)", () => {
+      const src = `(fn x -> x) 1`;
+      evalTestCase(src, 1);
+    });
+
+    test("return from function", () => {
+      const src = `(fn x -> { return (x + 1); x }) 1`;
+      evalTestCase(src, 2);
+    });
+
+    test.todo("function with shadowed name access", () => {
       const src = `fn a -> fn a -> #a`;
       evalTestCase(src);
     });
 
-    test("function with deep shadowed name access", () => {
+    test.todo("function with deep shadowed name access", () => {
       const src = `fn a -> fn a -> fn a -> ##a`;
       evalTestCase(src);
     });
 
-    describe("application", () => {
+    describe.todo("application", () => {
       test("function call", () => {
         const src = `f x`;
         evalTestCase(src);
@@ -264,7 +274,20 @@ describe("expressions", () => {
 
   describe.todo("structured programming", () => {
     test("if-then", () => {
-      const src = `y := (x := 25; loop if x <= 0: break x else { y := x; x = x - 1; if y == 19: continue 69; y })`;
+      const src = `y := (
+        x := 25 
+        res := () 
+        loop::{ 
+          if x <= 0: (res = ...res, x; loop.break)
+          else {
+            y := x
+            x = x - 1
+            if y == 19: (res = ...res, 69; loop.continue)
+            res = ...res, y
+          }
+        }
+        res
+      )`;
       evalTestCase(src);
     });
 
