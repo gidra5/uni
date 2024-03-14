@@ -22,6 +22,13 @@ export const name = (value: string): AbstractSyntaxTree => ({
   children: [],
 });
 
+export const bool = (value: boolean): AbstractSyntaxTree => ({
+  name: "bool",
+  value,
+  data: {},
+  children: [],
+});
+
 export const int = (value: number): AbstractSyntaxTree => ({
   name: "int",
   value,
@@ -52,6 +59,8 @@ export const token = (token: Token): AbstractSyntaxTree =>
     ? string(token.value)
     : /^_+$/.test(token.src)
     ? placeholder()
+    : token.src === "true" || token.src === "false"
+    ? bool(token.src === "true")
     : name(token.src);
 
 export const group = (value?: string, ...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
@@ -90,117 +99,5 @@ export const prefix = (group: AbstractSyntaxTree, rhs: AbstractSyntaxTree): Abst
   return operator(value, ...children, rhs);
 };
 
-export const record = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
-  const children: AbstractSyntaxTree[] = [];
-
-  [, { node }] = matchString(node, "record { fields }");
-
-  while (true) {
-    {
-      const [matched, match] = matchString(node, "rest;field");
-      if (matched) {
-        const { field, rest } = match;
-        if (field.name === "placeholder") {
-          node = rest;
-          continue;
-        }
-      }
-    }
-    {
-      const [matched, match] = matchString(node, "rest; name: value");
-      if (matched) {
-        const { name, value, rest } = match;
-        children.unshift(field(name, value));
-        node = rest;
-        continue;
-      }
-    }
-
-    const [matched, match] = matchString(node, "name: value");
-    if (matched) {
-      const { name, value } = match;
-      children.unshift(field(name, value));
-    }
-
-    break;
-  }
-
-  if (children.length === 0) return node;
-  return { name: "record", data: {}, children };
-};
-
-export const field = (...children: [name: AbstractSyntaxTree, value: AbstractSyntaxTree]): AbstractSyntaxTree => ({
-  name: "field",
-  data: {},
-  children,
-});
-
-export const map = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
-  const children: AbstractSyntaxTree[] = [];
-
-  [, { node }] = matchString(node, "map { fields }");
-
-  while (true) {
-    {
-      const [matched, match] = matchString(node, "rest;field");
-      if (matched) {
-        const { field, rest } = match;
-        if (field.name === "placeholder") {
-          node = rest;
-          continue;
-        }
-      }
-    }
-    {
-      const [matched, match] = matchString(node, "rest; key: value");
-      if (matched) {
-        const { key, value, rest } = match;
-        children.unshift(field(key, value));
-        node = rest;
-        continue;
-      }
-    }
-
-    const [matched, match] = matchString(node, "key: value");
-    if (matched) {
-      const { key, value } = match;
-      children.unshift(field(key, value));
-    }
-
-    break;
-  }
-
-  if (children.length === 0) return node;
-  return { name: "map", data: {}, children };
-};
-
-export const set = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
-  const children: AbstractSyntaxTree[] = [];
-
-  [, { node }] = matchString(node, "set { values }");
-
-  while (true) {
-    {
-      const [matched, match] = matchString(node, "rest; value");
-      if (matched) {
-        const { value, rest } = match;
-        if (value.name !== "placeholder") children.unshift(value);
-        node = rest;
-        continue;
-      }
-    }
-    children.unshift(node);
-    break;
-  }
-
-  if (children.length === 0) return node;
-  return { name: "set", data: {}, children };
-};
-
-export const pattern = (node: AbstractSyntaxTree): AbstractSyntaxTree => {
-  const children: AbstractSyntaxTree[] = [];
-
-  return { name: "pattern", data: {}, children };
-};
-
-export const program = (...children: AbstractSyntaxTree[]): AbstractSyntaxTree => operator(";", ...children);
+export const program = (...children: AbstractSyntaxTree[]): AbstractSyntaxTree =>
+  children.length > 1 ? operator(";", ...children) : children[0];

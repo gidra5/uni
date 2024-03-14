@@ -55,10 +55,6 @@ describe("expressions", () => {
       treeTestCase(src);
     });
 
-    test.todo("operator", () => {
-      const src = `+`;
-    });
-
     test("group", () => {
       const src = `(1)`;
       treeTestCase(src, null, pick(scopeDictionary, ["parens"]));
@@ -157,6 +153,16 @@ describe("expressions", () => {
   });
 
   describe("function expressions", () => {
+    test("function with return type", () => {
+      const src = `fn x, y -> type { x + y }`;
+      treeTestCase(src);
+    });
+
+    test("function block body", () => {
+      const src = `fn x, y { x + y }`;
+      treeTestCase(src);
+    });
+
     test("function multiple params", () => {
       const src = `fn x, y -> x + y`;
       treeTestCase(src);
@@ -233,11 +239,6 @@ describe("expressions", () => {
   describe("pattern matching", () => {
     test("match", () => {
       const src = `match x { 1 -> 2; 3 -> 4 }`;
-      treeTestCase(src);
-    });
-
-    test("match that accepts tuple", () => {
-      const src = `match x: ((1 -> 2), (3 -> 4))`;
       treeTestCase(src);
     });
 
@@ -396,32 +397,12 @@ describe("expressions", () => {
     });
 
     test("labeled expression", () => {
-      const src = `label: 123`;
+      const src = `label:: 123`;
       treeTestCase(src);
     });
 
     test("return", () => {
       const src = `() -> { return 123 }`;
-      treeTestCase(src);
-    });
-
-    test("block variable declaration", () => {
-      const src = `{ x := 123 }`;
-      treeTestCase(src);
-    });
-
-    test("block mutable variable declaration", () => {
-      const src = `{ mut x := 123 }`;
-      treeTestCase(src);
-    });
-
-    test("block variable assignment", () => {
-      const src = `{ x = 123 }`;
-      treeTestCase(src);
-    });
-
-    test("block pattern matching", () => {
-      const src = `{ x, y = 123, 456 }`;
       treeTestCase(src);
     });
   });
@@ -736,71 +717,70 @@ describe("expressions", () => {
 });
 
 describe("programs", () => {
-  describe("script", () => {
-    test("use", () => {
-      const src = `use "a" as b`;
-      treeTestCase(src);
-    });
-    test("use with", () => {
-      const src = `use "a" as b with x`;
-      treeTestCase(src);
-    });
-    test("export", () => {
-      const src = `export x`;
-      treeTestCase(src);
-    });
-    test("export as", () => {
-      const src = `export x as y`;
-      treeTestCase(src);
-    });
+  test("import", () => {
+    const src = `import "a" as b`;
+    treeTestCase(src);
+  });
+  test("import with", () => {
+    const src = `import "a" as b with x`;
+    treeTestCase(src);
+  });
+  test("export declaration", () => {
+    const src = `export x := z+123`;
+    treeTestCase(src);
+  });
+  test("export declaration as", () => {
+    const src = `export x as y := z+123`;
+    treeTestCase(src);
+  });
+  test("export expr", () => {
+    const src = `export x`;
+    treeTestCase(src);
+  });
+  test("export expr as", () => {
+    const src = `export x as y`;
+    treeTestCase(src);
+  });
+  test("external variable", () => {
+    const src = `external y`;
+    treeTestCase(src);
+  });
 
-    test("variable use", () => {
-      const src = `x := 123;  use "a" as b`;
+  describe("import descriptor", () => {
+    test("import dependency", () => {
+      const src = `import "depName"`;
       treeTestCase(src);
     });
-    test("variable use with", () => {
-      const src = `x := 123;  use "a" as b with x`;
+    test("import project absolute", () => {
+      const src = `import "/path/to/module"`;
       treeTestCase(src);
     });
-    test("variable export", () => {
-      const src = `x := 123; export x`;
+    test("import project relative", () => {
+      const src = `import "./relative/path/to/module"`;
       treeTestCase(src);
     });
-    test("variable export as", () => {
-      const src = `x := 123; export x as y`;
+    test("import project file", () => {
+      const src = `import "/path/to/file.extension"`;
+      treeTestCase(src);
+    });
+  });
+
+  describe("script", () => {
+    test("dynamic import", () => {
+      const src = `b := import "a"`;
+      treeTestCase(src);
+    });
+    test("dynamic import with", () => {
+      const src = `b := import "a" with x`;
+      treeTestCase(src);
+    });
+    test("dynamic async import", () => {
+      const src = `b := async import "a"`;
       treeTestCase(src);
     });
   });
 
   describe("module", () => {
-    test("import", () => {
-      const src = `import "a" as b`;
-      treeTestCase(src);
-    });
-    test("import with", () => {
-      const src = `import "a" as b with c`;
-      treeTestCase(src);
-    });
-    test("import with external", () => {
-      const src = `import "a" as b with external c`;
-      treeTestCase(src);
-    });
-    test("external", () => {
-      const src = `external y`;
-      treeTestCase(src);
-    });
-    test("private declare", () => {
-      const src = `z := y+1`;
-      treeTestCase(src);
-    });
-    test("public declare", () => {
-      const src = `export x := z+123`;
-      treeTestCase(src);
-    });
-    test("export main", () => {
-      const src = `export args -> {}`;
-      treeTestCase(src);
-    });
     test("operator", () => {
       const src = `operator _+_ := fn x, y -> x + y`;
       treeTestCase(src);

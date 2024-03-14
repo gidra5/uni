@@ -34,7 +34,7 @@ export const traverse: Traverse = (
   if (pre) {
     for (let i = 0; i < node.children.length; i++) {
       // @ts-ignore
-      node.children[i] = traverse(node.children[i], matcher, visitors);
+      node.children[i] = traverse(node.children[i], matcher, visitors, pre);
     }
   }
 

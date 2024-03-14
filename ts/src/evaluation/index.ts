@@ -349,18 +349,6 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           return null;
         }
 
-        case "if": {
-          const scope = context.scope;
-          const condition = evaluate(ast.children[0], context);
-          if (condition) {
-            const result = evaluate(ast.children[1], context);
-            context.scope = scope;
-            return result;
-          }
-          context.scope = scope;
-          return null;
-        }
-
         case "ifElse": {
           const scope = context.scope;
           const condition = evaluate(ast.children[0], context);
@@ -469,22 +457,6 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         case "external":
 
         // must be eliminated by that point
-        case "inRange_<_<":
-        case "inRange_<=_<":
-        case "inRange_<_<=":
-        case "inRange_<=_<=":
-        case "inRange_>_>":
-        case "inRange_>=_>":
-        case "inRange_>_>=":
-        case "inRange_>=_>=":
-        case "inRange_<_>":
-        case "inRange_<=_>":
-        case "inRange_<_>=":
-        case "inRange_<=_>=":
-        case "inRange_>_<":
-        case "inRange_>=_<":
-        case "inRange_>_<=":
-        case "inRange_>=_<=":
         case "async":
         case "await":
         case "is":
@@ -492,23 +464,8 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         case "mut":
         case "->":
         case "pin":
-        case "...":
-        case "matchColon":
-        case "ifBlock":
-        case "ifElseBlock":
-        case "ifBlockElseBlock":
-        case "forBlock":
-        case "whileBlock":
-        case "loopBlock":
-        case "while":
-        case "for":
-        case "loop":
         case "operator":
         case "operatorPrecedence":
-        case "prefixDecrement":
-        case "prefixIncrement":
-        case "postfixDecrement":
-        case "postfixIncrement":
         default:
           const impl = context.scope.getByName(ast.value);
           if (impl !== undefined) {
@@ -522,10 +479,6 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
     }
     case "group": {
       switch (ast.value) {
-        case "true":
-          return true;
-        case "false":
-          return false;
         case "symbol":
           return Symbol();
         case "brackets":
@@ -560,6 +513,8 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           return null;
       }
     }
+    case "boolean":
+      return Boolean(ast.value);
     case "float":
     case "int": {
       return Number(ast.value);

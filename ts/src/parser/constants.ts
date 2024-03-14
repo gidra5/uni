@@ -76,22 +76,16 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
       return [op, definition] as [string, TokenGroupDefinition];
     })
     .toObject(),
-  ...comparisonOps
-    .power(2)
-    .map<[string, TokenGroupDefinition]>(([op1, op2]) => {
-      const definition = {
-        separators: matchSeparators([op1], [op2]),
-        precedence: rightAssociative(booleanPrecedence + 4),
-      };
-      return [`inRange_${op1}_${op2}`, definition] as [string, TokenGroupDefinition];
-    })
-    .toObject(),
 
   as: { separators: matchSeparators(["as"]), precedence: [1, 1] },
   mut: { separators: matchSeparators(["mut"]), precedence: [null, assignmentPrecedence + 1] },
   "->": { separators: matchSeparators(["->"]), precedence: rightAssociative(semicolonPrecedence + 1) },
   fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
+  fnBlock: { separators: matchSeparators(["fn"], ["{"], ["}"]), precedence: [null, null] },
+  fnArrowBlock: { separators: matchSeparators(["fn"], ["->"], ["{"], ["}"]), precedence: [null, null] },
   macro: { separators: matchSeparators(["macro"], ["->"]), precedence: [null, 2] },
+  macroBlock: { separators: matchSeparators(["macro"], ["{"], ["}"]), precedence: [null, null] },
+  macroArrowBlock: { separators: matchSeparators(["macro"], ["->"], ["{"], ["}"]), precedence: [null, null] },
   ";": { separators: matchSeparators([";", "\n"]), precedence: associative(semicolonPrecedence) },
   "#": { separators: matchSeparators(["#"]), precedence: [null, maxPrecedence] },
   pin: { separators: matchSeparators(["^"]), precedence: [null, tuplePrecedence + 1] },
@@ -100,28 +94,12 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     separators: matchSeparators(["match"], ["{"], ["}"]),
     precedence: [null, null],
   },
-  matchColon: {
-    separators: matchSeparators(["match"], [":", "\n"]),
-    precedence: [null, semicolonPrecedence + 1],
-  },
   if: {
     separators: matchSeparators(["if"], [":", "\n"]),
     precedence: [null, semicolonPrecedence + 1],
   },
   ifElse: {
     separators: matchSeparators(["if"], [":", "\n"], ["else"]),
-    precedence: [null, semicolonPrecedence + 1],
-  },
-  for: {
-    separators: matchSeparators(["for"], ["in"], [":", "\n"]),
-    precedence: [null, semicolonPrecedence + 1],
-  },
-  while: {
-    separators: matchSeparators(["while"], [":", "\n"]),
-    precedence: [null, semicolonPrecedence + 1],
-  },
-  loop: {
-    separators: matchSeparators(["loop"]),
     precedence: [null, semicolonPrecedence + 1],
   },
   ifBlock: {
@@ -132,13 +110,25 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     separators: matchSeparators(["if"], ["{"], ["}"], ["else"]),
     precedence: [null, semicolonPrecedence + 1],
   },
+  for: {
+    separators: matchSeparators(["for"], ["in"], [":", "\n"]),
+    precedence: [null, semicolonPrecedence + 1],
+  },
   forBlock: {
     separators: matchSeparators(["for"], ["in"], ["{"], ["}"]),
     precedence: [null, null],
   },
+  while: {
+    separators: matchSeparators(["while"], [":", "\n"]),
+    precedence: [null, semicolonPrecedence + 1],
+  },
   whileBlock: {
     separators: matchSeparators(["while"], ["{"], ["}"]),
     precedence: [null, null],
+  },
+  loop: {
+    separators: matchSeparators(["loop"]),
+    precedence: [null, semicolonPrecedence + 1],
   },
   break: { separators: matchSeparators(["break"]), precedence: [null, semicolonPrecedence + 1] },
   continue: {
@@ -162,10 +152,6 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   symbol: { separators: matchSeparators(["symbol"]), precedence: [null, null] },
   atom: { separators: matchSeparators([":"]), precedence: [null, maxPrecedence] },
   channel: { separators: matchSeparators(["channel"]), precedence: [null, null] },
-  set: {
-    separators: matchSeparators(["set"]),
-    precedence: [null, 1],
-  },
   access: {
     separators: matchSeparators(["."]),
     precedence: leftAssociative(maxPrecedence),
@@ -180,11 +166,6 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   },
   importWith: {
     separators: matchSeparators(["import"], ["as"], ["with"]),
-    precedence: [null, 1],
-  },
-  use: { separators: matchSeparators(["use"], ["as"]), precedence: [null, 1] },
-  useWith: {
-    separators: matchSeparators(["use"], ["as"], ["with"]),
     precedence: [null, 1],
   },
   export: { separators: matchSeparators(["export"]), precedence: [null, 1] },

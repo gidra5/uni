@@ -1,13 +1,12 @@
-Modules consist of a list of declarations. These are possible declarations:
+Package consists of scripts, modules and a list of dependency packages.
+Dependency list is passed to compiler as a path to file, that contains mapping from dependency name to actual sources location on the machine that compiles package. 
+if compiler is passed a script, it is compiled into self-contained executable. Contains original script as an entry point, and all static dependencies of that script.
+If compiler is passed a module, it is compiled into reusable library, that can be imported statically or dynamically to dependant modules or scripts. Contains original module, and all static dependencies of that module.
+Dynamically imported modules and scripts are emitted as separate binaries, that are expected to be in the same location as dependant's file, unless specified otherwise during compilation.
 
-1. Import local module, relative to current file, or to the root of a project
-2. Use external module, via a link to repo or a local package
-3. External variables, that must be passed when module imported/used
-4. Definitions, that are identifiers with assigned value. Can be exported or not.
+Module and script compilation stages are separate commands in the compiler, so that outside manager could cache results
+Cache entries are updated if stage inputs hash does not match cached hash.
 
-Basic steps for parsing a file:
+Interpreter's behavior is the same, except that all imports are interpreted only once they occur during execution.
 
-1. Top-level is a list of [[Modules|module]] declarations
-2. Each declaration defines a name and a bound value, which is not parsed until all declarations are resolved.
-3. After all declarations resolved parse values accounting for all available bindings.
-4. Reduce some syntactic constructs to a simpler form, where only a restricted set of operations is allowed.
+[modules stuff](https://thunderseethe.dev/posts/whats-in-a-module/)

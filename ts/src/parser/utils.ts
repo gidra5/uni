@@ -5,8 +5,12 @@ import { isEqual, omit } from "../utils/index.js";
 import { AbstractSyntaxTree } from "./ast.js";
 import { ParsingResult, Precedence, TokenParser } from "./types.js";
 
-export type TemplateValues = AbstractSyntaxTree[] & Record<string, AbstractSyntaxTree>;
-export const template = (tree: AbstractSyntaxTree, values: TemplateValues) => {
+export type TemplateValues =
+  | AbstractSyntaxTree[]
+  | Record<string, AbstractSyntaxTree>
+  | (AbstractSyntaxTree[] & Record<string, AbstractSyntaxTree>);
+export const template = (tree: AbstractSyntaxTree, _values: TemplateValues) => {
+  const values = _values as AbstractSyntaxTree[];
   return traverse(tree, (node) => node.name, {
     placeholder: (tree) => {
       return [true, values.shift() ?? tree];
