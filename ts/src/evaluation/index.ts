@@ -7,21 +7,10 @@ import { parseExprString } from "../parser/string.js";
 
 type SymbolValue = symbol;
 type RecordValue = { kind: "record"; tuple: Value[]; record: { [key: string]: Value }; map: Map<Value, Value> };
-type VariantValue = { kind: "variant"; tag: Value; value: Value };
 type TypeValue = { kind: "type"; name: string; value: Value };
 type ExprValue = { kind: "expr"; ast: AbstractSyntaxTree; scope: Scope<ScopeValue> };
 type FunctionValue = (arg: ExprValue) => Value;
-type Value =
-  | number
-  | string
-  | boolean
-  | null
-  | FunctionValue
-  | RecordValue
-  | VariantValue
-  | SymbolValue
-  | TypeValue
-  | ExprValue;
+type Value = number | string | boolean | null | FunctionValue | RecordValue | SymbolValue | TypeValue | ExprValue;
 type ScopeValue = { value: Value; type?: TypeValue };
 type Context = { scope: Scope<ScopeValue> };
 
@@ -50,7 +39,7 @@ const record = (
 });
 const expr = (ast: AbstractSyntaxTree, scope: Scope<ScopeValue>): ExprValue => ({
   kind: "expr",
-  ast: omitASTDataScope(ast),
+  ast,
   scope,
 });
 const fn =
@@ -59,6 +48,51 @@ const fn =
     const evaluatedArg = evaluate(arg.ast, { scope: arg.scope });
     return value(evaluatedArg as T);
   };
+const exprToRecord = (_expr: ExprValue): RecordValue => {
+  const exprRecord: RecordValue = record();
+  const children = _expr.ast.children.map<RecordValue>((child) => exprToRecord(expr(child, _expr.scope)));
+
+  exprRecord.record.children = record(children);
+  exprRecord.record.name = _expr.ast.name;
+  exprRecord.record.value = jsValueToValue(_expr.ast.value);
+  exprRecord.record.data = jsValueToValue(_expr.ast.data);
+
+  return record([], { expr: exprRecord, env: _expr.scope as unknown as Value });
+};
+const recordToExpr = (record: RecordValue): ExprValue => {
+  const env = record.record.env as any;
+  const children = record.record.children! as RecordValue;
+  const _expr: AbstractSyntaxTree = {
+    children: children.tuple.map((child) => recordToExpr(child as RecordValue).ast),
+    name: record.record.name as string,
+    value: valueToJsValue(record.record.value),
+    data: valueToJsValue(record.record.data),
+  };
+  return expr(_expr, env);
+};
+const jsValueToValue = (value: any): Value => {
+  if (value === null) return null;
+  if (typeof value === "number" || typeof value === "string" || typeof value === "boolean" || typeof value === "symbol")
+    return value;
+  if (Array.isArray(value)) return record(value.map(jsValueToValue));
+  if (typeof value === "object") return record([], Iterator.iterEntries(value).mapValues(jsValueToValue).toObject());
+  if (typeof value === "function") return (arg: ExprValue) => jsValueToValue(value(arg));
+  return null;
+};
+const valueToJsValue = (value: Value): any => {
+  if (value === null) return null;
+  if (typeof value === "number" || typeof value === "string" || typeof value === "boolean" || typeof value === "symbol")
+    return value;
+  if (isRecord(value)) {
+    const v = value.tuple.map(valueToJsValue);
+    Object.assign(v, value.record);
+    return v;
+  }
+  if (typeof value === "function") {
+    throw new Error("Not implemented");
+  }
+  return null;
+};
 
 const recordSet = (record: RecordValue, key: Value, value: Value): void => {
   if (key === null) return;
@@ -98,9 +132,9 @@ export const initialContext = (): Context => {
   const context = {
     scope: new Scope<ScopeValue>({
       bind: {
-        value: fn((_expr: ExprValue) =>
+        value: fn((env: Value) =>
           fn((names: RecordValue) => {
-            const scope = _expr.scope
+            return (env as unknown as Scope)
               .push(...names.tuple.map((value) => ({ value })))
               .append(
                 new Scope(
@@ -116,31 +150,49 @@ export const initialContext = (): Context => {
                     .map<[string, ScopeValue]>(([key, value]) => [key, { value }])
                     .toObject()
                 )
-              );
-            // console.dir({ names, _expr, scope }, { depth: null });
-            return expr(_expr.ast, scope);
+              ) as unknown as Value;
           })
         ),
       },
-      node: {
-        value: fn((_expr: ExprValue) => {
-          const _record: RecordValue = record();
-          const children = _expr.ast.children.map<ExprValue>((child) => expr(child, _expr.scope));
+      env_set: {
+        value: fn((env: Value) =>
+          fn((name: Value) =>
+            fn((value: Value) => {
+              const ast = recordToExpr(name as RecordValue).ast;
+              const scope = env as unknown as Scope<ScopeValue>;
+              if (ast.children[0].name === "name") {
+                const name = ast.children[0].value;
+                const entryIndex = scope.toIndex({ name });
+                const entry = scope.scope[entryIndex];
+                if (entry !== undefined) {
+                  entry.value.value = value;
+                }
+              } else {
+                const context = { scope };
+                const accessor = ast.children[0];
+                const recordFieldNode = accessor.children[1];
+                const record = evaluate(accessor.children[0], context) as RecordValue;
+                const key = accessor.name === "access" ? recordFieldNode.value : evaluate(recordFieldNode, context);
+                recordSet(record, key, value);
+              }
 
-          _record.record.children = record(children);
-          _record.record.name = _expr.ast.name;
-          _record.record.value = _expr.ast.value;
-          _record.record.data = record([], _expr.ast.data);
-          return _record;
+              return value;
+            })
+          )
+        ),
+      },
+      env: {
+        value: fn((env: Value) => {
+          return (env as unknown as Scope).copy() as unknown as Value;
         }),
       },
       eval: {
         value: fn((value) => {
-          if (!isExpr(value)) return null;
-          return evaluate(value.ast, { scope: value.scope });
+          const expr = recordToExpr(value as RecordValue);
+          return evaluate(expr.ast, { scope: expr.scope });
         }),
       },
-      quote: { value: (expr) => expr },
+      quote: { value: (expr) => exprToRecord(expr) },
     }),
   };
   context.scope = context.scope.add("fn", {
@@ -148,20 +200,17 @@ export const initialContext = (): Context => {
       parseExprString(
         `macro name_expr -> macro body_expr -> {
           returnLabel := symbol
-          name_node := node name_expr 
-          name := if (:value) in name_node: name_node.value else 0
-          body_expr := bind body_expr (["return"]: (macro value -> {
+          name := if (:value) in name_expr.expr: name_expr.expr.value else 0
+          body_expr.env = bind body_expr.env (["return"]: (macro value -> {
             expr := quote break eval value
-            expr_node := node expr
-            expr_node.data.label = returnLabel
+            expr.expr.data.label = returnLabel
             eval expr
           }))
 
           macro arg_expr -> {
             arg := eval arg_expr
             body := quote { eval (bind body_expr ([name]: arg)) }
-            body_node := node body
-            body_node.data.label = returnLabel
+            body.expr.data.label = returnLabel
             eval body
           }
         }`
@@ -310,8 +359,10 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           const scope = context.scope;
           const name = ast.children[0].value;
           return (arg: ExprValue) => {
+            const exprRecord = exprToRecord(arg);
             try {
-              const boundScope = name !== undefined ? scope.add(name, { value: arg }) : scope.push({ value: arg });
+              const boundScope =
+                name !== undefined ? scope.add(name, { value: exprRecord }) : scope.push({ value: exprRecord });
               return evaluate(ast.children[1], { scope: boundScope });
             } catch (error) {
               if (error instanceof ReturnError) {

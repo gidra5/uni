@@ -1,10 +1,6 @@
 import { endOfSrcError, error } from "../errors.js";
 import type { ParsingError, StringParser, Token, TokenPos } from "./types.js";
-import {
-  indexPosition,
-  position as _position,
-  intervalPosition,
-} from "../position.js";
+import { indexPosition, position as _position, intervalPosition } from "../position.js";
 import { symbols } from "./constants.js";
 
 type TokenConstructorArgs<T> = T extends "identifier" | "newline"
@@ -62,6 +58,45 @@ export const parseToken: StringParser<TokenPos> = (src, i = 0) => {
     return [index, string(tokenSrc(start), position(start), value), errors];
   }
 
+  if (src.slice(index).startsWith("0x")) {
+    const start = index;
+    index += 2;
+
+    let value = "";
+    while (/[0-9a-fA-F]/.test(src.charAt(index))) {
+      value += src.charAt(index);
+      index++;
+    }
+
+    return [index, number(tokenSrc(start), position(start), parseInt(value, 16)), errors];
+  }
+
+  if (src.slice(index).startsWith("0o")) {
+    const start = index;
+    index += 2;
+
+    let value = "";
+    while (/[0-7]/.test(src.charAt(index))) {
+      value += src.charAt(index);
+      index++;
+    }
+
+    return [index, number(tokenSrc(start), position(start), parseInt(value, 8)), errors];
+  }
+
+  if (src.slice(index).startsWith("0b")) {
+    const start = index;
+    index += 2;
+
+    let value = "";
+    while (/[0-1]/.test(src.charAt(index))) {
+      value += src.charAt(index);
+      index++;
+    }
+
+    return [index, number(tokenSrc(start), position(start), parseInt(value, 2)), errors];
+  }
+
   if (/\d/.test(src.charAt(index))) {
     const start = index;
 
@@ -115,9 +150,8 @@ export const parseToken: StringParser<TokenPos> = (src, i = 0) => {
 
   const start = index;
   const _src =
-    symbols
-      .filter((symbol) => src.startsWith(symbol, start))
-      .reduce((a, b) => (a.length > b.length ? a : b), "") || src.charAt(index);
+    symbols.filter((symbol) => src.startsWith(symbol, start)).reduce((a, b) => (a.length > b.length ? a : b), "") ||
+    src.charAt(index);
   index += _src.length;
 
   return [index, identifier(_src, position(start)), errors];
