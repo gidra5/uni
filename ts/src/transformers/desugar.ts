@@ -187,6 +187,17 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     }
   );
 
+  // TODO: handle break and continue
+  // block to fn
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "block",
+    (node) => {
+      const [expr] = node.children;
+      return templateString("(fn -> _) ()", [expr]);
+    }
+  );
+
   // expressions
 
   // comparison sequence to and of comparisons
