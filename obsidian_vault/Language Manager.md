@@ -13,5 +13,7 @@ Includes:
 10. Formatter
 11. Linter
 12. Language Server
+13. Test runner
+14. Benchmark runner
 
 Language manager can generate and maintain dependency list from package manifest, which may contain package descriptors in multiple formats.
