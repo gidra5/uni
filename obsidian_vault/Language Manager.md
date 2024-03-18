@@ -5,7 +5,8 @@ A toolchain contains:
   1. Frontend
   2. Backend
   3. Transformers (extendable)
-  4. Watch mode
+  4. Analyzers (extendable)
+  5. Watch mode
 2. Virtual machine
 3. Debugger (extendable)
   1. Watch mode
