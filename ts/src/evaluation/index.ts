@@ -6,7 +6,7 @@ import { match, template } from "../parser/utils.js";
 import { parseExprString } from "../parser/string.js";
 
 type SymbolValue = symbol;
-type RecordValue = { kind: "record"; tuple: Value[]; record: { [key: string]: Value }; map: Map<Value, Value> };
+type RecordValue = { kind: "record"; getter: (key: Value) => Value; setter: (key: Value, val: Value) => void };
 type TypeValue = { kind: "type"; name: string; value: Value };
 type ExprValue = { kind: "expr"; ast: AbstractSyntaxTree; scope: Scope<ScopeValue> };
 type FunctionValue = (arg: ExprValue) => Value;
@@ -14,13 +14,13 @@ type Value = number | string | boolean | null | FunctionValue | RecordValue | Sy
 type ScopeValue = { getter?: () => Value; setter?: (val: Value) => void; type?: TypeValue };
 type Context = { scope: Scope<ScopeValue>; symbolToEntry?: Record<symbol, number> };
 
-const atoms: Record<string, symbol> = {};
+const atomsCache: Record<string, symbol> = {};
 
 const getAtom = (name: string): symbol => {
-  if (!(name in atoms)) {
-    atoms[name] = Symbol(name);
+  if (!(name in atomsCache)) {
+    atomsCache[name] = Symbol(name);
   }
-  return atoms[name];
+  return atomsCache[name];
 };
 const getterSymbol = Symbol();
 const setterSymbol = Symbol();
@@ -461,7 +461,7 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
             const entryIndex = context.scope.toIndex({ name });
             const entry = context.scope.scope[entryIndex];
             if (entry !== undefined) {
-              entry.value.value = value;
+              entry.value.setter?.(value);
             }
           } else {
             const accessor = ast.children[0];
