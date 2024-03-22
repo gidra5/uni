@@ -16,8 +16,9 @@ stack := ()
 block := fn label, body, continuation ->
   body = body with 
     break: fn val, label -> 
-      (x := stack[label]; stack[label] = void; x[0]) val
-    continue: fn label -> eval stack[label][1]
-  stack[label] = (continuation, body)
-  eval body
+      (x := stack[label]; stack[label] = void; x) val
+  stack[label] = continuation
+  result := eval body
+  stack[label] = void
+  result
 ```

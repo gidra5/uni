@@ -130,12 +130,6 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     separators: matchSeparators(["loop"]),
     precedence: [null, semicolonPrecedence + 1],
   },
-  break: { separators: matchSeparators(["break"]), precedence: [null, semicolonPrecedence + 1] },
-  continue: {
-    separators: matchSeparators(["continue"]),
-    precedence: [null, semicolonPrecedence + 1],
-  },
-  return: { separators: matchSeparators(["return"]), precedence: [null, semicolonPrecedence + 1] },
   yield: { separators: matchSeparators(["yield"]), precedence: [null, semicolonPrecedence + 1] },
   async: { separators: matchSeparators(["async"]), precedence: [null, maxPrecedence] },
   await: { separators: matchSeparators(["await"]), precedence: [null, maxPrecedence - 1] },

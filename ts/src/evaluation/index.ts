@@ -11,8 +11,8 @@ type TypeValue = { kind: "type"; name: string; value: Value };
 type ExprValue = { kind: "expr"; ast: AbstractSyntaxTree; scope: Scope<ScopeValue> };
 type FunctionValue = (arg: ExprValue) => Value;
 type Value = number | string | boolean | null | FunctionValue | RecordValue | SymbolValue | TypeValue | ExprValue;
-type ScopeValue = { value: Value; type?: TypeValue };
-type Context = { scope: Scope<ScopeValue> };
+type ScopeValue = { getter?: () => Value; setter?: (val: Value) => void; type?: TypeValue };
+type Context = { scope: Scope<ScopeValue>; symbolToEntry?: Record<symbol, number> };
 
 const atoms: Record<string, symbol> = {};
 
@@ -22,6 +22,8 @@ const getAtom = (name: string): symbol => {
   }
   return atoms[name];
 };
+const getterSymbol = Symbol();
+const setterSymbol = Symbol();
 
 const isRecord = (value: Value): value is RecordValue =>
   !!value && typeof value === "object" && value.kind === "record";
@@ -97,6 +99,8 @@ const valueToJsValue = (value: Value): any => {
 const recordSet = (record: RecordValue, key: Value, value: Value): void => {
   if (key === null) return;
 
+  const setter = recordGet(record, setterSymbol) as FunctionValue;
+
   if (value === null) {
     if (typeof key === "number") {
       record.tuple.splice(key, 1);
@@ -118,6 +122,8 @@ const recordSet = (record: RecordValue, key: Value, value: Value): void => {
 };
 const recordGet = (record: RecordValue, key: Value): Value => {
   if (key === null) return null;
+  const getter = recordGet(record, getterSymbol) as FunctionValue;
+
   if (typeof key === "number") return record.tuple[key] ?? null;
   if (typeof key === "symbol" && key.description) return record.record[key.description] ?? null;
   return record.map.get(key) ?? null;
@@ -193,6 +199,8 @@ export const initialContext = (): Context => {
         }),
       },
       quote: { value: (expr) => exprToRecord(expr) },
+      getter: { value: getterSymbol },
+      setter: { value: setterSymbol },
     }),
   };
   context.scope = context.scope.add("fn", {
@@ -360,11 +368,18 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           const name = ast.children[0].value;
           return (arg: ExprValue) => {
             const exprRecord = exprToRecord(arg);
+            const continuationLabel = Symbol();
+            recordSet(exprRecord, getAtom("continuation"), (result: ExprValue) => {
+              throw new BreakError(continuationLabel, result);
+            });
+            const boundScope =
+              name !== undefined ? scope.add(name, { value: exprRecord }) : scope.push({ value: exprRecord });
             try {
-              const boundScope =
-                name !== undefined ? scope.add(name, { value: exprRecord }) : scope.push({ value: exprRecord });
               return evaluate(ast.children[1], { scope: boundScope });
             } catch (error) {
+              if (error instanceof BreakError && error.label === continuationLabel) {
+                return error.value;
+              }
               if (error instanceof ReturnError) {
                 return error.value;
               }
@@ -400,33 +415,33 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
           return null;
         }
 
-        case "ifElse": {
-          const scope = context.scope;
-          const condition = evaluate(ast.children[0], context);
-          if (condition) {
-            const result = evaluate(ast.children[1], context);
-            context.scope = scope;
-            return result;
+        case "codeLabel": {
+          const label = ast.children[0].value;
+          const expr = ast.children[1];
+          const labelValue = record([], {
+            break: fn((val) => {
+              throw new BreakError(val);
+            }),
+            continue: () => {
+              throw new ContinueError();
+            },
+          });
+          const scope = context.scope.add(label, { getter: () => labelValue });
+
+          while (true) {
+            try {
+              return evaluate(expr, { scope });
+            } catch (error) {
+              if (error instanceof BreakError) {
+                return error.value;
+              }
+              if (error instanceof ContinueError) {
+                continue;
+              }
+              throw error;
+            }
           }
-          context.scope = scope;
-          const result = evaluate(ast.children[2], context);
-          context.scope = scope;
-          return result;
         }
-
-        case "break": {
-          // console.dir(["break", omitASTDataScope(ast)], { depth: null });
-
-          throw new BreakError(ast.data.label, evaluate(ast.children[0], context));
-        }
-
-        case "continue": {
-          throw new ContinueError(ast.data.label, evaluate(ast.children[0], context));
-        }
-
-        // case "return": {
-        //   throw new ReturnError(evaluate(ast.children[0], context));
-        // }
 
         case "yield": {
           throw new YieldError(evaluate(ast.children[0], context));
@@ -536,23 +551,6 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
         case "parens": {
           return evaluate(ast.children[0], context);
         }
-        case "braces": {
-          const scope = context.scope;
-          while (true) {
-            try {
-              const result = evaluate(ast.children[0], context);
-              context.scope = scope;
-              return result;
-            } catch (error) {
-              context.scope = scope;
-              if (!(error instanceof BreakError) && !(error instanceof ContinueError)) throw error;
-              if (error.label !== undefined && error.label !== ast.data.label) throw error;
-
-              if (error instanceof BreakError) return error.value;
-              if (error instanceof ContinueError) continue;
-            }
-          }
-        }
         default:
           const impl = context.scope.getByName(ast.value);
           if (impl !== undefined) {
@@ -584,13 +582,13 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
 };
 
 class BreakError extends Error {
-  constructor(public label?: string, public value: Value = null) {
+  constructor(public label?: any, public value: Value = null) {
     super("Break");
   }
 }
 
 class ContinueError extends Error {
-  constructor(public label?: string, public value: Value = null) {
+  constructor(public label?: any, public value: Value = null) {
     super("Continue");
   }
 }
