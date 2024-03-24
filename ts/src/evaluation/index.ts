@@ -18,7 +18,7 @@ type RecordValue = {
 type TypeValue = { kind: "type"; name: string; value: Value };
 type ExprValue = { kind: "expr"; ast: AbstractSyntaxTree; scope: Scope<ScopeValue> };
 type FunctionValue = (arg: ExprValue) => Value;
-type Value = number | string | boolean | null | FunctionValue | RecordValue | SymbolValue | TypeValue | ExprValue;
+type Value = number | string | boolean | null | FunctionValue | RecordValue | SymbolValue | TypeValue;
 type ScopeValue = { get?: () => Value; set?: (val: Value) => void; type?: TypeValue };
 type Context = { scope: Scope<ScopeValue> };
 
@@ -35,7 +35,6 @@ const setterSymbol = Symbol();
 
 const isRecord = (value: Value): value is RecordValue =>
   !!value && typeof value === "object" && value.kind === "record";
-const isExpr = (value: Value): value is ExprValue => !!value && typeof value === "object" && value.kind === "expr";
 
 const record = (
   tuple: Value[] = [],
@@ -44,13 +43,11 @@ const record = (
 ): RecordValue => ({
   kind: "record",
   has: recordHas(tuple, record, map),
-  get() {
+  get(key: Value) {
     const getter = recordGet(tuple, record, map);
-    return (key: Value) => {
-      if (key === getterSymbol) return fn(this.get);
-      if (key === setterSymbol) return fn((k) => fn((v) => (this.set(k, v), null)));
-      return getter(key);
-    };
+    if (key === getterSymbol) return fn(this.get);
+    if (key === setterSymbol) return fn((k) => fn((v) => (this.set(k, v), null)));
+    return getter(key);
   },
   set: recordSet(tuple, record, map),
   tuple,
@@ -398,7 +395,7 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
             const exprRecord = exprToRecord(arg);
             const continuationLabel = Symbol();
             exprRecord.set(getAtom("continuation"), (result: ExprValue) => {
-              throw new BreakError(continuationLabel, result);
+              throw new BreakError(continuationLabel, exprToRecord(result));
             });
             const boundScope =
               name !== undefined ? scope.add(name, { get: () => exprRecord }) : scope.push({ get: () => exprRecord });
