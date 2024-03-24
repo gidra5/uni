@@ -63,14 +63,14 @@ export const token = (token: Token): AbstractSyntaxTree =>
     ? bool(token.src === "true")
     : name(token.src);
 
-export const group = (value?: string, ...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
+export const group = (value?: string | symbol, ...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
   name: "group",
   value,
   data: {},
   children,
 });
 
-export const operator = (value: string, ...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
+export const operator = (value: string | symbol, ...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
   name: "operator",
   value,
   data: {},

@@ -16,7 +16,7 @@ export type TokenGroupDefinition = {
   drop?: boolean;
 };
 export type Scope = ScopeClass<TokenGroupDefinition>;
-export type ScopeArray = ({ name: string } & TokenGroupDefinition)[];
+export type ScopeArray = ({ name: string | symbol } & TokenGroupDefinition)[];
 export type ParsingContext = {
   scope: Scope;
   precedence: number;
@@ -200,9 +200,7 @@ export const parseGroup: TokenParserWithContext<AbstractSyntaxTree> =
       if (!nextTokenIsCurrentGroupSeparator && src[index]?.type === "newline") index++;
 
       matchingScope = matchingScope
-        .filter(({ separators }) => {
-          return separators(context)(src, index)[1] !== "noMatch";
-        })
+        .filter(({ separators }) => separators(context)(src, index)[1] !== "noMatch")
         .cached();
       context.matchedGroupScope = scopeIterToScope(matchingScope);
 

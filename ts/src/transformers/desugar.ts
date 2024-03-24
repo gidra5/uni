@@ -6,6 +6,25 @@ import { traverse } from "../tree";
 export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   // expressions
 
+  // pipe operator to function application
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "|>",
+    (node) => {
+      const [arg, fn] = node.children;
+      return operator("application", fn, arg);
+    }
+  );
+
+  // eliminate parentheses
+  traverse(
+    ast,
+    (node) => node.name === "group" && node.value === "parens",
+    (node) => {
+      return node.children[0];
+    }
+  );
+
   // comparison sequence to and of comparisons
   traverse(
     ast,
@@ -28,6 +47,39 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
       traverse(node.children[1]);
       if (comparisons.length === 1) return comparisons[0];
       return operator("and", ...comparisons);
+    }
+  );
+
+  // comparisons to single direction
+  traverse(
+    ast,
+    (node) => node.name === "operator" && comparisonOps.some((x) => x === node.value),
+    (node) => {
+      const [left, right] = node.children;
+      if (node.value === ">") return operator("<", right, left);
+      if (node.value === ">=") return templateString("!(_ < _)", [left, right]);
+      if (node.value === "<=") return templateString("!(_ < _)", [right, left]);
+      return node;
+    }
+  );
+
+  // not equal to equal
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "!=",
+    (node) => {
+      const [left, right] = node.children;
+      return templateString("!(_ == _)", [left, right]);
+    }
+  );
+
+  // not deep equal to deep equal
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "!==",
+    (node) => {
+      const [left, right] = node.children;
+      return templateString("!(_ === _)", [left, right]);
     }
   );
 

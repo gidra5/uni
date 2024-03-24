@@ -67,11 +67,11 @@ export const match = <T extends MatchTree2<T>>(
 };
 
 export const matchTokens =
-  (...tokens: string[]): TokenParser<boolean> =>
+  (...tokens: string[]): TokenParser<number> =>
   (src, i = 0) => {
-    const found = tokens.some((x) => src[i]?.src === x || (x === "\n" && src[i]?.type === "newline"));
-    if (found) return [i + 1, true, []];
-    return [i, false, []];
+    const index = tokens.findIndex((x) => src[i]?.src === x || (x === "\n" && src[i]?.type === "newline"));
+    if (index !== -1) return [i + 1, index, []];
+    return [i, index, []];
   };
 
 export const mapParsingResult = <T, const U>(
@@ -90,8 +90,8 @@ export const matchSeparators =
     const index = context.groupNodes?.length ?? 0;
     const separator = separators[index] ?? [];
     const isLast = index === separators.length - 1;
-    const parser = mapParserResult(matchTokens(...separator), (matched) =>
-      matched ? (isLast ? "done" : "match") : "noMatch"
+    const parser = mapParserResult(matchTokens(...separator), (index) =>
+      index !== -1 ? (isLast ? "done" : "match") : "noMatch"
     );
     return (src, i) => {
       const result = parser(src, i);
