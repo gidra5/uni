@@ -122,14 +122,20 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     }
   );
 
-  // clear placeholders from ";" operator
+  // ; to fn
   traverse(
     ast,
     (node) => node.name === "operator" && node.value === ";",
     (node) => {
-      node.children = node.children.filter((child) => child.name !== "placeholder");
-      if (node.children.length === 1) return node.children[0];
-      return node;
+      return node.children.reduce(
+        (acc, child) =>
+          acc.name === "placeholder"
+            ? child
+            : child.name === "placeholder"
+            ? acc
+            : templateString("(fn -> _) _", [child, acc]),
+        placeholder()
+      );
     }
   );
 
