@@ -1,7 +1,17 @@
 import { endOfTokensError, error } from "../errors.js";
 import { Iterator } from "iterator-js";
 import { indexPosition, position } from "../position.js";
-import { AbstractSyntaxTree, group, infix, operator, placeholder, postfix, prefix, program, token } from "./ast.js";
+import {
+  AbstractSyntaxTree,
+  group,
+  infix,
+  error as errorNode,
+  placeholder,
+  postfix,
+  prefix,
+  program,
+  token,
+} from "./ast.js";
 import { ParsingError, ParsingResult, Precedence, TokenParser } from "./types.js";
 import { mapField, omit, pushField, setField, omitASTDataScope } from "../utils/index.js";
 import { matchString, templateString } from "./string.js";
@@ -45,7 +55,7 @@ export const parseGroup: TokenParserWithContext<AbstractSyntaxTree> =
 
     if (!src[index]) {
       errors.push(endOfTokensError(index));
-      return [index, placeholder(), errors];
+      return [index, errorNode(), errors];
     }
 
     const path = ["groupNodes"];
@@ -224,12 +234,12 @@ export const parseGroup: TokenParserWithContext<AbstractSyntaxTree> =
         }
 
         errors.push(error("unterminated group", indexPosition(index)));
-        return [index, placeholder(), errors];
+        return [index, errorNode(), errors];
       }
     }
 
     errors.push(endOfTokensError(index));
-    return [index, placeholder(), errors];
+    return [index, errorNode(), errors];
   };
 
 export const parsePrefix: TokenParserWithContext<AbstractSyntaxTree> =

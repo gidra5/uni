@@ -1,10 +1,49 @@
-import { AbstractSyntaxTree, group, operator, placeholder } from "../parser/ast";
+import { AbstractSyntaxTree, group, int, operator, placeholder, string } from "../parser/ast";
 import { comparisonOps } from "../parser/constants";
 import { templateString } from "../parser/string";
 import { traverse } from "../tree";
 
 export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   // expressions
+  // tuple literal
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === ",",
+    (node) => {
+      return node.children.reduce((acc, child) => {
+        if (child.name === "placeholder") return acc;
+        if (child.value === "label" && child.name === "operator") {
+          const [name, value] = child.children;
+          const nameNode = name.name === "name" ? string(name.value) : name;
+          return operator("set", acc, nameNode, value);
+        }
+        if (child.value === "...") {
+          const [value] = child.children;
+          return operator("join", acc, value);
+        }
+        return operator("push", acc, child);
+      }, group("unit"));
+    }
+  );
+
+  // any other dangling labels outside of tuple literal
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "label",
+    (node) => {
+      const [name, value] = node.children;
+      return operator("set", group("unit"), name, value);
+    }
+  );
+
+  // unit
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "parens" && node.children.length === 0,
+    (node) => {
+      node.value = "unit";
+    }
+  );
 
   // pipe operator to function application
   traverse(
@@ -19,7 +58,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   // eliminate parentheses
   traverse(
     ast,
-    (node) => node.name === "group" && node.value === "parens",
+    (node) => node.name === "operator" && node.value === "parens",
     (node) => {
       return node.children[0];
     }
@@ -83,12 +122,14 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     }
   );
 
-  // clear placeholders from ";" and "," operator
+  // clear placeholders from ";" operator
   traverse(
     ast,
-    (node) => node.name === "operator" && (node.value === ";" || node.value === ","),
+    (node) => node.name === "operator" && node.value === ";",
     (node) => {
-      return operator(node.value, ...node.children.filter((child) => child.name !== "placeholder"));
+      node.children = node.children.filter((child) => child.name !== "placeholder");
+      if (node.children.length === 1) return node.children[0];
+      return node;
     }
   );
 
@@ -134,38 +175,6 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
 
   // statements
 
-  // if and ifBlock to ifElse
-  traverse(
-    ast,
-    (node) => node.name === "operator" && (node.value === "if" || node.value === "ifBlock"),
-    (node) => {
-      const condition = node.children[0];
-      const ifTrue = node.children[1];
-
-      return operator("ifElse", condition, ifTrue, placeholder());
-    },
-    true
-  );
-
-  // ifBlockElse to ifElse
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "ifBlockElse",
-    (node) => {
-      node.value = "ifElse";
-    }
-  );
-
-  // ifElse to match
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "ifElse",
-    (node) => {
-      const [condition, ifTrue, ifFalse] = node.children;
-      return templateString("match _ { true -> _, false -> _ }", [condition, ifTrue, ifFalse]);
-    }
-  );
-
   // forBlock to for
   traverse(
     ast,
@@ -201,7 +210,54 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) => node.name === "operator" && node.value === "while",
     (node) => {
       const [condition, body] = node.children;
-      return templateString("loop ({ cond := _; if !cond: break }; _)", [condition, body]);
+      return templateString("loop ({ cond := _; if !cond: break() }; _)", [condition, body]);
+    }
+  );
+
+  // if and ifBlock to ifElse
+  traverse(
+    ast,
+    (node) => node.name === "operator" && (node.value === "if" || node.value === "ifBlock"),
+    (node) => {
+      const condition = node.children[0];
+      const ifTrue = node.children[1];
+
+      return operator("ifElse", condition, ifTrue, placeholder());
+    },
+    true
+  );
+
+  // ifBlockElse to ifElse
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "ifBlockElse",
+    (node) => {
+      node.value = "ifElse";
+    }
+  );
+
+  // match to ifElse
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "match",
+    (node) => {
+      const [value, { children: branches }] = node.children;
+      if (branches.length === 0) return group("braces");
+      const branchTemplate = (branch, elseBranch) =>
+        templateString("if _ is _: label _ else _", [value, branch.children[0], branch.children[1], elseBranch]);
+      return templateString("label::_", [
+        branches.reduceRight((acc, branch) => branchTemplate(branch, acc), placeholder()),
+      ]);
+    }
+  );
+
+  // ifElse to and-or
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "ifElse",
+    (node) => {
+      const [condition, ifTrue, ifFalse] = node.children;
+      return templateString("label::((_ and label _) or label _)", [condition, ifTrue, ifFalse]);
     }
   );
 
@@ -211,7 +267,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) => node.name === "operator" && node.value === "loop",
     (node) => {
       const [body] = node.children;
-      return templateString("{ _; continue }", [body]);
+      return templateString("{ _; continue() }", [body]);
     }
   );
 
@@ -221,7 +277,10 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) => node.name === "operator" && node.value === "block",
     (node) => {
       const [expr] = node.children;
-      return templateString("(macro -> label::(continue := label.continue; break := label.break; _)) ()", [expr]);
+      return templateString(
+        "(fn x -> x x) (fn self -> fn -> label::(continue := fn -> label (self self ()); break := label; _)) ()",
+        [expr]
+      );
     }
   );
 

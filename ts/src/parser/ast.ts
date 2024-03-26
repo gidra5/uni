@@ -9,6 +9,12 @@ export type AbstractSyntaxTree<T = any> = {
   children: AbstractSyntaxTree<T>[];
 };
 
+export const error = (): AbstractSyntaxTree => ({
+  name: "error",
+  data: {},
+  children: [],
+});
+
 export const placeholder = (): AbstractSyntaxTree => ({
   name: "placeholder",
   data: {},
@@ -64,7 +70,7 @@ export const token = (token: Token): AbstractSyntaxTree =>
     : name(token.src);
 
 export const group = (value?: string | symbol, ...children: AbstractSyntaxTree[]): AbstractSyntaxTree => ({
-  name: "group",
+  name: "operator",
   value,
   data: {},
   children,
@@ -82,19 +88,16 @@ export const infix = (
   lhs: AbstractSyntaxTree,
   rhs: AbstractSyntaxTree
 ): AbstractSyntaxTree => {
-  assert(group.name === "group", 'infix: group.name !== "group"');
   const { value, children } = group;
   return operator(value, lhs, ...children, rhs);
 };
 
 export const postfix = (group: AbstractSyntaxTree, lhs: AbstractSyntaxTree): AbstractSyntaxTree => {
-  assert(group.name === "group", 'postfix: group.name !== "group"');
   const { value, children } = group;
   return operator(value, lhs, ...children);
 };
 
 export const prefix = (group: AbstractSyntaxTree, rhs: AbstractSyntaxTree): AbstractSyntaxTree => {
-  assert(group.name === "group", 'prefix: group.name !== "group"');
   const { value, children } = group;
   return operator(value, ...children, rhs);
 };

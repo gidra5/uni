@@ -168,7 +168,7 @@ export class Compiler {
 
   private compileToChunks(ast: AbstractSyntaxTree): Compiler {
     // console.log(ast, this);
-    if (ast.name === "group") {
+    if (ast.name === "operator") {
       if (ast.value === "true") {
         return this.pushConstant(-1);
       } else if (ast.value === "false") {
