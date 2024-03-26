@@ -55,3 +55,5 @@ Includes tools for:
 25. console
 26. structured logging
 27. measures (kg, meters, etc)
+28. regexp
+29. functional stuff
