@@ -1,4 +1,4 @@
-Supports reactive programming.
+Supports reactive programming via signals.
 `signal expr` - create signal variable with initial value
 `derived expr` - derive from other signals
 `effect { exprs }`

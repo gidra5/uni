@@ -5,4 +5,7 @@ Most application level errors are recoverable from inside the program.
 
 If some part of program cant recover from an error, usually it means shutdown of that part - termination of an operation, thread, or the entire program.
 
-The program source code may specify points where it *can't* handle the error or points that *can* handle any error. The first can be implemented as `result` type with `?` operator that "unwraps" it, immediately returning error if it was an error variant. The second case is handle with `try-catch` constructs and usually not useful for "expected" errors, thus only used for unexpected errors such as failing assertions.
+The program source code may specify points where it *can't* handle the error or points that *can* handle any error below the stack. 
+The first can be implemented as `result` type with `?` operator that "unwraps" it, immediately returning error if it was an error variant. 
+That usually covers errors that immediate user of the component could handle.
+The second case is handle with `try-catch` constructs and usually not useful for "expected" errors, thus only used for unexpected errors such as failing assertions, which usually means immediate user won't be able to recover from such errors.
