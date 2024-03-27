@@ -1,33 +1,83 @@
 import { type Value } from "./types";
 
-type Task = { continuation: (val: Value) => void; id: symbol };
+type ConsumerTask = { task: (val: Value) => void; channel: symbol };
+type PureTask = { task: () => void };
+type Task = ConsumerTask | PureTask;
 export class TaskQueue {
   private queue: Task[] = [];
-  private blocked: Task[] = [];
-  private values: Record<symbol, Value> = {};
+  private blocked: ConsumerTask[] = [];
+  private channels: Record<symbol, Value> = {};
 
-  createTask(id: symbol, continuation: (val: Value) => void) {
-    this.queue.push({ continuation, id });
+  createTask(task: () => void) {
+    this.queue.push({ task });
   }
 
-  createContinuation(continuation: (val: Value) => void): symbol {
-    const id = Symbol();
-    this.createTask(id, continuation);
-    return id;
+  createConsumeTask(channel: symbol, task: (val: Value) => void) {
+    this.queue.push({ channel, task });
   }
 
-  setValue(id: symbol, value: Value) {
-    this.values[id] = value;
+  createProduceTask(channel: symbol, task: () => Value) {
+    this.queue.push({
+      task: () => {
+        const result = task();
+        this.send(channel, result);
+      },
+    });
   }
 
-  getValue(id: symbol): Value {
-    const value = this.values[id];
-    delete this.values[id];
+  createTransformTask(inChannel: symbol, outChannel: symbol, task: (val: Value) => Value) {
+    this.queue.push({
+      channel: inChannel,
+      task: (v) => {
+        const result = task(v);
+        this.send(outChannel, result);
+      },
+    });
+  }
+
+  createConsumeTaskChannel(task: (val: Value) => void): symbol {
+    const channel = Symbol();
+    this.createConsumeTask(channel, task);
+    return channel;
+  }
+
+  createProduceTaskChannel(task: () => Value): symbol {
+    const channel = Symbol();
+    this.createProduceTask(channel, task);
+    return channel;
+  }
+
+  createTransformTaskInChannel(outChannel: symbol, task: (val: Value) => Value): symbol {
+    const inChannel = Symbol();
+    this.createTransformTask(inChannel, outChannel, task);
+    return inChannel;
+  }
+
+  createTransformTaskOutChannel(inChannel: symbol, task: (val: Value) => Value): symbol {
+    const outChannel = Symbol();
+    this.createTransformTask(inChannel, outChannel, task);
+    return outChannel;
+  }
+
+  createTransformTaskChannels(task: (val: Value) => Value): [inChannel: symbol, outChannel: symbol] {
+    const inChannel = Symbol();
+    const outChannel = Symbol();
+    this.createTransformTask(inChannel, outChannel, task);
+    return [inChannel, outChannel];
+  }
+
+  send(channel: symbol, value: Value) {
+    this.channels[channel] = value;
+  }
+
+  receive(channel: symbol): Value {
+    const value = this.channels[channel];
+    delete this.channels[channel];
     return value;
   }
 
-  ready(id: symbol): boolean {
-    return id in this.values;
+  ready(channel: symbol): boolean {
+    return channel in this.channels;
   }
 
   run() {
@@ -40,18 +90,25 @@ export class TaskQueue {
 
   private executeNextTask() {
     const task = this.queue.shift()!;
-    if (this.ready(task.id)) {
-      const value = this.getValue(task.id);
-      task.continuation(value);
-    } else {
-      this.blocked.push(task);
+
+    if (!("channel" in task)) {
+      task.task();
+      return;
     }
+
+    if (!this.ready(task.channel)) {
+      this.blocked.push(task);
+      return;
+    }
+
+    const value = this.receive(task.channel);
+    task.task(value);
   }
 
   private checkBlocked() {
     for (let i = this.blocked.length - 1; i >= 0; i--) {
       const task = this.blocked[i];
-      if (!this.ready(task.id)) continue;
+      if (!this.ready(task.channel)) continue;
       this.blocked.splice(i, 1);
       this.queue.push(task);
     }

@@ -4,6 +4,7 @@ import { ExprValue, FunctionValue, RecordValue, Value } from "./types.js";
 import { exprToRecord, initialContext, isRecord } from "./utils.js";
 import { expr, fn, record } from "./values.js";
 import { getAtom } from "./atoms.js";
+import { TaskQueue } from "./taskQueue.js";
 
 export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): Value => {
   const result = (() => {
@@ -399,4 +400,301 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
   })();
 
   return context.continuation?.(result) ?? result;
+};
+
+const taskQueueFanIn =
+  (taskQueue: TaskQueue) =>
+  (channels: symbol[], task: (vals: Value[]) => Value): symbol => {
+    const vals: Value[] = [];
+    const outChannel = Symbol();
+
+    for (const channel of channels) {
+      taskQueue.createConsumeTask(channel, (val) => {
+        vals.push(val);
+        if (vals.length === channels.length) {
+          taskQueue.send(outChannel, task(vals));
+        }
+      });
+    }
+    return outChannel;
+  };
+
+export const taskQueueEvaluate = (
+  taskQueue: TaskQueue,
+  ast: AbstractSyntaxTree,
+  context = initialContext()
+): symbol => {
+  const fanIn = taskQueueFanIn(taskQueue);
+  switch (ast.name) {
+    case "operator": {
+      switch (ast.value) {
+        case "print": {
+          const id = taskQueueEvaluate(taskQueue, ast.children[0], context);
+          return taskQueue.createTransformTaskOutChannel(id, (val) => {
+            console.dir(val, { depth: null });
+            return val;
+          });
+        }
+
+        case "+": {
+          const channels = ast.children.map((child) => taskQueueEvaluate(taskQueue, child, context));
+
+          return fanIn(channels, (vals) => vals.reduce((acc: number, val) => acc + (val as number), 0));
+        }
+        case "*": {
+          const channels = ast.children.map((child) => taskQueueEvaluate(taskQueue, child, context));
+
+          return fanIn(channels, (vals) => vals.reduce((acc: number, val) => acc * (val as number), 1));
+        }
+        case "-": {
+          const channels = ast.children.map((child) => taskQueueEvaluate(taskQueue, child, context));
+
+          return fanIn(channels, ([left, right]) => (left as number) - (right as number));
+        }
+        case "/": {
+          const channels = ast.children.map((child) => taskQueueEvaluate(taskQueue, child, context));
+
+          return fanIn(channels, ([left, right]) => (left as number) / (right as number));
+        }
+        case "%": {
+          const channels = ast.children.map((child) => taskQueueEvaluate(taskQueue, child, context));
+
+          return fanIn(channels, ([left, right]) => (left as number) % (right as number));
+        }
+        case "^": {
+          const channels = ast.children.map((child) => taskQueueEvaluate(taskQueue, child, context));
+
+          return fanIn(channels, ([left, right]) => Math.pow(left as number, right as number));
+        }
+
+        case "set": {
+          const tuple = taskQueueEvaluate(taskQueue, ast.children[0], context);
+          const key = taskQueueEvaluate(taskQueue, ast.children[1], context);
+          const value = taskQueueEvaluate(taskQueue, ast.children[2], context);
+
+          return fanIn([tuple, key, value], ([tupleVal, keyVal, valueVal]) => {
+            const record = tupleVal as RecordValue;
+            record.set(keyVal, valueVal);
+            return record;
+          });
+        }
+        case "push": {
+          const tuple = taskQueueEvaluate(taskQueue, ast.children[0], context);
+          const value = taskQueueEvaluate(taskQueue, ast.children[1], context);
+
+          return fanIn([tuple, value], ([tupleVal, valueVal]) => {
+            const record = tupleVal as RecordValue;
+            record.tuple.push(valueVal);
+            return record;
+          });
+        }
+        case "join": {
+          const tuple = taskQueueEvaluate(taskQueue, ast.children[0], context);
+          const value = taskQueueEvaluate(taskQueue, ast.children[1], context);
+
+          return fanIn([tuple, value], ([tupleVal, valueVal]) => {
+            if (!isRecord(valueVal)) return tupleVal;
+            const record = tupleVal as RecordValue;
+            valueVal.tuple.forEach((value) => record.tuple.push(value));
+            valueVal.map.forEach((value, key) => record.map.set(key, value));
+            Object.assign(record.record, valueVal.record);
+            return record;
+          });
+        }
+        case "unit": {
+          return taskQueue.createProduceTaskChannel(() => record());
+        }
+
+        case "in": {
+          const channels = ast.children.map((child) => taskQueueEvaluate(taskQueue, child, context));
+
+          return fanIn(channels, ([left, right]) => {
+            const record = right as RecordValue;
+            return record.has(left);
+          });
+        }
+        case "and": {
+          const channels = ast.children.map((child) => taskQueueEvaluate(taskQueue, child, context));
+
+          return fanIn(channels, (vals) => vals.every((val) => val));
+        }
+        case "or": {
+          const channels = ast.children.map((child) => taskQueueEvaluate(taskQueue, child, context));
+
+          return fanIn(channels, (vals) => vals.some((val) => val));
+        }
+        case "==": {
+          const channels = ast.children.map((child) => taskQueueEvaluate(taskQueue, child, context));
+
+          return fanIn(channels, ([left, right]) => left === right);
+        }
+        case "===": {
+          const channels = ast.children.map((child) => taskQueueEvaluate(taskQueue, child, context));
+
+          return fanIn(channels, ([left, right]) => isEqual(left, right));
+        }
+        case "!": {
+          return taskQueue.createTransformTaskOutChannel(
+            taskQueueEvaluate(taskQueue, ast.children[0], context),
+            (val) => !val
+          );
+        }
+        case "<": {
+          const channels = ast.children.map((child) => taskQueueEvaluate(taskQueue, child, context));
+
+          return fanIn(channels, ([left, right]) => (left as number) < (right as number));
+        }
+
+        case "macro": {
+        }
+
+        case "#": {
+          return taskQueue.createProduceTaskChannel(
+            () => context.scope.getByRelativeIndex(ast.children[0].value)?.value.get?.() ?? null
+          );
+        }
+
+        case "codeLabel": {
+        }
+
+        case "=": {
+          const value = taskQueueEvaluate(taskQueue, ast.children[1], context);
+
+          if (
+            ast.children[0].name !== "name" &&
+            !(ast.children[0].name === "operator" && ast.children[0].value === "brackets")
+          ) {
+            const accessor = ast.children[0];
+            const recordFieldNode = accessor.children[1];
+            const record = taskQueueEvaluate(taskQueue, accessor.children[0], context);
+            const key =
+              accessor.name === "access"
+                ? taskQueue.createProduceTaskChannel(() => recordFieldNode.value)
+                : taskQueueEvaluate(taskQueue, recordFieldNode, context);
+
+            return fanIn([record, key, value], ([recordVal, keyVal, valueVal]) => {
+              const record = recordVal as RecordValue;
+              record.set(keyVal, valueVal);
+              return valueVal;
+            });
+          }
+
+          const name =
+            ast.children[0].name === "name"
+              ? taskQueue.createProduceTaskChannel(() => ast.children[0].value)
+              : taskQueueEvaluate(taskQueue, ast.children[0], context);
+
+          return fanIn([name, value], ([nameVal, valueVal]) => {
+            const entryIndex = context.scope.toIndex({ name: nameVal as string });
+            const entry = context.scope.scope[entryIndex];
+            entry?.value.set?.(valueVal);
+            return valueVal;
+          });
+        }
+
+        case ":=": {
+          const value = taskQueueEvaluate(taskQueue, ast.children[1], context);
+          const name =
+            ast.children[0].name === "name"
+              ? taskQueue.createProduceTaskChannel(() => ast.children[0].value)
+              : taskQueueEvaluate(taskQueue, ast.children[0], context);
+
+          return fanIn([name, value], ([nameVal, valueVal]) => {
+            context.scope = context.scope.add(nameVal as string, { get: () => valueVal });
+            return valueVal;
+          });
+        }
+
+        case "atom": {
+          return taskQueue.createProduceTaskChannel(() => getAtom(ast.children[0].value));
+        }
+
+        case "access": {
+          return taskQueue.createTransformTaskOutChannel(
+            taskQueueEvaluate(taskQueue, ast.children[0], context),
+            (record) => {
+              const recordValue = record as RecordValue;
+              return recordValue.get(ast.children[1].value);
+            }
+          );
+        }
+
+        case "accessDynamic": {
+          const record = taskQueueEvaluate(taskQueue, ast.children[0], context);
+          const key = taskQueueEvaluate(taskQueue, ast.children[1], context);
+
+          return fanIn([record, key], ([recordVal, keyVal]) => {
+            const record = recordVal as RecordValue;
+            return record.get(keyVal);
+          });
+        }
+
+        case "negate": {
+          return taskQueue.createTransformTaskOutChannel(
+            taskQueueEvaluate(taskQueue, ast.children[0], context),
+            (val) => -(val as number)
+          );
+        }
+
+        case "application": {
+        }
+        case "symbol": {
+          return taskQueue.createProduceTaskChannel(() => Symbol());
+        }
+        case "brackets": {
+          return taskQueueEvaluate(taskQueue, ast.children[0], context);
+        }
+
+        case "ref":
+        case "deref":
+        case "free":
+        case "allocate": {
+          throw new Error("Not implemented");
+        }
+
+        case "parallel":
+        case "send":
+        case "receive":
+        case "peekSend":
+        case "peekReceive":
+        case "channel":
+        case "import":
+        case "importWith":
+        case "export":
+        case "exportAs":
+        case "external":
+
+        // must be eliminated by that point
+        case "pipe":
+        case "async":
+        case "await":
+        case "is":
+        case "as":
+        case "mut":
+        case "->":
+        case "pin":
+        case "operator":
+        case "operatorPrecedence":
+        default:
+          throw new Error(`Operator ${ast.value} not implemented`);
+      }
+    }
+    case "boolean": {
+      return taskQueue.createProduceTaskChannel(() => Boolean(ast.value));
+    }
+    case "float":
+    case "int": {
+      return taskQueue.createProduceTaskChannel(() => Number(ast.value));
+    }
+    case "string": {
+      return taskQueue.createProduceTaskChannel(() => String(ast.value));
+    }
+    case "placeholder":
+      return taskQueue.createProduceTaskChannel(() => null);
+    case "name": {
+      return taskQueue.createProduceTaskChannel(() => context.scope.getByName(ast.value)?.value.get?.() ?? null);
+    }
+    default:
+      return taskQueue.createProduceTaskChannel(() => null);
+  }
 };
