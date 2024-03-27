@@ -15,6 +15,7 @@ Includes tools for:
   1. Keyboard
   2. mouse
   3. gamepads
+  4. stdin
 4. parsing (following "parse, don't validate")
 5. string formatting
 6. containers
@@ -25,35 +26,42 @@ Includes tools for:
   5. queue
   6. option
   7. result
-7. mutex and semaphore
-8. memory allocation
-9. Iterators
-10. generators
-11. lenses
-12. streams
-13. animation interpolation
-14. math
-  1. linear algebra
-  2. number theory
-  3. complex
-  4. quaternions
-  5. dual
-  6. derivatives
-  7. integration
-  8. fft
-  9. statistics and probability 
-15. styling
-16. cli parsing
-17. reflection 
-18. process env
-19. ffi
-20. asm
-21. localization and internationalisation 
-22. file system and io
-23. time and timezones
-24. physics
-25. console
-26. structured logging
-27. measures (kg, meters, etc)
-28. regexp
-29. functional stuff
+7. memory allocation
+8. Iterators
+9. generators
+10. lenses
+11. streams
+12. animation interpolation
+13. math
+  14. linear algebra
+  15. number theory
+  16. complex
+  17. quaternions
+  18. dual
+  19. derivatives
+  20. integration
+  21. fft
+  22. statistics and probability sampling
+14. styling
+15. cli parsing
+16. reflection 
+17. process env
+18. ffi
+19. asm
+20. localization and internationalization 
+21. file system and io
+22. time and timezones
+23. physics
+24. console
+25. structured logging
+26. measures (kg, meters, etc)
+27. regexp
+28. functional stuff
+29. crypto
+30. compression
+31. encoding
+32. hashing
+33. data structures
+34. algorithms
+35. caching
+36. concurrency

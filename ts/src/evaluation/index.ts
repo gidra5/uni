@@ -28,23 +28,31 @@ type ScopeValue = { get?: () => Value; set?: (val: Value) => void; type?: TypeVa
 type Context = { scope: Scope<ScopeValue>; continuation?: (val: Value) => Value; tasks: TaskQueue };
 
 type Task = { continuation: (val: Value, queue: TaskQueue) => void; id: symbol };
-type TaskQueue = { queue: Task[]; blocked: Task[]; values: Record<symbol, Value> };
+class TaskQueue {
+  queue: Task[] = [];
+  blocked: Task[] = [];
+  values: Record<symbol, Value> = {};
 
-const process = (queue: TaskQueue) => {
-  while (true) {
-    for (const task of [...queue.blocked]) {
-      if (!(task.id in queue.values)) continue;
-      const index = queue.blocked.indexOf(task);
-      queue.blocked.splice(index, 1);
-      queue.queue.push(task);
+  run() {
+    while (true) {
+      this.checkBlocked();
+      if (this.queue.length === 0) break;
+      const task = this.queue.shift()!;
+      if (task.id in this.values) {
+        const value = this.values[task.id];
+        task.continuation(value, this);
+      } else {
+        this.blocked.push(task);
+      }
     }
-    if (queue.queue.length > 0) break;
-    const task = queue.queue.shift();
-    if (task.id in queue.values) {
-      const value = queue.values[task.id];
-      task.continuation(value, queue);
-    } else {
-      queue.blocked.push(task)
+  }
+
+  private checkBlocked() {
+    for (let i = this.blocked.length - 1; i >= 0; i--) {
+      const task = this.blocked[i];
+      if (!(task.id in this.values)) continue;
+      this.blocked.splice(i, 1);
+      this.queue.push(task);
     }
   }
 }
