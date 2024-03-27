@@ -237,14 +237,6 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
             };
           }
 
-          case ";": {
-            const [head, ...rest] = ast.children;
-            return evaluate(head, {
-              ...context,
-              continuation: () => evaluate(rest.length === 1 ? rest[0] : { ...ast, children: rest }, context),
-            });
-          }
-
           case "#": {
             const node = ast.children[0];
             return context.scope.getByRelativeIndex(node.value)?.value.get?.() ?? null;
@@ -408,21 +400,3 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
 
   return context.continuation?.(result) ?? result;
 };
-
-class BreakError extends Error {
-  constructor(public label?: any, public value: Value = null) {
-    super("Break");
-  }
-}
-
-class ReturnError extends Error {
-  constructor(public value: Value = null) {
-    super("Return");
-  }
-}
-
-class YieldError extends Error {
-  constructor(public value: Value = null) {
-    super("Yield");
-  }
-}
