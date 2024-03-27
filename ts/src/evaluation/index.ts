@@ -1,61 +1,9 @@
 import { Iterator } from "iterator-js";
-import { AbstractSyntaxTree, string } from "../parser/ast.js";
+import { AbstractSyntaxTree } from "../parser/ast.js";
 import { Scope } from "../scope.js";
-import { isEqual, omitASTDataScope } from "../utils/index.js";
-import { match, template } from "../parser/utils.js";
+import { isEqual } from "../utils/index.js";
 import { parseExprString } from "../parser/string.js";
-
-type SymbolValue = symbol;
-type RecordValue = {
-  kind: "record";
-  get: (key: Value) => Value;
-  set: (key: Value, val: Value) => void;
-  has: (key: Value) => boolean;
-  tuple: Value[];
-  record: Record<string | symbol, Value>;
-  map: Map<Value, Value>;
-};
-type TypeValue = { kind: "type"; name: string; value: Value };
-type ExprValue = {
-  kind: "expr";
-  ast: AbstractSyntaxTree;
-  scope: Scope<ScopeValue>;
-  continuation?: (val: Value) => Value;
-};
-type FunctionValue = (arg: ExprValue) => Value;
-type Value = number | string | boolean | null | FunctionValue | RecordValue | SymbolValue | TypeValue;
-type ScopeValue = { get?: () => Value; set?: (val: Value) => void; type?: TypeValue };
-type Context = { scope: Scope<ScopeValue>; continuation?: (val: Value) => Value; tasks: TaskQueue };
-
-type Task = { continuation: (val: Value, queue: TaskQueue) => void; id: symbol };
-class TaskQueue {
-  queue: Task[] = [];
-  blocked: Task[] = [];
-  values: Record<symbol, Value> = {};
-
-  run() {
-    while (true) {
-      this.checkBlocked();
-      if (this.queue.length === 0) break;
-      const task = this.queue.shift()!;
-      if (task.id in this.values) {
-        const value = this.values[task.id];
-        task.continuation(value, this);
-      } else {
-        this.blocked.push(task);
-      }
-    }
-  }
-
-  private checkBlocked() {
-    for (let i = this.blocked.length - 1; i >= 0; i--) {
-      const task = this.blocked[i];
-      if (!(task.id in this.values)) continue;
-      this.blocked.splice(i, 1);
-      this.queue.push(task);
-    }
-  }
-}
+import { Context, ExprValue, FunctionValue, RecordValue, ScopeValue, Value } from "./types.js";
 
 const atomsCache: Record<string, symbol> = {};
 
