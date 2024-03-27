@@ -25,7 +25,29 @@ type ExprValue = {
 type FunctionValue = (arg: ExprValue) => Value;
 type Value = number | string | boolean | null | FunctionValue | RecordValue | SymbolValue | TypeValue;
 type ScopeValue = { get?: () => Value; set?: (val: Value) => void; type?: TypeValue };
-type Context = { scope: Scope<ScopeValue>; continuation?: (val: Value) => Value };
+type Context = { scope: Scope<ScopeValue>; continuation?: (val: Value) => Value; tasks: TaskQueue };
+
+type Task = { continuation: (val: Value, queue: TaskQueue) => void; id: symbol };
+type TaskQueue = { queue: Task[]; blocked: Task[]; values: Record<symbol, Value> };
+
+const process = (queue: TaskQueue) => {
+  while (true) {
+    for (const task of [...queue.blocked]) {
+      if (!(task.id in queue.values)) continue;
+      const index = queue.blocked.indexOf(task);
+      queue.blocked.splice(index, 1);
+      queue.queue.push(task);
+    }
+    if (queue.queue.length > 0) break;
+    const task = queue.queue.shift();
+    if (task.id in queue.values) {
+      const value = queue.values[task.id];
+      task.continuation(value, queue);
+    } else {
+      queue.blocked.push(task)
+    }
+  }
+}
 
 const atomsCache: Record<string, symbol> = {};
 
