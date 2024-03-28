@@ -1,36 +1,29 @@
 import { Iterator } from "iterator-js";
-import { taskQueueEvaluate } from "./index.js";
+import { evaluate } from "./index.js";
 import { Scope } from "../scope.js";
-import {
-  TaskQueueContext,
-  TaskQueueExprValue,
-  TaskQueueFunctionValue,
-  TaskQueueRecordValue,
-  TaskQueueScopeValue,
-  TaskQueueValue,
-} from "./types";
+import { TaskQueueContext, ExprValue, FunctionValue, RecordValue, ScopeValue, Value } from "./types";
 import { getterSymbol, setterSymbol } from "./values.js";
 import { TaskQueue } from "./taskQueue.js";
 
-export const isTaskQueueRecord = (value: TaskQueueValue): value is TaskQueueRecordValue =>
+export const isRecord = (value: Value): value is RecordValue =>
   !!value && typeof value === "object" && value.kind === "record";
 
-export const initialTaskQueueContext = (taskQueue: TaskQueue): TaskQueueContext => {
-  const _eval: TaskQueueFunctionValue = (argChannel) => {
+export const initialContext = (taskQueue: TaskQueue): TaskQueueContext => {
+  const _eval: FunctionValue = (argChannel) => {
     const outChannel = Symbol();
     taskQueue.createConsumeTask(argChannel, (exprVal) => {
-      const expr = exprVal as TaskQueueExprValue;
-      const inChannel = taskQueueEvaluate(taskQueue, expr.ast, { scope: expr.scope });
+      const expr = exprVal as ExprValue;
+      const inChannel = evaluate(taskQueue, expr.ast, { scope: expr.scope });
       taskQueue.createConsumeTask(inChannel, (val) => {
-        const expr = val as TaskQueueExprValue;
-        const evalChannel = taskQueueEvaluate(taskQueue, expr.ast, { scope: expr.scope });
+        const expr = val as ExprValue;
+        const evalChannel = evaluate(taskQueue, expr.ast, { scope: expr.scope });
         taskQueue.pipe(evalChannel, outChannel);
       });
     });
     return outChannel;
   };
   const context = {
-    scope: new Scope<TaskQueueScopeValue>({
+    scope: new Scope<ScopeValue>({
       eval: { get: () => _eval },
       getter: { get: () => getterSymbol },
       setter: { get: () => setterSymbol },

@@ -7,8 +7,8 @@ import { parseTokens } from "./parser/tokens.js";
 import { parse } from "./parser/index.js";
 import { Compiler } from "./compiler/index.js";
 import { parseExprString } from "./parser/string.js";
-import { taskQueueEvaluate } from "./evaluation/index.js";
-import { initialTaskQueueContext } from "./evaluation/utils.js";
+import { evaluate } from "./evaluation/index.js";
+import { initialContext } from "./evaluation/utils.js";
 import { TaskQueue } from "./evaluation/taskQueue.js";
 import { transform } from "./transformers/desugar.js";
 
@@ -17,11 +17,11 @@ program
   .description("Run script from a file")
   .action((file) => {
     const taskQueue = new TaskQueue();
-    const context = initialTaskQueueContext(taskQueue);
+    const context = initialContext(taskQueue);
     const code = fs.readFileSync(file, "utf-8");
     const [tokens, tokenErrors] = parseTokens(code);
     const [ast, astErrors] = parse()(tokens);
-    taskQueueEvaluate(taskQueue, transform(ast), context);
+    evaluate(taskQueue, transform(ast), context);
     taskQueue.run();
   });
 
@@ -30,12 +30,12 @@ program
   .description("Run interactive task queue environment with optional initial script/module")
   .action((file) => {
     const taskQueue = new TaskQueue();
-    const context = initialTaskQueueContext(taskQueue);
+    const context = initialContext(taskQueue);
     if (file) {
       const code = fs.readFileSync(file, "utf-8");
       const [tokens, tokenErrors] = parseTokens(code);
       const [ast, astErrors] = parse()(tokens);
-      const resultSymbol = taskQueueEvaluate(taskQueue, transform(ast), context);
+      const resultSymbol = evaluate(taskQueue, transform(ast), context);
       taskQueue.run();
       const result = taskQueue.receive(resultSymbol);
       console.log(result);
@@ -56,7 +56,7 @@ program
             console.dir({ ast, astErrors, tokenErrors }, { depth: null });
             const transformed = transform(ast);
             console.dir({ transformed }, { depth: null });
-            const resultSymbol = taskQueueEvaluate(taskQueue, transformed, context);
+            const resultSymbol = evaluate(taskQueue, transformed, context);
             taskQueue.run();
             const result = taskQueue.receive(resultSymbol);
             console.log(result);

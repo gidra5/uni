@@ -1,56 +1,56 @@
-import { TaskQueueValue } from "./types";
+import { Value } from "./types";
 
-type ProduceTask = { task: (val: void) => TaskQueueValue; outChannel: symbol };
-type TransformTask = { task: (val: TaskQueueValue) => TaskQueueValue; inChannel: symbol; outChannel: symbol };
-type ConsumeTask = { task: (val: TaskQueueValue) => void; inChannel: symbol };
+type ProduceTask = { task: (val: void) => Value; outChannel: symbol };
+type TransformTask = { task: (val: Value) => Value; inChannel: symbol; outChannel: symbol };
+type ConsumeTask = { task: (val: Value) => void; inChannel: symbol };
 type PureTask = { task: () => void };
 type Task = TransformTask | ConsumeTask | ProduceTask | PureTask;
 export class TaskQueue {
   private queue: Task[] = [];
   private blocked: (ConsumeTask | TransformTask)[] = [];
-  private channels: Record<symbol, TaskQueueValue> = {};
+  private channels: Record<symbol, Value> = {};
 
   createTask(task: () => void) {
     this.queue.push({ task });
   }
 
-  createConsumeTask(inChannel: symbol, task: (val: TaskQueueValue) => void) {
+  createConsumeTask(inChannel: symbol, task: (val: Value) => void) {
     this.queue.push({ inChannel, task });
   }
 
-  createProduceTask(outChannel: symbol, task: () => TaskQueueValue) {
+  createProduceTask(outChannel: symbol, task: () => Value) {
     this.queue.push({ outChannel, task });
   }
 
-  createTransformTask(inChannel: symbol, outChannel: symbol, task: (val: TaskQueueValue) => TaskQueueValue) {
+  createTransformTask(inChannel: symbol, outChannel: symbol, task: (val: Value) => Value) {
     this.queue.push({ inChannel, outChannel, task });
   }
 
-  createConsumeTaskChannel(task: (val: TaskQueueValue) => void): symbol {
+  createConsumeTaskChannel(task: (val: Value) => void): symbol {
     const channel = Symbol("consume");
     this.createConsumeTask(channel, task);
     return channel;
   }
 
-  createProduceTaskChannel(task: () => TaskQueueValue): symbol {
+  createProduceTaskChannel(task: () => Value): symbol {
     const channel = Symbol("produce");
     this.createProduceTask(channel, task);
     return channel;
   }
 
-  createTransformTaskInChannel(outChannel: symbol, task: (val: TaskQueueValue) => TaskQueueValue): symbol {
+  createTransformTaskInChannel(outChannel: symbol, task: (val: Value) => Value): symbol {
     const inChannel = Symbol("transform.in");
     this.createTransformTask(inChannel, outChannel, task);
     return inChannel;
   }
 
-  createTransformTaskOutChannel(inChannel: symbol, task: (val: TaskQueueValue) => TaskQueueValue): symbol {
+  createTransformTaskOutChannel(inChannel: symbol, task: (val: Value) => Value): symbol {
     const outChannel = Symbol("transform.out");
     this.createTransformTask(inChannel, outChannel, task);
     return outChannel;
   }
 
-  createTransformTaskChannels(task: (val: TaskQueueValue) => TaskQueueValue): [inChannel: symbol, outChannel: symbol] {
+  createTransformTaskChannels(task: (val: Value) => Value): [inChannel: symbol, outChannel: symbol] {
     const inChannel = Symbol("transform.in");
     const outChannel = Symbol("transform.out");
     this.createTransformTask(inChannel, outChannel, task);
@@ -61,7 +61,7 @@ export class TaskQueue {
     this.createTransformTask(inChannel, outChannel, (val) => val);
   }
 
-  send(channel: symbol, value: TaskQueueValue) {
+  send(channel: symbol, value: Value) {
     if (value !== null) {
       this.channels[channel] = value;
       return;
@@ -69,7 +69,7 @@ export class TaskQueue {
     this.cancel(channel);
   }
 
-  receive(channel: symbol): TaskQueueValue {
+  receive(channel: symbol): Value {
     const value = this.channels[channel];
     delete this.channels[channel];
     return value;

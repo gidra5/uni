@@ -6,7 +6,7 @@ import { parseExprString } from "../src/parser/string";
 import { parseTokens } from "../src/parser/tokens";
 import { parse } from "../src/parser";
 import { omitASTDataScope } from "../src/utils";
-import { taskQueueEvaluate as evaluate } from "../src/evaluation";
+import { evaluate } from "../src/evaluation";
 import { TaskQueue } from "../src/evaluation/taskQueue";
 import { transform } from "../src/transformers/desugar";
 
