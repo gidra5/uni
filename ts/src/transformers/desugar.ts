@@ -349,7 +349,8 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     ast,
     (node) => node.name === "operator" && node.value === "fn",
     (node) => {
-      return templateString("macro -> _ { _ := eval #0; _ }", [node.children[1], node.children[0], node.children[2]]);
+      const [param, returnType, body] = node.children;
+      return templateString("macro -> _ { (macro _ -> _) (eval #0) }", [returnType, param, body]);
     }
   );
 
@@ -398,6 +399,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     ast,
     (node) => node.name === "operator" && node.value === "#" && node.children[0].name === "int",
     (node) => {
+      node.name = "name";
       node.value = node.children[0].value;
       node.children = [];
     }
@@ -421,3 +423,5 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
 
   return ast;
 };
+
+/* (fn -> #0 * 2) 4 */

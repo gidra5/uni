@@ -1,5 +1,3 @@
-import { assert } from "../utils/index.js";
-import { matchString } from "./string.js";
 import { Token } from "./types.js";
 
 export type AbstractSyntaxTree<T = any> = {
@@ -10,7 +8,7 @@ export type AbstractSyntaxTree<T = any> = {
 };
 
 export const error = (): AbstractSyntaxTree => ({
-  name: "error",
+  name: "placeholder",
   data: {},
   children: [],
 });

@@ -37,7 +37,7 @@ export type ParsingContext = {
 export type TokenParserWithContext<T> = (context: ParsingContext) => TokenParser<T>;
 
 const getPrecedence = (node: AbstractSyntaxTree, scope: Scope): Precedence =>
-  (node.name === "group" && node.value && scope.getByName(node.value)?.value.precedence) || [null, null];
+  (node.name === "operator" && node.value && scope.getByName(node.value)?.value.precedence) || [null, null];
 
 export const scopeIter = (scope: Scope = new ScopeClass()): Iterator<ScopeArray[number]> =>
   scope.iterEntries().map(({ name, value }) => ({ name, ...value }));

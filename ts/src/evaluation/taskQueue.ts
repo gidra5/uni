@@ -82,6 +82,7 @@ export class TaskQueue {
 
   run() {
     while (true) {
+      console.dir(this, { depth: null });
       this.checkBlocked();
       this.checkOrphans();
       if (this.queue.length === 0) break;

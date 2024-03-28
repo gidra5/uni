@@ -407,7 +407,12 @@ export const evaluate = (ast: AbstractSyntaxTree, context = initialContext()): V
       case "placeholder":
         return null;
       case "name": {
-        return context.scope.getByName(ast.value)?.value.get?.() ?? null;
+        const entry =
+          typeof ast.value === "number"
+            ? context.scope.getByRelativeIndex(ast.value)
+            : context.scope.getByName(ast.value);
+
+        return entry?.value.get?.() ?? null;
       }
       default:
         return null;
@@ -739,7 +744,14 @@ export const taskQueueEvaluate = (
       case "placeholder":
         return taskQueue.createProduceTaskChannel(() => null);
       case "name": {
-        return taskQueue.createProduceTaskChannel(() => context.scope.getByName(ast.value)?.value.get?.() ?? null);
+        return taskQueue.createProduceTaskChannel(() => {
+          const entry =
+            typeof ast.value === "number"
+              ? context.scope.getByRelativeIndex(ast.value)
+              : context.scope.getByName(ast.value);
+
+          return entry?.value.get?.() ?? null;
+        });
       }
       default:
         return taskQueue.createProduceTaskChannel(() => null);
