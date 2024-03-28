@@ -1,7 +1,19 @@
-import { evaluate } from ".";
+import { evaluate, taskQueueEvaluate } from ".";
 import { AbstractSyntaxTree } from "../parser/ast";
 import { Scope } from "../scope";
-import { ExprValue, FunctionValue, RecordValue, ScopeValue, Value } from "./types";
+import { TaskQueue } from "./taskQueue";
+import {
+  ExprValue,
+  FunctionValue,
+  RecordValue,
+  ScopeValue,
+  TaskQueueExprValue,
+  TaskQueueFunctionValue,
+  TaskQueueRecordValue,
+  TaskQueueScopeValue,
+  TaskQueueValue,
+  Value,
+} from "./types";
 
 export const recordSet =
   (tuple: Value[], record: Record<string | symbol, Value>, map: Map<Value, Value>) =>
@@ -47,7 +59,7 @@ export const recordHas =
 
 export const record = (
   tuple: Value[] = [],
-  record: { [key: string]: Value } = {},
+  record: Record<string | symbol, Value> = {},
   map: Map<Value, Value> = new Map()
 ): RecordValue => ({
   kind: "record",
@@ -67,16 +79,112 @@ export const expr = (
   ast: AbstractSyntaxTree,
   scope: Scope<ScopeValue>,
   continuation?: (val: Value) => Value
-): ExprValue => ({
-  kind: "expr",
-  ast,
-  scope,
-  continuation,
-});
+): ExprValue => ({ kind: "expr", ast, scope, continuation });
 export const fn =
   <T extends Value>(value: (arg: T) => Value): FunctionValue =>
   (arg) =>
     evaluate(arg.ast, { scope: arg.scope, continuation: value as any });
+
+export const taskQueueRecordSet =
+  (
+    tuple: TaskQueueValue[],
+    record: Record<string | symbol, TaskQueueValue>,
+    map: Map<TaskQueueValue, TaskQueueValue>
+  ) =>
+  (key: TaskQueueValue, value: TaskQueueValue): void => {
+    if (key === null) return;
+
+    if (value === null) {
+      if (typeof key === "number") {
+        tuple.splice(key, 1);
+      } else if (typeof key === "symbol" && key.description) {
+        delete record[key.description];
+      } else {
+        map.delete(key);
+      }
+      return;
+    }
+
+    if (typeof key === "number") {
+      tuple[key] = value;
+    } else if (typeof key === "symbol" || typeof key === "string") {
+      record[key] = value;
+    } else {
+      map.set(key, value);
+    }
+  };
+export const taskQueueRecordGet =
+  (
+    tuple: TaskQueueValue[],
+    record: Record<string | symbol, TaskQueueValue>,
+    map: Map<TaskQueueValue, TaskQueueValue>
+  ) =>
+  (key: TaskQueueValue): TaskQueueValue => {
+    if (key === null) return null;
+
+    if (typeof key === "number") return tuple[key] ?? null;
+    if (typeof key === "symbol" || typeof key === "string") return record[key] ?? null;
+    return map.get(key) ?? null;
+  };
+export const taskQueueRecordHas =
+  (
+    tuple: TaskQueueValue[],
+    record: Record<string | symbol, TaskQueueValue>,
+    map: Map<TaskQueueValue, TaskQueueValue>
+  ) =>
+  (key: TaskQueueValue): boolean => {
+    if (key === null) return false;
+    if (typeof key === "number") return key in tuple;
+    if (typeof key === "symbol" || typeof key === "string") return key in record;
+    return map.has(key);
+  };
+
+export const taskQueueRecord = (
+  taskQueue: TaskQueue,
+  tuple: TaskQueueValue[] = [],
+  record: Record<string | symbol, TaskQueueValue> = {},
+  map: Map<TaskQueueValue, TaskQueueValue> = new Map()
+): TaskQueueRecordValue => ({
+  kind: "record",
+  has: taskQueueRecordHas(tuple, record, map),
+  get(key: TaskQueueValue) {
+    const getter = taskQueueRecordGet(tuple, record, map);
+    if (key === getterSymbol) return taskQueueFn(taskQueue, this.get);
+    if (key === setterSymbol)
+      return taskQueueFn(taskQueue, (k) => taskQueueFn(taskQueue, (v) => (this.set(k, v), null)));
+    return getter(key);
+  },
+  set: taskQueueRecordSet(tuple, record, map),
+  tuple,
+  record,
+  map,
+});
+export const taskQueueExpr = (
+  ast: AbstractSyntaxTree,
+  scope: Scope<TaskQueueScopeValue>,
+  continuation?: symbol
+): TaskQueueExprValue => ({ kind: "expr", ast, scope, continuation });
+export const taskQueueFn = (
+  taskQueue: TaskQueue,
+  value: (arg: TaskQueueValue) => TaskQueueValue
+): TaskQueueFunctionValue => {
+  const argChannel: symbol = Symbol();
+  let cont: symbol | undefined;
+  const channel = taskQueue.createConsumeTaskChannel((exprVal) => {
+    const expr = exprVal as unknown as TaskQueueExprValue;
+    cont = expr.continuation;
+    taskQueueEvaluate(taskQueue, expr.ast, { scope: expr.scope, continuation: argChannel });
+  });
+  taskQueue.createConsumeTask(argChannel, (val) => {
+    const result = value(val);
+    if (cont === undefined) return;
+    taskQueue.send(cont, result);
+  });
+  return {
+    kind: "function",
+    channel,
+  };
+};
 
 export const getterSymbol = Symbol();
 export const setterSymbol = Symbol();

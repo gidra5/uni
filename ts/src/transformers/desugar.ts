@@ -341,14 +341,12 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     }
   );
 
-  // fn arg to nameless binding
+  // fn to macro
   traverse(
     ast,
     (node) => node.name === "operator" && node.value === "fn",
     (node) => {
-      const [param, returnType, body] = node.children;
-      if (param.name === "placeholder") return operator("fn", returnType, body);
-      return operator("fn", returnType, templateString("{ _ := #0; _ }", [param, body]));
+      return templateString("macro -> _ { _ := eval #0; _ }", [node.children[1], node.children[0], node.children[2]]);
     }
   );
 

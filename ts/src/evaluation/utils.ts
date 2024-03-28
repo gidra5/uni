@@ -2,9 +2,22 @@ import { Iterator } from "iterator-js";
 import { evaluate } from ".";
 import { AbstractSyntaxTree } from "../parser/ast";
 import { Scope } from "../scope";
-import { Context, ExprValue, FunctionValue, RecordValue, ScopeValue, Value } from "./types";
+import {
+  Context,
+  ExprValue,
+  FunctionValue,
+  RecordValue,
+  ScopeValue,
+  TaskQueueContext,
+  TaskQueueExprValue,
+  TaskQueueRecordValue,
+  TaskQueueScopeValue,
+  TaskQueueValue,
+  Value,
+} from "./types";
 import { parseExprString } from "../parser/string";
-import { expr, fn, getterSymbol, record, setterSymbol } from "./values";
+import { expr, fn, getterSymbol, record, setterSymbol, taskQueueExpr, taskQueueRecord } from "./values";
+import { TaskQueue } from "./taskQueue";
 
 export const isRecord = (value: Value): value is RecordValue =>
   !!value && typeof value === "object" && value.kind === "record";
@@ -158,6 +171,82 @@ export const initialContext = (): Context => {
   });
 
   console.dir(["initialContext", context], { depth: null });
+
+  return context;
+};
+
+export const isTaskQueueRecord = (value: TaskQueueValue): value is TaskQueueRecordValue =>
+  !!value && typeof value === "object" && value.kind === "record";
+
+export const taskQueueExprToRecord = (taskQueue: TaskQueue, _expr: TaskQueueExprValue): TaskQueueRecordValue => {
+  const exprRecord: TaskQueueRecordValue = taskQueueRecord(taskQueue);
+  const children = _expr.ast.children.map<TaskQueueRecordValue>((child) =>
+    taskQueueExprToRecord(taskQueue, taskQueueExpr(child, _expr.scope))
+  );
+
+  exprRecord.set("children", taskQueueRecord(taskQueue, children));
+  exprRecord.set("name", _expr.ast.name);
+  exprRecord.set("value", jsValueToTaskQueueValue(taskQueue, _expr.ast.value));
+  exprRecord.set("data", jsValueToTaskQueueValue(taskQueue, _expr.ast.data));
+
+  return taskQueueRecord(taskQueue, [], {
+    expr: exprRecord,
+    env: _expr.scope as unknown as TaskQueueValue,
+    cont: (_expr.continuation ?? null) as unknown as TaskQueueValue,
+  });
+};
+
+export const taskQueueRecordToExpr = (record: TaskQueueRecordValue): TaskQueueExprValue => {
+  const env = record.get("env") as any;
+  const children = record.get("children")! as TaskQueueRecordValue;
+  const _expr: AbstractSyntaxTree = {
+    children: children.tuple.map((child) => taskQueueRecordToExpr(child as TaskQueueRecordValue).ast),
+    name: record.get("name") as string,
+    value: taskQueueValueToJsValue(record.get("value")),
+    data: taskQueueValueToJsValue(record.get("data")),
+  };
+  return taskQueueExpr(_expr, env, record.get("cont") as any);
+};
+
+export const jsValueToTaskQueueValue = (taskQueue: TaskQueue, value: any): TaskQueueValue => {
+  if (value === null) return null;
+  if (typeof value === "number" || typeof value === "string" || typeof value === "boolean" || typeof value === "symbol")
+    return value;
+  if (Array.isArray(value)) return taskQueueRecord(taskQueue, value.map(jsValueToTaskQueueValue));
+  if (typeof value === "object")
+    return taskQueueRecord(
+      taskQueue,
+      [],
+      Iterator.iterEntries(value)
+        .mapValues((v) => jsValueToTaskQueueValue(taskQueue, v))
+        .toObject()
+    );
+  if (typeof value === "function") return { kind: "function", channel: Symbol() };
+  return null;
+};
+
+export const taskQueueValueToJsValue = (value: TaskQueueValue): any => {
+  if (value === null) return null;
+  if (typeof value === "number" || typeof value === "string" || typeof value === "boolean" || typeof value === "symbol")
+    return value;
+  if (isTaskQueueRecord(value)) {
+    const v = value.tuple.map(taskQueueValueToJsValue);
+    Object.assign(v, value.record);
+    return v;
+  }
+  if (typeof value === "function") {
+    throw new Error("Not implemented");
+  }
+  return null;
+};
+
+export const initialTaskQueueContext = (): TaskQueueContext => {
+  const context = {
+    scope: new Scope<TaskQueueScopeValue>({
+      getter: { get: () => getterSymbol },
+      setter: { get: () => setterSymbol },
+    }),
+  };
 
   return context;
 };
