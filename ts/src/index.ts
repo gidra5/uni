@@ -7,7 +7,10 @@ import { parseTokens } from "./parser/tokens.js";
 import { parse } from "./parser/index.js";
 import { Compiler } from "./compiler/index.js";
 import { parseExprString } from "./parser/string.js";
-import { evaluate, initialContext } from "./evaluation/index.js";
+import { evaluate, taskQueueEvaluate } from "./evaluation/index.js";
+import { initialContext, initialTaskQueueContext } from "./evaluation/utils.js";
+import { TaskQueue } from "./evaluation/taskQueue.js";
+import { transform } from "./transformers/desugar.js";
 
 program
   .command("run <file>")
@@ -45,7 +48,57 @@ program
           try {
             const [tokens, tokenErrors] = parseTokens(line);
             const [ast, astErrors] = parse()(tokens);
-            const result = evaluate(ast, context);
+            const transformed = transform(ast);
+            console.dir({ transformed, ast, astErrors, tokenErrors }, { depth: null });
+            const result = evaluate(transformed, context);
+            console.log(result);
+          } catch (e) {
+            console.error(e);
+          }
+          break;
+        }
+      }
+
+      rl.prompt();
+    }).on("close", () => {
+      console.log("Have a great day!");
+      process.exit(0);
+    });
+  });
+
+program
+  .command("repl-tq [file]")
+  .description("Run interactive task queue environment with optional initial script/module")
+  .action((file) => {
+    const taskQueue = new TaskQueue();
+    const context = initialTaskQueueContext();
+    if (file) {
+      const code = fs.readFileSync(file, "utf-8");
+      const [tokens, tokenErrors] = parseTokens(code);
+      const [ast, astErrors] = parse()(tokens);
+      const resultSymbol = taskQueueEvaluate(taskQueue, transform(ast), context);
+      taskQueue.run();
+      const result = taskQueue.receive(resultSymbol);
+      console.log(result);
+    }
+    const rl = readline.createInterface({ input, output, prompt: ">> " });
+    rl.prompt();
+
+    rl.on("line", (_line) => {
+      const line = _line.trim();
+      switch (line) {
+        case "exit":
+          rl.close();
+          break;
+        default: {
+          try {
+            const [tokens, tokenErrors] = parseTokens(line);
+            const [ast, astErrors] = parse()(tokens);
+            const transformed = transform(ast);
+            console.dir({ transformed, ast, astErrors, tokenErrors }, { depth: null });
+            const resultSymbol = taskQueueEvaluate(taskQueue, transformed, context);
+            taskQueue.run();
+            const result = taskQueue.receive(resultSymbol);
             console.log(result);
           } catch (e) {
             console.error(e);

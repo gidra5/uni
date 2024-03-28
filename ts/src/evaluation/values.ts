@@ -1,7 +1,7 @@
-import { evaluate, taskQueueEvaluate } from ".";
+import { evaluate, taskQueueEvaluate } from "./index.js";
 import { AbstractSyntaxTree } from "../parser/ast";
-import { Scope } from "../scope";
-import { TaskQueue } from "./taskQueue";
+import { Scope } from "../scope.js";
+import { TaskQueue } from "./taskQueue.js";
 import {
   ExprValue,
   FunctionValue,

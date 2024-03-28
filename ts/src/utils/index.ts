@@ -6,6 +6,8 @@ import { traverse } from "../tree.js";
 
 export const identity = <T>(x: T): T => x;
 
+export const inspect = <T>(x: T): T => (console.dir(x, { depth: null }), x);
+
 export function assert(condition: any, msg?: string): asserts condition {
   if (condition) return;
   throw new Error(msg ? `Assertion failed: ${msg}` : "Assertion failed");

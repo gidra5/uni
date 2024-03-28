@@ -1,7 +1,7 @@
 import { Iterator } from "iterator-js";
-import { evaluate } from ".";
+import { evaluate } from "./index.js";
 import { AbstractSyntaxTree } from "../parser/ast";
-import { Scope } from "../scope";
+import { Scope } from "../scope.js";
 import {
   Context,
   ExprValue,
@@ -15,9 +15,9 @@ import {
   TaskQueueValue,
   Value,
 } from "./types";
-import { parseExprString } from "../parser/string";
-import { expr, fn, getterSymbol, record, setterSymbol, taskQueueExpr, taskQueueRecord } from "./values";
-import { TaskQueue } from "./taskQueue";
+import { parseExprString } from "../parser/string.js";
+import { expr, fn, getterSymbol, record, setterSymbol, taskQueueExpr, taskQueueRecord } from "./values.js";
+import { TaskQueue } from "./taskQueue.js";
 
 export const isRecord = (value: Value): value is RecordValue =>
   !!value && typeof value === "object" && value.kind === "record";

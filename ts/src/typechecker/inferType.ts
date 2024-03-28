@@ -1,4 +1,4 @@
-import { AbstractSyntaxTree, set } from "../parser/ast";
+import { AbstractSyntaxTree } from "../parser/ast";
 import { matchString } from "../parser/string";
 import { Scope } from "../scope";
 import { assert, setField } from "../utils";

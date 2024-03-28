@@ -1,7 +1,8 @@
-import { AbstractSyntaxTree, group, int, operator, placeholder, string } from "../parser/ast";
-import { comparisonOps } from "../parser/constants";
-import { templateString } from "../parser/string";
-import { traverse } from "../tree";
+import { AbstractSyntaxTree, group, int, operator, placeholder, string } from "../parser/ast.js";
+import { comparisonOps } from "../parser/constants.js";
+import { templateString } from "../parser/string.js";
+import { traverse } from "../tree.js";
+import { inspect } from "../utils/index.js";
 
 export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   // expressions
@@ -123,17 +124,19 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   );
 
   // ; to fn
-  traverse(
+  ast = traverse(
     ast,
     (node) => node.name === "operator" && node.value === ";",
     (node) => {
       return node.children.reduce(
         (acc, child) =>
-          acc.name === "placeholder"
-            ? child
-            : child.name === "placeholder"
-            ? acc
-            : templateString("(fn -> _) _", [child, acc]),
+          inspect(
+            acc.name === "placeholder"
+              ? child
+              : child.name === "placeholder"
+              ? acc
+              : templateString("(fn -> _) _", [child, acc])
+          ),
         placeholder()
       );
     }
