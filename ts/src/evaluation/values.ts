@@ -2,7 +2,7 @@ import { evaluate } from "./index.js";
 import { AbstractSyntaxTree } from "../parser/ast";
 import { Scope } from "../scope.js";
 import { TaskQueue } from "./taskQueue.js";
-import { ExprValue, FunctionValue, RecordValue, ScopeValue, Value } from "./types";
+import { ChannelValue, ExprValue, FunctionValue, ParallelValue, RecordValue, ScopeValue, Value } from "./types";
 
 export const recordSet =
   (tuple: Value[], record: Record<string | symbol, Value>, map: Map<Value, Value>) =>
@@ -81,6 +81,8 @@ export const fn =
     });
     return outChannel;
   };
+export const channel = (): ChannelValue => ({ kind: "channel", channel: Symbol() });
+export const parallel = (channels: symbol[]): ParallelValue => ({ kind: "parallel", channels });
 
 export const getterSymbol = Symbol();
 export const setterSymbol = Symbol();

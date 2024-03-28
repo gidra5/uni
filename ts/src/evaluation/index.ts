@@ -300,6 +300,48 @@ export const evaluate = (
           return evaluate(taskQueue, ast.children[0], context);
         }
 
+        case "channel": {
+          return taskQueue.createProduceTaskChannel(() => channel());
+        }
+        case "send": {
+          const channel = evaluate(taskQueue, ast.children[0], context);
+          const value = evaluate(taskQueue, ast.children[1], context);
+
+          return fanIn([channel, value], ([channel, value]) => {
+            // TODO: do blocking if channel is already full
+            taskQueue.send(channel as symbol, value);
+            return value;
+          });
+        }
+        case "receive": {
+          const channel = evaluate(taskQueue, ast.children[0], context);
+
+          return taskQueue.createTransformTaskOutChannel(channel, (channel) => channel);
+        }
+        case "peekSend": {
+          const channel = evaluate(taskQueue, ast.children[0], context);
+          const value = evaluate(taskQueue, ast.children[1], context);
+
+          return fanIn([channel, value], ([channel, value]) => {
+            if (taskQueue.ready(channel as symbol)) return getAtom("err");
+            taskQueue.send(channel as symbol, value);
+            return getAtom("ok");
+          });
+        }
+        case "peekReceive": {
+          const channel = evaluate(taskQueue, ast.children[0], context);
+
+          return taskQueue.createTransformTaskOutChannel(channel, (channel) => {
+            if (taskQueue.ready(channel as symbol)) return getAtom("ok");
+            return getAtom("ok");
+          });
+        }
+        case "parallel": {
+          const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
+
+          return taskQueue.createProduceTaskChannel(() => parallel(channels));
+        }
+
         case "ref":
         case "deref":
         case "free":
@@ -307,19 +349,13 @@ export const evaluate = (
           throw new Error("Not implemented");
         }
 
-        case "parallel":
-        case "send":
-        case "receive":
-        case "peekSend":
-        case "peekReceive":
-        case "channel":
         case "import":
         case "importWith":
+
+        // must be eliminated by that point
         case "export":
         case "exportAs":
         case "external":
-
-        // must be eliminated by that point
         case "pipe":
         case "async":
         case "await":
