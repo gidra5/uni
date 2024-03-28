@@ -6,7 +6,9 @@ import { parseExprString } from "../src/parser/string";
 import { parseTokens } from "../src/parser/tokens";
 import { parse } from "../src/parser";
 import { omitASTDataScope } from "../src/utils";
-import { evaluate } from "../src/evaluation";
+import { taskQueueEvaluate as evaluate } from "../src/evaluation";
+import { TaskQueue } from "../src/evaluation/taskQueue";
+import { transform } from "../src/transformers/desugar";
 
 export const errorsTestCase = (src, expectedErrors, _it: any = it) =>
   _it(`finds all errors in example '${src}'`, () => {
@@ -23,7 +25,10 @@ export const evalTestCase = (src, expectedValue?, expectedTree?) => {
   if (expectedTree) expect(_tree).toEqual(expectedTree);
   expect(_tree).toMatchSnapshot();
 
-  const result = evaluate(tree);
+  const taskQueue = new TaskQueue();
+  const resultSymbol = evaluate(taskQueue, transform(_tree));
+  taskQueue.run();
+  const result = taskQueue.receive(resultSymbol);
   if (expectedValue) expect(result).toEqual(expectedValue);
   expect(result).toMatchSnapshot();
 };
