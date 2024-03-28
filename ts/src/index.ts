@@ -94,8 +94,9 @@ program
           try {
             const [tokens, tokenErrors] = parseTokens(line);
             const [ast, astErrors] = parse()(tokens);
+            console.dir({ ast, astErrors, tokenErrors }, { depth: null });
             const transformed = transform(ast);
-            console.dir({ transformed, ast, astErrors, tokenErrors }, { depth: null });
+            console.dir({ transformed }, { depth: null });
             const resultSymbol = taskQueueEvaluate(taskQueue, transformed, context);
             taskQueue.run();
             const result = taskQueue.receive(resultSymbol);

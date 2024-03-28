@@ -81,8 +81,10 @@ export class TaskQueue {
 
   run() {
     while (true) {
-      console.dir(this, { depth: null });
+      // console.dir({ msg: "before check blocked", queue: this }, { depth: null });
       this.checkBlocked();
+      // console.dir({ msg: "after check blocked", queue: this }, { depth: null });
+      console.dir(this, { depth: null });
       if (this.queue.length === 0) break;
       this.executeNextTask();
     }
@@ -104,8 +106,13 @@ export class TaskQueue {
 
     const value = this.receive(task.inChannel);
 
-    if ("outChannel" in task) this.send(task.outChannel, task.task(value));
-    else task.task(value);
+    try {
+      const result = task.task(value) ?? null;
+      if ("outChannel" in task) this.send(task.outChannel, result);
+    } catch (e) {
+      console.log(e);
+      if ("outChannel" in task) this.cancel(task.outChannel);
+    }
   }
 
   private checkBlocked() {

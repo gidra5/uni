@@ -178,34 +178,34 @@ export const initialContext = (): Context => {
 export const isTaskQueueRecord = (value: TaskQueueValue): value is TaskQueueRecordValue =>
   !!value && typeof value === "object" && value.kind === "record";
 
-export const taskQueueExprToRecord = (taskQueue: TaskQueue, _expr: TaskQueueExprValue): TaskQueueRecordValue => {
-  const exprRecord: TaskQueueRecordValue = taskQueueRecord(taskQueue);
-  const children = _expr.ast.children.map<TaskQueueRecordValue>((child) =>
-    taskQueueExprToRecord(taskQueue, taskQueueExpr(child, _expr.scope))
-  );
+// export const taskQueueExprToRecord = (taskQueue: TaskQueue, _expr: TaskQueueExprValue): TaskQueueRecordValue => {
+//   const exprRecord: TaskQueueRecordValue = taskQueueRecord(taskQueue);
+//   const children = _expr.ast.children.map<TaskQueueRecordValue>((child) =>
+//     taskQueueExprToRecord(taskQueue, taskQueueExpr(child, _expr.scope))
+//   );
 
-  exprRecord.set("children", taskQueueRecord(taskQueue, children));
-  exprRecord.set("name", _expr.ast.name);
-  exprRecord.set("value", jsValueToTaskQueueValue(taskQueue, _expr.ast.value));
-  exprRecord.set("data", jsValueToTaskQueueValue(taskQueue, _expr.ast.data));
+//   exprRecord.set("children", taskQueueRecord(taskQueue, children));
+//   exprRecord.set("name", _expr.ast.name);
+//   exprRecord.set("value", jsValueToTaskQueueValue(taskQueue, _expr.ast.value));
+//   exprRecord.set("data", jsValueToTaskQueueValue(taskQueue, _expr.ast.data));
 
-  return taskQueueRecord(taskQueue, [], {
-    expr: exprRecord,
-    env: _expr.scope as unknown as TaskQueueValue,
-  });
-};
+//   return taskQueueRecord(taskQueue, [], {
+//     expr: exprRecord,
+//     env: _expr.scope as unknown as TaskQueueValue,
+//   });
+// };
 
-export const taskQueueRecordToExpr = (record: TaskQueueRecordValue): TaskQueueExprValue => {
-  const env = record.get("env") as any;
-  const children = record.get("children")! as TaskQueueRecordValue;
-  const _expr: AbstractSyntaxTree = {
-    children: children.tuple.map((child) => taskQueueRecordToExpr(child as TaskQueueRecordValue).ast),
-    name: record.get("name") as string,
-    value: taskQueueValueToJsValue(record.get("value")),
-    data: taskQueueValueToJsValue(record.get("data")),
-  };
-  return taskQueueExpr(_expr, env);
-};
+// export const taskQueueRecordToExpr = (record: TaskQueueRecordValue): TaskQueueExprValue => {
+//   const env = record.get("env") as any;
+//   const children = record.get("children")! as TaskQueueRecordValue;
+//   const _expr: AbstractSyntaxTree = {
+//     children: children.tuple.map((child) => taskQueueRecordToExpr(child as TaskQueueRecordValue).ast),
+//     name: record.get("name") as string,
+//     value: taskQueueValueToJsValue(record.get("value")),
+//     data: taskQueueValueToJsValue(record.get("data")),
+//   };
+//   return taskQueueExpr(_expr, env);
+// };
 
 export const jsValueToTaskQueueValue = (taskQueue: TaskQueue, value: any): TaskQueueValue => {
   if (value === null) return null;
@@ -243,10 +243,10 @@ export const initialTaskQueueContext = (taskQueue: TaskQueue): TaskQueueContext 
   const _eval = (argChannel) => {
     const outChannel = Symbol();
     taskQueue.createConsumeTask(argChannel, (exprVal) => {
-      const expr = exprVal as unknown as TaskQueueExprValue;
+      const expr = exprVal as TaskQueueExprValue;
       const inChannel = taskQueueEvaluate(taskQueue, expr.ast, { scope: expr.scope });
       taskQueue.createConsumeTask(inChannel, (val) => {
-        const expr = taskQueueRecordToExpr(val as TaskQueueRecordValue);
+        const expr = val as TaskQueueExprValue;
         const evalChannel = taskQueueEvaluate(taskQueue, expr.ast, { scope: expr.scope });
         taskQueue.pipe(evalChannel, outChannel);
       });

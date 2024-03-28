@@ -150,6 +150,10 @@ describe("expressions", () => {
   });
 
   describe("function expressions", () => {
+    test("iife id", () => {
+      const src = `(macro -> eval #0)()`;
+      evalTestCase(src);
+    });
     test("function with no arg", () => {
       const src = `fn -> #0`;
       evalTestCase(src);
@@ -273,6 +277,10 @@ describe("expressions", () => {
   });
 
   describe.todo("structured programming", () => {
+    test("label", () => {
+      const src = `x:=label::((label 1),2)`;
+      evalTestCase(src);
+    });
     test("if-then", () => {
       const src = `y := (
         x := 25 

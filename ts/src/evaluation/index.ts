@@ -10,14 +10,7 @@ import {
   TaskQueueValue,
   Value,
 } from "./types.js";
-import {
-  exprToRecord,
-  initialContext,
-  initialTaskQueueContext,
-  isRecord,
-  isTaskQueueRecord,
-  taskQueueExprToRecord,
-} from "./utils.js";
+import { exprToRecord, initialContext, initialTaskQueueContext, isRecord, isTaskQueueRecord } from "./utils.js";
 import { expr, fn, record, taskQueueExpr, taskQueueFn, taskQueueRecord } from "./values.js";
 import { getAtom } from "./atoms.js";
 import { TaskQueue } from "./taskQueue.js";
@@ -428,6 +421,7 @@ const taskQueueFanIn =
     const vals: TaskQueueValue[] = [];
     const outChannel = Symbol("fanIn.out");
 
+    // TODO: memory leak, because if any of input channels' tasks are cancelled, the outChannel will never be resolved, leaving dangling tasks
     for (const channel of channels) {
       taskQueue.createConsumeTask(channel, (val) => {
         vals.push(val);
@@ -569,16 +563,35 @@ export const taskQueueEvaluate = (
 
         case "macro": {
           const scope = context.scope;
-          const name = ast.children[0].value;
           return taskQueue.createProduceTaskChannel(() => (argChannel) => {
             const outChannel = Symbol("macro.out");
             taskQueue.createConsumeTask(argChannel, (_arg) => {
               const arg = _arg as unknown as TaskQueueExprValue;
-              const exprRecord = taskQueueExprToRecord(taskQueue, arg);
-              const boundScope =
-                name !== undefined ? scope.add(name, { get: () => exprRecord }) : scope.push({ get: () => exprRecord });
+              const boundScope = scope.push({ get: () => arg });
 
-              const resultChannel = taskQueueEvaluate(taskQueue, ast.children[1], { scope: boundScope });
+              const resultChannel = taskQueueEvaluate(taskQueue, ast.children[0], { scope: boundScope });
+              taskQueue.pipe(resultChannel, outChannel);
+            });
+            return outChannel;
+          });
+        }
+
+        case "fn": {
+          const scope = context.scope;
+          return taskQueue.createProduceTaskChannel(() => (argChannel) => {
+            const outChannel = Symbol("fn.out");
+            const evalArgChannel = Symbol("fnArg.out");
+
+            taskQueue.createConsumeTask(argChannel, (_arg) => {
+              const arg = _arg as unknown as TaskQueueExprValue;
+              const evalArg = taskQueueEvaluate(taskQueue, arg.ast, { scope: arg.scope });
+              taskQueue.pipe(evalArg, evalArgChannel);
+            });
+
+            taskQueue.createConsumeTask(evalArgChannel, (arg) => {
+              const boundScope = scope.push({ get: () => arg });
+
+              const resultChannel = taskQueueEvaluate(taskQueue, ast.children[0], { scope: boundScope });
               taskQueue.pipe(resultChannel, outChannel);
             });
             return outChannel;

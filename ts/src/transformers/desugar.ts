@@ -40,9 +40,12 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   // unit
   traverse(
     ast,
-    (node) => node.name === "operator" && node.value === "parens" && node.children.length === 0,
+    (node) => node.name === "operator" && node.value === "parens",
     (node) => {
+      if (node.children.length > 1) return;
+      if (node.children.length === 1 && node.children[0].name !== "placeholder") return;
       node.value = "unit";
+      node.children = [];
     }
   );
 
@@ -304,21 +307,13 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     }
   );
 
-  // fn to typed fn
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "fn",
-    (node) => {
-      node.children = [node.children[0], placeholder(), node.children[1]];
-    }
-  );
-
   // fnArrowBlock to fn
   traverse(
     ast,
     (node) => node.name === "operator" && node.value === "fnArrowBlock",
     (node) => {
       node.value = "fn";
+      node.children = [node.children[0], node.children[2]];
     }
   );
 
@@ -327,21 +322,22 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     ast,
     (node) => node.name === "operator" && node.value === "fn",
     (node) => {
-      const [params, returnType, body] = node.children;
+      const [params, body] = node.children;
       if (params.value !== ",") return node;
       const param = params.children.pop()!;
-      const fn = operator("fn", param, returnType, body);
-      return params.children.reduceRight((acc, param) => operator("fn", param, placeholder(), acc), fn);
+      const fn = operator("fn", param, body);
+      return params.children.reduceRight((acc, param) => operator("fn", param, acc), fn);
     }
   );
 
-  // fn to macro
+  // function arg to nameless binding
   traverse(
     ast,
     (node) => node.name === "operator" && node.value === "fn",
     (node) => {
-      const [param, returnType, body] = node.children;
-      return templateString("macro _ -> _ { (macro _ -> _) (eval #0) }", [placeholder(), returnType, param, body]);
+      const [param, body] = node.children;
+      if (param.name === "placeholder") return operator("fn", body);
+      return operator("fn", operator("application", operator("fn", body), templateString("_ := #0", [param])));
     }
   );
 
@@ -354,21 +350,26 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     }
   );
 
-  // macro to typed macro
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "macro",
-    (node) => {
-      node.children = [node.children[0], placeholder(), node.children[1]];
-    }
-  );
-
   // macroArrowBlock to macro
   traverse(
     ast,
     (node) => node.name === "operator" && node.value === "macroArrowBlock",
     (node) => {
       node.value = "macro";
+      node.children = [node.children[0], node.children[2]];
+    }
+  );
+
+  // macro argument list to curried macro
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "macro",
+    (node) => {
+      const [params, body] = node.children;
+      if (params.value !== ",") return node;
+      const param = params.children.pop()!;
+      const fn = operator("macro", param, body);
+      return params.children.reduceRight((acc, param) => operator("macro", param, acc), fn);
     }
   );
 
@@ -377,13 +378,9 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     ast,
     (node) => node.name === "operator" && node.value === "macro",
     (node) => {
-      const [param, returnType, body] = node.children;
-      if (param.name === "placeholder") return operator("macro", returnType, body);
-      return operator(
-        "macro",
-        returnType,
-        templateString("(macro _ -> _ { _ }) (_ := #0)", [placeholder(), placeholder(), param, body])
-      );
+      const [param, body] = node.children;
+      if (param.name === "placeholder") return operator("macro", body);
+      return operator("macro", operator("application", operator("macro", body), templateString("_ := #0", [param])));
     }
   );
 
