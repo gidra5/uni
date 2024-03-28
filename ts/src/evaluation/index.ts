@@ -442,7 +442,7 @@ const taskQueueFanIn =
 export const taskQueueEvaluate = (
   taskQueue: TaskQueue,
   ast: AbstractSyntaxTree,
-  context = initialTaskQueueContext()
+  context = initialTaskQueueContext(taskQueue)
 ): symbol => {
   const fanIn = taskQueueFanIn(taskQueue);
   const res = (() => {
@@ -569,8 +569,9 @@ export const taskQueueEvaluate = (
           case "macro": {
             const scope = context.scope;
             const name = ast.children[0].value;
-            return taskQueue.createProduceTaskChannel(() =>
-              taskQueueFn(taskQueue, (_arg) => {
+            return taskQueue.createProduceTaskChannel(() => (argChannel) => {
+              const outChannel = Symbol();
+              taskQueue.createConsumeTask(argChannel, (_arg) => {
                 const arg = _arg as unknown as TaskQueueExprValue;
                 const exprRecord = taskQueueExprToRecord(taskQueue, arg);
                 const boundScope =
@@ -578,10 +579,11 @@ export const taskQueueEvaluate = (
                     ? scope.add(name, { get: () => exprRecord })
                     : scope.push({ get: () => exprRecord });
 
-                taskQueueEvaluate(taskQueue, ast.children[1], { scope: boundScope, continuation: arg.continuation });
-                return null;
-              })
-            );
+                const resultChannel = taskQueueEvaluate(taskQueue, ast.children[1], { scope: boundScope });
+                taskQueue.pipe(resultChannel, outChannel);
+              });
+              return outChannel;
+            });
           }
 
           case "#": {
@@ -683,12 +685,15 @@ export const taskQueueEvaluate = (
 
           case "application": {
             const fnChannel = taskQueueEvaluate(taskQueue, ast.children[0], context);
-
-            return taskQueue.createTransformTaskOutChannel(fnChannel, (fn) => {
+            const argChannel = taskQueue.createProduceTaskChannel(() =>
+              taskQueueExpr(ast.children[1], context.scope, context.continuation)
+            );
+            const outChannel = Symbol();
+            taskQueue.createConsumeTask(fnChannel, (fn) => {
               const func = fn as TaskQueueFunctionValue;
-              taskQueue.send(func.channel, taskQueueExpr(ast.children[1], context.scope, context.continuation));
-              return null;
+              taskQueue.pipe(func(argChannel), outChannel);
             });
+            return outChannel;
           }
           case "symbol": {
             return taskQueue.createProduceTaskChannel(() => Symbol());

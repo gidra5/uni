@@ -71,7 +71,7 @@ program
   .description("Run interactive task queue environment with optional initial script/module")
   .action((file) => {
     const taskQueue = new TaskQueue();
-    const context = initialTaskQueueContext();
+    const context = initialTaskQueueContext(taskQueue);
     if (file) {
       const code = fs.readFileSync(file, "utf-8");
       const [tokens, tokenErrors] = parseTokens(code);

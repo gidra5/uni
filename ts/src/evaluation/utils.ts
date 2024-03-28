@@ -1,5 +1,5 @@
 import { Iterator } from "iterator-js";
-import { evaluate } from "./index.js";
+import { evaluate, taskQueueEvaluate } from "./index.js";
 import { AbstractSyntaxTree } from "../parser/ast";
 import { Scope } from "../scope.js";
 import {
@@ -16,7 +16,7 @@ import {
   Value,
 } from "./types";
 import { parseExprString } from "../parser/string.js";
-import { expr, fn, getterSymbol, record, setterSymbol, taskQueueExpr, taskQueueRecord } from "./values.js";
+import { expr, fn, getterSymbol, record, setterSymbol, taskQueueExpr, taskQueueFn, taskQueueRecord } from "./values.js";
 import { TaskQueue } from "./taskQueue.js";
 
 export const isRecord = (value: Value): value is RecordValue =>
@@ -221,7 +221,7 @@ export const jsValueToTaskQueueValue = (taskQueue: TaskQueue, value: any): TaskQ
         .mapValues((v) => jsValueToTaskQueueValue(taskQueue, v))
         .toObject()
     );
-  if (typeof value === "function") return { kind: "function", channel: Symbol() };
+  if (typeof value === "function") return value;
   return null;
 };
 
@@ -240,12 +240,27 @@ export const taskQueueValueToJsValue = (value: TaskQueueValue): any => {
   return null;
 };
 
-export const initialTaskQueueContext = (): TaskQueueContext => {
+export const initialTaskQueueContext = (taskQueue: TaskQueue): TaskQueueContext => {
+  const _eval = (argChannel) => {
+    const outChannel = Symbol();
+    taskQueue.createConsumeTask(argChannel, (exprVal) => {
+      const expr = exprVal as unknown as TaskQueueExprValue;
+      const inChannel = taskQueueEvaluate(taskQueue, expr.ast, { scope: expr.scope });
+      taskQueue.createConsumeTask(inChannel, (val) => {
+        const expr = taskQueueRecordToExpr(val as TaskQueueRecordValue);
+        const evalChannel = taskQueueEvaluate(taskQueue, expr.ast, { scope: expr.scope });
+        taskQueue.pipe(evalChannel, outChannel);
+      });
+    });
+    return outChannel;
+  };
   const context = {
     scope: new Scope<TaskQueueScopeValue>({
+      eval: { get: () => _eval },
       getter: { get: () => getterSymbol },
       setter: { get: () => setterSymbol },
     }),
+    taskQueue,
   };
 
   return context;

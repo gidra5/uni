@@ -164,27 +164,17 @@ export const taskQueueExpr = (
   scope: Scope<TaskQueueScopeValue>,
   continuation?: symbol
 ): TaskQueueExprValue => ({ kind: "expr", ast, scope, continuation });
-export const taskQueueFn = (
-  taskQueue: TaskQueue,
-  value: (arg: TaskQueueValue) => TaskQueueValue
-): TaskQueueFunctionValue => {
-  const argChannel: symbol = Symbol();
-  let cont: symbol | undefined;
-  const channel = taskQueue.createConsumeTaskChannel((exprVal) => {
-    const expr = exprVal as unknown as TaskQueueExprValue;
-    cont = expr.continuation;
-    taskQueueEvaluate(taskQueue, expr.ast, { scope: expr.scope, continuation: argChannel });
-  });
-  taskQueue.createConsumeTask(argChannel, (val) => {
-    const result = value(val);
-    if (cont === undefined) return;
-    taskQueue.send(cont, result);
-  });
-  return {
-    kind: "function",
-    channel,
+export const taskQueueFn =
+  (taskQueue: TaskQueue, value: (arg: TaskQueueValue) => TaskQueueValue): TaskQueueFunctionValue =>
+  (argChannel) => {
+    const outChannel = Symbol();
+    taskQueue.createConsumeTask(argChannel, (exprVal) => {
+      const expr = exprVal as unknown as TaskQueueExprValue;
+      const inChannel = taskQueueEvaluate(taskQueue, expr.ast, { scope: expr.scope });
+      taskQueue.createTransformTask(inChannel, outChannel, value);
+    });
+    return outChannel;
   };
-};
 
 export const getterSymbol = Symbol();
 export const setterSymbol = Symbol();

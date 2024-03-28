@@ -41,7 +41,7 @@ export type TaskQueueRecordValue = {
   map: Map<TaskQueueValue, TaskQueueValue>;
 };
 export type TaskQueueTypeValue = { kind: "type"; name: string; value: TaskQueueValue };
-export type TaskQueueFunctionValue = { kind: "function"; channel: symbol };
+export type TaskQueueFunctionValue = (argChannel: symbol) => symbol;
 export type TaskQueueValue =
   | number
   | string

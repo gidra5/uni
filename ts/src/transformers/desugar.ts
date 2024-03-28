@@ -56,15 +56,6 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     }
   );
 
-  // eliminate parentheses
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "parens",
-    (node) => {
-      return node.children[0];
-    }
-  );
-
   // comparison sequence to and of comparisons
   traverse(
     ast,
@@ -350,7 +341,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) => node.name === "operator" && node.value === "fn",
     (node) => {
       const [param, returnType, body] = node.children;
-      return templateString("macro -> _ { (macro _ -> _) (eval #0) }", [returnType, param, body]);
+      return templateString("macro _ -> _ { (macro _ -> _) (eval #0) }", [placeholder(), returnType, param, body]);
     }
   );
 
@@ -388,7 +379,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) => {
       const [param, returnType, body] = node.children;
       if (param.name === "placeholder") return operator("macro", returnType, body);
-      return operator("macro", returnType, templateString("{ _ := #0; _ }", [param, body]));
+      return operator("macro", returnType, templateString("(macro _ -> _) (_ := #0)", [placeholder(), param, body]));
     }
   );
 
@@ -421,7 +412,14 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     true
   );
 
+  // eliminate parentheses
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "parens",
+    (node) => {
+      return node.children[0];
+    }
+  );
+
   return ast;
 };
-
-/* (fn -> #0 * 2) 4 */
