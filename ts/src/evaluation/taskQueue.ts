@@ -1,4 +1,4 @@
-import { TaskQueueValue, type Value } from "./types";
+import { TaskQueueValue } from "./types";
 
 type ProduceTask = { task: (val: void) => TaskQueueValue; outChannel: symbol };
 type TransformTask = { task: (val: TaskQueueValue) => TaskQueueValue; inChannel: symbol; outChannel: symbol };
@@ -8,7 +8,6 @@ type Task = TransformTask | ConsumeTask | ProduceTask | PureTask;
 export class TaskQueue {
   private queue: Task[] = [];
   private blocked: (ConsumeTask | TransformTask)[] = [];
-  private orphans: (ProduceTask | TransformTask)[] = [];
   private channels: Record<symbol, TaskQueueValue> = {};
 
   createTask(task: () => void) {
@@ -28,32 +27,32 @@ export class TaskQueue {
   }
 
   createConsumeTaskChannel(task: (val: TaskQueueValue) => void): symbol {
-    const channel = Symbol();
+    const channel = Symbol("consume");
     this.createConsumeTask(channel, task);
     return channel;
   }
 
   createProduceTaskChannel(task: () => TaskQueueValue): symbol {
-    const channel = Symbol();
+    const channel = Symbol("produce");
     this.createProduceTask(channel, task);
     return channel;
   }
 
   createTransformTaskInChannel(outChannel: symbol, task: (val: TaskQueueValue) => TaskQueueValue): symbol {
-    const inChannel = Symbol();
+    const inChannel = Symbol("transform.in");
     this.createTransformTask(inChannel, outChannel, task);
     return inChannel;
   }
 
   createTransformTaskOutChannel(inChannel: symbol, task: (val: TaskQueueValue) => TaskQueueValue): symbol {
-    const outChannel = Symbol();
+    const outChannel = Symbol("transform.out");
     this.createTransformTask(inChannel, outChannel, task);
     return outChannel;
   }
 
   createTransformTaskChannels(task: (val: TaskQueueValue) => TaskQueueValue): [inChannel: symbol, outChannel: symbol] {
-    const inChannel = Symbol();
-    const outChannel = Symbol();
+    const inChannel = Symbol("transform.in");
+    const outChannel = Symbol("transform.out");
     this.createTransformTask(inChannel, outChannel, task);
     return [inChannel, outChannel];
   }
@@ -84,7 +83,6 @@ export class TaskQueue {
     while (true) {
       console.dir(this, { depth: null });
       this.checkBlocked();
-      this.checkOrphans();
       if (this.queue.length === 0) break;
       this.executeNextTask();
     }
@@ -119,21 +117,12 @@ export class TaskQueue {
     }
   }
 
-  private checkOrphans() {
-    for (let i = this.orphans.length - 1; i >= 0; i--) {
-      const task = this.orphans[i];
-      if (!this.blocked.some((t) => t.inChannel === task.outChannel)) continue;
-      this.orphans.splice(i, 1);
-      this.queue.push(task);
-    }
-  }
-
   cancel(channel: symbol) {
     const dependant = [...this.blocked, ...this.queue].filter(
       (task) => "inChannel" in task && task.inChannel === channel
     );
-    this.blocked = this.blocked.filter((task) => dependant.includes(task));
-    this.queue = this.queue.filter((task) => dependant.includes(task));
+    this.blocked = this.blocked.filter((task) => !dependant.includes(task));
+    this.queue = this.queue.filter((task) => !dependant.includes(task));
 
     for (const task of dependant) {
       if ("outChannel" in task) this.cancel(task.outChannel);

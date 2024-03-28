@@ -29,7 +29,6 @@ export type TaskQueueExprValue = {
   kind: "expr";
   ast: AbstractSyntaxTree;
   scope: Scope<TaskQueueScopeValue>;
-  continuation?: symbol;
 };
 export type TaskQueueRecordValue = {
   kind: "record";
@@ -52,4 +51,4 @@ export type TaskQueueValue =
   | TaskQueueRecordValue
   | SymbolValue
   | TaskQueueTypeValue;
-export type TaskQueueContext = { scope: Scope<TaskQueueScopeValue>; continuation?: symbol };
+export type TaskQueueContext = { scope: Scope<TaskQueueScopeValue> };

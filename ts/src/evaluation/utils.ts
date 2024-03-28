@@ -192,7 +192,6 @@ export const taskQueueExprToRecord = (taskQueue: TaskQueue, _expr: TaskQueueExpr
   return taskQueueRecord(taskQueue, [], {
     expr: exprRecord,
     env: _expr.scope as unknown as TaskQueueValue,
-    cont: (_expr.continuation ?? null) as unknown as TaskQueueValue,
   });
 };
 
@@ -205,7 +204,7 @@ export const taskQueueRecordToExpr = (record: TaskQueueRecordValue): TaskQueueEx
     value: taskQueueValueToJsValue(record.get("value")),
     data: taskQueueValueToJsValue(record.get("data")),
   };
-  return taskQueueExpr(_expr, env, record.get("cont") as any);
+  return taskQueueExpr(_expr, env);
 };
 
 export const jsValueToTaskQueueValue = (taskQueue: TaskQueue, value: any): TaskQueueValue => {

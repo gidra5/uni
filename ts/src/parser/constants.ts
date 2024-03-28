@@ -140,8 +140,8 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   peekReceive: { separators: matchSeparators(["<-?"]), precedence: [null, 2] },
   peekSend: { separators: matchSeparators(["?<-"]), precedence: rightAssociative(2) },
 
-  "=": { separators: matchSeparators(["="]), precedence: rightAssociative(semicolonPrecedence + 1) },
-  ":=": { separators: matchSeparators([":="]), precedence: rightAssociative(semicolonPrecedence + 1) },
+  "=": { separators: matchSeparators(["="]), precedence: rightAssociative(assignmentPrecedence) },
+  ":=": { separators: matchSeparators([":="]), precedence: rightAssociative(assignmentPrecedence) },
 
   symbol: { separators: matchSeparators(["symbol"]), precedence: [null, null] },
   atom: { separators: matchSeparators([":"]), precedence: [null, maxPrecedence] },
@@ -172,7 +172,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     precedence: [null, 2],
   },
   label: { separators: matchSeparators([":"]), precedence: rightAssociative(tuplePrecedence + 2) },
-  codeLabel: { separators: matchSeparators(["::"]), precedence: leftAssociative(semicolonPrecedence + 1) },
+  codeLabel: { separators: matchSeparators(["::"]), precedence: leftAssociative(assignmentPrecedence + 1) },
   operator: {
     separators: matchSeparators(["operator"]),
     precedence: [null, assignmentPrecedence + 1],

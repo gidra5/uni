@@ -159,15 +159,15 @@ export const taskQueueRecord = (
   record,
   map,
 });
-export const taskQueueExpr = (
-  ast: AbstractSyntaxTree,
-  scope: Scope<TaskQueueScopeValue>,
-  continuation?: symbol
-): TaskQueueExprValue => ({ kind: "expr", ast, scope, continuation });
+export const taskQueueExpr = (ast: AbstractSyntaxTree, scope: Scope<TaskQueueScopeValue>): TaskQueueExprValue => ({
+  kind: "expr",
+  ast,
+  scope,
+});
 export const taskQueueFn =
   (taskQueue: TaskQueue, value: (arg: TaskQueueValue) => TaskQueueValue): TaskQueueFunctionValue =>
   (argChannel) => {
-    const outChannel = Symbol();
+    const outChannel = Symbol("taskQueueFn.out");
     taskQueue.createConsumeTask(argChannel, (exprVal) => {
       const expr = exprVal as unknown as TaskQueueExprValue;
       const inChannel = taskQueueEvaluate(taskQueue, expr.ast, { scope: expr.scope });

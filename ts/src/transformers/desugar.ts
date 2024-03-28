@@ -126,7 +126,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
               ? child
               : child.name === "placeholder"
               ? acc
-              : templateString("(fn -> _) _", [child, acc])
+              : templateString("(fn _ -> _) _", [placeholder(), child, acc])
           ),
         placeholder()
       );
@@ -278,8 +278,8 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) => {
       const [expr] = node.children;
       return templateString(
-        "(fn x -> x x) (fn self -> fn -> label::(continue := fn -> label (self self ()); break := label; _)) ()",
-        [expr]
+        "(fn x -> x x) (fn self -> fn -> label::(continue := fn _ -> label (self self ()); break := label; _)) ()",
+        [placeholder(), expr]
       );
     }
   );
@@ -379,7 +379,11 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) => {
       const [param, returnType, body] = node.children;
       if (param.name === "placeholder") return operator("macro", returnType, body);
-      return operator("macro", returnType, templateString("(macro _ -> _) (_ := #0)", [placeholder(), param, body]));
+      return operator(
+        "macro",
+        returnType,
+        templateString("(macro _ -> _ { _ }) (_ := #0)", [placeholder(), placeholder(), param, body])
+      );
     }
   );
 
