@@ -6,30 +6,12 @@ import { expr, fn, record } from "./values.js";
 import { getAtom } from "./atoms.js";
 import { TaskQueue } from "./taskQueue.js";
 
-const taskQueueFanIn =
-  (taskQueue: TaskQueue) =>
-  (channels: symbol[], task: (vals: Value[]) => Value): symbol => {
-    const vals: Value[] = [];
-    const outChannel = Symbol("fanIn.out");
-
-    // TODO: memory leak, because if any of input channels' tasks are cancelled, the outChannel will never be resolved, leaving dangling tasks
-    for (const channel of channels) {
-      taskQueue.createConsumeTask(channel, (val) => {
-        vals.push(val);
-        if (vals.length === channels.length) {
-          taskQueue.send(outChannel, task(vals));
-        }
-      });
-    }
-    return outChannel;
-  };
 
 export const evaluate = (
   taskQueue: TaskQueue,
   ast: AbstractSyntaxTree,
   context = initialContext(taskQueue)
 ): symbol => {
-  const fanIn = taskQueueFanIn(taskQueue);
   switch (ast.name) {
     case "operator": {
       switch (ast.value) {
@@ -44,32 +26,32 @@ export const evaluate = (
         case "+": {
           const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
 
-          return fanIn(channels, (vals) => vals.reduce((acc: number, val) => acc + (val as number), 0));
+          return taskQueue.fanIn(channels, (vals) => vals.reduce((acc: number, val) => acc + (val as number), 0));
         }
         case "*": {
           const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
 
-          return fanIn(channels, (vals) => vals.reduce((acc: number, val) => acc * (val as number), 1));
+          return taskQueue.fanIn(channels, (vals) => vals.reduce((acc: number, val) => acc * (val as number), 1));
         }
         case "-": {
           const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
 
-          return fanIn(channels, ([left, right]) => (left as number) - (right as number));
+          return taskQueue.fanIn(channels, ([left, right]) => (left as number) - (right as number));
         }
         case "/": {
           const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
 
-          return fanIn(channels, ([left, right]) => (left as number) / (right as number));
+          return taskQueue.fanIn(channels, ([left, right]) => (left as number) / (right as number));
         }
         case "%": {
           const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
 
-          return fanIn(channels, ([left, right]) => (left as number) % (right as number));
+          return taskQueue.fanIn(channels, ([left, right]) => (left as number) % (right as number));
         }
         case "^": {
           const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
 
-          return fanIn(channels, ([left, right]) => Math.pow(left as number, right as number));
+          return taskQueue.fanIn(channels, ([left, right]) => Math.pow(left as number, right as number));
         }
 
         case "set": {
@@ -77,7 +59,7 @@ export const evaluate = (
           const key = evaluate(taskQueue, ast.children[1], context);
           const value = evaluate(taskQueue, ast.children[2], context);
 
-          return fanIn([tuple, key, value], ([tupleVal, keyVal, valueVal]) => {
+          return taskQueue.fanIn([tuple, key, value], ([tupleVal, keyVal, valueVal]) => {
             const record = tupleVal as RecordValue;
             record.set(keyVal, valueVal);
             return record;
@@ -87,7 +69,7 @@ export const evaluate = (
           const tuple = evaluate(taskQueue, ast.children[0], context);
           const value = evaluate(taskQueue, ast.children[1], context);
 
-          return fanIn([tuple, value], ([tupleVal, valueVal]) => {
+          return taskQueue.fanIn([tuple, value], ([tupleVal, valueVal]) => {
             const record = tupleVal as RecordValue;
             // console.log("push", record);
 
@@ -99,7 +81,7 @@ export const evaluate = (
           const tuple = evaluate(taskQueue, ast.children[0], context);
           const value = evaluate(taskQueue, ast.children[1], context);
 
-          return fanIn([tuple, value], ([tupleVal, valueVal]) => {
+          return taskQueue.fanIn([tuple, value], ([tupleVal, valueVal]) => {
             if (!isRecord(valueVal)) return tupleVal;
             const record = tupleVal as RecordValue;
             valueVal.tuple.forEach((value) => record.tuple.push(value));
@@ -115,7 +97,7 @@ export const evaluate = (
         case "in": {
           const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
 
-          return fanIn(channels, ([left, right]) => {
+          return taskQueue.fanIn(channels, ([left, right]) => {
             const record = right as RecordValue;
             return record.has(left);
           });
@@ -123,22 +105,22 @@ export const evaluate = (
         case "and": {
           const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
 
-          return fanIn(channels, (vals) => vals.every((val) => val));
+          return taskQueue.fanIn(channels, (vals) => vals.every((val) => val));
         }
         case "or": {
           const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
 
-          return fanIn(channels, (vals) => vals.some((val) => val));
+          return taskQueue.fanIn(channels, (vals) => vals.some((val) => val));
         }
         case "==": {
           const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
 
-          return fanIn(channels, ([left, right]) => left === right);
+          return taskQueue.fanIn(channels, ([left, right]) => left === right);
         }
         case "===": {
           const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
 
-          return fanIn(channels, ([left, right]) => isEqual(left, right));
+          return taskQueue.fanIn(channels, ([left, right]) => isEqual(left, right));
         }
         case "!": {
           return taskQueue.createTransformTaskOutChannel(evaluate(taskQueue, ast.children[0], context), (val) => !val);
@@ -146,7 +128,7 @@ export const evaluate = (
         case "<": {
           const channels = ast.children.map((child) => evaluate(taskQueue, child, context));
 
-          return fanIn(channels, ([left, right]) => (left as number) < (right as number));
+          return taskQueue.fanIn(channels, ([left, right]) => (left as number) < (right as number));
         }
 
         case "macro": {
@@ -222,7 +204,7 @@ export const evaluate = (
                 ? taskQueue.createProduceTaskChannel(() => recordFieldNode.value)
                 : evaluate(taskQueue, recordFieldNode, context);
 
-            return fanIn([record, key, value], ([recordVal, keyVal, valueVal]) => {
+            return taskQueue.fanIn([record, key, value], ([recordVal, keyVal, valueVal]) => {
               const record = recordVal as RecordValue;
               record.set(keyVal, valueVal);
               return valueVal;
@@ -234,7 +216,7 @@ export const evaluate = (
               ? taskQueue.createProduceTaskChannel(() => ast.children[0].value)
               : evaluate(taskQueue, ast.children[0], context);
 
-          return fanIn([name, value], ([nameVal, valueVal]) => {
+          return taskQueue.fanIn([name, value], ([nameVal, valueVal]) => {
             const entryIndex = context.scope.toIndex({ name: nameVal as string });
             const entry = context.scope.scope[entryIndex];
             entry?.value.set?.(valueVal);
@@ -249,7 +231,7 @@ export const evaluate = (
               ? taskQueue.createProduceTaskChannel(() => ast.children[0].value)
               : evaluate(taskQueue, ast.children[0], context);
 
-          return fanIn([name, value], ([nameVal, valueVal]) => {
+          return taskQueue.fanIn([name, value], ([nameVal, valueVal]) => {
             context.scope = context.scope.add(nameVal as string, { get: () => valueVal });
             return valueVal;
           });
@@ -270,7 +252,7 @@ export const evaluate = (
           const record = evaluate(taskQueue, ast.children[0], context);
           const key = evaluate(taskQueue, ast.children[1], context);
 
-          return fanIn([record, key], ([recordVal, keyVal]) => {
+          return taskQueue.fanIn([record, key], ([recordVal, keyVal]) => {
             const record = recordVal as RecordValue;
             return record.get(keyVal);
           });
@@ -307,7 +289,7 @@ export const evaluate = (
           const channel = evaluate(taskQueue, ast.children[0], context);
           const value = evaluate(taskQueue, ast.children[1], context);
 
-          return fanIn([channel, value], ([channel, value]) => {
+          return taskQueue.fanIn([channel, value], ([channel, value]) => {
             // TODO: do blocking if channel is already full
             taskQueue.send(channel as symbol, value);
             return value;
@@ -322,7 +304,7 @@ export const evaluate = (
           const channel = evaluate(taskQueue, ast.children[0], context);
           const value = evaluate(taskQueue, ast.children[1], context);
 
-          return fanIn([channel, value], ([channel, value]) => {
+          return taskQueue.fanIn([channel, value], ([channel, value]) => {
             if (taskQueue.ready(channel as symbol)) return getAtom("err");
             taskQueue.send(channel as symbol, value);
             return getAtom("ok");

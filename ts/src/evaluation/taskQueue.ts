@@ -61,6 +61,22 @@ export class TaskQueue {
     this.createTransformTask(inChannel, outChannel, (val) => val);
   }
 
+  fanIn(channels: symbol[], task: (vals: Value[]) => Value): symbol {
+    const vals: Value[] = [];
+    const outChannel = Symbol("fanIn.out");
+
+    // TODO: memory leak, because if any of input channels' tasks are cancelled, the outChannel will never be resolved, leaving dangling tasks
+    for (const channel of channels) {
+      this.createConsumeTask(channel, (val) => {
+        vals.push(val);
+        if (vals.length === channels.length) {
+          this.send(outChannel, task(vals));
+        }
+      });
+    }
+    return outChannel;
+  }
+
   send(channel: symbol, value: Value) {
     if (value !== null) {
       this.channels[channel] = value;
