@@ -164,6 +164,17 @@ export const evaluate = (
           });
         }
 
+        case "eval": {
+          const outChannel = Symbol();
+          const argChannel = evaluate(taskQueue, ast.children[0], context);
+          taskQueue.createConsumeTask(argChannel, (exprVal) => {
+            const expr = exprVal as ExprValue;
+            const channel = evaluate(taskQueue, expr.ast, { scope: expr.scope });
+            taskQueue.pipe(channel, outChannel);
+          });
+          return outChannel;
+        }
+
         case "codeLabel": {
           const label = ast.children[0].value;
           const expr = ast.children[1];
