@@ -4,6 +4,9 @@ import { Scope } from "../scope.js";
 import { TaskQueue } from "./taskQueue.js";
 import { ChannelValue, ExprValue, FunctionValue, ParallelValue, RecordValue, ScopeValue, Value } from "./types";
 
+export const isRecord = (value: Value): value is RecordValue =>
+  !!value && typeof value === "object" && value.kind === "record";
+
 export const recordSet =
   (tuple: Value[], record: Record<string | symbol, Value>, map: Map<Value, Value>) =>
   (key: Value, value: Value): void => {

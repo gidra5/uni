@@ -44,7 +44,8 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) => {
       if (node.children.length > 1) return;
       if (node.children.length === 1 && node.children[0].name !== "placeholder") return;
-      node.value = "unit";
+      node.name = "unit";
+      delete node.value;
       node.children = [];
     }
   );
@@ -384,6 +385,41 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     }
   );
 
+  // literals
+
+  // channels
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "channel",
+    (node) => {
+      node.name = "channel";
+      delete node.value;
+      node.children = [];
+    }
+  );
+
+  // symbols
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "symbol",
+    (node) => {
+      node.name = "symbol";
+      delete node.value;
+      node.children = [];
+    }
+  );
+
+  // atom
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "atom",
+    (node) => {
+      node.name = "atom";
+      node.value = node.children[0].value;
+      node.children = [];
+    }
+  );
+
   // nameless binding and shadowing
 
   // nameless binding
@@ -407,6 +443,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) => {
       let value = node.children[0].value;
       if (typeof value === "string") value = { level: 0, name: value };
+      node.name = "name";
       node.value = { level: value.level + 1, name: value.name };
       node.children = [];
     },

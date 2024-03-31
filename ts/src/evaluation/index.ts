@@ -1,11 +1,10 @@
 import { AbstractSyntaxTree } from "../parser/ast.js";
 import { isEqual } from "../utils/index.js";
-import { ExprValue, FunctionValue, RecordValue, Value } from "./types.js";
-import { initialContext, isRecord } from "./utils.js";
-import { expr, fn, record } from "./values.js";
+import { ExprValue, FunctionValue, RecordValue } from "./types.js";
+import { initialContext } from "./utils.js";
+import { expr, fn, parallel, record, isRecord, channel } from "./values.js";
 import { getAtom } from "./atoms.js";
 import { TaskQueue } from "./taskQueue.js";
-
 
 export const evaluate = (
   taskQueue: TaskQueue,
@@ -16,8 +15,8 @@ export const evaluate = (
     case "operator": {
       switch (ast.value) {
         case "print": {
-          const id = evaluate(taskQueue, ast.children[0], context);
-          return taskQueue.createTransformTaskOutChannel(id, (val) => {
+          const channel = evaluate(taskQueue, ast.children[0], context);
+          return taskQueue.createTransformTaskOutChannel(channel, (val) => {
             console.dir(val, { depth: null });
             return val;
           });
@@ -89,9 +88,6 @@ export const evaluate = (
             Object.assign(record.record, valueVal.record);
             return record;
           });
-        }
-        case "unit": {
-          return taskQueue.createProduceTaskChannel(() => record(taskQueue));
         }
 
         case "in": {
@@ -168,12 +164,6 @@ export const evaluate = (
           });
         }
 
-        case "#": {
-          return taskQueue.createProduceTaskChannel(
-            () => context.scope.getByRelativeIndex(ast.value)?.value.get?.() ?? null
-          );
-        }
-
         case "codeLabel": {
           const label = ast.children[0].value;
           const expr = ast.children[1];
@@ -237,10 +227,6 @@ export const evaluate = (
           });
         }
 
-        case "atom": {
-          return taskQueue.createProduceTaskChannel(() => getAtom(ast.children[0].value));
-        }
-
         case "access": {
           return taskQueue.createTransformTaskOutChannel(evaluate(taskQueue, ast.children[0], context), (record) => {
             const recordValue = record as RecordValue;
@@ -275,16 +261,10 @@ export const evaluate = (
           });
           return outChannel;
         }
-        case "symbol": {
-          return taskQueue.createProduceTaskChannel(() => Symbol());
-        }
         case "brackets": {
           return evaluate(taskQueue, ast.children[0], context);
         }
 
-        case "channel": {
-          return taskQueue.createProduceTaskChannel(() => channel());
-        }
         case "send": {
           const channel = evaluate(taskQueue, ast.children[0], context);
           const value = evaluate(taskQueue, ast.children[1], context);
@@ -315,7 +295,7 @@ export const evaluate = (
 
           return taskQueue.createTransformTaskOutChannel(channel, (channel) => {
             if (taskQueue.ready(channel as symbol)) return getAtom("ok");
-            return getAtom("ok");
+            return getAtom("err");
           });
         }
         case "parallel": {
@@ -352,18 +332,36 @@ export const evaluate = (
           throw new Error(`Operator ${ast.value} not implemented`);
       }
     }
+
+    case "unit": {
+      return taskQueue.createProduceTaskChannel(() => record(taskQueue));
+    }
+
+    case "symbol": {
+      return taskQueue.createProduceTaskChannel(() => Symbol());
+    }
+
+    case "channel": {
+      return taskQueue.createProduceTaskChannel(() => channel());
+    }
+
+    case "atom": {
+      return taskQueue.createProduceTaskChannel(() => getAtom(ast.children[0].value));
+    }
+
     case "boolean": {
       return taskQueue.createProduceTaskChannel(() => Boolean(ast.value));
     }
+
     case "float":
     case "int": {
       return taskQueue.createProduceTaskChannel(() => Number(ast.value));
     }
+
     case "string": {
       return taskQueue.createProduceTaskChannel(() => String(ast.value));
     }
-    case "placeholder":
-      return taskQueue.createProduceTaskChannel(() => null);
+
     case "name": {
       return taskQueue.createProduceTaskChannel(() => {
         const entry =
@@ -374,6 +372,8 @@ export const evaluate = (
         return entry?.value.get?.() ?? null;
       });
     }
+
+    case "placeholder":
     default:
       return taskQueue.createProduceTaskChannel(() => null);
   }

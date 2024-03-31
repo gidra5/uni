@@ -1,12 +1,8 @@
-import { Iterator } from "iterator-js";
 import { evaluate } from "./index.js";
 import { Scope } from "../scope.js";
 import { TaskQueueContext, ExprValue, FunctionValue, RecordValue, ScopeValue, Value } from "./types";
 import { getterSymbol, setterSymbol } from "./values.js";
 import { TaskQueue } from "./taskQueue.js";
-
-export const isRecord = (value: Value): value is RecordValue =>
-  !!value && typeof value === "object" && value.kind === "record";
 
 export const initialContext = (taskQueue: TaskQueue): TaskQueueContext => {
   const _eval: FunctionValue = (argChannel) => {
