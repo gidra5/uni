@@ -2,7 +2,7 @@ import { evaluate } from "./index.js";
 import { AbstractSyntaxTree } from "../parser/ast";
 import { Scope } from "../scope.js";
 import { TaskQueue } from "./taskQueue.js";
-import { ChannelValue, ExprValue, FunctionValue, ParallelValue, RecordValue, ScopeValue, Value } from "./types";
+import { ChannelValue, ExprValue, FunctionValue, RecordValue, ScopeValue, Value } from "./types";
 
 export const isRecord = (value: Value): value is RecordValue =>
   !!value && typeof value === "object" && value.kind === "record";
@@ -31,6 +31,7 @@ export const recordSet =
       map.set(key, value);
     }
   };
+
 export const recordGet =
   (tuple: Value[], record: Record<string | symbol, Value>, map: Map<Value, Value>) =>
   (key: Value): Value => {
@@ -40,6 +41,7 @@ export const recordGet =
     if (typeof key === "symbol" || typeof key === "string") return record[key] ?? null;
     return map.get(key) ?? null;
   };
+
 export const recordHas =
   (tuple: Value[], record: Record<string | symbol, Value>, map: Map<Value, Value>) =>
   (key: Value): boolean => {
@@ -68,24 +70,28 @@ export const record = (
   record,
   map,
 });
+
 export const expr = (ast: AbstractSyntaxTree, scope: Scope<ScopeValue>): ExprValue => ({
   kind: "expr",
   ast,
   scope,
 });
+
+export const macro =
+  (fn: (arg: ExprValue) => Value): FunctionValue =>
+  (exprVal, cont) =>
+    cont(fn(exprVal));
+
 export const fn =
   (taskQueue: TaskQueue, value: (arg: Value) => Value): FunctionValue =>
-  (argChannel) => {
-    const outChannel = Symbol("taskQueueFn.out");
-    taskQueue.createConsumeTask(argChannel, (exprVal) => {
-      const expr = exprVal as unknown as ExprValue;
-      const inChannel = evaluate(taskQueue, expr.ast, { scope: expr.scope });
-      taskQueue.createTransformTask(inChannel, outChannel, value);
+  (expr, cont) =>
+    evaluate(taskQueue, expr.ast, {
+      scope: expr.scope,
+      continuation: (arg) => cont(value(arg)),
     });
-    return outChannel;
-  };
-export const channel = (): ChannelValue => ({ kind: "channel", channel: Symbol() });
-export const parallel = (channels: symbol[]): ParallelValue => ({ kind: "parallel", channels });
+
+export const channel = (): ChannelValue => ({ kind: "channel", channel: Symbol("channel") });
 
 export const getterSymbol = Symbol();
 export const setterSymbol = Symbol();
+export const closedSymbol = Symbol();

@@ -5,9 +5,10 @@ type TransformTask = { task: (val: Value) => Value; inChannel: symbol; outChanne
 type ConsumeTask = { task: (val: Value) => void; inChannel: symbol };
 type PureTask = { task: () => void };
 type Task = TransformTask | ConsumeTask | ProduceTask | PureTask;
+
 export class TaskQueue {
   private queue: Task[] = [];
-  private blocked: (ConsumeTask | TransformTask)[] = [];
+  private blocked: Task[] = [];
   private channels: Record<symbol, Value> = {};
 
   createTask(task: () => void) {
@@ -110,8 +111,10 @@ export class TaskQueue {
     const task = this.queue.shift()!;
 
     if (!("inChannel" in task)) {
-      if ("outChannel" in task) this.send(task.outChannel, task.task());
-      else task.task();
+      if (!("outChannel" in task)) task.task();
+      else if (this.ready(task.outChannel)) this.blocked.push(task);
+      else this.send(task.outChannel, task.task());
+
       return;
     }
 
@@ -119,6 +122,7 @@ export class TaskQueue {
       this.blocked.push(task);
       return;
     }
+    if ("outChannel" in task && this.ready(task.outChannel)) this.blocked.push(task);
 
     const value = this.receive(task.inChannel);
 
@@ -134,9 +138,10 @@ export class TaskQueue {
   private checkBlocked() {
     for (let i = this.blocked.length - 1; i >= 0; i--) {
       const task = this.blocked[i];
-      if (!this.ready(task.inChannel)) continue;
+      if ("inChannel" in task && !this.ready(task.inChannel)) continue;
+      if ("outChannel" in task && this.ready(task.outChannel)) continue;
       this.blocked.splice(i, 1);
-      this.queue.push(task);
+      this.queue.unshift(task);
     }
   }
 

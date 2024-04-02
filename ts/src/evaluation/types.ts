@@ -1,9 +1,9 @@
 import { AbstractSyntaxTree } from "../parser/ast";
 import { Scope } from "../scope";
+import { TaskQueue } from "./taskQueue";
 
 export type SymbolValue = symbol;
 export type ChannelValue = { kind: "channel"; channel: symbol };
-export type ParallelValue = { kind: "parallel"; channels: symbol[] };
 export type ScopeValue = { get?: () => Value; set?: (val: Value) => void };
 export type ExprValue = {
   kind: "expr";
@@ -20,7 +20,7 @@ export type RecordValue = {
   map: Map<Value, Value>;
 };
 export type TypeValue = { kind: "type"; name: string; value: Value };
-export type FunctionValue = (argChannel: symbol) => symbol;
+export type FunctionValue = (argChannel: ExprValue, continuation: Continuation) => void;
 export type Value =
   | number
   | string
@@ -31,6 +31,8 @@ export type Value =
   | RecordValue
   | SymbolValue
   | ChannelValue
-  | ParallelValue
   | TypeValue;
-export type TaskQueueContext = { scope: Scope<ScopeValue> };
+
+export type Continuation = (arg: Value) => void;
+export type Context = { scope: Scope<ScopeValue>; continuation: Continuation };
+export type Evaluate = (taskQueue: TaskQueue, ast: AbstractSyntaxTree, context: Context) => void;

@@ -135,6 +135,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   async: { separators: matchSeparators(["async"]), precedence: [null, maxPrecedence] },
   await: { separators: matchSeparators(["await"]), precedence: [null, maxPrecedence - 1] },
   parallel: { separators: matchSeparators(["|"]), precedence: associative(semicolonPrecedence + 1) },
+  select: { separators: matchSeparators(["&"]), precedence: associative(semicolonPrecedence + 1) },
   pipe: { separators: matchSeparators(["|>"]), precedence: leftAssociative(2) },
   send: { separators: matchSeparators(["<-"]), precedence: rightAssociative(2) },
   receive: { separators: matchSeparators(["<-"]), precedence: [null, 2] },
