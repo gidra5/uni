@@ -34,5 +34,10 @@ export type Value =
   | TypeValue;
 
 export type Continuation = (arg: Value) => void;
-export type Context = { scope: Scope<ScopeValue>; continuation: Continuation };
-export type Evaluate = (taskQueue: TaskQueue, ast: AbstractSyntaxTree, context: Context) => void;
+export type Context = { scope: Scope<ScopeValue> };
+export type Evaluate = (
+  taskQueue: TaskQueue,
+  ast: AbstractSyntaxTree,
+  context: Context,
+  continuation: Continuation
+) => void;

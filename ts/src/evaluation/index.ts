@@ -6,21 +6,18 @@ import { getAtom } from "./atoms.js";
 import { AbstractSyntaxTree } from "../parser/ast.js";
 import type { ScopeEntryIdentifier } from "../scope.js";
 
-export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(taskQueue)) => {
-  const _return = (value: Value) => context.continuation(value);
+export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(taskQueue), continuation) => {
+  const _return = (value: Value) => continuation(value);
 
   const evalChildren = (
     reducer: (v: Value[]) => void,
     [head, ...tail]: AbstractSyntaxTree["children"],
     v: Value[] = []
   ) => {
-    evaluate(taskQueue, head, {
-      ...context,
-      continuation: (value) => {
-        const result = [...v, value];
-        if (tail.length === 0) return reducer(result);
-        evalChildren(reducer, tail, result);
-      },
+    evaluate(taskQueue, head, context, (value) => {
+      const result = [...v, value];
+      if (tail.length === 0) return reducer(result);
+      evalChildren(reducer, tail, result);
     });
   };
 
@@ -34,12 +31,9 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
     case "operator": {
       switch (ast.value) {
         case "print": {
-          evaluate(taskQueue, ast.children[0], {
-            ...context,
-            continuation: (value) => {
-              console.dir(value, { depth: null });
-              _return(value);
-            },
+          evaluate(taskQueue, ast.children[0], context, (value) => {
+            console.dir(value, { depth: null });
+            _return(value);
           });
           return;
         }
@@ -123,10 +117,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           return;
         }
         case "!": {
-          evaluate(taskQueue, ast.children[0], {
-            ...context,
-            continuation: (value) => _return(!value),
-          });
+          evaluate(taskQueue, ast.children[0], context, (value) => _return(!value));
           return;
         }
         case "<": {
@@ -136,39 +127,30 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
 
         case "macro": {
           const scope = context.scope;
-          context.continuation((arg, continuation) => {
+          continuation((arg, continuation) => {
             const boundScope = scope.push({ get: () => arg, set: (value) => (arg = value as ExprValue) });
 
-            evaluate(taskQueue, ast.children[0], { scope: boundScope, continuation });
+            evaluate(taskQueue, ast.children[0], { scope: boundScope }, continuation);
           });
           return;
         }
 
         case "fn": {
           const scope = context.scope;
-          context.continuation((arg, continuation) => {
-            const outChannel = Symbol("fn.out");
+          continuation((arg, continuation) => {
+            evaluate(taskQueue, arg.ast, { scope: arg.scope }, (arg) => {
+              const boundScope = scope.push({ get: () => arg, set: (value) => (arg = value) });
 
-            evaluate(taskQueue, arg.ast, {
-              scope: arg.scope,
-              continuation: (arg) => {
-                const boundScope = scope.push({ get: () => arg, set: (value) => (arg = value) });
-
-                evaluate(taskQueue, ast.children[0], { scope: boundScope, continuation });
-              },
+              evaluate(taskQueue, ast.children[0], { scope: boundScope }, continuation);
             });
-            return outChannel;
           });
           return;
         }
 
         case "eval": {
-          evaluate(taskQueue, ast.children[0], {
-            ...context,
-            continuation: (value) => {
-              const expr = value as ExprValue;
-              evaluate(taskQueue, expr.ast, { scope: expr.scope, continuation: context.continuation });
-            },
+          evaluate(taskQueue, ast.children[0], context, (value) => {
+            const expr = value as ExprValue;
+            evaluate(taskQueue, expr.ast, { scope: expr.scope }, continuation);
           });
           return;
         }
@@ -176,7 +158,6 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         case "codeLabel": {
           const label = ast.children[0].value;
           const expr = ast.children[1];
-          const continuation = context.continuation;
 
           const labelValue: FunctionValue = fn(taskQueue, (value) => {
             continuation(value);
@@ -184,53 +165,40 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           });
           const scope = context.scope.add(label, { get: () => labelValue });
 
-          evaluate(taskQueue, expr, { continuation, scope });
+          evaluate(taskQueue, expr, { scope }, continuation);
           return;
         }
 
         case "=": {
-          evaluate(taskQueue, ast.children[1], {
-            ...context,
-            continuation: (value) => {
-              evaluate(taskQueue, ast.children[0], {
-                ...context,
-                continuation: (name) => {
-                  const entryIndex = context.scope.toIndex({ name: name as string });
-                  const entry = context.scope.scope[entryIndex];
-                  entry?.value.set?.(value);
-                  return _return(value);
-                },
-              });
-            },
+          evaluate(taskQueue, ast.children[1], context, (value) => {
+            evaluate(taskQueue, ast.children[0], context, (name) => {
+              const entryIndex = context.scope.toIndex({ name: name as string });
+              const entry = context.scope.scope[entryIndex];
+              entry?.value.set?.(value);
+              return _return(value);
+            });
           });
           return;
         }
 
         case ":=": {
-          evaluate(taskQueue, ast.children[1], {
-            ...context,
-            continuation: (value) => {
-              const entry = { get: () => value, set: (_value) => (value = _value) };
+          evaluate(taskQueue, ast.children[1], context, (value) => {
+            const entry = { get: () => value, set: (_value) => (value = _value) };
 
-              evaluate(taskQueue, ast.children[0], {
-                ...context,
-                continuation: (name) => {
-                  context.scope = context.scope.add(name as string, entry);
-                  return _return(value);
-                },
-              });
-            },
+            evaluate(taskQueue, ast.children[0], context, (name) => {
+              context.scope = context.scope.add(name as string, entry);
+              console.dir(context, { depth: null });
+
+              return _return(value);
+            });
           });
           return;
         }
 
         case "access": {
-          evaluate(taskQueue, ast.children[0], {
-            ...context,
-            continuation: (value) => {
-              const record = value as RecordValue;
-              _return(record.get(ast.children[1].value));
-            },
+          evaluate(taskQueue, ast.children[0], context, (value) => {
+            const record = value as RecordValue;
+            _return(record.get(ast.children[1].value));
           });
           return;
         }
@@ -243,26 +211,16 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         }
 
         case "negate": {
-          evaluate(taskQueue, ast.children[0], {
-            ...context,
-            continuation: (value) => _return(-(value as number)),
-          });
+          evaluate(taskQueue, ast.children[0], context, (value) => _return(-(value as number)));
           return;
         }
 
         case "application": {
           const arg = expr(ast.children[1], context.scope);
-          evaluate(taskQueue, ast.children[0], {
-            ...context,
-            continuation: (fn) => {
-              const func = fn as FunctionValue;
-              func(arg, context.continuation);
-            },
+          evaluate(taskQueue, ast.children[0], context, (fn) => {
+            const func = fn as FunctionValue;
+            func(arg, continuation);
           });
-          return;
-        }
-        case "brackets": {
-          evaluate(taskQueue, ast.children[0], context);
           return;
         }
 
@@ -278,17 +236,14 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           return;
         }
         case "receive": {
-          evaluate(taskQueue, ast.children[0], {
-            ...context,
-            continuation: (_channel) => {
-              const { channel } = _channel as ChannelValue;
-              taskQueue.createConsumeTask(channel, (_message) => {
-                const message = _message as RecordValue;
-                const [value, callbackChannel] = message.tuple;
-                taskQueue.send(callbackChannel as symbol, value);
-                _return(value);
-              });
-            },
+          evaluate(taskQueue, ast.children[0], context, (_channel) => {
+            const { channel } = _channel as ChannelValue;
+            taskQueue.createConsumeTask(channel, (_message) => {
+              const message = _message as RecordValue;
+              const [value, callbackChannel] = message.tuple;
+              taskQueue.send(callbackChannel as symbol, value);
+              _return(value);
+            });
           });
           return;
         }
@@ -304,36 +259,30 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           return;
         }
         case "peekReceive": {
-          evaluate(taskQueue, ast.children[0], {
-            ...context,
-            continuation: (_channel) => {
-              const { channel } = _channel as ChannelValue;
-              if (taskQueue.ready(channel)) {
-                const message = taskQueue.receive(channel) as RecordValue;
-                const [value, callbackChannel] = message.tuple;
-                taskQueue.send(callbackChannel as symbol, value);
-                _return(record(taskQueue, [getAtom("ok"), value]));
-                return;
-              }
-              _return(record(taskQueue, [getAtom("err"), null]));
-            },
+          evaluate(taskQueue, ast.children[0], context, (_channel) => {
+            const { channel } = _channel as ChannelValue;
+            if (taskQueue.ready(channel)) {
+              const message = taskQueue.receive(channel) as RecordValue;
+              const [value, callbackChannel] = message.tuple;
+              taskQueue.send(callbackChannel as symbol, value);
+              _return(record(taskQueue, [getAtom("ok"), value]));
+              return;
+            }
+            _return(record(taskQueue, [getAtom("err"), null]));
           });
           return;
         }
         case "parallel": {
-          ast.children.map((child) => evaluate(taskQueue, child, context));
+          ast.children.map((child) => evaluate(taskQueue, child, context, continuation));
           return;
         }
         case "select": {
           let consumed = false;
           ast.children.map((child) =>
-            evaluate(taskQueue, child, {
-              ...context,
-              continuation: (arg) => {
-                if (consumed) return;
-                consumed = true;
-                context.continuation(arg);
-              },
+            evaluate(taskQueue, child, context, (arg) => {
+              if (consumed) return;
+              consumed = true;
+              continuation(arg);
             })
           );
           return;
@@ -381,7 +330,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
     }
 
     case "atom": {
-      return _return(getAtom(ast.children[0].value));
+      return _return(getAtom(ast.value));
     }
 
     case "boolean": {
@@ -402,6 +351,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         typeof ast.value === "number" ? { relativeIndex: ast.value } : { name: getAtom(ast.value) };
       const entry = context.scope.get(identifier);
       const value = entry?.value.get?.() ?? null;
+      console.dir(["name", context], { depth: null });
 
       return _return(value);
     }

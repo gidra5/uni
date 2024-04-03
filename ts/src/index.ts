@@ -11,6 +11,7 @@ import { evaluate } from "./evaluation/index.js";
 import { initialContext } from "./evaluation/utils.js";
 import { TaskQueue } from "./evaluation/taskQueue.js";
 import { transform } from "./transformers/desugar.js";
+import { identity } from "./utils/index.js";
 
 program
   .command("run <file>")
@@ -21,7 +22,7 @@ program
     const code = fs.readFileSync(file, "utf-8");
     const [tokens, tokenErrors] = parseTokens(code);
     const [ast, astErrors] = parse()(tokens);
-    evaluate(taskQueue, transform(ast), context);
+    evaluate(taskQueue, transform(ast), context, identity);
     taskQueue.run();
   });
 
@@ -35,10 +36,8 @@ program
       const code = fs.readFileSync(file, "utf-8");
       const [tokens, tokenErrors] = parseTokens(code);
       const [ast, astErrors] = parse()(tokens);
-      const resultSymbol = evaluate(taskQueue, transform(ast), context);
+      evaluate(taskQueue, transform(ast), context, (v) => console.dir(v, { depth: null }));
       taskQueue.run();
-      const result = taskQueue.receive(resultSymbol);
-      console.log(result);
     }
     const rl = readline.createInterface({ input, output, prompt: ">> " });
     rl.prompt();
@@ -56,10 +55,8 @@ program
             console.dir({ ast, astErrors, tokenErrors }, { depth: null });
             const transformed = transform(ast);
             console.dir({ transformed }, { depth: null });
-            const resultSymbol = evaluate(taskQueue, transformed, context);
+            evaluate(taskQueue, transformed, context, (v) => console.dir(v, { depth: null }));
             taskQueue.run();
-            const result = taskQueue.receive(resultSymbol);
-            console.log(result);
           } catch (e) {
             console.error(e);
           }

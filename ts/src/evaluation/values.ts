@@ -85,10 +85,7 @@ export const macro =
 export const fn =
   (taskQueue: TaskQueue, value: (arg: Value) => Value): FunctionValue =>
   (expr, cont) =>
-    evaluate(taskQueue, expr.ast, {
-      scope: expr.scope,
-      continuation: (arg) => cont(value(arg)),
-    });
+    evaluate(taskQueue, expr.ast, { scope: expr.scope }, (arg) => cont(value(arg)));
 
 export const channel = (): ChannelValue => ({ kind: "channel", channel: Symbol("channel") });
 

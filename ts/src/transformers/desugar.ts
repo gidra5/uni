@@ -5,6 +5,17 @@ import { traverse } from "../tree.js";
 import { inspect } from "../utils/index.js";
 
 export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
+  // atoms
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "atom",
+    (node) => {
+      node.name = "atom";
+      node.value = node.children[0].value;
+      node.children = [];
+    }
+  );
+
   // record assignment to setter
   traverse(
     ast,
@@ -24,7 +35,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) =>
       node.name === "operator" && (node.value === ":=" || node.value === "=") && node.children[0].name === "name",
     (node) => {
-      node.name = "atom";
+      node.children[0].name = "atom";
     }
   );
 
@@ -476,7 +487,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   // eliminate parentheses
   traverse(
     ast,
-    (node) => node.name === "operator" && node.value === "parens",
+    (node) => node.name === "operator" && (node.value === "parens" || node.value === "brackets"),
     (node) => {
       return node.children[0];
     }
