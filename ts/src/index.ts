@@ -52,9 +52,9 @@ program
           try {
             const [tokens, tokenErrors] = parseTokens(line);
             const [ast, astErrors] = parse()(tokens);
-            console.dir({ ast, astErrors, tokenErrors }, { depth: null });
+            // console.dir({ ast, astErrors, tokenErrors }, { depth: null });
             const transformed = transform(ast);
-            console.dir({ context, transformed }, { depth: null });
+            // console.dir({ context, transformed }, { depth: null });
             evaluate(taskQueue, transformed, context, (v) => console.dir(v, { depth: null }));
             taskQueue.run();
           } catch (e) {

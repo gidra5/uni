@@ -293,8 +293,23 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           return;
         }
 
-        case "ref":
-        case "deref":
+        case "ref": {
+          evaluate(taskQueue, ast.children[0], context, (value) => {
+            const ref = Symbol("ref");
+            context.scope = context.scope.add(ref, { get: () => value, set: (val) => (value = val) });
+            return _return(ref);
+          });
+          return;
+        }
+        case "deref": {
+          evaluate(taskQueue, ast.children[0], context, (ref) => {
+            const identifier = { name: ref as symbol };
+            const entry = context.scope.get(identifier);
+            return _return(entry?.value.get?.() ?? null);
+          });
+          return;
+        }
+
         case "free":
         case "allocate": {
           throw new Error("Not implemented");
