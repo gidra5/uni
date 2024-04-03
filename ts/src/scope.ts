@@ -3,7 +3,7 @@ import { CopySymbol, copy } from "./utils/copy.js";
 
 type ScopeInnerEntry<T> = { name?: string | symbol; value: T };
 export type ScopeEntry<T> = { name?: string | symbol; relativeIndex: number; index: number; value: T };
-type ScopeEntryIdentifier = { name: string | symbol } | { relativeIndex: number } | { index: number };
+export type ScopeEntryIdentifier = { name: string | symbol } | { relativeIndex: number } | { index: number };
 
 export class Scope<T = any> {
   scope: ScopeInnerEntry<T>[];

@@ -5,6 +5,29 @@ import { traverse } from "../tree.js";
 import { inspect } from "../utils/index.js";
 
 export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
+  // record assignment to setter
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "=",
+    (node) => {
+      const [record, value] = node.children;
+      if (record.name !== "operator" || record.value !== ".") return;
+      // if (record.name === 'name') return;
+      const [recordValue, field] = record.children;
+      return templateString("_[setter] _ _", [recordValue, field, value]);
+    }
+  );
+
+  // name declaration to symbol
+  traverse(
+    ast,
+    (node) =>
+      node.name === "operator" && (node.value === ":=" || node.value === "=") && node.children[0].name === "name",
+    (node) => {
+      node.name = "atom";
+    }
+  );
+
   // expressions
   // tuple literal
   traverse(

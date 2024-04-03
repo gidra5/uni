@@ -62,7 +62,7 @@ export const record = (
   get(key: Value) {
     const getter = recordGet(tuple, record, map);
     if (key === getterSymbol) return fn(taskQueue, this.get);
-    if (key === setterSymbol) return fn(taskQueue, (k) => fn(taskQueue, (v) => (this.set(k, v), null)));
+    if (key === setterSymbol) return fn(taskQueue, (k) => fn(taskQueue, (v) => (this.set(k, v), v)));
     return getter(key);
   },
   set: recordSet(tuple, record, map),

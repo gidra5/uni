@@ -4,6 +4,7 @@ import { initialContext } from "./utils.js";
 import { expr, fn, record, isRecord, channel } from "./values.js";
 import { getAtom } from "./atoms.js";
 import { AbstractSyntaxTree } from "../parser/ast.js";
+import type { ScopeEntryIdentifier } from "../scope.js";
 
 export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(taskQueue)) => {
   const _return = (value: Value) => context.continuation(value);
@@ -40,25 +41,32 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
               _return(value);
             },
           });
+          return;
         }
 
         case "+": {
           evalReturnChildren((vals) => vals.reduce((acc: number, val) => acc + (val as number), 0), ast.children);
+          return;
         }
         case "*": {
           evalReturnChildren((vals) => vals.reduce((acc: number, val) => acc * (val as number), 1), ast.children);
+          return;
         }
         case "-": {
           evalReturnChildren(([left, right]) => (left as number) - (right as number), ast.children);
+          return;
         }
         case "/": {
           evalReturnChildren(([left, right]) => (left as number) / (right as number), ast.children);
+          return;
         }
         case "%": {
           evalReturnChildren(([left, right]) => (left as number) % (right as number), ast.children);
+          return;
         }
         case "^": {
           evalReturnChildren(([left, right]) => Math.pow(left as number, right as number), ast.children);
+          return;
         }
 
         case "set": {
@@ -67,6 +75,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
             record.set(key, value);
             return record;
           }, ast.children);
+          return;
         }
         case "push": {
           evalReturnChildren(([tuple, value]) => {
@@ -74,6 +83,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
             record.tuple.push(value);
             return record;
           }, ast.children);
+          return;
         }
         case "join": {
           evalReturnChildren(([tuple, value]) => {
@@ -86,6 +96,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
 
             return record;
           }, ast.children);
+          return;
         }
 
         case "in": {
@@ -93,27 +104,34 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
             const record = tuple as RecordValue;
             return record.has(key);
           }, ast.children);
+          return;
         }
         case "and": {
           evalReturnChildren((vals) => vals.every((val) => val), ast.children);
+          return;
         }
         case "or": {
           evalReturnChildren((vals) => vals.some((val) => val), ast.children);
+          return;
         }
         case "==": {
           evalReturnChildren(([left, right]) => left === right, ast.children);
+          return;
         }
         case "===": {
           evalReturnChildren(([left, right]) => isEqual(left, right), ast.children);
+          return;
         }
         case "!": {
           evaluate(taskQueue, ast.children[0], {
             ...context,
             continuation: (value) => _return(!value),
           });
+          return;
         }
         case "<": {
           evalReturnChildren(([left, right]) => (left as number) < (right as number), ast.children);
+          return;
         }
 
         case "macro": {
@@ -123,6 +141,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
 
             evaluate(taskQueue, ast.children[0], { scope: boundScope, continuation });
           });
+          return;
         }
 
         case "fn": {
@@ -140,6 +159,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
             });
             return outChannel;
           });
+          return;
         }
 
         case "eval": {
@@ -150,6 +170,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
               evaluate(taskQueue, expr.ast, { scope: expr.scope, continuation: context.continuation });
             },
           });
+          return;
         }
 
         case "codeLabel": {
@@ -164,48 +185,13 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           const scope = context.scope.add(label, { get: () => labelValue });
 
           evaluate(taskQueue, expr, { continuation, scope });
+          return;
         }
 
         case "=": {
           evaluate(taskQueue, ast.children[1], {
             ...context,
             continuation: (value) => {
-              if (
-                ast.children[0].name !== "name" &&
-                !(ast.children[0].name === "operator" && ast.children[0].value === "brackets")
-              ) {
-                const accessor = ast.children[0];
-                evaluate(taskQueue, accessor.children[0], {
-                  ...context,
-                  continuation: (_record) => {
-                    const recordFieldNode = accessor.children[1];
-                    const record = _record as RecordValue;
-
-                    if (accessor.name === "access") {
-                      const key = recordFieldNode.value;
-                      record.set(key, value);
-                      return _return(value);
-                    }
-
-                    evaluate(taskQueue, recordFieldNode, {
-                      ...context,
-                      continuation: (key) => {
-                        record.set(key, value);
-                        return _return(value);
-                      },
-                    });
-                  },
-                });
-              }
-
-              if (ast.children[0].name === "name") {
-                const name = ast.children[0].value;
-                const entryIndex = context.scope.toIndex({ name });
-                const entry = context.scope.scope[entryIndex];
-                entry?.value.set?.(value);
-                return _return(value);
-              }
-
               evaluate(taskQueue, ast.children[0], {
                 ...context,
                 continuation: (name) => {
@@ -217,6 +203,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
               });
             },
           });
+          return;
         }
 
         case ":=": {
@@ -224,11 +211,6 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
             ...context,
             continuation: (value) => {
               const entry = { get: () => value, set: (_value) => (value = _value) };
-              if (ast.children[0].name === "name") {
-                const name = ast.children[0].value;
-                context.scope = context.scope.add(name, entry);
-                return _return(value);
-              }
 
               evaluate(taskQueue, ast.children[0], {
                 ...context,
@@ -239,6 +221,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
               });
             },
           });
+          return;
         }
 
         case "access": {
@@ -249,12 +232,14 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
               _return(record.get(ast.children[1].value));
             },
           });
+          return;
         }
 
         case "accessDynamic": {
           evalReturnChildren(([record, key]) => {
             return (record as RecordValue).get(key);
           }, ast.children);
+          return;
         }
 
         case "negate": {
@@ -262,6 +247,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
             ...context,
             continuation: (value) => _return(-(value as number)),
           });
+          return;
         }
 
         case "application": {
@@ -273,9 +259,11 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
               func(arg, context.continuation);
             },
           });
+          return;
         }
         case "brackets": {
           evaluate(taskQueue, ast.children[0], context);
+          return;
         }
 
         case "send": {
@@ -287,6 +275,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
             taskQueue.createConsumeTask(callbackChannel, _return);
             taskQueue.createProduceTask(channel, () => message);
           }, ast.children);
+          return;
         }
         case "receive": {
           evaluate(taskQueue, ast.children[0], {
@@ -301,6 +290,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
               });
             },
           });
+          return;
         }
         case "peekSend": {
           evalReturnChildren(([_channel, value]) => {
@@ -311,6 +301,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
             taskQueue.send(channel, message);
             return record(taskQueue, [getAtom("ok"), value, callbackChannel]);
           }, ast.children);
+          return;
         }
         case "peekReceive": {
           evaluate(taskQueue, ast.children[0], {
@@ -327,9 +318,11 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
               _return(record(taskQueue, [getAtom("err"), null]));
             },
           });
+          return;
         }
         case "parallel": {
           ast.children.map((child) => evaluate(taskQueue, child, context));
+          return;
         }
         case "select": {
           let consumed = false;
@@ -343,6 +336,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
               },
             })
           );
+          return;
         }
 
         case "ref":
@@ -375,41 +369,41 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
     }
 
     case "unit": {
-      _return(record(taskQueue));
+      return _return(record(taskQueue));
     }
 
     case "symbol": {
-      _return(Symbol());
+      return _return(Symbol());
     }
 
     case "channel": {
-      _return(channel());
+      return _return(channel());
     }
 
     case "atom": {
-      _return(getAtom(ast.children[0].value));
+      return _return(getAtom(ast.children[0].value));
     }
 
     case "boolean": {
-      _return(Boolean(ast.value));
+      return _return(Boolean(ast.value));
     }
 
     case "float":
     case "int": {
-      _return(Number(ast.value));
+      return _return(Number(ast.value));
     }
 
     case "string": {
-      _return(String(ast.value));
+      return _return(String(ast.value));
     }
 
     case "name": {
-      const entry =
-        typeof ast.value === "number"
-          ? context.scope.getByRelativeIndex(ast.value)
-          : context.scope.getByName(ast.value);
+      const identifier: ScopeEntryIdentifier =
+        typeof ast.value === "number" ? { relativeIndex: ast.value } : { name: getAtom(ast.value) };
+      const entry = context.scope.get(identifier);
       const value = entry?.value.get?.() ?? null;
-      _return(value);
+
+      return _return(value);
     }
 
     case "placeholder":
