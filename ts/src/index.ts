@@ -54,7 +54,7 @@ program
             const [ast, astErrors] = parse()(tokens);
             console.dir({ ast, astErrors, tokenErrors }, { depth: null });
             const transformed = transform(ast);
-            console.dir({ transformed }, { depth: null });
+            console.dir({ context, transformed }, { depth: null });
             evaluate(taskQueue, transformed, context, (v) => console.dir(v, { depth: null }));
             taskQueue.run();
           } catch (e) {

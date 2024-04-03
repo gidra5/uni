@@ -101,7 +101,7 @@ export class TaskQueue {
       // console.dir({ msg: "before check blocked", queue: this }, { depth: null });
       this.checkBlocked();
       // console.dir({ msg: "after check blocked", queue: this }, { depth: null });
-      console.dir(this, { depth: null });
+      // console.dir(this, { depth: null });
       if (this.queue.length === 0) break;
       this.executeNextTask();
     }

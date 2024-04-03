@@ -152,24 +152,24 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     }
   );
 
-  // ; to fn
-  ast = traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === ";",
-    (node) => {
-      return node.children.reduce(
-        (acc, child) =>
-          inspect(
-            acc.name === "placeholder"
-              ? child
-              : child.name === "placeholder"
-              ? acc
-              : templateString("(fn _ -> _) _", [placeholder(), child, acc])
-          ),
-        placeholder()
-      );
-    }
-  );
+  // // ; to fn
+  // ast = traverse(
+  //   ast,
+  //   (node) => node.name === "operator" && node.value === ";",
+  //   (node) => {
+  //     return node.children.reduce(
+  //       (acc, child) =>
+  //         inspect(
+  //           acc.name === "placeholder"
+  //             ? child
+  //             : child.name === "placeholder"
+  //             ? acc
+  //             : templateString("(fn _ -> _) _", [placeholder(), child, acc])
+  //         ),
+  //       placeholder()
+  //     );
+  //   }
+  // );
 
   // postfix increment
   traverse(
@@ -312,7 +312,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   // block to fn
   traverse(
     ast,
-    (node) => node.name === "operator" && node.value === "block",
+    (node) => node.name === "operator" && node.value === "braces",
     (node) => {
       const [expr] = node.children;
       return templateString(

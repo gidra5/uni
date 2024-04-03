@@ -125,6 +125,11 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           return;
         }
 
+        case ";": {
+          evalReturnChildren((vals) => vals.pop() ?? null, ast.children);
+          return;
+        }
+
         case "macro": {
           const scope = context.scope;
           continuation((arg, continuation) => {
@@ -187,7 +192,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
 
             evaluate(taskQueue, ast.children[0], context, (name) => {
               context.scope = context.scope.add(name as string, entry);
-              console.dir(context, { depth: null });
+              // console.dir(context, { depth: null });
 
               return _return(value);
             });
@@ -273,13 +278,13 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           return;
         }
         case "parallel": {
-          ast.children.map((child) => evaluate(taskQueue, child, context, continuation));
+          ast.children.map((child) => evaluate(taskQueue, child, { ...context }, continuation));
           return;
         }
         case "select": {
           let consumed = false;
           ast.children.map((child) =>
-            evaluate(taskQueue, child, context, (arg) => {
+            evaluate(taskQueue, child, { ...context }, (arg) => {
               if (consumed) return;
               consumed = true;
               continuation(arg);
@@ -351,7 +356,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         typeof ast.value === "number" ? { relativeIndex: ast.value } : { name: getAtom(ast.value) };
       const entry = context.scope.get(identifier);
       const value = entry?.value.get?.() ?? null;
-      console.dir(["name", context], { depth: null });
+      // console.dir(["name", context], { depth: null });
 
       return _return(value);
     }
