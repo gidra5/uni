@@ -7,8 +7,6 @@ import { AbstractSyntaxTree } from "../parser/ast.js";
 import type { ScopeEntryIdentifier } from "../scope.js";
 
 export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(taskQueue), continuation) => {
-  const _return = (value: Value) => continuation(value);
-
   const evalChildren = (
     reducer: (v: Value[]) => void,
     [head, ...tail]: AbstractSyntaxTree["children"],
@@ -25,7 +23,21 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
     reducer: (v: Value[]) => Value,
     [head, ...tail]: AbstractSyntaxTree["children"],
     v: Value[] = []
-  ) => evalChildren((vals) => _return(reducer(vals)), [head, ...tail], v);
+  ) => evalChildren((vals) => continuation(reducer(vals)), [head, ...tail], v);
+
+  const evalShortcircuit = (
+    consumer: (v: Value[]) => void,
+    circuit: (v: Value[]) => boolean,
+    [head, ...tail]: AbstractSyntaxTree["children"],
+    v: Value[] = []
+  ) => {
+    evaluate(taskQueue, head, context, (value) => {
+      const result = [...v, value];
+      if (circuit(result)) return consumer(result);
+      if (tail.length === 0) return consumer(result);
+      evalShortcircuit(consumer, circuit, tail, result);
+    });
+  };
 
   switch (ast.name) {
     case "operator": {
@@ -33,7 +45,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         case "print": {
           evaluate(taskQueue, ast.children[0], context, (value) => {
             console.dir(value, { depth: null });
-            _return(value);
+            continuation(value);
           });
           return;
         }
@@ -101,11 +113,19 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           return;
         }
         case "and": {
-          evalReturnChildren((vals) => vals.every((val) => val), ast.children);
+          evalShortcircuit(
+            (vals) => continuation(vals.pop()!),
+            (vals) => !vals[vals.length - 1],
+            ast.children
+          );
           return;
         }
         case "or": {
-          evalReturnChildren((vals) => vals.some((val) => val), ast.children);
+          evalShortcircuit(
+            (vals) => continuation(vals.pop()!),
+            (vals) => !!vals[vals.length - 1],
+            ast.children
+          );
           return;
         }
         case "==": {
@@ -117,7 +137,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           return;
         }
         case "!": {
-          evaluate(taskQueue, ast.children[0], context, (value) => _return(!value));
+          evaluate(taskQueue, ast.children[0], context, (value) => continuation(!value));
           return;
         }
         case "<": {
@@ -180,7 +200,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
               const entryIndex = context.scope.toIndex({ name: name as string });
               const entry = context.scope.scope[entryIndex];
               entry?.value.set?.(value);
-              return _return(value);
+              return continuation(value);
             });
           });
           return;
@@ -194,7 +214,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
               context.scope = context.scope.add(name as string, entry);
               // console.dir(context, { depth: null });
 
-              return _return(value);
+              return continuation(value);
             });
           });
           return;
@@ -203,7 +223,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         case "access": {
           evaluate(taskQueue, ast.children[0], context, (value) => {
             const record = value as RecordValue;
-            _return(record.get(ast.children[1].value));
+            continuation(record.get(ast.children[1].value));
           });
           return;
         }
@@ -216,7 +236,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         }
 
         case "negate": {
-          evaluate(taskQueue, ast.children[0], context, (value) => _return(-(value as number)));
+          evaluate(taskQueue, ast.children[0], context, (value) => continuation(-(value as number)));
           return;
         }
 
@@ -235,7 +255,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
             const callbackChannel = Symbol("send.callback");
             const message = record(taskQueue, [value, callbackChannel]);
 
-            taskQueue.createConsumeTask(callbackChannel, _return);
+            taskQueue.createConsumeTask(callbackChannel, continuation);
             taskQueue.createProduceTask(channel, () => message);
           }, ast.children);
           return;
@@ -247,7 +267,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
               const message = _message as RecordValue;
               const [value, callbackChannel] = message.tuple;
               taskQueue.send(callbackChannel as symbol, value);
-              _return(value);
+              continuation(value);
             });
           });
           return;
@@ -255,8 +275,9 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         case "peekSend": {
           evalReturnChildren(([_channel, value]) => {
             const { channel } = _channel as ChannelValue;
+            if (taskQueue.ready(channel)) return record(taskQueue, [getAtom("err"), null, null]);
+
             const callbackChannel = Symbol("peekSend.callback");
-            if (taskQueue.ready(channel)) return record(taskQueue, [getAtom("err"), null]);
             const message = record(taskQueue, [value, callbackChannel]);
             taskQueue.send(channel, message);
             return record(taskQueue, [getAtom("ok"), value, callbackChannel]);
@@ -266,14 +287,12 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         case "peekReceive": {
           evaluate(taskQueue, ast.children[0], context, (_channel) => {
             const { channel } = _channel as ChannelValue;
-            if (taskQueue.ready(channel)) {
-              const message = taskQueue.receive(channel) as RecordValue;
-              const [value, callbackChannel] = message.tuple;
-              taskQueue.send(callbackChannel as symbol, value);
-              _return(record(taskQueue, [getAtom("ok"), value]));
-              return;
-            }
-            _return(record(taskQueue, [getAtom("err"), null]));
+            if (!taskQueue.ready(channel)) return continuation(record(taskQueue, [getAtom("err"), null]));
+
+            const message = taskQueue.receive(channel) as RecordValue;
+            const [value, callbackChannel] = message.tuple;
+            taskQueue.send(callbackChannel as symbol, value);
+            continuation(record(taskQueue, [getAtom("ok"), value]));
           });
           return;
         }
@@ -292,12 +311,51 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           );
           return;
         }
+        case "async": {
+          evaluate(taskQueue, ast.children[0], context, (f) => {
+            const fn = f as FunctionValue;
+
+            continuation((arg, continuation) => {
+              const _channel = channel();
+
+              taskQueue.createTask(() =>
+                fn(arg, (v) => {
+                  const { channel } = _channel;
+                  const callbackChannel = Symbol("async.callback");
+                  const message = record(taskQueue, [v, callbackChannel]);
+
+                  const handle = () => {
+                    taskQueue.createConsumeTask(callbackChannel, handle);
+                    taskQueue.createProduceTask(channel, () => message);
+                  };
+
+                  handle();
+                })
+              );
+
+              continuation(_channel);
+            });
+          });
+          return;
+        }
+        case "await": {
+          evaluate(taskQueue, ast.children[0], context, (_channel) => {
+            const { channel } = _channel as ChannelValue;
+            taskQueue.createConsumeTask(channel, (_message) => {
+              const message = _message as RecordValue;
+              const [value, callbackChannel] = message.tuple;
+              taskQueue.send(callbackChannel as symbol, value);
+              continuation(value);
+            });
+          });
+          return;
+        }
 
         case "ref": {
           evaluate(taskQueue, ast.children[0], context, (value) => {
             const ref = Symbol("ref");
             context.scope = context.scope.add(ref, { get: () => value, set: (val) => (value = val) });
-            return _return(ref);
+            return continuation(ref);
           });
           return;
         }
@@ -305,7 +363,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           evaluate(taskQueue, ast.children[0], context, (ref) => {
             const identifier = { name: ref as symbol };
             const entry = context.scope.get(identifier);
-            return _return(entry?.value.get?.() ?? null);
+            return continuation(entry?.value.get?.() ?? null);
           });
           return;
         }
@@ -323,8 +381,6 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         case "exportAs":
         case "external":
         case "pipe":
-        case "async":
-        case "await":
         case "is":
         case "as":
         case "mut":
@@ -338,32 +394,32 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
     }
 
     case "unit": {
-      return _return(record(taskQueue));
+      return continuation(record(taskQueue));
     }
 
     case "symbol": {
-      return _return(Symbol());
+      return continuation(Symbol());
     }
 
     case "channel": {
-      return _return(channel());
+      return continuation(channel());
     }
 
     case "atom": {
-      return _return(getAtom(ast.value));
+      return continuation(getAtom(ast.value));
     }
 
     case "boolean": {
-      return _return(Boolean(ast.value));
+      return continuation(Boolean(ast.value));
     }
 
     case "float":
     case "int": {
-      return _return(Number(ast.value));
+      return continuation(Number(ast.value));
     }
 
     case "string": {
-      return _return(String(ast.value));
+      return continuation(String(ast.value));
     }
 
     case "name": {
@@ -373,11 +429,11 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
       const value = entry?.value.get?.() ?? null;
       // console.dir(["name", context], { depth: null });
 
-      return _return(value);
+      return continuation(value);
     }
 
     case "placeholder":
     default:
-      _return(null);
+      continuation(null);
   }
 };

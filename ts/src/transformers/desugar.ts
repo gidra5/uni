@@ -310,14 +310,14 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   );
 
   // block to fn
-  traverse(
+  ast = traverse(
     ast,
     (node) => node.name === "operator" && node.value === "braces",
     (node) => {
       const [expr] = node.children;
       return templateString(
-        "(fn x -> x x) (fn self -> fn -> label::(continue := fn _ -> label (self self ()); break := label; _)) ()",
-        [placeholder(), expr]
+        "(fn f -> (fn x -> x x) fn self -> f (self self)) (fn self -> fn _ -> label::(continue := fn _ -> label (self ()); break := label; _)) ()",
+        [placeholder(), placeholder(), expr]
       );
     }
   );
@@ -325,7 +325,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   // functions
 
   // -> operator to function literal
-  traverse(
+  ast = traverse(
     ast,
     (node) => node.name === "operator" && node.value === "->",
     (node) => {
@@ -334,7 +334,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   );
 
   // fnBlock to fn
-  traverse(
+  ast = traverse(
     ast,
     (node) => node.name === "operator" && node.value === "fnBlock",
     (node) => {
@@ -343,7 +343,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   );
 
   // fnArrowBlock to fn
-  traverse(
+  ast = traverse(
     ast,
     (node) => node.name === "operator" && node.value === "fnArrowBlock",
     (node) => {
@@ -353,20 +353,20 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   );
 
   // function argument list to curried function
-  traverse(
+  ast = traverse(
     ast,
     (node) => node.name === "operator" && node.value === "fn",
     (node) => {
       const [params, body] = node.children;
       if (params.value !== ",") return node;
-      const param = params.children.pop()!;
+      const param = params.children[params.children.length - 1]!;
       const fn = operator("fn", param, body);
       return params.children.reduceRight((acc, param) => operator("fn", param, acc), fn);
     }
   );
 
   // function arg to nameless binding
-  traverse(
+  ast = traverse(
     ast,
     (node) => node.name === "operator" && node.value === "fn",
     (node) => {

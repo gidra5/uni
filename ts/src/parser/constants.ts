@@ -139,8 +139,8 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   pipe: { separators: matchSeparators(["|>"]), precedence: leftAssociative(2) },
   send: { separators: matchSeparators(["<-"]), precedence: rightAssociative(2) },
   receive: { separators: matchSeparators(["<-"]), precedence: [null, 2] },
-  peekReceive: { separators: matchSeparators(["<-?"]), precedence: [null, 2] },
-  peekSend: { separators: matchSeparators(["?<-"]), precedence: rightAssociative(2) },
+  peekReceive: { separators: matchSeparators(["?<-"]), precedence: [null, 2] },
+  peekSend: { separators: matchSeparators(["<-?"]), precedence: rightAssociative(2) },
 
   "=": { separators: matchSeparators(["="]), precedence: rightAssociative(assignmentPrecedence) },
   ":=": { separators: matchSeparators([":="]), precedence: rightAssociative(assignmentPrecedence) },

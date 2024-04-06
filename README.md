@@ -1,18 +1,19 @@
 # Uni - make everything possible the best way possible
 A general-purpose multi-paradigm language, that aims to provide scripting-like syntax, versatile std library and typing capabilities, great tooling, cross-platforming, interop with other languages, a native performance of compiled languages.
 
-While there are many great programming languages out in the wild, all of them feel like there is something missing, but otherwise best in class. Maybe its type system, maybe its pattern matching, or first class functions, etc. The goal of this project is to combine ideas from popular languages, ideas from papers on programming, that are either implemented exclusively by maths people for maths people, or just not supported by most mainstream languages
+While there are many great programming languages out in the wild, all of them feel like there is something missing, but otherwise best in class. Maybe its type system, pattern matching, or first class functions, etc., that are out of place or just unavailable. The goal of this project is to combine ideas from popular languages and ideas from papers on programming, that are either implemented exclusively by maths people for maths people, or just not supported by most mainstream languages
 
 ## Main principles
 * Everything is an expression.
-* First class types (dependent types) - a type can be used as a value
+* First class types (dependent types) - a type is a value
 * Customizable - write your own DSL with custom operators or inject custom behavior into language constructs
 * Small enough core, so that it can be implemented in multiple languages easily
-* Support for multiple types of environments such as virtual machine, compiled binary, interpreter, repl
+* Support for multiple types of environments such as virtual machine, binary, interpreter, repl
 * Zero annotation precise type inference
 * Minimal runtime for compiled output (aka "Zero-cost abstractions")
 * Concise, yet granular, APIs
-* "Revealing complexity" language design - does not overload with syntax
+* "Revealing complexity" language design - does not overload with syntax, if it is not needed for the problem at hand
+* Concurrency without stupid restrictions
 
 ## Quick Start
 To install and run do the following:
@@ -55,6 +56,7 @@ Syntax is a mix of functional and C-like syntax, so if you are coming from one o
   * Ints `1234`
   * Floats `1.2`
   * Symbols `symbol`
+  * Channels `channel`
   * Atoms `:atom`
 * Mutable variable `mut x := 1`
 * Immutable variable `x := 1`
@@ -80,8 +82,8 @@ Syntax is a mix of functional and C-like syntax, so if you are coming from one o
 * Loops
   * For loop `for x in y: print x`
   * While loop `while x != 0: x--`
-  * Loop `loop: print "infinity and beyond"`
-  * Break loops `loop: if x == 0: break else x = x + 1`
+  * Loop `loop print "infinity and beyond"`
+  * Break loops `loop if x == 0: break else x = x + 1`
   * Continue loops `loop { if x != 0 { print "in loop branch"; continue }; print "not in branch loop" }`
 * Branches
   * If branching `if x != 0 { print "in branch" }`
@@ -90,16 +92,25 @@ Syntax is a mix of functional and C-like syntax, so if you are coming from one o
 * Code blocks
   * Block `y := { x:= 1; x + 1 }; print "x is not visible here"`
   * Break from block `y := { break 1; print "not printed" }`
-  * Label code `labeled: { x:= { labeled.break 1; print "not printed" }; print "not printed as well"; x }`
+  * Label code `labeled::{ x:= { labeled 1; print "not printed" }; print "not printed as well"; x }`
 * Functions
   * Function literal `fn x -> x+1`
   * Arrow function `x -> x + 1`
   * Function literal without binding name `fn -> #0 + 1`
   * Function call `x 1`
-  * Function call placeholders `f x _ 1`
   * Using shadowed names `fn x -> fn x -> #x + x`
+  * Pipe `x |> f |> g`
+* Concurrency
+  * Parallel composition `1 | 2` - split execution into threads, where result of expression is one of presented values
+  * Select `1 & 2` - return result of the first value to resolve.
+  * Send to channel `c <- 1` - send value and block until received
+  * Receive from channel `<- c` - receive value, blocking if unavailable
+  * Try sending `c <-? 1` - try sending value, without blocking.
+  * Try receiving `?<- c` - try receiving value if it is available.
+  * async call `async f x` - a call that will fork, thus not blocking current thread
+  * await `await f x` - awaits result from async call
 
-While that is not a full syntax, it is more than enough to scripting stuff
+While that is not a full syntax, it is more than enough for scripting stuff
 
 ## Documentation
 There is a chaotic documentation managed inside obsidian vault. While the desktop app is mostly used to write it, its not expected to be used that way by anyone else, but will provide richer experience if it is. To get a tour of `uni` you can start at `obsidian_vault/Getting started` folder
@@ -118,7 +129,7 @@ node ./build/index.js <file>
 If your feature is suitable for TDD, to start adding functionality you can create test file in `tests` and starting `vitest`
 Otherwise run `tsc --watch` in background, add cmd command to test whatever you want to test, and run the script whenever you are ready.
 
-## Whatever
+## Note
 
 While I understand scale of this project is absurd for one man, it is still planned to be developed layer by layer. Most of the goals stated in description are a looong way from being done, especially that im not a pro, that made a bunch of such languages and knows how to do it all, but they will always be the focus of development.
 Quick start section especially needs more care, since it is too verbose, it must be one-liner (except the actual usage part)
