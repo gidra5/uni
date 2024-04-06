@@ -351,6 +351,15 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           return;
         }
 
+        case "import": {
+          evaluate(taskQueue, ast.children[0], context, async (name) => {
+            const imported = await loadFile(name as string);
+            if ("value" in imported) return continuation(imported.value);
+            evaluate(taskQueue, imported.ast, context, continuation);
+          });
+          return;
+        }
+
         case "ref": {
           evaluate(taskQueue, ast.children[0], context, (value) => {
             const ref = Symbol("ref");
@@ -373,10 +382,8 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           throw new Error("Not implemented");
         }
 
-        case "import":
-        case "importWith":
-
         // must be eliminated by that point
+        case "importWith":
         case "export":
         case "exportAs":
         case "external":
@@ -437,3 +444,6 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
       continuation(null);
   }
 };
+async function loadFile(name: string): Promise<{ ast: AbstractSyntaxTree } | { value: Value }> {
+  throw new Error("Function not implemented.");
+}

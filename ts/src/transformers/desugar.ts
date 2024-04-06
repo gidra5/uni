@@ -5,6 +5,38 @@ import { traverse } from "../tree.js";
 import { inspect } from "../utils/index.js";
 
 export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
+  // import
+
+  // importAs to import
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "importAs",
+    (node) => {
+      const [path, name] = node.children;
+      return templateString("_ := import _", [name, path]);
+    }
+  );
+
+  // importAsWith to import
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "importAsWith",
+    (node) => {
+      const [path, name, _with] = node.children;
+      return templateString("_ := import _ _", [name, path, _with]);
+    }
+  );
+
+  // importWith to import
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === "importWith",
+    (node) => {
+      const [path, _with] = node.children;
+      return templateString("import _ _", [path, _with]);
+    }
+  );
+
   // atoms
   traverse(
     ast,
@@ -402,7 +434,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) => {
       const [params, body] = node.children;
       if (params.value !== ",") return node;
-      const param = params.children.pop()!;
+      const param = params.children[params.children.length - 1];
       const fn = operator("macro", param, body);
       return params.children.reduceRight((acc, param) => operator("macro", param, acc), fn);
     }

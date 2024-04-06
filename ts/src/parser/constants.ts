@@ -157,11 +157,19 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     precedence: [maxPrecedence, null],
   },
   import: {
+    separators: matchSeparators(["import"]),
+    precedence: [null, null],
+  },
+  importAs: {
     separators: matchSeparators(["import"], ["as"]),
     precedence: [null, 1],
   },
-  importWith: {
+  importAsWith: {
     separators: matchSeparators(["import"], ["as"], ["with"]),
+    precedence: [null, 1],
+  },
+  importWith: {
+    separators: matchSeparators(["import"], ["with"]),
     precedence: [null, 1],
   },
   export: { separators: matchSeparators(["export"]), precedence: [null, 1] },
