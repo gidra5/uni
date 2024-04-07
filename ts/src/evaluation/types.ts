@@ -4,11 +4,13 @@ import { TaskQueue } from "./taskQueue";
 
 export type SymbolValue = symbol;
 export type ChannelValue = { kind: "channel"; channel: symbol };
-export type ScopeValue = { get?: () => Value; set?: (val: Value) => void };
+export type ImmutableValueRef = { get: () => Value };
+export type MutableValueRef = { get: () => Value; set: (val: Value) => void };
+export type ValueRef = MutableValueRef | ImmutableValueRef;
 export type ExprValue = {
   kind: "expr";
   ast: AbstractSyntaxTree;
-  scope: Scope<ScopeValue>;
+  scope: Scope<ValueRef>;
 };
 export type RecordValue = {
   kind: "record";
@@ -31,10 +33,11 @@ export type Value =
   | RecordValue
   | SymbolValue
   | ChannelValue
+  | (ValueRef & { kind: "ref" })
   | TypeValue;
 
 export type Continuation = (arg: Value) => void;
-export type Context = { scope: Scope<ScopeValue> };
+export type Context = { scope: Scope<ValueRef> };
 export type Evaluate = (
   taskQueue: TaskQueue,
   ast: AbstractSyntaxTree,

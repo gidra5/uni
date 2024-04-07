@@ -1,7 +1,7 @@
 import { isEqual } from "../utils/index.js";
-import { ChannelValue, Evaluate, ExprValue, FunctionValue, RecordValue, Value } from "./types.js";
+import { ChannelValue, Evaluate, ExprValue, FunctionValue, RecordValue, Value, ValueRef } from "./types.js";
 import { initialContext } from "./utils.js";
-import { expr, fn, record, isRecord, channel } from "./values.js";
+import { expr, fn, record, isRecord, channel, immutableRef, ref } from "./values.js";
 import { getAtom } from "./atoms.js";
 import { AbstractSyntaxTree } from "../parser/ast.js";
 import type { ScopeEntryIdentifier } from "../scope.js";
@@ -199,7 +199,12 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
             evaluate(taskQueue, ast.children[0], context, (name) => {
               const entryIndex = context.scope.toIndex({ name: name as string });
               const entry = context.scope.scope[entryIndex];
-              entry?.value.set?.(value);
+              if (!entry) throw new Error(`Variable ${name as string} not found in scope`);
+
+              const ref = entry.value;
+              if (!("set" in ref)) throw new Error(`Variable ${name as string} is not mutable`);
+
+              ref.set(value);
               return continuation(value);
             });
           });
@@ -208,11 +213,10 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
 
         case ":=": {
           evaluate(taskQueue, ast.children[1], context, (value) => {
-            const entry = { get: () => value, set: (_value) => (value = _value) };
+            const entry = ast.children[0].data.mutable ? ref(value) : immutableRef(value);
 
             evaluate(taskQueue, ast.children[0], context, (name) => {
-              context.scope = context.scope.add(name as string, entry);
-              // console.dir(context, { depth: null });
+              context.scope = context.scope.add(name as string, entry as ValueRef);
 
               return continuation(value);
             });
@@ -362,17 +366,16 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
 
         case "ref": {
           evaluate(taskQueue, ast.children[0], context, (value) => {
-            const ref = Symbol("ref");
-            context.scope = context.scope.add(ref, { get: () => value, set: (val) => (value = val) });
-            return continuation(ref);
+            const _ref = ref(value);
+
+            return continuation(_ref);
           });
           return;
         }
         case "deref": {
           evaluate(taskQueue, ast.children[0], context, (ref) => {
-            const identifier = { name: ref as symbol };
-            const entry = context.scope.get(identifier);
-            return continuation(entry?.value.get?.() ?? null);
+            const _ref = ref as ValueRef;
+            return continuation(_ref.get());
           });
           return;
         }

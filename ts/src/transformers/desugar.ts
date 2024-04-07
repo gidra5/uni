@@ -403,6 +403,8 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) => node.name === "operator" && node.value === "fn",
     (node) => {
       const [param, body] = node.children;
+      // console.log("function arg to nameless binding", node, param, body);
+
       if (param.name === "placeholder") return operator("fn", body);
       return operator("fn", operator("application", operator("fn", body), templateString("_ := #0", [param])));
     }

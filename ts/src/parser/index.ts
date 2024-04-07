@@ -13,15 +13,14 @@ import {
   token,
 } from "./ast.js";
 import { ParsingError, ParsingResult, Precedence, TokenParser } from "./types.js";
-import { mapField, omit, pushField, setField, omitASTDataScope } from "../utils/index.js";
-import { matchString, templateString } from "./string.js";
+import { pushField, setField } from "../utils/index.js";
 import { scope } from "./constants.js";
 import { Scope as ScopeClass } from "../scope.js";
-import { TemplateValues } from "./utils.js";
 
 export type TokenGroupDefinition = {
   separators: TokenParserWithContext<"done" | "noMatch" | "match">;
   precedence: Precedence;
+  transform?: (ast: AbstractSyntaxTree) => [AbstractSyntaxTree, ParsingError[]];
   parse?: TokenParserWithContext<AbstractSyntaxTree>;
   drop?: boolean;
 };
@@ -372,6 +371,15 @@ export const parseExpr: TokenParserWithContext<AbstractSyntaxTree> =
         context.lhs.children.push(rhs);
       } else {
         context.lhs = infix(group, context.lhs, rhs);
+      }
+    }
+
+    if (context.lhs.name === "operator" && context.scope.getByName(context.lhs.value)) {
+      const def = context.scope.getByName(context.lhs.value)!.value;
+      if (def.transform) {
+        const [transformed, _errors] = def.transform(context.lhs);
+        errors.push(..._errors);
+        context.lhs = transformed;
       }
     }
 

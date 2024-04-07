@@ -2,7 +2,16 @@ import { evaluate } from "./index.js";
 import { AbstractSyntaxTree } from "../parser/ast";
 import { Scope } from "../scope.js";
 import { TaskQueue } from "./taskQueue.js";
-import { ChannelValue, ExprValue, FunctionValue, RecordValue, ScopeValue, Value } from "./types";
+import {
+  ChannelValue,
+  ExprValue,
+  FunctionValue,
+  RecordValue,
+  ValueRef,
+  Value,
+  MutableValueRef,
+  ImmutableValueRef,
+} from "./types";
 
 export const isRecord = (value: Value): value is RecordValue =>
   !!value && typeof value === "object" && value.kind === "record";
@@ -71,7 +80,7 @@ export const record = (
   map,
 });
 
-export const expr = (ast: AbstractSyntaxTree, scope: Scope<ScopeValue>): ExprValue => ({
+export const expr = (ast: AbstractSyntaxTree, scope: Scope<ValueRef>): ExprValue => ({
   kind: "expr",
   ast,
   scope,
@@ -88,6 +97,9 @@ export const fn =
     evaluate(taskQueue, expr.ast, { scope: expr.scope }, (arg) => cont(value(arg)));
 
 export const channel = (): ChannelValue => ({ kind: "channel", channel: Symbol("channel") });
+
+export const immutableRef = (value: Value): Value => ({ get: () => value, kind: "ref" });
+export const ref = (value: Value): Value => ({ get: () => value, set: (val) => (value = val), kind: "ref" });
 
 export const getterSymbol = Symbol();
 export const setterSymbol = Symbol();
