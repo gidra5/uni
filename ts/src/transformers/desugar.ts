@@ -7,16 +7,6 @@ import { inspect } from "../utils/index.js";
 export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   // import
 
-  // importAs to import
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "importAs",
-    (node) => {
-      const [path, name] = node.children;
-      return templateString("_ := import _", [name, path]);
-    }
-  );
-
   // importAsWith to import
   traverse(
     ast,
@@ -34,17 +24,6 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     (node) => {
       const [path, _with] = node.children;
       return templateString("import _ _", [path, _with]);
-    }
-  );
-
-  // atoms
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "atom",
-    (node) => {
-      node.name = "atom";
-      node.value = node.children[0].value;
-      node.children = [];
     }
   );
 
@@ -72,26 +51,6 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   );
 
   // expressions
-  // tuple literal
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === ",",
-    (node) => {
-      return node.children.reduce((acc, child) => {
-        if (child.name === "placeholder") return acc;
-        if (child.value === "label" && child.name === "operator") {
-          const [name, value] = child.children;
-          const nameNode = name.name === "name" ? string(name.value) : name;
-          return operator("set", acc, nameNode, value);
-        }
-        if (child.value === "...") {
-          const [value] = child.children;
-          return operator("join", acc, value);
-        }
-        return operator("push", acc, child);
-      }, group("unit"));
-    }
-  );
 
   // any other dangling labels outside of tuple literal
   traverse(
@@ -148,39 +107,6 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
       traverse(node.children[1]);
       if (comparisons.length === 1) return comparisons[0];
       return operator("and", ...comparisons);
-    }
-  );
-
-  // comparisons to single direction
-  traverse(
-    ast,
-    (node) => node.name === "operator" && comparisonOps.some((x) => x === node.value),
-    (node) => {
-      const [left, right] = node.children;
-      if (node.value === ">") return operator("<", right, left);
-      if (node.value === ">=") return templateString("!(_ < _)", [left, right]);
-      if (node.value === "<=") return templateString("!(_ < _)", [right, left]);
-      return node;
-    }
-  );
-
-  // not equal to equal
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "!=",
-    (node) => {
-      const [left, right] = node.children;
-      return templateString("!(_ == _)", [left, right]);
-    }
-  );
-
-  // not deep equal to deep equal
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "!==",
-    (node) => {
-      const [left, right] = node.children;
-      return templateString("!(_ === _)", [left, right]);
     }
   );
 
