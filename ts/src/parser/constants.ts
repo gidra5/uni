@@ -40,16 +40,16 @@ const tuplePrecedence = booleanPrecedence + 4;
 const arithmeticPrecedence = tuplePrecedence + 3;
 const maxPrecedence = Number.MAX_SAFE_INTEGER;
 
-export const scopeDictionary: Record < string, TokenGroupDefinition > = {
+export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   false: {
     separators: matchSeparators(["false"]),
     precedence: [null, null],
-    transform: () => [bool(false), []]
+    transform: () => [bool(false), []],
   },
   true: {
     separators: matchSeparators(["true"]),
     precedence: [null, null],
-    transform: () => [bool(true), []]
+    transform: () => [bool(true), []],
   },
   print: { separators: matchSeparators(["print"]), precedence: [null, semicolonPrecedence + 1] },
   allocate: { separators: matchSeparators(["allocate"]), precedence: [null, semicolonPrecedence + 1] },
@@ -68,22 +68,24 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
   ",": {
     separators: matchSeparators([","]),
     precedence: associative(tuplePrecedence),
-
     transform: (ast) => {
-      return [node.children.reduce((acc, child) => {
-        if (child.name === "placeholder") return acc;
-        if (child.value === "label" && child.name === "operator") {
-          const [name, value] = child.children;
-          const nameNode = name.name === "name" ? string(name.value) : name;
-          return operator("set", acc, nameNode, value);
-        }
-        if (child.value === "...") {
-          const [value] = child.children;
-          return operator("join", acc, value);
-        }
-        return operator("push", acc, child);
-      }, group("unit")), []]
-    }
+      return [
+        ast.children.reduce((acc, child) => {
+          if (child.name === "placeholder") return acc;
+          if (child.value === "label" && child.name === "operator") {
+            const [name, value] = child.children;
+            const nameNode = name.name === "name" ? string(name.value) : name;
+            return operator("set", acc, nameNode, value);
+          }
+          if (child.value === "...") {
+            const [value] = child.children;
+            return operator("join", acc, value);
+          }
+          return operator("push", acc, child);
+        }, group("unit")),
+        [],
+      ];
+    },
   },
 
   in: { separators: matchSeparators(["in"]), precedence: rightAssociative(booleanPrecedence) },
@@ -96,8 +98,8 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
     precedence: rightAssociative(booleanPrecedence + 2),
     transform: (ast) => {
       const [left, right] = ast.children;
-      return [templateString("!(_ == _)", [left, right]), []]
-    }
+      return [templateString("!(_ == _)", [left, right]), []];
+    },
   },
   "===": { separators: matchSeparators(["==="]), precedence: rightAssociative(booleanPrecedence + 2) },
   "!==": {
@@ -105,27 +107,27 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
     precedence: rightAssociative(booleanPrecedence + 2),
     transform: (ast) => {
       const [left, right] = ast.children;
-      return [templateString("!(_ === _)", [left, right]), []]
-    }
+      return [templateString("!(_ === _)", [left, right]), []];
+    },
   },
   "!": { separators: matchSeparators(["!"]), precedence: [null, 4] },
   ...comparisonOps
-  .map((op) => {
-    const definition = {
-      separators: matchSeparators([op]),
-      precedence: rightAssociative(booleanPrecedence + 4),
-      transform: (ast) => {
-        const [left, right] = ast.children;
-        if (node.value === ">") return [operator("<", right, left), []];
-        if (node.value === ">=") return [templateString("!(_ < _)", [left, right]), []];
-        if (node.value === "<=") return [templateString("!(_ < _)", [right, left]), []];
+    .map((op) => {
+      const definition = {
+        separators: matchSeparators([op]),
+        precedence: rightAssociative(booleanPrecedence + 4),
+        transform: (ast) => {
+          const [left, right] = ast.children;
+          if (ast.value === ">") return [operator("<", right, left), []];
+          if (ast.value === ">=") return [templateString("!(_ < _)", [left, right]), []];
+          if (ast.value === "<=") return [templateString("!(_ < _)", [right, left]), []];
 
-        return [ast, []]
-      }
-    };
-    return [op, definition] as[string, TokenGroupDefinition];
-  })
-  .toObject(),
+          return [ast, []];
+        },
+      };
+      return [op, definition] as [string, TokenGroupDefinition];
+    })
+    .toObject(),
 
   as: { separators: matchSeparators(["as"]), precedence: [1, 1] },
   mut: {
@@ -134,22 +136,77 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
     transform: (ast) => {
       const [child] = ast.children;
       child.data.mutable = true;
-      return [child, []]
-    }
+      return [child, []];
+    },
   },
-  "->": { separators: matchSeparators(["->"]), precedence: rightAssociative(semicolonPrecedence + 1),transform: (ast) => {
-      const [left, right] = ast.children;
-      return [templateString("!(_ == _)", [left, right]), []]
-    } },
+  "->": {
+    separators: matchSeparators(["->"]),
+    precedence: rightAssociative(semicolonPrecedence + 1),
+    transform: (ast) => {
+      ast.value = "fn";
+      return [ast, []];
+    },
+  },
   fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
-  fnBlock: { separators: matchSeparators(["fn"], ["{"], ["}"]), precedence: [null, null] },
-  fnArrowBlock: { separators: matchSeparators(["fn"], ["->"], ["{"], ["}"]), precedence: [null, null] },
+  fnBlock: {
+    separators: matchSeparators(["fn"], ["{"], ["}"]),
+    precedence: [null, null],
+    transform: (ast) => {
+      ast.value = "fn";
+      return [ast, []];
+    },
+  },
+  fnArrowBlock: {
+    separators: matchSeparators(["fn"], ["->"], ["{"], ["}"]),
+    precedence: [null, null],
+    transform(ast) {
+      ast.value = "fn";
+      ast.children = [ast.children[0], ast.children[2]];
+      return [ast, []];
+    },
+  },
   macro: { separators: matchSeparators(["macro"], ["->"]), precedence: [null, 2] },
-  macroBlock: { separators: matchSeparators(["macro"], ["{"], ["}"]), precedence: [null, null] },
-  macroArrowBlock: { separators: matchSeparators(["macro"], ["->"], ["{"], ["}"]), precedence: [null, null] },
+  macroBlock: {
+    separators: matchSeparators(["macro"], ["{"], ["}"]),
+    precedence: [null, null],
+    transform: (ast) => {
+      ast.value = "macro";
+      return [ast, []];
+    },
+  },
+  macroArrowBlock: {
+    separators: matchSeparators(["macro"], ["->"], ["{"], ["}"]),
+    precedence: [null, null],
+    transform: (ast) => {
+      ast.value = "macro";
+      ast.children = [ast.children[0], ast.children[2]];
+      return [ast, []];
+    },
+  },
   eval: { separators: matchSeparators(["eval"]), precedence: [null, maxPrecedence] },
   ";": { separators: matchSeparators([";", "\n"]), precedence: associative(semicolonPrecedence) },
-  "#": { separators: matchSeparators(["#"]), precedence: [null, maxPrecedence] },
+  "#": {
+    separators: matchSeparators(["#"]),
+    precedence: [null, maxPrecedence],
+    transform: (ast) => {
+      const [child] = ast.children;
+      if (child.name === "int") {
+        ast.name = "name";
+        ast.value = ast.children[0].value;
+        ast.children = [];
+        return [ast, []];
+      }
+      if (child.name === "name") {
+        let value = child.value;
+        if (typeof value === "string") value = { level: 0, name: value };
+        ast.name = "name";
+        ast.value = { level: value.level + 1, name: value.name };
+        ast.children = [];
+        return [ast, []];
+      }
+      return [ast, []];
+    },
+  },
   pin: { separators: matchSeparators(["^"]), precedence: [null, tuplePrecedence + 1] },
   "...": { separators: matchSeparators(["..."]), precedence: [null, tuplePrecedence + 1] },
   match: {
@@ -167,10 +224,18 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
   ifBlock: {
     separators: matchSeparators(["if"], ["{"], ["}"]),
     precedence: [null, null],
+    transform: (ast) => {
+      ast.value = "if";
+      return [ast, []];
+    },
   },
   ifBlockElse: {
     separators: matchSeparators(["if"], ["{"], ["}"], ["else"]),
     precedence: [null, semicolonPrecedence + 1],
+    transform: (ast) => {
+      ast.value = "ifElse";
+      return [ast, []];
+    },
   },
   for: {
     separators: matchSeparators(["for"], ["in"], [":", "\n"]),
@@ -180,9 +245,9 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
     separators: matchSeparators(["for"], ["in"], ["{"], ["}"]),
     precedence: [null, null],
     transform: (ast) => {
-      ast.value = 'for'
-      return [ast, []]
-    }
+      ast.value = "for";
+      return [ast, []];
+    },
   },
   while: {
     separators: matchSeparators(["while"], [":", "\n"]),
@@ -192,9 +257,9 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
     separators: matchSeparators(["while"], ["{"], ["}"]),
     precedence: [null, null],
     transform: (ast) => {
-      ast.value = 'while'
-      return [ast, []]
-    }
+      ast.value = "while";
+      return [ast, []];
+    },
   },
   loop: {
     separators: matchSeparators(["loop"]),
@@ -209,9 +274,9 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
     separators: matchSeparators(["|>"]),
     precedence: leftAssociative(2),
     transform: (ast) => {
-      ast.value = 'for'
-      return [ast, []]
-    }
+      const [arg, fn] = ast.children;
+      return [operator("application", fn, arg), []];
+    },
   },
   send: { separators: matchSeparators(["<-"]), precedence: rightAssociative(2) },
   receive: { separators: matchSeparators(["<-"]), precedence: [null, 2] },
@@ -225,9 +290,10 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
     separators: matchSeparators(["symbol"]),
     precedence: [null, null],
     transform: (ast) => {
-      ast.name = 'symbol'
-      return [ast, []]
-    }
+      ast.name = "symbol";
+      delete ast.value;
+      return [ast, []];
+    },
   },
   atom: {
     separators: matchSeparators([":"]),
@@ -236,16 +302,17 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
       ast.name = "atom";
       ast.value = ast.children[0].value;
       ast.children = [];
-      return [ast, []]
-    }
+      return [ast, []];
+    },
   },
   channel: {
     separators: matchSeparators(["channel"]),
     precedence: [null, null],
     transform: (ast) => {
-      ast.name = 'channel'
-      return [ast, []]
-    }
+      ast.name = "channel";
+      delete ast.value;
+      return [ast, []];
+    },
   },
   access: {
     separators: matchSeparators(["."]),
@@ -264,12 +331,16 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
     precedence: [null, 1],
     transform: (ast) => {
       const [path, name] = ast.children;
-      return templateString("_ := import _", [name, path]);
-    }
+      return [templateString("_ := import _", [name, path]), []];
+    },
   },
   importAsWith: {
     separators: matchSeparators(["import"], ["as"], ["with"]),
     precedence: [null, 1],
+    transform: (ast) => {
+      const [path, name, withClause] = ast.children;
+      return [templateString("_ := import _ with _", [name, path, withClause]), []];
+    },
   },
   importWith: {
     separators: matchSeparators(["import"], ["with"]),
@@ -301,26 +372,52 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
   prefixDecrement: {
     separators: matchSeparators(["--"]),
     precedence: [null, maxPrecedence],
+    transform: (ast) => {
+      const [expr] = ast.children;
+      return [templateString("_ = _ - 1", [expr, expr]), []];
+    },
   },
   prefixIncrement: {
     separators: matchSeparators(["++"]),
     precedence: [null, maxPrecedence],
+    transform: (ast) => {
+      const [expr] = ast.children;
+      return [templateString("_ = _ + 1", [expr, expr]), []];
+    },
   },
   postfixDecrement: {
     separators: matchSeparators(["--"]),
     precedence: [3, null],
+    transform: (ast) => {
+      const [expr] = ast.children;
+      return [templateString("{ value := _; _ = value - 1; value }", [expr, expr]), []];
+    },
   },
   postfixIncrement: {
     separators: matchSeparators(["++"]),
     precedence: [3, null],
+    transform: (ast) => {
+      const [expr] = ast.children;
+      return [templateString("{ value := _; _ = value + 1; value }", [expr, expr]), []];
+    },
   },
   parens: {
     separators: matchSeparators(["("], [")"]),
     precedence: [null, null],
+    transform: (ast) => {
+      const [child] = ast.children;
+      if (!child || child.name === "placeholder") return [group("unit"), []];
+      return [child, []];
+    },
   },
   brackets: {
     separators: matchSeparators(["["], ["]"]),
     precedence: [null, null],
+    transform: (ast) => {
+      const [child] = ast.children;
+      if (!child || child.name === "placeholder") return [group("unit"), []];
+      return [child, []];
+    },
   },
   braces: {
     separators: matchSeparators(["{"], ["}"]),
@@ -329,7 +426,8 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
   comment: {
     separators: matchSeparators(["//"], ["\n"]),
     precedence: [null, null],
-    parse: () =>
+    parse:
+      () =>
       (src, i = 0) => {
         let index = i;
         while (src[index] && src[index].type !== "newline") index++;
@@ -340,7 +438,8 @@ export const scopeDictionary: Record < string, TokenGroupDefinition > = {
   commentBlock: {
     separators: matchSeparators(["/*"], ["*/"]),
     precedence: [null, null],
-    parse: () =>
+    parse:
+      () =>
       (src, i = 0) => {
         let index = i;
         while (src[index] && src[index].src !== "*/") index++;

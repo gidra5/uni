@@ -5,28 +5,6 @@ import { traverse } from "../tree.js";
 import { inspect } from "../utils/index.js";
 
 export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
-  // import
-
-  // importAsWith to import
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "importAsWith",
-    (node) => {
-      const [path, name, _with] = node.children;
-      return templateString("_ := import _ _", [name, path, _with]);
-    }
-  );
-
-  // importWith to import
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "importWith",
-    (node) => {
-      const [path, _with] = node.children;
-      return templateString("import _ _", [path, _with]);
-    }
-  );
-
   // record assignment to setter
   traverse(
     ast,
@@ -62,29 +40,6 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     }
   );
 
-  // unit
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "parens",
-    (node) => {
-      if (node.children.length > 1) return;
-      if (node.children.length === 1 && node.children[0].name !== "placeholder") return;
-      node.name = "unit";
-      delete node.value;
-      node.children = [];
-    }
-  );
-
-  // pipe operator to function application
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "|>",
-    (node) => {
-      const [arg, fn] = node.children;
-      return operator("application", fn, arg);
-    }
-  );
-
   // comparison sequence to and of comparisons
   traverse(
     ast,
@@ -110,84 +65,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     }
   );
 
-  // // ; to fn
-  // ast = traverse(
-  //   ast,
-  //   (node) => node.name === "operator" && node.value === ";",
-  //   (node) => {
-  //     return node.children.reduce(
-  //       (acc, child) =>
-  //         inspect(
-  //           acc.name === "placeholder"
-  //             ? child
-  //             : child.name === "placeholder"
-  //             ? acc
-  //             : templateString("(fn _ -> _) _", [placeholder(), child, acc])
-  //         ),
-  //       placeholder()
-  //     );
-  //   }
-  // );
-
-  // postfix increment
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "postfixIncrement",
-    (node) => {
-      const [expr] = node.children;
-      return templateString("{ value := _; _ = value + 1; value }", [expr, expr]);
-    }
-  );
-
-  // postfix decrement
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "postfixDecrement",
-    (node) => {
-      const [expr] = node.children;
-      return templateString("{ value := _; _ = value - 1; value }", [expr, expr]);
-    }
-  );
-
-  // prefix increment
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "prefixIncrement",
-    (node) => {
-      const [expr] = node.children;
-      return templateString("_ = _ + 1", [expr, expr]);
-    }
-  );
-
-  // prefix decrement
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "prefixDecrement",
-    (node) => {
-      const [expr] = node.children;
-      return templateString("_ = _ - 1", [expr, expr]);
-    }
-  );
-
   // statements
-
-  // forBlock to for
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "forBlock",
-    (node) => {
-      node.value = "for";
-    }
-  );
-
-  // whileBlock to while
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "whileBlock",
-    (node) => {
-      node.value = "while";
-    }
-  );
 
   // for to while
   traverse(
@@ -213,7 +91,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   // if and ifBlock to ifElse
   traverse(
     ast,
-    (node) => node.name === "operator" && (node.value === "if" || node.value === "ifBlock"),
+    (node) => node.name === "operator" && node.value === "if",
     (node) => {
       const condition = node.children[0];
       const ifTrue = node.children[1];
@@ -221,15 +99,6 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
       return operator("ifElse", condition, ifTrue, placeholder());
     },
     true
-  );
-
-  // ifBlockElse to ifElse
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "ifBlockElse",
-    (node) => {
-      node.value = "ifElse";
-    }
   );
 
   // match to ifElse
@@ -282,34 +151,6 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
 
   // functions
 
-  // -> operator to function literal
-  ast = traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "->",
-    (node) => {
-      node.value = "fn";
-    }
-  );
-
-  // fnBlock to fn
-  ast = traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "fnBlock",
-    (node) => {
-      node.value = "fn";
-    }
-  );
-
-  // fnArrowBlock to fn
-  ast = traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "fnArrowBlock",
-    (node) => {
-      node.value = "fn";
-      node.children = [node.children[0], node.children[2]];
-    }
-  );
-
   // function argument list to curried function
   ast = traverse(
     ast,
@@ -333,25 +174,6 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
 
       if (param.name === "placeholder") return operator("fn", body);
       return operator("fn", operator("application", operator("fn", body), templateString("_ := #0", [param])));
-    }
-  );
-
-  // macroBlock to macro
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "macroBlock",
-    (node) => {
-      node.value = "macro";
-    }
-  );
-
-  // macroArrowBlock to macro
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "macroArrowBlock",
-    (node) => {
-      node.value = "macro";
-      node.children = [node.children[0], node.children[2]];
     }
   );
 
@@ -379,70 +201,7 @@ export const transform = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
     }
   );
 
-  // literals
-
-  // channels
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "channel",
-    (node) => {
-      node.name = "channel";
-      delete node.value;
-      node.children = [];
-    }
-  );
-
-  // symbols
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "symbol",
-    (node) => {
-      node.name = "symbol";
-      delete node.value;
-      node.children = [];
-    }
-  );
-
-  // atom
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "atom",
-    (node) => {
-      node.name = "atom";
-      node.value = node.children[0].value;
-      node.children = [];
-    }
-  );
-
   // nameless binding and shadowing
-
-  // nameless binding
-  traverse(
-    ast,
-    (node) => node.name === "operator" && node.value === "#" && node.children[0].name === "int",
-    (node) => {
-      node.name = "name";
-      node.value = node.children[0].value;
-      node.children = [];
-    }
-  );
-
-  // shadowing
-  traverse(
-    ast,
-    (node) =>
-      node.name === "operator" &&
-      node.value === "#" &&
-      (node.children[0].name === "name" || node.children[0].value === "#"),
-    (node) => {
-      let value = node.children[0].value;
-      if (typeof value === "string") value = { level: 0, name: value };
-      node.name = "name";
-      node.value = { level: value.level + 1, name: value.name };
-      node.children = [];
-    },
-    true
-  );
 
   // eliminate parentheses
   traverse(
