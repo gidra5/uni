@@ -10,8 +10,9 @@ import { parseExprString } from "./parser/string.js";
 import { evaluate } from "./evaluation/index.js";
 import { initialContext } from "./evaluation/utils.js";
 import { TaskQueue } from "./evaluation/taskQueue.js";
-import { transform } from "./transformers/desugar.js";
+import { desugar } from "./transformers/desugar.js";
 import { identity } from "./utils/index.js";
+import { semanticReduction } from "./transformers/semanticReduction.js";
 
 program
   .command("run <file>")
@@ -22,7 +23,8 @@ program
     const code = fs.readFileSync(file, "utf-8");
     const [tokens, tokenErrors] = parseTokens(code);
     const [ast, astErrors] = parse()(tokens);
-    evaluate(taskQueue, transform(ast), context, identity);
+    const desugared = desugar(ast);
+    evaluate(taskQueue, semanticReduction(desugared), context, identity);
     taskQueue.run();
   });
 
@@ -36,7 +38,8 @@ program
       const code = fs.readFileSync(file, "utf-8");
       const [tokens, tokenErrors] = parseTokens(code);
       const [ast, astErrors] = parse()(tokens);
-      evaluate(taskQueue, transform(ast), context, (v) => console.dir(v, { depth: null }));
+      const desugared = desugar(ast);
+      evaluate(taskQueue, semanticReduction(desugared), context, (v) => console.dir(v, { depth: null }));
       taskQueue.run();
     }
     const rl = readline.createInterface({ input, output, prompt: ">> " });
@@ -53,7 +56,7 @@ program
             const [tokens, tokenErrors] = parseTokens(line);
             const [ast, astErrors] = parse()(tokens);
             // console.dir({ ast, astErrors, tokenErrors }, { depth: null });
-            const transformed = transform(ast);
+            const transformed = desugar(ast);
             // console.dir({ context, transformed }, { depth: null });
             evaluate(taskQueue, transformed, context, (v) => console.dir(v, { depth: null }));
             taskQueue.run();

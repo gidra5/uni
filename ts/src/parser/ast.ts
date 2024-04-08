@@ -19,7 +19,7 @@ export const placeholder = (): AbstractSyntaxTree => ({
   children: [],
 });
 
-export const name = (value: string): AbstractSyntaxTree => ({
+export const name = (value: string | symbol): AbstractSyntaxTree => ({
   name: "name",
   value,
   data: {},
@@ -49,6 +49,25 @@ export const float = (value: number): AbstractSyntaxTree => ({
 
 export const string = (value: string): AbstractSyntaxTree => ({
   name: "string",
+  value,
+  data: {},
+  children: [],
+});
+
+export const channel = (): AbstractSyntaxTree => ({
+  name: "channel",
+  data: {},
+  children: [],
+});
+
+export const symbol = (): AbstractSyntaxTree => ({
+  name: "symbol",
+  data: {},
+  children: [],
+});
+
+export const atom = (value: string): AbstractSyntaxTree => ({
+  name: "atom",
   value,
   data: {},
   children: [],

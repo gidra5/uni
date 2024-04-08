@@ -380,6 +380,18 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           return;
         }
 
+        case "braces": {
+          const [expr] = ast.children;
+
+          const _continue = () => evaluate(taskQueue, expr, { ...context }, continuation);
+          context.scope = context.scope.add("continue", { get: () => _continue });
+
+          const _break: FunctionValue = (_expr) => evaluate(taskQueue, _expr.ast, { scope: _expr.scope }, continuation);
+          context.scope = context.scope.add("break", { get: () => _break });
+
+          return _continue();
+        }
+
         case "free":
         case "allocate": {
           throw new Error("Not implemented");

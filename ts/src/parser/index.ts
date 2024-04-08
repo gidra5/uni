@@ -17,10 +17,11 @@ import { pushField, setField } from "../utils/index.js";
 import { scope } from "./constants.js";
 import { Scope as ScopeClass } from "../scope.js";
 
+export type ASTTransformer = (ast: AbstractSyntaxTree) => [AbstractSyntaxTree, ParsingError[]];
 export type TokenGroupDefinition = {
   separators: TokenParserWithContext<"done" | "noMatch" | "match">;
   precedence: Precedence;
-  transform?: (ast: AbstractSyntaxTree) => [AbstractSyntaxTree, ParsingError[]];
+  transform?: ASTTransformer;
   parse?: TokenParserWithContext<AbstractSyntaxTree>;
   drop?: boolean;
 };

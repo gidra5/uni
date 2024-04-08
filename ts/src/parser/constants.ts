@@ -1,7 +1,7 @@
 import { Iterator } from "iterator-js";
 import { associative, leftAssociative, matchSeparators, rightAssociative } from "./utils.js";
-import { placeholder, bool, group, operator, string } from "./ast.js";
-import { TokenGroupDefinition } from "./index.js";
+import { placeholder, bool, group, operator, string, type AbstractSyntaxTree, atom, symbol, channel } from "./ast.js";
+import { TokenGroupDefinition, type ASTTransformer } from "./index.js";
 import { Scope } from "../scope.js";
 import { templateString } from "../parser/string.js";
 
@@ -40,17 +40,21 @@ const tuplePrecedence = booleanPrecedence + 4;
 const arithmeticPrecedence = tuplePrecedence + 3;
 const maxPrecedence = Number.MAX_SAFE_INTEGER;
 
+const relabel =
+  (op: string): ASTTransformer =>
+  (ast) => {
+    ast.value = op;
+    return [ast, []];
+  };
+
+const constant =
+  (value: AbstractSyntaxTree): ASTTransformer =>
+  () =>
+    [value, []];
+
 export const scopeDictionary: Record<string, TokenGroupDefinition> = {
-  false: {
-    separators: matchSeparators(["false"]),
-    precedence: [null, null],
-    transform: () => [bool(false), []],
-  },
-  true: {
-    separators: matchSeparators(["true"]),
-    precedence: [null, null],
-    transform: () => [bool(true), []],
-  },
+  false: { separators: matchSeparators(["false"]), precedence: [null, null], transform: constant(bool(false)) },
+  true: { separators: matchSeparators(["true"]), precedence: [null, null], transform: constant(bool(true)) },
   print: { separators: matchSeparators(["print"]), precedence: [null, semicolonPrecedence + 1] },
   allocate: { separators: matchSeparators(["allocate"]), precedence: [null, semicolonPrecedence + 1] },
   free: { separators: matchSeparators(["free"]), precedence: [null, semicolonPrecedence + 1] },
@@ -142,20 +146,10 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   "->": {
     separators: matchSeparators(["->"]),
     precedence: rightAssociative(semicolonPrecedence + 1),
-    transform: (ast) => {
-      ast.value = "fn";
-      return [ast, []];
-    },
+    transform: relabel("fn"),
   },
   fn: { separators: matchSeparators(["fn"], ["->"]), precedence: [null, 2] },
-  fnBlock: {
-    separators: matchSeparators(["fn"], ["{"], ["}"]),
-    precedence: [null, null],
-    transform: (ast) => {
-      ast.value = "fn";
-      return [ast, []];
-    },
-  },
+  fnBlock: { separators: matchSeparators(["fn"], ["{"], ["}"]), precedence: [null, null], transform: relabel("fn") },
   fnArrowBlock: {
     separators: matchSeparators(["fn"], ["->"], ["{"], ["}"]),
     precedence: [null, null],
@@ -169,10 +163,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   macroBlock: {
     separators: matchSeparators(["macro"], ["{"], ["}"]),
     precedence: [null, null],
-    transform: (ast) => {
-      ast.value = "macro";
-      return [ast, []];
-    },
+    transform: relabel("macro"),
   },
   macroArrowBlock: {
     separators: matchSeparators(["macro"], ["->"], ["{"], ["}"]),
@@ -221,21 +212,11 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     separators: matchSeparators(["if"], [":", "\n"], ["else"]),
     precedence: [null, semicolonPrecedence + 1],
   },
-  ifBlock: {
-    separators: matchSeparators(["if"], ["{"], ["}"]),
-    precedence: [null, null],
-    transform: (ast) => {
-      ast.value = "if";
-      return [ast, []];
-    },
-  },
+  ifBlock: { separators: matchSeparators(["if"], ["{"], ["}"]), precedence: [null, null], transform: relabel("if") },
   ifBlockElse: {
     separators: matchSeparators(["if"], ["{"], ["}"], ["else"]),
     precedence: [null, semicolonPrecedence + 1],
-    transform: (ast) => {
-      ast.value = "ifElse";
-      return [ast, []];
-    },
+    transform: relabel("ifElse"),
   },
   for: {
     separators: matchSeparators(["for"], ["in"], [":", "\n"]),
@@ -244,10 +225,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   forBlock: {
     separators: matchSeparators(["for"], ["in"], ["{"], ["}"]),
     precedence: [null, null],
-    transform: (ast) => {
-      ast.value = "for";
-      return [ast, []];
-    },
+    transform: relabel("for"),
   },
   while: {
     separators: matchSeparators(["while"], [":", "\n"]),
@@ -256,10 +234,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   whileBlock: {
     separators: matchSeparators(["while"], ["{"], ["}"]),
     precedence: [null, null],
-    transform: (ast) => {
-      ast.value = "while";
-      return [ast, []];
-    },
+    transform: relabel("while"),
   },
   loop: {
     separators: matchSeparators(["loop"]),
@@ -289,30 +264,17 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   symbol: {
     separators: matchSeparators(["symbol"]),
     precedence: [null, null],
-    transform: (ast) => {
-      ast.name = "symbol";
-      delete ast.value;
-      return [ast, []];
-    },
+    transform: constant(symbol()),
   },
   atom: {
     separators: matchSeparators([":"]),
     precedence: [null, maxPrecedence],
-    transform: (ast) => {
-      ast.name = "atom";
-      ast.value = ast.children[0].value;
-      ast.children = [];
-      return [ast, []];
-    },
+    transform: (ast) => [atom(ast.children[0].value), []],
   },
   channel: {
     separators: matchSeparators(["channel"]),
     precedence: [null, null],
-    transform: (ast) => {
-      ast.name = "channel";
-      delete ast.value;
-      return [ast, []];
-    },
+    transform: constant(channel()),
   },
   access: {
     separators: matchSeparators(["."]),
