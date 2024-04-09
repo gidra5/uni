@@ -1,7 +1,6 @@
 import { AbstractSyntaxTree, group, name, operator, placeholder } from "../parser/ast.js";
 import { templateString } from "../parser/string.js";
 import { traverse } from "../tree.js";
-import { inspect } from "../utils/index.js";
 
 export const semanticReduction = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
   // record assignment to setter
