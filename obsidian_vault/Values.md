@@ -1,9 +1,18 @@
 variables store values
-variable is a pair of getter and setter for its value associated with some symbol, the same as the reference to its value
-reference to a variable returns that pair as a value
+reference to a value is a pair of getter and setter
+variable is a reference for its value associated with some symbol
+reference to a variable returns that reference
 dereference on assignment's left side calls setter of the reference
 dereference in other places calls getter of the reference
 declarations take a symbol and a reference and creates a variable in current scope
 variable's value is got through its symbol - get reference associated with that symbol, call the getter
 variable's value is assigned through its symbol - get reference associated with that symbol, call the setter
 
+assignment's and definition's lhs is transformed into atom if its just a name, or evaluates to a symbol
+tranaformantion should happen at evaluation phase, because translated tree would contain names as well, which will create inf loop
+`~symbol = value -> current_scope[symbol][setter] value`
+`~symbol -> current_scope[symbol][getter] ()`
+`~symbol := value -> &current_scope[symbol][setter] &value`
+`&~symbol := ref -> &current_scope[symbol][setter] value`
+`*ref = value -> ref[setter] value`
+`*ref -> ref[getter] ()`

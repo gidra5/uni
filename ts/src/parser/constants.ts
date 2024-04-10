@@ -258,6 +258,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   peekReceive: { separators: matchSeparators(["?<-"]), precedence: [null, 2] },
   peekSend: { separators: matchSeparators(["<-?"]), precedence: rightAssociative(2) },
 
+  "~": {separators: matchSeparators(["~"]), precedence: [null,(assignmentPrecedence)]}, 
   "=": { separators: matchSeparators(["="]), precedence: rightAssociative(assignmentPrecedence) },
   ":=": { separators: matchSeparators([":="]), precedence: rightAssociative(assignmentPrecedence) },
 
