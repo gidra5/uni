@@ -13,6 +13,6 @@ tranaformantion should happen at evaluation phase, because translated tree would
 `~symbol = value -> current_scope[symbol][setter] value`
 `~symbol -> current_scope[symbol][getter] ()`
 `~symbol := value -> &current_scope[symbol][setter] &value`
-`&~symbol := ref -> &current_scope[symbol][setter] value`
+`&~symbol := ref -> &current_scope[symbol][setter] ref`
 `*ref = value -> ref[setter] value`
 `*ref -> ref[getter] ()`
