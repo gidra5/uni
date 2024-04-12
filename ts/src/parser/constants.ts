@@ -143,6 +143,15 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
       return [child, []];
     },
   },
+  varRef: {
+    separators: matchSeparators(["ref"]),
+    precedence: [null, assignmentPrecedence + 1],
+    transform: (ast) => {
+      const [child] = ast.children;
+      child.data.reference = true;
+      return [child, []];
+    },
+  },
   "->": {
     separators: matchSeparators(["->"]),
     precedence: rightAssociative(semicolonPrecedence + 1),
@@ -258,7 +267,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   peekReceive: { separators: matchSeparators(["?<-"]), precedence: [null, 2] },
   peekSend: { separators: matchSeparators(["<-?"]), precedence: rightAssociative(2) },
 
-  "~": { separators: matchSeparators(["~"]), precedence: [null, tuplePrecedence + 1] },
+  "~": {separators: matchSeparators(["~"]), precedence: [null,(assignmentPrecedence)]}, 
   "=": { separators: matchSeparators(["="]), precedence: rightAssociative(assignmentPrecedence) },
   ":=": { separators: matchSeparators([":="]), precedence: rightAssociative(assignmentPrecedence) },
 

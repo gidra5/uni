@@ -10,9 +10,9 @@ variable's value is assigned through its symbol - get reference associated with 
 
 assignment's and definition's lhs is transformed into atom if its just a name, or evaluates to a symbol
 tranaformantion should happen at evaluation phase, because translated tree would contain names as well, which will create inf loop
-`~symbol = value -> current_scope[symbol][setter] value`
-`~symbol -> current_scope[symbol][getter] ()`
-`~symbol := value -> &current_scope[symbol][setter] &value`
-`&~symbol := ref -> &current_scope[symbol][setter] ref`
+`~symbol = value ->  *current_scope[symbol] = value`
+`~symbol -> *current_scope[symbol]`
+`~symbol := value -> ref ~symbol := &value`
+`ref ~symbol := ref -> current_scope[symbol] = ref`
 `*ref = value -> ref[setter] value`
 `*ref -> ref[getter] ()`
