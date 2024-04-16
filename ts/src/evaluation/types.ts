@@ -14,8 +14,7 @@ export type ExprValue = {
 };
 export type RecordValue = {
   kind: "record";
-  get: (key: Value) => Value;
-  set: (key: Value, val: Value) => void;
+  get: (key: Value) => ValueRef;
   has: (key: Value) => boolean;
   tuple: Value[];
   record: Record<string | symbol, Value>;

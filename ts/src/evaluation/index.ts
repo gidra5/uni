@@ -78,7 +78,8 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         case "set": {
           evalReturnChildren(([tuple, key, value]) => {
             const record = tuple as RecordValue;
-            record.set(key, value);
+            const field = record.get(key);
+            if ("set" in field) field.set(value);
             return record;
           }, ast.children);
           return;
@@ -227,14 +228,14 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         case "access": {
           evaluate(taskQueue, ast.children[0], context, (value) => {
             const record = value as RecordValue;
-            continuation(record.get(ast.children[1].value));
+            continuation(record.get(ast.children[1].value).get());
           });
           return;
         }
 
         case "accessDynamic": {
           evalReturnChildren(([record, key]) => {
-            return (record as RecordValue).get(key);
+            return (record as RecordValue).get(key).get();
           }, ast.children);
           return;
         }
