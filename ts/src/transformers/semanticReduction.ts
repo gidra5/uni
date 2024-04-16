@@ -3,7 +3,6 @@ import { templateString } from "../parser/string.js";
 import { traverse } from "../tree.js";
 
 export const semanticReduction = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
-  
   // record assignment to setter
   traverse(
     ast,
@@ -15,21 +14,21 @@ export const semanticReduction = (ast: AbstractSyntaxTree): AbstractSyntaxTree =
       return templateString("_ := &_", [record, value]);
     }
   );
-  
-    // record assignment to setter
-    traverse(
-      ast,
-      (node) => node.name === "operator" && node.value === ":=",
-      (node) => {
-        const [record, value] = node.children;
-        if (record.name !== "operator" || record.value !== "~") return;
-        if (!record.data.reference) return;
-        const [_symbol] = record;
-        return templateString("current_scope[_] = _", [_symbol, value]);
-      }
-    );
-  
-  // symbol assignment to deref assignment 
+
+  // record assignment to setter
+  traverse(
+    ast,
+    (node) => node.name === "operator" && node.value === ":=",
+    (node) => {
+      const [record, value] = node.children;
+      if (record.name !== "operator" || record.value !== "~") return;
+      if (!record.data.reference) return;
+      const [_symbol] = record.children;
+      return templateString("current_scope[_] = _", [_symbol, value]);
+    }
+  );
+
+  // symbol assignment to deref assignment
   traverse(
     ast,
     (node) => node.name === "operator" && node.value === "=",
@@ -41,7 +40,7 @@ export const semanticReduction = (ast: AbstractSyntaxTree): AbstractSyntaxTree =
       return templateString("*current_scope[_] = _", [_symbol, value]);
     }
   );
-  
+
   // symbol value to deref
   traverse(
     ast,
@@ -51,7 +50,7 @@ export const semanticReduction = (ast: AbstractSyntaxTree): AbstractSyntaxTree =
       return templateString("*current_scope[_]", [value]);
     }
   );
-  
+
   // reference assignment to setter
   traverse(
     ast,
@@ -64,7 +63,7 @@ export const semanticReduction = (ast: AbstractSyntaxTree): AbstractSyntaxTree =
       return templateString("_[setter] _", [ref, value]);
     }
   );
-  
+
   // deref to getter
   traverse(
     ast,
@@ -74,7 +73,7 @@ export const semanticReduction = (ast: AbstractSyntaxTree): AbstractSyntaxTree =
       return templateString("_[getter] ()", [value]);
     }
   );
-  
+
   // record assignment to setter
   traverse(
     ast,
