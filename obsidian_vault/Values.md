@@ -12,7 +12,7 @@ assignment's and definition's lhs is transformed into atom if its just a name, o
 tranaformantion should happen at evaluation phase, because translated tree would contain names as well, which will create inf loop
 `~symbol = value ->  *current_scope[symbol] = value`
 `~symbol -> *current_scope[symbol]`
-`~symbol := value -> ref ~symbol := &value`
-`ref ~symbol := ref -> current_scope[symbol] = ref`
+`~symbol := value -> &~symbol := &value`
+`&~symbol := ref -> current_scope[symbol] = ref`
 `*ref = value -> ref[setter] value`
 `*ref -> ref[getter] ()`
