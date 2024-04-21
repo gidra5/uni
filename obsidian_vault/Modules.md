@@ -9,4 +9,12 @@ Cache entries are updated if stage inputs hash does not match cached hash.
 
 Interpreter's behavior is the same, except that all imports are interpreted only once they occur during execution.
 
+Foreign modules and scripts represent the code written in other languages.
+
+Every foreign module/script contains:
+1. the binary source
+2. call translator
+3. module's interface
+4. symbol mapping from interface to binary
+
 [modules stuff](https://thunderseethe.dev/posts/whats-in-a-module/)

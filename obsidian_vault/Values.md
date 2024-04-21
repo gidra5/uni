@@ -16,3 +16,5 @@ tranaformantion should happen at evaluation phase, because translated tree would
 `&~symbol := ref -> current_scope[symbol] = ref`
 `*ref = value -> ref[setter] value`
 `*ref -> ref[getter] ()`
+`record.name = value ->  *record[:name] = value`
+`record.name -> *record[:name]`
