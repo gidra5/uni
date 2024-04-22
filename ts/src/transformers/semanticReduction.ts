@@ -1,89 +1,103 @@
 import { AbstractSyntaxTree, group, name, operator, placeholder } from "../parser/ast.js";
-import { templateString } from "../parser/string.js";
+import { matchString, templateString } from "../parser/string.js";
 import { traverse } from "../tree.js";
 
 export const semanticReduction = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
-  // record assignment to setter
+  // assignments and references
+
+  // name declaration to symbol declaration
   traverse(
     ast,
-    (node) => node.name === "operator" && node.value === ":=",
+    (node) => matchString(node, "_ := _")[0] || matchString(node, "_ = _")[0],
     (node) => {
-      const [record, value] = node.children;
-      if (record.name !== "operator" || record.value !== "~") return;
-      record.data.reference = true;
-      return templateString("_ := &_", [record, value]);
+      const [name] = node.children;
+      if (name.name !== "name") return node;
+
+      name.name = "atom";
+      node.children[0] = templateString("~_", [name]);
+
+      return node;
     }
   );
 
-  // record assignment to setter
+  // record name to symbol
   traverse(
     ast,
-    (node) => node.name === "operator" && node.value === ":=",
+    (node) => matchString(node, "_._")[0],
     (node) => {
-      const [record, value] = node.children;
-      if (record.name !== "operator" || record.value !== "~") return;
-      if (!record.data.reference) return;
-      const [_symbol] = record.children;
-      return templateString("current_scope[_] = _", [_symbol, value]);
+      const [name, name2] = node.children;
+
+      name2.name = "atom";
+      return templateString("_[_]", [name, name2]);
     }
   );
 
-  // symbol assignment to deref assignment
+  // record key to to dereference
   traverse(
     ast,
-    (node) => node.name === "operator" && node.value === "=",
+    (node) => matchString(node, "_[_]")[0],
     (node) => {
-      const [record, value] = node.children;
-      if (record.name !== "operator" || record.value !== "~") return;
-      // if (record.name === 'name') return;
-      const [_symbol] = record.children;
-      return templateString("*current_scope[_] = _", [_symbol, value]);
+      return templateString("*_", [node]);
     }
   );
 
-  // symbol value to deref
+  // symbol name assignment to scope assignment
   traverse(
     ast,
-    (node) => node.name === "operator" && node.value === "~",
+    (node) => matchString(node, "~_ = _")[0],
     (node) => {
-      const [value] = node.children;
-      return templateString("*current_scope[_]", [value]);
+      const [_name, value] = node.children;
+      const name = _name.children[0];
+      return templateString("*current_scope[_] = _", [name, value]);
     }
   );
 
-  // reference assignment to setter
+  // symbol name declaration to reference assignment
   traverse(
     ast,
-    (node) => node.name === "operator" && node.value === "=",
+    (node) => matchString(node, "~_ := _")[0],
     (node) => {
-      const [record, value] = node.children;
-      if (record.name !== "operator" || record.value !== "deref") return;
-      // if (record.name === 'name') return;
-      const [ref] = record.children;
-      return templateString("_[setter] _", [ref, value]);
+      const [name, value] = node.children;
+      return templateString("&_ := &_", [name, value]);
     }
   );
 
-  // deref to getter
+  // symbol name reference assignment to scope assignment
   traverse(
     ast,
-    (node) => node.name === "operator" && node.value === "deref",
+    (node) => matchString(node, "&_ := _")[0],
     (node) => {
-      const [value] = node.children;
-      return templateString("_[getter] ()", [value]);
+      const [name, value] = node.children;
+      return templateString("current_scope[_] = _", [name, value]);
     }
   );
 
-  // record assignment to setter
+  // symbol name reference to dereference
   traverse(
     ast,
-    (node) => node.name === "operator" && node.value === "=",
+    (node) => matchString(node, "&_")[0],
     (node) => {
-      const [record, value] = node.children;
-      if (record.name !== "operator" || record.value !== ".") return;
-      // if (record.name === 'name') return;
-      const [recordValue, field] = record.children;
-      return templateString("_[setter] _ _", [recordValue, field, value]);
+      return templateString("*current_scope[_]", [node.children[0]]);
+    }
+  );
+
+  // ref assignment to setter
+  traverse(
+    ast,
+    (node) => matchString(node, "*_ = _")[0],
+    (node) => {
+      const [_name, value] = node.children;
+      const name = _name.children[0];
+      return templateString("_[:set] _", [name, value]);
+    }
+  );
+
+  // dereference to getter
+  traverse(
+    ast,
+    (node) => matchString(node, "*_")[0],
+    (node) => {
+      return templateString("_[:get] ()", [node.children[0]]);
     }
   );
 
@@ -95,7 +109,7 @@ export const semanticReduction = (ast: AbstractSyntaxTree): AbstractSyntaxTree =
     (node) => node.name === "operator" && node.value === "for",
     (node) => {
       const [pattern, expr, body] = node.children;
-      const iteratorNameNode = name(Symbol("iterator"));
+      const iterator = name(Symbol("iterator"));
       const template = `{
         iterator := expr
         while iterator.has_next {
@@ -104,7 +118,7 @@ export const semanticReduction = (ast: AbstractSyntaxTree): AbstractSyntaxTree =
           body
         }
       }`;
-      return templateString(template, { iterator: iteratorNameNode, expr, pattern, body });
+      return templateString(template, { iterator, expr, pattern, body });
     }
   );
 

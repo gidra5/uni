@@ -69,12 +69,10 @@ export const record = (
   kind: "record",
   has: recordHas(tuple, record, map),
   get(key: Value) {
-    const getter = recordGet(tuple, record, map);
-    if (key === getterSymbol) return fn(taskQueue, this.get);
-    if (key === setterSymbol) return fn(taskQueue, (k) => fn(taskQueue, (v) => (this.set(k, v), v)));
-    return getter(key);
+    const get = recordGet(tuple, record, map);
+    const set = recordSet(tuple, record, map);
+    return { get: () => get(key), set: (value) => set(key, value) };
   },
-  set: recordSet(tuple, record, map),
   tuple,
   record,
   map,

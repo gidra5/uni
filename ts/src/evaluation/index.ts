@@ -225,19 +225,36 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           return;
         }
 
-        case "access": {
-          evaluate(taskQueue, ast.children[0], context, (value) => {
-            const record = value as RecordValue;
-            continuation(record.get(ast.children[1].value).get());
-          });
+        case "accessDynamic": {
+          evalReturnChildren(([record, key]) => {
+            if (typeof record !== "object") return null;
+            if (!record) return null;
+            if (isRecord(record)) return record.get(key);
+            if (record.kind !== "ref") return null;
+            if (typeof key !== "symbol") return null;
+
+            return record[key.description!];
+          }, ast.children);
           return;
         }
 
-        case "accessDynamic": {
-          evalReturnChildren(([record, key]) => {
-            return (record as RecordValue).get(key).get();
-          }, ast.children);
-          return;
+        case "currentScope": {
+          return continuation({
+            ...record(taskQueue),
+            get(key) {
+              const identifier: ScopeEntryIdentifier =
+                typeof key === "string" ? { name: getAtom(key) } : { name: key as symbol };
+              const entry = context.scope.get(identifier);
+              if (!entry) throw new Error(`Variable ${key as string} not found in scope`);
+
+              return entry.value;
+            },
+            has(key) {
+              const identifier: ScopeEntryIdentifier =
+                typeof key === "string" ? { name: getAtom(key) } : { name: key as symbol };
+              return context.scope.has(identifier);
+            },
+          });
         }
 
         case "negate": {
@@ -399,6 +416,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         }
 
         // must be eliminated by that point
+        case "access":
         case "importWith":
         case "export":
         case "exportAs":
@@ -445,16 +463,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
       return continuation(String(ast.value));
     }
 
-    case "name": {
-      const identifier: ScopeEntryIdentifier =
-        typeof ast.value === "number" ? { relativeIndex: ast.value } : { name: getAtom(ast.value) };
-      const entry = context.scope.get(identifier);
-      const value = entry?.value.get?.() ?? null;
-      // console.dir(["name", context], { depth: null });
-
-      return continuation(value);
-    }
-
+    case "name":
     case "placeholder":
     default:
       continuation(null);

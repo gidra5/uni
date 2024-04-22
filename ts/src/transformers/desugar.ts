@@ -1,22 +1,8 @@
 import { AbstractSyntaxTree, group, operator } from "../parser/ast.js";
 import { comparisonOps } from "../parser/constants.js";
 import { traverse } from "../tree.js";
-import { inspect } from "../utils/index.js";
 
 export const desugar = (ast: AbstractSyntaxTree): AbstractSyntaxTree => {
-  // name declaration to symbol
-  // traverse(
-  //   ast,
-  //   (node) =>
-  //     node.name === "operator" &&
-  //     (node.value === ":=" || node.value === "=") &&
-  //     node.children[0].name === "name" &&
-  //     typeof node.children[0].value === "string",
-  //   (node) => {
-  //     node.children[0].name = "atom";
-  //   }
-  // );
-
   // expressions
 
   // any other dangling labels outside of tuple literal

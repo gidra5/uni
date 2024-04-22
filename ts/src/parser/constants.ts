@@ -143,15 +143,6 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
       return [child, []];
     },
   },
-  varRef: {
-    separators: matchSeparators(["ref"]),
-    precedence: [null, assignmentPrecedence + 1],
-    transform: (ast) => {
-      const [child] = ast.children;
-      child.data.reference = true;
-      return [child, []];
-    },
-  },
   "->": {
     separators: matchSeparators(["->"]),
     precedence: rightAssociative(semicolonPrecedence + 1),
@@ -267,7 +258,7 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
   peekReceive: { separators: matchSeparators(["?<-"]), precedence: [null, 2] },
   peekSend: { separators: matchSeparators(["<-?"]), precedence: rightAssociative(2) },
 
-  "~": {separators: matchSeparators(["~"]), precedence: [null,(assignmentPrecedence)]}, 
+  "~": { separators: matchSeparators(["~"]), precedence: [null, assignmentPrecedence] },
   "=": { separators: matchSeparators(["="]), precedence: rightAssociative(assignmentPrecedence) },
   ":=": { separators: matchSeparators([":="]), precedence: rightAssociative(assignmentPrecedence) },
 
@@ -280,6 +271,10 @@ export const scopeDictionary: Record<string, TokenGroupDefinition> = {
     separators: matchSeparators([":"]),
     precedence: [null, maxPrecedence],
     transform: (ast) => [atom(ast.children[0].value), []],
+  },
+  currentScope: {
+    separators: matchSeparators(["current_scope"]),
+    precedence: [null, null],
   },
   channel: {
     separators: matchSeparators(["channel"]),
