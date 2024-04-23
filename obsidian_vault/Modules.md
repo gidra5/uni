@@ -17,4 +17,10 @@ Every foreign module/script contains:
 3. module's interface
 4. symbol mapping from interface to binary
 
+import resolution:
+1. If string is a relative path - import file relative to the source file
+2. If string is absolute path - resolve as if it starts from project's root directory
+3. If path refers to a module file - load as a module, if refers to a script file - load as a script, otherwise load as a binary.
+4. Otherwise resolve as an external dependency using some kind of a table.
+
 [modules stuff](https://thunderseethe.dev/posts/whats-in-a-module/)

@@ -36,7 +36,13 @@ export type Value =
   | TypeValue;
 
 export type Continuation = (arg: Value) => void;
-export type Context = { scope: Scope<ValueRef> };
+export type ResolvedModule = { ast: AbstractSyntaxTree } | { value: Value };
+export type Context = {
+  scope: Scope<ValueRef>;
+  filePath: string;
+  projectPath: string;
+  dependencyResolver: (path: string) => Promise<ResolvedModule>;
+};
 export type Evaluate = (
   taskQueue: TaskQueue,
   ast: AbstractSyntaxTree,

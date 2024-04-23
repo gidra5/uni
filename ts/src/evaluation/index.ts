@@ -1,12 +1,12 @@
 import { isEqual } from "../utils/index.js";
 import { ChannelValue, Evaluate, ExprValue, FunctionValue, RecordValue, Value, ValueRef } from "./types.js";
-import { initialContext } from "./utils.js";
+import { initialContext, loadFile } from "./utils.js";
 import { expr, fn, record, isRecord, channel, immutableRef, ref } from "./values.js";
 import { getAtom } from "./atoms.js";
 import { AbstractSyntaxTree } from "../parser/ast.js";
 import type { ScopeEntryIdentifier } from "../scope.js";
 
-export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(taskQueue), continuation) => {
+export const evaluate: Evaluate = (taskQueue, ast, context, continuation) => {
   const evalChildren = (
     reducer: (v: Value[]) => void,
     [head, ...tail]: AbstractSyntaxTree["children"],
@@ -156,7 +156,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           continuation((arg, continuation) => {
             const boundScope = scope.push({ get: () => arg, set: (value) => (arg = value as ExprValue) });
 
-            evaluate(taskQueue, ast.children[0], { scope: boundScope }, continuation);
+            evaluate(taskQueue, ast.children[0], { ...context, scope: boundScope }, continuation);
           });
           return;
         }
@@ -164,10 +164,10 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         case "fn": {
           const scope = context.scope;
           continuation((arg, continuation) => {
-            evaluate(taskQueue, arg.ast, { scope: arg.scope }, (arg) => {
+            evaluate(taskQueue, arg.ast, { ...context, scope: arg.scope }, (arg) => {
               const boundScope = scope.push({ get: () => arg, set: (value) => (arg = value) });
 
-              evaluate(taskQueue, ast.children[0], { scope: boundScope }, continuation);
+              evaluate(taskQueue, ast.children[0], { ...context, scope: boundScope }, continuation);
             });
           });
           return;
@@ -176,7 +176,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
         case "eval": {
           evaluate(taskQueue, ast.children[0], context, (value) => {
             const expr = value as ExprValue;
-            evaluate(taskQueue, expr.ast, { scope: expr.scope }, continuation);
+            evaluate(taskQueue, expr.ast, { ...context, scope: expr.scope }, continuation);
           });
           return;
         }
@@ -191,7 +191,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           });
           const scope = context.scope.add(label, { get: () => labelValue });
 
-          evaluate(taskQueue, expr, { scope }, continuation);
+          evaluate(taskQueue, expr, { ...context, scope }, continuation);
           return;
         }
 
@@ -375,9 +375,9 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
 
         case "import": {
           evaluate(taskQueue, ast.children[0], context, async (name) => {
-            const imported = await loadFile(name as string);
+            const imported = await loadFile(name as string, context);
             if ("value" in imported) return continuation(imported.value);
-            evaluate(taskQueue, imported.ast, context, continuation);
+            evaluate(taskQueue, imported.ast, initialContext(taskQueue), continuation);
           });
           return;
         }
@@ -404,7 +404,8 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
           const _continue = () => evaluate(taskQueue, expr, { ...context }, continuation);
           context.scope = context.scope.add("continue", { get: () => _continue });
 
-          const _break: FunctionValue = (_expr) => evaluate(taskQueue, _expr.ast, { scope: _expr.scope }, continuation);
+          const _break: FunctionValue = (_expr) =>
+            evaluate(taskQueue, _expr.ast, { ...context, scope: _expr.scope }, continuation);
           context.scope = context.scope.add("break", { get: () => _break });
 
           return _continue();
@@ -469,6 +470,3 @@ export const evaluate: Evaluate = (taskQueue, ast, context = initialContext(task
       continuation(null);
   }
 };
-async function loadFile(name: string): Promise<{ ast: AbstractSyntaxTree } | { value: Value }> {
-  throw new Error("Function not implemented.");
-}
