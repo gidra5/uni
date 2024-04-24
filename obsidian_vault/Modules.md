@@ -11,7 +11,7 @@ Interpreter's behavior is the same, except that all imports are interpreted only
 
 Foreign modules and scripts represent the code written in other languages.
 
-Every foreign module/script contains:
+Every pre-built module/script contains:
 1. the binary source
 2. call translator
 3. module's interface
@@ -20,7 +20,17 @@ Every foreign module/script contains:
 import resolution:
 1. If string is a relative path - import file relative to the source file
 2. If string is absolute path - resolve as if it starts from project's root directory
-3. If path refers to a module file - load as a module, if refers to a script file - load as a script, otherwise load as a binary.
-4. Otherwise resolve as an external dependency using some kind of a table.
+3. If path refers to a module file - load as a module, 
+4. If path refers to a script file - load as a script, 
+5. If path refers to any other type of file - load as a binary array.
+6. Otherwise resolve string as an external dependency using some kind of a table.
+7. Resolse rest of the path and relative to dependancy's package.
+
+runtime binary import:
+1. read symbol mapping
+2. get function pointer
+3. during call jump to call translator passing the functions pointer and other args
+4. load module into memory or smthing
+5. during compilation read module's interface and resolve any calls to symbols from it
 
 [modules stuff](https://thunderseethe.dev/posts/whats-in-a-module/)
