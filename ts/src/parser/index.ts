@@ -387,7 +387,25 @@ export const parseExpr: TokenParserWithContext<AbstractSyntaxTree> =
     return [index, context.lhs, errors];
   };
 
-export const parse =
+export const parseScript =
+  (context = defaultParsingContext()): TokenParser<AbstractSyntaxTree, true> =>
+  (src, i = 0) => {
+    const children: AbstractSyntaxTree[] = [];
+    const errors: ParsingError[] = [];
+    let index = i;
+
+    while (src[index]) {
+      const [_index, astNode, _errors] = parseExpr(context)(src, index);
+
+      index = _index;
+      children.push(astNode);
+      errors.push(..._errors);
+    }
+
+    return [program(...children), []];
+  };
+
+export const parseModule =
   (context = defaultParsingContext()): TokenParser<AbstractSyntaxTree, true> =>
   (src, i = 0) => {
     const children: AbstractSyntaxTree[] = [];

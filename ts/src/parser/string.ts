@@ -1,10 +1,11 @@
-import { defaultParsingContext, parse, parseExpr } from "./index.js";
+import { defaultParsingContext, parseScript, parseExpr, parseModule } from "./index.js";
 import { Scope } from "../scope.js";
 import { AbstractSyntaxTree } from "./ast.js";
 import { parseTokens } from "./tokens.js";
 import { ConsumeParsingResult } from "./types.js";
 import { TemplateValues, match, template } from "./utils.js";
 import { desugar } from "../transformers/desugar.js";
+import { semanticReduction } from "../transformers/semanticReduction.js";
 
 export const parseExprString = (src: string, scope = {}) => {
   const [tokens] = parseTokens(src);
@@ -15,11 +16,22 @@ export const parseExprString = (src: string, scope = {}) => {
   return result as ConsumeParsingResult<AbstractSyntaxTree>;
 };
 
-export const parseProgramString = (src: string, scope = {}) => {
+export const parseScriptString = (src: string, scope = {}) => {
   const [tokens] = parseTokens(src);
   const context = defaultParsingContext();
   context.scope = context.scope.append(new Scope(scope));
-  return parse(context)(tokens);
+  const [ast] = parseScript(context)(tokens);
+  const desugared = desugar(ast);
+  return semanticReduction(desugared);
+};
+
+export const parseModuleString = (src: string, scope = {}) => {
+  const [tokens] = parseTokens(src);
+  const context = defaultParsingContext();
+  context.scope = context.scope.append(new Scope(scope));
+  const [ast] = parseModule(context)(tokens);
+  const desugared = desugar(ast);
+  return semanticReduction(desugared);
 };
 
 export const templateString = (templateStr: string, values: TemplateValues) => {

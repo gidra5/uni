@@ -1,6 +1,6 @@
 import { isEqual } from "../utils/index.js";
 import { ChannelValue, Evaluate, ExprValue, FunctionValue, RecordValue, Value, ValueRef } from "./types.js";
-import { initialContext, loadFile } from "./utils.js";
+import { loadFile } from "./utils.js";
 import { expr, fn, record, isRecord, channel, immutableRef, ref } from "./values.js";
 import { getAtom } from "./atoms.js";
 import { AbstractSyntaxTree } from "../parser/ast.js";
@@ -185,10 +185,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context, continuation) => {
           const label = ast.children[0].value;
           const expr = ast.children[1];
 
-          const labelValue: FunctionValue = fn(taskQueue, (value) => {
-            continuation(value);
-            return null;
-          });
+          const labelValue: FunctionValue = fn(context, (value) => (continuation(value), null));
           const scope = context.scope.add(label, { get: () => labelValue });
 
           evaluate(taskQueue, expr, { ...context, scope }, continuation);
@@ -374,10 +371,8 @@ export const evaluate: Evaluate = (taskQueue, ast, context, continuation) => {
         }
 
         case "import": {
-          evaluate(taskQueue, ast.children[0], context, async (name) => {
-            const imported = await loadFile(name as string, context);
-            if ("value" in imported) return continuation(imported.value);
-            evaluate(taskQueue, imported.ast, initialContext(taskQueue), continuation);
+          evaluate(taskQueue, ast.children[0], context, (name) => {
+            loadFile(name as string, context).then(continuation);
           });
           return;
         }

@@ -3,16 +3,13 @@ import readline from "readline";
 import { stdin as input, stdout as output } from "process";
 import { VM } from "./vm/index.js";
 import fs from "fs";
-import { parseTokens } from "./parser/tokens.js";
-import { parse } from "./parser/index.js";
 import { Compiler } from "./compiler/index.js";
-import { parseExprString } from "./parser/string.js";
+import { parseExprString, parseScriptString } from "./parser/string.js";
 import { evaluate } from "./evaluation/index.js";
 import { initialContext } from "./evaluation/utils.js";
 import { TaskQueue } from "./evaluation/taskQueue.js";
-import { desugar } from "./transformers/desugar.js";
 import { identity } from "./utils/index.js";
-import { semanticReduction } from "./transformers/semanticReduction.js";
+import { Continuation } from "./evaluation/types.js";
 
 program
   .command("run <file>")
@@ -20,12 +17,12 @@ program
   .action((file) => {
     const taskQueue = new TaskQueue();
     const context = initialContext(taskQueue);
+    console.log("Starting interpreter...");
     const code = fs.readFileSync(file, "utf-8");
-    const [tokens, tokenErrors] = parseTokens(code);
-    const [ast, astErrors] = parse()(tokens);
-    const desugared = desugar(ast);
-    evaluate(taskQueue, semanticReduction(desugared), context, identity);
+    console.log("Script is read");
+    evaluate(taskQueue, parseScriptString(code), context, identity);
     taskQueue.run();
+    console.log("Exiting interpreter");
   });
 
 program
@@ -34,14 +31,16 @@ program
   .action((file) => {
     const taskQueue = new TaskQueue();
     const context = initialContext(taskQueue);
+    console.log("Starting REPL...");
+    const callback: Continuation = (v) => console.dir(v, { depth: null });
     if (file) {
+      console.log("Reading initial script...");
       const code = fs.readFileSync(file, "utf-8");
-      const [tokens, tokenErrors] = parseTokens(code);
-      const [ast, astErrors] = parse()(tokens);
-      const desugared = desugar(ast);
-      evaluate(taskQueue, semanticReduction(desugared), context, (v) => console.dir(v, { depth: null }));
+      console.log("Running initial script...");
+      evaluate(taskQueue, parseScriptString(code), context, callback);
       taskQueue.run();
     }
+    console.log("Waiting for next input...");
     const rl = readline.createInterface({ input, output, prompt: ">> " });
     rl.prompt();
 
@@ -53,12 +52,7 @@ program
           break;
         default: {
           try {
-            const [tokens, tokenErrors] = parseTokens(line);
-            const [ast, astErrors] = parse()(tokens);
-            // console.dir({ ast, astErrors, tokenErrors }, { depth: null });
-            const transformed = desugar(ast);
-            // console.dir({ context, transformed }, { depth: null });
-            evaluate(taskQueue, transformed, context, (v) => console.dir(v, { depth: null }));
+            evaluate(taskQueue, parseScriptString(line), context, callback);
             taskQueue.run();
           } catch (e) {
             console.error(e);
@@ -81,8 +75,6 @@ program
     const code = fs.readFileSync(file, "utf-8");
     console.log("File is read");
 
-    // const [tokens, _errors] = parseTokens(code);
-    // const [ast, __errors] = parse()(tokens);
     const [ast, _errors] = parseExprString(code);
     console.log("File is parsed");
 

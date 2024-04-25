@@ -24,7 +24,7 @@ import resolution:
 4. If path refers to a script file - load as a script, 
 5. If path refers to any other type of file - load as a binary array.
 6. Otherwise resolve string as an external dependency using some kind of a table.
-7. Resolse rest of the path and relative to dependancy's package.
+7. Resolve rest of the path as relative to dependency's package.
 
 runtime binary import:
 1. read symbol mapping
