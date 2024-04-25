@@ -33,15 +33,17 @@ export async function loadModule(source: string, taskQueue: TaskQueue): Promise<
   });
 }
 
+const MODULE_FILE_EXTENSION = ".unim";
+const SCRIPT_FILE_EXTENSION = ".uni";
 export async function loadFile(name: string, context: Context): Promise<Value> {
   const resolvedPath = await resolvePath(name, context);
 
-  if (resolvedPath.endsWith(".unim")) {
+  if (resolvedPath.endsWith(MODULE_FILE_EXTENSION)) {
     const file = await fsp.readFile(resolvedPath, "utf-8");
     return await loadModule(file, context.taskQueue);
   }
 
-  if (resolvedPath.endsWith(".uni")) {
+  if (resolvedPath.endsWith(SCRIPT_FILE_EXTENSION)) {
     const file = await fsp.readFile(resolvedPath, "utf-8");
     return await loadScript(file, context.taskQueue);
   }
@@ -50,6 +52,7 @@ export async function loadFile(name: string, context: Context): Promise<Value> {
   return file;
 }
 
+const LOCAL_DEPENDENCIES_PATH = "dependencies";
 async function resolvePath(name: string, context: Context) {
   if (name.startsWith("./")) {
     return path.resolve(context.filePath, name);
@@ -59,5 +62,5 @@ async function resolvePath(name: string, context: Context) {
     return path.join(context.projectPath, name.slice(1));
   }
 
-  return path.join(context.projectPath, "..", "dependencies", name);
+  return path.join(context.projectPath, "..", LOCAL_DEPENDENCIES_PATH, name);
 }
