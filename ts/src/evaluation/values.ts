@@ -2,7 +2,7 @@ import { evaluate } from "./index.js";
 import { AbstractSyntaxTree } from "../parser/ast";
 import { Scope } from "../scope.js";
 import { TaskQueue } from "./taskQueue.js";
-import { ChannelValue, ExprValue, FunctionValue, RecordValue, ValueRef, Value, Context } from "./types";
+import { ChannelValue, ExprValue, FunctionValue, RecordValue, ValueRef, Value, Context, Continuation } from "./types";
 
 export const isRecord = (value: Value): value is RecordValue =>
   !!value && typeof value === "object" && value.kind === "record";
@@ -84,6 +84,10 @@ export const fn =
   (context: Context, _fn: (arg: Value) => Value): FunctionValue =>
   (expr, cont) =>
     evaluate(context.taskQueue, expr.ast, { ...context, scope: expr.scope }, (arg) => cont(_fn(arg)));
+export const fnWithCont =
+  (context: Context, _fn: (arg: Value, continuation: Continuation) => void): FunctionValue =>
+  (expr, cont) =>
+    evaluate(context.taskQueue, expr.ast, { ...context, scope: expr.scope }, (arg) => _fn(arg, cont));
 
 export const channel = (): ChannelValue => ({ kind: "channel", channel: Symbol("channel") });
 

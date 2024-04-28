@@ -36,11 +36,13 @@ export type Value =
   | TypeValue;
 
 export type Continuation = (arg: Value) => void;
+export type Future = (continuation: Continuation) => void;
 export type Context = {
   taskQueue: TaskQueue;
   scope: Scope<ValueRef>;
   filePath: string;
   projectPath: string;
+  resolveDependency: (name: string) => string;
 };
 export type Evaluate = (
   taskQueue: TaskQueue,

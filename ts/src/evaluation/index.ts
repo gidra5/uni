@@ -372,7 +372,7 @@ export const evaluate: Evaluate = (taskQueue, ast, context, continuation) => {
 
         case "import": {
           evaluate(taskQueue, ast.children[0], context, (name) => {
-            loadFile(name as string, context).then(continuation);
+            loadFile(name as string, context)(continuation);
           });
           return;
         }
