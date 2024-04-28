@@ -1,17 +1,15 @@
-Syntax is defined by [[formal grammar]], which is defined using special symbols[^1], generally `->, *, +, ?`.
+Syntax is defined by [[formal grammar]], which is defined using special symbols[^1], generally `->, *, +, ?, |`.
 
 For a list of tokens refer to [[Tokenizer]]
 
 ### [[Modules|Module]]
 
-`import` and `use` distinguish between file imports and dependency imports respectively.
-
 ```
 module -> moduleItem*
 moduleItem -> (import | external | definition) (newline | ";")?
-import -> ("import" | "use") string ("as" pattern)? ("with" expression)?
+import -> ("import") string ("as" pattern)? ("with" expression)?
 external -> "external" pattern (":" type)? ("=" expression)?
-private -> "export"? pattern "=" expression
+definition -> "export"? pattern "=" expression
 ```
 
 ### Comments
