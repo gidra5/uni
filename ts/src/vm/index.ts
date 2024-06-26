@@ -52,11 +52,11 @@ export class VM extends EventEmitter {
 
     this.cond = Flag.ZERO;
     this.pc = INITIAL_ADDR;
-    this.memory[MemoryMappedRegisters.MSR] = STATUS_BIT;
+    this.memory[MemoryMappedRegisters.MACHINE_STATUS] = STATUS_BIT;
 
     if (osImage) {
       this.loadImage(osImage);
-      this.memory[MemoryMappedRegisters.MSR] |= OS_LOADED_BIT;
+      this.memory[MemoryMappedRegisters.MACHINE_STATUS] |= OS_LOADED_BIT;
     }
   }
 
@@ -77,11 +77,11 @@ export class VM extends EventEmitter {
   }
 
   get running() {
-    return !!(this.memory[MemoryMappedRegisters.MSR] & STATUS_BIT);
+    return !!(this.memory[MemoryMappedRegisters.MACHINE_STATUS] & STATUS_BIT);
   }
 
   get suspended() {
-    return !!(this.memory[MemoryMappedRegisters.MSR] & SUSPENDED_BIT);
+    return !!(this.memory[MemoryMappedRegisters.MACHINE_STATUS] & SUSPENDED_BIT);
   }
 
   run() {
@@ -133,12 +133,12 @@ export class VM extends EventEmitter {
   }
 
   suspend() {
-    this.memory[MemoryMappedRegisters.MSR] |= SUSPENDED_BIT;
+    this.memory[MemoryMappedRegisters.MACHINE_STATUS] |= SUSPENDED_BIT;
     throw new SuspendedError();
   }
 
   resume() {
-    this.memory[MemoryMappedRegisters.MSR] &= ~SUSPENDED_BIT;
+    this.memory[MemoryMappedRegisters.MACHINE_STATUS] &= ~SUSPENDED_BIT;
     this.run();
   }
 

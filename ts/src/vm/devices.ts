@@ -13,7 +13,7 @@ export type Device = {
 export enum MemoryMappedRegisters {
   DSR = 0xfe04 /* display status */,
   DDR = 0xfe06 /* display data */,
-  MSR = 0xfffe /* machine status */,
+  MACHINE_STATUS = 0xfffe,
   KBSR = 0xfe00 /* keyboard status */,
   KBDR = 0xfe02 /* keyboard data */,
 }

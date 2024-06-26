@@ -495,7 +495,7 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
     // console.log("VM_OPCODE_TRAP trapvect8 %s", toHex(trapCode));
 
     // if os is loaded use its implementation, otherwise use native
-    if (vm.memory[MemoryMappedRegisters.MSR] & OS_LOADED_BIT) {
+    if (vm.memory[MemoryMappedRegisters.MACHINE_STATUS] & OS_LOADED_BIT) {
       vm.registers[Register.R_R7] = vm.pc;
       vm.pc = vm.read(trapCode);
     } else trapHandlers[trapCode]?.(vm);
@@ -542,7 +542,7 @@ export const trapHandlers: Record<number, TrapHandler> = {
     putBuf(buf);
   },
   [TrapCode.TRAP_HALT]: function (vm) {
-    vm.memory[MemoryMappedRegisters.MSR] &= ~STATUS_BIT;
+    vm.memory[MemoryMappedRegisters.MACHINE_STATUS] &= ~STATUS_BIT;
   },
 };
 
