@@ -78,7 +78,7 @@ program
     const [ast, _errors] = parseExprString(code);
     console.log("File is parsed");
 
-    const compiled = Compiler.compile(ast, 0x3000);
+    const compiled = Compiler.compileToBinary(ast, 0x3000);
     console.log("File is compiled");
     const buffer = Buffer.from(compiled.buffer);
 

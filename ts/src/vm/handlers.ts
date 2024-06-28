@@ -139,12 +139,41 @@ export enum OpCode {
   MULT /* multiply */,
   DIVIDE /* divide */,
   SUBTRACT /* subtract */,
-  COPY /* copy */,
   XOR /* bitwise xor */,
-  PUSH /* push */,
-  POP /* pop */,
-  CALL /* call */,
-  RET /* return */,
+  // print string value that top of the stack points to
+  PRINT,
+  TUPLE,
+
+  // procedure operations
+  // assign name to the stack entry
+  ASSIGN_NAME,
+  ENTRY_POINT /* entry point of a procedure */,
+  CALL /* call to the procedure taking args from stack */,
+  RETURN /* return to the caller using args from stack */,
+
+  // stack operations
+  // take value at i index in stack and push copy to the top
+  COPY,
+  // push value to the top of the stack
+  PUSH,
+  // pop value from the top of the stack
+  POP,
+  // get value at i index in stack into register
+  GET,
+  // set value at i index in stack
+  SET,
+  // swap two values in stack at i and j indexes
+  SWAP,
+  // insert value at i index in stack
+  INSERT,
+  // remove value at i index in stack
+  REMOVE,
+  // replace value at i index in stack
+  REPLACE,
+  // push new stack frame
+  PUSH_FRAME,
+  // pop current stack frame
+  POP_FRAME,
 }
 
 export enum TrapCode {
