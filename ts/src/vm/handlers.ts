@@ -1,6 +1,17 @@
-import { Address, OS_LOADED_BIT, Register, STATUS_BIT, UInt16, putBuf, signExtend, toBin, toHex } from "./utils.js";
+import {
+  Address,
+  OS_LOADED_BIT,
+  Register,
+  PROCESSOR_STATUS_BIT,
+  UInt16,
+  putBuf,
+  signExtend,
+  toBin,
+  toHex,
+} from "./utils.js";
 import { VM } from "./index.js";
 import { MemoryMappedRegisters } from "./devices.js";
+import { Worker } from "worker_threads";
 
 /* 
   VM_OPCODE_ADD = 0b0001,
@@ -177,6 +188,7 @@ export enum OpCode {
 }
 
 export enum TrapCode {
+  TRAP_WAKE = 0x19 /* wake up the thread */,
   TRAP_GETC = 0x20 /* get character from keyboard, not echoed onto the terminal */,
   TRAP_OUT = 0x21 /* output a character */,
   TRAP_PUTS = 0x22 /* output a word string */,
@@ -532,6 +544,19 @@ export const opCodeHandlers: Record<number, OpCodeHandler> = {
 };
 
 export const trapHandlers: Record<number, TrapHandler> = {
+  [TrapCode.TRAP_WAKE]: function (vm) {
+    const threadId = vm.registers[Register.R_R0];
+    const worker = new Worker("./thread.js", { workerData: { memory: vm.memory, id: threadId } });
+    worker.on("message", (message) => {
+      if (message.type === "halt") {
+        worker.terminate();
+      }
+    });
+    vm.on("halt", () => {
+      worker.terminate();
+    });
+    worker.postMessage({ type: "start" });
+  },
   [TrapCode.TRAP_GETC]: function (vm) {
     /* read a single ASCII char */
     vm.registers[Register.R_R0] = vm.read(MemoryMappedRegisters.KBDR);
@@ -571,7 +596,7 @@ export const trapHandlers: Record<number, TrapHandler> = {
     putBuf(buf);
   },
   [TrapCode.TRAP_HALT]: function (vm) {
-    vm.memory[MemoryMappedRegisters.MACHINE_STATUS] &= ~STATUS_BIT;
+    vm.memory[MemoryMappedRegisters.MACHINE_STATUS] &= ~PROCESSOR_STATUS_BIT;
   },
 };
 

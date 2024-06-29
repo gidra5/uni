@@ -1,4 +1,4 @@
-import { STATUS_BIT } from "./utils.js";
+import { PROCESSOR_STATUS_BIT } from "./utils.js";
 
 export type MemoryMappedDevice = {
   device: Device;
@@ -22,7 +22,7 @@ export const keyboardDevice = (getChar: () => number, checkChar: () => boolean):
   read(address) {
     if (address === MemoryMappedRegisters.KBSR) {
       const input = checkChar();
-      return input ? STATUS_BIT : 0;
+      return input ? PROCESSOR_STATUS_BIT : 0;
     } else if (address === MemoryMappedRegisters.KBDR) {
       if (this.read(MemoryMappedRegisters.KBSR)) {
         return getChar();
@@ -39,7 +39,7 @@ export const keyboardDevice = (getChar: () => number, checkChar: () => boolean):
 export const displayDevice: Device = {
   read(address: number) {
     if (address === MemoryMappedRegisters.DSR) {
-      return STATUS_BIT;
+      return PROCESSOR_STATUS_BIT;
     } else if (address === MemoryMappedRegisters.DDR) {
       return 0;
     }

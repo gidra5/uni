@@ -2,10 +2,11 @@ export type UInt16 = number;
 export type Address = UInt16;
 
 export const INITIAL_ADDR = 0x3000 as const;
+export const PROCESSORS_COUNT = 4 as const;
 export const SIGN_BIT = 1 << 15;
-export const STATUS_BIT = 1 << 15;
+export const PROCESSOR_STATUS_BIT = (1 << 14) >> PROCESSORS_COUNT;
 export const SUSPENDED_BIT = 1 << 14;
-export const OS_LOADED_BIT = 1 << 13;
+export const OS_LOADED_BIT = 1 << 15;
 export const MEMORY_SIZE = 1 << 16;
 export const R_COUNT = 10 as const;
 

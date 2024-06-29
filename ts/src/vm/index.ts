@@ -9,11 +9,12 @@ import {
   UInt16,
   Flag,
   INITIAL_ADDR,
-  STATUS_BIT,
+  PROCESSOR_STATUS_BIT,
   signFlag,
   SUSPENDED_BIT,
   OS_LOADED_BIT,
   toHex,
+  PROCESSORS_COUNT,
 } from "./utils.js";
 
 class SuspendedError extends Error {
@@ -23,6 +24,7 @@ class SuspendedError extends Error {
 }
 
 export class VM extends EventEmitter {
+  id = 0;
   memory = new Uint16Array(MEMORY_SIZE);
   registers = new Uint16Array(R_COUNT);
   keyboard: Device;
@@ -52,7 +54,6 @@ export class VM extends EventEmitter {
 
     this.cond = Flag.ZERO;
     this.pc = INITIAL_ADDR;
-    this.memory[MemoryMappedRegisters.MACHINE_STATUS] = STATUS_BIT;
 
     if (osImage) {
       this.loadImage(osImage);
@@ -77,14 +78,15 @@ export class VM extends EventEmitter {
   }
 
   get running() {
-    return !!(this.memory[MemoryMappedRegisters.MACHINE_STATUS] & STATUS_BIT);
+    return !!(this.memory[MemoryMappedRegisters.MACHINE_STATUS] & (PROCESSOR_STATUS_BIT >> this.id));
   }
 
   get suspended() {
-    return !!(this.memory[MemoryMappedRegisters.MACHINE_STATUS] & SUSPENDED_BIT);
+    return !!(this.memory[MemoryMappedRegisters.MACHINE_STATUS] & (SUSPENDED_BIT >> this.id));
   }
 
   run() {
+    this.memory[MemoryMappedRegisters.MACHINE_STATUS] = PROCESSOR_STATUS_BIT >> this.id;
     // const initPC = this.pc;
     try {
       while (this.running && !this.suspended) {
