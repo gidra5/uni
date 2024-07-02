@@ -27,6 +27,7 @@ export enum Register {
   R_R7,
   R_PC /* program counter */,
   R_COND,
+  R_STACK_BASE,
 }
 
 export function signExtend(x: number, bitCount: number) {

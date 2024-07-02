@@ -157,7 +157,7 @@ export enum OpCode {
 
   // procedure operations
   // assign name to the stack entry
-  ASSIGN_NAME,
+  DECLARE,
   ENTRY_POINT /* entry point of a procedure */,
   CALL /* call to the procedure taking args from stack */,
   RETURN /* return to the caller using args from stack */,
