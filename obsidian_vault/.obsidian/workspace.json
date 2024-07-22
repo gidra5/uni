@@ -37,50 +37,14 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Compilation.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "1058ce76616bbbc9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Getting Started/Concurrency.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "5f6224781193cdf3",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Getting Started/Structural.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "c6784789770ddbe9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Getting Started/Source files.md",
+                "file": "Programming Language.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -146,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Getting Started/Source files.md",
+                "file": "Programming Language.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -163,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Getting Started/Source files.md",
+                "file": "Programming Language.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -186,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Getting Started/Source files.md"
+                "file": "Programming Language.md"
               }
             }
           },
@@ -230,8 +194,9 @@
       "bmo-chatbot:Chatbot (Clear Conversation)": false
     }
   },
-  "active": "c6784789770ddbe9",
+  "active": "d9822c97c29aed1f",
   "lastOpenFiles": [
+    "Compilation.md",
     "Getting Started/Reactive.md",
     "Getting Started/Structural.md",
     "Getting Started/Imperative.md",
@@ -240,7 +205,6 @@
     "Getting Started/Source files.md",
     "Concurrency.md",
     "Untitled 1.md",
-    "Compilation.md",
     "Intermediate Representation.md",
     "Data Normalization.md",
     "Composites.md",
