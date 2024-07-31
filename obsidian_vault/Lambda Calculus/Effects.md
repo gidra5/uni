@@ -73,3 +73,4 @@ TL;DR математики изобрели dependency injection в фп.
 [do be do be do](https://arxiv.org/pdf/1611.09259.pdf)
 [modal effect types](https://arxiv.org/abs/2407.11816)
 [effect systems](https://vhyrro.github.io/posts/effect-systems/)
+[koka](https://koka-lang.github.io/koka/doc/book.html#why)
