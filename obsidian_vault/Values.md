@@ -9,24 +9,29 @@ variable's value is got through its symbol - get reference associated with that 
 variable's value is assigned through its symbol - get reference associated with that symbol, call the setter
 
 assignment's and definition's lhs is transformed into atom if its just a name, or evaluates to a symbol
-tranaformantion should happen at evaluation phase, because translated tree would contain names as well, which will create inf loop
-`name = value -> ~:name= value`
-`name -> ~:name`
-`name := value -> ~:name := value`
-`&name := ref -> &~:name = ref`
+transformation should happen at evaluation phase, because translated tree would contain names as well, which will create inf loop
 
-`record.name -> record[:name]`
+there must be defined 5 operations:
+1. creating fresh reference
+2. binding reference to a symbol
+3. get reference that is bound to a symbol
+4. get value of reference
+5. set value of reference
 
-`record[v1] = v2 ->  *record[v1] = v2`
-`record[value] -> *record[value]`
+in current scope:
+`&[symbol] = ref` - bind reference to the symbol (declare a symbol)
+`&[symbol]` - get reference bound to the symbol
+`*ref = value` - set value of the reference
+`*ref` - get value of the reference
+`[get]: fn -> value, [set]: fn value -> _` - reference interface
 
-`~symbol = value ->  *current_scope[symbol] = value`
-`~symbol -> *current_scope[symbol]`
-`~symbol := value -> &~symbol := &value`
-`&~symbol := ref -> current_scope[symbol] = ref`
-
-`*ref = value -> ref[:set] value`
-`*ref -> ref[:get] ()`
-
-`&*value -> value`
-`*&value -> value`
+common operations in current scope:
+`[symbol] = value -> *&[symbol] = value` - set value of the reference that the symbol is bound to
+`[symbol] -> *&[symbol]` - get value of the reference that the symbol is bound to
+`[symbol] := value -> &[symbol] = ref; *&[symbol] = value` - create reference, set its value, and bind it to the symbol
+`name -> [:name]` - get value of a name
+`record.name -> *&record[:name]` - get value of a name in `record`
+`record[symbol] -> *&record[symbol]` - get value of a symbol in `record`
+`name = value -> *&[:name] = value`
+`record.name = value -> *&record[:name] = value`
+`record[symbol] = value -> *&record[symbol] = value`

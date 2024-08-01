@@ -1,1 +1,1 @@
-Macros distinguishing feature is the ability to decide when to evaluate inputs.
+Macros distinguishing feature is the ability to decide when to evaluate inputs and in what environment.

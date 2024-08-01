@@ -59,6 +59,8 @@ Includes tools for:
 26. measures (kg, meters, etc)
 27. regexp
 28. functional stuff
+  1. monads
+  2. functors
 29. crypto
 30. compression
 31. encoding
@@ -67,3 +69,4 @@ Includes tools for:
 34. algorithms
 35. caching
 36. concurrency
+37. primitives utilities
