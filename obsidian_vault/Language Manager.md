@@ -14,7 +14,7 @@ A toolchain contains:
   3. Inspection
   4. Step by step execution
 4. Interpreter (repl)
-5. Formatter (extendable)
+5. [Formatter](https://www.reddit.com/r/ProgrammingLanguages/s/OexVaqLI1C) (extendable)
 6. Linter (extendable)
 7. Language Server
 8. Test runner
@@ -37,3 +37,8 @@ A toolchain contains:
 13. Documentation management
 
 Language manager can generate and maintain dependency list from package manifest, which may contain package descriptors in multiple formats.
+
+depencencies
+1. be careful not too take too much
+2. can have unexpected licenses
+3. unoptimized enough

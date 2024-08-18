@@ -36,3 +36,5 @@ Execution policy may differently handle success or failure of individual tasks.
 For example:
 1. upon failure of any one task cancel siblings and return error.
 2. upon success of any one task cancel siblings and return result.
+
+https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/#go-statement-considered-harmful

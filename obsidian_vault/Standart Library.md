@@ -35,15 +35,16 @@ Includes tools for:
 11. streams
 12. animation interpolation
 13. math
-  14. linear algebra
-  15. number theory
-  16. complex
-  17. quaternions
-  18. dual
-  19. derivatives
-  20. integration
-  21. fft
-  22. statistics and probability sampling
+  1. linear algebra
+  2. number theory
+  3. complex
+  4. quaternions
+  5. dual
+  6. derivatives
+  7. integration
+  8. fft
+  9. statistics and probability sampling
+  10. [reference frames and geometry](https://www.cs.cornell.edu/~asampson/blog/gator.html)
 14. styling
 15. cli parsing
 16. reflection 
@@ -63,10 +64,12 @@ Includes tools for:
   2. functors
 29. crypto
 30. compression
-31. encoding
+31. encoding (json, yaml, base64, etc)
 32. hashing
 33. data structures
 34. algorithms
 35. caching
 36. concurrency
 37. primitives utilities
+38. plotting
+39. error correction codes

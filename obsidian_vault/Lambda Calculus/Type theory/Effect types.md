@@ -13,3 +13,4 @@ And looking from the opposite side, provided methods are added by implementing t
 Effect methods may be masked out from context so that the internal implementations does not interfere with outer implementations when function is called.
 Effect methods must be implemented by handlers, that are installed at some point in call-stack.
 
+https://vhyrro.github.io/posts/effect-systems/

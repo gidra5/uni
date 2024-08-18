@@ -1,3 +1,6 @@
+[nice definition](https://dl.acm.org/doi/pdf/10.1145/512644.512671)
+[girard's paradox coc](https://www.cse.chalmers.se/~coquand/girard.pdf)
+
 Basis of type system is Calculus of Constructions:
 
 1. There is a *Value* which is **Type of propositions**.

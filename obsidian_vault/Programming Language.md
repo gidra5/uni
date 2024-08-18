@@ -14,3 +14,8 @@ Project also specifies what are dependency libraries, their version and where to
 https://vekatze.github.io/neut/overview.html
 https://github.com/capy-language/capy/tree/master
 https://flix.dev/
+
+1. computation abstraction
+2. macro abstraction
+3. communication abstraction
+4. type abstraction
