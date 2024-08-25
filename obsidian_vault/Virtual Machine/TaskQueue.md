@@ -33,3 +33,4 @@ The main execution loop works as follows:
 
 The task generator will return channel that will store the result of computation after main loop is done.
 The important part is that tasks are always finite, that is they don't enter infinite loops inside, which helps not to block the main loop.
+

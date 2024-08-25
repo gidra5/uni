@@ -7,3 +7,5 @@ Can be categorized by these criteria:
 5. Dynamic
 6. Finite
 7. Continuous
+
+http://conal.net/blog/posts/sequences-streams-and-segments#more-65

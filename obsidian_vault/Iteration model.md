@@ -1,1 +1,0 @@
-http://conal.net/blog/posts/sequences-streams-and-segments#more-65
