@@ -1,40 +1,36 @@
-Concurrency model is based on tasks.
+Concurrency usually operates over some acyclic graph of tasks, one task depending on result of other tasks.
+Task is a chunk of logic to be executed, that produces some result to be used later.
 
-Task - synchronous unit of work. Can create more tasks during its lifetime. Tasks may depend on result of execution of other tasks (child tasks). Tasks may be pinned to exact thread. Tasks may be triggered by some condition becoming true.
+Concurrency may be indirect or direct.
 
-Tasks may fail or succeed.
+Direct concurrency works with hardware capabilities directly - waking up other cores on processor and handing them the code to execute. It requires user to manually orchestrate concurrency in presence of hardware constraints, but allows for maximum control of available resources. All tasks are explicitly initiated and need to be handled appropriately. Usually implies more or less fixed task graph, for which it is built.
 
-Child tasks that have failed also fail their parent task.
+Indirect concurrency add layer of abstraction that allows for practically unlimited amount of simultaneous executing code. Usually handles distribution of tasks onto processors for you, as well as handling results or failure of their execution. Allows for greater flexibility in code, because task graph may change dynamically, which simplifies development and maintenance. 
 
-Tasks are executed by threads, which can be more than one.
+Indirect concurrency may be implemented in different ways, but ultimately it requires a scheduler at runtime, that will handle incoming tasks. Usually follows architecture with queue of tasks where processors take them to execute, until the queue is empty and all processors are done.
 
-Threads are spawned in a thread-pool, to reuse existing threads and to create additional threads on demand.
-Thread-pool takes tasks from task-queue.
+Go implements them as set of queues of continuations (aka "rest of the computation/task"), one per each core in the processor, where processors may "steal" others work if they are idle.
 
-When program starts it creates main task, which then can spawn more dependent of indenendent tasks.
+Other languages implement runtime as a state machine or simple queue of tasks.
 
-Tasks can be created by:
-1. multiple pure function calls.
-2. async call to any function.
-3. Method calls.
-4. Pushing a value into iterator.
-5. Manual via std.
+There are concurrency primitives such as atomics, mutexes and semaphores, that allow to guarantee certain order of events, usually used in direct concurrency to handle access to shared resources.
+# Structured concurrency
 
-All concurrent method calls on the same instance are pinned to the same thread and executed synchronously in order.
-
-Any function can be pinned to some thread to guarantee that it will always be executed on the same thread.
-
-Also there are concurrency primitives such as atomics, mutexes and semaphores.
-
-https://stackoverflow.com/questions/980999/what-does-multicore-assembly-language-look-like
-
-https://openjdk.org/jeps/453 - structured concurrency.
 In structured concurrency all tasks have hierarchy.
-If task is cancelled, all its child tasks are cancelled as well
+If task is cancelled, all of its children tasks are cancelled as well
 A group of tasks may adhere to some execution policy.
 Execution policy may differently handle success or failure of individual tasks.
 For example:
 1. upon failure of any one task cancel siblings and return error.
 2. upon success of any one task cancel siblings and return result.
+Core to the idea of structured concurrency is lifetime of tasks - siblings may never outlive its parent.
+Main characteristics are:
+1. possibility for building up hierarchy of processes, that preserve the condition above - children may not outlive its parent. That means outside of parent, its impossible to see the concurrent behavior, it does not have "side-effect" of creating new tasks.
+2. that implies parents are responsible for handling cancelling and failure of all of its children. They must be able to handle failures and cancelling of any dangling processes that are not handled explicitly.
 
+While it adds hierarchy, it doesn't mean it needs to become a proper tree. Children may form another acyclic graph, the only thing required is that parent waits for all of its children to be done before reporting that it itself is done.
+
+https://stackoverflow.com/questions/980999/what-does-multicore-assembly-language-look-like
+https://openjdk.org/jeps/453 - structured concurrency.
 https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/#go-statement-considered-harmful
+[] concurrency in go book

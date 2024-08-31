@@ -8,43 +8,31 @@
         "type": "tabs",
         "children": [
           {
-            "id": "a12be9d19003fa88",
+            "id": "fcc1ddaa2c353696",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Lambda Calculus/Beta-reduction.md",
+                "file": "Aug 28, 2020.md",
                 "mode": "source",
                 "source": false
               }
             }
           },
           {
-            "id": "5d1a5c9caf595230",
+            "id": "c2c8d9d90edaf5e8",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Compilation.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "d9822c97c29aed1f",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Programming Language.md",
+                "file": "Language/Types.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -110,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Programming Language.md",
+                "file": "Language/Types.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Programming Language.md",
+                "file": "Language/Types.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Programming Language.md"
+                "file": "Language/Types.md"
               }
             }
           },
@@ -194,37 +182,37 @@
       "bmo-chatbot:Chatbot (Clear Conversation)": false
     }
   },
-  "active": "d9822c97c29aed1f",
+  "active": "c2c8d9d90edaf5e8",
   "lastOpenFiles": [
-    "Compilation.md",
-    "Getting Started/Reactive.md",
-    "Getting Started/Structural.md",
-    "Getting Started/Imperative.md",
-    "Getting Started/Functional.md",
-    "Getting Started/Concurrency.md",
-    "Getting Started/Source files.md",
-    "Concurrency.md",
-    "Untitled 1.md",
-    "Intermediate Representation.md",
-    "Data Normalization.md",
-    "Composites.md",
-    "Compiler Backend.md",
-    "Analysis.md",
-    "chrome_MDKK1pYBB9_1693548495.png",
-    "Virtual Machine/Virtual Machine.md",
-    "Virtual Machine/Register-based VM.md",
-    "Virtual Machine/Stack-based VM.md",
-    "Untitled.md",
-    "Virtual Machine",
-    "Lambda Calculus/Pi Calculus.md",
-    "Lambda Calculus/Lambda calculus.md",
-    "Syntax Tree.md",
-    "Parser.md",
-    "Types.md",
-    "Lambda calculus.md",
+    "Types. Aug 31, 2024.md",
+    "Language/Types.md",
+    "Language/Values.md",
+    "Lambda Calculus/Type theory/Algebraic types.md",
+    "Aug 28, 2020.md",
+    "Lambda Calculus/Type theory/Nominal types.md",
+    "Mar 15, 2022.md",
+    "Lambda Calculus/Type theory/Dependant types.md",
+    "Lambda Calculus/Type theory/Structural types.md",
+    "Lambda Calculus/Type theory/Singleton types.md",
+    "Lambda Calculus/Type theory/Effect types.md",
+    "Lambda Calculus/Type theory/Generic types.md",
+    "Lambda Calculus/Type theory/Gradual types.md",
+    "Lambda Calculus/Type theory/Linear types.md",
+    "Lambda Calculus/Type theory/Session types.md",
+    "Lambda Calculus/Type theory/Set-theoretic types.md",
+    "Lambda Calculus/Type theory/Subtyping.md",
+    "Lambda Calculus/Type theory/Variance.md",
+    "Lambda Calculus/Characteristics.md",
+    "Lambda Calculus/Inference and checking.md",
+    "Language/Standart Library.md",
     "Lambda Calculus/Beta-reduction.md",
+    "Lambda Calculus/Soundness.md",
+    "Language/Testing.md",
+    "Language/Scope.md",
+    "Language/Concurrency.md",
+    "chrome_MDKK1pYBB9_1693548495.png",
+    "Virtual Machine",
     "Lambda Calculus",
-    "Getting Started/Basic types.md",
     "Getting Started",
     "chrome_rmkcBFAW1x_1693548108.png",
     "Push",

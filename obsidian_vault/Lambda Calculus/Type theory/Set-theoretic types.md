@@ -1,20 +1,25 @@
 
 Basic set-theoretic types:
-1. intersection type with `and` operator.
-2. union type with `or` operator.
+1. intersection type with `and` operator. Associative
+2. union type with `or` operator. Associative
 3. negation type with `not` operator
-4. Bottom type `void`. `a and void = void`
-5. Top type `unknown = not void`
+4. Bottom type `void`.
+5. Top type `unknown`. 
+
+Subtyping relation `<:` is defined:
+
+1. `a <: unknown`
+2. `void <: a`
+3. `a and b <: a, a and b <: b`
+4. `a <: a or b, b <: a or b`
+6. if `a <: b` then `not b <: not a`
+
+useful relations:
+1. `a and b = a` if `a <: b`
+2. `a or b = b` if `a <: b`
+3. `unknown = not void`
 6. De-morgan's law `not (a or b) = not a and not b`
 7. Double negation `not not a = a`
-
-Subtyping relation `<=` is defined:
-
-1. `a <= unknown`
-2. `void <= a`
-3. `a and b <= a, a and b <= b`
-4. `a <= a or b, b <= a or b`
-6. if `a <= b` then `not b <= not a`
 
 https://inria.hal.science/file/index/docid/76261/filename/RR-0296.pdf
 

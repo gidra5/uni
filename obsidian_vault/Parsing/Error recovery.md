@@ -23,6 +23,7 @@ Last case makes sense for typos like when writing identifiers or keywords, but p
 One could say that it is useful to be conservative with application of these strategies, so that it doesn't create cascading errors.
 
 One useful observation is that since syntax tree is a hierarchy, errors that occurred in separate branches are probably unrelated as well. Making syntax that supports that assumption is really useful not only for detecting root causes, but also for keeping syntax understandable.
+That is also a reason why other heuristics for error handling work.
 
 # Implementation
 

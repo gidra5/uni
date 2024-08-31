@@ -1,0 +1,1 @@
+Types that are compared for subtyping only through their structure.
