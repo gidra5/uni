@@ -1,5 +1,4 @@
-import { describe, expect } from "vitest";
-import { it } from "@fast-check/vitest";
+import { describe, expect, it } from "vitest";
 import { group, infix, name } from "../src/parser/ast";
 import { matchString } from "../src/parser/string";
 

@@ -13,3 +13,6 @@ Main language design principles:
 11. Types must be completely optional, while preserving soundness.
 12. Formatting independent semantics
 13. Preference for unambiguous code with exceptions to cases when it doesn't impact maintainability. Special-cases are sometimes a form of ambiguity, thus also need to be avoided
+
+https://ceronman.com/2012/09/17/coffeescript-less-typing-bad-readability/
+https://cln.co/
