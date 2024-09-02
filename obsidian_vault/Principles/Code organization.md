@@ -6,3 +6,4 @@
 
 # Principles
 
+## Encapsulation

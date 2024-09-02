@@ -1,4 +1,6 @@
 Source: https://refactoring.guru/design-patterns
+https://wiki.haskell.org/Research_papers/Functional_pearls
+https://www.youtube.com/watch?v=srQt1NAHYC0
 
 ## Creational patterns
 

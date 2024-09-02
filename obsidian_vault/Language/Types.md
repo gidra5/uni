@@ -10,10 +10,9 @@ Basic algebraic types:
 8. bottom type `void`. 
 9.  top type `unknown`. 
 10. indexing `record.name` and `tuple[index]`
-11. session type `{ in type; out type; end }`
-12. intersection `and`
-13. negation `not`
-14. traits `trait`. 
+11. intersection `and`
+12. negation `not`
+13. traits `trait`. 
 
 Primitives:
 1. `number`

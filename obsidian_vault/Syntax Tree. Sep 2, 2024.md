@@ -1,4 +1,4 @@
-After [[Token Tree]] is generated, we can breadth first parse it into actual syntax tree.
+After either [[Token Tree. Sep 2, 2024]] or regular [[Token]] is generated, we can breadth first parse it into actual syntax tree.
 
 First are parsed all declarations in a module, then interpret declarations to add custom operators to be used inside declaration bodies.
 

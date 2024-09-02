@@ -1,4 +1,4 @@
-After paraing out AST, variables need to be resolved.
+After parsing out AST, variables need to be resolved.
 We need to know which values they actually refer, because otherwise that ambiguous.
 we traverse the AST, building out another tree of scopes, each scope having a hashmap of names.
 every time we enter new scope we insert a child to the current scope and move to it.

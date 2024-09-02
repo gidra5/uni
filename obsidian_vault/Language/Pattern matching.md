@@ -1,1 +1,1 @@
-Allows to inspect structure of an value and create [[bindings]] if matched.
+Allows to inspect structure of an value and create bindings if matched.

@@ -1,6 +1,6 @@
-You mav divide development strategies into two categories:
-1. Development of high level pieces of the application (top development)
-2. Development of low level, fundamental pieces of the application (bottom development)
+You may divide development strategies into two categories:
+1. Development of high level pieces of the application (top development, system design)
+2. Development of low level, fundamental pieces of the application (bottom development, framework design)
 
 In top development the first thing you consider is surface level behavior: 
 * what needs to be done when program starts
@@ -9,7 +9,7 @@ In top development the first thing you consider is surface level behavior:
 * expected contracts
 * TDD
 * e2e tests
-* general design of the system
+* general design and structure of the system
 * etc
 Top development is not concerned about what happens beneath, but rather about overall picture and usually does not care what exactly they do and produce.
 Thats a suitable place for a "global" store, event bus, god-object, dep injection etc. Things that usually need to be easily interconnected, *never* reused and very often change. Needs to be easily navigatable and read by any maintainer, current or future.

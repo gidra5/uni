@@ -5,6 +5,6 @@ Basic steps for parsing a file:
 3. After all declarations resolved parse values accounting for all available bindings.
 4. Reduce some syntactic constructs to a simpler form, where only a restricted set of operations is allowed.
 
-Any parsing requires [[Tokenizer]] - it splits plain text into list of tokens. 
+Any parsing requires [[Token]] - it splits plain text into list of tokens. 
 
-After tokenization is done its time to build [[Token Tree]], clean it from comments and then build [[Syntax Tree]].
+After tokenization is done its time to build [[Token Tree. Sep 2, 2024]], clean it from comments and then build [[Syntax Tree. Sep 2, 2024]].

@@ -1,0 +1,1 @@
+A value literal that describes constant of some type.

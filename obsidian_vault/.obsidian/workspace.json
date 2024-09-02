@@ -4,28 +4,28 @@
     "type": "split",
     "children": [
       {
-        "id": "065e67f302e21138",
+        "id": "7866645e96d332c9",
         "type": "tabs",
         "children": [
           {
-            "id": "fcc1ddaa2c353696",
+            "id": "43ac4cdb417e30de",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Aug 28, 2020.md",
+                "file": "Language/Syntax/Literal.md",
                 "mode": "source",
                 "source": false
               }
             }
           },
           {
-            "id": "c2c8d9d90edaf5e8",
+            "id": "b9189e8a8caac797",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Language/Types.md",
+                "file": "Language/Syntax/Syntax.md",
                 "mode": "source",
                 "source": false
               }
@@ -93,35 +93,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "55cdd3a6e0c4e48a",
-            "type": "leaf",
-            "state": {
-              "type": "backlink",
-              "state": {
-                "file": "Language/Types.md",
-                "collapseAll": false,
-                "extraContext": false,
-                "sortOrder": "alphabetical",
-                "showSearch": false,
-                "searchQuery": "",
-                "backlinkCollapsed": false,
-                "unlinkedCollapsed": true
-              }
-            }
-          },
-          {
-            "id": "66c7f5c0195deb90",
-            "type": "leaf",
-            "state": {
-              "type": "outgoing-link",
-              "state": {
-                "file": "Language/Types.md",
-                "linksCollapsed": false,
-                "unlinkedCollapsed": true
-              }
-            }
-          },
-          {
             "id": "ffcf2246ded521fe",
             "type": "leaf",
             "state": {
@@ -131,39 +102,8 @@
                 "useHierarchy": true
               }
             }
-          },
-          {
-            "id": "97f85e55c13e773a",
-            "type": "leaf",
-            "state": {
-              "type": "outline",
-              "state": {
-                "file": "Language/Types.md"
-              }
-            }
-          },
-          {
-            "id": "76f28b42e5aaac15",
-            "type": "leaf",
-            "state": {
-              "type": "chatbot-view",
-              "state": {}
-            }
-          },
-          {
-            "id": "71937e750e6807f5",
-            "type": "leaf",
-            "state": {
-              "type": "all-properties",
-              "state": {
-                "sortOrder": "frequency",
-                "showSearch": false,
-                "searchQuery": ""
-              }
-            }
           }
-        ],
-        "currentTab": 4
+        ]
       }
     ],
     "direction": "horizontal",
@@ -182,34 +122,37 @@
       "bmo-chatbot:Chatbot (Clear Conversation)": false
     }
   },
-  "active": "c2c8d9d90edaf5e8",
+  "active": "b9189e8a8caac797",
   "lastOpenFiles": [
-    "Types. Aug 31, 2024.md",
-    "Language/Types.md",
-    "Language/Values.md",
-    "Lambda Calculus/Type theory/Algebraic types.md",
-    "Aug 28, 2020.md",
-    "Lambda Calculus/Type theory/Nominal types.md",
-    "Mar 15, 2022.md",
-    "Lambda Calculus/Type theory/Dependant types.md",
-    "Lambda Calculus/Type theory/Structural types.md",
-    "Lambda Calculus/Type theory/Singleton types.md",
-    "Lambda Calculus/Type theory/Effect types.md",
-    "Lambda Calculus/Type theory/Generic types.md",
-    "Lambda Calculus/Type theory/Gradual types.md",
-    "Lambda Calculus/Type theory/Linear types.md",
-    "Lambda Calculus/Type theory/Session types.md",
-    "Lambda Calculus/Type theory/Set-theoretic types.md",
-    "Lambda Calculus/Type theory/Subtyping.md",
-    "Lambda Calculus/Type theory/Variance.md",
-    "Lambda Calculus/Characteristics.md",
-    "Lambda Calculus/Inference and checking.md",
-    "Language/Standart Library.md",
-    "Lambda Calculus/Beta-reduction.md",
-    "Lambda Calculus/Soundness.md",
+    "Language/Syntax/Pattern expression.md",
+    "Language/Syntax/Literal.md",
+    "Language/Syntax/Expression.md",
+    "Language/Syntax/Declaration.md",
+    "Language/Syntax/Syntax.md",
+    "Language/Syntax/Type expression.md",
+    "Language/Syntax/Template expression.md",
+    "Principles/Code organization.md",
+    "Principles/Design patterns.md",
+    "Principles/Language design.md",
+    "Principles/Leaky abstraction.md",
+    "Language/Programming Language.md",
+    "Parsing/Syntax.md",
+    "Untitled.md",
+    "Language/Language Manager.md",
+    "Language/Analysis/Intermediate Representation.md",
+    "Language/Composites.md",
+    "Language/Compiler Backend.md",
+    "Language/Analysis/Scope.md",
     "Language/Testing.md",
-    "Language/Scope.md",
-    "Language/Concurrency.md",
+    "Language/Analysis",
+    "Language/Pattern matching.md",
+    "Language/Modules.md",
+    "Language/Literals.md",
+    "Language/Compilation.md",
+    "Language/Binding.md",
+    "Language/Big numbers.md",
+    "Language/Syntax",
+    "Principles",
     "chrome_MDKK1pYBB9_1693548495.png",
     "Virtual Machine",
     "Lambda Calculus",

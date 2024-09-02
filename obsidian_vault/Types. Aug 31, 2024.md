@@ -1,4 +1,4 @@
-
+as a closest to machine code IR
 Basic algebraic types:
 1. Tagged union type with `union` applied to record
 2. Untagged union with `union` applied to tuple, aliased with `or`
