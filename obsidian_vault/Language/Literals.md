@@ -16,7 +16,7 @@ Dynamic counterpart of Records
 
 ## Arrays
 
-Dynamic and homogenious counterpart of Tuples.
+Dynamic and homogenous counterpart of Tuples.
 
 ## Streams
 
