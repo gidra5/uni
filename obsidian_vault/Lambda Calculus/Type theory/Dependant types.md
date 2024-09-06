@@ -1,5 +1,6 @@
 [nice definition](https://dl.acm.org/doi/pdf/10.1145/512644.512671)
 [girard's paradox coc](https://www.cse.chalmers.se/~coquand/girard.pdf)
+https://ncatlab.org/nlab/show/computational+trilogy
 
 Basis of type system is Calculus of Constructions:
 

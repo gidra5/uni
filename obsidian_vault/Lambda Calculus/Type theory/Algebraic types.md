@@ -4,13 +4,17 @@ Basic algebraic types:
 2. *Tagged union* type with `union` operator applied to record (for names variants) or tuple (for indexed variants)
 3. *Tuple* types with `type, ...`
 4. *Record* types with `label: type, ...`
-5. *Join* tuples and records, or extend unions `...tuple1, ...tuple2`
-6. *Unit* type with `()`. Unit wrt joining `...tuple, ...() = tuple`
-7. *Void* type with `void = union ()`. Unit wrt extending `...union, ...void = union`, `...tuple, void = tuple`
-8. `a[k]` is the type of index `k` in tuple or union with indexed variants
-9. `a.label` is the type of label `k` in record or union with named variants
-10. `a[k] = void` if `k` is not a label or index present on `a`
-11. `a[union k] = union a[k.n]`
+6. *Unit* type with `()`. A record without any fields
+7. *Void* type with `void = union ()`. A union without any variants
+
+Operators:
+1. *Join* tuples and records, or extend unions `...tuple1, ...tuple2`
+2. *Index* tuples or unions `a[k]` or `a.label` is the type of an element at given index.
+
+Relations:
+1. `a[k] = void` if `k` is not a label or index present on `a`
+2. `a[union k] = union a[k.n]`
+
 
 Subtyping relation `<=` is defined:
 

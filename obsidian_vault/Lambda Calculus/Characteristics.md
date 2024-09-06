@@ -5,3 +5,4 @@ Characteristics of interest for any type theory\lambda calculus:
 4. Consistency - is it possible to provide term of an empty type (void)?
 5. If term `a` reduces to term `b`, do they inhabit the same type?
 6. is reduction an equivalence relation
+7. Subject reduction - reduction of a term preserves its type.
