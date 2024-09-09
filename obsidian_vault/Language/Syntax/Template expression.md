@@ -1,1 +1,0 @@
-A kind of expression that describes string template.

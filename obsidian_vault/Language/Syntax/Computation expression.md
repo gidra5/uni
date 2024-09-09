@@ -1,94 +1,91 @@
 
-`(expr)` parens
-`placeholder` a zero-size "void" value
+High-level structure:
+```
+computation = 
+  | "(" computation ")"
+  | application
+  | placeholder 
+  | block 
+  | effect
+  | structured
+  | concurrency
+  | logical
+  | constructors
+  | arithmetic
+  | scope
+```
+
+utilities:
+`colon_compute_or_block = ":" computation | block`
+`block = "{" sequence "}"`
+`sequence = computation (";" computation)*`
 
 ## Effect handlers
 
-`inject expr { sequence }` - inject value of `expr` as effect handler for the `sequence`
-`inject expr: expr2` - inject value of `expr` as effect handler for the `expr2`
-`use pattern` - declare `pattern` effects to be used in current scope
-`use name` - take symbol `name` effect from env and return its handler
-`without expr { sequence }` - hide all effect handlers named by symbols from `expr` list for the `sequence`
-`without expr: expr2` - hide all effect handlers named by symbols from `expr` list for the `expr2`
-`mask expr { sequence }` - hide closest effect handlers named by symbols from `expr` list for the `sequence`
-`mask expr: expr2` - hide closest effect handlers named by symbols from `expr` list for the `expr2`
+`effect = ("inject" | "without" | "mask") computation colon_compute_or_block | "use" (pattern | "." identifier)`
 
-## Structured programming
+## structured expressions
 
-`while expr: expr2`
-`while expr { sequence }`
-`for pattern in expr: expr2`
-`for pattern in expr { sequence }`
-`loop { expr }`
-`if expr: expr`
-`if expr { sequence }`
-`if expr: expr else expr`
-`if expr { sequence } else expr`
-`switch expr { pattern -> expr, }`
-`{ sequence }`
-`label::expr`
+```
+structured = 
+  | ("while" | "for" pattern "in" | "loop") computation colon_compute_or_block 
+  | identifier "::" computation
+  | "if" computation colon_compute_or_block ("else" computation)?
+  | "switch" computation "{" (arrow_function ",")* arrow_function? ","? "}"
+```
 
-## concurrency
+## concurrent expressions
 
-`async expr`
-`expr | expr`
-`| expr\n|expr`
-`<- expr`
-`<-? expr`
-`expr <- expr`
-`expr ?<- expr`
-`await expr`
+```
+concurrency = 
+  | ("async" | "await" | "<-" | "<-?") computation
+  | computation ("<-" | "?<-") computation
+  | "|"? computation ("|" computation)*
+```
 
-## logic
+## logical expressions
 
-`expr and expr`
-`expr or expr`
-`not expr`
-`!expr`
-`expr == expr`
-`expr === expr`
-`expr != expr`
-`expr !== expr`
-`expr > expr`
-`expr >= expr`
-`expr < expr`
-`expr <= expr`
+```
+logical = 
+  | computation ("and" | "or" | "==" | "===" | "!=" | "!==" | ">" | ">=" | "<" | "<=")
+  | ("not" | "!") computation
+```
 
-## data
+## arithmetic expressions
 
-`expr, expr`
-`name: expr,`
-`[expr]: expr,`
-`expr.name`
-`expr[expr]`
-`expr, ...expr`
-`:name`
-`[expr]`
-`*expr`
-`&expr`
+```
+arithmetic = 
+  | ("+" | "-") computation
+  | computation ("+" | "-" | "*" | "/" | "%" | "^") computation
+```
 
-## arithmetic
+## constructors and destructors
 
-`+expr`
-`-expr`
-`expr + expr`
-`expr - expr`
-`expr * expr`
-`expr / expr`
-`expr % expr`
-`expr ^ expr`
+`bracketed = "[" computation "]"`
+`pair = (bracketed | identifier) ":" computation`
+`tuple_item = pair | computation | "..." computation`
+`tuple = (tuple_item ",")+ tuple_item?`
+`access = computation (bracketed | "." identifier) | bracketed`
+`atom = ":" identifier`
 
-## scope
+```
+constructors = 
+  | tuple
+  | access
+  | atom
+  | ("*" | "&") computation
+```
 
-`pattern := expr`
-`pattern = expr`
-`pattern += expr`
-`pattern -= expr`
-`expr_and_pattern++`
-`expr_and_pattern--`
-`--expr_and_pattern`
-`++expr_and_pattern`
+## scope modifiers
 
+```
+scope =
+ | decl_pattern ":=" expr
+ | assign_pattern "=" expr
+ | inc_pattern ("+=" | "-=") expr
+ | expr_and_pattern ("++" | "--")
+ | ("++" | "--") expr_and_pattern
+```
 
 
 
