@@ -1,6 +1,8 @@
 Source: https://refactoring.guru/design-patterns
 https://wiki.haskell.org/Research_papers/Functional_pearls
 https://www.youtube.com/watch?v=srQt1NAHYC0
+https://mishadoff.com/blog/clojure-design-patterns/
+https://www.reddit.com/r/functionalprogramming/comments/qpaius/gang_of_four_design_patterns_equivalent_in/
 
 ## Creational patterns
 
