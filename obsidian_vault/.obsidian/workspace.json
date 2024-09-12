@@ -8,31 +8,18 @@
         "type": "tabs",
         "children": [
           {
-            "id": "43ac4cdb417e30de",
+            "id": "4bc974b8bff4a1f7",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Language/Syntax/Literal.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "b9189e8a8caac797",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Lambda Calculus/Type theory/Co-inductive types.md",
+                "file": "Principles/Inversion of control.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -109,7 +96,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Lambda Calculus/Type theory/Co-inductive types.md",
+                "file": "Principles/Inversion of control.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -126,7 +113,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Lambda Calculus/Type theory/Co-inductive types.md",
+                "file": "Principles/Inversion of control.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +137,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Lambda Calculus/Type theory/Co-inductive types.md"
+                "file": "Principles/Inversion of control.md"
               }
             }
           }
@@ -170,16 +157,27 @@
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
       "obsidian42-brat:BRAT": false,
-      "bmo-chatbot:Chatbot (Clear Conversation)": false
+      "bmo-chatbot:Chatbot (Clear Conversation)": false,
+      "obsidian-excalidraw-plugin:Create new drawing": false
     }
   },
-  "active": "b9189e8a8caac797",
+  "active": "4bc974b8bff4a1f7",
   "lastOpenFiles": [
+    "Excalidraw/ioc_diagram_6.excalidraw.md",
+    "Excalidraw/ioc_diagram_2.excalidraw.md",
+    "Excalidraw/ioc_diagram_3.excalidraw.md",
+    "Excalidraw/ioc_diagram_4.excalidraw.md",
+    "Excalidraw/ioc_diagram_5.excalidraw.md",
+    "Excalidraw/ioc_diagram.excalidraw.md",
+    "Principles/Inversion of control.md",
+    "Excalidraw/Drawing 2024-09-12 13.10.35.excalidraw.md",
+    "Untitled.canvas",
+    "Excalidraw",
+    "Lambda Calculus/Type theory/Co-inductive types.md",
     "Lambda Calculus/Type theory/Algebraic types.md",
     "Lambda Calculus/Type theory/Inductive types.md",
     "Lambda Calculus/Type theory/Modal types.md",
     "Lambda Calculus/Type theory/Nominal types.md",
-    "Lambda Calculus/Type theory/Co-inductive types.md",
     "Language/Syntax/Literal.md",
     "Lambda Calculus/Type theory/Abstract types.md",
     "Language/Syntax/Syntax.md",
@@ -193,14 +191,6 @@
     "Principles/Language design.md",
     "Principles/Leaky abstraction.md",
     "Language/Programming Language.md",
-    "Parsing/Syntax.md",
-    "Untitled.md",
-    "Language/Language Manager.md",
-    "Language/Analysis/Intermediate Representation.md",
-    "Language/Composites.md",
-    "Language/Compiler Backend.md",
-    "Language/Analysis/Scope.md",
-    "Language/Testing.md",
     "Language/Analysis",
     "Language/Syntax",
     "Principles",
@@ -210,7 +200,6 @@
     "Getting Started",
     "chrome_rmkcBFAW1x_1693548108.png",
     "Push",
-    "rest",
-    "Untitled.canvas"
+    "rest"
   ]
 }
