@@ -30,6 +30,36 @@ Main characteristics are:
 
 While it adds hierarchy, it doesn't mean it needs to become a proper tree. Children may form another acyclic graph, the only thing required is that parent waits for all of its children to be done before reporting that it itself is done.
 
+Java rfc 453 example of structured concurrency:
+```
+Response handle() throws ExecutionException, InterruptedException {
+    try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+        Supplier<String>  user  = scope.fork(() -> findUser());
+        Supplier<Integer> order = scope.fork(() -> fetchOrder());
+
+        scope.join()            // Join both subtasks
+             .throwIfFailed();  // ... and propagate errors
+
+        // Here, both subtasks have succeeded, so compose their results
+        return new Response(user.get(), order.get());
+    }
+}
+```
+
+simplify to:
+```
+handle := fn {
+	policy shutdown_on_failure {
+		user := async find_user();
+		order := async order();
+
+		throw_if_failed();
+
+		await user, await order
+	}
+}
+```
+
 https://stackoverflow.com/questions/980999/what-does-multicore-assembly-language-look-like
 https://openjdk.org/jeps/453 - structured concurrency.
 https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/#go-statement-considered-harmful
