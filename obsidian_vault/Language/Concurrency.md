@@ -49,7 +49,7 @@ Response handle() throws ExecutionException, InterruptedException {
 simplify to:
 ```
 handle := fn {
-	policy shutdown_on_failure {
+	policy cancel_on_error {
 		user := async find_user();
 		order := async order();
 
