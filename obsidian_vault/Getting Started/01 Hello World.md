@@ -1,5 +1,5 @@
 First install the language manager. 
-It contains all the tools you will need for develompent, like compiler or test runner.
+It contains all the tools you will need for development, like compiler or test runner.
 Follow these steps:
 
 1. Download [[Language Manager|language manager]]
