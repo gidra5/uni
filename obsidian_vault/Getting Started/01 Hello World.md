@@ -3,7 +3,7 @@ It contains all the tools you will need for development, like compiler or test r
 Follow these steps:
 
 1. Download [[Language Manager|language manager]]
-2. the latest version of a compiler and/or interpreter for your platform will be installed, for other platforms manual install via cli is needed
+2. The latest version of a compiler and/or interpreter for your platform will be installed, for other platforms manual install via cli is needed
 3. Use it to initiate new project in given folder
 4. Install dependencies using [[Language Manager|language manager]]
 5. Compile project or run files with interpreter using [[Language Manager|the manager]]
