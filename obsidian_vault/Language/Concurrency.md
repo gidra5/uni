@@ -63,6 +63,18 @@ handle := fn {
 notably:
 1. `scope` is now implicit under `policy` block
 
+```
+<T> T race(List<Callable<T>> tasks, Instant deadline) 
+        throws InterruptedException, ExecutionException, TimeoutException {
+    try (var scope = new StructuredTaskScope.ShutdownOnSuccess<T>()) {
+        for (var task : tasks) {
+            scope.fork(task);
+        }
+        return scope.joinUntil(deadline)
+                    .result();  // Throws if none of the subtasks completed successfully
+    }
+}
+```
 
 https://stackoverflow.com/questions/980999/what-does-multicore-assembly-language-look-like
 https://openjdk.org/jeps/453 - structured concurrency.
