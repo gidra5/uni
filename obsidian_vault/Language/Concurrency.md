@@ -61,6 +61,7 @@ handle := fn {
 ```
 
 nota
+1. 
 https://stackoverflow.com/questions/980999/what-does-multicore-assembly-language-look-like
 https://openjdk.org/jeps/453 - structured concurrency.
 https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/#go-statement-considered-harmful
