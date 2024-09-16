@@ -77,6 +77,20 @@ Java rfc 453 example 2 of structured concurrency:
 }
 ```
 
+simplify to:
+```
+handle := fn {
+	policy cancel_on_error {
+		user := async find_user();
+		order := async order();
+
+		throw_if_failed();
+
+		await user, await order
+	}
+}
+```
+
 https://stackoverflow.com/questions/980999/what-does-multicore-assembly-language-look-like
 https://openjdk.org/jeps/453 - structured concurrency.
 https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/#go-statement-considered-harmful
