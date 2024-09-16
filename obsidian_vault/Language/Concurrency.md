@@ -46,14 +46,12 @@ Response handle() throws ExecutionException, InterruptedException {
 }
 ```
 
-simplify to:
+rewrite to:
 ```
 handle := fn {
 	policy cancel_on_error {
 		user := async find_user();
 		order := async order();
-
-		throw_if_failed();
 
 		await user, await order
 	}
@@ -62,6 +60,7 @@ handle := fn {
 
 notably:
 1. `scope` is now implicit under `policy` block
+2. throwing error is implicit at the end of scope
 
 Java rfc 453 example 2 of structured concurrency:
 ```
@@ -77,16 +76,12 @@ Java rfc 453 example 2 of structured concurrency:
 }
 ```
 
-simplify to:
+rewrite to:
 ```
-handle := fn {
-	policy cancel_on_error {
-		user := async find_user();
-		order := async order();
-
-		throw_if_failed();
-
-		await user, await order
+race := fn list {
+	policy cancel_on_return {
+		tasks := for task in list: async task();
+		tasks.fold fn task, rest -> task + rest
 	}
 }
 ```
