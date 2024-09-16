@@ -63,7 +63,7 @@ handle := fn {
 notably:
 1. `scope` is now implicit under `policy` block
 
-Java rfc 453 example of structured concurrency:
+Java rfc 453 example 2 of structured concurrency:
 ```
 <T> T race(List<Callable<T>> tasks, Instant deadline) 
         throws InterruptedException, ExecutionException, TimeoutException {
