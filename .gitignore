@@ -1,4 +1,5 @@
 ml.code-workspace
 .vscode
+.obsidian
 test-results
 coverage
