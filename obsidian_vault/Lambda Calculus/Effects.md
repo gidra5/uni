@@ -77,11 +77,11 @@ TL;DR математики изобрели dependency injection в фп.
 
 ```
 logger :=
-	log: handler fn (callback, msg) {
+	log: fn (callback, msg) {
 		result, logs := callback()
 		result, (msg, ...logs)
 	},
-	[return_handler]: handler fn x do x, ()
+	[return_handler]: fn x do x, ()
 
 f := fn {
 	injected.log 789
