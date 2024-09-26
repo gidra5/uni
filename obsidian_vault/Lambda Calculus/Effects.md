@@ -74,3 +74,24 @@ TL;DR математики изобрели dependency injection в фп.
 [modal effect types](https://arxiv.org/abs/2407.11816)
 [effect systems](https://vhyrro.github.io/posts/effect-systems/)
 [koka](https://koka-lang.github.io/koka/doc/book.html#why)
+
+```
+result, logs := fn {
+	result, logs := fn {
+		inject 
+			log: handler fn (callback, msg) {
+				result, logs := callback()
+				result, (msg, ...logs)
+			},
+			[return_handler]: handler fn x do x, ()
+		{
+			123, fn {
+			    injected.log 789
+			    234
+			} ()
+		}
+	} ()
+	result, (456, ...logs)
+} ()
+result, (123, ...logs)
+```
