@@ -64,4 +64,6 @@ package entry bundling:
    2. embed into bundle
    3. embed into executable
 
+every module entry must be pure expression. It can be some computation, but should not require any effect handling by itself.
+
 [modules stuff](https://thunderseethe.dev/posts/whats-in-a-module/)
