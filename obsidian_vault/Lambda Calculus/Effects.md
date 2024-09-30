@@ -122,3 +122,6 @@ inject _handler {
 	}
 }, ())
 ```
+
+https://www.reddit.com/r/ProgrammingLanguages/comments/14iz6jf/singlecontinuation_algebraic_effects_in_an/
+https://ntietz.com/blog/lessons-from-implementing-hurl/
