@@ -73,3 +73,5 @@ Includes tools for:
 37. primitives utilities
 38. plotting
 39. error correction codes
+
+https://julesjacobs.com/2023/09/21/generalizing-itertools.html

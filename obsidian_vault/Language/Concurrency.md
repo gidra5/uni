@@ -90,3 +90,4 @@ https://stackoverflow.com/questions/980999/what-does-multicore-assembly-language
 https://openjdk.org/jeps/453 - structured concurrency.
 https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/#go-statement-considered-harmful
 [] concurrency in go book
+https://github.com/tc39/proposal-explicit-resource-management/issues/97

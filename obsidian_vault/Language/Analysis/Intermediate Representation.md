@@ -16,3 +16,4 @@ That includes:
 https://github.com/SeaOfNodes/Simple
 https://en.wikipedia.org/wiki/Sea_of_nodes
 https://en.wikipedia.org/wiki/Intermediate_representation
+https://www.reddit.com/r/ProgrammingLanguages/s/aAmy9KtxfU

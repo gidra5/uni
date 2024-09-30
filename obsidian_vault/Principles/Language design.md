@@ -16,3 +16,4 @@ Main language design principles:
 
 https://ceronman.com/2012/09/17/coffeescript-less-typing-bad-readability/
 https://cln.co/
+https://youtu.be/RNZeAmp1EaA?si=PtCQ2Bn2N3391b84

@@ -20,3 +20,5 @@ Subtyping relation `<=` is defined:
 
 1. `a <= b` if `a[k] <= b[k]` for all `k: keyof a or keyof b`, where `a` and `b` are tuples or records
 2. `union a <= union b` if `a[k] <= b[k]` for all `k: keyof a and keyof b`
+
+https://www.reddit.com/r/ProgrammingLanguages/s/1D3rV7YQVo

@@ -16,6 +16,10 @@ Project also specifies what are dependency libraries, their version and where to
 https://vekatze.github.io/neut/overview.html
 https://github.com/capy-language/capy/tree/master
 https://flix.dev/
+https://www.reddit.com/r/ProgrammingLanguages/comments/1frz2wl/can_you_teach_me_some_novel_concepts/
+http://neilmitchell.blogspot.com/2020/04/writing-fast-interpreter.html
+https://github.com/zserge/tinylangs
+https://www.reddit.com/r/ProgrammingLanguages/s/XrbjFZrWqa
 
 1. computation abstraction
 2. macro abstraction
