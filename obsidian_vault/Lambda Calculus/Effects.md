@@ -107,3 +107,18 @@ result, logs := fn {
 } ()
 result, (123, ...logs)
 ```
+
+```
+decide := :decide |> handle
+_handler := [:decide]: handler fn (callback, value) do 126
+inject _handler {
+	if decide() do 123 else 456
+}
+
+->>
+(fn (callback, value) do 126) (fn choice {
+	inject [:decide]: handler fn (callback, value) do 126 {
+		if choice do 123 else 456
+	}
+}, ())
+```
