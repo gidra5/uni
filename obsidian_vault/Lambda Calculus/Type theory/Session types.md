@@ -19,3 +19,4 @@ https://github.com/Munksgaard/session-types
 https://www.doc.ic.ac.uk/~dorchard/publ/popl16-orchard-yoshida.pdf
 https://kar.kent.ac.uk/61623/1/effects-revisited.pdf
 https://docs.rs/par/latest/par/
+https://www.reddit.com/r/ProgrammingLanguages/comments/1fyzxvm/i_made_practical_session_types_based_on_linear/
