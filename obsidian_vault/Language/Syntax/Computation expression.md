@@ -1,3 +1,5 @@
+Using `->` for describing "statement form" is ambiguous together with using same symbol for lambda shorthand. But not actually a big problem, since it makes more sense to interpret `->` as part of statement form rather than 
+
 
 High-level structure:
 ```
