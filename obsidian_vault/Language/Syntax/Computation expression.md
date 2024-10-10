@@ -1,4 +1,4 @@
-Using `->` for describing "statement form" is ambiguous together with using same symbol for lambda shorthand. But not actually a big problem, since it makes more sense to interpret `->` as part of statement form rather than 
+Using `->` for describing "statement form" is ambiguous together with using same symbol for lambda shorthand. But not actually a big problem, since it makes more sense to interpret `->` as part of statement form rather than lambda and use parens to unambiguously use lambdas there.
 
 
 High-level structure:

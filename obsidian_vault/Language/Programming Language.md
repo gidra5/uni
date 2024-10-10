@@ -20,6 +20,12 @@ https://www.reddit.com/r/ProgrammingLanguages/comments/1frz2wl/can_you_teach_me_
 http://neilmitchell.blogspot.com/2020/04/writing-fast-interpreter.html
 https://github.com/zserge/tinylangs
 https://www.reddit.com/r/ProgrammingLanguages/s/XrbjFZrWqa
+https://www.reddit.com/r/ProgrammingLanguages/comments/1fyxu4n/whats_the_coolest_minor_feature_in_your_language/
+https://arxiv.org/pdf/2108.11155
+https://plasmalang.org/about.html
+https://effekt-lang.org/quickstart.html
+
+
 
 1. computation abstraction
 2. macro abstraction

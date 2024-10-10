@@ -125,3 +125,47 @@ inject _handler {
 
 https://www.reddit.com/r/ProgrammingLanguages/comments/14iz6jf/singlecontinuation_algebraic_effects_in_an/
 https://ntietz.com/blog/lessons-from-implementing-hurl/
+https://arxiv.org/pdf/2108.11155
+
+```
+interface Greet { def sayHello(): Bool }
+interface Break { def break(v: Int): Int }
+
+def helloWorld() = {
+  try {
+    var m = 0
+    try {
+      if (do sayHello()) do break(m)
+      else {
+        m = m + 1
+        m
+      }
+    } with Break {
+      def break(v) = { v }
+    }
+  } with Greet {
+    def sayHello() = { resume(false); resume(true) }
+  }
+}
+```
+
+```
+interface Greet { def sayHello(): Unit }
+
+def helloWorld() = {
+  var n = 0
+ 
+  var (m, f) = try {
+    var m in global = 0
+    var f in global = box { () => m }
+    do sayHello()
+    var g = box { () => (m, f()) }
+    m = m + 1
+    n = n + 1
+    (m, g)
+  } with Greet {
+    def sayHello() = { resume(()); resume(()) }
+  }
+  (m, n ,f())
+}
+```
