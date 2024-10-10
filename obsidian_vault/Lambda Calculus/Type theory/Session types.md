@@ -18,4 +18,4 @@ https://blog.sigplan.org/2024/08/12/soundly-handling-linearity/
 https://github.com/Munksgaard/session-types
 https://www.doc.ic.ac.uk/~dorchard/publ/popl16-orchard-yoshida.pdf
 https://kar.kent.ac.uk/61623/1/effects-revisited.pdf
-
+https://docs.rs/par/latest/par/
