@@ -91,3 +91,4 @@ https://openjdk.org/jeps/453 - structured concurrency.
 https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/#go-statement-considered-harmful
 [] concurrency in go book
 https://github.com/tc39/proposal-explicit-resource-management/issues/97
+https://medium.com/@jayphelps/backpressure-explained-the-flow-of-data-through-software-2350b3e77ce7

@@ -37,5 +37,4 @@ Tests should be platform independent - any machine that runs them will see ident
 https://www.reddit.com/r/Compilers/comments/z8jovo/how_do_you_test_compiler_projects/
 https://langdev.stackexchange.com/questions/1544/how-to-test-a-compiler-interpreter
 https://github.com/smarr/are-we-fast-yet
-https://medium.com/@jayphelps/backpressure-explained-the-flow-of-data-through-software-2350b3e77ce7
 https://github.com/sampsyo/flatcalc/blob/c5bbe7bd79f98a3b857f0432d4739a3f4f6241bd/src/main.rs#L118-L136
