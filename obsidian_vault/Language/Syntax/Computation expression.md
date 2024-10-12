@@ -18,21 +18,22 @@ computation =
 ```
 
 utilities:
-`colon_compute_or_block = ":" computation | block`
+`statement_form = "do" computation | "->" sequence | block`
 `block = "{" sequence "}"`
 `sequence = computation (";" computation)*`
 
 ## Effect handlers
 
-`effect = ("inject" | "without" | "mask") computation colon_compute_or_block | "use" (pattern | "." identifier)`
+`effect = ("inject" | "without" | "mask") computation statement_form`
 
 ## structured expressions
 
 ```
 structured = 
-  | ("while" | "for" pattern "in" | "loop") computation colon_compute_or_block 
+  | ("while" | "for" pattern "in" | "loop") computation statement_form 
   | identifier "::" computation
-  | "if" computation colon_compute_or_block ("else" computation)?
+  | "if" computation statement_form 
+  | "if" computation ("do" computation | block) "else" computation
   | "switch" computation "{" (arrow_function ",")* arrow_function? ","? "}"
 ```
 
