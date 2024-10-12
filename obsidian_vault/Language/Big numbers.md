@@ -12,14 +12,14 @@ It can be defined as `a^b=exp(log(a)*log(b))`
 Floating point numbers are represented as `a*2^b`, where exponentiation is the regular one
 
 ```
-a*2^b*c*2^d = (a*c)*2^(b*d)
+a*2^b*c*2^d = (a*c)*2^(b+d)
 exp(a*2^b)  = 2^(a*2^b)
 			= 2^a*2^2^b
 			= (2^2^b)*2^a
 a*2^b+c*2^d = (a+c)*2^b+c*2^(d-b)
             = log(exp(x + y))
             = log(exp(x)*exp(y))
-            = log((2^2^b)*2^a*(2^2^c)*2^d)
-            = log((2^2^b)*(2^2^c)*2^(a*d))
+            = log((2^2^b)*2^a*(2^2^d)*2^c)
+            = log(2^(2^b+2^d)*2^(a+c))
 ```
 
