@@ -42,3 +42,5 @@ depencencies
 1. be careful not too take too much
 2. can have unexpected licenses
 3. unoptimized enough
+
+Dependency quality rating?
