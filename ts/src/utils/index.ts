@@ -1,12 +1,9 @@
 import { Iterator } from "iterator-js";
 import { RecordKey } from "../types.js";
-import { AbstractSyntaxTree } from "../parser/ast.js";
-import { copy } from "./copy.js";
-import { traverse } from "../tree.js";
 
 export const identity = <T>(x: T): T => x;
 
-export const inspect = <T>(x: T): T => (console.dir(x, { depth: null }), x);
+export const print = <T>(x: T): T => (console.dir(x, { depth: null }), x);
 
 export function assert(condition: any, msg?: string): asserts condition {
   if (condition) return;
@@ -82,14 +79,3 @@ export const mapField = (path: RecordKey[], fn: (x: any) => any) => (obj: any) =
 export const setField = (path: RecordKey[], value: any) => mapField(path, () => value);
 
 export const pushField = (path: RecordKey[], value: any) => mapField(path, (x) => x && [...x, value]);
-
-export const omitASTDataScope = (ast: AbstractSyntaxTree): AbstractSyntaxTree =>
-  traverse(
-    ast,
-    () => true,
-    (node) => {
-      node = copy(node);
-      delete node.data.scope;
-      return node;
-    }
-  );

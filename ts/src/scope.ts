@@ -1,15 +1,14 @@
 import { Iterator } from "iterator-js";
-import { CopySymbol, copy } from "./utils/copy.js";
 
-type ScopeInnerEntry<T> = { name?: string | symbol; value: T };
+type ScopeInnerEntry<T> = { name?: symbol; value: T };
 export type ScopeEntry<T> = { name?: string | symbol; relativeIndex: number; index: number; value: T };
 export type ScopeEntryIdentifier = { name: string | symbol } | { relativeIndex: number } | { index: number };
 
-export class Scope<T = any> {
-  scope: ScopeInnerEntry<T>[];
-  names: Record<string | symbol, number>;
+export class Environment<T = any> {
+  private scope: ScopeInnerEntry<T>[];
+  private names: Record<symbol, number>;
 
-  constructor(recordScope: Record<string, T> = {}) {
+  private constructor(recordScope: Record<string, T> = {}) {
     const iter = Iterator.iterEntries(recordScope)
       .enumerate()
       .map<[string, T, number]>(([x, i]) => [...x, i]);
@@ -17,7 +16,7 @@ export class Scope<T = any> {
     this.names = iter.map<[string, number]>(([x, _, i]) => [x, i]).toObject();
   }
 
-  static namesFromScope<T>(entry: ScopeInnerEntry<T>[]) {
+  private static namesFromScope<T>(entry: ScopeInnerEntry<T>[]) {
     return Iterator.iter(entry)
       .enumerate()
       .filterMap<[string | symbol, number]>(([{ name }, i]) => {
@@ -27,26 +26,26 @@ export class Scope<T = any> {
       .toObject();
   }
 
-  updateNames() {
-    this.names = Scope.namesFromScope(this.scope);
+  private updateNames() {
+    this.names = Environment.namesFromScope(this.scope);
   }
 
-  drop(n: number) {
+  private drop(n: number) {
     const copied = this.copy();
     copied.scope = copied.scope.slice(0, -n);
     copied.updateNames();
     return copied;
   }
 
-  relativeToIndex(index: number): number {
+  private relativeToIndex(index: number): number {
     return this.scope.length - index - 1;
   }
 
-  indexToRelative(level: number): number {
+  private indexToRelative(level: number): number {
     return this.scope.length - level - 1;
   }
 
-  assignName(entry: ScopeEntryIdentifier, name: string | symbol) {
+  private assignName(entry: ScopeEntryIdentifier, name: string | symbol) {
     const copied = this.copy();
     const index = copied.toIndex(entry);
     copied.scope[index].name = name;
@@ -54,7 +53,7 @@ export class Scope<T = any> {
     return copied;
   }
 
-  iter() {
+  private iter() {
     return Iterator.iter(this.scope)
       .enumerate()
       .map<ScopeEntry<T>>(([{ name, value }, index]) => ({
@@ -65,7 +64,7 @@ export class Scope<T = any> {
       }));
   }
 
-  iterEntries() {
+  private iterEntries() {
     return Iterator.iterEntries(this.names).map<Required<ScopeEntry<T>>>(([name, index]) => ({
       index,
       relativeIndex: this.indexToRelative(index),
@@ -74,61 +73,61 @@ export class Scope<T = any> {
     }));
   }
 
-  toIndex(identifier: ScopeEntryIdentifier): number {
+  private toIndex(identifier: ScopeEntryIdentifier): number {
     if ("index" in identifier) return identifier.index;
     if ("relativeIndex" in identifier) return this.relativeToIndex(identifier.relativeIndex);
     return this.names[identifier.name] ?? -1;
   }
 
-  toRelativeIndex(identifier: ScopeEntryIdentifier): number {
+  private toRelativeIndex(identifier: ScopeEntryIdentifier): number {
     if ("relativeIndex" in identifier) return identifier.relativeIndex;
     const level = this.toIndex(identifier);
     return this.indexToRelative(level);
   }
 
-  toName(identifier: ScopeEntryIdentifier): string | symbol | undefined {
+  private toName(identifier: ScopeEntryIdentifier): string | symbol | undefined {
     if ("name" in identifier) return identifier.name;
     const level = this.toIndex(identifier);
     if (level === -1) return;
     return this.scope[level].name;
   }
 
-  has(identifier: ScopeEntryIdentifier): boolean {
+  private has(identifier: ScopeEntryIdentifier): boolean {
     if ("index" in identifier) return identifier.index < this.scope.length;
     if ("relativeIndex" in identifier) return identifier.relativeIndex <= this.scope.length;
     return identifier.name in this.names;
   }
 
-  get(identifier: ScopeEntryIdentifier): ScopeEntry<T> | undefined {
+  private get(identifier: ScopeEntryIdentifier): ScopeEntry<T> | undefined {
     const level = this.toIndex(identifier);
     if (level === -1) return;
 
     return { ...this.scope[level], index: level, relativeIndex: this.indexToRelative(level) };
   }
 
-  getByName(name: string | symbol): ScopeEntry<T> | undefined {
+  private getByName(name: string | symbol): ScopeEntry<T> | undefined {
     return this.get({ name });
   }
 
   /** 0 is closest scope variable */
-  getByRelativeIndex(index: number): ScopeEntry<T> | undefined {
+  private getByRelativeIndex(index: number): ScopeEntry<T> | undefined {
     return this.get({ relativeIndex: index });
   }
 
   /** 0 is top-level scope variable */
-  getByIndex(level: number): ScopeEntry<T> | undefined {
+  private getByIndex(level: number): ScopeEntry<T> | undefined {
     return this.get({ index: level });
   }
 
-  getIndex(name: string | symbol): number {
+  private getIndex(name: string | symbol): number {
     return this.toIndex({ name });
   }
 
-  getRelativeIndex(name: string | symbol): number {
+  private getRelativeIndex(name: string | symbol): number {
     return this.toRelativeIndex({ name });
   }
 
-  push(...values: T[]): Scope<T> {
+  private push(...values: T[]): Environment<T> {
     const copied = this.copy();
     copied.scope.push(...values.map((value) => ({ value })));
     // console.dir(
@@ -143,7 +142,7 @@ export class Scope<T = any> {
     return copied;
   }
 
-  add(name: string | symbol, value: T): Scope<T> {
+  private add(name: string | symbol, value: T): Environment<T> {
     const copied = this.push(value);
     const index = copied.scope.length - 1;
     copied.names[name] = index;
@@ -151,7 +150,7 @@ export class Scope<T = any> {
     return copied;
   }
 
-  remove(identifier: ScopeEntryIdentifier): Scope<T> {
+  private remove(identifier: ScopeEntryIdentifier): Environment<T> {
     const level = this.toIndex(identifier);
     if (level === undefined) return this;
     const copied = this.copy();
@@ -160,49 +159,45 @@ export class Scope<T = any> {
     return copied;
   }
 
-  removeAll(name: string | symbol): Scope<T> {
+  private removeAll(name: string | symbol): Environment<T> {
     const copied = this.copy();
     copied.scope = copied.scope.filter((x) => x.name !== name);
     copied.updateNames();
     return copied;
   }
 
-  removeByName(name: string | symbol): Scope<T> {
+  private removeByName(name: string | symbol): Environment<T> {
     return this.remove({ name });
   }
 
-  removeByRelativeIndex(relativeIndex: number): Scope<T> {
+  private removeByRelativeIndex(relativeIndex: number): Environment<T> {
     return this.remove({ relativeIndex });
   }
 
-  removeByIndex(index: number): Scope<T> {
+  private removeByIndex(index: number): Environment<T> {
     return this.remove({ index });
   }
 
-  private _append(scope: Scope<T>) {
+  private _append(scope: Environment<T>) {
     this.scope.push(...scope.scope);
     this.updateNames();
     return this;
   }
 
   /** creates new merged scope with priority to passed scope */
-  append(scope: Scope<T>): Scope<T> {
+  private append(scope: Environment<T>): Environment<T> {
     const copied = this.copy();
     return copied._append(scope);
   }
 
-  copy(): Scope<T> {
-    const copied = new Scope<T>();
+  private copy(): Environment<T> {
+    const copied = new Environment<T>();
     copied.scope = this.scope.slice();
     copied.names = { ...this.names };
     return copied;
   }
 
-  [CopySymbol](): Scope<T> {
-    return this.copy();
-  }
-
-  size() {
+  private size() {
     return this.scope.length;
   }
 }
