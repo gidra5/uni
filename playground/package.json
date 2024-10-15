@@ -9,11 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "solid-js": "^1.9.1"
+    "clsx": "^2.1.1",
+    "cxs": "^6.2.0",
+    "prismjs": "^1.29.0",
+    "solid-js": "^1.9.1",
+    "solid-simple-code-editor": "^0.2.2"
   },
   "devDependencies": {
     "typescript": "^5.5.3",
     "vite": "^5.4.8",
-    "vite-plugin-solid": "^2.10.2"
+    "vite-plugin-solid": "^2.10.2",
+    "unocss": "^0.63.4"
   }
 }
