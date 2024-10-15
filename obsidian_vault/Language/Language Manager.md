@@ -31,10 +31,12 @@ A toolchain contains:
 11. Package manager
   1. Package initializer with templates
   2. Builds caching management
-  3. Dependencies management
-  4. Package search
+  3. Incremental builds
+  4. Dependencies management
+  5. Package search
 12. Extensions management
 13. Documentation management
+14. Jupyter notebook kernel
 
 Language manager can generate and maintain dependency list from package manifest, which may contain package descriptors in multiple formats.
 
