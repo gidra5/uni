@@ -17,3 +17,4 @@ These redundancies can be replaced by more abstract nodes that drop information 
 Thus resulting output from syntax analysis is an Abstract Syntax Tree.
 
 https://craftinginterpreters.com/representing-code.html
+https://www.oilshell.org/blog/2016/10/20.html
