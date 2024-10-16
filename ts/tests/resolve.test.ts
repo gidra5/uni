@@ -1,8 +1,19 @@
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
-import { exampleScopeTestCase, treeScopeTestCase } from "./utils";
 import { pick } from "../../src/utils";
 import { scopeDictionary } from "../../src/parser/constants";
+
+const treeScopeTestCase = (src, expectedScope?, scope = {}) => {
+  const [tokens] = parseTokens(src);
+  const context = defaultParsingContext();
+  context.scope = new Scope(scope);
+  const [tree, errors] = parseExpr(context)(tokens).slice(1);
+  const resolvedTree = resolve(tree as AbstractSyntaxTree);
+  // console.dir(resolvedTree, { depth: null });
+  expect(errors).toEqual([]);
+  if (expectedScope) expect(resolvedTree.data.scope).toEqual(expectedScope);
+  expect(resolvedTree).toMatchSnapshot();
+};
 
 describe("expressions", () => {
   describe("function expressions", () => {

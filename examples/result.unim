@@ -1,0 +1,8 @@
+export ok := value -> fn ok, err -> ok value
+export err := value -> fn ok, err -> err value
+export map := fn f, result ->
+  if result is ok value: ok (f value) else: result
+export unwrap := fn result, default ->
+  if result is ok value: value else: default
+export flat_map := fn f, result ->
+  if result is ok value: f value else: result

@@ -1,0 +1,15 @@
+symbol NotFound
+export empty := fn entry, empty -> empty
+export entry := fn key, value, rest -> fn entry, empty -> entry key value rest
+export find := fn key, map -> map
+  (fn _key, value, rest ->
+    if key == _key: value else find key rest
+  )
+  NotFound
+export insert := fn key, value, map -> entry key value (remove key map)
+export remove := fn key, map -> map
+  (fn _key, value, rest ->
+    if key == _key: rest else remove key rest
+  )
+  empty
+operator _[_] = fn map, key -> find key map

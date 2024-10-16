@@ -2,10 +2,29 @@ import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { Iterator } from "iterator-js";
 import { infixArithmeticOps, prefixArithmeticOps } from "../../src/parser/constants";
-import { group, infix, name, placeholder, prefix, string } from "../../src/parser/ast";
 import { matchSeparators } from "../../src/parser/utils";
-import { exampleInferTestCase, treeInferTestCase, treeInferTestCaseArgs } from "./utils";
 import { func, index, type, unknown } from "../../src/typechecker/type";
+
+const exampleInferTestCase = (src, expectedType?, scope = {}) => {
+  const [tree, errors] = parseProgramString(src, scope);
+  const typedTree = inferType(tree);
+  // console.dir(typedTree, { depth: null });
+  expect(errors).toEqual([]);
+  if (expectedType) expect(typedTree.data.type).toEqual(expectedType);
+  expect(typedTree.data.type).toMatchSnapshot();
+};
+
+const treeInferTestCaseArgs = (src, expectedType?, scope = {}) =>
+  [`produces correct tree for '${src}'`, () => treeInferTestCase(src, expectedType, scope)] as const;
+
+const treeInferTestCase = (src, expectedType?, scope = {}) => {
+  const [tree, errors] = parseExprString(src, scope);
+  const typedTree = inferType(tree);
+  // console.dir(typedTree, { depth: null });
+  expect(errors).toEqual([]);
+  if (expectedType) expect(typedTree.data.type).toEqual(expectedType);
+  expect(typedTree.data.type).toMatchSnapshot();
+};
 
 describe("expressions", () => {
   describe.todo("values", () => {

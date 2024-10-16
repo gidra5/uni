@@ -1,0 +1,15 @@
+
+export none := fn some, none -> none
+export some := value -> fn some, none -> some value
+export map := fn f, option -> match option {
+  none -> none
+  some value -> some (f value)
+}
+export unwrap := fn option, default -> match option {
+  none -> default
+  some value -> value
+}
+export flat_map := fn f, option -> match option {
+  none -> none
+  some value -> f value
+}

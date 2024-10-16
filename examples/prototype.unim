@@ -1,0 +1,5 @@
+
+symbol Prototype
+operator _._ = fn value, name -> 
+  if value[name] is some value: value
+  else accessor value[Prototype] name

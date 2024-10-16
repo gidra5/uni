@@ -1,13 +1,36 @@
 import { Iterator } from "iterator-js";
 import { RecordKey } from "../types.js";
+import { setTimeout } from "node:timers/promises";
+import { SystemError } from "../error.js";
 
 export const identity = <T>(x: T): T => x;
 
 export const print = <T>(x: T): T => (console.dir(x, { depth: null }), x);
 
-export function assert(condition: any, msg?: string): asserts condition {
+let eventLoopYieldCounter = 0;
+const eventLoopYieldMax = 1000;
+export const eventLoopYield = async () => {
+  eventLoopYieldCounter = (eventLoopYieldCounter + 1) % eventLoopYieldMax;
+  if (eventLoopYieldCounter === 0) await setTimeout(0);
+};
+
+export function assert(condition: any, msg?: string | SystemError): asserts condition {
   if (condition) return;
-  throw new Error(msg ? `Assertion failed: ${msg}` : "Assertion failed");
+  if (!msg) throw new Error("Assertion failed");
+  if (msg instanceof SystemError) {
+    msg.print();
+    throw msg;
+  }
+  throw new Error(`Assertion failed: ${msg}`);
+}
+
+export function unreachable(msg?: string | SystemError): never {
+  if (!msg) throw new Error("Unreachable");
+  if (msg instanceof SystemError) {
+    msg.print();
+    throw msg;
+  }
+  throw new Error(msg);
 }
 
 export const omit = <T extends {}, K extends string>(obj: T, keys: K[]): Omit<T, K> => {

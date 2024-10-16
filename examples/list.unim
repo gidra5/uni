@@ -1,0 +1,6 @@
+symbol EmptyList
+export nil := fn cons, nil -> nil
+export cons := fn x, xs -> fn cons, nil -> cons x xs
+export head := fn list -> list (fn x, xs -> x) EmptyList
+export tail := fn list -> list (fn x, xs -> xs) EmptyList
+export map := fn f, list -> list (fn x, xs -> cons (f x) (map f xs)) nil

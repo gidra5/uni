@@ -3,3 +3,4 @@ ml.code-workspace
 .obsidian
 test-results
 coverage
+node_modules
