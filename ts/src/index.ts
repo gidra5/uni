@@ -7,7 +7,7 @@ import { identity } from "./utils/index.js";
 
 program
   .command("run <file>")
-  .description("Run script from a file")
+  .description("Run script from a file in interpreter")
   .action((file) => {
     // const taskQueue = new TaskQueue();
     // const context = initialContext(taskQueue);
@@ -20,8 +20,9 @@ program
   });
 
 program
-  .command("repl [file]")
-  .description("Run interactive task queue environment with optional initial script/module")
+  .command("repl")
+  .argument("[file]", "initial script/module")
+  .description("Run REPL in interpreter")
   .action((file) => {
     // const taskQueue = new TaskQueue();
     // const context = initialContext(taskQueue);
@@ -64,8 +65,10 @@ program
 
 program
   .command("build <file> <output>")
+  .option("-s, --stack-vm", "Compile for stack VM")
   .description("Compile a program into an image")
-  .action((file, output) => {
+  .action((file, output, options) => {
+    const stackVm = options.stackVm;
     const code = fs.readFileSync(file, "utf-8");
     console.log("File is read");
 
@@ -82,8 +85,13 @@ program
 
 program
   .command("vm <image> [osImage]")
+  .option("-s, --stack-vm", "Run in stack VM")
   .description("Run an image of compiled program")
-  .action((imageFile, osImageFile) => {
+  .action((imageFile, osImageFile, options) => {
+    // .univm - uses register vm
+    // .unisvm - uses stack vm
+    // otherwise read stackVm flag
+    const stackVm = options.stackVm;
     const osImage = osImageFile ? fs.readFileSync(osImageFile) : undefined;
     const image = fs.readFileSync(imageFile);
 

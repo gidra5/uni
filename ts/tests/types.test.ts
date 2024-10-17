@@ -1,3 +1,7 @@
+import { parseToken, parseTokens, type Token } from "../src/parser/tokens.js";
+import { describe, expect } from "vitest";
+import { it, fc, test } from "@fast-check/vitest";
+
 describe.todo("types", () => {
   describe("primitives", () => {
     test("number", () => {
