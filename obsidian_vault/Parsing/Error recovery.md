@@ -35,7 +35,7 @@ cases for inserting tokens:
 1. combinations of prefix, infix, postfix and mixfix expressions that are missing operands.
 
 https://craftinginterpreters.com/parsing-expressions.html
-https://www.digitalmars.com/articles/b90.html
+https://www.digitalmars.com/articles/b90.html the poisoning approach.
 https://www.tutorialspoint.com/compiler_design/compiler_design_error_recovery.htm
 https://www.geeksforgeeks.org/error-recovery-in-predictive-parsing/
 https://supunsetunga.medium.com/writing-a-parser-syntax-error-handling-b71b67a8ac66
