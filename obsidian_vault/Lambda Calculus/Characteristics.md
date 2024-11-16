@@ -6,3 +6,6 @@ Characteristics of interest for any type theory\lambda calculus:
 5. If term `a` reduces to term `b`, do they inhabit the same type?
 6. is reduction an equivalence relation
 7. Subject reduction - reduction of a term preserves its type.
+8. How does it describe what values are stored in variable?
+9. How does it describe how given values can be used?
+10. How does it describe interaction with environment?
