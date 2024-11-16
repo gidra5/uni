@@ -19,5 +19,7 @@ invariants include:
 
 Dual invariants are essentially invariants for input and output values of a function respectively.
 Modes can have a submoding relation, similar to subtyping for types. Any submoded value can be used in place of mode value.
+If different mode axis interfere, such that some combinations are considered invalid (like closure containing local values cant be global)
+Modes for references and their content not always related, assuming otherwise can read to unsoundness.
 
 Different invariants can be combined together to create a full description of restrictions on given value.
