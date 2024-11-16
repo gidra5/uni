@@ -9,3 +9,10 @@ Characteristics of interest for any type theory\lambda calculus:
 8. How does it describe what values are stored in variable?
 9. How does it describe how given values can be used?
 10. How does it describe interaction with environment?
+
+Given a value we want to know:
+1. How it is stored (for example with algebraic types)
+2. What interfaces does it satisfy (for example with abstract or generic types)
+3. Where can it be used (using subtyping for example)
+4. How can it be used (with linear or modal types)
+5. How it changes when we interact with it (via session types for example)

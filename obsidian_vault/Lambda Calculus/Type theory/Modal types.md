@@ -13,10 +13,11 @@ they are also useful to represent invariants about variables
 
 invariants include:
 1. locality - value does not escape the scope of variable containing it. It can escape for example through return value or be stored in a variable outside the scope.
-3. Uniqueness - if reference is the only reference to underlying value. That allows opaque in-place mutations. A dual invariant affinity - if reference must be used exactly once or it can be reused. For example to prevent leaks a cleanup function must be called exactly once whiich allows to preserve uniqueness.
-5. Contention - if reference can be safely read from or written to. In a multithreaded context, writes and reads create data-race conditions, so knowing if given reference is contended is useful to prevent such race conditions. A dual invariant portable - if reference can be safely moved through thread border.
+3. Uniqueness - if reference is the only reference to underlying value. That allows opaque in-place mutations. A dual invariant affinity - if reference must be used exactly once or it can be reused. For example to prevent leaks a cleanup function must be called exactly once which allows to preserve uniqueness after function call.
+5. Contention - if reference can be safely read from or written to. In a multithreaded context, writes and reads create data-race conditions, so knowing if given reference is contended is useful to prevent such race conditions. A dual invariant portable - if reference can be safely moved through thread border, which allows to preserve contention after function call.
 6. Mutability - if reference can be changed. If value is immutable, then many other modes can be assumed as well.
 
+Dual invariants are essentially invariants for input and output values of a function respectively.
 Modes can have a submoding relation, similar to subtyping for types. Any submoded value can be used in place of mode value.
 
 Different invariants can be combined together to create a full description of restrictions on given value.
