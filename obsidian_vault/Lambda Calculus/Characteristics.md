@@ -9,6 +9,7 @@ Characteristics of interest for any type theory\lambda calculus:
 8. How does it describe what values are stored in variable?
 9. How does it describe how given values can be used?
 10. How does it describe interaction with environment?
+11. Ad-hoc polymorphism coherence - Every different valid typing derivation for a program leads to a resulting program that has the same dynamic semantics.
 
 Given a value we want to know:
 1. How it is stored (for example with algebraic types)
