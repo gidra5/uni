@@ -17,5 +17,7 @@ Effect types can be composed with set-like operations:
 2. intersection - only common effects are performed.
 3. negation - effect is not performed.
 
+Some effects are unrecoverable (like destroying a file), which means they cannot be reverted exactly once done. In some cases being exact is not necessary, but its not always the case. That places restrictions on how effects emitted before it can be handled - they cannot be handled more than once, because the exact state of continuation cannot be restored. There are ways to mitigate this, like evaluating effects in temporary environment, reverting them manually, or simply marking them as non-critical (they can be allowed to not be restored). That also places restriction on result of the continuation, because once such effect is performed its result cannot be implicitly discarded, so it must be used in some way.
+
 https://vhyrro.github.io/posts/effect-systems/
 https://dl.acm.org/doi/pdf/10.1145/3607846
