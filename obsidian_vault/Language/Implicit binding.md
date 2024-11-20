@@ -1,0 +1,1 @@
+Given a functor or monad it is nice to be able to avoid explicit mapping and flattening of results, since they obscure co
