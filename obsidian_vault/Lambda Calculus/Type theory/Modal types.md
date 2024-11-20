@@ -23,3 +23,5 @@ If different mode axis interfere, such that some combinations are considered inv
 Modes for references and their content not always related, assuming otherwise can read to unsoundness.
 
 Different invariants can be combined together to create a full description of restrictions on given value.
+
+https://blog.bruce-hill.com/mutability-isnt-variability
