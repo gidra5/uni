@@ -1,5 +1,5 @@
 keywords, 
 functions on application, 
 paired tokens, 
-literals
+numbers and strings
 code labels
