@@ -89,6 +89,6 @@ race := fn list {
 https://stackoverflow.com/questions/980999/what-does-multicore-assembly-language-look-like
 https://openjdk.org/jeps/453 - structured concurrency.
 https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/#go-statement-considered-harmful
-[] concurrency in go book
+https://edu.anarcho-copy.org/Programming%20Languages/Go/Concurrency%20in%20Go.pdf
 https://github.com/tc39/proposal-explicit-resource-management/issues/97
 https://medium.com/@jayphelps/backpressure-explained-the-flow-of-data-through-software-2350b3e77ce7
