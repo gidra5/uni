@@ -89,6 +89,18 @@ const binaryLiteralError = Parser.do(function* () {
   return error(SystemError.invalidBinaryLiteral(pos), pos, tokenSrc);
 });
 
+const blockCommentError = Parser.do(function* () {
+  const pos = yield Parser.span();
+  const tokenSrc = yield Parser.substring();
+  return error(SystemError.unclosedBlockComment(pos), pos, tokenSrc);
+});
+
+const endOfSourceError = Parser.do(function* () {
+  const pos = yield Parser.span();
+  return error(SystemError.endOfSource(pos), pos);
+});
+
+
 const _number = function* (value: string) {
   return number(yield Parser.substring(), yield Parser.span(), Number(value));
 };
@@ -125,13 +137,23 @@ const parseHexStyleLiteral = (prefix: string, digitRegexp: RegExp, error: Parser
     return yield* _number(value);
   });
 
+const parseBlockComment = function* () {
+  while (!(yield Parser.string("*/"))) {
+    if (yield Parser.string("/*")) yield* parseBlockComment();
+    else if (yield Parser.isEnd()) return yield blockCommentError;
+    else yield Parser.advance();
+  }
+  return null;
+};
+
 export const parseToken = Parser.do<string, TokenPos>(function* () {
   yield Parser.rememberIndex();
   let isNewline = false;
 
   while (true) {
     if (yield Parser.string("/*")) {
-      yield Parser.untilString("*/");
+      const result = yield* parseBlockComment();
+      if (result) return result;
       continue;
     }
 
@@ -150,7 +172,8 @@ export const parseToken = Parser.do<string, TokenPos>(function* () {
     break;
   }
 
-  if (isNewline) return yield* _newline();
+  if (isNewline) return yield * _newline();
+  if (yield Parser.isEnd()) return yield endOfSourceError;
 
   yield Parser.rememberIndex();
 

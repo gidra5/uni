@@ -1,15 +1,15 @@
 import { parseToken, parseTokens, specialStringChars, type Token } from "../src/parser/tokens.js";
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
-import { array, integer, type Arbitrary } from "fast-check";
+import { array, type Arbitrary } from "fast-check";
 import { Iterator } from "iterator-js";
 import { eventLoopYield } from "../src/utils/index.js";
 import { SystemError } from "../src/error.js";
 
 const anyStringArb = fc.string({ size: "large", unit: "binary" });
-const commentArb = anyStringArb.filter((s) => s.includes("\n"));
-const blockCommentArb = anyStringArb.filter((s) => s.includes("*/") || s.includes("/*"));
-const stringInsidesArb = anyStringArb.filter((s) => !s.includes("\\") && !s.includes('"'));
+const commentArb = anyStringArb.filter((s) => !s.includes("\n"));
+const blockCommentArb = anyStringArb.map((s) => s.replace("*/", "").replace("/*", ""));
+const stringInsidesArb = anyStringArb.map((s) => s.replace("\\", "").replace('"', ""));
 const charArb = fc.string({ minLength: 1, maxLength: 1 });
 const notStringSpecialCharArb = charArb.filter((s) => !specialStringChars.includes(s));
 const arrayLenArb = <T>(arb: Arbitrary<T>, len: number) => fc.array(arb, { minLength: len, maxLength: len });
@@ -279,7 +279,7 @@ describe("comments", () => {
     expect(index).toBe(expectedIndex);
     expect(token).toEqual(expectedToken);
   });
-  it.prop([fc.string().map((s) => s.replace("*/", ""))])("multi line comments", (comment) => {
+  it.prop([blockCommentArb])("multi line comments", (comment) => {
     const src = `/*${comment}*/`;
     const input = `${src}_`;
     const startIndex = 0;
@@ -294,40 +294,85 @@ describe("comments", () => {
     expect(index).toBe(expectedIndex);
     expect(token).toEqual(expectedToken);
   });
-  it.prop([fc.string().map((s) => s.replace("*/", "")), array(integer({ min: 0, max: 2 }))])(
-    "multiple comments",
-    (comment, parts) => {
-      const src = [...parts, 0]
-        .map((kind) => {
-          if (kind === 0) return "\n";
-          if (kind === 1) return `//${comment}\n`;
-          return `/*${comment}*/`;
-        })
-        .join("");
-      const input = `${src}_`;
-      const startIndex = 0;
+  it.prop([
+    array(
+      fc.oneof(
+        fc.constant("\n"),
+        commentArb.map((comment) => `//${comment}\n`),
+        blockCommentArb.filter((t) => !t.includes("\n")).map((comment) => `/*${comment}*/`)
+      )
+    ).map((parts) => parts.join("")),
+  ])("multiple comments", (src) => {
+    const input = `${src}_`;
+    const startIndex = 0;
 
-      let expectedIndex: number;
-      let expectedStart: number;
-      let expectedToken: Token;
-      if (src.includes("\n")) {
-        expectedToken = { type: "newline", src };
-        expectedStart = 0;
-        expectedIndex = src.length;
-      } else {
-        expectedToken = { type: "placeholder", src: "_" };
-        expectedStart = src.length;
-        expectedIndex = src.length + 1;
-      }
-
-      const [{ index }, { start, end, ...token }] = parseToken.parse(input, { index: startIndex });
-
-      expect(start).toBe(expectedStart);
-      expect(end).toBe(expectedIndex);
-      expect(index).toBe(expectedIndex);
-      expect(token).toEqual(expectedToken);
+    let expectedIndex: number;
+    let expectedStart: number;
+    let expectedToken: Token;
+    if (src.includes("\n")) {
+      expectedToken = { type: "newline", src };
+      expectedStart = 0;
+      expectedIndex = src.length;
+    } else {
+      expectedToken = { type: "placeholder", src: "_" };
+      expectedStart = src.length;
+      expectedIndex = src.length + 1;
     }
-  );
+
+    const [{ index }, { start, end, ...token }] = parseToken.parse(input, { index: startIndex });
+
+    expect(start).toBe(expectedStart);
+    expect(end).toBe(expectedIndex);
+    expect(index).toBe(expectedIndex);
+    expect(token).toEqual(expectedToken);
+  });
+
+  // it.todo.prop([anyStringArb, commentArb])(
+  //   'adding line comments instead of newlines never changes the result',
+  //   (src, comment) => {
+  //     const tokens = parseTokens(src);
+  //     const withComments = parseTokens(withLineComments());
+  //     expect(tokens).toStrictEqual(withComments);
+
+  //     function withLineComments(): string {
+  //       let result = src;
+  //       for (const token of [...tokens].reverse()) {
+  //         if (token.type === 'newline') {
+  //           const startString = result.slice(0, token.start);
+  //           const endString = result.slice(token.end);
+  //           result = `${startString}//${comment}\n${endString}`;
+  //         }
+  //       }
+  //       return result;
+  //     }
+  //   }
+  // );
+
+  // it.todo.prop([anyStringArb, blockCommentArb])(
+  //   'adding block comments between tokens never changes the result',
+  //   (src, comment) => {
+  //     const tokens = parseTokens(src);
+  //     const withComments = parseTokens(withBlockComments());
+  //     expect(tokens).toStrictEqual(withComments);
+
+  //     function withBlockComments(): string {
+  //       let result = src;
+  //       for (const [i, token] of [...tokens].reverse().entries()) {
+  //         if (i === tokens.length - 1) {
+  //           result = `${result}/*${comment}*/`;
+  //           continue;
+  //         }
+
+  //         // insert block comment between tokens
+  //         const prevToken = tokens[i + 1];
+  //         const startString = result.slice(0, token.end);
+  //         const endString = result.slice(prevToken.start);
+  //         result = `${startString}/*${comment}*/${endString}`;
+  //       }
+  //       return result;
+  //     }
+  //   }
+  // );
 });
 
 test("parseTokens", () => {
@@ -341,50 +386,3 @@ test("parseTokens", () => {
 it.prop([anyStringArb])("parseTokens never throws", (src) => {
   expect(() => parseTokens(src)).not.toThrow();
 });
-
-// it.todo.prop([anyStringArb, commentArb])(
-//   'adding line comments instead of newlines never changes the result',
-//   (src, comment) => {
-//     const tokens = parseTokens(src);
-//     const withComments = parseTokens(withLineComments());
-//     expect(tokens).toStrictEqual(withComments);
-
-//     function withLineComments(): string {
-//       let result = src;
-//       for (const token of [...tokens].reverse()) {
-//         if (token.type === 'newline') {
-//           const startString = result.slice(0, token.start);
-//           const endString = result.slice(token.end);
-//           result = `${startString}//${comment}\n${endString}`;
-//         }
-//       }
-//       return result;
-//     }
-//   }
-// );
-
-// it.todo.prop([anyStringArb, blockCommentArb])(
-//   'adding block comments between tokens never changes the result',
-//   (src, comment) => {
-//     const tokens = parseTokens(src);
-//     const withComments = parseTokens(withBlockComments());
-//     expect(tokens).toStrictEqual(withComments);
-
-//     function withBlockComments(): string {
-//       let result = src;
-//       for (const [i, token] of [...tokens].reverse().entries()) {
-//         if (i === tokens.length - 1) {
-//           result = `${result}/*${comment}*/`;
-//           continue;
-//         }
-
-//         // insert block comment between tokens
-//         const prevToken = tokens[i + 1];
-//         const startString = result.slice(0, token.end);
-//         const endString = result.slice(prevToken.start);
-//         result = `${startString}/*${comment}*/${endString}`;
-//       }
-//       return result;
-//     }
-//   }
-// );

@@ -31,6 +31,7 @@ export enum ErrorType {
   IMMUTABLE_VARIABLE_ASSIGNMENT,
   MISPLACED_OPERATOR,
   MISSING_OPERAND,
+  UNCLOSED_BLOCK_COMMENT,
 }
 
 type Options = {
@@ -154,6 +155,12 @@ export class SystemError extends Error {
       .withNote(
         "Valid binary literals start with 0b and digits 0 or 1 (binary digits), which may be followed by more binary digits, optionally separated by underscores"
       );
+  }
+
+  static unclosedBlockComment(pos: Position): SystemError {
+    return new SystemError(ErrorType.UNCLOSED_BLOCK_COMMENT, "Block comment is not closed")
+      .withPrimaryLabel('expected block comment to be closed by "*/"', pos)
+      .withSecondaryLabel('insert "*/" here', { start: pos.end - 1, end: pos.end });
   }
 
   static invalidOctalLiteral(pos: Position): SystemError {
