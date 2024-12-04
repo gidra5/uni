@@ -177,6 +177,7 @@ export const parseToken = Parser.do<string, TokenPos | (Position & { type: "skip
 
     while (!(yield Parser.string('"'))) {
       if (yield Parser.isEnd()) return yield* stringLiteralError();
+      if (yield Parser.checkString("\n")) return yield * stringLiteralError();
 
       if (yield Parser.string("\\")) {
         if (yield Parser.isEnd()) continue;
