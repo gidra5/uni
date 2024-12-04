@@ -136,6 +136,30 @@ describe("string token", () => {
     expect(index).toBe(expectedIndex);
     expect(token).toEqual(expectedToken);
   });
+
+  test.prop([
+    fc.array(stringInsidesArb).chain((segments) =>
+      fc
+        .stringMatching(/^\s*$/)
+        .filter((s) => !s.includes("\n"))
+        .map((s) => "\n" + s)
+        .map((intend) => [intend, segments] as const)
+    ),
+  ])("multiline strings", async ([intend, segments]) => {
+    await eventLoopYield();
+
+    const literal = intend + segments.join(intend);
+    const value = segments.join("\n").trimEnd();
+    const src = `"""${literal}"""`;
+    const startIndex = 0;
+    const expectedIndex = src.length;
+    const expectedToken = { type: "string", src, value };
+
+    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+
+    expect(index).toBe(expectedIndex);
+    expect(token).toEqual(expectedToken);
+  });
 });
 
 describe("number token", () => {

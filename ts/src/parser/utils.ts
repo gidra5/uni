@@ -160,6 +160,14 @@ export class Parser<T, U, C extends BaseContext = BaseContext> {
     return Parser.peekChar(-1);
   }
 
+  static peekSubstring<C extends BaseContext>(size: number) {
+    return new Parser<string, string, C>((src, ctx) => [ctx, src.substring(ctx.index, ctx.index + size)]);
+  }
+
+  static prevSubstring<C extends BaseContext>(size: number): Parser<string, string, C> {
+    return new Parser<string, string, C>((src, ctx) => [ctx, src.substring(ctx.index - size, ctx.index)]);
+  }
+
   static string<C extends BaseContext>(s: string): Parser<string, boolean, C> {
     return new Parser((src, ctx) => {
       const matches = src.startsWith(s, ctx.index);

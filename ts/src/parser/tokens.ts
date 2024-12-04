@@ -187,17 +187,54 @@ export const parseToken = Parser.do<string, TokenPos | (Position & { type: "skip
     break;
   }
 
-  if (isNewline) return yield * _newline();
+  if (isNewline) return yield* _newline();
   if (yield Parser.isEnd()) return { type: "skip", ...(yield Parser.span()) };
 
   yield Parser.rememberIndex();
+
+  if (yield Parser.string('"""\n')) {
+    let intend = "\n";
+    while ((yield Parser.checkRegexp(/\s/)) && !(yield Parser.checkString("\n"))) intend += yield Parser.nextChar();
+
+    let value = "";
+
+    while (!(yield Parser.string('"""'))) {
+      if (yield Parser.isEnd()) return yield * stringLiteralError(value);
+      if (yield Parser.string(intend)) {
+        if (yield Parser.isEnd()) continue;
+        value += "\n";
+        continue;
+      }
+      if (yield Parser.string("\n")) {
+        if (yield Parser.isEnd()) continue;
+        while ((yield Parser.checkRegexp(/\s/)) && !(yield Parser.checkString("\n"))) {}
+        value += "\n";
+        continue;
+      }
+
+      if (yield Parser.string("\\")) {
+        if (yield Parser.isEnd()) continue;
+
+        type Char = keyof typeof specialStringCharTable | null;
+        const char: Char = yield Parser.oneOfStrings(...specialStringChars);
+        if (char) {
+          value += specialStringCharTable[char];
+          continue;
+        }
+      }
+
+      value += yield Parser.nextChar();
+    }
+
+    return yield* _string(value.trimEnd());
+  }
 
   if (yield Parser.string('"')) {
     let value = "";
 
     while (!(yield Parser.string('"'))) {
-      if (yield Parser.isEnd()) return yield * stringLiteralError(value);
-      if (yield Parser.checkString("\n")) return yield * stringLiteralError(value);
+      if (yield Parser.isEnd()) return yield* stringLiteralError(value);
+      if (yield Parser.checkString("\n")) return yield* stringLiteralError(value);
 
       if (yield Parser.string("\\")) {
         if (yield Parser.isEnd()) continue;
