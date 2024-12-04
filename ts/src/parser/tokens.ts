@@ -1,5 +1,6 @@
 import { SystemError } from "../error.js";
-import { position as _position, indexPosition, type Position } from "../position.js";
+import { type Position } from "../position.js";
+import { Parser } from "./utils.js";
 
 export const symbols = [
   "::",
@@ -26,6 +27,15 @@ export const symbols = [
 
 // Sort symbols by length in descending order
 symbols.sort((a, b) => b.length - a.length);
+
+const specialStringCharTable = {
+  "0": "\0",
+  r: "\r",
+  n: "\n",
+  t: "\t",
+};
+
+export const specialStringChars = Object.keys(specialStringCharTable);
 
 export type Token =
   | { type: "error"; src: string; cause: SystemError }
@@ -55,44 +65,84 @@ export const placeholder = (src: string, pos: Position): TokenPos => ({
   ...pos,
 });
 
-const parseBlockComment = (src: string, i: number): number => {
-  let index = i;
-  while (src.charAt(index) && !src.startsWith("*/", index)) {
-    index++;
-  }
-  return index + 2;
+const stringLiteralError = function* () {
+  const tokenSrc = yield Parser.substring();
+  const pos = yield Parser.span();
+  return error(SystemError.unterminatedString(pos), pos, tokenSrc);
 };
 
-export const parseToken = (src: string, i = 0): [index: number, result: TokenPos] => {
-  let index = i;
+const hexLiteralError = Parser.do(function* () {
+  const pos = yield Parser.span();
+  const tokenSrc = yield Parser.substring();
+  return error(SystemError.invalidHexLiteral(pos), pos, tokenSrc);
+});
 
-  if (!src.charAt(index)) {
-    const pos = indexPosition(index);
-    return [index, error(SystemError.endOfSource(pos), pos)];
-  }
-  const tokenSrc = (start: number) => src.substring(start, index);
-  const position = (start: number) => _position(start, index);
+const octalLiteralError = Parser.do(function* () {
+  const pos = yield Parser.span();
+  const tokenSrc = yield Parser.substring();
+  return error(SystemError.invalidOctalLiteral(pos), pos, tokenSrc);
+});
 
+const binaryLiteralError = Parser.do(function* () {
+  const pos = yield Parser.span();
+  const tokenSrc = yield Parser.substring();
+  return error(SystemError.invalidBinaryLiteral(pos), pos, tokenSrc);
+});
+
+const _number = function* (value: string) {
+  return number(yield Parser.substring(), yield Parser.span(), Number(value));
+};
+
+const _newline = function* () {
+  return newline(yield Parser.substring(), yield Parser.span());
+};
+
+const _string = function* (value: string) {
+  return string(yield Parser.substring(), yield Parser.span(), value);
+};
+
+const _identifier = function* (ident: string) {
+  return identifier(ident, yield Parser.span());
+};
+
+const _placeholder = function* (ident: string) {
+  return placeholder(ident, yield Parser.span());
+};
+
+const parseHexStyleLiteral = (prefix: string, digitRegexp: RegExp, error: Parser<string, TokenPos>) =>
+  Parser.do(function* () {
+    if (!(yield Parser.checkRegexp(digitRegexp))) {
+      while ((yield Parser.regexp(digitRegexp)) || (yield Parser.string("_"))) {}
+      return yield error;
+    }
+
+    let value = prefix;
+    while ((yield Parser.checkRegexp(digitRegexp)) || (yield Parser.checkString("_"))) {
+      const prev = yield Parser.nextChar();
+      if (prev !== "_") value += prev;
+    }
+
+    return yield* _number(value);
+  });
+
+export const parseToken = Parser.do<string, TokenPos>(function* () {
+  yield Parser.rememberIndex();
   let isNewline = false;
+
   while (true) {
-    if (src.startsWith("/*", index)) {
-      index += 2;
-      index = parseBlockComment(src, index);
+    if (yield Parser.string("/*")) {
+      yield Parser.untilString("*/");
       continue;
     }
 
-    if (/\s/.test(src.charAt(index))) {
-      if (src.charAt(index) === "\n") isNewline = true;
-      index++;
+    if (yield Parser.checkRegexp(/\s/)) {
+      if (yield Parser.checkString("\n")) isNewline = true;
+      yield Parser.advance();
       continue;
     }
 
-    if (src.startsWith("//", index)) {
-      index += 2;
-      while (src.charAt(index) && src.charAt(index) !== "\n") {
-        index++;
-      }
-      index++;
+    if (yield Parser.string("//")) {
+      yield Parser.untilString("\n");
       isNewline = true;
       continue;
     }
@@ -100,182 +150,77 @@ export const parseToken = (src: string, i = 0): [index: number, result: TokenPos
     break;
   }
 
-  if (isNewline) {
-    return [index, newline(tokenSrc(i), position(i))];
-  }
+  if (isNewline) return yield* _newline();
 
-  if (src.charAt(index) === '"') {
-    const start = index;
-    index++;
+  yield Parser.rememberIndex();
 
+  if (yield Parser.string('"')) {
     let value = "";
-    while (src.charAt(index) !== '"') {
-      if (!src.charAt(index)) {
-        const pos = position(start);
-        const token = error(SystemError.unterminatedString(pos), pos, tokenSrc(start));
-        return [index, token];
-      }
 
-      // escape characters
-      if (src.charAt(index) === "\\") {
-        index++;
+    while (!(yield Parser.string('"'))) {
+      if (yield Parser.isEnd()) return yield* stringLiteralError();
 
-        if (!src.charAt(index)) continue;
+      if (yield Parser.string("\\")) {
+        if (yield Parser.isEnd()) continue;
 
-        if (src.charAt(index) === "n") value += "\n";
-        else if (src.charAt(index) === "t") value += "\t";
-        else if (src.charAt(index) === "r") value += "\r";
-        else if (src.charAt(index) === "0") value += "\0";
-        else value += src.charAt(index);
-
-        index++;
-        continue;
-      }
-
-      value += src.charAt(index);
-      index++;
-    }
-    index++;
-
-    return [index, string(tokenSrc(start), position(start), value)];
-  }
-
-  if (src.startsWith("0x", index)) {
-    const start = index;
-    index += 2;
-
-    if (!/[0-9a-fA-F]/.test(src.charAt(index))) {
-      while (/[0-9a-fA-F_]/.test(src.charAt(index))) index++;
-
-      const pos = position(start);
-      const token = error(SystemError.invalidHexLiteral(pos), pos, tokenSrc(start));
-      return [index, token];
-    }
-
-    let value = "0x";
-    while (/[0-9a-fA-F_]/.test(src.charAt(index))) {
-      if (src.charAt(index) !== "_") value += src.charAt(index);
-      index++;
-    }
-
-    const token = number(tokenSrc(start), position(start), Number(value));
-    return [index, token];
-  }
-
-  if (src.startsWith("0o", index)) {
-    const start = index;
-    index += 2;
-
-    if (!/[0-7]/.test(src.charAt(index))) {
-      while (/[0-7_]/.test(src.charAt(index))) index++;
-
-      const pos = position(start);
-      const token = error(SystemError.invalidOctalLiteral(pos), pos, tokenSrc(start));
-      return [index, token];
-    }
-
-    let value = "0o";
-    while (/[0-7_]/.test(src.charAt(index))) {
-      if (src.charAt(index) !== "_") value += src.charAt(index);
-      index++;
-    }
-
-    const token = number(tokenSrc(start), position(start), Number(value));
-    return [index, token];
-  }
-
-  if (src.startsWith("0b", index)) {
-    const start = index;
-    index += 2;
-
-    if (!/[0-1]/.test(src.charAt(index))) {
-      while (/[0-1_]/.test(src.charAt(index))) index++;
-
-      const pos = position(start);
-      const token = error(SystemError.invalidBinaryLiteral(pos), pos, tokenSrc(start));
-      return [index, token];
-    }
-
-    let value = "0b";
-    while (/[0-1_]/.test(src.charAt(index))) {
-      if (src.charAt(index) !== "_") value += src.charAt(index);
-      index++;
-    }
-
-    const token = number(tokenSrc(start), position(start), Number(value));
-    return [index, token];
-  }
-
-  if (/\d/.test(src.charAt(index))) {
-    const start = index;
-
-    let value = "";
-    while (/[_\d]/.test(src.charAt(index))) {
-      while (src.charAt(index) === "_") {
-        index++;
-      }
-      value += src.charAt(index);
-      index++;
-    }
-    if (src.charAt(index) === ".") value += src.charAt(index++);
-    if (/\d/.test(src.charAt(index))) {
-      value += src.charAt(index);
-      index++;
-      while (/[_\d]/.test(src.charAt(index))) {
-        while (src.charAt(index) === "_") {
-          index++;
+        const char: keyof typeof specialStringCharTable | null = yield Parser.oneOfStrings(...specialStringChars);
+        if (char) {
+          value += specialStringCharTable[char];
+          continue;
         }
-        value += src.charAt(index);
-        index++;
       }
+
+      value += yield Parser.nextChar();
     }
 
-    const token = number(tokenSrc(start), position(start), Number(value));
-    return [index, token];
+    return yield* _string(value);
   }
 
-  if (/[a-zA-Z_]/.test(src.charAt(index))) {
-    const start = index;
-    while (/\w/.test(src.charAt(index))) index++;
+  if (yield Parser.string("0x")) return yield parseHexStyleLiteral("0x", /[0-9a-fA-F]/, hexLiteralError);
+  if (yield Parser.string("0o")) return yield parseHexStyleLiteral("0o", /[0-7]/, octalLiteralError);
+  if (yield Parser.string("0b")) return yield parseHexStyleLiteral("0b", /[01]/, binaryLiteralError);
 
-    const ident = tokenSrc(start);
-    if (/^[_]+$/.test(ident)) return [index, placeholder(ident, position(start))];
-    return [index, identifier(ident, position(start))];
+  if (yield Parser.checkRegexp(/\d/)) {
+    let value = "";
+
+    while (yield Parser.checkRegexp(/\d/)) {
+      value += yield Parser.nextChar();
+      while (yield Parser.string("_")) {}
+    }
+    if (yield Parser.checkString(".")) value += yield Parser.nextChar();
+    while (yield Parser.checkRegexp(/\d/)) {
+      value += yield Parser.nextChar();
+      while (yield Parser.string("_")) {}
+    }
+
+    return yield* _number(value);
   }
 
-  if (src.charAt(index) === "." && /\d/.test(src.charAt(index + 1))) {
-    const start = index;
-    index++;
+  if ((yield Parser.checkString(".")) && /\d/.test(yield Parser.peekChar(1))) {
+    yield Parser.advance();
     let value = "0.";
-    while (/[_\d]/.test(src.charAt(index))) {
-      while (src.charAt(index) === "_") {
-        index++;
-      }
-      value += src.charAt(index);
-      index++;
+
+    while (yield Parser.checkRegexp(/\d/)) {
+      value += yield Parser.nextChar();
+      while (yield Parser.string("_")) {}
     }
 
-    const token = number(tokenSrc(start), position(start), Number(value));
-    return [index, token];
+    return yield* _number(value);
   }
 
-  const start = index;
-  const ident = symbols.filter((symbol) => src.startsWith(symbol, start))[0] || src.charAt(index);
-  index += ident.length;
+  if (yield Parser.checkRegexp(/[a-zA-Z_]/)) {
+    while (yield Parser.regexp(/\w/)) {}
 
-  return [index, identifier(ident, position(start))];
-};
-
-export const parseTokens = (src: string, i = 0): TokenPos[] => {
-  let index = i;
-  const tokens: TokenPos[] = [];
-
-  while (src.charAt(index)) {
-    const [nextIndex, token] = parseToken(src, index);
-
-    index = nextIndex;
-    tokens.push(token);
+    const ident = yield Parser.substring();
+    if (/^_+$/.test(ident)) return yield* _placeholder(ident);
+    return yield* _identifier(ident);
   }
 
-  return tokens;
-};
+  for (const symbol of symbols) {
+    if (yield Parser.string(symbol)) return yield* _identifier(symbol);
+  }
+
+  return yield* _identifier(yield Parser.nextChar());
+});
+
+export const parseTokens = parseToken.all({ index: 0 });
