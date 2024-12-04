@@ -37,8 +37,9 @@ const specialStringCharTable = {
 
 export const specialStringChars = Object.keys(specialStringCharTable);
 
+type ErrorToken = Exclude<Token, { type: "error" }>;
 export type Token =
-  | { type: "error"; src: string; cause: SystemError }
+  | { type: "error"; src: string; cause: SystemError; token: ErrorToken }
   | { type: "placeholder"; src: string }
   | { type: "identifier" | "newline"; src: string }
   | { type: "number"; src: string; value: number }
@@ -46,47 +47,68 @@ export type Token =
 
 export type TokenPos = Token & Position;
 
-export const identifier = (src: string, pos: Position): TokenPos => ({
+export const identifier = (src: string, pos: Position): TokenPos & { type: "identifier" } => ({
   type: "identifier",
   src,
   ...pos,
 });
-export const newline = (src: string, pos: Position): TokenPos => ({
+export const newline = (src: string, pos: Position): TokenPos & { type: "newline" } => ({
   type: "newline",
   src,
   ...pos,
 });
-export const number = (src: string, pos: Position, value: number): TokenPos => ({ type: "number", src, value, ...pos });
-export const string = (src: string, pos: Position, value: string): TokenPos => ({ type: "string", src, value, ...pos });
-export const error = (cause: SystemError, pos: Position, src = ""): TokenPos => ({ type: "error", cause, src, ...pos });
-export const placeholder = (src: string, pos: Position): TokenPos => ({
+export const number = (src: string, pos: Position, value: number): Extract<TokenPos, { type: "number" }> => ({
+  type: "number",
+  src,
+  value,
+  ...pos,
+});
+export const string = (src: string, pos: Position, value: string): Extract<TokenPos, { type: "string" }> => ({
+  type: "string",
+  src,
+  value,
+  ...pos,
+});
+export const placeholder = (src: string, pos: Position): Extract<TokenPos, { type: "placeholder" }> => ({
   type: "placeholder",
   src,
   ...pos,
 });
+export const error = (
+  cause: SystemError,
+  pos: Position,
+  src = "",
+  token: ErrorToken = placeholder(src, pos)
+): TokenPos => ({
+  type: "error",
+  cause,
+  token,
+  src,
+  ...pos,
+});
 
-const stringLiteralError = function* () {
+const stringLiteralError = function* (value: string) {
   const tokenSrc = yield Parser.substring();
   const pos = yield Parser.span();
-  return error(SystemError.unterminatedString(pos), pos, tokenSrc);
+  return error(SystemError.unterminatedString(pos), pos, tokenSrc, string(tokenSrc, pos, value));
 };
 
 const hexLiteralError = Parser.do(function* () {
   const pos = yield Parser.span();
   const tokenSrc = yield Parser.substring();
-  return error(SystemError.invalidHexLiteral(pos), pos, tokenSrc);
+  return error(SystemError.invalidHexLiteral(pos), pos, tokenSrc, number(tokenSrc, pos, 0));
 });
 
 const octalLiteralError = Parser.do(function* () {
   const pos = yield Parser.span();
   const tokenSrc = yield Parser.substring();
-  return error(SystemError.invalidOctalLiteral(pos), pos, tokenSrc);
+  return error(SystemError.invalidOctalLiteral(pos), pos, tokenSrc, number(tokenSrc, pos, 0));
 });
 
 const binaryLiteralError = Parser.do(function* () {
   const pos = yield Parser.span();
   const tokenSrc = yield Parser.substring();
-  return error(SystemError.invalidBinaryLiteral(pos), pos, tokenSrc);
+  return error(SystemError.invalidBinaryLiteral(pos), pos, tokenSrc, number(tokenSrc, pos, 0));
 });
 
 const blockCommentError = Parser.do(function* () {
@@ -94,7 +116,6 @@ const blockCommentError = Parser.do(function* () {
   const tokenSrc = yield Parser.substring();
   return error(SystemError.unclosedBlockComment(pos), pos, tokenSrc);
 });
-
 
 const _number = function* (value: string) {
   return number(yield Parser.substring(), yield Parser.span(), Number(value));
@@ -119,7 +140,6 @@ const _placeholder = function* (ident: string) {
 const parseHexStyleLiteral = (prefix: string, digitRegexp: RegExp, error: Parser<string, TokenPos>) =>
   Parser.do(function* () {
     if (!(yield Parser.checkRegexp(digitRegexp))) {
-      while ((yield Parser.regexp(digitRegexp)) || (yield Parser.string("_"))) {}
       return yield error;
     }
 
@@ -176,8 +196,8 @@ export const parseToken = Parser.do<string, TokenPos | (Position & { type: "skip
     let value = "";
 
     while (!(yield Parser.string('"'))) {
-      if (yield Parser.isEnd()) return yield* stringLiteralError();
-      if (yield Parser.checkString("\n")) return yield * stringLiteralError();
+      if (yield Parser.isEnd()) return yield * stringLiteralError(value);
+      if (yield Parser.checkString("\n")) return yield * stringLiteralError(value);
 
       if (yield Parser.string("\\")) {
         if (yield Parser.isEnd()) continue;

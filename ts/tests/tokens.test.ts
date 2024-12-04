@@ -1,15 +1,18 @@
-import { parseToken, parseTokens, specialStringChars, type Token } from "../src/parser/tokens.js";
+import { parseToken, parseTokens, placeholder, specialStringChars, string, type Token } from "../src/parser/tokens.js";
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { array, type Arbitrary } from "fast-check";
 import { Iterator } from "iterator-js";
 import { eventLoopYield } from "../src/utils/index.js";
 import { SystemError } from "../src/error.js";
+import { position } from "../src/position.js";
 
 const anyStringArb = fc.string({ size: "large", unit: "binary" });
 const commentArb = anyStringArb.filter((s) => !s.includes("\n"));
 const blockCommentArb = anyStringArb.map((s) => s.replace("*/", "").replace("/*", ""));
-const stringInsidesArb = anyStringArb.filter((s) => !s.includes("\n")).map((s) => s.replace("\\", "").replace('"', ""));
+const stringInsidesArb = anyStringArb
+  .filter((s) => !s.includes("\n") && !s.includes("\\"))
+  .map((s) => s.replace('"', ""));
 const charArb = fc.string({ minLength: 1, maxLength: 1 });
 const notStringSpecialCharArb = charArb.filter((s) => !specialStringChars.includes(s));
 const arrayLenArb = <T>(arb: Arbitrary<T>, len: number) => fc.array(arb, { minLength: len, maxLength: len });
@@ -75,10 +78,12 @@ describe("string token", () => {
     const expectedToken = {
       type: "error",
       src,
-      cause: SystemError.unterminatedString({ start: 0, end: expectedIndex }),
+      cause: SystemError.unterminatedString(position(startIndex, expectedIndex)),
     };
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, { start, end, ..._token }] = parseToken.parse(src, { index: startIndex });
+    // @ts-ignore
+    const { token: _, ...token } = _token;
 
     expect(index).toBe(expectedIndex);
     expect(token).toEqual(expectedToken);
@@ -102,7 +107,28 @@ describe("string token", () => {
     const expectedToken = {
       type: "error",
       src,
-      cause: SystemError.unterminatedString({ start: 0, end: expectedIndex }),
+      cause: SystemError.unterminatedString(position(startIndex, expectedIndex)),
+    };
+
+    const [{ index }, { start, end, ..._token }] = parseToken.parse(src, { index: startIndex });
+    // @ts-ignore
+    const { token: _, ...token } = _token;
+
+    expect(index).toBe(expectedIndex);
+    expect(token).toEqual(expectedToken);
+  });
+
+  test.prop([stringInsidesArb])("unclosed string token before newline", async (literal) => {
+    await eventLoopYield();
+
+    const src = `"${literal}\n`;
+    const startIndex = 0;
+    const expectedIndex = literal.length + 1;
+    const expectedToken = {
+      type: "error",
+      src: `"${literal}`,
+      token: string(`"${literal}`, position(startIndex, expectedIndex), literal),
+      cause: SystemError.unterminatedString(position(startIndex, expectedIndex)),
     };
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -110,27 +136,6 @@ describe("string token", () => {
     expect(index).toBe(expectedIndex);
     expect(token).toEqual(expectedToken);
   });
-
-  test.prop([stringInsidesArb], { seed: 1962366388, path: "0:0", endOnFailure: true })(
-    "unclosed string token before newline",
-    async (literal) => {
-      await eventLoopYield();
-
-      const src = `"${literal}\n`;
-      const startIndex = 0;
-      const expectedIndex = literal.length + 1;
-      const expectedToken = {
-        type: "error",
-        src: `"${literal}`,
-        cause: SystemError.unterminatedString({ start: startIndex, end: expectedIndex }),
-      };
-
-      const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
-
-      expect(index).toBe(expectedIndex);
-      expect(token).toEqual(expectedToken);
-    }
-  );
 });
 
 describe("number token", () => {
