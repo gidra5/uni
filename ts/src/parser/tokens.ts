@@ -95,11 +95,6 @@ const blockCommentError = Parser.do(function* () {
   return error(SystemError.unclosedBlockComment(pos), pos, tokenSrc);
 });
 
-const endOfSourceError = Parser.do(function* () {
-  const pos = yield Parser.span();
-  return error(SystemError.endOfSource(pos), pos);
-});
-
 
 const _number = function* (value: string) {
   return number(yield Parser.substring(), yield Parser.span(), Number(value));
@@ -146,7 +141,7 @@ const parseBlockComment = function* () {
   return null;
 };
 
-export const parseToken = Parser.do<string, TokenPos>(function* () {
+export const parseToken = Parser.do<string, TokenPos | (Position & { type: "skip" })>(function* () {
   yield Parser.rememberIndex();
   let isNewline = false;
 
@@ -173,7 +168,7 @@ export const parseToken = Parser.do<string, TokenPos>(function* () {
   }
 
   if (isNewline) return yield * _newline();
-  if (yield Parser.isEnd()) return yield endOfSourceError;
+  if (yield Parser.isEnd()) return { type: "skip", ...(yield Parser.span()) };
 
   yield Parser.rememberIndex();
 
@@ -246,4 +241,4 @@ export const parseToken = Parser.do<string, TokenPos>(function* () {
   return yield* _identifier(yield Parser.nextChar());
 });
 
-export const parseTokens = parseToken.all({ index: 0 });
+export const parseTokens = parseToken.map((token) => (token.type === "skip" ? null : token)).all({ index: 0 });

@@ -50,8 +50,18 @@ export class Parser<T, U, C extends BaseContext = BaseContext> {
     });
   }
 
-  all<T extends { length: number }, U>(this: Parser<T, U, C>, initialCtx: C) {
-    return (src: T): U[] => this.zeroOrMore().parse(src, initialCtx)[1];
+  all<T extends { length: number }, U>(this: Parser<T, U | null, C>, initialCtx: C) {
+    const parser = this.parse;
+    return (src: T): U[] => {
+      let ctx: C = initialCtx;
+      const items: U[] = [];
+      while (ctx.index < src.length) {
+        let item: U | null;
+        [ctx, item] = parser(src, ctx);
+        if (item) items.push(item);
+      }
+      return items;
+    };
   }
 
   static or<T, U, C extends BaseContext = BaseContext>(
