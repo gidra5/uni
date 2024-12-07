@@ -1,7 +1,7 @@
 import { position, type Position } from "../position";
 import { assert } from "../utils";
 
-type BaseContext = { index: number; rememberedIndex?: number };
+export type BaseContext = { index: number; rememberedIndex?: number };
 export type ParserFunction<T, U, C extends BaseContext = BaseContext> = (src: T, context: C) => [context: C, ast: U];
 
 export class Parser<T, U, C extends BaseContext = BaseContext> {
@@ -129,6 +129,27 @@ export class Parser<T, U, C extends BaseContext = BaseContext> {
     return new Parser((src, ctx) => {
       assert(ctx.rememberedIndex !== undefined, "must be used after rememberIndex performed");
       return [ctx, src.substring(ctx.rememberedIndex, ctx.index)];
+    });
+  }
+
+  static appendFollow<C extends BaseContext & { followSet: string[] }>(str: string): Parser<any, void, C> {
+    return new Parser((src, ctx) => {
+      const followSet = [...ctx.followSet, str];
+      return [{ ...ctx, followSet }, void 0];
+    });
+  }
+
+  static popFollow<C extends BaseContext & { followSet: string[] }>(): Parser<any, void, C> {
+    return new Parser((src, ctx) => {
+      assert(ctx.followSet.length > 0, "must popFollow only after appendFollow");
+      const followSet = ctx.followSet.slice(0, -1);
+      return [{ ...ctx, followSet }, void 0];
+    });
+  }
+
+  static followSet<C extends BaseContext & { followSet: string[] }>(): Parser<any, string[], C> {
+    return new Parser((src, ctx) => {
+      return [ctx, ctx.followSet];
     });
   }
 

@@ -1,4 +1,10 @@
-import { parseToken, parseTokens, placeholder, specialStringChars, string, type Token } from "../src/parser/tokens.js";
+import {
+  parseMultilineStringToken,
+  parseStringToken,
+  parseToken,
+  specialStringChars,
+  type Token,
+} from "../src/parser/tokens.js";
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { array, type Arbitrary } from "fast-check";
@@ -124,11 +130,12 @@ describe("string token", () => {
     const src = `"${literal}\n`;
     const startIndex = 0;
     const expectedIndex = literal.length + 1;
+    const pos = position(startIndex, expectedIndex);
     const expectedToken = {
       type: "error",
       src: `"${literal}`,
-      token: string(`"${literal}`, position(startIndex, expectedIndex), literal),
-      cause: SystemError.unterminatedString(position(startIndex, expectedIndex)),
+      token: { token: "string", src: `"${literal}`, value: literal, ...pos },
+      cause: SystemError.unterminatedString(pos),
     };
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -376,66 +383,47 @@ describe("comments", () => {
     expect(token).toEqual(expectedToken);
   });
 
-  it.prop([anyStringArb])("adding line comments instead of newlines never changes the resulting tokens", (src) => {
-    const tokens = parseTokens(src);
-    const withComments = parseTokens(withLineComments());
+  it.prop([anyStringArb])("adding line comments instead of newlines never changes the resulting token", (src) => {
+    const [, token] = parseToken.parse(src, { index: 0 });
+    const [, withComments] = parseToken.parse(withLineComments(), { index: 0 });
 
-    expect(mapTokens(tokens)).toStrictEqual(mapTokens(withComments));
+    expect(mapTokens(token)).toStrictEqual(mapTokens(withComments));
 
-    function mapTokens(tokens: typeof withComments) {
-      return tokens.map(({ start, end, ...token }) => {
-        if (token.type === "newline") return { type: "newline" };
-        return token;
-      });
+    function mapTokens({ start, end, ...token }: typeof withComments) {
+      if (token.type === "newline") return { type: "newline" };
+      return token;
     }
 
     function withLineComments(): string {
-      let result = src;
-      for (const token of [...tokens].reverse()) {
-        if (token.type === "newline") {
-          const startString = result.substring(0, token.start);
-          const endString = result.substring(token.end);
-          result = `${startString}//\n${endString}`;
-        }
+      if (token.type === "newline") {
+        const tail = src.substring(token.end);
+        return `//\n${tail}`;
       }
-      return result;
+      return src;
     }
   });
 
-  it.prop([anyStringArb])("adding block comments between tokens never changes the result", (src) => {
-    const tokens = parseTokens(src);
-    const withComments = parseTokens(withLineComments());
+  it.prop([anyStringArb])("adding block comments never changes the result", (src) => {
+    const [, token] = parseToken.parse(src, { index: 0 });
+    const [, withComments] = parseToken.parse(`/**/${src}/**/`, { index: 0 });
 
-    expect(mapTokens(tokens)).toStrictEqual(mapTokens(withComments));
+    expect(mapTokens(token)).toStrictEqual(mapTokens(withComments));
 
-    function mapTokens(tokens: typeof withComments) {
-      return tokens.map(({ start, end, ...token }) => {
-        if (token.type === "newline") return { type: "newline" };
-        return token;
-      });
-    }
-
-    function withLineComments(): string {
-      let result = src;
-      for (const [token1, token2] of [...Iterator.iter(tokens).window(2)].reverse()) {
-        const startString = result.substring(0, token1.end);
-        const endString = result.substring(token2.start);
-        result = `${startString}/**/${endString}`;
-      }
-      result = `/**/${result}/**/`;
-      return result;
+    function mapTokens({ start, end, ...token }: typeof withComments) {
+      if (token.type === "newline") return { type: "newline" };
+      return token;
     }
   });
 });
 
-test("parseTokens", () => {
-  const src = '42 "Hello" variable ((expr))';
-
-  const tokens = parseTokens(src);
-
-  expect(tokens).toMatchSnapshot();
+it.prop([anyStringArb])("parseToken never throws", (src) => {
+  expect(() => parseToken.parse(src, { index: 0 })).not.toThrow();
 });
 
-it.prop([anyStringArb])("parseTokens never throws", (src) => {
-  expect(() => parseTokens(src)).not.toThrow();
+it.prop([anyStringArb])("parseStringToken never throws", (src) => {
+  expect(() => parseStringToken.parse(src, { index: 0 })).not.toThrow();
+});
+
+it.prop([anyStringArb, fc.stringMatching(/\n\s*/)])("parseMultilineStringToken never throws", (src, intend) => {
+  expect(() => parseMultilineStringToken(intend).parse(src, { index: 0 })).not.toThrow();
 });

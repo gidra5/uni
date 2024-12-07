@@ -37,104 +37,113 @@ const specialStringCharTable = {
 
 export const specialStringChars = Object.keys(specialStringCharTable);
 
+type SkipToken = { type: "skip" };
+type SkipTokenPos = SkipToken & Position;
+
 type ErrorToken = Exclude<Token, { type: "error" }>;
 export type Token =
   | { type: "error"; src: string; cause: SystemError; token: ErrorToken }
   | { type: "placeholder"; src: string }
   | { type: "identifier" | "newline"; src: string }
   | { type: "number"; src: string; value: number }
-  | { type: "string"; src: string; value: string };
+  | { type: "string"; src: string }
+  | { type: "multilineString"; src: string; intend: string };
+
+type StringErrorToken = Exclude<StringToken, { type: "error" }>;
+export type StringToken =
+  | { type: "error"; src: string; cause: SystemError; token: StringErrorToken }
+  | { type: "segment"; src: string; value: string }
+  | { type: "lastSegment"; src: string; value: string };
 
 export type TokenPos = Token & Position;
-
-export const identifier = (src: string, pos: Position): TokenPos & { type: "identifier" } => ({
-  type: "identifier",
-  src,
-  ...pos,
-});
-export const newline = (src: string, pos: Position): TokenPos & { type: "newline" } => ({
-  type: "newline",
-  src,
-  ...pos,
-});
-export const number = (src: string, pos: Position, value: number): Extract<TokenPos, { type: "number" }> => ({
-  type: "number",
-  src,
-  value,
-  ...pos,
-});
-export const string = (src: string, pos: Position, value: string): Extract<TokenPos, { type: "string" }> => ({
-  type: "string",
-  src,
-  value,
-  ...pos,
-});
-export const placeholder = (src: string, pos: Position): Extract<TokenPos, { type: "placeholder" }> => ({
-  type: "placeholder",
-  src,
-  ...pos,
-});
-export const error = (
-  cause: SystemError,
-  pos: Position,
-  src = "",
-  token: ErrorToken = placeholder(src, pos)
-): TokenPos => ({
-  type: "error",
-  cause,
-  token,
-  src,
-  ...pos,
-});
-
-const stringLiteralError = function* (value: string) {
-  const tokenSrc = yield Parser.substring();
-  const pos = yield Parser.span();
-  return error(SystemError.unterminatedString(pos), pos, tokenSrc, string(tokenSrc, pos, value));
-};
+export type StringTokenPos = StringToken & Position;
 
 const hexLiteralError = Parser.do(function* () {
-  const pos = yield Parser.span();
-  const tokenSrc = yield Parser.substring();
-  return error(SystemError.invalidHexLiteral(pos), pos, tokenSrc, number(tokenSrc, pos, 0));
+  const src: string = yield Parser.substring();
+  const pos: Position = yield Parser.span();
+  const cause = SystemError.invalidHexLiteral(pos);
+  const token = { type: "number", value: 0, src, ...pos } satisfies TokenPos;
+  return { type: "error", cause, token, src, ...pos } satisfies TokenPos;
 });
 
 const octalLiteralError = Parser.do(function* () {
-  const pos = yield Parser.span();
-  const tokenSrc = yield Parser.substring();
-  return error(SystemError.invalidOctalLiteral(pos), pos, tokenSrc, number(tokenSrc, pos, 0));
+  const src: string = yield Parser.substring();
+  const pos: Position = yield Parser.span();
+  const cause = SystemError.invalidOctalLiteral(pos);
+  const token = { type: "number", value: 0, src, ...pos } satisfies TokenPos;
+  return { type: "error", cause, token, src, ...pos } satisfies TokenPos;
 });
 
 const binaryLiteralError = Parser.do(function* () {
-  const pos = yield Parser.span();
-  const tokenSrc = yield Parser.substring();
-  return error(SystemError.invalidBinaryLiteral(pos), pos, tokenSrc, number(tokenSrc, pos, 0));
+  const src: string = yield Parser.substring();
+  const pos: Position = yield Parser.span();
+  const cause = SystemError.invalidBinaryLiteral(pos);
+  const token = { type: "number", value: 0, src, ...pos } satisfies TokenPos;
+  return { type: "error", cause, token, src, ...pos } satisfies TokenPos;
 });
 
 const blockCommentError = Parser.do(function* () {
-  const pos = yield Parser.span();
-  const tokenSrc = yield Parser.substring();
-  return error(SystemError.unclosedBlockComment(pos), pos, tokenSrc);
+  const src: string = yield Parser.substring();
+  const pos: Position = yield Parser.span();
+  const cause = SystemError.unclosedBlockComment(pos);
+  const token = { type: "placeholder", src, ...pos } satisfies TokenPos;
+  return { type: "error", cause, token, src, ...pos } satisfies TokenPos;
 });
 
-const _number = function* (value: string) {
-  return number(yield Parser.substring(), yield Parser.span(), Number(value));
+const number = function* (value: string) {
+  const pos: Position = yield Parser.span();
+  const src: string = yield Parser.substring();
+  return { type: "number", value: Number(value), src, ...pos } satisfies TokenPos;
 };
 
-const _newline = function* () {
-  return newline(yield Parser.substring(), yield Parser.span());
+const newline = function* () {
+  const pos: Position = yield Parser.span();
+  const src: string = yield Parser.substring();
+  return { type: "newline", src, ...pos } satisfies TokenPos;
 };
 
-const _string = function* (value: string) {
-  return string(yield Parser.substring(), yield Parser.span(), value);
+const identifier = function* () {
+  const pos: Position = yield Parser.span();
+  const src: string = yield Parser.substring();
+  return { type: "identifier", src, ...pos } satisfies TokenPos;
 };
 
-const _identifier = function* (ident: string) {
-  return identifier(ident, yield Parser.span());
+const placeholder = function* () {
+  const pos: Position = yield Parser.span();
+  const src: string = yield Parser.substring();
+  return { type: "placeholder", src, ...pos } satisfies TokenPos;
 };
 
-const _placeholder = function* (ident: string) {
-  return placeholder(ident, yield Parser.span());
+const string = function* () {
+  const pos: Position = yield Parser.span();
+  const src: string = yield Parser.substring();
+  return { type: "string", src, ...pos } satisfies TokenPos;
+};
+
+const multilineString = function* (intend: string) {
+  const pos: Position = yield Parser.span();
+  const src: string = yield Parser.substring();
+  return { type: "multilineString", intend, src, ...pos } satisfies TokenPos;
+};
+
+const stringSegment = function* (value: string) {
+  const pos: Position = yield Parser.span();
+  const src: string = yield Parser.substring();
+  return { type: "segment", value, src, ...pos } satisfies StringTokenPos;
+};
+
+const stringLastSegment = function* (value: string) {
+  const pos: Position = yield Parser.span();
+  const src: string = yield Parser.substring();
+  return { type: "lastSegment", value, src, ...pos } satisfies StringTokenPos;
+};
+
+const stringLiteralError = function* (value: string) {
+  const src: string = yield Parser.substring();
+  const pos: Position = yield Parser.span();
+  const cause = SystemError.unterminatedString(pos);
+  const token = { type: "segment", value, src, ...pos } satisfies StringTokenPos;
+  return { type: "error", cause, token, src, ...pos } satisfies StringTokenPos;
 };
 
 const parseHexStyleLiteral = (prefix: string, digitRegexp: RegExp, error: Parser<string, TokenPos>) =>
@@ -149,7 +158,7 @@ const parseHexStyleLiteral = (prefix: string, digitRegexp: RegExp, error: Parser
       if (prev !== "_") value += prev;
     }
 
-    return yield* _number(value);
+    return yield* number(value);
   });
 
 const parseBlockComment = function* () {
@@ -161,45 +170,40 @@ const parseBlockComment = function* () {
   return null;
 };
 
-export const parseToken = Parser.do<string, TokenPos | (Position & { type: "skip" })>(function* () {
+export const parseStringToken = Parser.do<string, StringTokenPos>(function* () {
   yield Parser.rememberIndex();
-  let isNewline = false;
+  let value = "";
 
   while (true) {
-    if (yield Parser.string("/*")) {
-      const result = yield* parseBlockComment();
-      if (result) return result;
-      continue;
+    if (yield Parser.string('"')) return yield* stringLastSegment(value);
+    if (yield Parser.string("\\(")) return yield* stringSegment(value);
+    if (yield Parser.isEnd()) return yield* stringLiteralError(value);
+    if (yield Parser.checkString("\n")) return yield* stringLiteralError(value);
+
+    if (yield Parser.string("\\")) {
+      if (yield Parser.isEnd()) continue;
+
+      const char: keyof typeof specialStringCharTable | null = yield Parser.oneOfStrings(...specialStringChars);
+      if (char) {
+        value += specialStringCharTable[char];
+        continue;
+      }
     }
 
-    if (yield Parser.checkRegexp(/\s/)) {
-      if (yield Parser.checkString("\n")) isNewline = true;
-      yield Parser.advance();
-      continue;
-    }
-
-    if (yield Parser.string("//")) {
-      yield Parser.untilString("\n");
-      isNewline = true;
-      continue;
-    }
-
-    break;
+    value += yield Parser.nextChar();
   }
+});
 
-  if (isNewline) return yield* _newline();
-  if (yield Parser.isEnd()) return { type: "skip", ...(yield Parser.span()) };
-
-  yield Parser.rememberIndex();
-
-  if (yield Parser.string('"""\n')) {
-    let intend = "\n";
-    while ((yield Parser.checkRegexp(/\s/)) && !(yield Parser.checkString("\n"))) intend += yield Parser.nextChar();
-
+export const parseMultilineStringToken = (intend: string) =>
+  Parser.do<string, StringTokenPos>(function* () {
+    yield Parser.rememberIndex();
     let value = "";
 
-    while (!(yield Parser.string('"""'))) {
-      if (yield Parser.isEnd()) return yield * stringLiteralError(value);
+    while (true) {
+      if (yield Parser.string('"""')) return yield* stringLastSegment(value);
+      if (yield Parser.string("\\(")) return yield* stringSegment(value);
+      if (yield Parser.isEnd()) return yield* stringLiteralError(value);
+
       if (yield Parser.string(intend)) {
         if (yield Parser.isEnd()) continue;
         value += "\n";
@@ -225,32 +229,47 @@ export const parseToken = Parser.do<string, TokenPos | (Position & { type: "skip
 
       value += yield Parser.nextChar();
     }
+  });
 
-    return yield* _string(value.trimEnd());
-  }
+export const parseToken = Parser.do<string, TokenPos | SkipTokenPos>(function* () {
+  yield Parser.rememberIndex();
+  let isNewline = false;
 
-  if (yield Parser.string('"')) {
-    let value = "";
-
-    while (!(yield Parser.string('"'))) {
-      if (yield Parser.isEnd()) return yield* stringLiteralError(value);
-      if (yield Parser.checkString("\n")) return yield* stringLiteralError(value);
-
-      if (yield Parser.string("\\")) {
-        if (yield Parser.isEnd()) continue;
-
-        const char: keyof typeof specialStringCharTable | null = yield Parser.oneOfStrings(...specialStringChars);
-        if (char) {
-          value += specialStringCharTable[char];
-          continue;
-        }
-      }
-
-      value += yield Parser.nextChar();
+  while (true) {
+    if (yield Parser.string("/*")) {
+      const result = yield* parseBlockComment();
+      if (result) return result;
+      continue;
     }
 
-    return yield* _string(value);
+    if (yield Parser.checkRegexp(/\s/)) {
+      if (yield Parser.checkString("\n")) isNewline = true;
+      yield Parser.advance();
+      continue;
+    }
+
+    if (yield Parser.string("//")) {
+      yield Parser.untilString("\n");
+      isNewline = true;
+      continue;
+    }
+
+    break;
   }
+
+  if (isNewline) return yield* newline();
+  if (yield Parser.isEnd()) return { type: "skip", ...(yield Parser.span()) };
+
+  yield Parser.rememberIndex();
+
+  if (yield Parser.string('"""\n')) {
+    let intend = "\n";
+    while ((yield Parser.checkRegexp(/\s/)) && !(yield Parser.checkString("\n"))) intend += yield Parser.nextChar();
+
+    return yield* multilineString(intend);
+  }
+
+  if (yield Parser.string('"')) return yield* string();
 
   if (yield Parser.string("0x")) return yield parseHexStyleLiteral("0x", /[0-9a-fA-F]/, hexLiteralError);
   if (yield Parser.string("0o")) return yield parseHexStyleLiteral("0o", /[0-7]/, octalLiteralError);
@@ -269,7 +288,7 @@ export const parseToken = Parser.do<string, TokenPos | (Position & { type: "skip
       while (yield Parser.string("_")) {}
     }
 
-    return yield* _number(value);
+    return yield* number(value);
   }
 
   if ((yield Parser.checkString(".")) && /\d/.test(yield Parser.peekChar(1))) {
@@ -281,22 +300,21 @@ export const parseToken = Parser.do<string, TokenPos | (Position & { type: "skip
       while (yield Parser.string("_")) {}
     }
 
-    return yield* _number(value);
+    return yield* number(value);
   }
 
   if (yield Parser.checkRegexp(/[a-zA-Z_]/)) {
     while (yield Parser.regexp(/\w/)) {}
 
     const ident = yield Parser.substring();
-    if (/^_+$/.test(ident)) return yield* _placeholder(ident);
-    return yield* _identifier(ident);
+    if (/^_+$/.test(ident)) return yield* placeholder();
+    return yield* identifier();
   }
 
   for (const symbol of symbols) {
-    if (yield Parser.string(symbol)) return yield* _identifier(symbol);
+    if (yield Parser.string(symbol)) return yield* identifier();
   }
 
-  return yield* _identifier(yield Parser.nextChar());
+  yield Parser.nextChar();
+  return yield* identifier();
 });
-
-export const parseTokens = parseToken.map((token) => (token.type === "skip" ? null : token)).all({ index: 0 });
