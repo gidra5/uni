@@ -20,7 +20,7 @@ const stringInsidesArb = anyStringArb
   .filter((s) => !s.includes("\n") && !s.includes("\\"))
   .map((s) => s.replace('"', ""));
 const charArb = fc.string({ minLength: 1, maxLength: 1 });
-const notStringSpecialCharArb = charArb.filter((s) => !specialStringChars.includes(s));
+const notStringSpecialCharArb = charArb.filter((s) => !specialStringChars.includes(s) && s !== "(");
 const arrayLenArb = <T>(arb: Arbitrary<T>, len: number) => fc.array(arb, { minLength: len, maxLength: len });
 
 describe("string token", () => {
@@ -45,10 +45,10 @@ describe("string token", () => {
       .map(([strings, joins]) => {
         const literal = Iterator.zip(strings, [...joins.map((x) => "\\" + x), ""])
           .flat()
-          .join();
+          .join("");
         const value = Iterator.zip(strings, [...joins, ""])
           .flat()
-          .join();
+          .join("");
         return [literal, value];
       }),
   ])("string token escapes", async ([literal, value]) => {
@@ -56,7 +56,7 @@ describe("string token", () => {
 
     const src = `"${literal}"`;
     const startIndex = 0;
-    const expectedToken = { type: "string", src, value };
+    const expectedToken = { type: "string", src, value: [value] };
     const expectedIndex = literal.length + 2;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -73,7 +73,7 @@ describe("string token", () => {
       .map(([strings, joins]) =>
         Iterator.zip(strings, [...joins.map((x) => "\\" + x), ""])
           .flat()
-          .join()
+          .join("")
       ),
   ])("unclosed string token", async (literal) => {
     await eventLoopYield();
@@ -102,7 +102,7 @@ describe("string token", () => {
       .map(([strings, joins]) =>
         Iterator.zip(strings, [...joins.map((x) => "\\" + x), ""])
           .flat()
-          .join()
+          .join("")
       ),
   ])("unclosed string token escape", async (literal) => {
     await eventLoopYield();

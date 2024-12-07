@@ -11,9 +11,6 @@ export const symbols = [
   "--",
   "++",
   "+=",
-  "//",
-  "/*",
-  "*/",
   "!=",
   "==",
   ">=",
@@ -209,6 +206,8 @@ export const parseMultilineStringToken = (intend: string) =>
         value += "\n";
         continue;
       }
+
+      // if intendation is not full, skip until the next character
       if (yield Parser.string("\n")) {
         if (yield Parser.isEnd()) continue;
         while ((yield Parser.checkRegexp(/\s/)) && !(yield Parser.checkString("\n"))) {}
@@ -219,6 +218,7 @@ export const parseMultilineStringToken = (intend: string) =>
       if (yield Parser.string("\\")) {
         if (yield Parser.isEnd()) continue;
 
+        // escape sequence
         type Char = keyof typeof specialStringCharTable | null;
         const char: Char = yield Parser.oneOfStrings(...specialStringChars);
         if (char) {
@@ -235,6 +235,7 @@ export const parseToken = Parser.do<string, TokenPos | SkipTokenPos>(function* (
   yield Parser.rememberIndex();
   let isNewline = false;
 
+  // skip comments and whitespace
   while (true) {
     if (yield Parser.string("/*")) {
       const result = yield* parseBlockComment();
@@ -291,7 +292,7 @@ export const parseToken = Parser.do<string, TokenPos | SkipTokenPos>(function* (
     return yield* number(value);
   }
 
-  if ((yield Parser.checkString(".")) && /\d/.test(yield Parser.peekChar(1))) {
+  if (/\.\d/.test(yield Parser.peekSubstring(2))) {
     yield Parser.advance();
     let value = "0.";
 
