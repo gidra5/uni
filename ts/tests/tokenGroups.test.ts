@@ -1,4 +1,5 @@
-import { parseToken, specialStringChars, type Token } from "../src/parser/tokens.js";
+import { specialStringChars } from "../src/parser/tokens.js";
+import { parseTokenGroups, _parseToken } from "../src/parser/tokenGroups.js";
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { array, type Arbitrary } from "fast-check";
@@ -56,7 +57,7 @@ describe.todo("string interpolation", () => {
     await eventLoopYield();
 
     const value = interpolated
-      .flatMap(([text, interpolated]) => [text, parseTokens(interpolated).map(clearToken)])
+      .flatMap(([text, interpolated]) => [text, parseTokenGroups(interpolated).map(clearToken)])
       .map((v) =>
         Array.isArray(v) && v.length === 0
           ? [{ type: "error", src: "", cause: SystemError.unterminatedString(position(0, 0)) }]
@@ -69,7 +70,7 @@ describe.todo("string interpolation", () => {
     const expectedIndex = src.length;
     const expectedToken = { type: "string", src, value };
 
-    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, token] = _parseToken.parse(src, { index: startIndex, followSet: [] });
     console.dir({ token, expectedToken }, { depth: null });
 
     expect(index).toBe(expectedIndex);
@@ -80,11 +81,11 @@ describe.todo("string interpolation", () => {
 test("parseTokens", () => {
   const src = '42 "Hello" variable ((expr))';
 
-  const tokens = parseTokens(src);
+  const tokens = parseTokenGroups(src);
 
   expect(tokens).toMatchSnapshot();
 });
 
 it.prop([anyStringArb])("parseTokens never throws", (src) => {
-  expect(() => parseTokens(src)).not.toThrow();
+  expect(() => parseTokenGroups(src)).not.toThrow();
 });

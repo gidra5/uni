@@ -35,7 +35,7 @@ const specialStringCharTable = {
 export const specialStringChars = Object.keys(specialStringCharTable);
 
 type SkipToken = { type: "skip" };
-type SkipTokenPos = SkipToken & Position;
+export type SkipTokenPos = SkipToken & Position;
 
 type ErrorToken = Exclude<Token, { type: "error" }>;
 export type Token =
@@ -57,30 +57,37 @@ export type StringTokenPos = StringToken & Position;
 const hexLiteralError = Parser.do(function* () {
   const pos: Position = yield Parser.span();
   const cause = SystemError.invalidHexLiteral(pos);
-  const token = { type: "number", value: 0, ...pos } satisfies TokenPos;
+  const token = { type: "number", value: 0 } satisfies ErrorToken;
   return { type: "error", cause, token, ...pos } satisfies TokenPos;
 });
 
 const octalLiteralError = Parser.do(function* () {
   const pos: Position = yield Parser.span();
   const cause = SystemError.invalidOctalLiteral(pos);
-  const token = { type: "number", value: 0, ...pos } satisfies TokenPos;
+  const token = { type: "number", value: 0 } satisfies ErrorToken;
   return { type: "error", cause, token, ...pos } satisfies TokenPos;
 });
 
 const binaryLiteralError = Parser.do(function* () {
   const pos: Position = yield Parser.span();
   const cause = SystemError.invalidBinaryLiteral(pos);
-  const token = { type: "number", value: 0, ...pos } satisfies TokenPos;
+  const token = { type: "number", value: 0 } satisfies ErrorToken;
   return { type: "error", cause, token, ...pos } satisfies TokenPos;
 });
 
 const blockCommentError = Parser.do(function* () {
   const pos: Position = yield Parser.span();
   const cause = SystemError.unclosedBlockComment(pos);
-  const token = { type: "placeholder", ...pos } satisfies TokenPos;
+  const token = { type: "placeholder" } satisfies ErrorToken;
   return { type: "error", cause, token, ...pos } satisfies TokenPos;
 });
+
+const endOfSourceError = function* () {
+  const pos: Position = yield Parser.span();
+  const cause = SystemError.endOfSource(pos);
+  const token = { type: "placeholder" } satisfies ErrorToken;
+  return { type: "error", cause, token, ...pos } satisfies TokenPos;
+};
 
 const number = function* (value: string) {
   const pos: Position = yield Parser.span();
@@ -217,7 +224,7 @@ export const parseMultilineStringToken = (intend: string) =>
     }
   });
 
-export const parseWhitespace = Parser.do<string, TokenPos | SkipTokenPos>(function* () {
+export const parseWhitespace = Parser.do<string, TokenPos | SkipTokenPos | null>(function* () {
   yield Parser.rememberIndex();
   let isNewline = false;
 
@@ -245,11 +252,11 @@ export const parseWhitespace = Parser.do<string, TokenPos | SkipTokenPos>(functi
   }
 
   if (isNewline) return yield* newline();
-  if (yield Parser.isEnd()) return { type: "skip", ...(yield Parser.span()) };
+  if (yield Parser.isEnd()) return yield* endOfSourceError();
   return null;
 });
 
-export const parseToken = Parser.do<string, TokenPos | SkipTokenPos>(function* () {
+export const parseToken = Parser.do<string, TokenPos>(function* () {
   const parsedWhitespace = yield parseWhitespace;
   if (parsedWhitespace) return parsedWhitespace;
 

@@ -367,7 +367,6 @@ describe("comments", () => {
     expect(mapTokens(token)).toStrictEqual(mapTokens(withComments));
 
     function mapTokens({ start, end, ...token }: typeof withComments) {
-      if (token.type === "newline") return { type: "newline" };
       return token;
     }
 
@@ -387,7 +386,6 @@ describe("comments", () => {
     expect(mapTokens(token)).toStrictEqual(mapTokens(withComments));
 
     function mapTokens({ start, end, ...token }: typeof withComments) {
-      if (token.type === "newline") return { type: "newline" };
       return token;
     }
   });

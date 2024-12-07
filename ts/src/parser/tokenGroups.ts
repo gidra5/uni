@@ -5,6 +5,7 @@ import {
   parseStringToken,
   parseToken,
   parseWhitespace,
+  SkipTokenPos,
   type StringTokenPos,
   type TokenPos,
 } from "./tokens";
@@ -99,13 +100,13 @@ const parseTokenGroup = (until: string) =>
   Parser.do<string, TokenGroup[], ParserContext>(function* self() {
     const tokens: TokenGroup[] = [];
     yield Parser.appendFollow(until);
-    const ws = yield parseWhitespace;
-    if (ws) tokens.push(ws);
+    const ws: ({ type: "newline" } & Position) | SkipTokenPos | null = yield parseWhitespace as any;
+    if (ws && ws.type !== "skip") tokens.push(ws);
     while (!(yield Parser.checkFollowSet())) {
-      const token = yield _parseToken;
+      const token: TokenGroup = yield _parseToken;
       tokens.push(token);
-      const ws = yield parseWhitespace;
-      if (ws) tokens.push(ws);
+      const ws: ({ type: "newline" } & Position) | SkipTokenPos | null = yield parseWhitespace as any;
+      if (ws && ws.type !== "skip") tokens.push(ws);
     }
     yield Parser.popFollow();
 

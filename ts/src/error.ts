@@ -50,7 +50,7 @@ type ErrorLabel = LabelInfo & {
 export class SystemError extends Error {
   data: Record<string, any>;
   fileId?: number;
-  private type: ErrorType;
+  readonly type: ErrorType;
   private labels: ErrorLabel[];
   private notes: string[];
   private constructor(type: ErrorType, msg: string, options: Options = {}) {
