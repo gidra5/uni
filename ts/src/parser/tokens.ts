@@ -217,7 +217,7 @@ export const parseMultilineStringToken = (intend: string) =>
     }
   });
 
-export const parseToken = Parser.do<string, TokenPos | SkipTokenPos>(function* () {
+export const parseWhitespace = Parser.do<string, TokenPos | SkipTokenPos>(function* () {
   yield Parser.rememberIndex();
   let isNewline = false;
 
@@ -246,6 +246,12 @@ export const parseToken = Parser.do<string, TokenPos | SkipTokenPos>(function* (
 
   if (isNewline) return yield* newline();
   if (yield Parser.isEnd()) return { type: "skip", ...(yield Parser.span()) };
+  return null;
+});
+
+export const parseToken = Parser.do<string, TokenPos | SkipTokenPos>(function* () {
+  const parsedWhitespace = yield parseWhitespace;
+  if (parsedWhitespace) return parsedWhitespace;
 
   yield Parser.rememberIndex();
 
