@@ -195,8 +195,8 @@ export const parseMultilineStringToken = (intend: string) =>
     let value = "";
 
     while (true) {
-      if (yield Parser.isEnd()) return yield* stringLiteralError(value);
-      if (yield Parser.string('"""')) return yield* stringLastSegment(value);
+      if (yield Parser.isEnd()) return yield* stringLiteralError(value.trimEnd());
+      if (yield Parser.string('"""')) return yield* stringLastSegment(value.trimEnd());
       if (yield Parser.string("\\(")) return yield* stringSegment(value);
 
       if (yield Parser.string(intend)) {
