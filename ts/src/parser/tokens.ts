@@ -40,15 +40,14 @@ type SkipTokenPos = SkipToken & Position;
 type ErrorToken = Exclude<Token, { type: "error" }>;
 export type Token =
   | { type: "error"; src: string; cause: SystemError; token: ErrorToken }
-  | { type: "placeholder"; src: string }
-  | { type: "identifier" | "newline"; src: string }
+  | { type: "placeholder" | "newline"; src: string }
+  | { type: "identifier"; src: string }
   | { type: "number"; src: string; value: number }
   | { type: "string"; src: string }
   | { type: "multilineString"; src: string; intend: string };
 
-type StringErrorToken = Exclude<StringToken, { type: "error" }>;
 export type StringToken =
-  | { type: "error"; src: string; cause: SystemError; token: StringErrorToken }
+  | { type: "error"; src: string; cause: SystemError; value: string }
   | { type: "segment"; src: string; value: string }
   | { type: "lastSegment"; src: string; value: string };
 
@@ -139,8 +138,7 @@ const stringLiteralError = function* (value: string) {
   const src: string = yield Parser.substring();
   const pos: Position = yield Parser.span();
   const cause = SystemError.unterminatedString(pos);
-  const token = { type: "segment", value, src, ...pos } satisfies StringTokenPos;
-  return { type: "error", cause, token, src, ...pos } satisfies StringTokenPos;
+  return { type: "error", cause, value, src, ...pos } satisfies StringTokenPos;
 };
 
 const parseHexStyleLiteral = (prefix: string, digitRegexp: RegExp, error: Parser<string, TokenPos>) =>
@@ -158,9 +156,9 @@ const parseHexStyleLiteral = (prefix: string, digitRegexp: RegExp, error: Parser
     return yield* number(value);
   });
 
-const parseBlockComment = function* () {
+const parseBlockComment = function* self() {
   while (!(yield Parser.string("*/"))) {
-    if (yield Parser.string("/*")) yield* parseBlockComment();
+    if (yield Parser.string("/*")) yield* self();
     else if (yield Parser.isEnd()) return yield blockCommentError;
     else yield Parser.advance();
   }
@@ -197,9 +195,9 @@ export const parseMultilineStringToken = (intend: string) =>
     let value = "";
 
     while (true) {
+      if (yield Parser.isEnd()) return yield* stringLiteralError(value);
       if (yield Parser.string('"""')) return yield* stringLastSegment(value);
       if (yield Parser.string("\\(")) return yield* stringSegment(value);
-      if (yield Parser.isEnd()) return yield* stringLiteralError(value);
 
       if (yield Parser.string(intend)) {
         if (yield Parser.isEnd()) continue;
@@ -210,7 +208,7 @@ export const parseMultilineStringToken = (intend: string) =>
       // if intendation is not full, skip until the next character
       if (yield Parser.string("\n")) {
         if (yield Parser.isEnd()) continue;
-        while ((yield Parser.checkRegexp(/\s/)) && !(yield Parser.checkString("\n"))) {}
+        while ((yield Parser.checkRegexp(/\s/)) && !(yield Parser.checkString("\n"))) yield Parser.advance();
         value += "\n";
         continue;
       }

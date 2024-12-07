@@ -27,12 +27,12 @@ describe("string token", () => {
   test.prop([stringInsidesArb])("simple string", async (value) => {
     await eventLoopYield();
 
-    const src = `"${value}"`;
+    const src = `${value}"`;
     const startIndex = 0;
-    const expectedToken = { type: "string", src, value };
-    const expectedIndex = value.length + 2;
+    const expectedToken = { type: "lastSegment", src, value };
+    const expectedIndex = value.length + 1;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, { start, end, ...token }] = parseStringToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
     expect(token).toEqual(expectedToken);
@@ -54,12 +54,12 @@ describe("string token", () => {
   ])("string token escapes", async ([literal, value]) => {
     await eventLoopYield();
 
-    const src = `"${literal}"`;
+    const src = `${literal}"`;
     const startIndex = 0;
-    const expectedToken = { type: "string", src, value: [value] };
-    const expectedIndex = literal.length + 2;
+    const expectedToken = { type: "lastSegment", src, value };
+    const expectedIndex = literal.length + 1;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, { start, end, ...token }] = parseStringToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
     expect((token as any).value).toEqual(expectedToken.value);
@@ -78,18 +78,18 @@ describe("string token", () => {
   ])("unclosed string token", async (literal) => {
     await eventLoopYield();
 
-    const src = `"${literal}`;
+    const src = literal;
     const startIndex = 0;
-    const expectedIndex = literal.length + 1;
+    const expectedIndex = literal.length;
     const expectedToken = {
       type: "error",
       src,
       cause: SystemError.unterminatedString(position(startIndex, expectedIndex)),
     };
 
-    const [{ index }, { start, end, ..._token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, { start, end, ..._token }] = parseStringToken.parse(src, { index: startIndex });
     // @ts-ignore
-    const { token: _, ...token } = _token;
+    const { value: _, ...token } = _token;
 
     expect(index).toBe(expectedIndex);
     expect(token).toEqual(expectedToken);
@@ -107,18 +107,18 @@ describe("string token", () => {
   ])("unclosed string token escape", async (literal) => {
     await eventLoopYield();
 
-    const src = `"${literal}\\`;
+    const src = `${literal}\\`;
     const startIndex = 0;
-    const expectedIndex = literal.length + 2;
+    const expectedIndex = literal.length + 1;
     const expectedToken = {
       type: "error",
       src,
       cause: SystemError.unterminatedString(position(startIndex, expectedIndex)),
     };
 
-    const [{ index }, { start, end, ..._token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, { start, end, ..._token }] = parseStringToken.parse(src, { index: startIndex });
     // @ts-ignore
-    const { token: _, ...token } = _token;
+    const { value: _, ...token } = _token;
 
     expect(index).toBe(expectedIndex);
     expect(token).toEqual(expectedToken);
@@ -127,18 +127,18 @@ describe("string token", () => {
   test.prop([stringInsidesArb])("unclosed string token before newline", async (literal) => {
     await eventLoopYield();
 
-    const src = `"${literal}\n`;
+    const src = `${literal}\n`;
     const startIndex = 0;
-    const expectedIndex = literal.length + 1;
+    const expectedIndex = literal.length;
     const pos = position(startIndex, expectedIndex);
     const expectedToken = {
       type: "error",
-      src: `"${literal}`,
-      token: { token: "string", src: `"${literal}`, value: literal, ...pos },
+      src: literal,
+      value: literal,
       cause: SystemError.unterminatedString(pos),
     };
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, { start, end, ...token }] = parseStringToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
     expect(token).toEqual(expectedToken);
@@ -155,14 +155,14 @@ describe("string token", () => {
   ])("multiline strings", async ([intend, segments]) => {
     await eventLoopYield();
 
-    const literal = intend + segments.join(intend);
+    const literal = segments.join(intend);
     const value = segments.join("\n").trimEnd();
-    const src = `"""${literal}"""`;
+    const src = `${literal}"""`;
     const startIndex = 0;
     const expectedIndex = src.length;
-    const expectedToken = { type: "string", src, value };
+    const expectedToken = { type: "lastSegment", src, value };
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, { start, end, ...token }] = parseMultilineStringToken(intend).parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
     expect(token).toEqual(expectedToken);
@@ -425,5 +425,6 @@ it.prop([anyStringArb])("parseStringToken never throws", (src) => {
 });
 
 it.prop([anyStringArb, fc.stringMatching(/\n\s*/)])("parseMultilineStringToken never throws", (src, intend) => {
-  expect(() => parseMultilineStringToken(intend).parse(src, { index: 0 })).not.toThrow();
+  const parser = parseMultilineStringToken(intend);
+  expect(() => parser.parse(src, { index: 0 })).not.toThrow();
 });
