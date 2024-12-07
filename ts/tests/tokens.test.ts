@@ -29,7 +29,7 @@ describe("string token", () => {
 
     const src = `${value}"`;
     const startIndex = 0;
-    const expectedToken = { type: "lastSegment", src, value };
+    const expectedToken = { type: "lastSegment", value };
     const expectedIndex = value.length + 1;
 
     const [{ index }, { start, end, ...token }] = parseStringToken.parse(src, { index: startIndex });
@@ -56,7 +56,7 @@ describe("string token", () => {
 
     const src = `${literal}"`;
     const startIndex = 0;
-    const expectedToken = { type: "lastSegment", src, value };
+    const expectedToken = { type: "lastSegment", value };
     const expectedIndex = literal.length + 1;
 
     const [{ index }, { start, end, ...token }] = parseStringToken.parse(src, { index: startIndex });
@@ -83,7 +83,6 @@ describe("string token", () => {
     const expectedIndex = literal.length;
     const expectedToken = {
       type: "error",
-      src,
       cause: SystemError.unterminatedString(position(startIndex, expectedIndex)),
     };
 
@@ -112,7 +111,6 @@ describe("string token", () => {
     const expectedIndex = literal.length + 1;
     const expectedToken = {
       type: "error",
-      src,
       cause: SystemError.unterminatedString(position(startIndex, expectedIndex)),
     };
 
@@ -133,7 +131,6 @@ describe("string token", () => {
     const pos = position(startIndex, expectedIndex);
     const expectedToken = {
       type: "error",
-      src: literal,
       value: literal,
       cause: SystemError.unterminatedString(pos),
     };
@@ -160,7 +157,7 @@ describe("string token", () => {
     const src = `${literal}"""`;
     const startIndex = 0;
     const expectedIndex = src.length;
-    const expectedToken = { type: "lastSegment", src, value };
+    const expectedToken = { type: "lastSegment", value };
 
     const [{ index }, { start, end, ...token }] = parseMultilineStringToken(intend).parse(src, { index: startIndex });
 
@@ -172,7 +169,7 @@ describe("string token", () => {
 describe("number token", () => {
   it.prop([fc.stringMatching(/^\d+\.\d+$/)])("float literals", (src) => {
     const startIndex = 0;
-    const expectedToken = { type: "number", src, value: Number(src) };
+    const expectedToken = { type: "number", value: Number(src) };
     const expectedIndex = src.length;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -183,7 +180,7 @@ describe("number token", () => {
 
   it.prop([fc.stringMatching(/^\d+$/)])("int literals", (src) => {
     const startIndex = 0;
-    const expectedToken = { type: "number", src, value: Number(src) };
+    const expectedToken = { type: "number", value: Number(src) };
     const expectedIndex = src.length;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -194,7 +191,7 @@ describe("number token", () => {
 
   it.prop([fc.stringMatching(/^\d+\.$/)])("trailing dot literals", (src) => {
     const startIndex = 0;
-    const expectedToken = { type: "number", src, value: Number(src + "0") };
+    const expectedToken = { type: "number", value: Number(src + "0") };
     const expectedIndex = src.length;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -206,7 +203,7 @@ describe("number token", () => {
 
   it.prop([fc.stringMatching(/^\.\d+$/)])("prefix dot literals", (src) => {
     const startIndex = 0;
-    const expectedToken = { type: "number", src, value: Number("0" + src) };
+    const expectedToken = { type: "number", value: Number("0" + src) };
     const expectedIndex = src.length;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -217,11 +214,7 @@ describe("number token", () => {
 
   it.prop([fc.stringMatching(/^\d[\d_]*\d$/)])("int literals with spacers", (src) => {
     const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-      value: Number(src.replace(/_/g, "")),
-    };
+    const expectedToken = { type: "number", value: Number(src.replace(/_/g, "")) };
     const expectedIndex = src.length;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -232,11 +225,7 @@ describe("number token", () => {
 
   it.prop([fc.stringMatching(/^\.\d[\d_]*\d$/)])("float literals with spacers", (src) => {
     const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-      value: Number(src.replace(/_/g, "")),
-    };
+    const expectedToken = { type: "number", value: Number(src.replace(/_/g, "")) };
     const expectedIndex = src.length;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -247,11 +236,7 @@ describe("number token", () => {
 
   it.prop([fc.stringMatching(/^0x[\da-fA-F][\da-fA-F_]*[\da-fA-F]$/)])("hex literals with spacers", (src) => {
     const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-      value: Number(src.replace(/_/g, "")),
-    };
+    const expectedToken = { type: "number", value: Number(src.replace(/_/g, "")) };
     const expectedIndex = src.length;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -263,11 +248,7 @@ describe("number token", () => {
 
   it.prop([fc.stringMatching(/^0o[0-7][0-7_]*[0-7]$/)])("octal literals with spacers", (src) => {
     const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-      value: Number(src.replace(/_/g, "")),
-    };
+    const expectedToken = { type: "number", value: Number(src.replace(/_/g, "")) };
     const expectedIndex = src.length;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -279,11 +260,7 @@ describe("number token", () => {
 
   it.prop([fc.stringMatching(/^0b[01][01_]*[01]$/)])("binary literals with spacers", (src) => {
     const startIndex = 0;
-    const expectedToken = {
-      type: "number",
-      src,
-      value: Number(src.replace(/_/g, "")),
-    };
+    const expectedToken = { type: "number", value: Number(src.replace(/_/g, "")) };
     const expectedIndex = src.length;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -297,7 +274,7 @@ describe("number token", () => {
 describe("identifier token", () => {
   it.prop([fc.stringMatching(/^[a-zA-Z]\w*$/)])("regular idents", (src) => {
     const startIndex = 0;
-    const expectedToken = { type: "identifier", src };
+    const expectedToken = { type: "identifier", name: src };
     const expectedIndex = src.length;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -308,7 +285,7 @@ describe("identifier token", () => {
 
   it.prop([fc.stringMatching(/^_+$/)])("placeholders", (src) => {
     const startIndex = 0;
-    const expectedToken = { type: "placeholder", src };
+    const expectedToken = { type: "placeholder" };
     const expectedIndex = src.length;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
@@ -323,7 +300,7 @@ describe("comments", () => {
     const src = `//${comment}\n`;
     const input = `${src}12412434`;
     const startIndex = 0;
-    const expectedToken = { type: "newline", src };
+    const expectedToken = { type: "newline" };
     const expectedIndex = src.length;
 
     const [{ index }, { start, end, ...token }] = parseToken.parse(input, { index: startIndex });
@@ -338,7 +315,7 @@ describe("comments", () => {
     const src = `/*${comment}*/`;
     const input = `${src}_`;
     const startIndex = 0;
-    const expectedToken = { type: "placeholder", src: "_" };
+    const expectedToken = { type: "placeholder" };
     const expectedStart = src.length;
     const expectedIndex = src.length + 1;
 
@@ -366,11 +343,11 @@ describe("comments", () => {
     let expectedStart: number;
     let expectedToken: Token;
     if (src.includes("\n")) {
-      expectedToken = { type: "newline", src };
+      expectedToken = { type: "newline" };
       expectedStart = 0;
       expectedIndex = src.length;
     } else {
-      expectedToken = { type: "placeholder", src: "_" };
+      expectedToken = { type: "placeholder" };
       expectedStart = src.length;
       expectedIndex = src.length + 1;
     }
