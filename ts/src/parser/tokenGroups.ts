@@ -1,6 +1,13 @@
 import type { SystemError } from "../error";
 import type { Position } from "../position";
-import { parseStringToken, parseToken, type StringTokenPos, type TokenPos } from "./tokens";
+import {
+  parseMultilineStringToken,
+  parseStringToken,
+  parseToken,
+  parseWhitespace,
+  type StringTokenPos,
+  type TokenPos,
+} from "./tokens";
 import { Parser, BaseContext } from "./utils";
 
 enum TokenGroupKind {
@@ -11,37 +18,98 @@ enum TokenGroupKind {
 }
 
 export type TokenGroup =
-  | { type: "placeholder"; src: string }
-  | { type: "identifier" | "newline"; src: string }
-  | { type: "number"; src: string; value: number }
-  | { type: "string"; src: string; string: number }
-  | { type: "error"; cause: SystemError; token: TokenGroup }
-  | { type: "group"; kind: TokenGroupKind; tokens: TokenGroup[] };
-
-export type TokenGroupPos = TokenGroup & Position;
+  | ({ type: "placeholder" | "newline" } & Position)
+  | ({ type: "identifier"; name: string } & Position)
+  | ({ type: "number"; value: number } & Position)
+  | ({ type: "string"; value: string } & Position)
+  | ({ type: "group"; kind: TokenGroupKind; tokens: TokenGroup[] } & Position)
+  | { type: "error"; cause: SystemError; token: TokenGroup };
 
 type ParserContext = {
   followSet: string[];
 } & BaseContext;
 
-const parseTokenGroup = Parser.do<string, TokenGroupPos, ParserContext>(function* self() {
+const _parseToken = Parser.do<string, TokenGroup, ParserContext>(function* self() {
+  yield Parser.rememberIndex();
   const token: TokenPos = yield parseToken;
 
   if (token.type === "multilineString") {
-    const segment: StringTokenPos = yield parseStringToken;
+    const parser = parseMultilineStringToken(token.intend);
+    const tokens: TokenGroup[] = [];
 
-    if (segment.type === "segment") {
-      yield Parser.appendFollow(")");
+    while (true) {
+      yield Parser.rememberIndex();
+      const segment: StringTokenPos = yield parser;
 
-      const tokenGroup = yield parseTokenGroup;
+      if (segment.type === "lastSegment") {
+        tokens.push({ ...segment, type: "string" });
+        break;
+      }
+      if (segment.type === "error") {
+        const { cause, ...token } = segment;
+        tokens.push({ type: "error", cause, token: { ...token, type: "string" } });
+        break;
+      }
 
-      yield Parser.popFollow();
+      const _tokens: TokenGroup[] = yield parseTokenGroup(")");
+      const pos: Position = yield Parser.span();
+      tokens.push({ type: "group", kind: TokenGroupKind.StringInterpolation, tokens: _tokens, ...pos });
     }
+
+    return { type: "group", kind: TokenGroupKind.StringInterpolation, tokens };
   }
+
   if (token.type === "string") {
+    const tokens: TokenGroup[] = [];
+
+    while (true) {
+      yield Parser.rememberIndex();
+      const segment: StringTokenPos = yield parseStringToken;
+
+      if (segment.type === "lastSegment") {
+        tokens.push({ ...segment, type: "string" });
+        break;
+      }
+      if (segment.type === "error") {
+        const { cause, ...token } = segment;
+        tokens.push({ type: "error", cause, token: { ...token, type: "string" } });
+        break;
+      }
+
+      const _tokens: TokenGroup[] = yield parseTokenGroup(")");
+      const pos: Position = yield Parser.span();
+      tokens.push({ type: "group", kind: TokenGroupKind.StringInterpolation, tokens: _tokens, ...pos });
+    }
+
+    return { type: "group", kind: TokenGroupKind.StringInterpolation, tokens };
+  }
+
+  if (token.type === "identifier") {
+    if (token.name === "(") {
+      const tokens: TokenGroup[] = yield parseTokenGroup(")");
+      const pos: Position = yield Parser.span();
+      return { type: "group", kind: TokenGroupKind.Parentheses, tokens, ...pos };
+    }
   }
 
   return token;
 });
 
-export const parseTokenGroups = parseTokenGroup.all({ index: 0, followSet: [] });
+const parseTokenGroup = (until: string) =>
+  Parser.do<string, TokenGroup[], ParserContext>(function* self() {
+    const tokens: TokenGroup[] = [];
+    yield Parser.appendFollow(until);
+    const ws = yield parseWhitespace;
+    if (ws) tokens.push(ws);
+    while (!(yield Parser.checkFollowSet())) {
+      const token = yield _parseToken;
+      tokens.push(token);
+      const ws = yield parseWhitespace;
+      if (ws) tokens.push(ws);
+    }
+    yield Parser.popFollow();
+
+    return tokens;
+  });
+
+export const parseTokenGroups = _parseToken.all({ index: 0, followSet: [] });
