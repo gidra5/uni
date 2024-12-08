@@ -23,6 +23,15 @@ const charArb = fc.string({ minLength: 1, maxLength: 1 });
 const notStringSpecialCharArb = charArb.filter((s) => !specialStringChars.includes(s) && s !== "(");
 const arrayLenArb = <T>(arb: Arbitrary<T>, len: number) => fc.array(arb, { minLength: len, maxLength: len });
 
+function dropPos(token: any) {
+  if ("start" in token) {
+    const { start, end, ..._token } = token;
+    return _token;
+  }
+  if (token.type === "error") return { ...token, token: dropPos(token.token) };
+  return token;
+}
+
 describe("string token", () => {
   test.prop([stringInsidesArb])("simple string", async (value) => {
     await eventLoopYield();
@@ -32,10 +41,10 @@ describe("string token", () => {
     const expectedToken = { type: "lastSegment", value };
     const expectedIndex = value.length + 1;
 
-    const [{ index }, { start, end, ...token }] = parseStringToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseStringToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   test.prop([
@@ -59,11 +68,11 @@ describe("string token", () => {
     const expectedToken = { type: "lastSegment", value };
     const expectedIndex = literal.length + 1;
 
-    const [{ index }, { start, end, ...token }] = parseStringToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseStringToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
     expect((token as any).value).toEqual(expectedToken.value);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   test.prop([
@@ -86,12 +95,10 @@ describe("string token", () => {
       cause: SystemError.unterminatedString(position(startIndex, expectedIndex)),
     };
 
-    const [{ index }, { start, end, ..._token }] = parseStringToken.parse(src, { index: startIndex });
-    // @ts-ignore
-    const { value: _, ...token } = _token;
+    const [{ index }, { value: _, ...token }] = parseStringToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   test.prop([
@@ -114,12 +121,10 @@ describe("string token", () => {
       cause: SystemError.unterminatedString(position(startIndex, expectedIndex)),
     };
 
-    const [{ index }, { start, end, ..._token }] = parseStringToken.parse(src, { index: startIndex });
-    // @ts-ignore
-    const { value: _, ...token } = _token;
+    const [{ index }, { value: _, ...token }] = parseStringToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   test.prop([stringInsidesArb])("unclosed string token before newline", async (literal) => {
@@ -135,10 +140,10 @@ describe("string token", () => {
       cause: SystemError.unterminatedString(pos),
     };
 
-    const [{ index }, { start, end, ...token }] = parseStringToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseStringToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   test.prop([
@@ -159,10 +164,10 @@ describe("string token", () => {
     const expectedIndex = src.length;
     const expectedToken = { type: "lastSegment", value };
 
-    const [{ index }, { start, end, ...token }] = parseMultilineStringToken(intend).parse(src, { index: startIndex });
+    const [{ index }, token] = parseMultilineStringToken(intend).parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 });
 
@@ -172,10 +177,10 @@ describe("number token", () => {
     const expectedToken = { type: "number", value: Number(src) };
     const expectedIndex = src.length;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   it.prop([fc.stringMatching(/^\d+$/)])("int literals", (src) => {
@@ -183,10 +188,10 @@ describe("number token", () => {
     const expectedToken = { type: "number", value: Number(src) };
     const expectedIndex = src.length;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   it.prop([fc.stringMatching(/^\d+\.$/)])("trailing dot literals", (src) => {
@@ -194,11 +199,11 @@ describe("number token", () => {
     const expectedToken = { type: "number", value: Number(src + "0") };
     const expectedIndex = src.length;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
     expect((token as any).value).toEqual(expectedToken.value);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   it.prop([fc.stringMatching(/^\.\d+$/)])("prefix dot literals", (src) => {
@@ -206,10 +211,10 @@ describe("number token", () => {
     const expectedToken = { type: "number", value: Number("0" + src) };
     const expectedIndex = src.length;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   it.prop([fc.stringMatching(/^\d[\d_]*\d$/)])("int literals with spacers", (src) => {
@@ -217,10 +222,10 @@ describe("number token", () => {
     const expectedToken = { type: "number", value: Number(src.replace(/_/g, "")) };
     const expectedIndex = src.length;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   it.prop([fc.stringMatching(/^\.\d[\d_]*\d$/)])("float literals with spacers", (src) => {
@@ -228,10 +233,10 @@ describe("number token", () => {
     const expectedToken = { type: "number", value: Number(src.replace(/_/g, "")) };
     const expectedIndex = src.length;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   it.prop([fc.stringMatching(/^0x[\da-fA-F][\da-fA-F_]*[\da-fA-F]$/)])("hex literals with spacers", (src) => {
@@ -239,11 +244,11 @@ describe("number token", () => {
     const expectedToken = { type: "number", value: Number(src.replace(/_/g, "")) };
     const expectedIndex = src.length;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
     expect((token as any).value).toEqual(expectedToken.value);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   it.prop([fc.stringMatching(/^0o[0-7][0-7_]*[0-7]$/)])("octal literals with spacers", (src) => {
@@ -251,11 +256,11 @@ describe("number token", () => {
     const expectedToken = { type: "number", value: Number(src.replace(/_/g, "")) };
     const expectedIndex = src.length;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
     expect((token as any).value).toEqual(expectedToken.value);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   it.prop([fc.stringMatching(/^0b[01][01_]*[01]$/)])("binary literals with spacers", (src) => {
@@ -263,11 +268,11 @@ describe("number token", () => {
     const expectedToken = { type: "number", value: Number(src.replace(/_/g, "")) };
     const expectedIndex = src.length;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
     expect((token as any).value).toEqual(expectedToken.value);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 });
 
@@ -277,10 +282,10 @@ describe("identifier token", () => {
     const expectedToken = { type: "identifier", name: src };
     const expectedIndex = src.length;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   it.prop([fc.stringMatching(/^_+$/)])("placeholders", (src) => {
@@ -288,10 +293,10 @@ describe("identifier token", () => {
     const expectedToken = { type: "placeholder" };
     const expectedIndex = src.length;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(src, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
 
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 });
 
@@ -303,12 +308,10 @@ describe("comments", () => {
     const expectedToken = { type: "newline" };
     const expectedIndex = src.length;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(input, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(input, { index: startIndex });
 
-    expect(start).toBe(0);
-    expect(end).toBe(expectedIndex);
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   it.prop([blockCommentArb])("multi line comments", (comment) => {
@@ -319,12 +322,12 @@ describe("comments", () => {
     const expectedStart = src.length;
     const expectedIndex = src.length + 1;
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(input, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(input, { index: startIndex });
 
-    expect(start).toBe(expectedStart);
-    expect(end).toBe(expectedIndex);
+    expect((token as any).start).toBe(expectedStart);
+    expect((token as any).end).toBe(expectedIndex);
     expect(index).toBe(expectedIndex);
-    expect(token).toEqual(expectedToken);
+    expect(dropPos(token)).toEqual(expectedToken);
   });
 
   it.prop([
@@ -340,22 +343,25 @@ describe("comments", () => {
     const startIndex = 0;
 
     let expectedIndex: number;
-    let expectedStart: number;
-    let expectedToken: Token;
+    let expectedToken: { type: string; start: number; end: number };
     if (src.includes("\n")) {
-      expectedToken = { type: "newline" };
-      expectedStart = 0;
+      expectedToken = {
+        type: "newline",
+        start: 0,
+        end: src.length,
+      };
       expectedIndex = src.length;
     } else {
-      expectedToken = { type: "placeholder" };
-      expectedStart = src.length;
+      expectedToken = {
+        type: "placeholder",
+        start: src.length,
+        end: src.length + 1,
+      };
       expectedIndex = src.length + 1;
     }
 
-    const [{ index }, { start, end, ...token }] = parseToken.parse(input, { index: startIndex });
+    const [{ index }, token] = parseToken.parse(input, { index: startIndex });
 
-    expect(start).toBe(expectedStart);
-    expect(end).toBe(expectedIndex);
     expect(index).toBe(expectedIndex);
     expect(token).toEqual(expectedToken);
   });
@@ -364,11 +370,7 @@ describe("comments", () => {
     const [, token] = parseToken.parse(src, { index: 0 });
     const [, withComments] = parseToken.parse(withLineComments(), { index: 0 });
 
-    expect(mapTokens(token)).toStrictEqual(mapTokens(withComments));
-
-    function mapTokens({ start, end, ...token }: typeof withComments) {
-      return token;
-    }
+    expect(dropPos(token)).toStrictEqual(dropPos(withComments));
 
     function withLineComments(): string {
       if (token.type === "newline") {
@@ -383,11 +385,7 @@ describe("comments", () => {
     const [, token] = parseToken.parse(src, { index: 0 });
     const [, withComments] = parseToken.parse(`/**/${src}/**/`, { index: 0 });
 
-    expect(mapTokens(token)).toStrictEqual(mapTokens(withComments));
-
-    function mapTokens({ start, end, ...token }: typeof withComments) {
-      return token;
-    }
+    expect(dropPos(token)).toStrictEqual(dropPos(withComments));
   });
 });
 
