@@ -18,21 +18,18 @@ const charArb = fc.string({ minLength: 1, maxLength: 1 });
 const notStringSpecialCharArb = charArb.filter((s) => !specialStringChars.includes(s));
 const arrayLenArb = <T>(arb: Arbitrary<T>, len: number) => fc.array(arb, { minLength: len, maxLength: len });
 
-describe.only("string interpolation", () => {
-  function clearToken({ start, end, ...token }: any) {
-    if (token.type === "string") {
-      return {
-        type: "string",
-        src: token.src,
-        value: token.value.map((v) => {
-          if (typeof v === "string") return v;
-          return v.map(clearToken);
-        }),
-      };
-    }
-    return token;
+function clearToken({ start, end, ...token }: any) {
+  if (token.type === "group") {
+    return {
+      type: "group",
+      kind: token.kind,
+      tokens: token.tokens.map(clearToken),
+    };
   }
+  return token;
+}
 
+describe.only("string interpolation", () => {
   test.prop(
     [
       fc
@@ -57,13 +54,13 @@ describe.only("string interpolation", () => {
 
     const value: TokenGroup[] = interpolated.flatMap(([text, interpolated]): TokenGroup[] => [
       { type: "string", value: text } as TokenGroup,
-      ...parseTokenGroups(interpolated),
+      { type: "group", kind: TokenGroupKind.Parentheses, tokens: parseTokenGroups(interpolated) } as TokenGroup,
     ]);
 
     const src = `"${literal}"`;
     const startIndex = 0;
     const expectedIndex = src.length;
-    const expectedToken = { type: "group", kind: TokenGroupKind.StringInterpolation, tokens: value };
+    const expectedToken = { type: "group", kind: TokenGroupKind.StringTemplate, tokens: value };
 
     const [{ index }, token] = _parseToken.parse(src, { index: startIndex, followSet: [] });
     console.dir({ token, expectedToken }, { depth: null });
