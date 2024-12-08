@@ -10,7 +10,7 @@ import {
 } from "./tokens";
 import { Parser, BaseContext } from "./utils";
 
-enum TokenGroupKind {
+export enum TokenGroupKind {
   StringInterpolation,
   Parentheses,
   Braces,
@@ -28,8 +28,8 @@ export type TokenGroup =
 
 type ParserContext = { followSet: string[] } & BaseContext;
 
-export const _parseToken = Parser.do<string, TokenGroup, ParserContext>(function* self() {
-  yield Parser.rememberIndex<ParserContext>();
+export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(function* self() {
+  yield Parser.rememberIndex();
   const token: Token = yield parseToken as any;
 
   if (token.type === "multilineString") {
@@ -95,7 +95,7 @@ export const _parseToken = Parser.do<string, TokenGroup, ParserContext>(function
         return { type: "group", kind: TokenGroupKind.Parentheses, tokens, ...pos };
       }
       const pos: Position = yield Parser.span(start);
-      const _token = { type: "group", kind: TokenGroupKind.Parentheses, tokens, ...pos };
+      const _token: TokenGroup = { type: "group", kind: TokenGroupKind.Parentheses, tokens, ...pos };
       const closeIndex: number = yield Parser.index();
       const closePos: Position = indexPosition(closeIndex);
       const cause = SystemError.unbalancedOpenToken(["(", ")"], openPos, closePos);
@@ -106,11 +106,11 @@ export const _parseToken = Parser.do<string, TokenGroup, ParserContext>(function
   return token;
 });
 
-const parseTokenGroup = (until: string) =>
-  Parser.do<string, TokenGroup[], ParserContext>(function* self() {
+const parseTokenGroup = (until: string): Parser<string, TokenGroup[], ParserContext> =>
+  Parser.do(function* self() {
     const tokens: TokenGroup[] = [];
     yield Parser.appendFollow(until);
-    const ws: ({ type: "newline" } & Position) | null = yield parseWhitespace as any;
+    const ws: ({ type: "newline" } & Position) | null = yield parseWhitespace;
     if (ws) tokens.push(ws);
     while (!(yield Parser.checkFollowSet())) {
       const token: TokenGroup = yield _parseToken;
@@ -123,4 +123,4 @@ const parseTokenGroup = (until: string) =>
     return tokens;
   });
 
-export const parseTokenGroups = _parseToken.all({ index: 0, followSet: [] });
+export const parseTokenGroups = _parseToken.all<string, TokenGroup>({ index: 0, followSet: [] });

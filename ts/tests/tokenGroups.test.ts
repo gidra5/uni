@@ -1,5 +1,5 @@
 import { specialStringChars } from "../src/parser/tokens.js";
-import { parseTokenGroups, _parseToken } from "../src/parser/tokenGroups.js";
+import { parseTokenGroups, _parseToken, TokenGroup, TokenGroupKind } from "../src/parser/tokenGroups.js";
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { array, type Arbitrary } from "fast-check";
@@ -18,9 +18,8 @@ const charArb = fc.string({ minLength: 1, maxLength: 1 });
 const notStringSpecialCharArb = charArb.filter((s) => !specialStringChars.includes(s));
 const arrayLenArb = <T>(arb: Arbitrary<T>, len: number) => fc.array(arb, { minLength: len, maxLength: len });
 
-describe.todo("string interpolation", () => {
+describe.only("string interpolation", () => {
   function clearToken({ start, end, ...token }: any) {
-    if (token.type === "newline") return { type: "newline" };
     if (token.type === "string") {
       return {
         type: "string",
@@ -34,7 +33,7 @@ describe.todo("string interpolation", () => {
     return token;
   }
 
-  test.todo.prop(
+  test.prop(
     [
       fc
         .array(stringInsidesArb)
@@ -56,19 +55,15 @@ describe.todo("string interpolation", () => {
   )("template strings", async ([literal, interpolated]) => {
     await eventLoopYield();
 
-    const value = interpolated
-      .flatMap(([text, interpolated]) => [text, parseTokenGroups(interpolated).map(clearToken)])
-      .map((v) =>
-        Array.isArray(v) && v.length === 0
-          ? [{ type: "error", src: "", cause: SystemError.unterminatedString(position(0, 0)) }]
-          : v
-      )
-      .filter((v) => v.length > 0);
+    const value: TokenGroup[] = interpolated.flatMap(([text, interpolated]): TokenGroup[] => [
+      { type: "string", value: text } as TokenGroup,
+      ...parseTokenGroups(interpolated),
+    ]);
 
     const src = `"${literal}"`;
     const startIndex = 0;
     const expectedIndex = src.length;
-    const expectedToken = { type: "string", src, value };
+    const expectedToken = { type: "group", kind: TokenGroupKind.StringInterpolation, tokens: value };
 
     const [{ index }, token] = _parseToken.parse(src, { index: startIndex, followSet: [] });
     console.dir({ token, expectedToken }, { depth: null });
