@@ -118,8 +118,11 @@ export class Parser<T, U, C extends BaseContext = BaseContext> {
     return new Parser((src, ctx) => [{ ...ctx, rememberedIndex: undefined }, void 0]);
   }
 
-  static span<C extends BaseContext>(): Parser<any, Position, C> {
+  static span<C extends BaseContext>(start?: number): Parser<any, Position, C> {
     return new Parser((src, ctx) => {
+      if (start !== undefined) {
+        return [ctx, position(start, ctx.index)];
+      }
       assert(ctx.rememberedIndex !== undefined, "must be used after rememberIndex performed");
       return [ctx, position(ctx.rememberedIndex, ctx.index)];
     });

@@ -19,7 +19,7 @@ const notStringSpecialCharArb = charArb.filter((s) => !specialStringChars.includ
 const arrayLenArb = <T>(arb: Arbitrary<T>, len: number) => fc.array(arb, { minLength: len, maxLength: len });
 
 describe.todo("string interpolation", () => {
-  function clearToken({ start, end, ...token }: TokenPos | (Position & { type: "skip" })) {
+  function clearToken({ start, end, ...token }: any) {
     if (token.type === "newline") return { type: "newline" };
     if (token.type === "string") {
       return {
@@ -86,6 +86,6 @@ test("parseTokens", () => {
   expect(tokens).toMatchSnapshot();
 });
 
-it.prop([anyStringArb])("parseTokens never throws", (src) => {
+it.prop([anyStringArb])("parseTokenGroups never throws", (src) => {
   expect(() => parseTokenGroups(src)).not.toThrow();
 });

@@ -1,4 +1,4 @@
-import { type Token, type TokenPos } from "./tokens.js";
+import { type Token, type Token } from "./tokens.js";
 import { SystemError } from "./error.js";
 import { indexPosition, position, mapListPosToPos, mergePositions, Position } from "./position.js";
 import {
@@ -236,7 +236,7 @@ const parsePairGroup =
 
 const parseStatementForm =
   (context: Context, parseInner: ContextParser, node: (inner: Tree, ast?: Tree) => Tree) =>
-  (src: TokenPos[], i: number): [index: number, ast: Tree] => {
+  (src: Token[], i: number): [index: number, ast: Tree] => {
     let index = i;
     const start = index;
     const nodePosition = () => mapListPosToPos(position(start, index), src);
@@ -822,7 +822,7 @@ const parseExprGroup: ContextParser = (context) => (src, i) => {
 const parsePrattGroup =
   (
     context: Context,
-    groupParser: (context: Context) => (tokens: TokenPos[], index: number) => [index: number, node: Tree],
+    groupParser: (context: Context) => (tokens: Token[], index: number) => [index: number, node: Tree],
     getPrecedence: (node: Tree) => Precedence
   ): Parser =>
   (src, i) => {
@@ -863,7 +863,7 @@ const parsePrattGroup =
 const parsePrefix =
   (
     context: Context,
-    groupParser: (context: Context) => (tokens: TokenPos[], index: number) => [index: number, node: Tree],
+    groupParser: (context: Context) => (tokens: Token[], index: number) => [index: number, node: Tree],
     getPrecedence: (node: Tree) => Precedence
   ): Parser =>
   (src, i) => {
@@ -905,7 +905,7 @@ const parsePrefix =
 const parsePratt =
   (
     context: Context,
-    groupParser: (context: Context) => (tokens: TokenPos[], index: number) => [index: number, node: Tree],
+    groupParser: (context: Context) => (tokens: Token[], index: number) => [index: number, node: Tree],
     getPrecedence: (node: Tree) => Precedence,
     precedence: number
   ): Parser =>
@@ -992,7 +992,7 @@ const parsePattern =
     ];
   };
 
-export const parseScript = (src: TokenPos[]) => {
+export const parseScript = (src: Token[]) => {
   const context = newContext();
   const [_, expr] = parseExpr(context)(src, 0);
   return script(expr);
@@ -1007,7 +1007,7 @@ const parseDeclaration: Parser<DeclarationNode> = (src, i) => {
   ];
 };
 
-export const parseModule = (src: TokenPos[]) => {
+export const parseModule = (src: Token[]) => {
   const children: (ImportNode | DeclarationPatternNode | ErrorNode)[] = [];
   let lastExport: ExportNode | null = null;
   let index = 0;
@@ -1063,13 +1063,13 @@ if (import.meta.vitest) {
 
   it.prop([fc.array(tokenArbitrary)])("module is always flat sequence", (tokens) => {
     tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
-    let ast = parseModule(tokens as TokenPos[]);
+    let ast = parseModule(tokens as Token[]);
     expect(ast.children.every((node) => (node as Tree).type !== "sequence")).toBe(true);
   });
 
   it.prop([fc.array(tokenArbitrary)])("script is always flat sequence", (tokens) => {
     tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
-    let ast = parseScript(tokens as TokenPos[]);
+    let ast = parseScript(tokens as Token[]);
     expect(ast.children.every((node) => (node as Tree).type !== "sequence")).toBe(true);
   });
 
@@ -1084,7 +1084,7 @@ if (import.meta.vitest) {
       tokens[0].src === "[" ? NodeType.SQUARE_BRACKETS : tokens[0].src === "{" ? NodeType.RECORD : NodeType.PARENS;
 
     tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
-    let ast = parsePattern(newContext())(tokens as TokenPos[], 0)[1];
+    let ast = parsePattern(newContext())(tokens as Token[], 0)[1];
     expect(ast).toMatchObject({ type: patternType });
   });
 
@@ -1094,7 +1094,7 @@ if (import.meta.vitest) {
 
     tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
 
-    let ast = parseExpr(newContext())(tokens as TokenPos[], 0)[1];
+    let ast = parseExpr(newContext())(tokens as Token[], 0)[1];
     expect(ast).toMatchObject({ type: exprType });
   });
 }

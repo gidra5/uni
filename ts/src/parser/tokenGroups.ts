@@ -1,13 +1,12 @@
-import type { SystemError } from "../error";
-import type { Position } from "../position";
+import { SystemError } from "../error";
+import { indexPosition, type Position } from "../position";
 import {
   parseMultilineStringToken,
   parseStringToken,
   parseToken,
   parseWhitespace,
-  SkipTokenPos,
-  type StringTokenPos,
-  type TokenPos,
+  type StringToken,
+  type Token,
 } from "./tokens";
 import { Parser, BaseContext } from "./utils";
 
@@ -19,20 +18,19 @@ enum TokenGroupKind {
 }
 
 export type TokenGroup =
-  | ({ type: "placeholder" | "newline" } & Position)
+  | ({ type: "placeholder" } & Position)
+  | ({ type: "newline" } & Position)
   | ({ type: "identifier"; name: string } & Position)
   | ({ type: "number"; value: number } & Position)
   | ({ type: "string"; value: string } & Position)
   | ({ type: "group"; kind: TokenGroupKind; tokens: TokenGroup[] } & Position)
   | { type: "error"; cause: SystemError; token: TokenGroup };
 
-type ParserContext = {
-  followSet: string[];
-} & BaseContext;
+type ParserContext = { followSet: string[] } & BaseContext;
 
-const _parseToken = Parser.do<string, TokenGroup, ParserContext>(function* self() {
-  yield Parser.rememberIndex();
-  const token: TokenPos = yield parseToken;
+export const _parseToken = Parser.do<string, TokenGroup, ParserContext>(function* self() {
+  yield Parser.rememberIndex<ParserContext>();
+  const token: Token = yield parseToken as any;
 
   if (token.type === "multilineString") {
     const parser = parseMultilineStringToken(token.intend);
@@ -40,7 +38,7 @@ const _parseToken = Parser.do<string, TokenGroup, ParserContext>(function* self(
 
     while (true) {
       yield Parser.rememberIndex();
-      const segment: StringTokenPos = yield parser;
+      const segment: StringToken = yield parser;
 
       if (segment.type === "lastSegment") {
         tokens.push({ ...segment, type: "string" });
@@ -57,15 +55,16 @@ const _parseToken = Parser.do<string, TokenGroup, ParserContext>(function* self(
       tokens.push({ type: "group", kind: TokenGroupKind.StringInterpolation, tokens: _tokens, ...pos });
     }
 
-    return { type: "group", kind: TokenGroupKind.StringInterpolation, tokens };
+    const pos: Position = yield Parser.span();
+    return { type: "group", kind: TokenGroupKind.StringInterpolation, tokens, ...pos };
   }
 
   if (token.type === "string") {
+    const start: number = yield Parser.rememberedIndex();
     const tokens: TokenGroup[] = [];
 
     while (true) {
-      yield Parser.rememberIndex();
-      const segment: StringTokenPos = yield parseStringToken;
+      const segment: StringToken = yield parseStringToken;
 
       if (segment.type === "lastSegment") {
         tokens.push({ ...segment, type: "string" });
@@ -82,14 +81,25 @@ const _parseToken = Parser.do<string, TokenGroup, ParserContext>(function* self(
       tokens.push({ type: "group", kind: TokenGroupKind.StringInterpolation, tokens: _tokens, ...pos });
     }
 
-    return { type: "group", kind: TokenGroupKind.StringInterpolation, tokens };
+    const pos: Position = yield Parser.span(start);
+    return { type: "group", kind: TokenGroupKind.StringInterpolation, tokens, ...pos };
   }
 
   if (token.type === "identifier") {
     if (token.name === "(") {
+      const start: number = yield Parser.rememberedIndex();
+      const openPos: Position = yield Parser.span();
       const tokens: TokenGroup[] = yield parseTokenGroup(")");
-      const pos: Position = yield Parser.span();
-      return { type: "group", kind: TokenGroupKind.Parentheses, tokens, ...pos };
+      if (yield Parser.string(")")) {
+        const pos: Position = yield Parser.span(start);
+        return { type: "group", kind: TokenGroupKind.Parentheses, tokens, ...pos };
+      }
+      const pos: Position = yield Parser.span(start);
+      const _token = { type: "group", kind: TokenGroupKind.Parentheses, tokens, ...pos };
+      const closeIndex: number = yield Parser.index();
+      const closePos: Position = indexPosition(closeIndex);
+      const cause = SystemError.unbalancedOpenToken(["(", ")"], openPos, closePos);
+      return { type: "error", cause, token: _token };
     }
   }
 
@@ -100,13 +110,13 @@ const parseTokenGroup = (until: string) =>
   Parser.do<string, TokenGroup[], ParserContext>(function* self() {
     const tokens: TokenGroup[] = [];
     yield Parser.appendFollow(until);
-    const ws: ({ type: "newline" } & Position) | SkipTokenPos | null = yield parseWhitespace as any;
-    if (ws && ws.type !== "skip") tokens.push(ws);
+    const ws: ({ type: "newline" } & Position) | null = yield parseWhitespace as any;
+    if (ws) tokens.push(ws);
     while (!(yield Parser.checkFollowSet())) {
       const token: TokenGroup = yield _parseToken;
       tokens.push(token);
-      const ws: ({ type: "newline" } & Position) | SkipTokenPos | null = yield parseWhitespace as any;
-      if (ws && ws.type !== "skip") tokens.push(ws);
+      const ws: ({ type: "newline" } & Position) | null = yield parseWhitespace as any;
+      if (ws) tokens.push(ws);
     }
     yield Parser.popFollow();
 
