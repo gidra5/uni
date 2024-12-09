@@ -14,7 +14,7 @@ exports[`parseTokens 1`] = `
     "start": 3,
     "tokens": [
       {
-        "end": 10,
+        "end": 9,
         "start": 4,
         "type": "string",
         "value": "Hello",

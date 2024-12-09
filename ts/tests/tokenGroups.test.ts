@@ -1,19 +1,21 @@
 import { specialStringChars } from "../src/parser/tokens.js";
-import { parseTokenGroups, _parseToken, TokenGroup, TokenGroupKind } from "../src/parser/tokenGroups.js";
+import {
+  parseTokenGroups,
+  _parseToken,
+  TokenGroup,
+  TokenGroupKind,
+  parseTokenGroup,
+} from "../src/parser/tokenGroups.js";
 import { describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
-import { array, type Arbitrary } from "fast-check";
+// import { describe, expect, test } from "vitest";
+// import { fc } from "@fast-check/vitest";
+import { type Arbitrary } from "fast-check";
 import { Iterator } from "iterator-js";
 import { eventLoopYield } from "../src/utils/index.js";
-import { SystemError } from "../src/error.js";
-import { position } from "../src/position.js";
 
 const anyStringArb = fc.string({ size: "large", unit: "binary" });
-const commentArb = anyStringArb.filter((s) => !s.includes("\n"));
-const blockCommentArb = anyStringArb.map((s) => s.replace("*/", "").replace("/*", ""));
-const stringInsidesArb = anyStringArb
-  .filter((s) => !s.includes("\n") && !s.includes("\\"))
-  .map((s) => s.replace('"', ""));
+const stringInsidesArb = anyStringArb.filter((s) => !s.includes("\n") && !s.includes("\\") && !s.includes('"'));
 const charArb = fc.string({ minLength: 1, maxLength: 1 });
 const notStringSpecialCharArb = charArb.filter((s) => !specialStringChars.includes(s));
 const arrayLenArb = <T>(arb: Arbitrary<T>, len: number) => fc.array(arb, { minLength: len, maxLength: len });
@@ -26,17 +28,24 @@ function clearToken({ start, end, ...token }: any) {
       tokens: token.tokens.map(clearToken),
     };
   }
+  if (token.type === "error") {
+    return {
+      type: "error",
+      cause: token.cause,
+      token: token.token.map(clearToken),
+    };
+  }
   return token;
 }
 
-describe.only("string interpolation", () => {
+describe("string interpolation", () => {
   test.prop(
     [
       fc
         .array(stringInsidesArb)
         .chain((textSegments) =>
           arrayLenArb(
-            anyStringArb.filter((s) => !s.includes("(") && !s.includes(")")),
+            anyStringArb.filter((s) => !s.includes("(") && !s.includes(")") && !s.includes('"')),
             Math.max(textSegments.length - 1, 0)
           ).map((joins) => [textSegments, joins])
         )
@@ -48,23 +57,43 @@ describe.only("string interpolation", () => {
           return [literal, value.toArray()] as const;
         }),
     ],
-    { seed: -426290917, path: "0:1:0:0:1:2:2", endOnFailure: true }
+    {
+      // seed: -968732021,
+      // path: "2:2:1:5:8:10:12:13:13:0:0:0:1:3:2:3",
+      // endOnFailure: true,
+      examples: [
+        [
+          [
+            '\\(")',
+            [
+              ["", '"'],
+              ["", ""],
+            ],
+          ],
+        ],
+      ],
+    }
   )("template strings", async ([literal, interpolated]) => {
     await eventLoopYield();
-
-    const value: TokenGroup[] = interpolated.flatMap(([text, interpolated]): TokenGroup[] => [
-      { type: "string", value: text } as TokenGroup,
-      { type: "group", kind: TokenGroupKind.Parentheses, tokens: parseTokenGroups(interpolated) } as TokenGroup,
-    ]);
-
+    const value: TokenGroup[] = interpolated
+      .flatMap(([text, interpolated]): TokenGroup[] => [
+        { type: "string", value: text } as TokenGroup,
+        {
+          type: "group",
+          kind: TokenGroupKind.Parentheses,
+          tokens: parseTokenGroup(")")
+            .parse(interpolated + ")", { followSet: [], index: 0 })[1]
+            .tokens.map(clearToken),
+        } as TokenGroup,
+      ])
+      .slice(0, -1);
+    if (value.length === 0) value.push({ type: "string", value: "" } as TokenGroup);
     const src = `"${literal}"`;
     const startIndex = 0;
     const expectedIndex = src.length;
     const expectedToken = { type: "group", kind: TokenGroupKind.StringTemplate, tokens: value };
-
     const [{ index }, token] = _parseToken.parse(src, { index: startIndex, followSet: [] });
-    console.dir({ token, expectedToken }, { depth: null });
-
+    console.dir({ token: clearToken(token), expectedToken }, { depth: null });
     expect(index).toBe(expectedIndex);
     expect(clearToken(token)).toEqual(expectedToken);
   });

@@ -1,5 +1,6 @@
 import { SystemError } from "../error";
 import { indexPosition, intervalPosition, type Position } from "../position";
+import { assert } from "../utils";
 import {
   parseMultilineStringToken,
   parseStringToken,
@@ -41,6 +42,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       const segment: StringToken = yield parser;
 
       if (segment.type === "lastSegment") {
+        assert(yield Parser.string(token.type === "string" ? '"' : '"""'));
         tokens.push({ ...segment, type: "string" });
         break;
       }
@@ -49,20 +51,22 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
         tokens.push({ type: "error", cause, token: { ...token, type: "string" } });
         break;
       }
+      assert(yield Parser.string("\\("));
+      tokens.push({ ...segment, type: "string" });
 
       // opening "\(" token
-      const openPos: Position = intervalPosition(segment.end - 2, 2);
+      const openPos: Position = intervalPosition(segment.end, 2);
       const { tokens: _tokens, closed }: TokenGroupResult = yield parseTokenGroup(")");
-      const pos: Position = yield Parser.span(start);
+      const pos: Position = yield Parser.span(segment.end);
       if (closed) {
         tokens.push({ type: "group", kind: TokenGroupKind.Parentheses, tokens: _tokens, ...pos });
       } else {
-        const _token: TokenGroup = { type: "group", kind: TokenGroupKind.Parentheses, tokens, ...pos };
+        const token: TokenGroup = { type: "group", kind: TokenGroupKind.Parentheses, tokens: _tokens, ...pos };
         const closeIndex: number = yield Parser.index();
         const closePos: Position = indexPosition(closeIndex);
         const cause = SystemError.unbalancedOpenToken(["\\(", ")"], openPos, closePos);
 
-        tokens.push({ type: "error", cause, token: _token });
+        tokens.push({ type: "error", cause, token });
       }
     }
 
@@ -94,13 +98,14 @@ type TokenGroupResult = {
   closed: boolean;
 };
 
-const parseTokenGroup = (until: string): Parser<string, TokenGroupResult, ParserContext> =>
+export const parseTokenGroup = (until: string): Parser<string, TokenGroupResult, ParserContext> =>
   Parser.do(function* self() {
     const tokens: TokenGroup[] = [];
+
     yield Parser.appendFollow(until);
     const ws: ({ type: "newline" } & Position) | null = yield parseWhitespace;
     if (ws) tokens.push(ws);
-    while (!(yield Parser.checkFollowSet())) {
+    while (!(yield Parser.checkFollowSet()) && (yield Parser.isNotEnd())) {
       const token: TokenGroup = yield _parseToken;
       tokens.push(token);
       const ws: ({ type: "newline" } & Position) | null = yield parseWhitespace as any;

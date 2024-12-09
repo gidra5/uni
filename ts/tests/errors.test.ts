@@ -62,9 +62,15 @@ it(`single closing parens`, () => _testCase("1 + (2 + 3"));
 it(`single closing parens`, () => _testCase("1 * (5/3) (*4"));
 it(`single closing parens`, () => _testCase("send((1+2), 3+,4)"));
 it(`single closing parens`, () => _testCase("!"));
+it.todo(`single closing parens`, () => _testCase('"\\(")"'));
+it.todo(`single closing parens`, () => _testCase("f + !"));
+it.todo(`single closing parens`, () => _testCase('"uwu\n 1'));
+it.todo(`single closing parens`, () => _testCase("1 + (2 + 3))"));
+it.todo(`single closing parens`, () => _testCase("1 + (2 + 3)) +"));
+it.todo(`single closing parens`, () => _testCase("q + )/"));
+it.todo(`single closing parens`, () => _testCase("q + )/"));
+it.todo(`single closing parens`, () => _testCase(" - )/q + )/"));
 
-// testCase('f + !', [], it.todo);
-// testCase('"uwu\n 1', [], it.todo);
 // testCase(
 //   `
 //     quick_sort := xs -> {

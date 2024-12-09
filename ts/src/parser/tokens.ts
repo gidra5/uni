@@ -160,8 +160,8 @@ export const parseStringToken = Parser.do<string, StringToken>(function* () {
   let value = "";
 
   while (true) {
-    if (yield Parser.string('"')) return yield* stringLastSegment(value);
-    if (yield Parser.string("\\(")) return yield* stringSegment(value);
+    if (yield Parser.checkString('"')) return yield* stringLastSegment(value);
+    if (yield Parser.checkString("\\(")) return yield* stringSegment(value);
     if (yield Parser.isEnd()) return yield* stringLiteralError(value);
     if (yield Parser.checkString("\n")) return yield* stringLiteralError(value);
 
@@ -185,9 +185,9 @@ export const parseMultilineStringToken = (intend: string) =>
     let value = "";
 
     while (true) {
+      if (yield Parser.checkString('"""')) return yield* stringLastSegment(value.trimEnd());
+      if (yield Parser.checkString("\\(")) return yield* stringSegment(value);
       if (yield Parser.isEnd()) return yield* stringLiteralError(value.trimEnd());
-      if (yield Parser.string('"""')) return yield* stringLastSegment(value.trimEnd());
-      if (yield Parser.string("\\(")) return yield* stringSegment(value);
 
       if (yield Parser.string(intend)) {
         if (yield Parser.isEnd()) continue;
