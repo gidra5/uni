@@ -16,7 +16,9 @@ export enum TokenGroupKind {
   Parentheses,
   Braces,
   Brackets,
-  ForInBlock,
+  ForIn,
+  Colon,
+  Arrow,
 }
 
 export type TokenGroup =
@@ -60,6 +62,11 @@ const parsePair = function* self(start: number, startStr: string, endStr: string
   return error(yield* unbalancedOpenToken(start, startStr, endStr), _token);
 };
 
+const parseBraces = function* self() {
+  const start: number = yield Parser.rememberedIndex();
+  return yield* parsePair(start, "{", "}", TokenGroupKind.Braces);
+};
+
 export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(function* self() {
   yield Parser.rememberIndex();
   const token: Token = yield parseToken as any;
@@ -100,45 +107,48 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
     }
     if (token.name === "[") {
       const start: number = yield Parser.rememberedIndex();
-      return yield* parsePair(start, "[", "]", TokenGroupKind.Braces);
+      return yield* parsePair(start, "[", "]", TokenGroupKind.Brackets);
     }
-    if (token.name === "{") {
-      const start: number = yield Parser.rememberedIndex();
-      return yield* parsePair(start, "{", "}", TokenGroupKind.Brackets);
-    }
+    if (token.name === "{") return yield* parseBraces();
 
-    // for .. in .. { .. }
-    // for .. in ..:
-    // for .. in .. ->
     if (token.name === "for") {
       const start: number = yield Parser.rememberedIndex();
       const tokens: TokenGroup[] = [];
-      let valid = true;
+      let current: string | null = "for";
 
-      {
-        const start: number = yield Parser.rememberedIndex();
-        const { tokens: token, closed }: TokenGroupResult = yield parseTokenGroup("in");
-        if (closed) tokens.push(error(yield* unbalancedOpenToken(start, "for", "in"), token));
-        else tokens.push(token);
-        valid &&= closed;
+      tokens.push(
+        yield parseTokenGroup("in", ":", "->", "{", "}").chain(function* ({ tokens, closed }) {
+          current = closed;
+          if (closed === "in") return tokens;
+          return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
+        })
+      );
+
+      if (current !== "in") {
+        const operandError = SystemError.missingOperand(indexPosition(yield Parser.index()));
+        tokens.push(error(operandError, group3([])));
+      } else {
+        tokens.push(
+          yield parseTokenGroup(":", "->", "{", "}").chain(function* ({ tokens, closed }) {
+            current = closed;
+            if (closed === "in") return tokens;
+            return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
+          })
+        );
       }
 
-      if (valid) {
-        const start: number = (yield Parser.index()) - 2;
-        const { tokens: token, closed }: TokenGroupResult = yield parseTokenGroup("{");
-        if (closed) tokens.push(error(yield* unbalancedOpenToken(start, "in", "{"), token));
-        else tokens.push(token);
-        valid &&= closed;
-      } else tokens.push(yield* group([]));
+      if (!["{", ":", "->"].includes(current)) {
+        const operandError = SystemError.missingOperand(indexPosition(yield Parser.index()));
+        tokens.push(error(operandError, group3([])));
+      } else if (current === "{") {
+        tokens.push(yield* parseBraces());
+      } else if (current === ":") {
+        tokens.push(yield* group([], TokenGroupKind.Colon));
+      } else if (current === "->") {
+        tokens.push(yield* group([], TokenGroupKind.Arrow));
+      }
 
-      if (valid) {
-        const start: number = (yield Parser.index()) - 2;
-        const { tokens: token, closed }: TokenGroupResult = yield parseTokenGroup("{");
-        if (closed) tokens.push(error(yield* unbalancedOpenToken(start, "{", "}"), token));
-        else tokens.push(token);
-      } else tokens.push(yield* group([]));
-
-      return group(tokens, TokenGroupKind.ForInBlock, start);
+      return yield* group(tokens, TokenGroupKind.ForIn, start);
     }
   }
 
@@ -147,7 +157,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
 
 type TokenGroupResult = {
   tokens: { type: "group"; tokens: TokenGroup[] };
-  closed: boolean;
+  closed: string | null;
 };
 
 export const parseTokenGroup = (...untils: string[]): Parser<string, TokenGroupResult, ParserContext> =>

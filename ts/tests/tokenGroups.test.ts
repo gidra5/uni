@@ -62,7 +62,7 @@ test.prop([
         kind: TokenGroupKind.Parentheses,
         tokens: parseTokenGroup(")")
           .parse(interpolated + ")", { followSet: [], index: 0 })[1]
-          .tokens.map(clearToken),
+          .tokens.tokens.map(clearToken),
       } as TokenGroup,
     ])
     .slice(0, -1);

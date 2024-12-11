@@ -2,9 +2,14 @@ import { position, type Position } from "../position";
 import { assert } from "../utils";
 
 export type BaseContext = { index: number; rememberedIndex?: number };
-export type ParserFunction<T, U, C extends BaseContext = BaseContext> = (src: T, context: C) => [context: C, ast: U];
+export type ParserFunction<in T, out U, C extends BaseContext = BaseContext> = (
+  src: T,
+  context: C
+) => [context: C, ast: U];
+type ParserFunctionOrParser<T, U, C extends BaseContext = BaseContext> = ParserFunction<T, U, C> | Parser<T, U, C>;
+type ParserGenerator<T, U1, U2, C extends BaseContext = BaseContext> = Generator<ParserFunctionOrParser<T, U1, C>, U2>;
 
-export class Parser<T, U, C extends BaseContext = BaseContext> {
+export class Parser<in T, out U, C extends BaseContext = BaseContext> {
   constructor(public parse: ParserFunction<T, U, C>) {}
 
   map<U2>(f: (x: U, ctx: C) => U2): Parser<T, U2, C> {
@@ -25,7 +30,7 @@ export class Parser<T, U, C extends BaseContext = BaseContext> {
     });
   }
 
-  chain<U2>(f: (x: U) => Generator<ParserFunction<T, unknown, C>, U2>): Parser<T, U2, C> {
+  chain<U2>(f: (x: U) => ParserGenerator<T, unknown, U2, C>): Parser<T, U2, C> {
     const parser = this.parse;
     return new Parser((src, ctx) => {
       let parsed: U;
@@ -64,9 +69,7 @@ export class Parser<T, U, C extends BaseContext = BaseContext> {
     };
   }
 
-  static or<T, U, C extends BaseContext = BaseContext>(
-    ...parsers: (ParserFunction<T, U | null, C> | Parser<T, U | null, C>)[]
-  ) {
+  static or<T, U, C extends BaseContext = BaseContext>(...parsers: ParserFunctionOrParser<T, U | null, C>[]) {
     return new Parser<T, U | null, C>((src, ctx) => {
       for (const parser of parsers) {
         let f: ParserFunction<T, U | null, C>;
@@ -80,7 +83,7 @@ export class Parser<T, U, C extends BaseContext = BaseContext> {
   }
 
   static do<T, U, C extends BaseContext = BaseContext>(
-    f: () => Generator<ParserFunction<T, unknown, C> | Parser<T, unknown, C>, U, any>
+    f: () => Generator<ParserFunctionOrParser<T, unknown, C>, U, any>
   ): Parser<T, U, C> {
     return new Parser((src, ctx) => {
       const gen = f();
@@ -249,7 +252,7 @@ export class Parser<T, U, C extends BaseContext = BaseContext> {
 }
 
 export const _do = <T, U, C extends BaseContext = BaseContext>(
-  f: () => Generator<ParserFunction<T, unknown, C> | Parser<T, unknown, C>, U>
+  f: () => ParserGenerator<T, unknown, U, C>
 ): ParserFunction<T, U, C> => Parser.do(f).parse;
 
 export const all =
