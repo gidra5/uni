@@ -1,6 +1,6 @@
 import { SystemError } from "../error";
 import { indexPosition, intervalPosition, type Position } from "../position";
-import { assert } from "../utils";
+import { assert, getPos, nextId, setPos } from "../utils";
 import {
   parseMultilineStringToken,
   parseStringToken,
@@ -21,32 +21,35 @@ export enum TokenGroupKind {
   Arrow,
 }
 
-export type TokenGroup =
-  | ({ type: "placeholder" } & Position)
-  | ({ type: "newline" } & Position)
-  | ({ type: "identifier"; name: string } & Position)
-  | ({ type: "number"; value: number } & Position)
-  | ({ type: "string"; value: string } & Position)
-  | ({ type: "group"; kind: TokenGroupKind; tokens: TokenGroup[] } & Position)
+export type TokenGroup = (
+  | { type: "placeholder" }
+  | { type: "newline" }
+  | { type: "identifier"; name: string }
+  | { type: "number"; value: number }
+  | { type: "string"; value: string }
+  | { type: "group"; kind: TokenGroupKind; tokens: TokenGroup[] }
   | { type: "group"; tokens: TokenGroup[] }
-  | { type: "error"; cause: SystemError; token: TokenGroup };
+  | { type: "error"; cause: SystemError; token: TokenGroup }
+) & { id: number };
 
 type ParserContext = { followSet: string[] } & BaseContext;
 
-const error = (cause: SystemError, token: TokenGroup): TokenGroup => ({ type: "error", cause, token });
+const error = (cause: SystemError, token: TokenGroup): TokenGroup => ({ id: nextId(), type: "error", cause, token });
 const group = function* (tokens: TokenGroup[], kind?: TokenGroupKind, start?: number) {
-  if (kind !== undefined) {
-    const pos = yield Parser.span(start);
-    return { type: "group", kind, tokens, ...pos } as TokenGroup;
-  }
-  return { type: "group", tokens } as TokenGroup;
+  const g = group3(tokens);
+  if (kind === undefined) return g;
+  return yield * group2(g, kind, start);
 };
-const group2 = function* (token: { type: "group"; tokens: TokenGroup[] }, kind: TokenGroupKind, start: number) {
-  const pos = yield Parser.span(start);
-  return { ...token, kind, ...pos } as TokenGroup;
+const group2 = function* (
+  token: { id: number; type: "group"; tokens: TokenGroup[] },
+  kind: TokenGroupKind,
+  start?: number
+) {
+  setPos(token.id, yield Parser.span(start));
+  return { ...token, kind } as TokenGroup;
 };
 const group3 = (tokens: TokenGroup[]) => {
-  return { type: "group", tokens } as { type: "group"; tokens: TokenGroup[] };
+  return { id: nextId(), type: "group", tokens } as { id: number; type: "group"; tokens: TokenGroup[] };
 };
 const unbalancedOpenToken = function* (start: number, startStr: string, endStr: string) {
   const openPos: Position = intervalPosition(start, startStr.length);
@@ -87,14 +90,15 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
 
       if (segment.type === "error") {
         const { cause, ...token } = segment;
-        tokens.push({ type: "error", cause, token: { ...token, type: "string" } });
+        tokens.push({ id: nextId(), type: "error", cause, token: { ...token, type: "string" } });
         break;
       }
 
       assert(yield Parser.string("\\("));
 
       tokens.push({ ...segment, type: "string" });
-      tokens.push(yield* parsePair(segment.end, "\\(", ")", TokenGroupKind.Parentheses));
+      const start = getPos(segment.id)!.end;
+      tokens.push(yield* parsePair(start, "\\(", ")", TokenGroupKind.Parentheses));
     }
 
     return yield* group(tokens, TokenGroupKind.StringTemplate, start);
@@ -156,7 +160,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
 });
 
 type TokenGroupResult = {
-  tokens: { type: "group"; tokens: TokenGroup[] };
+  tokens: { id: number; type: "group"; tokens: TokenGroup[] };
   closed: string | null;
 };
 
@@ -165,12 +169,12 @@ export const parseTokenGroup = (...untils: string[]): Parser<string, TokenGroupR
     const tokens: TokenGroup[] = [];
 
     for (const until of untils) yield Parser.appendFollow(until);
-    const ws: ({ type: "newline" } & Position) | null = yield parseWhitespace;
+    const ws: { id: number; type: "newline" } | null = yield parseWhitespace;
     if (ws) tokens.push(ws);
     while (!(yield Parser.checkFollowSet()) && (yield Parser.isNotEnd())) {
       const token: TokenGroup = yield _parseToken;
       tokens.push(token);
-      const ws: ({ type: "newline" } & Position) | null = yield parseWhitespace as any;
+      const ws: { id: number; type: "newline" } | null = yield parseWhitespace as any;
       if (ws) tokens.push(ws);
     }
     for (const _until of untils) yield Parser.popFollow();

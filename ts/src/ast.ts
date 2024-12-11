@@ -1,11 +1,11 @@
 import { SystemError } from "./error.js";
-import { inject, Injectable, register } from "./injector.js";
 import { isPosition, Position } from "./position.js";
 import { Token } from "./parser/tokens.js";
+import { nextId, setPos } from "./utils/index.js";
 
 export type Tree = {
   type: string;
-  id: string;
+  id: number;
   data: any;
   children: Tree[];
 };
@@ -97,80 +97,80 @@ export const NodeType = {
 export type NodeType = (typeof NodeType)[keyof typeof NodeType];
 
 type ScriptNode = {
-  id: string;
+  id: number;
   data: {};
   type: typeof NodeType.SCRIPT;
   children: ExpressionNode[];
 };
 type ModuleNode = {
-  id: string;
+  id: number;
   data: {};
   type: typeof NodeType.MODULE;
   children: DeclarationNode[];
 };
 type ErrorNode<T extends Tree = Tree> = {
-  id: string;
+  id: number;
   data: { cause: SystemError };
   type: typeof NodeType.ERROR;
   children: [T] | [];
 };
 type ImplicitPlaceholderNode = {
-  id: string;
+  id: number;
   data: {};
   type: typeof NodeType.IMPLICIT_PLACEHOLDER;
   children: [];
 };
 type PlaceholderNode = {
-  id: string;
+  id: number;
   data: {};
   type: typeof NodeType.PLACEHOLDER;
   children: [];
 };
 type NameNode = {
-  id: string;
+  id: number;
   data: { value: string | symbol };
   type: typeof NodeType.NAME;
   children: [];
 };
 type NumberNode = {
-  id: string;
+  id: number;
   data: { value: number };
   type: typeof NodeType.NUMBER;
   children: [];
 };
 type StringNode = {
-  id: string;
+  id: number;
   data: { value: string };
   type: typeof NodeType.STRING;
   children: [];
 };
 type AtomNode = {
-  id: string;
+  id: number;
   data: { name: string };
   type: typeof NodeType.ATOM;
   children: [];
 };
 
 type BlockNode = {
-  id: string;
+  id: number;
   data: {};
   type: typeof NodeType.BLOCK;
   children: [ExpressionNode];
 };
 type SequenceNode = {
-  id: string;
+  id: number;
   data: {};
   type: typeof NodeType.SEQUENCE;
   children: ExpressionNode[];
 };
 type TupleNode = {
-  id: string;
+  id: number;
   data: {};
   type: typeof NodeType.TUPLE;
   children: ExpressionNode[];
 };
 type FunctionNode = {
-  id: string;
+  id: number;
   data: { isTopFunction?: false };
   type: typeof NodeType.FUNCTION;
   children: [PatternNode, ExpressionNode];
@@ -192,12 +192,6 @@ type ExpressionNode =
   | TupleNode;
 
 type PatternNode = Tree | PlaceholderNode | NameNode | StringNode | NumberNode | AtomNode;
-
-const nextId = () => {
-  const id = inject(Injectable.ASTNodeNextId);
-  register(Injectable.ASTNodeNextId, id + 1);
-  return String(id);
-};
 
 enum Associativity {
   LEFT = "left",
@@ -345,7 +339,7 @@ type NodeOptions = {
 
 const node = (type: string, { data = {}, position, children = [] }: NodeOptions = {}): Tree => {
   const id = nextId();
-  if (position) inject(Injectable.ASTNodePositionMap).set(id, position);
+  if (position) setPos(id, position);
   return { type, id, data, children };
 };
 

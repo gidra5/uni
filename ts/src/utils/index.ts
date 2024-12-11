@@ -2,10 +2,12 @@ import { Iterator } from "iterator-js";
 import { RecordKey } from "../types.js";
 import { setTimeout } from "node:timers/promises";
 import { SystemError } from "../error.js";
+import { inject, Injectable, register } from "../injector.js";
+import type { Position } from "../position.js";
 
 export const identity = <T>(x: T): T => x;
 
-export const print = <T>(x: T): T => (console.dir(x, { depth: null }), x);
+export const dir = <T>(x: T): T => (console.dir(x, { depth: null }), x);
 
 let eventLoopYieldCounter = 0;
 const eventLoopYieldMax = 1000;
@@ -13,6 +15,15 @@ export const eventLoopYield = async () => {
   eventLoopYieldCounter = (eventLoopYieldCounter + 1) % eventLoopYieldMax;
   if (eventLoopYieldCounter === 0) await setTimeout(0);
 };
+
+export const nextId = () => {
+  const id = inject(Injectable.NextId);
+  register(Injectable.NextId, id + 1);
+  return id;
+};
+
+export const setPos = (id: number, pos: Position) => inject(Injectable.PositionMap).set(id, pos);
+export const getPos = (id: number) => inject(Injectable.PositionMap).get(id);
 
 export function assert(condition: any, msg?: string | SystemError): asserts condition {
   if (condition) return;

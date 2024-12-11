@@ -3,19 +3,16 @@
 exports[`parseTokens 1`] = `
 [
   {
-    "end": 2,
-    "start": 0,
+    "id": 0,
     "type": "number",
     "value": 42,
   },
   {
-    "end": 10,
+    "id": 3,
     "kind": 0,
-    "start": 3,
     "tokens": [
       {
-        "end": 9,
-        "start": 4,
+        "id": 2,
         "type": "string",
         "value": "Hello",
       },
@@ -23,25 +20,21 @@ exports[`parseTokens 1`] = `
     "type": "group",
   },
   {
-    "end": 19,
+    "id": 4,
     "name": "variable",
-    "start": 11,
     "type": "identifier",
   },
   {
-    "end": 28,
+    "id": 9,
     "kind": 1,
-    "start": 20,
     "tokens": [
       {
-        "end": 27,
+        "id": 8,
         "kind": 1,
-        "start": 21,
         "tokens": [
           {
-            "end": 26,
+            "id": 7,
             "name": "expr",
-            "start": 22,
             "type": "identifier",
           },
         ],

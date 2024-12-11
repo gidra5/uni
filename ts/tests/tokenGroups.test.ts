@@ -6,11 +6,17 @@ import {
   TokenGroupKind,
   parseTokenGroup,
 } from "../src/parser/tokenGroups.js";
-import { expect } from "vitest";
+import { beforeEach, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { type Arbitrary } from "fast-check";
 import { Iterator } from "iterator-js";
-import { eventLoopYield } from "../src/utils/index.js";
+import { eventLoopYield, getPos } from "../src/utils/index.js";
+import { Injectable, register } from "../src/injector.js";
+
+beforeEach(() => {
+  register(Injectable.NextId, 0);
+  register(Injectable.PositionMap, new Map());
+});
 
 const anyStringArb = fc.string({ size: "large", unit: "binary" });
 const stringInsidesArb = anyStringArb.filter((s) => !s.includes("\n") && !s.includes("\\") && !s.includes('"'));
@@ -18,21 +24,9 @@ const charArb = fc.string({ minLength: 1, maxLength: 1 });
 const notStringSpecialCharArb = charArb.filter((s) => !specialStringChars.includes(s));
 const arrayLenArb = <T>(arb: Arbitrary<T>, len: number) => fc.array(arb, { minLength: len, maxLength: len });
 
-function clearToken({ start, end, ...token }: any) {
-  if (token.type === "group") {
-    return {
-      type: "group",
-      kind: token.kind,
-      tokens: token.tokens.map(clearToken),
-    };
-  }
-  if (token.type === "error") {
-    return {
-      type: "error",
-      cause: token.cause,
-      token: clearToken(token.token),
-    };
-  }
+function clearToken({ id, ...token }: any) {
+  if (token.type === "group") return { ...token, tokens: token.tokens.map(clearToken) };
+  if (token.type === "error") return { ...token, token: clearToken(token.token) };
   return token;
 }
 
@@ -98,8 +92,12 @@ it.prop([anyStringArb])("parseTokenGroups positions are correctly nested", (src)
   function check(tg: TokenGroup[], start = 0, end = src.length) {
     tg.forEach(function checkToken(tg: TokenGroup) {
       if (tg.type === "group") {
-        if ("kind" in tg) check(tg.tokens, tg.start, tg.end);
-        else check(tg.tokens, start, end);
+        if ("kind" in tg) {
+          const pos = getPos(tg.id)!;
+          check(tg.tokens, pos.start, pos.end);
+        } else {
+          check(tg.tokens, start, end);
+        }
         return;
       }
       if (tg.type === "error") {
@@ -107,8 +105,9 @@ it.prop([anyStringArb])("parseTokenGroups positions are correctly nested", (src)
         return;
       }
 
-      expect(tg.start >= start);
-      expect(tg.end <= end);
+      const pos = getPos(tg.id)!;
+      expect(pos.start >= start);
+      expect(pos.end <= end);
     });
   }
 });
