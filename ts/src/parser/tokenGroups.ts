@@ -12,13 +12,13 @@ import {
 import { Parser, BaseContext } from "./utils";
 
 export enum TokenGroupKind {
-  StringTemplate,
-  Parentheses,
-  Braces,
-  Brackets,
-  ForIn,
-  Colon,
-  Arrow,
+  StringTemplate = "string template",
+  Parentheses = "parentheses",
+  Braces = "braces",
+  Brackets = "brackets",
+  ForIn = "for in",
+  Colon = "colon",
+  Arrow = "arrow",
 }
 
 export type TokenGroup = (

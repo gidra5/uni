@@ -29,18 +29,6 @@ const testCase = (input: string) => {
   }
 };
 
-const treeTestCase = (src, expectedTree?, scope = scopeDictionary) => {
-  const [tokens] = parseTokens(src);
-  const context = defaultParsingContext();
-  context.scope = new Scope(scope);
-  const [tree, errors] = parseExpr(context)(tokens).slice(1);
-  // console.dir(tree, { depth: null });
-  expect(errors).toEqual([]);
-  dropScope(tree);
-  if (expectedTree) expect(tree).toEqual(expectedTree);
-  expect(tree).toMatchSnapshot();
-};
-
 describe("advent of code 1 single file", () => {
   it("variable", () =>
     testCase(`
@@ -310,23 +298,23 @@ describe("pattern matching", () => {
   describe("set-theoretic patterns", () => {
     test.todo("pattern union", () => {
       const src = `((x:x, y:y) or (y:y, z:z)) -> y`;
-      treeTestCase(src);
+      testCase(src);
     });
 
     test.todo("pattern intersection", () => {
       const src = `((x:x, y:y) and (z:z)) -> x + y + z`;
-      treeTestCase(src);
+      testCase(src);
     });
 
     test.todo("pattern negation", () => {
       const src = `(!(x:x, y:y)) -> x + y + z`;
-      treeTestCase(src);
+      testCase(src);
     });
   });
 
   test.todo("with type", () => {
     const src = `x is (type number, a)`;
-    treeTestCase(src);
+    testCase(src);
   });
 });
 

@@ -1,18 +1,53 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`group kinds > for group > parseTokens 1`] = `
+[
+  {
+    "kind": "for in",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "tokens": [
+          {
+            "name": "y",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "colon",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
 exports[`parseTokens 1`] = `
 [
   {
-    "id": 0,
     "type": "number",
     "value": 42,
   },
   {
-    "id": 3,
-    "kind": 0,
+    "kind": "string template",
     "tokens": [
       {
-        "id": 2,
         "type": "string",
         "value": "Hello",
       },
@@ -20,20 +55,16 @@ exports[`parseTokens 1`] = `
     "type": "group",
   },
   {
-    "id": 4,
     "name": "variable",
     "type": "identifier",
   },
   {
-    "id": 9,
-    "kind": 1,
+    "kind": "parentheses",
     "tokens": [
       {
-        "id": 8,
-        "kind": 1,
+        "kind": "parentheses",
         "tokens": [
           {
-            "id": 7,
             "name": "expr",
             "type": "identifier",
           },

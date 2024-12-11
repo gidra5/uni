@@ -6,7 +6,7 @@ import {
   TokenGroupKind,
   parseTokenGroup,
 } from "../src/parser/tokenGroups.js";
-import { beforeEach, expect } from "vitest";
+import { beforeEach, describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 import { type Arbitrary } from "fast-check";
 import { Iterator } from "iterator-js";
@@ -24,11 +24,22 @@ const charArb = fc.string({ minLength: 1, maxLength: 1 });
 const notStringSpecialCharArb = charArb.filter((s) => !specialStringChars.includes(s));
 const arrayLenArb = <T>(arb: Arbitrary<T>, len: number) => fc.array(arb, { minLength: len, maxLength: len });
 
-function clearToken({ id, ...token }: any) {
-  if (token.type === "group") return { ...token, tokens: token.tokens.map(clearToken) };
-  if (token.type === "error") return { ...token, token: clearToken(token.token) };
+function clearIds({ id, ...token }: any) {
+  if (token.type === "group") return { ...token, tokens: token.tokens.map(clearIds) };
+  if (token.type === "error") return { ...token, token: clearIds(token.token) };
   return token;
 }
+
+const testCase = (input: string) => {
+  const tokenGroups = parseTokenGroups(input);
+  expect(tokenGroups.map(clearIds)).toMatchSnapshot();
+};
+
+describe("group kinds", () => {
+  describe("for group", () => {
+    test("parseTokens", () => testCase("for x in y: z"));
+  });
+});
 
 test.prop([
   fc
@@ -56,7 +67,7 @@ test.prop([
         kind: TokenGroupKind.Parentheses,
         tokens: parseTokenGroup(")")
           .parse(interpolated + ")", { followSet: [], index: 0 })[1]
-          .tokens.tokens.map(clearToken),
+          .tokens.tokens.map(clearIds),
       } as TokenGroup,
     ])
     .slice(0, -1);
@@ -69,16 +80,10 @@ test.prop([
   const [{ index }, token] = _parseToken.parse(src, { index: startIndex, followSet: [] });
 
   expect(index).toBe(expectedIndex);
-  expect(clearToken(token)).toEqual(expectedToken);
+  expect(clearIds(token)).toEqual(expectedToken);
 });
 
-test("parseTokens", () => {
-  const src = '42 "Hello" variable ((expr))';
-
-  const tokens = parseTokenGroups(src);
-
-  expect(tokens).toMatchSnapshot();
-});
+test("parseTokens", () => testCase('42 "Hello" variable ((expr))'));
 
 it.prop([anyStringArb])("parseTokenGroups never throws", (src) => {
   expect(() => parseTokenGroups(src)).not.toThrow();
