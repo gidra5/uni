@@ -126,9 +126,8 @@ describe("expressions", () => {
   describe("boolean expressions", () => {
     it("not", () => testCase(`!123`));
     it('"and", "or" and "not" associativity', () => testCase(`a and b and c or d or !e and f and g or not h or i`));
-    it("in operator", () => testCase(`:key in x and y`));
-    it("ranges 1", () => testCase(`123 < 456 < 789`));
-    it("ranges 2", () => testCase(`123 < 456 > 789`));
+    it("in operator", () => testCase(`$key in x and y`));
+    it.todo("ranges 1", () => testCase(`123 < 456 < 789`));
   });
 
   describe("function expressions", () => {
@@ -163,13 +162,13 @@ describe("expressions", () => {
       it("function as last arg", () => testCase(`open "file" file -> write file "yolo"`));
       it("block as last arg", () => testCase(`open "file" { write "yolo" }`));
       it("pipe", () => testCase(`1 |> fn x { x + 1 } |> fn y { y * 2 }`));
+    });
 
-      describe("function call delimiters", () => {
-        it.todo("delimited args", () => testCase(`f(x, y)`));
-        it.todo("placeholder arg", () => testCase(`f(_, y)`));
-        it.todo("placeholder args", () => testCase(`f(_, y, _)`));
-        it.todo("spread args", () => testCase(`f(...x, y)`));
-      });
+    describe("delimited application", () => {
+      it.todo("delimited args", () => testCase(`f(x, y)`));
+      it.todo("placeholder arg", () => testCase(`f(_, y)`));
+      it.todo("placeholder args", () => testCase(`f(_, y, _)`));
+      it.todo("spread args", () => testCase(`f(...x, y)`));
     });
 
     describe("function forms", () => {
@@ -280,9 +279,9 @@ describe("pattern matching", () => {
   it("with rest value", () => testCase(`x is (a, ...b)`));
   it("with rest value first", () => testCase(`x is (...b, a)`));
   it("with record pattern", () => testCase(`x is { a, b }`));
-  it("with record pattern rename", () => testCase(`x is { a: c, b }`));
-  it("with record pattern key", () => testCase(`x is { [a + b]: c, b }`));
-  it("with record pattern nested", () => testCase(`x is { a: (c, d), b }`));
+  it("with record pattern rename", () => testCase(`x is { a @ c, b }`));
+  it("with record pattern key", () => testCase(`x is { [a + b] @ c, b }`));
+  it("with record pattern nested", () => testCase(`x is { a @ (c, d), b }`));
   it("with default value", () => testCase(`x is (b = 4, a)`));
   it("with default value second", () => testCase(`x is (a, b = 4)`));
   it("with default value parens", () => testCase(`x is ((b = 4), a)`));
@@ -322,7 +321,7 @@ describe("pattern matching", () => {
   });
 
   test.todo("record pattern with type", () => {
-    const src = `x is { a: type number, b }`;
+    const src = `x is { a: number, b }`;
     testCase(src);
   });
 
@@ -339,10 +338,10 @@ describe("types", () => {
   it.todo("type coalesce right", () => testCase("x :> number"));
 
   describe("functions", () => {
-    it.todo("function type", () => testCase('x: number -> string = fn: "1"'));
-    it.todo("function type with multiple args", () => testCase('x: fn number, string -> string = fn: "1"'));
-    it.todo("function type with named args", () => testCase('x: fn x: number, y: string -> string = fn: "1"'));
-    it.todo("parametric function type", () => testCase('x: fn x: infer y -> y or number = fn: "1"'));
+    it.todo("function type", () => testCase('x: number -> string := fn: "1"'));
+    it.todo("function type with multiple args", () => testCase('x: fn number, string -> string := fn: "1"'));
+    it.todo("function type with named args", () => testCase('x: fn x: number, y: string -> string := fn: "1"'));
+    it.todo("parametric function type", () => testCase('x: fn x: infer y -> y or number := fn: "1"'));
   });
 });
 

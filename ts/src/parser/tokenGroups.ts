@@ -38,7 +38,7 @@ const error = (cause: SystemError, token: TokenGroup): TokenGroup => ({ id: next
 const group = function* (tokens: TokenGroup[], kind?: TokenGroupKind, start?: number) {
   const g = group3(tokens);
   if (kind === undefined) return g;
-  return yield * group2(g, kind, start);
+  return yield* group2(g, kind, start);
 };
 const group2 = function* (
   token: { id: number; type: "group"; tokens: TokenGroup[] },
@@ -135,7 +135,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
         tokens.push(
           yield parseTokenGroup(":", "->", "{", "}").chain(function* ({ tokens, closed }) {
             current = closed;
-            if (closed === "in") return tokens;
+            if (["{", ":", "->"].includes(closed!)) return tokens;
             return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
           })
         );

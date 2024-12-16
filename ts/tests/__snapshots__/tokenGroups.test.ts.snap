@@ -1,6 +1,83 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`group kinds > for group > parseTokens 1`] = `
+exports[`group kinds > for group > for arrow 1`] = `
+[
+  {
+    "kind": "for in",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "tokens": [
+          {
+            "name": "y",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "arrow",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > for group > for braces 1`] = `
+[
+  {
+    "kind": "for in",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "tokens": [
+          {
+            "name": "y",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "braces",
+        "tokens": [
+          {
+            "name": "z",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > for group > for colon 1`] = `
 [
   {
     "kind": "for in",
@@ -34,6 +111,51 @@ exports[`group kinds > for group > parseTokens 1`] = `
   {
     "name": "z",
     "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > pair groups > braces 1`] = `
+[
+  {
+    "kind": "braces",
+    "tokens": [
+      {
+        "name": "x",
+        "type": "identifier",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > pair groups > brackets 1`] = `
+[
+  {
+    "kind": "brackets",
+    "tokens": [
+      {
+        "name": "x",
+        "type": "identifier",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > pair groups > parens 1`] = `
+[
+  {
+    "kind": "parentheses",
+    "tokens": [
+      {
+        "name": "x",
+        "type": "identifier",
+      },
+    ],
+    "type": "group",
   },
 ]
 `;
