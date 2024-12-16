@@ -1,5 +1,93 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`group kinds > fn group > fn arrow 1`] = `
+[
+  {
+    "kind": "function",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "arrow",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > fn group > fn braces 1`] = `
+[
+  {
+    "kind": "function",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "braces",
+        "tokens": [
+          {
+            "name": "z",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > fn group > fn colon 1`] = `
+[
+  {
+    "kind": "function",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "colon",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
 exports[`group kinds > for group > for arrow 1`] = `
 [
   {
@@ -115,6 +203,308 @@ exports[`group kinds > for group > for colon 1`] = `
 ]
 `;
 
+exports[`group kinds > if group > if arrow 1`] = `
+[
+  {
+    "kind": "if",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "y",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "arrow",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > if group > if braces 1`] = `
+[
+  {
+    "kind": "if",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "y",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "braces",
+        "tokens": [
+          {
+            "name": "z",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > if group > if colon 1`] = `
+[
+  {
+    "kind": "if",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "y",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "colon",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > inject group > inject arrow 1`] = `
+[
+  {
+    "kind": "inject",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "arrow",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > inject group > inject braces 1`] = `
+[
+  {
+    "kind": "inject",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "braces",
+        "tokens": [
+          {
+            "name": "z",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > inject group > inject colon 1`] = `
+[
+  {
+    "kind": "inject",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "colon",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > mask group > mask arrow 1`] = `
+[
+  {
+    "kind": "mask",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "arrow",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > mask group > mask braces 1`] = `
+[
+  {
+    "kind": "mask",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "braces",
+        "tokens": [
+          {
+            "name": "z",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > mask group > mask colon 1`] = `
+[
+  {
+    "kind": "mask",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "colon",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > match group > parseTokens 1`] = `
+[
+  {
+    "kind": "match",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "braces",
+        "tokens": [
+          {
+            "name": "a",
+            "type": "identifier",
+          },
+          {
+            "name": "->",
+            "type": "identifier",
+          },
+          {
+            "name": "b",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
 exports[`group kinds > pair groups > braces 1`] = `
 [
   {
@@ -156,6 +546,182 @@ exports[`group kinds > pair groups > parens 1`] = `
       },
     ],
     "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > while group > while arrow 1`] = `
+[
+  {
+    "kind": "while",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "arrow",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > while group > while braces 1`] = `
+[
+  {
+    "kind": "while",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "braces",
+        "tokens": [
+          {
+            "name": "z",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > while group > while colon 1`] = `
+[
+  {
+    "kind": "while",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "colon",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > without group > without arrow 1`] = `
+[
+  {
+    "kind": "without",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "arrow",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > without group > without braces 1`] = `
+[
+  {
+    "kind": "without",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "braces",
+        "tokens": [
+          {
+            "name": "z",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > without group > without colon 1`] = `
+[
+  {
+    "kind": "without",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "colon",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
   },
 ]
 `;

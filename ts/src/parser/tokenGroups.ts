@@ -17,8 +17,18 @@ export enum TokenGroupKind {
   Braces = "braces",
   Brackets = "brackets",
   ForIn = "for in",
+  While = "while",
+  Inject = "inject",
+  Mask = "mask",
+  Without = "without",
   Colon = "colon",
   Arrow = "arrow",
+  Else = "else",
+  If = "if",
+  Match = "match",
+  Record = "record",
+  Dict = "dict",
+  Function = "function",
 }
 
 export type TokenGroup = (
@@ -153,6 +163,138 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       }
 
       return yield* group(tokens, TokenGroupKind.ForIn, start);
+    }
+
+    if (token.name === "if") {
+      const start: number = yield Parser.rememberedIndex();
+      const tokens: TokenGroup[] = [];
+      let current: string | null = "for";
+
+      tokens.push(
+        yield parseTokenGroup(":", "->", "{", "}", "else").chain(function* ({ tokens, closed }) {
+          current = closed;
+          if (["{", ":", "->"].includes(closed!)) return tokens;
+          return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
+        })
+      );
+
+      if (!["{", ":", "->"].includes(current)) {
+        const operandError = SystemError.missingOperand(indexPosition(yield Parser.index()));
+        tokens.push(error(operandError, group3([])));
+        return yield* group(tokens, TokenGroupKind.If, start);
+      } else if (current === "{") {
+        tokens.push(yield* parseBraces());
+        const hasElse = false;
+        if (hasElse) tokens.push(yield* group([], TokenGroupKind.Else));
+        return yield* group(tokens, TokenGroupKind.If, start);
+      } else if (current === ":") {
+        // const { tokens: _tokens, closed } = yield parseTokenGroup("else");
+
+        // tokens.push(
+        //   yield parseTokenGroup("else").chain(function* ({ tokens, closed }) {
+        //     current = closed;
+        //     if (closed) return tokens;
+        //     return yield* group([], TokenGroupKind.Colon) as any;
+        //   })
+        // );
+
+        tokens.push(yield* group([], TokenGroupKind.Colon));
+        return yield* group(tokens, TokenGroupKind.If, start);
+      }
+
+      tokens.push(yield* group([], TokenGroupKind.Arrow));
+      return yield* group(tokens, TokenGroupKind.If, start);
+    }
+
+    if (token.name === "fn") {
+      const start: number = yield Parser.rememberedIndex();
+      const tokens: TokenGroup[] = [];
+      let current: string | null = "fn";
+
+      tokens.push(
+        yield parseTokenGroup(":", "->", "{", "}").chain(function* ({ tokens, closed }) {
+          current = closed;
+          if (["{", ":", "->"].includes(closed!)) return tokens;
+          return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
+        })
+      );
+
+      if (!["{", ":", "->"].includes(current)) {
+        const operandError = SystemError.missingOperand(indexPosition(yield Parser.index()));
+        tokens.push(error(operandError, group3([])));
+      } else if (current === "{") {
+        tokens.push(yield* parseBraces());
+      } else if (current === ":") {
+        tokens.push(yield* group([], TokenGroupKind.Colon));
+      } else if (current === "->") {
+        tokens.push(yield* group([], TokenGroupKind.Arrow));
+      }
+
+      return yield* group(tokens, TokenGroupKind.Function, start);
+    }
+
+    if (["while", "inject", "mask", "without"].includes(token.name)) {
+      const start: number = yield Parser.rememberedIndex();
+      const tokens: TokenGroup[] = [];
+      let current: string | null = "for";
+
+      tokens.push(
+        yield parseTokenGroup(":", "->", "{", "}").chain(function* ({ tokens, closed }) {
+          current = closed;
+          if (["{", ":", "->"].includes(closed!)) return tokens;
+          return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
+        })
+      );
+
+      if (!["{", ":", "->"].includes(current)) {
+        const operandError = SystemError.missingOperand(indexPosition(yield Parser.index()));
+        tokens.push(error(operandError, group3([])));
+      } else if (current === "{") {
+        tokens.push(yield* parseBraces());
+      } else if (current === ":") {
+        tokens.push(yield* group([], TokenGroupKind.Colon));
+      } else if (current === "->") {
+        tokens.push(yield* group([], TokenGroupKind.Arrow));
+      }
+
+      return yield* group(tokens, token.name as TokenGroupKind, start);
+    }
+
+    if (token.name === "match") {
+      const start: number = yield Parser.rememberedIndex();
+      const tokens: TokenGroup[] = [];
+      let current: string | null = "match";
+
+      tokens.push(
+        yield parseTokenGroup("{", "}").chain(function* ({ tokens, closed }) {
+          current = closed;
+          if (closed === "{") return tokens;
+          return error(yield* unbalancedOpenToken(start, "match", "{") as any, tokens);
+        })
+      );
+
+      if (current !== "{") {
+        const operandError = SystemError.missingOperand(indexPosition(yield Parser.index()));
+        tokens.push(error(operandError, group3([])));
+      } else if (current === "{") {
+        tokens.push(yield* parseBraces());
+      }
+
+      return yield* group(tokens, TokenGroupKind.Match, start);
+    }
+
+    if (token.name === "record") {
+      const start: number = yield Parser.rememberedIndex();
+      const block = yield* parseBraces();
+
+      return yield* group([block], TokenGroupKind.Record, start);
+    }
+
+    if (token.name === "dict") {
+      const start: number = yield Parser.rememberedIndex();
+      const block = yield* parseBraces();
+
+      return yield* group([block], TokenGroupKind.Dict, start);
     }
   }
 
