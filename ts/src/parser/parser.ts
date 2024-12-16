@@ -24,6 +24,7 @@ import {
 import { inject, Injectable } from "./injector.js";
 import { CompileContext } from "./evaluate/index.js";
 import { Diagnostic, primaryDiagnosticLabel } from "codespan-napi";
+import type { TokenGroup } from "./tokenGroups.js";
 
 export const getExprPrecedence = (node: Tree): Precedence =>
   inject(Injectable.ASTNodePrecedenceMap).get(node.id) ?? _getExprPrecedence(node.type);
@@ -992,7 +993,7 @@ const parsePattern =
     ];
   };
 
-export const parseScript = (src: Token[]) => {
+export const parseScript = (src: TokenGroup[]) => {
   const context = newContext();
   const [_, expr] = parseExpr(context)(src, 0);
   return script(expr);

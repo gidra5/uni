@@ -1,32 +1,32 @@
 import { beforeEach, describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 
-import { parseTokens } from "../../src/parser/tokens.ts";
-import { parseScript } from "../../src/parser.ts";
-import { Injectable, register } from "../../src/injector.ts";
+import { parseTokenGroups } from "../src/parser/tokenGroups.ts";
+import { parseScript } from "../src/parser/parser.ts";
+import { Injectable, register } from "../src/injector.ts";
+import { Tree } from "../src/ast.ts";
 import { FileMap } from "codespan-napi";
-import { Tree } from "../../src/ast.ts";
 
 beforeEach(() => {
   register(Injectable.FileMap, new FileMap());
-  register(Injectable.ASTNodeNextId, 0);
+  register(Injectable.NextId, 0);
   register(Injectable.ASTNodePrecedenceMap, new Map());
-  register(Injectable.ASTNodePositionMap, new Map());
+  register(Injectable.PositionMap, new Map());
 });
 
+function clearIds(ast: Tree) {
+  if (ast.children.length > 0) {
+    ast.children.forEach(clearIds);
+  }
+  delete (ast as any).id;
+  return ast;
+}
+
 const testCase = (input: string) => {
-  const tokens = parseTokens(input);
+  const tokens = parseTokenGroups(input);
   const ast = parseScript(tokens);
 
   expect(clearIds(ast)).toMatchSnapshot();
-
-  function clearIds(ast: Tree) {
-    if (ast.children.length > 0) {
-      ast.children.forEach(clearIds);
-    }
-    delete (ast as any).id;
-    return ast;
-  }
 };
 
 describe("advent of code 1 single file", () => {
@@ -50,7 +50,7 @@ describe("advent of code 1 single file", () => {
         lines := {
           lines := split document "\\n"
           lines = map lines (replace "\\w+" "")
-          lines = filter lines fn line do line != ""
+          lines = filter lines fn line: line != ""
         }
       `));
 
@@ -60,9 +60,9 @@ describe("advent of code 1 single file", () => {
           digits := ()
   
           while line != "" {
-            if match "\d" (char_at line 0) {
+            if (char_at line 0).match "\d" {
               digit := number(char_at line 0)
-              if !digits[0] do digits[0] = digit
+              if !digits[0]: digits[0] = digit
               digits[1] = digit
             }
             (_, ...line) = line
@@ -87,7 +87,7 @@ describe("advent of code 1 single file", () => {
     testCase(`
         reduce := fn list, reducer, merge, initial {
           len := length list
-          if len == 0 do return initial
+          if len == 0: return initial
         
           midpoint := floor(len / 2)
           item := list[midpoint]
@@ -161,13 +161,19 @@ describe("expressions", () => {
       it.todo("a + send (2, 3)", () => testCase(`a + send (2, 3)`));
       it("methods chaining", () => testCase(`math.floor(1).multiply(2)`));
       it("function as last arg", () => testCase(`open "file" file -> write file "yolo"`));
+      it("block as last arg", () => testCase(`open "file" { write "yolo" }`));
       it("pipe", () => testCase(`1 |> fn x { x + 1 } |> fn y { y * 2 }`));
-      it.todo("function call placeholder arg", () => testCase(`f _ y`));
-      it.todo("function call placeholder args", () => testCase(`f _ y _`));
+
+      describe("function call delimiters", () => {
+        it.todo("delimited args", () => testCase(`f(x, y)`));
+        it.todo("placeholder arg", () => testCase(`f(_, y)`));
+        it.todo("placeholder args", () => testCase(`f(_, y, _)`));
+        it.todo("spread args", () => testCase(`f(...x, y)`));
+      });
     });
 
     describe("function forms", () => {
-      it("immediate form", () => testCase(`fn do x; y`));
+      it("immediate form", () => testCase(`fn: x; y`));
       it("block form", () => testCase(`fn { x }`));
       it("rest form", () => testCase(`fn -> x; y`));
     });
@@ -178,24 +184,24 @@ describe("expressions", () => {
       testCase(`
         y := {
           x := 25
-          loop if x < 0 do break x else {
+          loop if x < 0: break x else {
             y := x
             x = x - 1
-            if y == 19 do continue 69
+            if y == 19: continue 69
             y
           }
         }
       `));
 
-    it("if-then", () => testCase(`if true do 123`));
-    it("if-then-else", () => testCase(`if true do 123 else 456`));
-    it("if-then-elseif-then-else", () => testCase(`if true do 123 else if false do 789 else 456`));
+    it("if-then", () => testCase(`if true: 123`));
+    it("if-then-else", () => testCase(`if true: 123 else 456`));
+    it("if-then-elseif-then-else", () => testCase(`if true: 123 else if false: 789 else 456`));
     it("sequence", () => testCase(`123; 234; 345; 456`));
     it("block sequence", () => testCase(`{ 123; 234; 345; 456 }`));
     it("parens sequence", () => testCase(`(123; 234; 345; 456)`));
     it("block", () => testCase(`{ 123 }`));
-    it("for loop", () => testCase(`for x in (1, 2, 3) do x`));
-    it("while loop", () => testCase(`while true do 123`));
+    it("for loop", () => testCase(`for x in (1, 2, 3): x`));
+    it("while loop", () => testCase(`while true: 123`));
     it("loop", () => testCase(`loop 123`));
     it("loop scope", () => testCase(`loop { x }`));
     it("labeled expression", () => testCase(`label::123`));
@@ -204,7 +210,7 @@ describe("expressions", () => {
     it("post increment", () => testCase(`x++`));
 
     describe("statement forms", () => {
-      it("immediate form", () => testCase(`if true do 123; 456`));
+      it("immediate form", () => testCase(`if true: 123; 456`));
       it("block form", () => testCase(`if true { 123 }`));
       it("rest form", () => testCase(`if true -> 123; 456`));
     });
@@ -213,12 +219,14 @@ describe("expressions", () => {
   describe("concurrent programming", () => {
     it("channel send", () => testCase(`c <- 123`));
     it("channel receive", () => testCase(`<- c`));
-    it("channel try send", () => testCase(`c ?<- 123`));
+    it("channel try send", () => testCase(`c <-? 123`));
     it("channel try receive", () => testCase(`<-? c`));
     it("try receive with assignment", () => testCase(`status := <-?numbers`));
+    it("superposition value", () => testCase(`123 & 456`));
     it("parallel value", () => testCase(`123 | 456`));
     it("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
     it("parallel with channels", () => testCase(`c <- 123 | <- c`));
+    it.todo("select channels", () => testCase(`c1 + c2`));
     it("async", () => testCase(`async f x`));
     it("async index", () => testCase(`async f.a`));
     it("await async", () => testCase(`await async f x`));
@@ -228,13 +236,12 @@ describe("expressions", () => {
   describe("data structures", () => {
     it("unit", () => testCase(`()`));
     it("tuple", () => testCase(`list, reducer, merge, initial`));
-    it("record single", () => testCase(`a: 1`));
-    it("record", () => testCase(`a: 1, b: 2`));
-    it("tuple with single item (atom)", () => testCase(`(:a,)`));
+    it("record single", () => testCase(`record { a: 1 }`));
+    it("record", () => testCase(`record { a: 1, b: 2 }`));
+    it("tuple with single item (atom)", () => testCase(`($a,)`));
     it("(-(2+7)/A,j, i, 127.0 )", () => testCase(`(-(2+7)/A,j, i, 127.0 )`));
-    it("atom (global symbol)", () => testCase(`:atom`));
-    it("dictionary", () => testCase(`[1]: 2, [3]: 4`));
-    it("map without braces", () => testCase(`1+2: 3, 4+5: 6`));
+    it("atom (global symbol)", () => testCase(`$atom`));
+    it("dictionary", () => testCase(`dict { [1]: 2, [3]: 4 }`));
     it("period operator", () => testCase(`math.floor`));
     it("index", () => testCase(`x[0]`));
     it("field assignment", () => testCase(`x.y = 123`));
@@ -242,34 +249,26 @@ describe("expressions", () => {
   });
 
   describe("effect handlers", () => {
-    it("inject", () => testCase(`inject a: 1, b: 2 { 1 }`));
-    it("mask", () => testCase(`mask "a", "b" { 1 }`));
-    it("without", () => testCase(`without "a", "b" { 1 }`));
+    it("inject", () => testCase(`inject record { a: 1, b: 2 } { 1 }`));
+    it("mask", () => testCase(`mask $a, $b { 1 }`));
+    it("without", () => testCase(`without $a, $b { 1 }`));
     it("complex", () =>
       testCase(`
-        inject a: 1, b: 2 {
-          { a, b } := handlers
-          inject a: a+1, b: b+2 {
-            mask "a" {
-              without "b" {
-                { a } := handlers
-                a + 1
-              }
-            }
-          }  
-        }
+        inject record { a: 1, b: 2 } ->
+        { a, b } := handlers
+         
+        inject record { a: a+1, b: b+2 } ->
+        mask $a ->
+        without $b ->
+
+        { a } := handlers
+        a + 1
       `));
-  });
-
-  describe("signals", () => {
-    it.todo("value", () => `signal 123`);
-
-    it.todo("derived", () => `signal (x + y)`);
   });
 });
 
 describe("pattern matching", () => {
-  it("switch", () => testCase(`match a { 1 -> 2; 2 -> 3; _ -> 4 }`));
+  it("match", () => testCase(`match a { 1 -> 2; 2 -> 3; _ -> 4 }`));
 
   it("in function parameters", () => testCase(`(x, y) -> x + y`));
   it("declare record pattern", () => testCase(`{ a, b } := handlers`));
@@ -292,43 +291,58 @@ describe("pattern matching", () => {
   it("with name for match", () => testCase(`x is ((a, b) @ c)`));
   it("with like pattern", () => testCase(`x is like { a, b }`));
   it("with strict pattern", () => testCase(`x is like (a, strict { b })`));
+  it("with nested value", () => testCase(`x is a.b and a.b == x`));
+  it("with merging nested value", () => testCase(`x is (a.b and a.c) and a.b == x and a.c == x`));
+  it("with dynamically nested value", () => testCase(`x is a[b] and a[b] == x`));
+  it("with dynamic name", () => testCase(`x is [$a] and [$a] == x`));
+  it("with unwrapping", () => testCase(`x is some a`));
 
   it("binding visible in scope where it is true", () => testCase(`x is (a, b) and a == b + 1`));
 
   describe("set-theoretic patterns", () => {
     test.todo("pattern union", () => {
-      const src = `((x:x, y:y) or (y:y, z:z)) -> y`;
+      const src = `({ x, y } or { y, z }) -> y`;
       testCase(src);
     });
 
     test.todo("pattern intersection", () => {
-      const src = `((x:x, y:y) and (z:z)) -> x + y + z`;
+      const src = `({ x, y } and { z }) -> x + y + z`;
       testCase(src);
     });
 
     test.todo("pattern negation", () => {
-      const src = `(!(x:x, y:y)) -> x + y + z`;
+      const src = `(not { x, y }) -> x + y + z`;
       testCase(src);
     });
   });
 
   test.todo("with type", () => {
+    const src = `x is (a: number, b)`;
+    testCase(src);
+  });
+
+  test.todo("record pattern with type", () => {
+    const src = `x is { a: type number, b }`;
+    testCase(src);
+  });
+
+  test.todo("with anonymous type", () => {
     const src = `x is (type number, a)`;
     testCase(src);
   });
 });
 
 describe("types", () => {
-  it.todo("declaration with type", () => testCase("x: number = 1"));
+  it.todo("declaration with type", () => testCase("x: number := 1"));
   it.todo("typeof", () => testCase("typeof x"));
   it.todo("type cast", () => testCase("x as number"));
   it.todo("type coalesce right", () => testCase("x :> number"));
 
   describe("functions", () => {
-    it.todo("function type", () => testCase('x: number -> string = fn do "1"'));
-    it.todo("function type with multiple args", () => testCase('x: fn number, string -> string = fn do "1"'));
-    it.todo("function type with named args", () => testCase('x: fn x: number, y: string -> string = fn do "1"'));
-    it.todo("parametric function type", () => testCase('x: fn x: infer y -> y or number = fn do "1"'));
+    it.todo("function type", () => testCase('x: number -> string = fn: "1"'));
+    it.todo("function type with multiple args", () => testCase('x: fn number, string -> string = fn: "1"'));
+    it.todo("function type with named args", () => testCase('x: fn x: number, y: string -> string = fn: "1"'));
+    it.todo("parametric function type", () => testCase('x: fn x: infer y -> y or number = fn: "1"'));
   });
 });
 
@@ -365,7 +379,7 @@ describe("programs", () => {
 });
 
 describe("newline handling", () => {
-  it("for loop newline", () => testCase(`for x in 1, 2, 3 do\n x`));
+  it("for loop newline", () => testCase(`for x in 1, 2, 3:\n x`));
   it("parallel parens", () => testCase(`(\n| 1\n| 2\n)`));
   it("parallel", () => testCase(`| 1\n| 2`));
   it("chaining", () => testCase(`a\n.b`));
@@ -374,11 +388,11 @@ describe("newline handling", () => {
   it("prefix", () => testCase(`!\na`));
   it("infix-prefix", () => testCase(`b :=\n !\na`));
   it("infix-infix", () => testCase(`b +\nc +\nd`));
-  it("if else separate lines", () => testCase(`if a do\n 1\n else\n 2`));
-  it("if-then newline", () => testCase(`if true do\n 123`));
-  it("if-then newline-else", () => testCase(`if true do\n 123 else 456`));
-  it("if-then newline-else newline", () => testCase(`if true do\n 123 else\n 456`));
-  it("if-then post newline", () => testCase(`if true do 123\nelse 456`));
+  it("if else separate lines", () => testCase(`if a:\n 1\n else\n 2`));
+  it("if-then newline", () => testCase(`if true:\n 123`));
+  it("if-then newline-else", () => testCase(`if true:\n 123 else 456`));
+  it("if-then newline-else newline", () => testCase(`if true:\n 123 else\n 456`));
+  it("if-then post newline", () => testCase(`if true: 123\nelse 456`));
   it("if-then post newline block", () => testCase(`if true { 123 }\nelse 456`));
   it("block newline in the middle", () => testCase(`{ a := 1\n b := 2 }`));
   it("block newline at the end", () => testCase(`{ a := 1\n b := 2\n }`));
@@ -387,7 +401,7 @@ describe("newline handling", () => {
   it("block semicolon newline at the end", () => testCase(`{ a := 1;\n b := 2;\n }`));
   it("newline at the end", () => testCase(`1\n`));
   it("semicolon-newline at the end", () => testCase(`1;\n`));
-  it("empty switch with newline", () => testCase(`switch a { \n }`));
+  it("empty switch with newline", () => testCase(`match a { \n }`));
   // it.todo('application-newline-increment', () => testCase(`f a\n ++b`));
   it("pipe", () => testCase(`1 \n|> fn x { x + 1 } \n|> fn y { y * 2 }`));
 });

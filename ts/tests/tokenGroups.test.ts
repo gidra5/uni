@@ -36,8 +36,55 @@ const testCase = (input: string) => {
 };
 
 describe("group kinds", () => {
+  describe("pair groups", () => {
+    test("parseTokens", () => testCase("(x)"));
+    test("parseTokens", () => testCase("[x]"));
+    test("parseTokens", () => testCase("{x}"));
+  });
+
   describe("for group", () => {
     test("parseTokens", () => testCase("for x in y: z"));
+    test("parseTokens", () => testCase("for x in y -> z"));
+    test("parseTokens", () => testCase("for x in y { z }"));
+  });
+
+  describe("while group", () => {
+    test("parseTokens", () => testCase("while x: z"));
+    test("parseTokens", () => testCase("while x -> z"));
+    test("parseTokens", () => testCase("while x { z }"));
+  });
+
+  describe("inject group", () => {
+    test("parseTokens", () => testCase("inject x: z"));
+    test("parseTokens", () => testCase("inject x -> z"));
+    test("parseTokens", () => testCase("inject x { z }"));
+  });
+
+  describe("mask group", () => {
+    test("parseTokens", () => testCase("mask x: z"));
+    test("parseTokens", () => testCase("mask x -> z"));
+    test("parseTokens", () => testCase("mask x { z }"));
+  });
+
+  describe("without group", () => {
+    test("parseTokens", () => testCase("without x: z"));
+    test("parseTokens", () => testCase("without x -> z"));
+    test("parseTokens", () => testCase("without x { z }"));
+  });
+
+  describe("fn group", () => {
+    test("parseTokens", () => testCase("fn x: z"));
+    test("parseTokens", () => testCase("fn x -> z"));
+    test("parseTokens", () => testCase("fn x { z }"));
+    test("parseTokens", () => testCase("fn x -> y { z }"));
+  });
+
+  describe("if group", () => {
+    test("parseTokens", () => testCase("if y: z"));
+    test("parseTokens", () => testCase("if y { z }"));
+    test("parseTokens", () => testCase("if y -> z"));
+    test("parseTokens", () => testCase("if y: z else x"));
+    test("parseTokens", () => testCase("if y { z } else x"));
   });
 });
 
