@@ -106,6 +106,14 @@ const endOfSourceError = function* () {
   return { id: nextId(), type: "error", cause, token } satisfies Token;
 };
 
+const stringLiteralError = function* (value: string) {
+  const id = nextId();
+  const pos: Position = yield Parser.span();
+  setPos(id, pos);
+  const cause = SystemError.unterminatedString(pos);
+  return { id, type: "error", cause, value } satisfies StringToken;
+};
+
 const number = function* (value: string) {
   const id = nextId();
   setPos(id, yield Parser.span());
@@ -156,26 +164,15 @@ const stringLastSegment = function* (value: string) {
   return { id, type: "lastSegment", value } satisfies StringToken;
 };
 
-const stringLiteralError = function* (value: string) {
-  const id = nextId();
-  const pos: Position = yield Parser.span();
-  setPos(id, pos);
-  const cause = SystemError.unterminatedString(pos);
-  return { id, type: "error", cause, value } satisfies StringToken;
-};
-
 const parseHexStyleLiteral = (prefix: string, digitRegexp: RegExp, error: Parser<string, Token>) =>
   Parser.do(function* () {
-    if (!(yield Parser.checkRegexp(digitRegexp))) {
-      return yield error;
-    }
-
     let value = prefix;
     while ((yield Parser.checkRegexp(digitRegexp)) || (yield Parser.checkString("_"))) {
       const prev = yield Parser.nextChar();
       if (prev !== "_") value += prev;
     }
 
+    if (value === prefix) return yield error;
     return yield* number(value);
   });
 

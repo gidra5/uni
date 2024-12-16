@@ -149,12 +149,12 @@ export class SystemError extends Error {
   static invalidBinaryLiteral(pos: Position): SystemError {
     return new SystemError(ErrorType.INVALID_BINARY_LITERAL, "Invalid binary literal")
       .withPrimaryLabel("expected digits 0 or 1", {
-        start: pos.start + 2,
-        end: pos.start + 3,
+        start: pos.end,
+        end: pos.end,
       })
-      .withNote(
-        "Valid binary literals start with 0b and digits 0 or 1 (binary digits), which may be followed by more binary digits, optionally separated by underscores"
-      );
+      .withNote("Valid binary literals start with 0b, which must")
+      .withNote("be followed by at least one binary digit (0-1),")
+      .withNote("optionally separated by underscores");
   }
 
   static unclosedBlockComment(pos: Position): SystemError {
@@ -166,23 +166,23 @@ export class SystemError extends Error {
   static invalidOctalLiteral(pos: Position): SystemError {
     return new SystemError(ErrorType.INVALID_OCTAL_LITERAL, "Invalid octal literal")
       .withPrimaryLabel("expected a digit between 0 and 7", {
-        start: pos.start + 2,
-        end: pos.start + 3,
+        start: pos.end,
+        end: pos.end,
       })
-      .withNote(
-        "Valid octal literals start with 0o and a digit between 0 and 7 (octal digits), which may be followed by more octal digits, optionally separated by underscores"
-      );
+      .withNote("Valid binary literals start with 0o, which must")
+      .withNote("be followed by at least one octal digit (0-7),")
+      .withNote("optionally separated by underscores");
   }
 
   static invalidHexLiteral(pos: Position): SystemError {
     return new SystemError(ErrorType.INVALID_HEX_LITERAL, "Invalid hex literal")
       .withPrimaryLabel("expected a digit or a letter between a and f (case insensitive)", {
-        start: pos.start + 2,
-        end: pos.start + 3,
+        start: pos.end,
+        end: pos.end,
       })
-      .withNote(
-        "Valid hex literals start with 0x and a digit or a case insensitive letter between a and f (hex digits), which may be followed by more hex digits, optionally separated by underscores"
-      );
+      .withNote("Valid binary literals start with 0x, which must")
+      .withNote("be followed by at least one hex digit (0-9a-fA-F),")
+      .withNote("optionally separated by underscores");
   }
 
   static missingToken(pos: Position, ...tokens: string[]): SystemError {

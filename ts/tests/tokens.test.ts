@@ -35,7 +35,7 @@ describe("string token", () => {
     const src = `${value}"`;
     const startIndex = 0;
     const expectedToken = { type: "lastSegment", value };
-    const expectedIndex = value.length ;
+    const expectedIndex = value.length;
 
     const [{ index }, token] = parseStringToken.parse(src, { index: startIndex });
 
@@ -122,6 +122,24 @@ describe("string token", () => {
     expect(index).toBe(expectedIndex);
     expect(dropId(token)).toEqual(expectedToken);
   });
+
+  test.prop([stringInsidesArb, stringInsidesArb])(
+    "string token with newline escape",
+    async (literalLeft, literalRight) => {
+      await eventLoopYield();
+
+      const startIndex = 0;
+      const src = `${literalLeft}\\\n${literalRight}"`;
+      const value = `${literalLeft}\n${literalRight}`;
+      const expectedIndex = literalLeft.length + literalRight.length + 2;
+      const expectedToken = { type: "lastSegment", value };
+
+      const [{ index }, token] = parseStringToken.parse(src, { index: startIndex });
+
+      expect(index).toBe(expectedIndex);
+      expect(dropId(token)).toEqual(expectedToken);
+    }
+  );
 
   test.prop([stringInsidesArb])("unclosed string token before newline", async (literal) => {
     await eventLoopYield();
@@ -268,6 +286,54 @@ describe("number token", () => {
 
     expect(index).toBe(expectedIndex);
     expect((token as any).value).toEqual(expectedToken.value);
+    expect(dropId(token)).toEqual(expectedToken);
+  });
+
+  it.prop([fc.stringMatching(/^0x_*$/)])("hex literals with error", (src) => {
+    const startIndex = 0;
+    const pos = position(startIndex, startIndex + src.length);
+    const expectedToken = {
+      type: "error",
+      cause: SystemError.invalidHexLiteral(pos),
+      token: { type: "number", value: 0 },
+    };
+    const expectedIndex = src.length;
+
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
+
+    expect(index).toBe(expectedIndex);
+    expect(dropId(token)).toEqual(expectedToken);
+  });
+
+  it.prop([fc.stringMatching(/^0o_*$/)])("octal literals with error", (src) => {
+    const startIndex = 0;
+    const pos = position(startIndex, startIndex + src.length);
+    const expectedToken = {
+      type: "error",
+      cause: SystemError.invalidOctalLiteral(pos),
+      token: { type: "number", value: 0 },
+    };
+    const expectedIndex = src.length;
+
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
+
+    expect(index).toBe(expectedIndex);
+    expect(dropId(token)).toEqual(expectedToken);
+  });
+
+  it.prop([fc.stringMatching(/^0b_*$/)])("binary literals with error", (src) => {
+    const startIndex = 0;
+    const pos = position(startIndex, startIndex + src.length);
+    const expectedToken = {
+      type: "error",
+      cause: SystemError.invalidBinaryLiteral(pos),
+      token: { type: "number", value: 0 },
+    };
+    const expectedIndex = src.length;
+
+    const [{ index }, token] = parseToken.parse(src, { index: startIndex });
+
+    expect(index).toBe(expectedIndex);
     expect(dropId(token)).toEqual(expectedToken);
   });
 });
