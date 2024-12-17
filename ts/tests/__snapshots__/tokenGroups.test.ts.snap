@@ -29,6 +29,45 @@ exports[`group kinds > fn group > fn arrow 1`] = `
 ]
 `;
 
+exports[`group kinds > fn group > fn arrow braces 1`] = `
+[
+  {
+    "kind": "function",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "tokens": [
+          {
+            "name": "y",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "kind": "braces",
+        "tokens": [
+          {
+            "name": "z",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
 exports[`group kinds > fn group > fn braces 1`] = `
 [
   {
@@ -467,7 +506,7 @@ exports[`group kinds > mask group > mask colon 1`] = `
 ]
 `;
 
-exports[`group kinds > match group > parseTokens 1`] = `
+exports[`group kinds > match group > match 1`] = `
 [
   {
     "kind": "match",

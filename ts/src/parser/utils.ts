@@ -109,8 +109,16 @@ export class Parser<in T, out U, C extends BaseContext = BaseContext> {
     return new Parser((src, ctx) => [ctx, ctx.index]);
   }
 
-  static rememberIndex<C extends BaseContext>(): Parser<any, void, C> {
-    return new Parser((src, ctx) => [{ ...ctx, rememberedIndex: ctx.index }, void 0]);
+  static rememberIndex<C extends BaseContext>(i?: number): Parser<any, void, C> {
+    return new Parser((src, ctx) => [{ ...ctx, rememberedIndex: i ?? ctx.index }, void 0]);
+  }
+
+  static resetIndex<C extends BaseContext>(i?: number): Parser<any, void, C> {
+    return new Parser((src, ctx) => {
+      const index = i ?? ctx.rememberedIndex;
+      assert(index !== undefined, "must be used after rememberIndex performed");
+      return [{ ...ctx, index }, void 0];
+    });
   }
 
   static rememberedIndex<C extends BaseContext>(): Parser<any, number | undefined, C> {

@@ -227,7 +227,21 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       } else if (current === ":") {
         tokens.push(yield* group([], TokenGroupKind.Colon));
       } else if (current === "->") {
-        tokens.push(yield* group([], TokenGroupKind.Arrow));
+        const rememberedIndex = yield Parser.rememberIndex();
+        const start: number = yield Parser.index();
+        const x = yield parseTokenGroup("{").chain(function* ({ tokens, closed }) {
+          current = closed;
+          if (closed === "{") return tokens;
+          return null;
+        });
+        if (!x) {
+          yield Parser.resetIndex(start);
+          yield Parser.rememberIndex(rememberedIndex);
+          tokens.push(yield* group([], TokenGroupKind.Arrow));
+        } else {
+          tokens.push(x);
+          tokens.push(yield* parseBraces());
+        }
       }
 
       return yield* group(tokens, TokenGroupKind.Function, start);
@@ -273,28 +287,14 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
         })
       );
 
-      if (current !== "{") {
+      if (current === "{") {
+        tokens.push(yield* parseBraces());
+      } else {
         const operandError = SystemError.missingOperand(indexPosition(yield Parser.index()));
         tokens.push(error(operandError, group3([])));
-      } else if (current === "{") {
-        tokens.push(yield* parseBraces());
       }
 
       return yield* group(tokens, TokenGroupKind.Match, start);
-    }
-
-    if (token.name === "record") {
-      const start: number = yield Parser.rememberedIndex();
-      const block = yield* parseBraces();
-
-      return yield* group([block], TokenGroupKind.Record, start);
-    }
-
-    if (token.name === "dict") {
-      const start: number = yield Parser.rememberedIndex();
-      const block = yield* parseBraces();
-
-      return yield* group([block], TokenGroupKind.Dict, start);
     }
   }
 

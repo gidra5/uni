@@ -89,7 +89,7 @@ describe("group kinds", () => {
     test("fn colon", () => testCase("fn x: z"));
     test("fn arrow", () => testCase("fn x -> z"));
     test("fn braces", () => testCase("fn x { z }"));
-    test.todo("fn arrow braces", () => testCase("fn x -> y { z }"));
+    test("fn arrow braces", () => testCase("fn x -> y { z }"));
   });
 
   describe("if group", () => {
@@ -100,13 +100,8 @@ describe("group kinds", () => {
     test.todo("if braces else", () => testCase("if y { z } else x"));
   });
 
-  describe.todo("record group", () => {
-    test("record braces", () => testCase("record { a }"));
-    test("dict braces", () => testCase("dict { a }"));
-  });
-
   describe("match group", () => {
-    test("parseTokens", () => testCase("match x { a -> b }"));
+    test("match", () => testCase("match x { a -> b }"));
   });
 });
 
