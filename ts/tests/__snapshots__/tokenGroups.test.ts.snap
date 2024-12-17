@@ -127,6 +127,99 @@ exports[`group kinds > fn group > fn colon 1`] = `
 ]
 `;
 
+exports[`group kinds > for group > errors > block missing block end 1`] = `
+[
+  {
+    "kind": "for in",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "tokens": [
+          {
+            "name": "y",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "kind": "braces",
+          "tokens": [
+            {
+              "cause": [Error: Unexpected end of source],
+              "token": {
+                "type": "placeholder",
+              },
+              "type": "error",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > for group > errors > missing everything 1`] = `
+[
+  {
+    "kind": "for in",
+    "tokens": [
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "tokens": [
+            {
+              "name": "x",
+              "type": "identifier",
+            },
+            {
+              "cause": [Error: Unexpected end of source],
+              "token": {
+                "type": "placeholder",
+              },
+              "type": "error",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
 exports[`group kinds > for group > for arrow 1`] = `
 [
   {

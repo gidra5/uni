@@ -35,7 +35,7 @@ const testCase = (input: string) => {
   expect(tokenGroups.map(clearIds)).toMatchSnapshot();
 };
 
-describe("group kinds", () => {
+describe.only("group kinds", () => {
   describe("pair groups", () => {
     test("parens", () => testCase("(x)"));
     test("brackets", () => testCase("[x]"));
@@ -47,17 +47,17 @@ describe("group kinds", () => {
     test("for arrow", () => testCase("for x in y -> z"));
     test("for braces", () => testCase("for x in y { z }"));
 
-    describe.todo("errors", () => {
-      test("parseTokens", () => testCase("for x in y {"));
-      test("parseTokens", () => testCase("for x in y }"));
-      test("parseTokens", () => testCase("for x { z }"));
-      test("parseTokens", () => testCase("for x in y"));
-      test("parseTokens", () => testCase("for x : z"));
-      test("parseTokens", () => testCase("for x -> z"));
-      test("parseTokens", () => testCase("for x }"));
-      test("parseTokens", () => testCase("for x {"));
-      test("parseTokens", () => testCase("{ for x } }"));
-      test("parseTokens", () => testCase("for x"));
+    describe("errors", () => {
+      test("block missing block end", () => testCase("for x in y {"));
+      test.todo("block missing block start", () => testCase("for x in y }"));
+      test.todo("block missing 'in y'", () => testCase("for x { z }"));
+      test.todo("missing closing token or block", () => testCase("for x in y"));
+      test.todo("colon missing 'in y'", () => testCase("for x : z"));
+      test.todo("arrow missing 'in y'", () => testCase("for x -> z"));
+      test.todo("missing 'in y' and block start", () => testCase("for x }"));
+      test.todo("missing 'in y' and block end", () => testCase("for x {"));
+      test.todo("missing 'in y' and block start inside block", () => testCase("{ for x } }"));
+      test("missing everything", () => testCase("for x"));
     });
   });
 
@@ -97,7 +97,7 @@ describe("group kinds", () => {
     test("if arrow", () => testCase("if y -> z"));
     test("if braces", () => testCase("if y { z }"));
     test("if colon else", () => testCase("if y: z else x"));
-    test.only("if braces else", () => testCase("if y { z } else x"));
+    test("if braces else", () => testCase("if y { z } else x"));
   });
 
   describe("match group", () => {
