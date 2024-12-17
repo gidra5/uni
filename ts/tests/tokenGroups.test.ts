@@ -96,8 +96,8 @@ describe("group kinds", () => {
     test("if colon", () => testCase("if y: z"));
     test("if arrow", () => testCase("if y -> z"));
     test("if braces", () => testCase("if y { z }"));
-    test.todo("if colon else", () => testCase("if y: z else x"));
-    test.todo("if braces else", () => testCase("if y { z } else x"));
+    test("if colon else", () => testCase("if y: z else x"));
+    test.only("if braces else", () => testCase("if y { z } else x"));
   });
 
   describe("match group", () => {

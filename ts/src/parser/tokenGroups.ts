@@ -184,21 +184,24 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
         return yield* group(tokens, TokenGroupKind.If, start);
       } else if (current === "{") {
         tokens.push(yield* parseBraces());
-        const hasElse = false;
-        if (hasElse) tokens.push(yield* group([], TokenGroupKind.Else));
         return yield* group(tokens, TokenGroupKind.If, start);
       } else if (current === ":") {
-        // const { tokens: _tokens, closed } = yield parseTokenGroup("else");
+        const rememberedIndex = yield Parser.rememberIndex();
+        const start: number = yield Parser.index();
+        const x = yield parseTokenGroup("else").chain(function* ({ tokens, closed }) {
+          current = closed;
+          if (closed === "else") return tokens;
+          return null;
+        });
+        if (!x) {
+          yield Parser.resetIndex(start);
+          yield Parser.rememberIndex(rememberedIndex);
+          tokens.push(yield* group([], TokenGroupKind.Colon));
+        } else {
+          tokens.push(x);
+          tokens.push(yield* group([], TokenGroupKind.Else));
+        }
 
-        // tokens.push(
-        //   yield parseTokenGroup("else").chain(function* ({ tokens, closed }) {
-        //     current = closed;
-        //     if (closed) return tokens;
-        //     return yield* group([], TokenGroupKind.Colon) as any;
-        //   })
-        // );
-
-        tokens.push(yield* group([], TokenGroupKind.Colon));
         return yield* group(tokens, TokenGroupKind.If, start);
       }
 
