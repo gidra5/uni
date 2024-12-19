@@ -131,7 +131,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       let current: string | null = "for";
 
       tokens.push(
-        yield parseTokenGroup("in", ":", "->", "{", "}").chain(function* ({ tokens, closed }) {
+        yield parseTokenGroup("in", ":", "->", "{").chain(function* ({ tokens, closed }) {
           current = closed;
           if (closed === "in") return tokens;
           return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
@@ -143,7 +143,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
         tokens.push(error(operandError, group3([])));
       } else {
         tokens.push(
-          yield parseTokenGroup(":", "->", "{", "}").chain(function* ({ tokens, closed }) {
+          yield parseTokenGroup(":", "->", "{").chain(function* ({ tokens, closed }) {
             current = closed;
             if (["{", ":", "->"].includes(closed!)) return tokens;
             return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
@@ -171,7 +171,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       let current: string | null = "for";
 
       tokens.push(
-        yield parseTokenGroup(":", "->", "{", "}", "else").chain(function* ({ tokens, closed }) {
+        yield parseTokenGroup(":", "->", "{", "else").chain(function* ({ tokens, closed }) {
           current = closed;
           if (["{", ":", "->"].includes(closed!)) return tokens;
           return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
@@ -215,10 +215,10 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       let current: string | null = "fn";
 
       tokens.push(
-        yield parseTokenGroup(":", "->", "{", "}").chain(function* ({ tokens, closed }) {
+        yield parseTokenGroup(":", "->", "{").chain(function* ({ tokens, closed }) {
           current = closed;
           if (["{", ":", "->"].includes(closed!)) return tokens;
-          return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
+          return error(yield* unbalancedOpenToken(start, "fn", "in") as any, tokens);
         })
       );
 
@@ -256,7 +256,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       let current: string | null = "for";
 
       tokens.push(
-        yield parseTokenGroup(":", "->", "{", "}").chain(function* ({ tokens, closed }) {
+        yield parseTokenGroup(":", "->", "{").chain(function* ({ tokens, closed }) {
           current = closed;
           if (["{", ":", "->"].includes(closed!)) return tokens;
           return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
