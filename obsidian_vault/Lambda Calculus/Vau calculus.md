@@ -6,21 +6,27 @@ Simplified
 
 literal is:
 * const
-* env `[x <- y, ...]`
+* env `[x: y, ...]`
 * macro `macro x -> y`
 * capture `env e -> x`
+* pair `x y`
+* left project `left x`
+* right project `right x`
 
 Term is:
 * literal
 * variable `x`
 * eval `eval x e`
 * apply `x y e`
+* lookup `e[x]`
 
 Rules:
-* eval literal -> literal
-* eval (x y) -> (eval x) y
-* eval eval x -> eval x
-* (macro x -> y) a -> y\[x=a]
+* `eval literal e -> literal`
+* `eval x [x: y] -> e[x]`
+* `eval (x y) e -> (eval x e) y e`
+* `(macro x -> y) a e -> y<x: a>`
+* `(env e -> x) a e -> (x e []) a e`
+* 
 
 Example:
 ```
