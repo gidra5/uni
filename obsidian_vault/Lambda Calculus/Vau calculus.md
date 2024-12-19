@@ -10,29 +10,39 @@ literal is:
 * macro `macro x -> y`
 * capture `env e -> x`
 * pair `x y`
-* left project `left x`
-* right project `right x`
+* left project `left`
+* right project `right`
 
 Term is:
 * literal
 * variable `x`
-* eval `eval x e`
-* apply `x y e`
-* lookup `e[x]`
+* eval `eval<e> x`
+* apply `apply<e> x y`
 
 Rules:
-* `eval literal e -> literal`
-* `eval x [x: y] -> e[x]`
-* `eval (x y) e -> (eval x e) y e`
-* `(macro x -> y) a e -> y<x: a>`
-* `(env e -> x) a e -> (x e []) a e`
-* 
+* `eval<e> literal -> literal`
+* `eval<[x: y]> x -> y`
+* `eval<e> (x y) -> apply<e> (eval<e> x) y`
+* `apply<e> (macro x -> y) a -> y<x: a>`
+* `apply<e>(env e -> x) a -> apply<e> (x e []) a`
+* `apply<e> left (x y) -> x`
+* `apply<e> right (x y) -> y`
 
 Example:
 ```
 eval ((fn x -> x * x) (2 + 3)) ->
+(macro y -> (macro x -> eval (x * x)) (eval y)) (2 + 3) ->
 (macro x -> eval (x * x)) (eval (2 + 3)) ->
 (macro x -> eval (x * x)) 5 ->
+eval (5 * 5) ->
+25
+```
+
+```
+eval ((fn x -> x * x) (2 + 3)) ->
+(macro y -> (macro x -> eval (x * x)) (eval y)) (2 + 3) [] ->
+(macro x -> eval (x * x)) (eval (2 + 3)) [] ->
+(macro x -> eval (x * x)) 5 [] ->
 eval (5 * 5) ->
 25
 ```
