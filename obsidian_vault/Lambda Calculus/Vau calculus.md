@@ -1,51 +1,20 @@
 
 https://web.cs.wpi.edu/~jshutt/jns-nepls07.txt
-literal is:
-* const
-* macro (macro x -> y)
-* either left (left x)
-* either right (right x)
-
-Term is:
-* literal
-* variable
-* pair (x, y)
-* call-by-value operator (<x\>)
-* eval (eval x)
-* apply (x y)
-
-Rules:
-* eval literal -> literal
-* eval (x, y) -> (eval x) y
-* eval <x\> -> <eval x\>
-* (left x) () -> x
-* (right x) (a, b) -> x a b
-* (right x) a -> x a ()
-* <x\> x1 ... xn -> x (eval x1) ... (eval xn)
-* (macro x -> y) a -> y\[x=a]
-
-Example:
-```
-eval ((fn x -> x * x) (2 + 3)) ->
-<(right (macro x -> left (eval (x * x))))> (2 + 3) ->
-(right (macro x -> left (eval (x * x)))) 5 ->
-(macro x -> left (eval (x * x))) 5 () ->
-(left (eval (5 * 5))) () ->
-eval (5 * 5) ->
-25
-```
+https://web.archive.org/web/20101011085011/http://www.wpi.edu/Pubs/ETD/Available/etd-090110-124904/unrestricted/jshutt.pdf
 
 Simplified
 
 literal is:
 * const
-* macro (macro x -> y)
+* env `[x <- y, ...]`
+* macro `macro x -> y`
+* capture `env e -> x`
 
 Term is:
 * literal
-* variable
-* eval (eval x)
-* apply (x y)
+* variable `x`
+* eval `eval x e`
+* apply `x y e`
 
 Rules:
 * eval literal -> literal
