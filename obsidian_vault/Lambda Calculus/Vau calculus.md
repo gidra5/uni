@@ -23,16 +23,21 @@ Term is:
 Rules:
 * `eval<e> literal => literal`
 * `eval<[x: y, ...]> x => y`
+* `eval<[x': y, ...e]> x => eval<e> x`
 * `eval<e> (x y) => apply<e> (eval<e> x) y`
-* `bind<e> literal -> literal`
-* `bind<e> (x y) -> (bind<e> x) (bind<e> y)`
-* `bind<e1> e2 -> [...e1, ...e2]`
-* `bind<e> (macro x -> y) -> macro x -> bind<[x: x, ...e]> y`
+* `bind<e> literal => literal`
+* `bind<e> (x y) => (bind<e> x) (bind<e> y)`
+* `bind<e> (left y) => left (bind<e> y)`
+* `bind<e> (right y) => right (bind<e> y)`
+* `bind<e1> e2 => [...e1, ...e2]`
+* `bind<e> (macro x -> y) => macro x -> bind<[x: x, ...e]> y`
 * `bind<e> (env -> y) => env -> bind<[x: x, ...e]> y`
-* `apply<e> (macro x -> y) a -> bind<[x: a]> y`
-* `apply<e> (env -> x) a -> apply<e> (apply<[]> x e) a`
-* `apply<e> left (x y) -> x`
-* `apply<e> right (x y) -> y`
+* `apply<e> (macro x -> y) a => bind<[x: a]> y`
+* `apply<e> (env -> x) a => apply<e> (apply<[]> x e) a`
+* `apply<e> left (x y) => x`
+* `apply<e> right (x y) => y`
+
+...
 
 Example:
 ```
