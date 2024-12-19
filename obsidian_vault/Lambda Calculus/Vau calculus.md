@@ -1,4 +1,5 @@
 
+https://web.cs.wpi.edu/~jshutt/jns-nepls07.txt
 literal is:
 * const
 * macro (macro x -> y)
@@ -31,18 +32,32 @@ eval ((fn x -> x * x) (2 + 3)) ->
 (macro x -> left (eval (x * x))) 5 () ->
 (left (eval (5 * 5))) () ->
 eval (5 * 5) ->
-25 ->
+25
 ```
 
 Simplified
 
+literal is:
+* const
+* macro (macro x -> y)
+
+Term is:
+* literal
+* variable
+* eval (eval x)
+* apply (x y)
+
+Rules:
+* eval literal -> literal
+* eval (x y) -> (eval x) y
+* eval eval x -> eval x
+* (macro x -> y) a -> y\[x=a]
 
 Example:
 ```
 eval ((fn x -> x * x) (2 + 3)) ->
-<macro x -> eval (x * x)> (2 + 3) ->
 (macro x -> eval (x * x)) (eval (2 + 3)) ->
 (macro x -> eval (x * x)) 5 ->
 eval (5 * 5) ->
-25 ->
+25
 ```
