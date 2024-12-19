@@ -1,5 +1,5 @@
 
-first
+first "vau-x-calculus"
 
 literal is:
 * const
@@ -20,4 +20,6 @@ Rules:
 * eval (x, y) -> (eval x) y
 * eval <x\> -> <eval x\>
 * (left x) () -> x
-* 
+* (right x) (a, b) -> x a b
+* <x\> x1 ... xn -> x (eval x1) ... (eval xn)
+* (macro x -> y) a -> y\[x=a]
