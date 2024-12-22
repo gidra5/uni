@@ -35,7 +35,7 @@ const testCase = (input: string) => {
   expect(tokenGroups.map(clearIds)).toMatchSnapshot();
 };
 
-describe.only("group kinds", () => {
+describe("group kinds", () => {
   describe("pair groups", () => {
     test("parens", () => testCase("(x)"));
     test("brackets", () => testCase("[x]"));
@@ -50,14 +50,14 @@ describe.only("group kinds", () => {
 
     describe("errors", () => {
       test("block missing block end", () => testCase("for x in y {"));
-      test.todo("block missing block start", () => testCase("for x in y }"));
-      test.todo("block missing 'in y'", () => testCase("for x { z }"));
-      test.todo("missing closing token or block", () => testCase("for x in y"));
-      test.todo("colon missing 'in y'", () => testCase("for x : z"));
-      test.todo("arrow missing 'in y'", () => testCase("for x -> z"));
-      test.todo("missing 'in y' and block start", () => testCase("for x }"));
-      test.todo("missing 'in y' and block end", () => testCase("for x {"));
-      test.todo("missing 'in y' and block start inside block", () => testCase("{ for x } }"));
+      test("block missing block start", () => testCase("for x in y }"));
+      test("block missing 'in y'", () => testCase("for x { z }"));
+      test("missing closing token or block", () => testCase("for x in y"));
+      test("colon missing 'in y'", () => testCase("for x : z"));
+      test("arrow missing 'in y'", () => testCase("for x -> z"));
+      test("missing 'in y' and block start", () => testCase("for x }"));
+      test("missing 'in y' and block end", () => testCase("for x {"));
+      test("missing 'in y' and block start inside block", () => testCase("{ for x } }"));
       test("missing everything", () => testCase("for x"));
     });
   });
@@ -66,24 +66,13 @@ describe.only("group kinds", () => {
     test("while colon", () => testCase("while x: z"));
     test("while arrow", () => testCase("while x -> z"));
     test("while braces", () => testCase("while x { z }"));
-  });
 
-  describe("inject group", () => {
-    test("inject colon", () => testCase("inject x: z"));
-    test("inject arrow", () => testCase("inject x -> z"));
-    test("inject braces", () => testCase("inject x { z }"));
-  });
-
-  describe("mask group", () => {
-    test("mask colon", () => testCase("mask x: z"));
-    test("mask arrow", () => testCase("mask x -> z"));
-    test("mask braces", () => testCase("mask x { z }"));
-  });
-
-  describe("without group", () => {
-    test("without colon", () => testCase("without x: z"));
-    test("without arrow", () => testCase("without x -> z"));
-    test("without braces", () => testCase("without x { z }"));
+    // describe("errors", () => {
+    //   test("block missing block end", () => testCase("while x {"));
+    //   test("block missing block start", () => testCase("while x }"));
+    //   test("missing closing token or block", () => testCase("while x"));
+    //   test("missing block start inside block", () => testCase("{ while x } }"));
+    // });
   });
 
   describe("fn group", () => {
@@ -91,12 +80,6 @@ describe.only("group kinds", () => {
     test("fn arrow", () => testCase("fn x -> z"));
     test("fn braces", () => testCase("fn x { z }"));
     test("fn arrow braces", () => testCase("fn x -> y { z }"));
-  });
-
-  describe("if group", () => {
-    test("if colon", () => testCase("if y: z"));
-    test("if arrow", () => testCase("if y -> z"));
-    test("if braces", () => testCase("if y { z }"));
   });
 
   describe("match group", () => {

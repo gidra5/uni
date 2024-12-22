@@ -65,6 +65,10 @@ const unbalancedOpenToken = function* (start: number, startStr: string, endStr: 
   const closePos: Position = indexPosition(yield Parser.index());
   return SystemError.unbalancedOpenToken([startStr, endStr], openPos, closePos);
 };
+const unbalancedCloseToken = function* (startStr: string, endStr: string) {
+  const closePos: Position = indexPosition(yield Parser.index());
+  return SystemError.unbalancedCloseToken([startStr, endStr], closePos);
+};
 
 const parsePair = function* self(start: number, startStr: string, endStr: string, kind: TokenGroupKind) {
   const { tokens, closed }: TokenGroupResult = yield parseTokenGroup(endStr);
@@ -117,6 +121,13 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
   }
 
   if (token.type === "identifier") {
+    if (!(yield Parser.checkFollowSet()) && ["}", ")", "]"].includes(token.name)) {
+      yield Parser.advance();
+      const startStr = token.name === ")" ? "(" : token.name === "]" ? "[" : token.name === "}" ? "{" : null;
+      assert(startStr);
+      return error(yield* unbalancedCloseToken(startStr, token.name), token);
+    }
+
     if (token.name === "(") {
       const start: number = yield Parser.rememberedIndex();
       return yield* parsePair(start, "(", ")", TokenGroupKind.Parentheses);
@@ -133,7 +144,11 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       let current: string | null = "for";
 
       tokens.push(
-        yield parseTokenGroup("in", ":", "->", "{").chain(function* ({ tokens, closed }) {
+        yield parseTokenGroup("in", ":", "->", "{", "}").chain(function* ({ tokens, closed }) {
+          if (closed === "}") {
+            yield Parser.advance(-1);
+            return error(yield* unbalancedOpenToken(start, "in", ':", "->" or "{') as any, tokens);
+          }
           current = closed;
           if (closed === "in") return tokens;
           return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
@@ -145,7 +160,11 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
         tokens.push(error(operandError, group3([])));
       } else {
         tokens.push(
-          yield parseTokenGroup(":", "->", "{").chain(function* ({ tokens, closed }) {
+          yield parseTokenGroup(":", "->", "{", "}").chain(function* ({ tokens, closed }) {
+            if (closed === "}") {
+              yield Parser.advance(-1);
+              return error(yield* unbalancedOpenToken(start, "in", ':", "->" or "{') as any, tokens);
+            }
             current = closed;
             if (["{", ":", "->"].includes(closed!)) return tokens;
             return error(yield* unbalancedOpenToken(start, "in", ':", "->" or "{') as any, tokens);

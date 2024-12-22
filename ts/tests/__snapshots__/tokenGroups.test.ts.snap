@@ -127,6 +127,89 @@ exports[`group kinds > fn group > fn colon 1`] = `
 ]
 `;
 
+exports[`group kinds > for group > errors > arrow missing 'in y' 1`] = `
+[
+  {
+    "kind": "for in",
+    "tokens": [
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "tokens": [
+            {
+              "name": "x",
+              "type": "identifier",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "kind": "arrow",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > for group > errors > block missing 'in y' 1`] = `
+[
+  {
+    "kind": "for in",
+    "tokens": [
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "tokens": [
+            {
+              "name": "x",
+              "type": "identifier",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "kind": "braces",
+        "tokens": [
+          {
+            "name": "z",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
 exports[`group kinds > for group > errors > block missing block end 1`] = `
 [
   {
@@ -154,6 +237,287 @@ exports[`group kinds > for group > errors > block missing block end 1`] = `
         "cause": [Error: Missing closing token],
         "token": {
           "kind": "braces",
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > for group > errors > block missing block start 1`] = `
+[
+  {
+    "kind": "for in",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "tokens": [
+            {
+              "name": "y",
+              "type": "identifier",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "cause": [Error: Unexpected closing token "}"],
+    "token": {
+      "name": "}",
+      "type": "identifier",
+    },
+    "type": "error",
+  },
+]
+`;
+
+exports[`group kinds > for group > errors > colon missing 'in y' 1`] = `
+[
+  {
+    "kind": "for in",
+    "tokens": [
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "tokens": [
+            {
+              "name": "x",
+              "type": "identifier",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "kind": "colon",
+        "tokens": [],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "name": "z",
+    "type": "identifier",
+  },
+]
+`;
+
+exports[`group kinds > for group > errors > missing 'in y' and block end 1`] = `
+[
+  {
+    "kind": "for in",
+    "tokens": [
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "tokens": [
+            {
+              "name": "x",
+              "type": "identifier",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "kind": "braces",
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > for group > errors > missing 'in y' and block start 1`] = `
+[
+  {
+    "kind": "for in",
+    "tokens": [
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "tokens": [
+            {
+              "name": "x",
+              "type": "identifier",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "cause": [Error: Unexpected closing token "}"],
+    "token": {
+      "name": "}",
+      "type": "identifier",
+    },
+    "type": "error",
+  },
+]
+`;
+
+exports[`group kinds > for group > errors > missing 'in y' and block start inside block 1`] = `
+[
+  {
+    "kind": "braces",
+    "tokens": [
+      {
+        "kind": "for in",
+        "tokens": [
+          {
+            "cause": [Error: Missing closing token],
+            "token": {
+              "tokens": [
+                {
+                  "name": "x",
+                  "type": "identifier",
+                },
+              ],
+              "type": "group",
+            },
+            "type": "error",
+          },
+          {
+            "cause": [Error: missing operand],
+            "token": {
+              "tokens": [],
+              "type": "group",
+            },
+            "type": "error",
+          },
+          {
+            "cause": [Error: missing operand],
+            "token": {
+              "tokens": [],
+              "type": "group",
+            },
+            "type": "error",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "cause": [Error: Unexpected closing token "}"],
+    "token": {
+      "name": "}",
+      "type": "identifier",
+    },
+    "type": "error",
+  },
+]
+`;
+
+exports[`group kinds > for group > errors > missing closing token or block 1`] = `
+[
+  {
+    "kind": "for in",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "tokens": [
+            {
+              "name": "y",
+              "type": "identifier",
+            },
+            {
+              "cause": [Error: Unexpected end of source],
+              "token": {
+                "type": "placeholder",
+              },
+              "type": "error",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
           "tokens": [],
           "type": "group",
         },
@@ -307,270 +671,6 @@ exports[`group kinds > for group > for colon 1`] = `
         "tokens": [
           {
             "name": "y",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-      {
-        "kind": "colon",
-        "tokens": [],
-        "type": "group",
-      },
-    ],
-    "type": "group",
-  },
-  {
-    "name": "z",
-    "type": "identifier",
-  },
-]
-`;
-
-exports[`group kinds > if group > if arrow 1`] = `
-[
-  {
-    "kind": "if",
-    "tokens": [
-      {
-        "tokens": [
-          {
-            "name": "y",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-      {
-        "kind": "arrow",
-        "tokens": [],
-        "type": "group",
-      },
-    ],
-    "type": "group",
-  },
-  {
-    "name": "z",
-    "type": "identifier",
-  },
-]
-`;
-
-exports[`group kinds > if group > if braces 1`] = `
-[
-  {
-    "kind": "if",
-    "tokens": [
-      {
-        "tokens": [
-          {
-            "name": "y",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-      {
-        "kind": "braces",
-        "tokens": [
-          {
-            "name": "z",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-    ],
-    "type": "group",
-  },
-]
-`;
-
-exports[`group kinds > if group > if colon 1`] = `
-[
-  {
-    "kind": "if",
-    "tokens": [
-      {
-        "tokens": [
-          {
-            "name": "y",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-      {
-        "kind": "colon",
-        "tokens": [],
-        "type": "group",
-      },
-    ],
-    "type": "group",
-  },
-  {
-    "name": "z",
-    "type": "identifier",
-  },
-]
-`;
-
-exports[`group kinds > inject group > inject arrow 1`] = `
-[
-  {
-    "kind": "inject",
-    "tokens": [
-      {
-        "tokens": [
-          {
-            "name": "x",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-      {
-        "kind": "arrow",
-        "tokens": [],
-        "type": "group",
-      },
-    ],
-    "type": "group",
-  },
-  {
-    "name": "z",
-    "type": "identifier",
-  },
-]
-`;
-
-exports[`group kinds > inject group > inject braces 1`] = `
-[
-  {
-    "kind": "inject",
-    "tokens": [
-      {
-        "tokens": [
-          {
-            "name": "x",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-      {
-        "kind": "braces",
-        "tokens": [
-          {
-            "name": "z",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-    ],
-    "type": "group",
-  },
-]
-`;
-
-exports[`group kinds > inject group > inject colon 1`] = `
-[
-  {
-    "kind": "inject",
-    "tokens": [
-      {
-        "tokens": [
-          {
-            "name": "x",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-      {
-        "kind": "colon",
-        "tokens": [],
-        "type": "group",
-      },
-    ],
-    "type": "group",
-  },
-  {
-    "name": "z",
-    "type": "identifier",
-  },
-]
-`;
-
-exports[`group kinds > mask group > mask arrow 1`] = `
-[
-  {
-    "kind": "mask",
-    "tokens": [
-      {
-        "tokens": [
-          {
-            "name": "x",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-      {
-        "kind": "arrow",
-        "tokens": [],
-        "type": "group",
-      },
-    ],
-    "type": "group",
-  },
-  {
-    "name": "z",
-    "type": "identifier",
-  },
-]
-`;
-
-exports[`group kinds > mask group > mask braces 1`] = `
-[
-  {
-    "kind": "mask",
-    "tokens": [
-      {
-        "tokens": [
-          {
-            "name": "x",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-      {
-        "kind": "braces",
-        "tokens": [
-          {
-            "name": "z",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-    ],
-    "type": "group",
-  },
-]
-`;
-
-exports[`group kinds > mask group > mask colon 1`] = `
-[
-  {
-    "kind": "mask",
-    "tokens": [
-      {
-        "tokens": [
-          {
-            "name": "x",
             "type": "identifier",
           },
         ],
@@ -759,94 +859,6 @@ exports[`group kinds > while group > while colon 1`] = `
 [
   {
     "kind": "while",
-    "tokens": [
-      {
-        "tokens": [
-          {
-            "name": "x",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-      {
-        "kind": "colon",
-        "tokens": [],
-        "type": "group",
-      },
-    ],
-    "type": "group",
-  },
-  {
-    "name": "z",
-    "type": "identifier",
-  },
-]
-`;
-
-exports[`group kinds > without group > without arrow 1`] = `
-[
-  {
-    "kind": "without",
-    "tokens": [
-      {
-        "tokens": [
-          {
-            "name": "x",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-      {
-        "kind": "arrow",
-        "tokens": [],
-        "type": "group",
-      },
-    ],
-    "type": "group",
-  },
-  {
-    "name": "z",
-    "type": "identifier",
-  },
-]
-`;
-
-exports[`group kinds > without group > without braces 1`] = `
-[
-  {
-    "kind": "without",
-    "tokens": [
-      {
-        "tokens": [
-          {
-            "name": "x",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-      {
-        "kind": "braces",
-        "tokens": [
-          {
-            "name": "z",
-            "type": "identifier",
-          },
-        ],
-        "type": "group",
-      },
-    ],
-    "type": "group",
-  },
-]
-`;
-
-exports[`group kinds > without group > without colon 1`] = `
-[
-  {
-    "kind": "without",
     "tokens": [
       {
         "tokens": [
