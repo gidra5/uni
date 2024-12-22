@@ -122,12 +122,16 @@ const idToPrefixPatternOp = {
 const tokenIncludes = (token: Token | undefined, tokens: string[]): boolean =>
   !!token && (tokens.includes(token.src) || (tokens.includes("\n") && token.type === "newline"));
 
+type Context2 = {
+  index: number;
+  lhs: boolean;
+  allowPatternDefault: boolean;
+};
 type Context = Readonly<{
   lhs: boolean;
   allowPatternDefault: boolean;
   followSet: string[];
   banned: string[];
-  skip: string[];
 }>;
 
 const newContext = ({ banned = [] }: Partial<Context> = {}): Context => ({
@@ -135,7 +139,6 @@ const newContext = ({ banned = [] }: Partial<Context> = {}): Context => ({
   allowPatternDefault: false,
   followSet: [],
   banned,
-  skip: [],
 });
 
 type ContextParser = (context: Context) => ParserFunction<TokenGroup[], Tree>;
@@ -807,8 +810,7 @@ const parseExprGroup: ContextParser = (context) => (src, i) => {
 const parsePrattGroup =
   (
     context: Context,
-    groupParser: (context: Context) => ParserFunction<TokenGroup[], Tree>,
-    getPrecedence: (node: Tree) => Precedence
+    groupParser: (context: Context) => ParserFunction<TokenGroup[], Tree>
   ): ParserFunction<TokenGroup[], Tree> =>
   (src, i) => {
     let index = i;
@@ -819,29 +821,11 @@ const parsePrattGroup =
       return [index, error(SystemError.endOfSource(nodePosition()), nodePosition())];
     }
 
-    if (!context.followSet.includes(")") && src[index].src === ")") {
-      while (src[index] && src[index].src === ")") index++;
-      return [index, error(SystemError.unbalancedCloseToken(["(", ")"], nodePosition()), nodePosition())];
-    }
-    if (!context.followSet.includes("}") && src[index].src === "}") {
-      while (src[index] && src[index].src === "}") index++;
-      return [index, error(SystemError.unbalancedCloseToken(["{", "}"], nodePosition()), nodePosition())];
-    }
-    if (!context.followSet.includes("]") && src[index].src === "]") {
-      while (src[index] && src[index].src === "]") index++;
-      return [index, error(SystemError.unbalancedCloseToken(["[", "]"], nodePosition()), nodePosition())];
-    }
-
-    if (tokenIncludes(src[index], context.skip))
-      return parsePrattGroup(context, groupParser, getPrecedence)(src, index + 1);
     if (tokenIncludes(src[index], context.banned)) return [index, implicitPlaceholder(nodePosition())];
     if (tokenIncludes(src[index], context.followSet)) return [index, implicitPlaceholder(nodePosition())];
 
     let node: Tree;
     [index, node] = groupParser(context)(src, index);
-
-    while (tokenIncludes(src[index], context.skip)) index++;
-
     return [index, node];
   };
 
@@ -889,13 +873,12 @@ const parsePrefix =
 
 const parsePratt =
   (
-    context: Context,
     groupParser: (context: Context) => ParserFunction<TokenGroup[], Tree>,
     getPrecedence: (node: Tree) => Precedence,
-    precedence: number
-  ): ParserFunction<TokenGroup[], Tree> =>
-  (src, i) => {
-    let index = i;
+    precedence = 0
+  ): ParserFunction<TokenGroup[], Tree, Context2> =>
+  (src, ctx) => {
+    let index = ctx.index;
     let lhs: Tree;
     [index, lhs] = parsePrefix(context, groupParser, getPrecedence)(src, index);
     const until = () => {
@@ -957,17 +940,15 @@ const parsePratt =
     return [index, lhs];
   };
 
-const parseExpr = (context: Context): ParserFunction<TokenGroup[], Tree> =>
-  parsePratt({ ...context, allowPatternDefault: false }, parseExprGroup, getExprPrecedence, 0);
+const parseExpr = parsePratt(parseExprGroup, getExprPrecedence);
 
-const parsePattern = (context: Context): ParserFunction<TokenGroup[], Tree> =>
-  parsePratt(context, parsePatternGroup, getPatternPrecedence, 0);
+const parsePattern = parsePratt(parsePatternGroup, getPatternPrecedence);
 
-export const parseScript = (src: TokenGroup[]) => {
-  const context = newContext();
-  const [_, expr] = parseExpr(context)(src, { index: 0 });
-  return script(expr.children);
-};
+export const parseScript = (src: TokenGroup[]) =>
+  Parser.do(function* () {
+    const expr = yield parseExpr;
+    return script(expr.children);
+  }).parse(src, { index: 0, lhs: false, allowPatternDefault: false });
 
 const parseDeclaration: ParserFunction<TokenGroup[], Tree> = (src, i) => {
   const context = newContext({ banned: [";"] });

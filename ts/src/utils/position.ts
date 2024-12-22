@@ -1,4 +1,4 @@
-import { assert, clamp } from "./utils/index.js";
+import { assert, clamp } from "./index.js";
 
 /**
  * Represents a position in a source string.

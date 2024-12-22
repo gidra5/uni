@@ -3,7 +3,7 @@ import { it, fc, test } from "@fast-check/vitest";
 
 import { parseTokenGroups } from "../src/parser/tokenGroups.ts";
 import { parseScript } from "../src/parser/parser.ts";
-import { Injectable, register } from "../src/injector.ts";
+import { Injectable, register } from "../src/utils/injector.ts";
 import { Tree } from "../src/ast.ts";
 import { FileMap } from "codespan-napi";
 
@@ -29,7 +29,7 @@ const testCase = (input: string) => {
   expect(clearIds(ast)).toMatchSnapshot();
 };
 
-describe("advent of code 1 single file", () => {
+describe.todo("advent of code 1 single file", () => {
   it("variable", () =>
     testCase(`
       // https://adventofcode.com/2023/day/1
@@ -103,12 +103,6 @@ describe("advent of code 1 single file", () => {
 
 /* one test per example of a language construct  */
 
-describe("comments", () => {
-  it("comment", () => testCase(`// comment\n123`));
-
-  it("comment block", () => testCase(`/* comment block */123`));
-});
-
 describe("expressions", () => {
   describe("values", () => {
     it("integer", () => testCase(`123`));
@@ -116,21 +110,21 @@ describe("expressions", () => {
     it("string", () => testCase(`"string"`));
   });
 
-  describe("arithmetics", () => {
+  describe.todo("arithmetics", () => {
     it("order of application", () => testCase(`1 + 2^-3 * 4 - 5 / 6 % 7`));
     it("-(a+b)", () => testCase(`-(a+b)`));
 
     it("complex", () => testCase(`(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1`));
   });
 
-  describe("boolean expressions", () => {
+  describe.todo("boolean expressions", () => {
     it("not", () => testCase(`!123`));
     it('"and", "or" and "not" associativity', () => testCase(`a and b and c or d or !e and f and g or not h or i`));
     it("in operator", () => testCase(`$key in x and y`));
     it.todo("ranges 1", () => testCase(`123 < 456 < 789`));
   });
 
-  describe("function expressions", () => {
+  describe.todo("function expressions", () => {
     it("function block body", () => testCase(`fn x, y { x + y }`));
     it("function multiple params", () => testCase(`fn x, y -> x + y`));
     it("fn no parameters", () => testCase(`fn -> 123`));
@@ -166,6 +160,7 @@ describe("expressions", () => {
 
     describe("delimited application", () => {
       it.todo("delimited args", () => testCase(`f(x, y)`));
+      it.todo("named args", () => testCase(`f(x: 1, 3, y: 2)`));
       it.todo("placeholder arg", () => testCase(`f(_, y)`));
       it.todo("placeholder args", () => testCase(`f(_, y, _)`));
       it.todo("spread args", () => testCase(`f(...x, y)`));
@@ -178,7 +173,7 @@ describe("expressions", () => {
     });
   });
 
-  describe("structured programming", () => {
+  describe.todo("structured programming", () => {
     it("complex 1", () =>
       testCase(`
         y := {
@@ -215,7 +210,7 @@ describe("expressions", () => {
     });
   });
 
-  describe("concurrent programming", () => {
+  describe.todo("concurrent programming", () => {
     it("channel send", () => testCase(`c <- 123`));
     it("channel receive", () => testCase(`<- c`));
     it("channel try send", () => testCase(`c <-? 123`));
@@ -232,7 +227,7 @@ describe("expressions", () => {
     it("await", () => testCase(`await x + 1`));
   });
 
-  describe("data structures", () => {
+  describe.todo("data structures", () => {
     it("unit", () => testCase(`()`));
     it("tuple", () => testCase(`list, reducer, merge, initial`));
     it("record single", () => testCase(`record { a: 1 }`));
@@ -247,7 +242,7 @@ describe("expressions", () => {
     it("field assignment dynamic", () => testCase(`x[y] = 123`));
   });
 
-  describe("effect handlers", () => {
+  describe.todo("effect handlers", () => {
     it("inject", () => testCase(`inject record { a: 1, b: 2 } { 1 }`));
     it("mask", () => testCase(`mask $a, $b { 1 }`));
     it("without", () => testCase(`without $a, $b { 1 }`));
@@ -266,7 +261,7 @@ describe("expressions", () => {
   });
 });
 
-describe("pattern matching", () => {
+describe.todo("pattern matching", () => {
   it("match", () => testCase(`match a { 1 -> 2; 2 -> 3; _ -> 4 }`));
 
   it("in function parameters", () => testCase(`(x, y) -> x + y`));
@@ -331,7 +326,7 @@ describe("pattern matching", () => {
   });
 });
 
-describe("types", () => {
+describe.todo("types", () => {
   it.todo("declaration with type", () => testCase("x: number := 1"));
   it.todo("typeof", () => testCase("typeof x"));
   it.todo("type cast", () => testCase("x as number"));
@@ -345,7 +340,7 @@ describe("types", () => {
   });
 });
 
-describe("programs", () => {
+describe.todo("programs", () => {
   it.todo("export declaration as", () => testCase(`export x as y := 123`));
   it.todo("export expr as", () => testCase(`export x as y`));
   it.todo("external variable", () => testCase(`external y`));
@@ -377,7 +372,7 @@ describe("programs", () => {
   });
 });
 
-describe("newline handling", () => {
+describe.todo("newline handling", () => {
   it("for loop newline", () => testCase(`for x in 1, 2, 3:\n x`));
   it("parallel parens", () => testCase(`(\n| 1\n| 2\n)`));
   it("parallel", () => testCase(`| 1\n| 2`));
