@@ -40,6 +40,7 @@ describe.only("group kinds", () => {
     test("parens", () => testCase("(x)"));
     test("brackets", () => testCase("[x]"));
     test("braces", () => testCase("{x}"));
+    test("braces newlines", () => testCase("{\nx\ny\n}"));
   });
 
   describe("for group", () => {
@@ -96,8 +97,6 @@ describe.only("group kinds", () => {
     test("if colon", () => testCase("if y: z"));
     test("if arrow", () => testCase("if y -> z"));
     test("if braces", () => testCase("if y { z }"));
-    test("if colon else", () => testCase("if y: z else x"));
-    test("if braces else", () => testCase("if y { z } else x"));
   });
 
   describe("match group", () => {

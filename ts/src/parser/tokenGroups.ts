@@ -23,7 +23,6 @@ export enum TokenGroupKind {
   Without = "without",
   Colon = "colon",
   Arrow = "arrow",
-  Else = "else",
   If = "if",
   Match = "match",
   Record = "record",
@@ -81,6 +80,9 @@ const parseBraces = function* self() {
 };
 
 export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(function* self() {
+  const parsedWhitespace = yield parseWhitespace;
+  if (parsedWhitespace) return parsedWhitespace;
+
   yield Parser.rememberIndex();
   const token: Token = yield parseToken as any;
 
@@ -146,7 +148,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
           yield parseTokenGroup(":", "->", "{").chain(function* ({ tokens, closed }) {
             current = closed;
             if (["{", ":", "->"].includes(closed!)) return tokens;
-            return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
+            return error(yield* unbalancedOpenToken(start, "in", ':", "->" or "{') as any, tokens);
           })
         );
       }
@@ -163,50 +165,6 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       }
 
       return yield* group(tokens, TokenGroupKind.ForIn, start);
-    }
-
-    if (token.name === "if") {
-      const start: number = yield Parser.rememberedIndex();
-      const tokens: TokenGroup[] = [];
-      let current: string | null = "for";
-
-      tokens.push(
-        yield parseTokenGroup(":", "->", "{", "else").chain(function* ({ tokens, closed }) {
-          current = closed;
-          if (["{", ":", "->"].includes(closed!)) return tokens;
-          return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
-        })
-      );
-
-      if (!["{", ":", "->"].includes(current)) {
-        const operandError = SystemError.missingOperand(indexPosition(yield Parser.index()));
-        tokens.push(error(operandError, group3([])));
-        return yield* group(tokens, TokenGroupKind.If, start);
-      } else if (current === "{") {
-        tokens.push(yield* parseBraces());
-        return yield* group(tokens, TokenGroupKind.If, start);
-      } else if (current === ":") {
-        const rememberedIndex = yield Parser.rememberIndex();
-        const start: number = yield Parser.index();
-        const x = yield parseTokenGroup("else").chain(function* ({ tokens, closed }) {
-          current = closed;
-          if (closed === "else") return tokens;
-          return null;
-        });
-        if (!x) {
-          yield Parser.resetIndex(start);
-          yield Parser.rememberIndex(rememberedIndex);
-          tokens.push(yield* group([], TokenGroupKind.Colon));
-        } else {
-          tokens.push(x);
-          tokens.push(yield* group([], TokenGroupKind.Else));
-        }
-
-        return yield* group(tokens, TokenGroupKind.If, start);
-      }
-
-      tokens.push(yield* group([], TokenGroupKind.Arrow));
-      return yield* group(tokens, TokenGroupKind.If, start);
     }
 
     if (token.name === "fn") {
@@ -250,7 +208,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       return yield* group(tokens, TokenGroupKind.Function, start);
     }
 
-    if (["while", "inject", "mask", "without"].includes(token.name)) {
+    if (["while", "inject", "mask", "without", "if"].includes(token.name)) {
       const start: number = yield Parser.rememberedIndex();
       const tokens: TokenGroup[] = [];
       let current: string | null = "for";
@@ -259,7 +217,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
         yield parseTokenGroup(":", "->", "{").chain(function* ({ tokens, closed }) {
           current = closed;
           if (["{", ":", "->"].includes(closed!)) return tokens;
-          return error(yield* unbalancedOpenToken(start, "for", "in") as any, tokens);
+          return error(yield* unbalancedOpenToken(start, token.name, ':", "->" or "{') as any, tokens);
         })
       );
 
@@ -314,14 +272,15 @@ export const parseTokenGroup = (...untils: string[]): Parser<string, TokenGroupR
     const tokens: TokenGroup[] = [];
 
     for (const until of untils) yield Parser.appendFollow(until);
-    const ws: { id: number; type: "newline" } | null = yield parseWhitespace;
-    if (ws) tokens.push(ws);
+    yield parseWhitespace as any;
+
     while (!(yield Parser.checkFollowSet()) && (yield Parser.isNotEnd())) {
       const token: TokenGroup = yield _parseToken;
       tokens.push(token);
-      const ws: { id: number; type: "newline" } | null = yield parseWhitespace as any;
-      if (ws) tokens.push(ws);
+      const ws = yield parseWhitespace as any;
+      if (ws && !(yield Parser.checkFollowSet())) tokens.push(ws);
     }
+
     for (const _until of untils) yield Parser.popFollow();
 
     return { tokens: group3(tokens), closed: yield Parser.oneOfStrings(...untils) };
