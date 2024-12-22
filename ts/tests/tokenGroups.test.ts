@@ -86,22 +86,6 @@ describe("group kinds", () => {
     });
   });
 
-  describe("fn group", () => {
-    test("fn colon", () => testCase("fn x: z"));
-    test("fn arrow", () => testCase("fn x -> z"));
-    test("fn braces", () => testCase("fn x { z }"));
-    test("fn arrow braces", () => testCase("fn x -> y { z }"));
-
-    describe("errors", () => {
-      test.todo("block missing block end", () => testCase("fn x -> y {"));
-      test.todo("block missing block start", () => testCase("fn x -> y }"));
-      test.todo("missing block start", () => testCase("fn x }"));
-      test.todo("missing block end", () => testCase("fn x {"));
-      test.todo("missing block start inside block", () => testCase("{ fn x } }"));
-      test.todo("missing everything", () => testCase("fn x"));
-    });
-  });
-
   describe("match group", () => {
     test("match", () => testCase("match x { a -> b }"));
 

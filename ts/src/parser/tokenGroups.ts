@@ -27,7 +27,7 @@ export enum TokenGroupKind {
   Match = "match",
   Record = "record",
   Dict = "dict",
-  Function = "function",
+  Function = "fn",
 }
 
 export type TokenGroup = (
@@ -191,51 +191,10 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       return yield* group(tokens, TokenGroupKind.ForIn, start);
     }
 
-    if (token.name === "fn") {
+    if (["while", "inject", "mask", "without", "if", "fn"].includes(token.name)) {
       const start: number = yield Parser.rememberedIndex();
       const tokens: TokenGroup[] = [];
-      let current: string | null = "fn";
-
-      tokens.push(
-        yield parseTokenGroup(":", "->", "{").chain(function* ({ tokens, closed }) {
-          current = closed;
-          if (["{", ":", "->"].includes(closed!)) return tokens;
-          return error(yield* unbalancedOpenToken(start, "fn", "in") as any, tokens);
-        })
-      );
-
-      if (!["{", ":", "->"].includes(current)) {
-        const operandError = SystemError.missingOperand(indexPosition(yield Parser.index()));
-        tokens.push(error(operandError, group3([])));
-      } else if (current === "{") {
-        tokens.push(yield* parseBraces());
-      } else if (current === ":") {
-        tokens.push(yield* group([], TokenGroupKind.Colon));
-      } else if (current === "->") {
-        const rememberedIndex = yield Parser.rememberIndex();
-        const start: number = yield Parser.index();
-        const x = yield parseTokenGroup("{").chain(function* ({ tokens, closed }) {
-          current = closed;
-          if (closed === "{") return tokens;
-          return null;
-        });
-        if (!x) {
-          yield Parser.resetIndex(start);
-          yield Parser.rememberIndex(rememberedIndex);
-          tokens.push(yield* group([], TokenGroupKind.Arrow));
-        } else {
-          tokens.push(x);
-          tokens.push(yield* parseBraces());
-        }
-      }
-
-      return yield* group(tokens, TokenGroupKind.Function, start);
-    }
-
-    if (["while", "inject", "mask", "without", "if"].includes(token.name)) {
-      const start: number = yield Parser.rememberedIndex();
-      const tokens: TokenGroup[] = [];
-      let current: string | null = "for";
+      let current: string | null = "start";
 
       tokens.push(
         yield parseTokenGroup(":", "->", "{", "}").chain(function* ({ tokens, closed }) {
