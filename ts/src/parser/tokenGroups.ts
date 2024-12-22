@@ -233,7 +233,11 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       let current: string | null = "for";
 
       tokens.push(
-        yield parseTokenGroup(":", "->", "{").chain(function* ({ tokens, closed }) {
+        yield parseTokenGroup(":", "->", "{", "}").chain(function* ({ tokens, closed }) {
+          if (closed === "}") {
+            yield Parser.advance(-1);
+            return error(yield* unbalancedOpenToken(start, token.name, ':", "->" or "{') as any, tokens);
+          }
           current = closed;
           if (["{", ":", "->"].includes(closed!)) return tokens;
           return error(yield* unbalancedOpenToken(start, token.name, ':", "->" or "{') as any, tokens);

@@ -796,6 +796,160 @@ exports[`group kinds > pair groups > parens 1`] = `
 ]
 `;
 
+exports[`group kinds > while group > errors > block missing block end 1`] = `
+[
+  {
+    "kind": "while",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "kind": "braces",
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > while group > errors > block missing block start 1`] = `
+[
+  {
+    "kind": "while",
+    "tokens": [
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "tokens": [
+            {
+              "name": "x",
+              "type": "identifier",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "cause": [Error: Unexpected closing token "}"],
+    "token": {
+      "name": "}",
+      "type": "identifier",
+    },
+    "type": "error",
+  },
+]
+`;
+
+exports[`group kinds > while group > errors > missing block start inside block 1`] = `
+[
+  {
+    "kind": "braces",
+    "tokens": [
+      {
+        "kind": "while",
+        "tokens": [
+          {
+            "cause": [Error: Missing closing token],
+            "token": {
+              "tokens": [
+                {
+                  "name": "x",
+                  "type": "identifier",
+                },
+              ],
+              "type": "group",
+            },
+            "type": "error",
+          },
+          {
+            "cause": [Error: missing operand],
+            "token": {
+              "tokens": [],
+              "type": "group",
+            },
+            "type": "error",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "cause": [Error: Unexpected closing token "}"],
+    "token": {
+      "name": "}",
+      "type": "identifier",
+    },
+    "type": "error",
+  },
+]
+`;
+
+exports[`group kinds > while group > errors > missing closing token or block 1`] = `
+[
+  {
+    "kind": "while",
+    "tokens": [
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "tokens": [
+            {
+              "name": "x",
+              "type": "identifier",
+            },
+            {
+              "cause": [Error: Unexpected end of source],
+              "token": {
+                "type": "placeholder",
+              },
+              "type": "error",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
 exports[`group kinds > while group > while arrow 1`] = `
 [
   {

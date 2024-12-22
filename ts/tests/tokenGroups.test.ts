@@ -67,12 +67,12 @@ describe("group kinds", () => {
     test("while arrow", () => testCase("while x -> z"));
     test("while braces", () => testCase("while x { z }"));
 
-    // describe("errors", () => {
-    //   test("block missing block end", () => testCase("while x {"));
-    //   test("block missing block start", () => testCase("while x }"));
-    //   test("missing closing token or block", () => testCase("while x"));
-    //   test("missing block start inside block", () => testCase("{ while x } }"));
-    // });
+    describe("errors", () => {
+      test("block missing block end", () => testCase("while x {"));
+      test("block missing block start", () => testCase("while x }"));
+      test("missing closing token or block", () => testCase("while x"));
+      test("missing block start inside block", () => testCase("{ while x } }"));
+    });
   });
 
   describe("fn group", () => {
