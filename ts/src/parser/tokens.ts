@@ -1,5 +1,5 @@
 import { SystemError } from "../error.js";
-import { type Position } from "../position.js";
+import { type Position } from "../utils/position.js";
 import { nextId, setPos } from "../utils/index.js";
 import { Parser } from "./utils.js";
 

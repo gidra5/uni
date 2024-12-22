@@ -1,11 +1,11 @@
-import { position, type Position } from "../position";
+import { position, type Position } from "../utils/position";
 import { assert } from "../utils";
 
 export type BaseContext = { index: number; rememberedIndex?: number };
 export type ParserFunction<in T, out U, C extends BaseContext = BaseContext> = (
   src: T,
-  context: C
-) => [context: C, ast: U];
+  context: Readonly<C>
+) => [context: Readonly<C>, ast: U];
 type ParserFunctionOrParser<T, U, C extends BaseContext = BaseContext> = ParserFunction<T, U, C> | Parser<T, U, C>;
 type ParserGenerator<T, U1, U2, C extends BaseContext = BaseContext> = Generator<ParserFunctionOrParser<T, U1, C>, U2>;
 

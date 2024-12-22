@@ -2,8 +2,8 @@ import { Iterator } from "iterator-js";
 import { RecordKey } from "../types.js";
 import { setTimeout } from "node:timers/promises";
 import { SystemError } from "../error.js";
-import { inject, Injectable, register } from "../injector.js";
-import type { Position } from "../position.js";
+import { inject, Injectable, register } from "./injector.js";
+import type { Position } from "../utils/position.js";
 
 export const identity = <T>(x: T): T => x;
 

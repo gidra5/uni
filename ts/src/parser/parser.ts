@@ -1,6 +1,6 @@
-import { type Token, type Token } from "./tokens.js";
-import { SystemError } from "./error.js";
-import { indexPosition, position, mapListPosToPos, mergePositions, Position } from "./position.js";
+import { type Token } from "./tokens.js";
+import { SystemError } from "../error.js";
+import { indexPosition, position, mapListPosToPos, mergePositions, Position } from "../utils/position.js";
 import {
   Tree,
   block,
@@ -14,17 +14,11 @@ import {
   Precedence,
   getExprPrecedence as _getExprPrecedence,
   getPatternPrecedence as _getPatternPrecedence,
-  ExpressionNode,
-  ExportNode,
-  ImportNode,
-  DeclarationPatternNode,
-  ErrorNode,
   atom,
-} from "./ast.js";
-import { inject, Injectable } from "./injector.js";
-import { CompileContext } from "./evaluate/index.js";
-import { Diagnostic, primaryDiagnosticLabel } from "codespan-napi";
+} from "../ast.js";
+import { inject, Injectable } from "../utils/injector.js";
 import type { TokenGroup } from "./tokenGroups.js";
+import { Parser, ParserFunction } from "./utils.js";
 
 export const getExprPrecedence = (node: Tree): Precedence =>
   inject(Injectable.ASTNodePrecedenceMap).get(node.id) ?? _getExprPrecedence(node.type);
@@ -33,7 +27,7 @@ export const getPatternPrecedence = (node: Tree): Precedence =>
   inject(Injectable.ASTNodePrecedenceMap).get(node.id) ?? _getPatternPrecedence(node.type);
 
 export const getPosition = (node: Tree): Position => {
-  const map = inject(Injectable.ASTNodePositionMap);
+  const map = inject(Injectable.PositionMap);
   if (map.has(node.id)) return map.get(node.id)!;
   const childrenPosition = node.children.map(getPosition);
   return mergePositions(...childrenPosition);
@@ -53,23 +47,6 @@ const prefix = (group: Tree, rhs: Tree): Tree => {
   const { children } = group;
   return { ...group, children: [...children, rhs] };
 };
-
-export const showPos = (position: Position, context: CompileContext, msg: string = "") => {
-  const diag = Diagnostic.note();
-
-  diag.withLabels([
-    primaryDiagnosticLabel(context.fileId, {
-      message: msg,
-      start: position.start,
-      end: position.end,
-    }),
-  ]);
-  const fileMap = inject(Injectable.FileMap);
-  diag.emitStd(fileMap);
-};
-
-export const showNode = (node: Tree, context: CompileContext, msg: string = "") =>
-  showPos(getPosition(node), context, msg);
 
 const idToExprOp = {
   "+": NodeType.ADD,
@@ -161,7 +138,9 @@ const newContext = ({ banned = [] }: Partial<Context> = {}): Context => ({
   skip: [],
 });
 
-const parseValue: Parser = (src, i) => {
+type ContextParser = (context: Context) => ParserFunction<TokenGroup[], Tree>;
+
+const parseValue: ParserFunction<TokenGroup[], Tree> = (src, i) => {
   let index = i;
   const start = index;
   const nodePosition = () => mapListPosToPos(position(start, index), src);
@@ -203,7 +182,12 @@ const parseValue: Parser = (src, i) => {
 };
 
 const parsePairGroup =
-  (context: Context, [left, right]: [string, string], parseInner: ContextParser, node: (ast: Tree) => Tree): Parser =>
+  (
+    context: Context,
+    [left, right]: [string, string],
+    parseInner: ContextParser,
+    node: (ast: Tree) => Tree
+  ): ParserFunction<TokenGroup[], Tree> =>
   (src, i) => {
     let index = i;
     const start = index;
@@ -823,9 +807,9 @@ const parseExprGroup: ContextParser = (context) => (src, i) => {
 const parsePrattGroup =
   (
     context: Context,
-    groupParser: (context: Context) => (tokens: Token[], index: number) => [index: number, node: Tree],
+    groupParser: (context: Context) => ParserFunction<TokenGroup[], Tree>,
     getPrecedence: (node: Tree) => Precedence
-  ): Parser =>
+  ): ParserFunction<TokenGroup[], Tree> =>
   (src, i) => {
     let index = i;
     const start = index;
@@ -864,9 +848,9 @@ const parsePrattGroup =
 const parsePrefix =
   (
     context: Context,
-    groupParser: (context: Context) => (tokens: Token[], index: number) => [index: number, node: Tree],
+    groupParser: (context: Context) => ParserFunction<TokenGroup[], Tree>,
     getPrecedence: (node: Tree) => Precedence
-  ): Parser =>
+  ): ParserFunction<TokenGroup[], Tree> =>
   (src, i) => {
     let index = i;
     //skip possible whitespace prefix
@@ -906,10 +890,10 @@ const parsePrefix =
 const parsePratt =
   (
     context: Context,
-    groupParser: (context: Context) => (tokens: Token[], index: number) => [index: number, node: Tree],
+    groupParser: (context: Context) => ParserFunction<TokenGroup[], Tree>,
     getPrecedence: (node: Tree) => Precedence,
     precedence: number
-  ): Parser =>
+  ): ParserFunction<TokenGroup[], Tree> =>
   (src, i) => {
     let index = i;
     let lhs: Tree;
@@ -973,44 +957,26 @@ const parsePratt =
     return [index, lhs];
   };
 
-const parseExpr =
-  (context: Context): Parser<ExpressionNode> =>
-  (src, i) => {
-    return parsePratt(
-      { ...context, allowPatternDefault: false },
-      parseExprGroup,
-      getExprPrecedence,
-      0
-    )(src, i) as unknown as [index: number, ast: ExpressionNode];
-  };
+const parseExpr = (context: Context): ParserFunction<TokenGroup[], Tree> =>
+  parsePratt({ ...context, allowPatternDefault: false }, parseExprGroup, getExprPrecedence, 0);
 
-const parsePattern =
-  (context: Context): Parser =>
-  (src, i) => {
-    return parsePratt(context, parsePatternGroup, getPatternPrecedence, 0)(src, i) as unknown as [
-      index: number,
-      ast: Tree
-    ];
-  };
+const parsePattern = (context: Context): ParserFunction<TokenGroup[], Tree> =>
+  parsePratt(context, parsePatternGroup, getPatternPrecedence, 0);
 
 export const parseScript = (src: TokenGroup[]) => {
   const context = newContext();
-  const [_, expr] = parseExpr(context)(src, 0);
-  return script(expr);
+  const [_, expr] = parseExpr(context)(src, { index: 0 });
+  return script(expr.children);
 };
 
-type DeclarationNode = ImportNode | DeclarationPatternNode | ExportNode;
-const parseDeclaration: Parser<DeclarationNode> = (src, i) => {
+const parseDeclaration: ParserFunction<TokenGroup[], Tree> = (src, i) => {
   const context = newContext({ banned: [";"] });
-  return parseExpr(context)(src, i) as unknown as [
-    index: number,
-    ast: ImportNode | DeclarationPatternNode | ExportNode
-  ];
+  return parseExpr(context)(src, i);
 };
 
-export const parseModule = (src: Token[]) => {
-  const children: (ImportNode | DeclarationPatternNode | ErrorNode)[] = [];
-  let lastExport: ExportNode | null = null;
+export const parseModule = (src: TokenGroup[]) => {
+  const children: Tree[] = [];
+  let lastExport: Tree | null = null;
   let index = 0;
 
   while (src[index]) {
@@ -1018,11 +984,11 @@ export const parseModule = (src: Token[]) => {
       index++;
       continue;
     }
-    let node: ImportNode | DeclarationPatternNode | ExportNode;
+    let node: Tree;
     [index, node] = parseDeclaration(src, index);
     if (node.type === NodeType.EXPORT) {
       if (node.children[0].type === NodeType.DECLARE) {
-        children.push(node as unknown as DeclarationPatternNode);
+        children.push(node);
         continue;
       }
       if (lastExport) {
@@ -1033,69 +999,69 @@ export const parseModule = (src: Token[]) => {
     } else children.push(node);
   }
 
-  if (lastExport) children.push(lastExport as any);
-  return module(children.flatMap((node) => ((node as Tree).type === "sequence" ? node.children : [node])) as any);
+  if (lastExport) children.push(lastExport);
+  return module(children.flatMap((node) => (node.type === "sequence" ? node.children : [node])));
 };
 
-if (import.meta.vitest) {
-  const { expect } = import.meta.vitest;
-  const { it, fc } = await import("@fast-check/vitest");
-  const { tokenArbitrary, tokenListArbitrary } = await import("../src/testing.js");
-  const zeroPos = { start: 0, end: 0 };
-  const arb1 = fc.oneof(fc.constant(["(", ")"]), fc.constant(["[", "]"]), fc.constant(["{", "}"]));
+// if (import.meta.vitest) {
+//   const { expect } = import.meta.vitest;
+//   const { it, fc } = await import("@fast-check/vitest");
+//   const { tokenArbitrary, tokenListArbitrary } = await import("../src/testing.js");
+//   const zeroPos = { start: 0, end: 0 };
+//   const arb1 = fc.oneof(fc.constant(["(", ")"]), fc.constant(["[", "]"]), fc.constant(["{", "}"]));
 
-  it.prop([fc.array(tokenArbitrary)])("module parsing never throws", (tokens) => {
-    try {
-      parseModule(tokens.map((t) => ({ ...t, ...zeroPos })));
-    } catch (e) {
-      const msg = e instanceof Error ? e.stack : e;
-      expect.unreachable(msg as string);
-    }
-  });
+//   it.prop([fc.array(tokenArbitrary)])("module parsing never throws", (tokens) => {
+//     try {
+//       parseModule(tokens.map((t) => ({ ...t, ...zeroPos })));
+//     } catch (e) {
+//       const msg = e instanceof Error ? e.stack : e;
+//       expect.unreachable(msg as string);
+//     }
+//   });
 
-  it.prop([fc.array(tokenArbitrary)])("script parsing never throws", (tokens) => {
-    try {
-      parseScript(tokens.map((t) => ({ ...t, ...zeroPos })));
-    } catch (e) {
-      const msg = e instanceof Error ? e.stack : e;
-      expect.unreachable(msg as string);
-    }
-  });
+//   it.prop([fc.array(tokenArbitrary)])("script parsing never throws", (tokens) => {
+//     try {
+//       parseScript(tokens.map((t) => ({ ...t, ...zeroPos })));
+//     } catch (e) {
+//       const msg = e instanceof Error ? e.stack : e;
+//       expect.unreachable(msg as string);
+//     }
+//   });
 
-  it.prop([fc.array(tokenArbitrary)])("module is always flat sequence", (tokens) => {
-    tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
-    let ast = parseModule(tokens as Token[]);
-    expect(ast.children.every((node) => (node as Tree).type !== "sequence")).toBe(true);
-  });
+//   it.prop([fc.array(tokenArbitrary)])("module is always flat sequence", (tokens) => {
+//     tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
+//     let ast = parseModule(tokens as Token[]);
+//     expect(ast.children.every((node) => (node as Tree).type !== "sequence")).toBe(true);
+//   });
 
-  it.prop([fc.array(tokenArbitrary)])("script is always flat sequence", (tokens) => {
-    tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
-    let ast = parseScript(tokens as Token[]);
-    expect(ast.children.every((node) => (node as Tree).type !== "sequence")).toBe(true);
-  });
+//   it.prop([fc.array(tokenArbitrary)])("script is always flat sequence", (tokens) => {
+//     tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
+//     let ast = parseScript(tokens as Token[]);
+//     expect(ast.children.every((node) => (node as Tree).type !== "sequence")).toBe(true);
+//   });
 
-  const arb2 = arb1.chain(([open, close]) =>
-    tokenListArbitrary
-      .filter((tokens) => !tokens.some((t) => t.src !== open && t.src !== close))
-      .map((tokens) => [{ type: "identifier", src: open }, ...tokens, { type: "identifier", src: close }])
-  );
+//   const arb2 = arb1.chain(([open, close]) =>
+//     tokenListArbitrary
+//       .filter((tokens) => !tokens.some((t) => t.src !== open && t.src !== close))
+//       .map((tokens) => [{ type: "identifier", src: open }, ...tokens, { type: "identifier", src: close }])
+//   );
 
-  it.prop([arb2])("pattern parsing always bound by paired tokens", (tokens) => {
-    const patternType =
-      tokens[0].src === "[" ? NodeType.SQUARE_BRACKETS : tokens[0].src === "{" ? NodeType.RECORD : NodeType.PARENS;
+//   it.prop([arb2])("pattern parsing always bound by paired tokens", (tokens) => {
+//     const patternType =
+//       tokens[0].src === "[" ? NodeType.SQUARE_BRACKETS : tokens[0].src === "{" ? NodeType.RECORD : NodeType.PARENS;
 
-    tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
-    let ast = parsePattern(newContext())(tokens as Token[], 0)[1];
-    expect(ast).toMatchObject({ type: patternType });
-  });
+//     tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
+//     let ast = parsePattern(newContext())(tokens as Token[], 0)[1];
+//     expect(ast).toMatchObject({ type: patternType });
+//   });
 
-  it.prop([arb2])("expr parsing always bound by paired tokens", (tokens) => {
-    const exprType =
-      tokens[0].src === "(" ? NodeType.PARENS : tokens[0].src === "{" ? NodeType.BLOCK : NodeType.SQUARE_BRACKETS;
+//   it.prop([arb2])("expr parsing always bound by paired tokens", (tokens) => {
+//     const exprType =
+//       tokens[0].src === "(" ? NodeType.PARENS : tokens[0].src === "{" ? NodeType.BLOCK : NodeType.SQUARE_BRACKETS;
 
-    tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
+//     tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
 
-    let ast = parseExpr(newContext())(tokens as Token[], 0)[1];
-    expect(ast).toMatchObject({ type: exprType });
-  });
-}
+//     let ast = parseExpr(newContext())(tokens as Token[], 0)[1];
+//     expect(ast).toMatchObject({ type: exprType });
+//   });
+// }

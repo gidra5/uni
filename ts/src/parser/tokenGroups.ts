@@ -1,5 +1,5 @@
 import { SystemError } from "../error";
-import { indexPosition, intervalPosition, type Position } from "../position";
+import { indexPosition, intervalPosition, type Position } from "../utils/position.js";
 import { assert, getPos, nextId, setPos } from "../utils";
 import {
   parseMultilineStringToken,
@@ -258,11 +258,11 @@ type TokenGroupResult = {
   closed: string | null;
 };
 
-export const parseTokenGroup = (...untils: string[]): Parser<string, TokenGroupResult, ParserContext> =>
+export const parseTokenGroup = (...untilArray: string[]): Parser<string, TokenGroupResult, ParserContext> =>
   Parser.do(function* self() {
     const tokens: TokenGroup[] = [];
 
-    for (const until of untils) yield Parser.appendFollow(until);
+    for (const until of untilArray) yield Parser.appendFollow(until);
     yield parseWhitespace as any;
 
     while (!(yield Parser.checkFollowSet()) && (yield Parser.isNotEnd())) {
@@ -272,9 +272,9 @@ export const parseTokenGroup = (...untils: string[]): Parser<string, TokenGroupR
       if (ws && !(yield Parser.checkFollowSet())) tokens.push(ws);
     }
 
-    for (const _until of untils) yield Parser.popFollow();
+    for (const _until of untilArray) yield Parser.popFollow();
 
-    return { tokens: group3(tokens), closed: yield Parser.oneOfStrings(...untils) };
+    return { tokens: group3(tokens), closed: yield Parser.oneOfStrings(...untilArray) };
   });
 
 export const parseTokenGroups = _parseToken.all<string, TokenGroup>({ index: 0, followSet: [] });

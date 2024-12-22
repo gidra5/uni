@@ -5,8 +5,8 @@ import { array, type Arbitrary } from "fast-check";
 import { Iterator } from "iterator-js";
 import { eventLoopYield, getPos } from "../src/utils/index.js";
 import { SystemError } from "../src/error.js";
-import { position } from "../src/position.js";
-import { Injectable, register } from "../src/injector.js";
+import { position } from "../src/utils/position.js";
+import { Injectable, register } from "../src/utils/injector.js";
 
 beforeEach(() => {
   register(Injectable.NextId, 0);

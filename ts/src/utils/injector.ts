@@ -1,5 +1,5 @@
 import { FileMap } from "codespan-napi";
-import type { Precedence } from "./ast";
+import type { Precedence } from "../ast";
 import type { Position } from "./position";
 
 enum Injectable {

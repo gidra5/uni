@@ -11,7 +11,7 @@ import { it, fc, test } from "@fast-check/vitest";
 import { type Arbitrary } from "fast-check";
 import { Iterator } from "iterator-js";
 import { eventLoopYield, getPos } from "../src/utils/index.js";
-import { Injectable, register } from "../src/injector.js";
+import { Injectable, register } from "../src/utils/injector.js";
 
 beforeEach(() => {
   register(Injectable.NextId, 0);

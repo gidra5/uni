@@ -1,5 +1,5 @@
 import { SystemError } from "./error.js";
-import { isPosition, Position } from "./position.js";
+import { isPosition, Position } from "./utils/position.js";
 import { Token } from "./parser/tokens.js";
 import { nextId, setPos } from "./utils/index.js";
 
@@ -95,103 +95,6 @@ export const NodeType = {
   STRICT: "strict",
 } as const;
 export type NodeType = (typeof NodeType)[keyof typeof NodeType];
-
-type ScriptNode = {
-  id: number;
-  data: {};
-  type: typeof NodeType.SCRIPT;
-  children: ExpressionNode[];
-};
-type ModuleNode = {
-  id: number;
-  data: {};
-  type: typeof NodeType.MODULE;
-  children: DeclarationNode[];
-};
-type ErrorNode<T extends Tree = Tree> = {
-  id: number;
-  data: { cause: SystemError };
-  type: typeof NodeType.ERROR;
-  children: [T] | [];
-};
-type ImplicitPlaceholderNode = {
-  id: number;
-  data: {};
-  type: typeof NodeType.IMPLICIT_PLACEHOLDER;
-  children: [];
-};
-type PlaceholderNode = {
-  id: number;
-  data: {};
-  type: typeof NodeType.PLACEHOLDER;
-  children: [];
-};
-type NameNode = {
-  id: number;
-  data: { value: string | symbol };
-  type: typeof NodeType.NAME;
-  children: [];
-};
-type NumberNode = {
-  id: number;
-  data: { value: number };
-  type: typeof NodeType.NUMBER;
-  children: [];
-};
-type StringNode = {
-  id: number;
-  data: { value: string };
-  type: typeof NodeType.STRING;
-  children: [];
-};
-type AtomNode = {
-  id: number;
-  data: { name: string };
-  type: typeof NodeType.ATOM;
-  children: [];
-};
-
-type BlockNode = {
-  id: number;
-  data: {};
-  type: typeof NodeType.BLOCK;
-  children: [ExpressionNode];
-};
-type SequenceNode = {
-  id: number;
-  data: {};
-  type: typeof NodeType.SEQUENCE;
-  children: ExpressionNode[];
-};
-type TupleNode = {
-  id: number;
-  data: {};
-  type: typeof NodeType.TUPLE;
-  children: ExpressionNode[];
-};
-type FunctionNode = {
-  id: number;
-  data: { isTopFunction?: false };
-  type: typeof NodeType.FUNCTION;
-  children: [PatternNode, ExpressionNode];
-};
-type DeclarationNode = Tree;
-
-type ExpressionNode =
-  | Tree
-  | ErrorNode
-  | ImplicitPlaceholderNode
-  | PlaceholderNode
-  | NameNode
-  | NumberNode
-  | StringNode
-  | AtomNode
-  | BlockNode
-  | SequenceNode
-  | FunctionNode
-  | TupleNode;
-
-type PatternNode = Tree | PlaceholderNode | NameNode | StringNode | NumberNode | AtomNode;
 
 enum Associativity {
   LEFT = "left",
@@ -337,33 +240,28 @@ type NodeOptions = {
   children?: Tree[];
 };
 
-const node = (type: string, { data = {}, position, children = [] }: NodeOptions = {}): Tree => {
+export const node = (type: string, { data = {}, position, children = [] }: NodeOptions = {}): Tree => {
   const id = nextId();
   if (position) setPos(id, position);
   return { type, id, data, children };
 };
 
-export const error = <T extends Tree>(cause: SystemError, _node: T | Position): ErrorNode<T> =>
+export const error = <T extends Tree>(cause: SystemError, _node: T | Position): Tree =>
   node(NodeType.ERROR, {
     data: { cause },
     children: "type" in _node ? [_node] : [],
     position: isPosition(_node) ? _node : undefined,
-  }) as ErrorNode<T>;
+  });
 
-export const implicitPlaceholder = (position: Position): ImplicitPlaceholderNode =>
-  node(NodeType.IMPLICIT_PLACEHOLDER, { position }) as ImplicitPlaceholderNode;
+export const implicitPlaceholder = (position: Position) => node(NodeType.IMPLICIT_PLACEHOLDER, { position });
 
-export const placeholder = (position: Position): PlaceholderNode =>
-  node(NodeType.PLACEHOLDER, { position }) as PlaceholderNode;
+export const placeholder = (position: Position) => node(NodeType.PLACEHOLDER, { position });
 
-export const name = (value: string | symbol, position: Position): NameNode =>
-  node(NodeType.NAME, { data: { value }, position }) as NameNode;
+export const name = (value: string | symbol, position: Position) => node(NodeType.NAME, { data: { value }, position });
 
-export const number = (value: number, position: Position): NumberNode =>
-  node(NodeType.NUMBER, { data: { value }, position }) as NumberNode;
+export const number = (value: number, position: Position) => node(NodeType.NUMBER, { data: { value }, position });
 
-export const string = (value: string, position: Position): StringNode =>
-  node(NodeType.STRING, { data: { value }, position }) as StringNode;
+export const string = (value: string, position: Position) => node(NodeType.STRING, { data: { value }, position });
 
 export const token = (token: Token, position: Position) =>
   token.type === "number"
@@ -376,32 +274,28 @@ export const token = (token: Token, position: Position) =>
     ? error(token.cause, position)
     : name(token.src, position);
 
-export const atom = (name: string, position?: Position): AtomNode =>
-  node(NodeType.ATOM, { data: { name }, position }) as AtomNode;
+export const atom = (name: string, position?: Position) => node(NodeType.ATOM, { data: { name }, position });
 
-export const module = (children: ModuleNode["children"]): ModuleNode =>
-  node(NodeType.MODULE, { children }) as ModuleNode;
+export const module = (children: Tree[]) => node(NodeType.MODULE, { children });
 
-export const script = (children: ScriptNode["children"]): ScriptNode =>
-  node(NodeType.SCRIPT, { children }) as ScriptNode;
+export const script = (children: Tree[]) => node(NodeType.SCRIPT, { children });
 
-export const block = (expr: ExpressionNode, position?: Position): BlockNode =>
-  node(NodeType.BLOCK, { position, children: [expr] }) as BlockNode;
+export const block = (expr: Tree, position?: Position) => node(NodeType.BLOCK, { position, children: [expr] });
 
-export const sequence = (children: Tree[]): SequenceNode => node(NodeType.SEQUENCE, { children }) as SequenceNode;
+export const sequence = (children: Tree[]) => node(NodeType.SEQUENCE, { children });
 
 export const fn = (
   pattern: Tree,
   body: Tree,
   { position, isTopFunction = true }: { position?: Position; isTopFunction?: boolean } = {}
-): FunctionNode => {
+) => {
   const children = [pattern, body];
-  const _node = node(NodeType.FUNCTION, { position, children }) as FunctionNode;
+  const _node = node(NodeType.FUNCTION, { position, children });
   if (!isTopFunction) _node.data.isTopFunction = isTopFunction;
   return _node;
 };
 
-export const tuple = (children: Tree[]): TupleNode => node(NodeType.TUPLE, { children }) as TupleNode;
+export const tuple = (children: Tree[]) => node(NodeType.TUPLE, { children });
 
 export const loop = (body: Tree, position?: Position) => node(NodeType.LOOP, { children: [body], position });
 export const ifElse = (condition: Tree, ifTrue: Tree, ifFalse: Tree, position?: Position) =>

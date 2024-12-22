@@ -1,7 +1,7 @@
 import { Diagnostic, LabelInfo, primaryDiagnosticLabel, secondaryDiagnosticLabel } from "codespan-napi";
 import { assert } from "./utils/index.js";
-import { Position } from "./position.js";
-import { inject, Injectable } from "./injector.js";
+import { Position } from "./utils/position.js";
+import { inject, Injectable } from "./utils/injector.js";
 import { getExprPrecedence, NodeType } from "./ast.js";
 
 export enum ErrorType {
