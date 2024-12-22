@@ -691,6 +691,160 @@ exports[`group kinds > for group > for colon 1`] = `
 ]
 `;
 
+exports[`group kinds > match group > errors > missing block end 1`] = `
+[
+  {
+    "kind": "match",
+    "tokens": [
+      {
+        "tokens": [
+          {
+            "name": "x",
+            "type": "identifier",
+          },
+        ],
+        "type": "group",
+      },
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "kind": "braces",
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > match group > errors > missing block start 1`] = `
+[
+  {
+    "kind": "match",
+    "tokens": [
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "tokens": [
+            {
+              "name": "x",
+              "type": "identifier",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "cause": [Error: Unexpected closing token "}"],
+    "token": {
+      "name": "}",
+      "type": "identifier",
+    },
+    "type": "error",
+  },
+]
+`;
+
+exports[`group kinds > match group > errors > missing block start inside block 1`] = `
+[
+  {
+    "kind": "braces",
+    "tokens": [
+      {
+        "kind": "match",
+        "tokens": [
+          {
+            "cause": [Error: Missing closing token],
+            "token": {
+              "tokens": [
+                {
+                  "name": "x",
+                  "type": "identifier",
+                },
+              ],
+              "type": "group",
+            },
+            "type": "error",
+          },
+          {
+            "cause": [Error: missing operand],
+            "token": {
+              "tokens": [],
+              "type": "group",
+            },
+            "type": "error",
+          },
+        ],
+        "type": "group",
+      },
+    ],
+    "type": "group",
+  },
+  {
+    "cause": [Error: Unexpected closing token "}"],
+    "token": {
+      "name": "}",
+      "type": "identifier",
+    },
+    "type": "error",
+  },
+]
+`;
+
+exports[`group kinds > match group > errors > missing everything 1`] = `
+[
+  {
+    "kind": "match",
+    "tokens": [
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "tokens": [
+            {
+              "name": "x",
+              "type": "identifier",
+            },
+            {
+              "cause": [Error: Unexpected end of source],
+              "token": {
+                "type": "placeholder",
+              },
+              "type": "error",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+      {
+        "cause": [Error: missing operand],
+        "token": {
+          "tokens": [],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
 exports[`group kinds > match group > match 1`] = `
 [
   {

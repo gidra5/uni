@@ -106,10 +106,10 @@ describe("group kinds", () => {
     test("match", () => testCase("match x { a -> b }"));
 
     describe("errors", () => {
-      test.todo("missing block start", () => testCase("match x }"));
-      test.todo("missing block end", () => testCase("match x {"));
-      test.todo("missing block start inside block", () => testCase("{ match x } }"));
-      test.todo("missing everything", () => testCase("match x"));
+      test("missing block start", () => testCase("match x }"));
+      test("missing block end", () => testCase("match x {"));
+      test("missing block start inside block", () => testCase("{ match x } }"));
+      test("missing everything", () => testCase("match x"));
     });
   });
 });

@@ -121,8 +121,6 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
   }
 
   if (token.type === "identifier") {
-    console.log("x", token.name, yield Parser.ctx(), yield Parser.checkFollowSetPrev());
-
     if (!(yield Parser.checkFollowSetPrev())) {
       if (token.name === ")") {
         return error(yield* unbalancedCloseToken("(", ")"), token);
@@ -272,6 +270,10 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
 
       tokens.push(
         yield parseTokenGroup("{", "}").chain(function* ({ tokens, closed }) {
+          if (closed === "}") {
+            yield Parser.advance(-1);
+            return error(yield* unbalancedOpenToken(start, "match", "{") as any, tokens);
+          }
           current = closed;
           if (closed === "{") return tokens;
           return error(yield* unbalancedOpenToken(start, "match", "{") as any, tokens);
