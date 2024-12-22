@@ -822,6 +822,32 @@ exports[`group kinds > pair groups > errors > missing block end inside block 1`]
 ]
 `;
 
+exports[`group kinds > pair groups > errors > missing block end inside block inside parens 1`] = `
+[
+  {
+    "kind": "parentheses",
+    "tokens": [
+      {
+        "cause": [Error: Missing closing token],
+        "token": {
+          "kind": "braces",
+          "tokens": [
+            {
+              "kind": "braces",
+              "tokens": [],
+              "type": "group",
+            },
+          ],
+          "type": "group",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
 exports[`group kinds > pair groups > errors > missing block start 1`] = `
 [
   {
@@ -849,6 +875,49 @@ exports[`group kinds > pair groups > errors > missing block start inside block 1
       "type": "identifier",
     },
     "type": "error",
+  },
+]
+`;
+
+exports[`group kinds > pair groups > errors > missing block start inside block inside parens 1`] = `
+[
+  {
+    "kind": "parentheses",
+    "tokens": [
+      {
+        "kind": "braces",
+        "tokens": [],
+        "type": "group",
+      },
+      {
+        "cause": [Error: Unexpected closing token "}"],
+        "token": {
+          "name": "}",
+          "type": "identifier",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
+  },
+]
+`;
+
+exports[`group kinds > pair groups > errors > missing block start inside parens 1`] = `
+[
+  {
+    "kind": "parentheses",
+    "tokens": [
+      {
+        "cause": [Error: Unexpected closing token "}"],
+        "token": {
+          "name": "}",
+          "type": "identifier",
+        },
+        "type": "error",
+      },
+    ],
+    "type": "group",
   },
 ]
 `;

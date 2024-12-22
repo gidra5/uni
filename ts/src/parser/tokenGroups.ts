@@ -121,17 +121,16 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
   }
 
   if (token.type === "identifier") {
-    if (!(yield Parser.checkFollowSet())) {
+    console.log("x", token.name, yield Parser.ctx(), yield Parser.checkFollowSetPrev());
+
+    if (!(yield Parser.checkFollowSetPrev())) {
       if (token.name === ")") {
-        yield Parser.advance();
         return error(yield* unbalancedCloseToken("(", ")"), token);
       }
       if (token.name === "]") {
-        yield Parser.advance();
         return error(yield* unbalancedCloseToken("[", "]"), token);
       }
       if (token.name === "}") {
-        yield Parser.advance();
         return error(yield* unbalancedCloseToken("{", "}"), token);
       }
     }

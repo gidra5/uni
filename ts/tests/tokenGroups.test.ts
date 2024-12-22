@@ -48,9 +48,9 @@ describe("group kinds", () => {
       test("missing block start inside block", () => testCase("{}}"));
       test("missing block end inside block", () => testCase("{{}"));
       test(`unclosed inside parens`, () => testCase("({)"));
-      test.todo(`missing block start inside parens`, () => testCase("(})"));
-      test.todo(`missing block start inside block inside parens`, () => testCase("({}})"));
-      test.todo(`missing block end inside block inside parens`, () => testCase("({{})"));
+      test(`missing block start inside parens`, () => testCase("(})"));
+      test(`missing block start inside block inside parens`, () => testCase("({}})"));
+      test(`missing block end inside block inside parens`, () => testCase("({{})"));
     });
   });
 
@@ -92,24 +92,24 @@ describe("group kinds", () => {
     test("fn braces", () => testCase("fn x { z }"));
     test("fn arrow braces", () => testCase("fn x -> y { z }"));
 
-    describe.todo("errors", () => {
-      test("block missing block end", () => testCase("fn x -> y {"));
-      test("block missing block start", () => testCase("fn x -> y }"));
-      test("missing block start", () => testCase("fn x }"));
-      test("missing block end", () => testCase("fn x {"));
-      test("missing block start inside block", () => testCase("{ fn x } }"));
-      test("missing everything", () => testCase("fn x"));
+    describe("errors", () => {
+      test.todo("block missing block end", () => testCase("fn x -> y {"));
+      test.todo("block missing block start", () => testCase("fn x -> y }"));
+      test.todo("missing block start", () => testCase("fn x }"));
+      test.todo("missing block end", () => testCase("fn x {"));
+      test.todo("missing block start inside block", () => testCase("{ fn x } }"));
+      test.todo("missing everything", () => testCase("fn x"));
     });
   });
 
   describe("match group", () => {
     test("match", () => testCase("match x { a -> b }"));
 
-    describe.todo("errors", () => {
-      test("missing block start", () => testCase("match x }"));
-      test("missing block end", () => testCase("match x {"));
-      test("missing block start inside block", () => testCase("{ match x } }"));
-      test("missing everything", () => testCase("match x"));
+    describe("errors", () => {
+      test.todo("missing block start", () => testCase("match x }"));
+      test.todo("missing block end", () => testCase("match x {"));
+      test.todo("missing block start inside block", () => testCase("{ match x } }"));
+      test.todo("missing everything", () => testCase("match x"));
     });
   });
 });

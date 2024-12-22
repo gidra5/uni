@@ -173,6 +173,12 @@ export class Parser<in T, out U, C extends BaseContext = BaseContext> {
     });
   }
 
+  static checkFollowSetPrev<C extends BaseContext & { followSet: string[] }>(): Parser<any, boolean, C> {
+    return new Parser((src, ctx) => {
+      return [ctx, ctx.followSet.some((s) => src.startsWith(s, ctx.index - 1))];
+    });
+  }
+
   static isEnd<T extends { length: number }, C extends BaseContext>(): Parser<T, boolean, C> {
     return new Parser((src, ctx) => [ctx, ctx.index >= src.length]);
   }
