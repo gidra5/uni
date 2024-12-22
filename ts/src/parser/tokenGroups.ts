@@ -121,11 +121,19 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
   }
 
   if (token.type === "identifier") {
-    if (!(yield Parser.checkFollowSet()) && ["}", ")", "]"].includes(token.name)) {
-      yield Parser.advance();
-      const startStr = token.name === ")" ? "(" : token.name === "]" ? "[" : token.name === "}" ? "{" : null;
-      assert(startStr);
-      return error(yield* unbalancedCloseToken(startStr, token.name), token);
+    if (!(yield Parser.checkFollowSet())) {
+      if (token.name === ")") {
+        yield Parser.advance();
+        return error(yield* unbalancedCloseToken("(", ")"), token);
+      }
+      if (token.name === "]") {
+        yield Parser.advance();
+        return error(yield* unbalancedCloseToken("[", "]"), token);
+      }
+      if (token.name === "}") {
+        yield Parser.advance();
+        return error(yield* unbalancedCloseToken("{", "}"), token);
+      }
     }
 
     if (token.name === "(") {

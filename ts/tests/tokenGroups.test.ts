@@ -41,6 +41,17 @@ describe("group kinds", () => {
     test("brackets", () => testCase("[x]"));
     test("braces", () => testCase("{x}"));
     test("braces newlines", () => testCase("{\nx\ny\n}"));
+
+    describe("errors", () => {
+      test("missing block end", () => testCase("{"));
+      test("missing block start", () => testCase("}"));
+      test("missing block start inside block", () => testCase("{}}"));
+      test("missing block end inside block", () => testCase("{{}"));
+      test(`unclosed inside parens`, () => testCase("({)"));
+      test.todo(`missing block start inside parens`, () => testCase("(})"));
+      test.todo(`missing block start inside block inside parens`, () => testCase("({}})"));
+      test.todo(`missing block end inside block inside parens`, () => testCase("({{})"));
+    });
   });
 
   describe("for group", () => {
@@ -80,10 +91,26 @@ describe("group kinds", () => {
     test("fn arrow", () => testCase("fn x -> z"));
     test("fn braces", () => testCase("fn x { z }"));
     test("fn arrow braces", () => testCase("fn x -> y { z }"));
+
+    describe.todo("errors", () => {
+      test("block missing block end", () => testCase("fn x -> y {"));
+      test("block missing block start", () => testCase("fn x -> y }"));
+      test("missing block start", () => testCase("fn x }"));
+      test("missing block end", () => testCase("fn x {"));
+      test("missing block start inside block", () => testCase("{ fn x } }"));
+      test("missing everything", () => testCase("fn x"));
+    });
   });
 
   describe("match group", () => {
     test("match", () => testCase("match x { a -> b }"));
+
+    describe.todo("errors", () => {
+      test("missing block start", () => testCase("match x }"));
+      test("missing block end", () => testCase("match x {"));
+      test("missing block start inside block", () => testCase("{ match x } }"));
+      test("missing everything", () => testCase("match x"));
+    });
   });
 });
 
