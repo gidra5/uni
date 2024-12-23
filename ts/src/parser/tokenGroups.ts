@@ -25,8 +25,6 @@ export enum TokenGroupKind {
   Arrow = "arrow",
   If = "if",
   Match = "match",
-  Record = "record",
-  Dict = "dict",
   Function = "fn",
 }
 
@@ -84,9 +82,6 @@ const parseBraces = function* self() {
 };
 
 export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(function* self() {
-  const parsedWhitespace = yield parseWhitespace;
-  if (parsedWhitespace) return parsedWhitespace;
-
   yield Parser.rememberIndex();
   const token: Token = yield parseToken as any;
 
@@ -262,7 +257,7 @@ export const parseTokenGroup = (...untilArray: string[]): Parser<string, TokenGr
   Parser.do(function* self() {
     const tokens: TokenGroup[] = [];
 
-    for (const until of untilArray) yield Parser.appendFollow(until);
+    yield Parser.appendFollow(...untilArray);
     yield parseWhitespace as any;
 
     while (!(yield Parser.checkFollowSet()) && (yield Parser.isNotEnd())) {

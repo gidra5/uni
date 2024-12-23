@@ -282,6 +282,9 @@ export const parseWhitespace = Parser.do<string, Token | null>(function* () {
 });
 
 export const parseToken = Parser.do<string, Token>(function* () {
+  const parsedWhitespace = yield parseWhitespace;
+  if (parsedWhitespace) return parsedWhitespace;
+
   yield Parser.rememberIndex();
 
   if (yield Parser.string('"""\n')) {

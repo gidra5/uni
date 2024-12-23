@@ -108,6 +108,7 @@ describe("expressions", () => {
     it("integer", () => testCase(`123`));
     it("float", () => testCase(`123.456`));
     it("string", () => testCase(`"string"`));
+    it("string template", () => testCase(`"string \\(1) string"`));
   });
 
   describe.todo("arithmetics", () => {
@@ -326,7 +327,7 @@ describe.todo("pattern matching", () => {
   });
 });
 
-describe.todo("types", () => {
+describe("types", () => {
   it.todo("declaration with type", () => testCase("x: number := 1"));
   it.todo("typeof", () => testCase("typeof x"));
   it.todo("type cast", () => testCase("x as number"));

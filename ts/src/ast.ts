@@ -2,6 +2,7 @@ import { SystemError } from "./error.js";
 import { isPosition, Position } from "./utils/position.js";
 import { Token } from "./parser/tokens.js";
 import { nextId, setPos } from "./utils/index.js";
+import type { TokenGroup } from "./parser/tokenGroups.js";
 
 export type Tree = {
   type: string;
@@ -263,7 +264,7 @@ export const number = (value: number, position: Position) => node(NodeType.NUMBE
 
 export const string = (value: string, position: Position) => node(NodeType.STRING, { data: { value }, position });
 
-export const token = (token: Token, position: Position) =>
+export const token = (token: TokenGroup, position: Position) =>
   token.type === "number"
     ? number(token.value, position)
     : token.type === "string"
@@ -272,7 +273,9 @@ export const token = (token: Token, position: Position) =>
     ? placeholder(position)
     : token.type === "error"
     ? error(token.cause, position)
-    : name(token.src, position);
+    : token.type === "identifier"
+    ? name(token.name, position)
+    : error(SystemError.unknown(), position);
 
 export const atom = (name: string, position?: Position) => node(NodeType.ATOM, { data: { name }, position });
 
