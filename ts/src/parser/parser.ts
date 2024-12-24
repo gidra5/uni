@@ -127,8 +127,12 @@ const idToPrefixExprOp = {
 //   "!": NodeType.NOT,
 // };
 
-// const tokenIncludes = (token: Token | undefined, tokens: string[]): boolean =>
-//   !!token && (tokens.includes(token.src) || (tokens.includes("\n") && token.type === "newline"));
+const tokenIncludes = (token: TokenGroup | undefined, tokens: string[]): boolean => {
+  if (token === undefined) return false;
+  if (token.type === "identifier") return tokens.includes(token.name);
+
+  return tokens.includes("\n") && token.type === "newline";
+};
 
 type Context3 = {
   groupParser: Parser<TokenGroup[], Tree, { lhs: boolean }>;
@@ -136,12 +140,12 @@ type Context3 = {
   precedence: number;
   followSet: string[];
 };
-type Context = Readonly<{
-  lhs: boolean;
-  allowPatternDefault: boolean;
-  followSet: string[];
-  banned: string[];
-}>;
+// type Context = Readonly<{
+//   lhs: boolean;
+//   allowPatternDefault: boolean;
+//   followSet: string[];
+//   banned: string[];
+// }>;
 
 // const newContext = ({ banned = [] }: Partial<Context> = {}): Context => ({
 //   lhs: false,
@@ -822,11 +826,11 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
         children.push(expr);
       }
     }
-    const node = _node(NodeType.ADD, { position: yield* nodePosition(), children })
+    const node = _node(NodeType.TEMPLATE, { position: yield * nodePosition(), children });
     inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
-    return node ;
+    return node;
   }
-  
+
   yield Parser.advance();
   return token(_token, yield * nodePosition());
   // return yield (src, i) => {
@@ -835,7 +839,6 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
   //   if (
   //     src[nextIndex] &&
   //     !tokenIncludes(src[nextIndex], context.followSet) &&
-  //     !tokenIncludes(src[nextIndex], context.banned) &&
   //     pattern.type !== NodeType.ERROR &&
   //     Object.hasOwn(idToLhsPatternExprOp, src[nextIndex].src)
   //   ) {
@@ -933,7 +936,6 @@ const parsePrattGroup = function* (): ParserGenerator<TokenGroup[], any, Tree, C
     return error(SystemError.endOfSource(position), position);
   }
 
-  // if (tokenIncludes(src[index], context.banned)) return [index, implicitPlaceholder(nodePosition())];
   // if (tokenIncludes(src[index], context.followSet)) return [index, implicitPlaceholder(nodePosition())];
 
   const node: Tree = yield groupParser as any;
@@ -983,58 +985,55 @@ const parsePrefix: Parser<TokenGroup[], Tree, Context3> = Parser.do(function* se
 });
 
 const parsePratt = function* self() {
-  const { getPrecedence, precedence }: Context3 = yield Parser.ctx();
+  const { getPrecedence, precedence, followSet }: Context3 = yield Parser.ctx();
   let lhs: Tree = yield parsePrefix;
-  // const until = () => {
-  //   return (
-  //     context.followSet.length === 0 ||
-  //     !tokenIncludes(src[index], context.followSet) ||
-  //     context.banned.length === 0 ||
-  //     !tokenIncludes(src[index], context.banned)
-  //   );
-  // };
+  const until = function* () {
+    if (yield Parser.isEnd()) return false;
+    if (followSet.length === 0) return true;
+    return !tokenIncludes(yield Parser.peek(), followSet);
+  };
 
-  // while (yield Parser.isNotEnd()) {
-  //   const opGroup: Tree = yield Parser.scope({ lhs: true }, parsePrattGroup as any);
-  //   const [left, right] = getPrecedence(opGroup);
-  //   if (left === null) break;
-  //   if (left <= precedence) break;
+  while (yield * until()) {
+    const opGroup: Tree = yield Parser.scope({ lhs: true }, parsePrattGroup as any);
+    const [left, right] = getPrecedence(opGroup);
+    if (left === null) break;
+    if (left <= precedence) break;
 
-  //   if (right === null) {
-  //     lhs = postfix(opGroup, lhs);
-  //     continue;
-  //   }
+    if (right === null) {
+      lhs = postfix(opGroup, lhs);
+      continue;
+    }
 
-  //   if (opGroup.type === NodeType.SEQUENCE) {
-  //     const token: TokenGroup | undefined = yield Parser.peek();
-  //     if (token?.type === "newline") yield Parser.advance();
-  //     if (yield Parser.isEnd()) break;
-  //   }
+    if (opGroup.type === NodeType.SEQUENCE) {
+      const token: TokenGroup | undefined = yield Parser.peek();
+      if (token?.type === "newline") yield Parser.advance();
+      if (yield Parser.isEnd()) break;
+    }
 
-  //   const rhs: Tree = yield Parser.scope({ precedence: right }, self);
+    const rhs: Tree = yield Parser.scope({ precedence: right }, self);
 
-  //   if (rhs.type === NodeType.ERROR && rhs.children.length === 0) {
-  //     const position = indexPosition(yield Parser.index());
-  //     const node = infix(opGroup, lhs, implicitPlaceholder(position));
-  //     const errorNode = error(SystemError.missingOperand(position).withCause(rhs.data.cause), node);
-  //     return errorNode;
-  //   }
+    if (rhs.type === NodeType.ERROR && rhs.children.length === 0) {
+      const position = indexPosition(yield Parser.index());
+      const node = infix(opGroup, lhs, implicitPlaceholder(position));
+      const errorNode = error(SystemError.missingOperand(position).withCause(rhs.data.cause), node);
+      return errorNode;
+    }
 
-  //   // if two same operators are next to each other, and their precedence is the same on both sides
-  //   // so it is both left and right associative
-  //   // which means we can put all arguments into one group
-  //   const associative = left === right;
-  //   const hasSameOperator = opGroup.type === lhs.type;
-  //   const isPlaceholder = rhs.type === NodeType.IMPLICIT_PLACEHOLDER;
+    // if two same operators are next to each other, and their precedence is the same on both sides
+    // so it is both left and right associative
+    // which means we can put all arguments into one group
+    const associative = left === right;
+    const hasSameOperator = opGroup.type === lhs.type;
+    const isPlaceholder = rhs.type === NodeType.IMPLICIT_PLACEHOLDER;
 
-  //   if (associative && hasSameOperator && !isPlaceholder) {
-  //     lhs.children.push(rhs);
-  //   } else if (!isPlaceholder) {
-  //     lhs = infix(opGroup, lhs, rhs);
-  //   } else if (!(associative && hasSameOperator)) {
-  //     lhs = postfix(opGroup, lhs);
-  //   }
-  // }
+    if (associative && hasSameOperator && !isPlaceholder) {
+      lhs.children.push(rhs);
+    } else if (!isPlaceholder) {
+      lhs = infix(opGroup, lhs, rhs);
+    } else if (!(associative && hasSameOperator)) {
+      lhs = postfix(opGroup, lhs);
+    }
+  }
 
   if (lhs.type === NodeType.SEQUENCE && lhs.children.length === 1) {
     return lhs.children[0];

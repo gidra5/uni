@@ -111,11 +111,11 @@ describe("expressions", () => {
     it("string template", () => testCase(`"string \\(1) string"`));
   });
 
-  describe.todo("arithmetics", () => {
-    it("order of application", () => testCase(`1 + 2^-3 * 4 - 5 / 6 % 7`));
+  describe("arithmetics", () => {
+    it.only("order of application", () => testCase(`1 + 2^-3 * 4 - 5 / 6 % 7`));
     it("-(a+b)", () => testCase(`-(a+b)`));
 
-    it("complex", () => testCase(`(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1`));
+    it.todo("complex", () => testCase(`(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1`));
   });
 
   describe.todo("boolean expressions", () => {

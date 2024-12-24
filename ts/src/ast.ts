@@ -1,6 +1,5 @@
 import { SystemError } from "./error.js";
 import { isPosition, Position } from "./utils/position.js";
-import { Token } from "./parser/tokens.js";
 import { nextId, setPos } from "./utils/index.js";
 import type { TokenGroup } from "./parser/tokenGroups.js";
 
@@ -94,23 +93,20 @@ export const NodeType = {
   RECORD: "object",
   LIKE: "like",
   STRICT: "strict",
+  TEMPLATE: "template",
 } as const;
 export type NodeType = (typeof NodeType)[keyof typeof NodeType];
-
-enum Associativity {
-  LEFT = "left",
-  RIGHT = "right",
-  LEFT_AND_RIGHT = "both",
-}
 
 enum Fixity {
   PREFIX = "prefix",
   POSTFIX = "postfix",
+  INFIX_LEFT = "infix_left",
+  INFIX_RIGHT = "infix_right",
   INFIX = "infix",
   NONE = "none",
 }
 
-const generatePrecedences = <T extends string>(precedenceList: [T, Fixity, Associativity?][]) => {
+const generatePrecedences = <T extends string>(precedenceList: [T, Fixity][]) => {
   const precedences = {} as Record<T, Precedence>;
 
   // if two same operators are next to each other, which one will take precedence
@@ -122,7 +118,7 @@ const generatePrecedences = <T extends string>(precedenceList: [T, Fixity, Assoc
   const associative = (p: number): Precedence => [p, p];
   let precedenceCounter = 0;
 
-  for (const [operator, fixity, associativity] of precedenceList) {
+  for (const [operator, fixity] of precedenceList) {
     precedenceCounter++;
 
     if (fixity === Fixity.PREFIX) {
@@ -131,9 +127,9 @@ const generatePrecedences = <T extends string>(precedenceList: [T, Fixity, Assoc
       precedences[operator] = [precedenceCounter, null];
     } else if (fixity === Fixity.NONE) {
       precedences[operator] = [null, null];
-    } else if (associativity === Associativity.LEFT_AND_RIGHT) {
+    } else if (fixity === Fixity.INFIX) {
       precedences[operator] = associative(precedenceCounter);
-    } else if (associativity === Associativity.LEFT) {
+    } else if (fixity === Fixity.INFIX_LEFT) {
       precedences[operator] = leftAssociative(precedenceCounter++);
     } else precedences[operator] = rightAssociative(precedenceCounter++);
   }
@@ -143,8 +139,8 @@ const generatePrecedences = <T extends string>(precedenceList: [T, Fixity, Assoc
 
 // if two same operators are next to each other, which one will take precedence
 // first come lower precedence operators
-const exprPrecedenceList: [NodeType, Fixity, Associativity?][] = [
-  [NodeType.SEQUENCE, Fixity.INFIX, Associativity.LEFT_AND_RIGHT],
+const exprPrecedenceList: [NodeType, Fixity][] = [
+  [NodeType.SEQUENCE, Fixity.INFIX],
   [NodeType.FUNCTION, Fixity.PREFIX],
   [NodeType.ASYNC, Fixity.PREFIX],
   [NodeType.IF, Fixity.PREFIX],
@@ -160,37 +156,37 @@ const exprPrecedenceList: [NodeType, Fixity, Associativity?][] = [
   [NodeType.ASSIGN, Fixity.PREFIX],
   [NodeType.INC_ASSIGN, Fixity.PREFIX],
 
-  [NodeType.PARALLEL, Fixity.INFIX, Associativity.LEFT_AND_RIGHT],
-  [NodeType.PIPE, Fixity.INFIX, Associativity.LEFT_AND_RIGHT],
-  [NodeType.TUPLE, Fixity.INFIX, Associativity.LEFT_AND_RIGHT],
-  [NodeType.LABEL, Fixity.INFIX, Associativity.RIGHT],
+  [NodeType.PARALLEL, Fixity.INFIX],
+  [NodeType.PIPE, Fixity.INFIX],
+  [NodeType.TUPLE, Fixity.INFIX],
+  [NodeType.LABEL, Fixity.INFIX_RIGHT],
   [NodeType.SPREAD, Fixity.PREFIX],
 
-  [NodeType.SEND, Fixity.INFIX, Associativity.RIGHT],
+  [NodeType.SEND, Fixity.INFIX_RIGHT],
   [NodeType.RECEIVE, Fixity.PREFIX],
-  [NodeType.SEND_STATUS, Fixity.INFIX, Associativity.RIGHT],
+  [NodeType.SEND_STATUS, Fixity.INFIX_RIGHT],
   [NodeType.RECEIVE_STATUS, Fixity.PREFIX],
 
-  [NodeType.OR, Fixity.INFIX, Associativity.LEFT_AND_RIGHT],
-  [NodeType.AND, Fixity.INFIX, Associativity.LEFT_AND_RIGHT],
-  [NodeType.EQUAL, Fixity.INFIX, Associativity.RIGHT],
-  [NodeType.NOT_EQUAL, Fixity.INFIX, Associativity.RIGHT],
-  [NodeType.DEEP_EQUAL, Fixity.INFIX, Associativity.RIGHT],
-  [NodeType.DEEP_NOT_EQUAL, Fixity.INFIX, Associativity.RIGHT],
-  [NodeType.LESS, Fixity.INFIX, Associativity.RIGHT],
-  [NodeType.LESS_EQUAL, Fixity.INFIX, Associativity.RIGHT],
-  [NodeType.GREATER, Fixity.INFIX, Associativity.RIGHT],
-  [NodeType.GREATER_EQUAL, Fixity.INFIX, Associativity.RIGHT],
+  [NodeType.OR, Fixity.INFIX],
+  [NodeType.AND, Fixity.INFIX],
+  [NodeType.EQUAL, Fixity.INFIX_RIGHT],
+  [NodeType.NOT_EQUAL, Fixity.INFIX_RIGHT],
+  [NodeType.DEEP_EQUAL, Fixity.INFIX_RIGHT],
+  [NodeType.DEEP_NOT_EQUAL, Fixity.INFIX_RIGHT],
+  [NodeType.LESS, Fixity.INFIX_RIGHT],
+  [NodeType.LESS_EQUAL, Fixity.INFIX_RIGHT],
+  [NodeType.GREATER, Fixity.INFIX_RIGHT],
+  [NodeType.GREATER_EQUAL, Fixity.INFIX_RIGHT],
   [NodeType.IS, Fixity.POSTFIX],
-  [NodeType.IN, Fixity.INFIX, Associativity.LEFT_AND_RIGHT],
+  [NodeType.IN, Fixity.INFIX],
   [NodeType.NOT, Fixity.PREFIX],
 
-  [NodeType.ADD, Fixity.INFIX, Associativity.LEFT_AND_RIGHT],
-  [NodeType.SUB, Fixity.INFIX, Associativity.LEFT_AND_RIGHT],
-  [NodeType.MULT, Fixity.INFIX, Associativity.LEFT_AND_RIGHT],
-  [NodeType.DIV, Fixity.INFIX, Associativity.LEFT_AND_RIGHT],
-  [NodeType.MOD, Fixity.INFIX, Associativity.LEFT],
-  [NodeType.POW, Fixity.INFIX, Associativity.RIGHT],
+  [NodeType.ADD, Fixity.INFIX],
+  [NodeType.SUB, Fixity.INFIX],
+  [NodeType.MULT, Fixity.INFIX],
+  [NodeType.DIV, Fixity.INFIX],
+  [NodeType.MOD, Fixity.INFIX_LEFT],
+  [NodeType.POW, Fixity.INFIX_RIGHT],
   [NodeType.MINUS, Fixity.PREFIX],
   [NodeType.PLUS, Fixity.PREFIX],
   [NodeType.INCREMENT, Fixity.PREFIX],
@@ -203,14 +199,14 @@ const exprPrecedenceList: [NodeType, Fixity, Associativity?][] = [
   [NodeType.EXPORT, Fixity.PREFIX],
   [NodeType.MUTABLE, Fixity.PREFIX],
   [NodeType.AWAIT, Fixity.PREFIX],
-  [NodeType.APPLICATION, Fixity.INFIX, Associativity.LEFT],
+  [NodeType.APPLICATION, Fixity.INFIX_LEFT],
   [NodeType.INDEX, Fixity.POSTFIX],
   [NodeType.TRY, Fixity.POSTFIX],
 ] as const;
 
-const patternPrecedenceList: [NodeType, Fixity, Associativity?][] = [
-  [NodeType.TUPLE, Fixity.INFIX, Associativity.LEFT_AND_RIGHT],
-  [NodeType.LABEL, Fixity.INFIX, Associativity.RIGHT],
+const patternPrecedenceList: [NodeType, Fixity][] = [
+  [NodeType.TUPLE, Fixity.INFIX],
+  [NodeType.LABEL, Fixity.INFIX_RIGHT],
   [NodeType.SPREAD, Fixity.PREFIX],
   [NodeType.ASSIGN, Fixity.POSTFIX],
   [NodeType.MUTABLE, Fixity.PREFIX],
@@ -219,7 +215,7 @@ const patternPrecedenceList: [NodeType, Fixity, Associativity?][] = [
   [NodeType.EXPORT, Fixity.PREFIX],
   [NodeType.NOT, Fixity.PREFIX],
   [NodeType.INDEX, Fixity.POSTFIX],
-  [NodeType.BIND, Fixity.INFIX, Associativity.RIGHT],
+  [NodeType.BIND, Fixity.INFIX_RIGHT],
   [NodeType.ATOM, Fixity.PREFIX],
 ] as const;
 

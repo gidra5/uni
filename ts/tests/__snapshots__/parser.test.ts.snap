@@ -1690,38 +1690,6 @@ exports[`advent of code 1 single file > variable 1`] = `
 }
 `;
 
-exports[`comments > comment 1`] = `
-{
-  "children": [
-    {
-      "children": [],
-      "data": {
-        "value": 123,
-      },
-      "type": "number",
-    },
-  ],
-  "data": {},
-  "type": "script",
-}
-`;
-
-exports[`comments > comment block 1`] = `
-{
-  "children": [
-    {
-      "children": [],
-      "data": {
-        "value": 123,
-      },
-      "type": "number",
-    },
-  ],
-  "data": {},
-  "type": "script",
-}
-`;
-
 exports[`expressions > arithmetics > -(a+b) 1`] = `
 {
   "children": [
@@ -7322,7 +7290,7 @@ exports[`expressions > values > string template 1`] = `
         },
       ],
       "data": {},
-      "type": "add",
+      "type": "template",
     },
   ],
   "data": {},
