@@ -859,7 +859,7 @@ const parsePrefix: Parser<TokenGroup[], Tree, Context3> = Parser.do(function* se
   const [, right] = getPrecedence(group);
   if (right === null) return group;
 
-  const rhs: Tree = yield Parser.scope({ precedence: right }, self);
+  const rhs: Tree = yield Parser.scope({ precedence: right }, parsePratt) as any;
 
   if (group.type === NodeType.ERROR) {
     const node = group.children[0];
@@ -890,6 +890,7 @@ const parsePratt = function* self() {
     yield Parser.rememberIndex();
     const opGroup: Tree = yield Parser.scope({ lhs: true }, parsePrattGroup as any);
     const [left, right] = getPrecedence(opGroup);
+
     if (left === null) {
       yield Parser.resetIndex();
       break;
