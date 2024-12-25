@@ -13,6 +13,7 @@ import {
   Precedence,
   getExprPrecedence as _getExprPrecedence,
   getPatternPrecedence as _getPatternPrecedence,
+  atom,
 } from "../ast.js";
 import { inject, Injectable } from "../utils/injector.js";
 import { TokenGroupKind, type TokenGroup } from "./tokenGroups.js";
@@ -429,7 +430,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
   if (lhs && _token.type === "identifier" && _token.name === "is") {
     yield Parser.advance();
     const pattern: Tree = yield parsePattern;
-    return _node(NodeType.IS, { position: yield* nodePosition(), children: [pattern] });
+    return _node(NodeType.IS, { position: yield * nodePosition(), children: [pattern] });
   }
 
   if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Function) {
@@ -659,7 +660,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     ) {
       const op = idToLhsPatternExprOp[next.name];
       yield Parser.advance();
-      return _node(op, { position: yield* nodePosition(), children: [pattern] });
+      return _node(op, { position: yield * nodePosition(), children: [pattern] });
     }
 
     yield Parser.resetIndex();
@@ -668,7 +669,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
   if (!lhs && _token.type === "identifier" && Object.hasOwn(idToPrefixExprOp, _token.name)) {
     const op = idToPrefixExprOp[_token.name];
     yield Parser.advance();
-    return _node(op, { position: yield* nodePosition() });
+    return _node(op, { position: yield * nodePosition() });
   }
 
   if (lhs && _token.type === "identifier" && Object.hasOwn(idToExprOp, _token.name)) {
@@ -679,27 +680,27 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
 
   if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Braces) {
     yield Parser.advance();
-    if (_token.tokens.length === 0) return block(implicitPlaceholder(yield* nodePosition()), yield* nodePosition());
+    if (_token.tokens.length === 0) return block(implicitPlaceholder(yield * nodePosition()), yield * nodePosition());
 
     const [exprParseCtx, expr] = parseExpr.parse(_token.tokens, { index: 0 });
     assert(exprParseCtx.index === _token.tokens.length);
 
-    return block(expr, yield* nodePosition());
+    return block(expr, yield * nodePosition());
   }
 
   if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Brackets) {
     yield Parser.advance();
     if (_token.tokens.length === 0)
       return _node(lhs ? NodeType.INDEX : NodeType.SQUARE_BRACKETS, {
-        position: yield* nodePosition(),
-        children: [implicitPlaceholder(yield* nodePosition())],
+        position: yield * nodePosition(),
+        children: [implicitPlaceholder(yield * nodePosition())],
       });
 
     const [exprParseCtx, expr] = parseExpr.parse(_token.tokens, { index: 0 });
     assert(exprParseCtx.index === _token.tokens.length);
 
     return _node(lhs ? NodeType.INDEX : NodeType.SQUARE_BRACKETS, {
-      position: yield* nodePosition(),
+      position: yield * nodePosition(),
       children: [expr],
     });
   }
@@ -708,61 +709,43 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     yield Parser.advance();
     if (_token.tokens.length === 0) {
       return _node(NodeType.PARENS, {
-        position: yield* nodePosition(),
-        children: [implicitPlaceholder(yield* nodePosition())],
+        position: yield * nodePosition(),
+        children: [implicitPlaceholder(yield * nodePosition())],
       });
     }
 
     const [exprParseCtx, expr] = parseExpr.parse(_token.tokens, { index: 0 });
     assert(exprParseCtx.index === _token.tokens.length);
 
-    return _node(NodeType.PARENS, { position: yield* nodePosition(), children: [expr] });
+    return _node(NodeType.PARENS, { position: yield * nodePosition(), children: [expr] });
   }
 
-  if (lhs) {
-    const node = _node(NodeType.APPLICATION);
+  if (lhs && (yield Parser.newline())) {
+    if (yield Parser.isEnd()) return _node(NodeType.SEQUENCE);
 
-    // if function call is with parentheses, make precedence higher than field access
-    // so method chaining works as usual
-    if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
-      const indexPrecedence = _getExprPrecedence(NodeType.INDEX);
-      const applicationPrecedence = _getExprPrecedence(NodeType.APPLICATION);
-      inject(Injectable.ASTNodePrecedenceMap).set(node.id, [applicationPrecedence[0], indexPrecedence[0]! + 1]);
+    const _token: TokenGroup = yield Parser.peek();
+    if (lhs && _token.type === "identifier" && Object.hasOwn(idToExprOp, _token.name)) {
+      const op = idToExprOp[_token.name];
+      yield Parser.advance();
+      return _node(op);
     }
 
-    return node;
+    if (lhs && (yield Parser.identifier("."))) {
+      const next: TokenGroup | undefined = yield Parser.peek();
+      const { followSet }: Context3 = yield Parser.ctx();
+      if (!tokenIncludes(next, followSet) && next?.type === "identifier") {
+        yield Parser.advance();
+        const key = atom(next.name, getTokenPosition(next));
+        return _node(NodeType.INDEX, {
+          position: yield * nodePosition(),
+          children: [key],
+        });
+      }
+      return error(SystemError.invalidIndex(yield * nodePosition()), yield * nodePosition());
+    }
+
+    return _node(NodeType.SEQUENCE);
   }
-
-  // if (lhs && src[index].type === "newline") {
-  //   index++;
-
-  //   if (!src[index]) return [index, _node(NodeType.SEQUENCE)];
-
-  //   if (lhs && Object.hasOwn(idToExprOp, src[index].src)) {
-  //     const op = idToExprOp[src[index].src];
-  //     index++;
-  //     return [index, _node(op)];
-  //   }
-
-  //   if (lhs && src[index].src === ".") {
-  //     index++;
-  //     const next = src[index];
-  //     if (!tokenIncludes(next, context.followSet) && next?.type === "identifier") {
-  //       index++;
-  //       const key = atom(next.src, { start: next.start, end: next.end });
-  //       return [
-  //         index,
-  //         _node(NodeType.INDEX, {
-  //           position: nodePosition(),
-  //           children: [key],
-  //         }),
-  //       ];
-  //     }
-  //     return [index, error(SystemError.invalidIndex(nodePosition()), nodePosition())];
-  //   }
-
-  //   return [index, _node(NodeType.SEQUENCE)];
-  // }
 
   // if (!lhs && src[index].src === "|") {
   //   index++;
@@ -786,6 +769,20 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
   //   return [index, error(SystemError.invalidIndex(nodePosition()), nodePosition())];
   // }
 
+  if (lhs) {
+    const node = _node(NodeType.APPLICATION);
+
+    // if function call is with parentheses, make precedence higher than field access
+    // so method chaining works as usual
+    if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
+      const indexPrecedence = _getExprPrecedence(NodeType.INDEX);
+      const applicationPrecedence = _getExprPrecedence(NodeType.APPLICATION);
+      inject(Injectable.ASTNodePrecedenceMap).set(node.id, [applicationPrecedence[0], indexPrecedence[0]! + 1]);
+    }
+
+    return node;
+  }
+
   // if (!lhs && Object.hasOwn(idToExprOp, src[index].src)) {
   //   const name = src[index].src;
   //   const op = idToExprOp[name];
@@ -803,12 +800,12 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
   if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.StringTemplate) {
     yield Parser.advance();
     if (_token.tokens.length === 1) {
-      return token(_token.tokens[0], yield* nodePosition());
+      return token(_token.tokens[0], yield * nodePosition());
     }
     const children: Tree[] = [];
     for (const __token of _token.tokens) {
       if (__token.type === "string") {
-        children.push(token(__token, yield* nodePosition()));
+        children.push(token(__token, yield * nodePosition()));
       } else {
         assert(__token.type === "group");
         assert("kind" in __token);
@@ -818,7 +815,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
         children.push(expr);
       }
     }
-    const node = _node(NodeType.TEMPLATE, { position: yield* nodePosition(), children });
+    const node = _node(NodeType.TEMPLATE, { position: yield * nodePosition(), children });
     inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
     return node;
   }
@@ -857,7 +854,7 @@ const parsePrefix: Parser<TokenGroup[], Tree, Context3> = Parser.do(function* se
   };
 
   if (yield Parser.isEnd()) {
-    const position = yield* nodePosition();
+    const position = yield * nodePosition();
     return error(SystemError.endOfSource(position), position);
   }
 
@@ -893,14 +890,12 @@ const parsePratt = function* self() {
     if (followSet.length === 0) return true;
     return !tokenIncludes(yield Parser.peek(), followSet);
   };
-  console.log(1, lhs, yield Parser.ctx());
 
-  while (yield* until()) {
+  while (yield * until()) {
     yield Parser.rememberIndex();
     const opGroup: Tree = yield Parser.scope({ lhs: true }, parsePrattGroup as any);
     const [left, right] = getPrecedence(opGroup);
 
-    console.log(3, opGroup, yield Parser.ctx());
     if (left === null) {
       yield Parser.resetIndex();
       break;
@@ -916,8 +911,7 @@ const parsePratt = function* self() {
     }
 
     if (opGroup.type === NodeType.SEQUENCE) {
-      const token: TokenGroup | undefined = yield Parser.peek();
-      if (token?.type === "newline") yield Parser.advance();
+      yield Parser.newline();
       if (yield Parser.isEnd()) break;
     }
 
@@ -945,8 +939,6 @@ const parsePratt = function* self() {
       lhs = postfix(opGroup, lhs);
     }
   }
-
-  console.log(2, lhs, yield Parser.ctx());
 
   if (lhs.type === NodeType.SEQUENCE && lhs.children.length === 1) {
     return lhs.children[0];

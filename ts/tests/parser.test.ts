@@ -30,7 +30,7 @@ const testCase = (input: string) => {
 };
 
 describe("advent of code 1 single file", () => {
-  it.skip("variable", () =>
+  it("variable", () =>
     testCase(`
       // https://adventofcode.com/2023/day/1
 
@@ -366,25 +366,25 @@ describe("newline handling", () => {
   it.skip("parallel parens", () => testCase(`(\n| 1\n| 2\n)`));
   it.skip("parallel", () => testCase(`| 1\n| 2`));
   it.skip("chaining", () => testCase(`a\n.b`));
-  it.skip("parens", () => testCase(`(\n1 +\n2\n+ 3\n)`));
-  it.skip("no parens", () => testCase(`1 +\n2\n+ 3`));
-  it.skip("prefix", () => testCase(`!\na`));
-  it.skip("infix-prefix", () => testCase(`b :=\n !\na`));
-  it.skip("infix-infix", () => testCase(`b +\nc +\nd`));
-  it.skip("if else separate lines", () => testCase(`if a:\n 1\n else\n 2`));
+  it("parens", () => testCase(`(\n1 +\n2\n+ 3\n)`));
+  it("no parens", () => testCase(`1 +\n2\n+ 3`));
+  it("prefix", () => testCase(`!\na`));
+  it("infix-prefix", () => testCase(`b :=\n !\na`));
+  it("infix-infix", () => testCase(`b +\nc +\nd`));
+  it("if else separate lines", () => testCase(`if a:\n 1\n else\n 2`));
   it("if-then newline", () => testCase(`if true:\n 123`));
   it("if-then newline-else", () => testCase(`if true:\n 123 else 456`));
   it("if-then newline-else newline", () => testCase(`if true:\n 123 else\n 456`));
-  it.skip("if-then post newline", () => testCase(`if true: 123\nelse 456`));
-  it.skip("if-then post newline block", () => testCase(`if true { 123 }\nelse 456`));
-  it.skip("block newline in the middle", () => testCase(`{ a := 1\n b := 2 }`));
-  it.skip("block newline at the end", () => testCase(`{ a := 1\n b := 2\n }`));
-  it.skip("block newline at the beginning", () => testCase(`{\n a := 1\n b := 2 }`));
+  it("if-then post newline", () => testCase(`if true: 123\nelse 456`));
+  it("if-then post newline block", () => testCase(`if true { 123 }\nelse 456`));
+  it("block newline in the middle", () => testCase(`{ a := 1\n b := 2 }`));
+  it("block newline at the end", () => testCase(`{ a := 1\n b := 2\n }`));
+  it("block newline at the beginning", () => testCase(`{\n a := 1\n b := 2 }`));
   it("block semicolon newline", () => testCase(`{ a := 1;\n b := 2 }`));
   it("block semicolon newline at the end", () => testCase(`{ a := 1;\n b := 2;\n }`));
-  it.only("newline at the end", () => testCase(`1\n`));
+  it("newline at the end", () => testCase(`1\n`));
   it("semicolon-newline at the end", () => testCase(`1;\n`));
   it.skip("empty switch with newline", () => testCase(`match a { \n }`));
   // it.todo('application-newline-increment', () => testCase(`f a\n ++b`));
-  it.skip("pipe", () => testCase(`1 \n|> fn x { x + 1 } \n|> fn y { y * 2 }`));
+  it("pipe", () => testCase(`1 \n|> fn x { x + 1 } \n|> fn y { y * 2 }`));
 });
