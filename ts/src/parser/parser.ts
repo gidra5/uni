@@ -403,29 +403,28 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
 
   const _token: TokenGroup = yield Parser.peek();
 
-  // if (token.type === "identifier" && token.name === "import") {
-  //   yield Parser.advance();
-  //   const nameToken: TokenGroup | undefined = yield Parser.peek();
-  //   if (nameToken?.type !== "string") {
-  //     return _node(NodeType.IMPORT, { position: yield* nodePosition() });
-  //   }
+  if (yield Parser.identifier("import")) {
+    const nameToken: TokenGroup | undefined = yield Parser.peek();
+    if (nameToken?.type !== "string") {
+      return _node(NodeType.IMPORT, { position: yield * nodePosition() });
+    }
 
-  //   yield Parser.advance();
-  //   const name = nameToken.value;
-  //   const pattern: Tree | null = yield Parser.peek<TokenGroup>().chain(function* (next) {
-  //     if (next?.type === "identifier" && next.name === "as") {
-  //       yield Parser.advance();
-  //       return yield parsePattern;
-  //     }
-  //     return null;
-  //   });
+    yield Parser.advance();
+    const name = nameToken.value;
+    const pattern: Tree | null = yield Parser.peek<TokenGroup>().chain(function* (next) {
+      if (next?.type === "identifier" && next.name === "as") {
+        yield Parser.advance();
+        return yield parsePattern;
+      }
+      return null;
+    });
 
-  //   const node = _node(NodeType.IMPORT, { position: yield* nodePosition() });
-  //   node.data.name = name;
-  //   if (pattern) node.children.push(pattern);
-  //   inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
-  //   return node;
-  // }
+    const node = _node(NodeType.IMPORT, { position: yield * nodePosition() });
+    node.data.name = name;
+    if (pattern) node.children.push(pattern);
+    inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+    return node;
+  }
 
   if (lhs && _token.type === "identifier" && _token.name === "is") {
     yield Parser.advance();
