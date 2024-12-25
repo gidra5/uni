@@ -752,22 +752,19 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
   //   return parsePrattGroup(context, parseExprGroup, getExprPrecedence)(src, index);
   // }
 
-  // if (lhs && src[index].src === ".") {
-  //   index++;
-  //   const next = src[index];
-  //   if (!tokenIncludes(next, context.followSet) && next?.type === "identifier") {
-  //     index++;
-  //     const key = atom(next.src, { start: next.start, end: next.end });
-  //     return [
-  //       index,
-  //       _node(NodeType.INDEX, {
-  //         position: nodePosition(),
-  //         children: [key],
-  //       }),
-  //     ];
-  //   }
-  //   return [index, error(SystemError.invalidIndex(nodePosition()), nodePosition())];
-  // }
+  if (lhs && (yield Parser.identifier("."))) {
+    const next: TokenGroup | undefined = yield Parser.peek();
+    const { followSet }: Context3 = yield Parser.ctx();
+    if (!tokenIncludes(next, followSet) && next?.type === "identifier") {
+      yield Parser.advance();
+      const key = atom(next.name, getTokenPosition(next));
+      return _node(NodeType.INDEX, {
+        position: yield * nodePosition(),
+        children: [key],
+      });
+    }
+    return error(SystemError.invalidIndex(yield * nodePosition()), yield * nodePosition());
+  }
 
   if (lhs) {
     const node = _node(NodeType.APPLICATION);
@@ -783,19 +780,19 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     return node;
   }
 
-  // if (!lhs && Object.hasOwn(idToExprOp, src[index].src)) {
-  //   const name = src[index].src;
-  //   const op = idToExprOp[name];
-  //   index++;
-  //   const position = nodePosition();
-  //   const node = error(
-  //     SystemError.infixOperatorInPrefixPosition(name, op, position),
-  //     _node(op, { position, children: [implicitPlaceholder(position)] })
-  //   );
-  //   const precedence = _getExprPrecedence(op);
-  //   inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, precedence[1]]);
-  //   return [index, node];
-  // }
+  if (!lhs && _token.type === "identifier" && Object.hasOwn(idToExprOp, _token.name)) {
+    yield Parser.advance();
+    const name = _token.name;
+    const op = idToExprOp[name];
+    const position = yield * nodePosition();
+    const node = error(
+      SystemError.infixOperatorInPrefixPosition(name, op, position),
+      _node(op, { position, children: [implicitPlaceholder(position)] })
+    );
+    const precedence = _getExprPrecedence(op);
+    inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, precedence[1]]);
+    return node;
+  }
 
   if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.StringTemplate) {
     yield Parser.advance();

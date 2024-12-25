@@ -45,7 +45,7 @@ describe("advent of code 1 single file", () => {
       """
     `));
 
-  it.skip("split lines", () =>
+  it("split lines", () =>
     testCase(`
         lines := {
           lines := split document "\\n"
@@ -76,7 +76,7 @@ describe("advent of code 1 single file", () => {
 
   it("flat map list reducer", () => testCase(`fn acc, item -> (...acc, ...mapper item)`));
 
-  it.skip("flat map list impl", () =>
+  it("flat map list impl", () =>
     testCase(`
         flat_map := fn list, mapper {
           reduce list (fn acc, item -> (...acc, ...mapper item)) (fn first, second -> (...first, ...second)) ()
@@ -142,7 +142,7 @@ describe("expressions", () => {
     describe("application", () => {
       it("function call", () => testCase(`f x`));
       it("function call multiple args", () => testCase(`f x y`));
-      it.todo("function call param with field", () => testCase(`f x.y`));
+      it("function call param with field", () => testCase(`f x.y`));
       it("send((1+2), 3)", () => testCase(`send((1+2), 3)`));
       it("send(2, 3)", () => testCase(`send(2, 3)`));
       it("(send)(2, 3)", () => testCase(`(send)(2, 3)`));
@@ -154,7 +154,7 @@ describe("expressions", () => {
       it("send 1 (2, 3)", () => testCase(`send 1 (2, 3)`));
       it("a + send 1 + 2", () => testCase(`a + send 1 + 2`));
       it("a + send (2, 3)", () => testCase(`a + send (2, 3)`));
-      it.todo("methods chaining", () => testCase(`math.floor(1).multiply(2)`));
+      it("methods chaining", () => testCase(`math.floor(1).multiply(2)`));
       it("function as last arg", () => testCase(`open "file" file -> write file "yolo"`));
       it("block as last arg", () => testCase(`open "file" { write "yolo" }`));
       it("pipe", () => testCase(`1 |> fn x { x + 1 } |> fn y { y * 2 }`));
@@ -176,7 +176,7 @@ describe("expressions", () => {
   });
 
   describe("structured programming", () => {
-    it.skip("complex 1", () =>
+    it("complex 1", () =>
       testCase(`
         y := {
           x := 25
@@ -224,7 +224,7 @@ describe("expressions", () => {
     it("parallel with channels", () => testCase(`c <- 123 | <- c`));
     it("select channels", () => testCase(`c1 + c2`));
     it("async", () => testCase(`async f x`));
-    it.skip("async index", () => testCase(`async f.a`));
+    it("async index", () => testCase(`async f.a`));
     it("await async", () => testCase(`await async f x`));
     it("await", () => testCase(`await x + 1`));
   });
@@ -236,13 +236,13 @@ describe("expressions", () => {
     it.skip("record", () => testCase(`record { a: 1, b: 2 }`));
     it("(-(2+7)/A,j, i, 127.0 )", () => testCase(`(-(2+7)/A,j, i, 127.0 )`));
     it.skip("dictionary", () => testCase(`dict { [1]: 2, [3]: 4 }`));
-    it.skip("period operator", () => testCase(`math.floor`));
+    it("period operator", () => testCase(`math.floor`));
     it("index", () => testCase(`x[0]`));
     it.skip("field assignment", () => testCase(`x.y = 123`));
-    it.skip("field assignment dynamic", () => testCase(`x[y] = 123`));
+    it("field assignment dynamic", () => testCase(`x[y] = 123`));
   });
 
-  describe.todo("effect handlers", () => {
+  describe.skip("effect handlers", () => {
     it("inject", () => testCase(`inject record { a: 1, b: 2 } { 1 }`));
     it("mask", () => testCase(`mask $a, $b { 1 }`));
     it("without", () => testCase(`without $a, $b { 1 }`));
@@ -329,7 +329,7 @@ describe("types", () => {
   });
 });
 
-describe.skip("programs", () => {
+describe("programs", () => {
   it.todo("export declaration as", () => testCase(`export x as y := 123`));
   it.todo("export expr as", () => testCase(`export x as y`));
   it.todo("external variable", () => testCase(`external y`));
@@ -340,21 +340,23 @@ describe.skip("programs", () => {
     it.todo("import project relative", () => testCase(`import ./relative/path/to/folder`));
     it.todo("import project root", () => testCase(`import /`));
     it.todo("import project file", () => testCase(`import /path/to/file.extension`));
+    it.todo("import string file", () => testCase(`import /path/to/"file.extension"`));
     it.todo("import project relative complex", () => testCase(`import ../relative/.././path/to/folder`));
+    it.todo("import string folder", () => testCase(`import ../relative/.././path/to/"folder"`));
   });
 
-  it("import", () => testCase(`import a as b`));
+  it.skip("import", () => testCase(`import a as b`));
   it.todo("import with", () => testCase(`import a as b with x`));
 
   describe("script", () => {
-    it("dynamic import", () => testCase(`b := import a`));
-    it("dynamic async import", () => testCase(`b := async import a`));
+    it.skip("dynamic import", () => testCase(`b := import a`));
+    it.skip("dynamic async import", () => testCase(`b := async import a`));
     it.todo("dynamic import with", () => testCase(`b := import a with x`));
   });
 
   describe("module", () => {
-    it("export declaration", () => testCase(`export x := 123`));
-    it("export default", () => testCase(`export fn args -> 1`));
+    it.skip("export declaration", () => testCase(`export x := 123`));
+    it.skip("export default", () => testCase(`export fn args -> 1`));
     it.todo("operator", () => testCase(`operator _+_ := fn x, y -> x + y`));
     it.todo("operator with precedence", () => testCase(`operator _+_ precedence 1 := fn x, y -> x + y`));
     it.todo("operator with tuple precedence", () => testCase(`operator _+_ precedence 1, 2 := fn x, y -> x + y`));
@@ -365,7 +367,7 @@ describe("newline handling", () => {
   it.skip("for loop newline", () => testCase(`for x in 1, 2, 3:\n x`));
   it.skip("parallel parens", () => testCase(`(\n| 1\n| 2\n)`));
   it.skip("parallel", () => testCase(`| 1\n| 2`));
-  it.skip("chaining", () => testCase(`a\n.b`));
+  it("chaining", () => testCase(`a\n.b`));
   it("parens", () => testCase(`(\n1 +\n2\n+ 3\n)`));
   it("no parens", () => testCase(`1 +\n2\n+ 3`));
   it("prefix", () => testCase(`!\na`));
