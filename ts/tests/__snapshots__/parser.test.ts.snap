@@ -1750,76 +1750,76 @@ exports[`expressions > arithmetics > order of application 1`] = `
                 {
                   "children": [
                     {
+                      "children": [],
+                      "data": {
+                        "value": 2,
+                      },
+                      "type": "number",
+                    },
+                    {
                       "children": [
-                        {
-                          "children": [
-                            {
-                              "children": [],
-                              "data": {
-                                "value": 2,
-                              },
-                              "type": "number",
-                            },
-                            {
-                              "children": [
-                                {
-                                  "children": [],
-                                  "data": {
-                                    "value": 3,
-                                  },
-                                  "type": "number",
-                                },
-                              ],
-                              "data": {},
-                              "type": "minus",
-                            },
-                          ],
-                          "data": {},
-                          "type": "pow",
-                        },
                         {
                           "children": [],
                           "data": {
-                            "value": 4,
+                            "value": 3,
                           },
                           "type": "number",
                         },
                       ],
                       "data": {},
-                      "type": "application",
-                    },
-                    {
-                      "children": [],
-                      "data": {
-                        "value": 5,
-                      },
-                      "type": "number",
+                      "type": "minus",
                     },
                   ],
                   "data": {},
-                  "type": "application",
+                  "type": "pow",
                 },
                 {
                   "children": [],
                   "data": {
-                    "value": 6,
+                    "value": 4,
                   },
                   "type": "number",
                 },
               ],
               "data": {},
-              "type": "application",
+              "type": "*",
             },
             {
-              "children": [],
-              "data": {
-                "value": 7,
-              },
-              "type": "number",
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": 5,
+                  },
+                  "type": "number",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": 6,
+                      },
+                      "type": "number",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": 7,
+                      },
+                      "type": "number",
+                    },
+                  ],
+                  "data": {},
+                  "type": "%",
+                },
+              ],
+              "data": {},
+              "type": "/",
             },
           ],
           "data": {},
-          "type": "application",
+          "type": "subtract",
         },
       ],
       "data": {},

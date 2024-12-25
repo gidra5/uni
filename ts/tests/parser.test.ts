@@ -113,7 +113,7 @@ describe("expressions", () => {
   });
 
   describe("arithmetics", () => {
-    it.skip("order of application", () => testCase(`1 + 2^-3 * 4 - 5 / 6 % 7`));
+    it.only("order of application", () => testCase(`1 + 2^-3 * 4 - 5 / 6 % 7`));
     it("-(a+b)", () => testCase(`-(a+b)`));
 
     it.todo("complex", () => testCase(`(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1`));

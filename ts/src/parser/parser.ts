@@ -166,18 +166,18 @@ const parseValue = Parser.do<TokenGroup[], Tree>(function* () {
   const _token: TokenGroup = yield Parser.peek();
 
   if (yield Parser.identifier("$")) {
-    if (yield Parser.isEnd()) return error(SystemError.endOfSource(yield * nodePosition()), yield * nodePosition());
+    if (yield Parser.isEnd()) return error(SystemError.endOfSource(yield* nodePosition()), yield* nodePosition());
     const token2: TokenGroup | undefined = yield Parser.peek();
     if (token2?.type !== "identifier")
-      return error(SystemError.invalidPattern(yield * nodePosition()), yield * nodePosition());
+      return error(SystemError.invalidPattern(yield* nodePosition()), yield* nodePosition());
     yield Parser.advance();
-    return _node(NodeType.ATOM, { data: { name: token2.name }, position: yield * nodePosition() });
+    return _node(NodeType.ATOM, { data: { name: token2.name }, position: yield* nodePosition() });
   }
 
   const token2 = yield Parser.peek(1);
   if (_token.type === "identifier" && token2?.type === "identifier" && token2.name === "::") {
     yield Parser.advance(2);
-    return _node(NodeType.CODE_LABEL, { position: yield * nodePosition(), data: { name: _token.name } });
+    return _node(NodeType.CODE_LABEL, { position: yield* nodePosition(), data: { name: _token.name } });
   }
 
   yield Parser.advance();
@@ -775,10 +775,7 @@ const parsePrattGroup = function* (): ParserGenerator<TokenGroup[], any, Tree, C
 };
 
 const parsePrefix: Parser<TokenGroup[], Tree, Context3> = Parser.do(function* self() {
-  {
-    const token: TokenGroup | undefined = yield Parser.peek();
-    if (token?.type === "newline") yield Parser.advance();
-  }
+  yield Parser.newline();
 
   const start = yield Parser.index();
   const nodePosition = function* () {
@@ -826,10 +823,17 @@ const parsePratt = function* self() {
   };
 
   while (yield* until()) {
+    yield Parser.rememberIndex();
     const opGroup: Tree = yield Parser.scope({ lhs: true }, parsePrattGroup as any);
     const [left, right] = getPrecedence(opGroup);
-    if (left === null) break;
-    if (left <= precedence) break;
+    if (left === null) {
+      yield Parser.resetIndex();
+      break;
+    }
+    if (left <= precedence) {
+      yield Parser.resetIndex();
+      break;
+    }
 
     if (right === null) {
       lhs = postfix(opGroup, lhs);
