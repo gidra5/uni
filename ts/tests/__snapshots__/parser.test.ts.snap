@@ -2870,73 +2870,6 @@ exports[`expressions > data structures > (-(2+7)/A,j, i, 127.0 ) 1`] = `
 }
 `;
 
-exports[`expressions > data structures > dictionary 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [
-            {
-              "children": [
-                {
-                  "children": [],
-                  "data": {
-                    "value": 1,
-                  },
-                  "type": "number",
-                },
-              ],
-              "data": {},
-              "type": "square_brackets",
-            },
-            {
-              "children": [],
-              "data": {
-                "value": 2,
-              },
-              "type": "number",
-            },
-          ],
-          "data": {},
-          "type": ":",
-        },
-        {
-          "children": [
-            {
-              "children": [
-                {
-                  "children": [],
-                  "data": {
-                    "value": 3,
-                  },
-                  "type": "number",
-                },
-              ],
-              "data": {},
-              "type": "square_brackets",
-            },
-            {
-              "children": [],
-              "data": {
-                "value": 4,
-              },
-              "type": "number",
-            },
-          ],
-          "data": {},
-          "type": ":",
-        },
-      ],
-      "data": {},
-      "type": ",",
-    },
-  ],
-  "data": {},
-  "type": "script",
-}
-`;
-
 exports[`expressions > data structures > field assignment 1`] = `
 {
   "children": [
@@ -3072,90 +3005,6 @@ exports[`expressions > data structures > period operator 1`] = `
       ],
       "data": {},
       "type": "index",
-    },
-  ],
-  "data": {},
-  "type": "script",
-}
-`;
-
-exports[`expressions > data structures > record 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [
-            {
-              "children": [],
-              "data": {
-                "value": "a",
-              },
-              "type": "name",
-            },
-            {
-              "children": [],
-              "data": {
-                "value": 1,
-              },
-              "type": "number",
-            },
-          ],
-          "data": {},
-          "type": ":",
-        },
-        {
-          "children": [
-            {
-              "children": [],
-              "data": {
-                "value": "b",
-              },
-              "type": "name",
-            },
-            {
-              "children": [],
-              "data": {
-                "value": 2,
-              },
-              "type": "number",
-            },
-          ],
-          "data": {},
-          "type": ":",
-        },
-      ],
-      "data": {},
-      "type": ",",
-    },
-  ],
-  "data": {},
-  "type": "script",
-}
-`;
-
-exports[`expressions > data structures > record single 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [],
-          "data": {
-            "value": "a",
-          },
-          "type": "name",
-        },
-        {
-          "children": [],
-          "data": {
-            "value": 1,
-          },
-          "type": "number",
-        },
-      ],
-      "data": {},
-      "type": ":",
     },
   ],
   "data": {},
@@ -3560,16 +3409,16 @@ exports[`expressions > effect handlers > mask 1`] = `
             {
               "children": [],
               "data": {
-                "value": "a",
+                "name": "a",
               },
-              "type": "string",
+              "type": "atom",
             },
             {
               "children": [],
               "data": {
-                "value": "b",
+                "name": "b",
               },
-              "type": "string",
+              "type": "atom",
             },
           ],
           "data": {},
@@ -3602,16 +3451,16 @@ exports[`expressions > effect handlers > without 1`] = `
             {
               "children": [],
               "data": {
-                "value": "a",
+                "name": "a",
               },
-              "type": "string",
+              "type": "atom",
             },
             {
               "children": [],
               "data": {
-                "value": "b",
+                "name": "b",
               },
-              "type": "string",
+              "type": "atom",
             },
           ],
           "data": {},

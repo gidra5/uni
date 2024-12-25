@@ -196,7 +196,7 @@ describe("expressions", () => {
     it("block sequence", () => testCase(`{ 123; 234; 345; 456 }`));
     it("parens sequence", () => testCase(`(123; 234; 345; 456)`));
     it("block", () => testCase(`{ 123 }`));
-    it.skip("for loop", () => testCase(`for x in (1, 2, 3): x`));
+    it("for loop", () => testCase(`for x in (1, 2, 3): x`));
     it("while loop", () => testCase(`while true: 123`));
     it("loop", () => testCase(`loop 123`));
     it("loop scope", () => testCase(`loop { x }`));
@@ -220,7 +220,7 @@ describe("expressions", () => {
     it("try receive with assignment", () => testCase(`status := <-?numbers`));
     it("superposition value", () => testCase(`123 & 456`));
     it("parallel value", () => testCase(`123 | 456`));
-    it.skip("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
+    it("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
     it("parallel with channels", () => testCase(`c <- 123 | <- c`));
     it("select channels", () => testCase(`c1 + c2`));
     it("async", () => testCase(`async f x`));
@@ -232,21 +232,21 @@ describe("expressions", () => {
   describe("data structures", () => {
     it("unit", () => testCase(`()`));
     it("tuple", () => testCase(`list, reducer, merge, initial`));
-    it.skip("record single", () => testCase(`record { a: 1 }`));
-    it.skip("record", () => testCase(`record { a: 1, b: 2 }`));
+    it.todo("record single", () => testCase(`record { a: 1 }`));
+    it.todo("record", () => testCase(`record { a: 1, b: 2 }`));
     it("(-(2+7)/A,j, i, 127.0 )", () => testCase(`(-(2+7)/A,j, i, 127.0 )`));
-    it.skip("dictionary", () => testCase(`dict { [1]: 2, [3]: 4 }`));
+    it.todo("dictionary", () => testCase(`dict { [1]: 2, [3]: 4 }`));
     it("period operator", () => testCase(`math.floor`));
     it("index", () => testCase(`x[0]`));
     it.skip("field assignment", () => testCase(`x.y = 123`));
     it("field assignment dynamic", () => testCase(`x[y] = 123`));
   });
 
-  describe.skip("effect handlers", () => {
-    it("inject", () => testCase(`inject record { a: 1, b: 2 } { 1 }`));
+  describe("effect handlers", () => {
+    it.skip("inject", () => testCase(`inject record { a: 1, b: 2 } { 1 }`));
     it("mask", () => testCase(`mask $a, $b { 1 }`));
     it("without", () => testCase(`without $a, $b { 1 }`));
-    it("complex", () =>
+    it.skip("complex", () =>
       testCase(`
         inject record { a: 1, b: 2 } ->
         { a, b } := handlers
@@ -260,9 +260,9 @@ describe("expressions", () => {
       `));
   });
 });
- 
+
 describe("pattern matching", () => {
-  it.skip("match", () => testCase(`match a { 1 -> 2; 2 -> 3; _ -> 4 }`));
+  it("match", () => testCase(`match a { 1 -> 2; 2 -> 3; _ -> 4 }`));
 
   it("in function parameters", () => testCase(`(x, y) -> x + y`));
   it("declare record pattern", () => testCase(`{ a, b } := handlers`));
@@ -364,9 +364,9 @@ describe("programs", () => {
 });
 
 describe("newline handling", () => {
-  it.skip("for loop newline", () => testCase(`for x in 1, 2, 3:\n x`));
-  it.skip("parallel parens", () => testCase(`(\n| 1\n| 2\n)`));
-  it.skip("parallel", () => testCase(`| 1\n| 2`));
+  it("for loop newline", () => testCase(`for x in 1, 2, 3:\n x`));
+  it("parallel parens", () => testCase(`(\n| 1\n| 2\n)`));
+  it("parallel", () => testCase(`| 1\n| 2`));
   it("chaining", () => testCase(`a\n.b`));
   it("parens", () => testCase(`(\n1 +\n2\n+ 3\n)`));
   it("no parens", () => testCase(`1 +\n2\n+ 3`));
@@ -386,7 +386,7 @@ describe("newline handling", () => {
   it("block semicolon newline at the end", () => testCase(`{ a := 1;\n b := 2;\n }`));
   it("newline at the end", () => testCase(`1\n`));
   it("semicolon-newline at the end", () => testCase(`1;\n`));
-  it.skip("empty switch with newline", () => testCase(`match a { \n }`));
+  it("empty switch with newline", () => testCase(`match a { \n }`));
   // it.todo('application-newline-increment', () => testCase(`f a\n ++b`));
   it("pipe", () => testCase(`1 \n|> fn x { x + 1 } \n|> fn y { y * 2 }`));
 });

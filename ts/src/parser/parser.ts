@@ -520,76 +520,83 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     });
   }
 
-  // if (!lhs && token.type === "group" && "kind" in token && token.kind === TokenGroupKind.ForIn) {
-  //   yield Parser.advance();
-  //   const [patternGroup, exprGroup, formToken] = token.tokens;
-  //   assert(patternGroup.type === "group");
-  //   assert(exprGroup.type === "group");
-  //   assert(formToken.type === "group");
-  //   assert("kind" in formToken);
-  //   const [patternParseCtx, pattern] = parsePattern.parse(patternGroup.tokens, { index: 0 });
-  //   assert(patternParseCtx.index === patternGroup.tokens.length);
-  //   const [exprParseCtx, expr] = parseExpr.parse(exprGroup.tokens, { index: 0 });
-  //   assert(exprParseCtx.index === exprGroup.tokens.length);
+  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.ForIn) {
+    yield Parser.advance();
+    const [patternGroup, exprGroup, formToken] = _token.tokens;
+    assert(patternGroup.type === "group");
+    assert(exprGroup.type === "group");
+    assert(formToken.type === "group");
+    assert("kind" in formToken);
+    const [patternParseCtx, pattern] = parsePattern.parse(patternGroup.tokens, { index: 0 });
+    assert(patternParseCtx.index === patternGroup.tokens.length);
+    const [exprParseCtx, expr] = parseExpr.parse(exprGroup.tokens, { index: 0 });
+    assert(exprParseCtx.index === exprGroup.tokens.length);
 
-  //   return yield Parser.do(function* () {
-  //     if (formToken.kind === TokenGroupKind.Colon) return null;
-  //     if (formToken.kind === TokenGroupKind.Braces) {
-  //       const [exprParseCtx, expr] = parseExpr.parse(formToken.tokens, { index: 0 });
-  //       assert(exprParseCtx.index === formToken.tokens.length);
-  //       return expr;
-  //     }
-  //     if (formToken.kind === TokenGroupKind.Arrow) {
-  //       const precedence = _getExprPrecedence(NodeType.SEQUENCE);
-  //       return yield Parser.scope({ precedence: precedence[1]! - 1 }, parsePratt);
-  //     }
-  //   }).chain(function* (body: Tree | null) {
-  //     if (!body) {
-  //       return _node(NodeType.FOR, {
-  //         position: yield* nodePosition(),
-  //         children: [pattern, expr],
-  //       });
-  //     }
+    return yield Parser.do(function* () {
+      if (formToken.kind === TokenGroupKind.Colon) return null;
+      if (formToken.kind === TokenGroupKind.Braces) {
+        const [exprParseCtx, expr] = parseExpr.parse(formToken.tokens, { index: 0 });
+        assert(exprParseCtx.index === formToken.tokens.length);
+        return expr;
+      }
+      if (formToken.kind === TokenGroupKind.Arrow) {
+        const precedence = _getExprPrecedence(NodeType.SEQUENCE);
+        return yield Parser.scope({ precedence: precedence[1]! - 1 }, parsePratt);
+      }
+    }).chain(function* (body: Tree | null) {
+      if (!body) {
+        return _node(NodeType.FOR, {
+          position: yield* nodePosition(),
+          children: [pattern, expr],
+        });
+      }
 
-  //     const node = _node(NodeType.FOR, {
-  //       position: yield* nodePosition(),
-  //       children: [pattern, expr, body],
-  //     });
-  //     inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+      const node = _node(NodeType.FOR, {
+        position: yield* nodePosition(),
+        children: [pattern, expr, body],
+      });
+      inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
 
-  //     return node;
-  //   });
-  // }
+      return node;
+    });
+  }
 
-  // if (!lhs && token.type === "group" && "kind" in token && token.kind === TokenGroupKind.Match) {
-  //   yield Parser.advance();
-  //   const [valueGroup, bodyGroup] = token.tokens;
-  //   assert(valueGroup.type === "group");
-  //   assert(bodyGroup.type === "group");
-  //   const [valueParseCtx, value] = parseExpr.parse(valueGroup.tokens, { index: 0 });
-  //   assert(valueParseCtx.index === valueGroup.tokens.length);
+  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Match) {
+    yield Parser.advance();
+    const [valueGroup, bodyGroup] = _token.tokens;
+    assert(valueGroup.type === "group");
+    assert(bodyGroup.type === "group");
+    const [valueParseCtx, value] = parseExpr.parse(valueGroup.tokens, { index: 0 });
+    assert(valueParseCtx.index === valueGroup.tokens.length);
 
-  //   const [bodyParseCtx, cases] = Parser.do<TokenGroup[], Tree>(function* () {
-  //     yield Parser.newline();
+    const [bodyParseCtx, cases] = Parser.scope<TokenGroup[], Tree>({ followSet: [] }, function* () {
+      yield Parser.newline();
+      yield Parser.appendFollow("->");
+      let pattern: Tree = yield parsePattern;
+      yield Parser.popFollow();
 
-  //     // banned: ["->"]
-  //     let pattern: Tree = yield parsePattern;
-  //     yield Parser.identifier("->");
+      if (!(yield Parser.identifier("->"))) {
+        yield Parser.or(yield Parser.identifier(";"), yield Parser.newline()).zeroOrMore();
+        return error(SystemError.unknown(), _node(NodeType.MATCH_CASE, { children: [pattern] }));
+      }
 
-  //     // else error missing ->
-  //     // banned: [";", '\n']
-  //     let body: Tree = yield parseExpr;
-  //     yield Parser.newline();
-  //     yield Parser.identifier(";");
+      yield Parser.appendFollow(";", "\n");
+      let body: Tree = yield parseExpr;
+      yield Parser.popFollow(2);
+      yield Parser.newline();
+      yield Parser.identifier(";");
 
-  //     return _node(NodeType.MATCH_CASE, { children: [pattern, body] });
-  //   })
-  //     .zeroOrMore()
-  //     .parse(bodyGroup.tokens, { index: 0 });
-  //   assert(bodyParseCtx.index === bodyGroup.tokens.length);
+      return _node(NodeType.MATCH_CASE, { children: [pattern, body] });
+    })
+      .zeroOrMore()
+      .parse(bodyGroup.tokens, { index: 0 });
 
-  //   return _node(NodeType.MATCH, { children: [value, ...cases] });
-  // }
+    if (bodyParseCtx.index !== bodyGroup.tokens.length) {
+      return error(SystemError.unknown(), _node(NodeType.MATCH, { children: [value, ...cases] }));
+    }
+
+    return _node(NodeType.MATCH, { children: [value, ...cases] });
+  }
 
   if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Inject) {
     return yield parseStatementForm(parseExpr).chain(function* ([expr, body]) {
