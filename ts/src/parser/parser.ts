@@ -398,11 +398,11 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
   //   return node;
   // }
 
-  // if (lhs && token.type === "identifier" && token.name === "is") {
-  //   yield Parser.advance();
-  //   const pattern: Tree = yield parsePattern;
-  //   return _node(NodeType.IS, { position: yield* nodePosition(), children: [pattern] });
-  // }
+  if (lhs && _token.type === "identifier" && _token.name === "is") {
+    yield Parser.advance();
+    const pattern: Tree = yield parsePattern;
+    return _node(NodeType.IS, { position: yield* nodePosition(), children: [pattern] });
+  }
 
   // if (!lhs && token.type === "group" && "kind" in token && token.kind === TokenGroupKind.Function) {
   //   yield Parser.advance();
