@@ -747,10 +747,9 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     return _node(NodeType.SEQUENCE);
   }
 
-  // if (!lhs && src[index].src === "|") {
-  //   index++;
-  //   return parsePrattGroup(context, parseExprGroup, getExprPrecedence)(src, index);
-  // }
+  if (!lhs && (yield Parser.identifier("|"))) {
+    return yield * parsePrattGroup();
+  }
 
   if (lhs && (yield Parser.identifier("."))) {
     const next: TokenGroup | undefined = yield Parser.peek();

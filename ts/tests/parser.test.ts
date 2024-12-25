@@ -196,7 +196,7 @@ describe("expressions", () => {
     it("block sequence", () => testCase(`{ 123; 234; 345; 456 }`));
     it("parens sequence", () => testCase(`(123; 234; 345; 456)`));
     it("block", () => testCase(`{ 123 }`));
-    it.todo("for loop", () => testCase(`for x in (1, 2, 3): x`));
+    it.skip("for loop", () => testCase(`for x in (1, 2, 3): x`));
     it("while loop", () => testCase(`while true: 123`));
     it("loop", () => testCase(`loop 123`));
     it("loop scope", () => testCase(`loop { x }`));
@@ -260,7 +260,7 @@ describe("expressions", () => {
       `));
   });
 });
-
+ 
 describe("pattern matching", () => {
   it.skip("match", () => testCase(`match a { 1 -> 2; 2 -> 3; _ -> 4 }`));
 
