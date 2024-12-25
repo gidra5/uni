@@ -262,37 +262,37 @@ describe("expressions", () => {
   });
 });
 
-describe.skip("pattern matching", () => {
-  it("match", () => testCase(`match a { 1 -> 2; 2 -> 3; _ -> 4 }`));
+describe("pattern matching", () => {
+  it.skip("match", () => testCase(`match a { 1 -> 2; 2 -> 3; _ -> 4 }`));
 
   it("in function parameters", () => testCase(`(x, y) -> x + y`));
-  it("declare record pattern", () => testCase(`{ a, b } := handlers`));
-  it("with 'is' operator", () => testCase(`x is (a, b)`));
-  it("with placeholder", () => testCase(`x is (_, b)`));
-  it("with pin", () => testCase(`x is (^a, b)`));
-  it("with pin expression", () => testCase(`x is (^(a + b), b)`));
-  it("with constant value", () => testCase(`x is (1, b)`));
-  it("with rest value", () => testCase(`x is (a, ...b)`));
-  it("with rest value first", () => testCase(`x is (...b, a)`));
-  it("with record pattern", () => testCase(`x is { a, b }`));
-  it("with record pattern rename", () => testCase(`x is { a @ c, b }`));
-  it("with record pattern key", () => testCase(`x is { [a + b] @ c, b }`));
-  it("with record pattern nested", () => testCase(`x is { a @ (c, d), b }`));
-  it("with default value", () => testCase(`x is (b = 4, a)`));
-  it("with default value second", () => testCase(`x is (a, b = 4)`));
-  it("with default value parens", () => testCase(`x is ((b = 4), a)`));
-  it("with record default value", () => testCase(`x is { b = 4, a }`));
-  it("with rename", () => testCase(`x is (a @ b, c)`));
-  it("with name for match", () => testCase(`x is ((a, b) @ c)`));
-  it("with like pattern", () => testCase(`x is like { a, b }`));
-  it("with strict pattern", () => testCase(`x is like (a, strict { b })`));
-  it("with nested value", () => testCase(`x is a.b and a.b == x`));
-  it("with merging nested value", () => testCase(`x is (a.b and a.c) and a.b == x and a.c == x`));
-  it("with dynamically nested value", () => testCase(`x is a[b] and a[b] == x`));
-  it("with dynamic name", () => testCase(`x is [$a] and [$a] == x`));
-  it("with unwrapping", () => testCase(`x is some a`));
+  it.skip("declare record pattern", () => testCase(`{ a, b } := handlers`));
+  it.skip("with 'is' operator", () => testCase(`x is (a, b)`));
+  it.skip("with placeholder", () => testCase(`x is (_, b)`));
+  it.skip("with pin", () => testCase(`x is (^a, b)`));
+  it.skip("with pin expression", () => testCase(`x is (^(a + b), b)`));
+  it.skip("with constant value", () => testCase(`x is (1, b)`));
+  it.skip("with rest value", () => testCase(`x is (a, ...b)`));
+  it.skip("with rest value first", () => testCase(`x is (...b, a)`));
+  it.skip("with record pattern", () => testCase(`x is { a, b }`));
+  it.skip("with record pattern rename", () => testCase(`x is { a @ c, b }`));
+  it.skip("with record pattern key", () => testCase(`x is { [a + b] @ c, b }`));
+  it.skip("with record pattern nested", () => testCase(`x is { a @ (c, d), b }`));
+  it.skip("with default value", () => testCase(`x is (b = 4, a)`));
+  it.skip("with default value second", () => testCase(`x is (a, b = 4)`));
+  it.skip("with default value parens", () => testCase(`x is ((b = 4), a)`));
+  it.skip("with record default value", () => testCase(`x is { b = 4, a }`));
+  it.skip("with rename", () => testCase(`x is (a @ b, c)`));
+  it.skip("with name for match", () => testCase(`x is ((a, b) @ c)`));
+  it.skip("with like pattern", () => testCase(`x is like { a, b }`));
+  it.skip("with strict pattern", () => testCase(`x is like (a, strict { b })`));
+  it.skip("with nested value", () => testCase(`x is a.b and a.b == x`));
+  it.skip("with merging nested value", () => testCase(`x is (a.b and a.c) and a.b == x and a.c == x`));
+  it.skip("with dynamically nested value", () => testCase(`x is a[b] and a[b] == x`));
+  it.skip("with dynamic name", () => testCase(`x is [$a] and [$a] == x`));
+  it.skip("with unwrapping", () => testCase(`x is some a`));
 
-  it("binding visible in scope where it is true", () => testCase(`x is (a, b) and a == b + 1`));
+  it.skip("binding visible in scope where it is true", () => testCase(`x is (a, b) and a == b + 1`));
 
   describe("set-theoretic patterns", () => {
     test.todo("pattern union", () => {
