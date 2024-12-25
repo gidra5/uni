@@ -1731,6 +1731,319 @@ exports[`expressions > arithmetics > -(a+b) 1`] = `
 }
 `;
 
+exports[`expressions > arithmetics > complex 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "children": [],
+                              "data": {
+                                "value": 2,
+                              },
+                              "type": "number",
+                            },
+                            {
+                              "children": [],
+                              "data": {
+                                "value": 2,
+                              },
+                              "type": "number",
+                            },
+                          ],
+                          "data": {},
+                          "type": "pow",
+                        },
+                        {
+                          "children": [],
+                          "data": {
+                            "value": 5,
+                          },
+                          "type": "number",
+                        },
+                      ],
+                      "data": {},
+                      "type": "subtract",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": 7,
+                      },
+                      "type": "number",
+                    },
+                  ],
+                  "data": {},
+                  "type": "add",
+                },
+              ],
+              "data": {},
+              "type": "parens",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "i",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {},
+                  "type": "minus",
+                },
+              ],
+              "data": {},
+              "type": "parens",
+            },
+          ],
+          "data": {},
+          "type": "subtract",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "j",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {},
+                  "type": "parens",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": 0,
+                  },
+                  "type": "number",
+                },
+              ],
+              "data": {},
+              "type": "/",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": 1,
+                  },
+                  "type": "number",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {
+                            "value": 1,
+                          },
+                          "type": "number",
+                        },
+                        {
+                          "children": [],
+                          "data": {
+                            "value": "f",
+                          },
+                          "type": "name",
+                        },
+                      ],
+                      "data": {},
+                      "type": "*",
+                    },
+                  ],
+                  "data": {},
+                  "type": "parens",
+                },
+              ],
+              "data": {},
+              "type": "*",
+            },
+          ],
+          "data": {},
+          "type": "subtract",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": 27,
+                      },
+                      "type": "number",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "x",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {},
+                  "type": "subtract",
+                },
+              ],
+              "data": {},
+              "type": "parens",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "q",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "/",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "send",
+              },
+              "type": "name",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [
+                                    {
+                                      "children": [],
+                                      "data": {
+                                        "value": 2,
+                                      },
+                                      "type": "number",
+                                    },
+                                    {
+                                      "children": [],
+                                      "data": {
+                                        "value": 7,
+                                      },
+                                      "type": "number",
+                                    },
+                                  ],
+                                  "data": {},
+                                  "type": "add",
+                                },
+                              ],
+                              "data": {},
+                              "type": "parens",
+                            },
+                          ],
+                          "data": {},
+                          "type": "minus",
+                        },
+                        {
+                          "children": [],
+                          "data": {
+                            "value": "A",
+                          },
+                          "type": "name",
+                        },
+                      ],
+                      "data": {},
+                      "type": "/",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "j",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "i",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": 127,
+                      },
+                      "type": "number",
+                    },
+                  ],
+                  "data": {},
+                  "type": ",",
+                },
+              ],
+              "data": {},
+              "type": "parens",
+            },
+          ],
+          "data": {},
+          "type": "application",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": 1,
+              },
+              "type": "number",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 1,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": "/",
+        },
+      ],
+      "data": {},
+      "type": "add",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`expressions > arithmetics > order of application 1`] = `
 {
   "children": [

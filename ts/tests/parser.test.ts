@@ -113,13 +113,13 @@ describe("expressions", () => {
   });
 
   describe("arithmetics", () => {
-    it.only("order of application", () => testCase(`1 + 2^-3 * 4 - 5 / 6 % 7`));
+    it("order of application", () => testCase(`1 + 2^-3 * 4 - 5 / 6 % 7`));
     it("-(a+b)", () => testCase(`-(a+b)`));
 
-    it.todo("complex", () => testCase(`(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1`));
+    it("complex", () => testCase(`(2^2-5+7)-(-i)+ (j)/0 - 1*(1*f)+(27-x )/q + send(-(2+7)/A,j, i, 127.0 ) + 1/1`));
   });
 
-  describe.todo("boolean expressions", () => {
+  describe("boolean expressions", () => {
     it("not", () => testCase(`!123`));
     it('"and", "or" and "not" associativity', () => testCase(`a and b and c or d or !e and f and g or not h or i`));
     it("in operator", () => testCase(`$key in x and y`));
