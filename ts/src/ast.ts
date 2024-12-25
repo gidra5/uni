@@ -30,6 +30,7 @@ export const NodeType = {
   MOD: "%",
   POW: "pow",
   PARALLEL: "parallel",
+  SUPERPOSITION: "superposition",
   SEND: "send",
   LABEL: ":",
   TUPLE: ",",

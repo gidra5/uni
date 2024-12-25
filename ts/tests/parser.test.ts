@@ -140,23 +140,23 @@ describe("expressions", () => {
     it.todo("function with deep shadowed name access", () => `fn a -> fn a -> fn a -> ##a`);
 
     describe("application", () => {
-      it.todo("function call", () => testCase(`f x`));
-      it.todo("function call multiple args", () => testCase(`f x y`));
+      it("function call", () => testCase(`f x`));
+      it("function call multiple args", () => testCase(`f x y`));
       it.todo("function call param with field", () => testCase(`f x.y`));
-      it.todo("send((1+2), 3)", () => testCase(`send((1+2), 3)`));
-      it.todo("send(2, 3)", () => testCase(`send(2, 3)`));
-      it.todo("(send)(2, 3)", () => testCase(`(send)(2, 3)`));
-      it.todo("(send 1)(2, 3)", () => testCase(`(send 1)(2, 3)`));
-      it.todo("(send 1 2)(2, 3)", () => testCase(`(send 1 2)(2, 3)`));
-      it.todo("send 1 + 2", () => testCase(`send 1 + 2`));
-      it.todo("a + send (2, 3)", () => testCase(`a + send (2, 3)`));
-      it.todo("send a (2, 3)", () => testCase(`send a (2, 3)`));
-      it.todo("send 1 (2, 3)", () => testCase(`send 1 (2, 3)`));
-      it.todo("a + send 1 + 2", () => testCase(`a + send 1 + 2`));
-      it.todo("a + send (2, 3)", () => testCase(`a + send (2, 3)`));
+      it("send((1+2), 3)", () => testCase(`send((1+2), 3)`));
+      it("send(2, 3)", () => testCase(`send(2, 3)`));
+      it("(send)(2, 3)", () => testCase(`(send)(2, 3)`));
+      it("(send 1)(2, 3)", () => testCase(`(send 1)(2, 3)`));
+      it("(send 1 2)(2, 3)", () => testCase(`(send 1 2)(2, 3)`));
+      it("send 1 + 2", () => testCase(`send 1 + 2`));
+      it("a + send (2, 3)", () => testCase(`a + send (2, 3)`));
+      it("send a (2, 3)", () => testCase(`send a (2, 3)`));
+      it("send 1 (2, 3)", () => testCase(`send 1 (2, 3)`));
+      it("a + send 1 + 2", () => testCase(`a + send 1 + 2`));
+      it("a + send (2, 3)", () => testCase(`a + send (2, 3)`));
       it.todo("methods chaining", () => testCase(`math.floor(1).multiply(2)`));
       it.todo("function as last arg", () => testCase(`open "file" file -> write file "yolo"`));
-      it.todo("block as last arg", () => testCase(`open "file" { write "yolo" }`));
+      it("block as last arg", () => testCase(`open "file" { write "yolo" }`));
       it.todo("pipe", () => testCase(`1 |> fn x { x + 1 } |> fn y { y * 2 }`));
     });
 
@@ -213,20 +213,20 @@ describe("expressions", () => {
     });
   });
 
-  describe.todo("concurrent programming", () => {
+  describe("concurrent programming", () => {
     it("channel send", () => testCase(`c <- 123`));
     it("channel receive", () => testCase(`<- c`));
     it("channel try send", () => testCase(`c <-? 123`));
     it("channel try receive", () => testCase(`<-? c`));
-    it("try receive with assignment", () => testCase(`status := <-?numbers`));
-    it("superposition value", () => testCase(`123 & 456`));
+    it.skip("try receive with assignment", () => testCase(`status := <-?numbers`));
+    it.skip("superposition value", () => testCase(`123 & 456`));
     it("parallel value", () => testCase(`123 | 456`));
-    it("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
+    it.skip("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
     it("parallel with channels", () => testCase(`c <- 123 | <- c`));
     it.todo("select channels", () => testCase(`c1 + c2`));
-    it("async", () => testCase(`async f x`));
-    it("async index", () => testCase(`async f.a`));
-    it("await async", () => testCase(`await async f x`));
+    it.skip("async", () => testCase(`async f x`));
+    it.skip("async index", () => testCase(`async f.a`));
+    it.skip("await async", () => testCase(`await async f x`));
     it("await", () => testCase(`await x + 1`));
   });
 

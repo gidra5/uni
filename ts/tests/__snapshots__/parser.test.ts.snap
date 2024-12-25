@@ -3884,6 +3884,67 @@ exports[`expressions > function expressions > application > a + send (2, 3) 1`] 
 }
 `;
 
+exports[`expressions > function expressions > application > a + send (2, 3) 2`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "a",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "send",
+              },
+              "type": "name",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": 2,
+                      },
+                      "type": "number",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": 3,
+                      },
+                      "type": "number",
+                    },
+                  ],
+                  "data": {},
+                  "type": ",",
+                },
+              ],
+              "data": {},
+              "type": "parens",
+            },
+          ],
+          "data": {},
+          "type": "application",
+        },
+      ],
+      "data": {},
+      "type": "add",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`expressions > function expressions > application > a + send 1 + 2 1`] = `
 {
   "children": [
@@ -3926,6 +3987,67 @@ exports[`expressions > function expressions > application > a + send 1 + 2 1`] =
       ],
       "data": {},
       "type": "add",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > function expressions > application > block as last arg 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "open",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "file",
+              },
+              "type": "string",
+            },
+          ],
+          "data": {},
+          "type": "application",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "write",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "yolo",
+                  },
+                  "type": "string",
+                },
+              ],
+              "data": {},
+              "type": "application",
+            },
+          ],
+          "data": {},
+          "type": "block",
+        },
+      ],
+      "data": {},
+      "type": "application",
     },
   ],
   "data": {},
