@@ -191,18 +191,18 @@ describe("expressions", () => {
     );
 
     it("if-then", () => testCase(`if true: 123`));
-    it.todo("if-then-else", () => testCase(`if true: 123 else 456`));
-    it.todo("if-then-elseif-then-else", () => testCase(`if true: 123 else if false: 789 else 456`));
-    it.todo("sequence", () => testCase(`123; 234; 345; 456`));
-    it.todo("block sequence", () => testCase(`{ 123; 234; 345; 456 }`));
-    it.todo("parens sequence", () => testCase(`(123; 234; 345; 456)`));
+    it("if-then-else", () => testCase(`if true: 123 else 456`));
+    it("if-then-elseif-then-else", () => testCase(`if true: 123 else if false: 789 else 456`));
+    it("sequence", () => testCase(`123; 234; 345; 456`));
+    it("block sequence", () => testCase(`{ 123; 234; 345; 456 }`));
+    it("parens sequence", () => testCase(`(123; 234; 345; 456)`));
     it("block", () => testCase(`{ 123 }`));
     it.todo("for loop", () => testCase(`for x in (1, 2, 3): x`));
     it("while loop", () => testCase(`while true: 123`));
-    it.todo("loop", () => testCase(`loop 123`));
-    it.todo("loop scope", () => testCase(`loop { x }`));
+    it("loop", () => testCase(`loop 123`));
+    it("loop scope", () => testCase(`loop { x }`));
     it("labeled expression", () => testCase(`label::123`));
-    it.todo("semicolon at the end", () => testCase(`1;`));
+    it("semicolon at the end", () => testCase(`1;`));
     it("increment", () => testCase(`++x`));
     it("post increment", () => testCase(`x++`));
 
@@ -230,17 +230,17 @@ describe("expressions", () => {
     it("await", () => testCase(`await x + 1`));
   });
 
-  describe.todo("data structures", () => {
+  describe("data structures", () => {
     it("unit", () => testCase(`()`));
     it("tuple", () => testCase(`list, reducer, merge, initial`));
-    it("record single", () => testCase(`record { a: 1 }`));
-    it("record", () => testCase(`record { a: 1, b: 2 }`));
+    it.skip("record single", () => testCase(`record { a: 1 }`));
+    it.skip("record", () => testCase(`record { a: 1, b: 2 }`));
     it("(-(2+7)/A,j, i, 127.0 )", () => testCase(`(-(2+7)/A,j, i, 127.0 )`));
-    it("dictionary", () => testCase(`dict { [1]: 2, [3]: 4 }`));
-    it("period operator", () => testCase(`math.floor`));
+    it.skip("dictionary", () => testCase(`dict { [1]: 2, [3]: 4 }`));
+    it.skip("period operator", () => testCase(`math.floor`));
     it("index", () => testCase(`x[0]`));
-    it("field assignment", () => testCase(`x.y = 123`));
-    it("field assignment dynamic", () => testCase(`x[y] = 123`));
+    it.skip("field assignment", () => testCase(`x.y = 123`));
+    it.skip("field assignment dynamic", () => testCase(`x[y] = 123`));
   });
 
   describe.todo("effect handlers", () => {

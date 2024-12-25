@@ -610,6 +610,8 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
 
   if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Braces) {
     yield Parser.advance();
+    if (_token.tokens.length === 0) return block(implicitPlaceholder(yield* nodePosition()), yield* nodePosition());
+
     const [exprParseCtx, expr] = parseExpr.parse(_token.tokens, { index: 0 });
     assert(exprParseCtx.index === _token.tokens.length);
 
@@ -618,6 +620,12 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
 
   if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Brackets) {
     yield Parser.advance();
+    if (_token.tokens.length === 0)
+      return _node(lhs ? NodeType.INDEX : NodeType.SQUARE_BRACKETS, {
+        position: yield* nodePosition(),
+        children: [implicitPlaceholder(yield* nodePosition())],
+      });
+
     const [exprParseCtx, expr] = parseExpr.parse(_token.tokens, { index: 0 });
     assert(exprParseCtx.index === _token.tokens.length);
 
@@ -629,24 +637,33 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
 
   if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
     yield Parser.advance();
+    if (_token.tokens.length === 0) {
+      return _node(NodeType.PARENS, {
+        position: yield* nodePosition(),
+        children: [implicitPlaceholder(yield* nodePosition())],
+      });
+    }
+
     const [exprParseCtx, expr] = parseExpr.parse(_token.tokens, { index: 0 });
     assert(exprParseCtx.index === _token.tokens.length);
 
     return _node(NodeType.PARENS, { position: yield* nodePosition(), children: [expr] });
   }
 
-  // if (!lhs) {
-  //   const [nextIndex, pattern] = parsePattern(context)(src, index);
-  //   if (
-  //     src[nextIndex] &&
-  //     !tokenIncludes(src[nextIndex], context.followSet) &&
-  //     pattern.type !== NodeType.ERROR &&
-  //     Object.hasOwn(idToLhsPatternExprOp, src[nextIndex].src)
-  //   ) {
-  //     const op = idToLhsPatternExprOp[src[nextIndex].src];
-  //     return [nextIndex + 1, _node(op, { position: nodePosition(), children: [pattern] })];
-  //   }
-  // }
+  if (!lhs) {
+    yield Parser.rememberIndex();
+    // const pattern = yield Parser.scope({}, function*(){ return yield parsePattern; });
+    //   if (
+    //     src[nextIndex] &&
+    //     !tokenIncludes(src[nextIndex], context.followSet) &&
+    //     pattern.type !== NodeType.ERROR &&
+    //     Object.hasOwn(idToLhsPatternExprOp, src[nextIndex].src)
+    //   ) {
+    //     const op = idToLhsPatternExprOp[src[nextIndex].src];
+    //     return [nextIndex + 1, _node(op, { position: nodePosition(), children: [pattern] })];
+    //   }
+    yield Parser.resetIndex();
+  }
 
   if (lhs) {
     const node = _node(NodeType.APPLICATION);
@@ -879,10 +896,13 @@ const parsePratt = function* self() {
   return lhs;
 };
 
-const parseExpr = Parser.scope<TokenGroup[], Tree, {}, Context3>(
-  { groupParser: parseExprGroup, getPrecedence: getExprPrecedence, precedence: 0, followSet: [] },
-  parsePratt
-);
+const parseExpr = Parser.do(function* () {
+  const { followSet = [] }: Context3 = yield Parser.ctx();
+  return yield Parser.scope<TokenGroup[], Tree, {}, Context3>(
+    { groupParser: parseExprGroup, getPrecedence: getExprPrecedence, precedence: 0, followSet },
+    parsePratt
+  );
+});
 // const parsePattern = Parser.scope<TokenGroup[], Tree, {}, Context3>(
 //   {
 //     allowPatternDefault: false,
