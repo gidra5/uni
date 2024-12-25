@@ -20,6 +20,7 @@ export const NodeType = {
   NUMBER: "number",
   STRING: "string",
   ATOM: "atom",
+  HASH_NAME: "hash_name",
 
   ADD: "add",
   PLUS: "plus",
@@ -158,6 +159,7 @@ const exprPrecedenceList: [NodeType, Fixity][] = [
   [NodeType.INC_ASSIGN, Fixity.PREFIX],
 
   [NodeType.PARALLEL, Fixity.INFIX],
+  [NodeType.SUPERPOSITION, Fixity.INFIX],
   [NodeType.PIPE, Fixity.INFIX],
   [NodeType.TUPLE, Fixity.INFIX],
   [NodeType.LABEL, Fixity.INFIX_RIGHT],

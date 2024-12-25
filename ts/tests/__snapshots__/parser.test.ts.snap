@@ -2692,6 +2692,64 @@ exports[`expressions > concurrent programming > prefix parallel with code after 
 }
 `;
 
+exports[`expressions > concurrent programming > select channels 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "c1",
+          },
+          "type": "name",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": "c2",
+          },
+          "type": "name",
+        },
+      ],
+      "data": {},
+      "type": "add",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > concurrent programming > superposition value 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": 123,
+          },
+          "type": "number",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": 456,
+          },
+          "type": "number",
+        },
+      ],
+      "data": {},
+      "type": "superposition",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`expressions > concurrent programming > try receive with assignment 1`] = `
 {
   "children": [

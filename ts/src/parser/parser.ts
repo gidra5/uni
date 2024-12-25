@@ -175,6 +175,24 @@ const parseValue = Parser.do<TokenGroup[], Tree>(function* () {
     return _node(NodeType.ATOM, { data: { name: token2.name }, position: yield* nodePosition() });
   }
 
+  if (yield Parser.identifier("#")) {
+    if (yield Parser.isEnd()) return error(SystemError.endOfSource(yield* nodePosition()), yield* nodePosition());
+    const token2: TokenGroup | undefined = yield Parser.peek();
+    const count = (yield Parser.identifier("#").zeroOrMore()).length;
+    if (token2?.type === "identifier") {
+      yield Parser.advance();
+      return _node(NodeType.HASH_NAME, { data: { name: token2.name, count }, position: yield* nodePosition() });
+    }
+    if (token2?.type === "number") {
+      yield Parser.advance();
+      const value = token2.value;
+      if (!Number.isInteger(value))
+        return error(SystemError.invalidPattern(yield* nodePosition()), yield* nodePosition());
+      return _node(NodeType.HASH_NAME, { data: { index: token2.value }, position: yield* nodePosition() });
+    }
+    return error(SystemError.invalidPattern(yield* nodePosition()), yield* nodePosition());
+  }
+
   const token2 = yield Parser.peek(1);
   if (_token.type === "identifier" && token2?.type === "identifier" && token2.name === "::") {
     yield Parser.advance(2);
@@ -194,8 +212,19 @@ const parseStatementForm = (innerParser: Parser<TokenGroup[], Tree, {}>) =>
     assert(formToken.type === "group");
     assert("kind" in formToken);
 
-    const [conditionParseCtx, inner] = innerParser.parse(innerGroup.tokens, { index: 0 });
-    assert(conditionParseCtx.index === innerGroup.tokens.length);
+    // const [conditionParseCtx, inner] = innerParser.parse(innerGroup.tokens, { index: 0 });
+    // assert(conditionParseCtx.index === innerGroup.tokens.length);
+    const inner = yield Parser.do(function* () {
+      if (innerGroup.tokens.length === 0) return implicitPlaceholder(indexPosition(yield Parser.index()));
+
+      const [exprParseCtx, expr] = innerParser.parse(innerGroup.tokens, { index: 0 });
+
+      if (exprParseCtx.index !== innerGroup.tokens.length) {
+        return error(SystemError.unknown(), expr);
+      }
+
+      return expr;
+    });
 
     return yield Parser.do(function* () {
       if (formToken.kind === TokenGroupKind.Colon) return [inner, null];
@@ -270,7 +299,6 @@ const parsePatternGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.d
       });
 
     const [exprParseCtx, expr] = parseExpr.parse(_token.tokens, { index: 0 });
-    assert(exprParseCtx.index === _token.tokens.length);
 
     if (exprParseCtx.index !== _token.tokens.length) {
       return error(
@@ -404,45 +432,25 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     return _node(NodeType.IS, { position: yield* nodePosition(), children: [pattern] });
   }
 
-  // if (!lhs && token.type === "group" && "kind" in token && token.kind === TokenGroupKind.Function) {
-  //   yield Parser.advance();
-  //   const [patternGroup, formToken] = token.tokens;
-  //   assert(patternGroup.type === "group");
-  //   assert(formToken.type === "group");
-  //   assert("kind" in formToken);
+  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Function) {
+    return yield parseStatementForm(parsePattern).chain(function* ([pattern, expr]) {
+      if (!expr) {
+        return _node(NodeType.FUNCTION, {
+          position: yield* nodePosition(),
+          children: [pattern],
+          data: { isTopFunction: true },
+        });
+      }
 
-  //   const [patternParseCtx, pattern] = parsePattern.parse(patternGroup.tokens, { index: 0 });
-  //   assert(patternParseCtx.index === patternGroup.tokens.length);
-
-  //   return yield Parser.do(function* () {
-  //     if (formToken.kind === TokenGroupKind.Colon) return null;
-  //     if (formToken.kind === TokenGroupKind.Braces) {
-  //       const [exprParseCtx, expr] = parseExpr.parse(formToken.tokens, { index: 0 });
-  //       assert(exprParseCtx.index === formToken.tokens.length);
-  //       return expr;
-  //     }
-  //     if (formToken.kind === TokenGroupKind.Arrow) {
-  //       const precedence = _getExprPrecedence(NodeType.SEQUENCE);
-  //       return yield Parser.scope({ precedence: precedence[1]! - 1 }, parsePratt);
-  //     }
-  //   }).chain(function* (expr: Tree | null) {
-  //     if (!expr) {
-  //       return _node(NodeType.FUNCTION, {
-  //         position: yield* nodePosition(),
-  //         children: [pattern],
-  //         data: { isTopFunction: true },
-  //       });
-  //     }
-
-  //     const node = _node(NodeType.FUNCTION, {
-  //       position: yield* nodePosition(),
-  //       children: [pattern, expr],
-  //       data: { isTopFunction: true },
-  //     });
-  //     inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
-  //     return node;
-  //   });
-  // }
+      const node = _node(NodeType.FUNCTION, {
+        position: yield* nodePosition(),
+        children: [pattern, expr],
+        data: { isTopFunction: true },
+      });
+      inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+      return node;
+    });
+  }
 
   if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.If) {
     return yield parseStatementForm(parseExpr).chain(function* ([condition, trueBranch]) {

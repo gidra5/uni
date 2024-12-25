@@ -127,12 +127,12 @@ describe("expressions", () => {
   });
 
   describe("function expressions", () => {
-    it.todo("function block body", () => testCase(`fn x, y { x + y }`));
-    it.todo("function multiple params", () => testCase(`fn x, y -> x + y`));
-    it.todo("fn no parameters", () => testCase(`fn -> 123`));
-    it.todo("fn no parameters block", () => testCase(`fn { 123 }`));
-    it.todo("arrow function", () => testCase(`x -> x`));
-    it.todo("fn increment", () => testCase(`fn -> line_handled_count++`));
+    it("function block body", () => testCase(`fn x, y { x + y }`));
+    it("function multiple params", () => testCase(`fn x, y -> x + y`));
+    it("fn no parameters", () => testCase(`fn -> 123`));
+    it("fn no parameters block", () => testCase(`fn { 123 }`));
+    it("arrow function", () => testCase(`x -> x`));
+    it("fn increment", () => testCase(`fn -> line_handled_count++`));
     it.todo("function with return type", () => `fn x, y -> type { x + y }`);
     it.todo("function with placeholder arg", () => `_ -> #0`);
     it.todo("function with no arg", () => `fn -> #0`);
@@ -155,9 +155,9 @@ describe("expressions", () => {
       it("a + send 1 + 2", () => testCase(`a + send 1 + 2`));
       it("a + send (2, 3)", () => testCase(`a + send (2, 3)`));
       it.todo("methods chaining", () => testCase(`math.floor(1).multiply(2)`));
-      it.todo("function as last arg", () => testCase(`open "file" file -> write file "yolo"`));
+      it("function as last arg", () => testCase(`open "file" file -> write file "yolo"`));
       it("block as last arg", () => testCase(`open "file" { write "yolo" }`));
-      it.todo("pipe", () => testCase(`1 |> fn x { x + 1 } |> fn y { y * 2 }`));
+      it("pipe", () => testCase(`1 |> fn x { x + 1 } |> fn y { y * 2 }`));
     });
 
     describe("delimited application", () => {
@@ -168,7 +168,7 @@ describe("expressions", () => {
       it.todo("spread args", () => testCase(`f(...x, y)`));
     });
 
-    describe.todo("function forms", () => {
+    describe("function forms", () => {
       it("immediate form", () => testCase(`fn: x; y`));
       it("block form", () => testCase(`fn { x }`));
       it("rest form", () => testCase(`fn -> x; y`));
@@ -176,7 +176,7 @@ describe("expressions", () => {
   });
 
   describe("structured programming", () => {
-    it.todo("complex 1", () =>
+    it.skip("complex 1", () =>
       testCase(`
         y := {
           x := 25
@@ -187,8 +187,7 @@ describe("expressions", () => {
             y
           }
         }
-      `)
-    );
+      `));
 
     it("if-then", () => testCase(`if true: 123`));
     it("if-then-else", () => testCase(`if true: 123 else 456`));
@@ -218,15 +217,15 @@ describe("expressions", () => {
     it("channel receive", () => testCase(`<- c`));
     it("channel try send", () => testCase(`c <-? 123`));
     it("channel try receive", () => testCase(`<-? c`));
-    it.skip("try receive with assignment", () => testCase(`status := <-?numbers`));
-    it.skip("superposition value", () => testCase(`123 & 456`));
+    it("try receive with assignment", () => testCase(`status := <-?numbers`));
+    it("superposition value", () => testCase(`123 & 456`));
     it("parallel value", () => testCase(`123 | 456`));
     it.skip("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
     it("parallel with channels", () => testCase(`c <- 123 | <- c`));
-    it.todo("select channels", () => testCase(`c1 + c2`));
-    it.skip("async", () => testCase(`async f x`));
+    it("select channels", () => testCase(`c1 + c2`));
+    it("async", () => testCase(`async f x`));
     it.skip("async index", () => testCase(`async f.a`));
-    it.skip("await async", () => testCase(`await async f x`));
+    it("await async", () => testCase(`await async f x`));
     it("await", () => testCase(`await x + 1`));
   });
 
@@ -311,20 +310,9 @@ describe("pattern matching", () => {
     });
   });
 
-  test.todo("with type", () => {
-    const src = `x is (a: number, b)`;
-    testCase(src);
-  });
+  test.todo("with type", () => testCase(`x is (a: number, b)`));
 
-  test.todo("record pattern with type", () => {
-    const src = `x is { a: number, b }`;
-    testCase(src);
-  });
-
-  test.todo("with anonymous type", () => {
-    const src = `x is (type number, a)`;
-    testCase(src);
-  });
+  test.todo("record pattern with type", () => testCase(`x is { a: number, b }`));
 });
 
 describe("types", () => {
@@ -385,17 +373,17 @@ describe("newline handling", () => {
   it.skip("infix-infix", () => testCase(`b +\nc +\nd`));
   it.skip("if else separate lines", () => testCase(`if a:\n 1\n else\n 2`));
   it("if-then newline", () => testCase(`if true:\n 123`));
-  it.skip("if-then newline-else", () => testCase(`if true:\n 123 else 456`));
-  it.skip("if-then newline-else newline", () => testCase(`if true:\n 123 else\n 456`));
+  it("if-then newline-else", () => testCase(`if true:\n 123 else 456`));
+  it("if-then newline-else newline", () => testCase(`if true:\n 123 else\n 456`));
   it.skip("if-then post newline", () => testCase(`if true: 123\nelse 456`));
   it.skip("if-then post newline block", () => testCase(`if true { 123 }\nelse 456`));
   it.skip("block newline in the middle", () => testCase(`{ a := 1\n b := 2 }`));
   it.skip("block newline at the end", () => testCase(`{ a := 1\n b := 2\n }`));
   it.skip("block newline at the beginning", () => testCase(`{\n a := 1\n b := 2 }`));
-  it.skip("block semicolon newline", () => testCase(`{ a := 1;\n b := 2 }`));
-  it.skip("block semicolon newline at the end", () => testCase(`{ a := 1;\n b := 2;\n }`));
+  it("block semicolon newline", () => testCase(`{ a := 1;\n b := 2 }`));
+  it("block semicolon newline at the end", () => testCase(`{ a := 1;\n b := 2;\n }`));
   it.skip("newline at the end", () => testCase(`1\n`));
-  it.skip("semicolon-newline at the end", () => testCase(`1;\n`));
+  it("semicolon-newline at the end", () => testCase(`1;\n`));
   it.skip("empty switch with newline", () => testCase(`match a { \n }`));
   // it.todo('application-newline-increment', () => testCase(`f a\n ++b`));
   it.skip("pipe", () => testCase(`1 \n|> fn x { x + 1 } \n|> fn y { y * 2 }`));
