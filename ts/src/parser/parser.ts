@@ -893,12 +893,14 @@ const parsePratt = function* self() {
     if (followSet.length === 0) return true;
     return !tokenIncludes(yield Parser.peek(), followSet);
   };
+  console.log(1, lhs, yield Parser.ctx());
 
   while (yield* until()) {
     yield Parser.rememberIndex();
     const opGroup: Tree = yield Parser.scope({ lhs: true }, parsePrattGroup as any);
     const [left, right] = getPrecedence(opGroup);
 
+    console.log(3, opGroup, yield Parser.ctx());
     if (left === null) {
       yield Parser.resetIndex();
       break;
@@ -943,6 +945,8 @@ const parsePratt = function* self() {
       lhs = postfix(opGroup, lhs);
     }
   }
+
+  console.log(2, lhs, yield Parser.ctx());
 
   if (lhs.type === NodeType.SEQUENCE && lhs.children.length === 1) {
     return lhs.children[0];

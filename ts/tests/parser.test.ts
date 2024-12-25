@@ -29,23 +29,23 @@ const testCase = (input: string) => {
   expect(clearIds(ast)).toMatchSnapshot();
 };
 
-describe.skip("advent of code 1 single file", () => {
-  it("variable", () =>
+describe("advent of code 1 single file", () => {
+  it.skip("variable", () =>
     testCase(`
       // https://adventofcode.com/2023/day/1
 
       /* take first and last digit on line, concat into two-digit number
         * and sum all numbers in document
         */
-      document := "
+      document := """
         1abc2
         pqr3stu8vwx
         a1b2c3d4e5f
         treb7uchet
-      "
+      """
     `));
 
-  it("split lines", () =>
+  it.skip("split lines", () =>
     testCase(`
         lines := {
           lines := split document "\\n"
@@ -54,7 +54,7 @@ describe.skip("advent of code 1 single file", () => {
         }
       `));
 
-  it("parse numbers", () =>
+  it.skip("parse numbers", () =>
     testCase(`
         numbers := flat_map lines fn line {
           digits := ()
@@ -76,14 +76,14 @@ describe.skip("advent of code 1 single file", () => {
 
   it("flat map list reducer", () => testCase(`fn acc, item -> (...acc, ...mapper item)`));
 
-  it("flat map list impl", () =>
+  it.skip("flat map list impl", () =>
     testCase(`
         flat_map := fn list, mapper {
           reduce list (fn acc, item -> (...acc, ...mapper item)) (fn first, second -> (...first, ...second)) ()
         }
       `));
 
-  it("reduce list", () =>
+  it.skip("reduce list", () =>
     testCase(`
         reduce := fn list, reducer, merge, initial {
           len := length list
@@ -382,7 +382,7 @@ describe("newline handling", () => {
   it.skip("block newline at the beginning", () => testCase(`{\n a := 1\n b := 2 }`));
   it("block semicolon newline", () => testCase(`{ a := 1;\n b := 2 }`));
   it("block semicolon newline at the end", () => testCase(`{ a := 1;\n b := 2;\n }`));
-  it.skip("newline at the end", () => testCase(`1\n`));
+  it.only("newline at the end", () => testCase(`1\n`));
   it("semicolon-newline at the end", () => testCase(`1;\n`));
   it.skip("empty switch with newline", () => testCase(`match a { \n }`));
   // it.todo('application-newline-increment', () => testCase(`f a\n ++b`));
