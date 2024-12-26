@@ -295,8 +295,8 @@ describe("pattern matching", () => {
 
   describe("set-theoretic patterns", () => {
     test.todo("pattern union", () => testCase(`({ x, y } or { y, z }) -> y`));
-    test.todo("pattern intersection", () => testCase(`({ x, y } and { z }) -> x + y + z`));
-    test.todo("pattern negation", () => testCase(`(not { x, y }) -> x + y + z`));
+    test.only("pattern intersection", () => testCase(`({ x, y } and { z }) -> x + y + z`));
+    test("pattern negation", () => testCase(`(not { x, y }) -> x + y + z`));
   });
 
   test.todo("with type", () => testCase(`x is (a: number, b)`));

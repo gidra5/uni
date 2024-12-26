@@ -116,11 +116,13 @@ const idToPatternOp = {
   ",": NodeType.TUPLE,
   ":": NodeType.LABEL,
   "@": NodeType.BIND,
+  and: NodeType.AND,
+  or: NodeType.OR,
 };
 
 const idToPrefixPatternOp = {
   "...": NodeType.SPREAD,
-  ":": NodeType.ATOM,
+  $: NodeType.ATOM,
   export: NodeType.EXPORT,
   mut: NodeType.MUTABLE,
   like: NodeType.LIKE,
@@ -142,21 +144,6 @@ type Context3 = {
   precedence: number;
   followSet: string[];
 };
-// type Context = Readonly<{
-//   lhs: boolean;
-//   allowPatternDefault: boolean;
-//   followSet: string[];
-//   banned: string[];
-// }>;
-
-// const newContext = ({ banned = [] }: Partial<Context> = {}): Context => ({
-//   lhs: false,
-//   allowPatternDefault: false,
-//   followSet: [],
-//   banned,
-// });
-
-// type ContextParser = (context: Context) => ParserFunction<TokenGroup[], Tree>;
 
 const parseValue = Parser.do<TokenGroup[], Tree>(function* () {
   const start = yield Parser.index();
