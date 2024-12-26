@@ -294,8 +294,8 @@ describe("pattern matching", () => {
   it("binding visible in scope where it is true", () => testCase(`x is (a, b) and a == b + 1`));
 
   describe("set-theoretic patterns", () => {
-    test.todo("pattern union", () => testCase(`({ x, y } or { y, z }) -> y`));
-    test.only("pattern intersection", () => testCase(`({ x, y } and { z }) -> x + y + z`));
+    test("pattern union", () => testCase(`({ x, y } or { y, z }) -> y`));
+    test("pattern intersection", () => testCase(`({ x, y } and { z }) -> x + y + z`));
     test("pattern negation", () => testCase(`(not { x, y }) -> x + y + z`));
   });
 

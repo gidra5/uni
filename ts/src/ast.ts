@@ -216,6 +216,8 @@ const patternPrecedenceList: [NodeType, Fixity][] = [
   [NodeType.LIKE, Fixity.PREFIX],
   [NodeType.STRICT, Fixity.PREFIX],
   [NodeType.EXPORT, Fixity.PREFIX],
+  [NodeType.OR, Fixity.INFIX],
+  [NodeType.AND, Fixity.INFIX],
   [NodeType.NOT, Fixity.PREFIX],
   [NodeType.INDEX, Fixity.POSTFIX],
   [NodeType.BIND, Fixity.INFIX_RIGHT],

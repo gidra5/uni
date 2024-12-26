@@ -116,6 +116,9 @@ const idToPatternOp = {
   ",": NodeType.TUPLE,
   ":": NodeType.LABEL,
   "@": NodeType.BIND,
+};
+
+const idToPatternOp2 = {
   and: NodeType.AND,
   or: NodeType.OR,
 };
@@ -252,6 +255,12 @@ const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(functi
 
   if (lhs && _token.type === "identifier" && Object.hasOwn(idToPatternOp, _token.name)) {
     const op = idToPatternOp[_token.name];
+    yield Parser.advance();
+    return _node(op);
+  }
+
+  if (allowPatternDefault && lhs && _token.type === "identifier" && Object.hasOwn(idToPatternOp2, _token.name)) {
+    const op = idToPatternOp2[_token.name];
     yield Parser.advance();
     return _node(op);
   }
@@ -415,8 +424,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     return node;
   }
 
-  if (lhs && _token.type === "identifier" && _token.name === "is") {
-    yield Parser.advance();
+  if (lhs && (yield Parser.identifier("is"))) {
     const pattern: Tree = yield parsePattern;
     return _node(NodeType.IS, { position: yield* nodePosition(), children: [pattern] });
   }

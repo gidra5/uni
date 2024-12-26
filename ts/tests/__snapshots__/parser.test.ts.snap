@@ -7115,32 +7115,59 @@ exports[`pattern matching > set-theoretic patterns > pattern intersection 1`] = 
                     },
                   ],
                   "data": {},
-                  "type": ",",
+                  "type": "object",
                 },
-              ],
-              "data": {},
-              "type": "block",
-            },
-            {
-              "children": [
                 {
-                  "children": [],
-                  "data": {
-                    "value": "z",
-                  },
-                  "type": "name",
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "z",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {},
+                  "type": "object",
                 },
               ],
               "data": {},
-              "type": "block",
+              "type": "and",
             },
           ],
           "data": {},
-          "type": "and",
+          "type": "parens",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "y",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "z",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "add",
         },
       ],
       "data": {},
-      "type": "parens",
+      "type": "func",
     },
   ],
   "data": {},
@@ -7211,6 +7238,80 @@ exports[`pattern matching > set-theoretic patterns > pattern negation 1`] = `
           ],
           "data": {},
           "type": "add",
+        },
+      ],
+      "data": {},
+      "type": "func",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`pattern matching > set-theoretic patterns > pattern union 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "x",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "y",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {},
+                  "type": "object",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "y",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "z",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {},
+                  "type": "object",
+                },
+              ],
+              "data": {},
+              "type": "or",
+            },
+          ],
+          "data": {},
+          "type": "parens",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": "y",
+          },
+          "type": "name",
         },
       ],
       "data": {},
