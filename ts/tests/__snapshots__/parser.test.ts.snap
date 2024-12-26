@@ -8589,6 +8589,209 @@ exports[`pattern matching > with record pattern 1`] = `
 }
 `;
 
+exports[`pattern matching > with record pattern key 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {
+                            "value": "a",
+                          },
+                          "type": "name",
+                        },
+                        {
+                          "children": [],
+                          "data": {
+                            "value": "b",
+                          },
+                          "type": "name",
+                        },
+                      ],
+                      "data": {},
+                      "type": "add",
+                    },
+                  ],
+                  "data": {},
+                  "type": "square_brackets",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "c",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "type": "@",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "b",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "object",
+        },
+      ],
+      "data": {},
+      "type": "is",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`pattern matching > with record pattern nested 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {
+                            "value": "c",
+                          },
+                          "type": "name",
+                        },
+                        {
+                          "children": [],
+                          "data": {
+                            "value": "d",
+                          },
+                          "type": "name",
+                        },
+                      ],
+                      "data": {},
+                      "type": ",",
+                    },
+                  ],
+                  "data": {},
+                  "type": "parens",
+                },
+              ],
+              "data": {},
+              "type": "@",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "b",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "object",
+        },
+      ],
+      "data": {},
+      "type": "is",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`pattern matching > with record pattern rename 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "c",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "type": "@",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "b",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "object",
+        },
+      ],
+      "data": {},
+      "type": "is",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`pattern matching > with rename 1`] = `
 {
   "children": [

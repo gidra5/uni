@@ -274,9 +274,9 @@ describe("pattern matching", () => {
   it("with rest value", () => testCase(`x is (a, ...b)`));
   it("with rest value first", () => testCase(`x is (...b, a)`));
   it("with record pattern", () => testCase(`x is { a, b }`));
-  it.todo("with record pattern rename", () => testCase(`x is { a @ c, b }`));
-  it.todo("with record pattern key", () => testCase(`x is { [a + b] @ c, b }`));
-  it.todo("with record pattern nested", () => testCase(`x is { a @ (c, d), b }`));
+  it("with record pattern rename", () => testCase(`x is { a @ c, b }`));
+  it("with record pattern key", () => testCase(`x is { [a + b] @ c, b }`));
+  it("with record pattern nested", () => testCase(`x is { a @ (c, d), b }`));
   it("with default value", () => testCase(`x is (b = 4, a)`));
   it("with default value second", () => testCase(`x is (a, b = 4)`));
   it("with default value parens", () => testCase(`x is ((b = 4), a)`));
