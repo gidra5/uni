@@ -361,38 +361,35 @@ const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(functi
     return node;
   }
 
-  // if (!context.lhs && src[index].src === "^") {
-  //   index++;
-  //   let value: Tree;
-  //   [index, value] = parsePrattGroup(context, parseExprGroup, getExprPrecedence)(src, index);
-  //   const node = _node(NodeType.PIN, {
-  //     position: nodePosition(),
-  //     children: [value],
-  //   });
-  //   const precedence = getExprPrecedence(value);
-  //   if (precedence[0] !== null && precedence[1] !== null) {
-  //     return [index, error(SystemError.invalidPinPattern(nodePosition()), node)];
-  //   }
+  if (!lhs && (yield Parser.identifier("^"))) {
+    const value: Tree = yield Parser.scope({ lhs: false }, function* () {
+      return yield parseExprGroup;
+    });
+    const node = _node(NodeType.PIN, {
+      position: yield* nodePosition(),
+      children: [value],
+    });
+    const precedence = getExprPrecedence(value);
+    if (precedence[0] !== null || precedence[1] !== null) {
+      return error(SystemError.invalidPinPattern(yield* nodePosition()), node);
+    }
 
-  //   return [index, node];
-  // }
+    return node;
+  }
 
-  // if (context.lhs && src[index].src === ".") {
-  //   index++;
-  //   const next = src[index];
-  //   if (!tokenIncludes(next, context.followSet) && next?.type === "identifier") {
-  //     index++;
-  //     const key = atom(next.src, { start: next.start, end: next.end });
-  //     return [
-  //       index,
-  //       _node(NodeType.INDEX, {
-  //         position: nodePosition(),
-  //         children: [key],
-  //       }),
-  //     ];
-  //   }
-  //   return [index, error(SystemError.invalidIndex(nodePosition()), nodePosition())];
-  // }
+  if (lhs && (yield Parser.identifier("."))) {
+    const next: TokenGroup | undefined = yield Parser.peek();
+    const { followSet }: Context3 = yield Parser.ctx();
+    if (!tokenIncludes(next, followSet) && next?.type === "identifier") {
+      yield Parser.advance();
+      const key = atom(next.name, getTokenPosition(next));
+      return _node(NodeType.INDEX, {
+        position: yield* nodePosition(),
+        children: [key],
+      });
+    }
+    return error(SystemError.invalidIndex(yield* nodePosition()), yield* nodePosition());
+  }
 
   return yield parseValue;
 });

@@ -238,7 +238,7 @@ describe("expressions", () => {
     it.todo("dictionary", () => testCase(`dict { [1]: 2, [3]: 4 }`));
     it("period operator", () => testCase(`math.floor`));
     it("index", () => testCase(`x[0]`));
-    it.skip("field assignment", () => testCase(`x.y = 123`));
+    it("field assignment", () => testCase(`x.y = 123`));
     it("field assignment dynamic", () => testCase(`x[y] = 123`));
   });
 
@@ -268,8 +268,8 @@ describe("pattern matching", () => {
   it("declare record pattern", () => testCase(`{ a, b } := handlers`));
   it("with 'is' operator", () => testCase(`x is (a, b)`));
   it("with placeholder", () => testCase(`x is (_, b)`));
-  it.skip("with pin", () => testCase(`x is (^a, b)`));
-  it.skip("with pin expression", () => testCase(`x is (^(a + b), b)`));
+  it("with pin", () => testCase(`x is (^a, b)`));
+  it("with pin expression", () => testCase(`x is (^(a + b), b)`));
   it("with constant value", () => testCase(`x is (1, b)`));
   it("with rest value", () => testCase(`x is (a, ...b)`));
   it("with rest value first", () => testCase(`x is (...b, a)`));
@@ -285,7 +285,7 @@ describe("pattern matching", () => {
   it("with name for match", () => testCase(`x is ((a, b) @ c)`));
   it("with like pattern", () => testCase(`x is like { a, b }`));
   it("with strict pattern", () => testCase(`x is like (a, strict { b })`));
-  it.todo("with nested value", () => testCase(`x is a.b and a.b == x`));
+  it("with nested value", () => testCase(`x is a.b and a.b == x`));
   it.todo("with merging nested value", () => testCase(`x is (a.b and a.c) and a.b == x and a.c == x`));
   it.todo("with dynamically nested value", () => testCase(`x is a[b] and a[b] == x`));
   it.todo("with dynamic name", () => testCase(`x is [$a] and [$a] == x`));
@@ -294,20 +294,9 @@ describe("pattern matching", () => {
   it("binding visible in scope where it is true", () => testCase(`x is (a, b) and a == b + 1`));
 
   describe("set-theoretic patterns", () => {
-    test.todo("pattern union", () => {
-      const src = `({ x, y } or { y, z }) -> y`;
-      testCase(src);
-    });
-
-    test.todo("pattern intersection", () => {
-      const src = `({ x, y } and { z }) -> x + y + z`;
-      testCase(src);
-    });
-
-    test.todo("pattern negation", () => {
-      const src = `(not { x, y }) -> x + y + z`;
-      testCase(src);
-    });
+    test.todo("pattern union", () => testCase(`({ x, y } or { y, z }) -> y`));
+    test.todo("pattern intersection", () => testCase(`({ x, y } and { z }) -> x + y + z`));
+    test.todo("pattern negation", () => testCase(`(not { x, y }) -> x + y + z`));
   });
 
   test.todo("with type", () => testCase(`x is (a: number, b)`));

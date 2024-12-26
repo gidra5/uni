@@ -7488,6 +7488,87 @@ exports[`pattern matching > with name for match 1`] = `
 }
 `;
 
+exports[`pattern matching > with nested value 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "name": "b",
+                  },
+                  "type": "atom",
+                },
+              ],
+              "data": {},
+              "type": "index",
+            },
+          ],
+          "data": {},
+          "type": "is",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "name": "b",
+                  },
+                  "type": "atom",
+                },
+              ],
+              "data": {},
+              "type": "index",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "==",
+        },
+      ],
+      "data": {},
+      "type": "and",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`pattern matching > with pin 1`] = `
 {
   "children": [
