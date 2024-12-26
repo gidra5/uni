@@ -3012,6 +3012,157 @@ exports[`expressions > data structures > period operator 1`] = `
 }
 `;
 
+exports[`expressions > data structures > record 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "a",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 1,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": ":",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "b",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 2,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": ":",
+        },
+      ],
+      "data": {},
+      "type": "object",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > data structures > record dynamic 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "string",
+                },
+              ],
+              "data": {},
+              "type": "square_brackets",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 1,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": ":",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "b",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 2,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": ":",
+        },
+      ],
+      "data": {},
+      "type": "object",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > data structures > record single 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "a",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 1,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": ":",
+        },
+      ],
+      "data": {},
+      "type": "object",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`expressions > data structures > tuple 1`] = `
 {
   "children": [
