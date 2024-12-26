@@ -7929,6 +7929,54 @@ exports[`pattern matching > with like pattern 1`] = `
 }
 `;
 
+exports[`pattern matching > with matcher 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "some",
+              },
+              "type": "name",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "type": "parens",
+            },
+          ],
+          "data": {},
+          "type": "application",
+        },
+      ],
+      "data": {},
+      "type": "is",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`pattern matching > with merging nested value 1`] = `
 {
   "children": [
@@ -8216,6 +8264,54 @@ exports[`pattern matching > with nested value 1`] = `
       ],
       "data": {},
       "type": "and",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`pattern matching > with parens matcher 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "some",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "type": "application",
+            },
+          ],
+          "data": {},
+          "type": "parens",
+        },
+      ],
+      "data": {},
+      "type": "is",
     },
   ],
   "data": {},

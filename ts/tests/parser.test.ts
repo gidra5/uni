@@ -289,7 +289,8 @@ describe("pattern matching", () => {
   it("with merging nested value", () => testCase(`x is (a.b and a.c) and a.b == x and a.c == x`));
   it("with dynamically nested value", () => testCase(`x is a[b] and a[b] == x`));
   it("with dynamic name", () => testCase(`x is [$a] and [$a] == x`));
-  it.todo("with matcher", () => testCase(`x is some a`));
+  it("with matcher", () => testCase(`x is some(a)`));
+  it("with parens matcher", () => testCase(`x is (some a)`));
 
   it("binding visible in scope where it is true", () => testCase(`x is (a, b) and a == b + 1`));
 

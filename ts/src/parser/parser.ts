@@ -259,11 +259,11 @@ const parseStatementForm = (innerParser: Parser<TokenGroup[], Tree, {}>) =>
 
 type Context2 = {
   lhs: boolean;
-  allowPatternDefault: boolean;
+  isDeepPattern: boolean; // is pattern inside of parens or any other pattern grouping
 };
 
 const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(function* () {
-  const { lhs, allowPatternDefault }: Context2 = yield Parser.ctx();
+  const { lhs, isDeepPattern }: Context2 = yield Parser.ctx();
   const start = yield Parser.index();
   const nodePosition = function* () {
     const index = yield Parser.index();
@@ -285,7 +285,7 @@ const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(functi
     return _node(op);
   }
 
-  if (allowPatternDefault && lhs && _token.type === "identifier" && Object.hasOwn(idToPatternOp2, _token.name)) {
+  if (isDeepPattern && lhs && _token.type === "identifier" && Object.hasOwn(idToPatternOp2, _token.name)) {
     const op = idToPatternOp2[_token.name];
     yield Parser.advance();
     return _node(op);
@@ -301,7 +301,7 @@ const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(functi
       return node;
     }
 
-    const [exprParseCtx, pattern] = Parser.scope<TokenGroup[], Tree>({ allowPatternDefault: true }, function* () {
+    const [exprParseCtx, pattern] = Parser.scope<TokenGroup[], Tree>({ isDeepPattern: true }, function* () {
       return yield parsePattern;
     }).parse(_token.tokens, { index: 0 });
 
@@ -353,7 +353,7 @@ const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(functi
       });
     }
 
-    const [exprParseCtx, pattern] = Parser.scope<TokenGroup[], Tree>({ allowPatternDefault: true }, function* () {
+    const [exprParseCtx, pattern] = Parser.scope<TokenGroup[], Tree>({ isDeepPattern: true }, function* () {
       return yield parsePattern;
     }).parse(_token.tokens, { index: 0 });
 
@@ -367,7 +367,7 @@ const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(functi
     return _node(NodeType.PARENS, { position: yield* nodePosition(), children: [pattern] });
   }
 
-  if (allowPatternDefault && lhs && (yield Parser.identifier("="))) {
+  if (isDeepPattern && lhs && (yield Parser.identifier("="))) {
     const value: Tree = yield Parser.scope({ lhs: false }, function* () {
       return yield parseExprGroup;
     });
@@ -411,6 +411,16 @@ const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(functi
       });
     }
     return error(SystemError.invalidIndex(yield* nodePosition()), yield* nodePosition());
+  }
+
+  if (lhs) {
+    // if function call is with parentheses, make precedence higher than field access
+    // so method chaining works as usual
+    if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
+      return _node(NodeType.APPLICATION);
+    }
+
+    if (isDeepPattern) return _node(NodeType.APPLICATION);
   }
 
   return yield parseValue;
@@ -958,11 +968,10 @@ const parseExpr = Parser.do<TokenGroup[], Tree>(function* () {
 });
 
 const parsePattern = Parser.do(function* () {
-  const { followSet = [], allowPatternDefault = false }: Context3 & { allowPatternDefault: boolean } =
-    yield Parser.ctx();
-  return yield Parser.scope<TokenGroup[], Tree, {}, Context3 & { allowPatternDefault: boolean }>(
+  const { followSet = [], isDeepPattern = false }: Context3 & { isDeepPattern: boolean } = yield Parser.ctx();
+  return yield Parser.scope<TokenGroup[], Tree, {}, Context3 & { isDeepPattern: boolean }>(
     {
-      allowPatternDefault,
+      isDeepPattern,
       groupParser: parsePatternGroup,
       getPrecedence: getPatternPrecedence,
       precedence: 0,
