@@ -299,9 +299,8 @@ describe("pattern matching", () => {
     test("pattern negation", () => testCase(`(not { x, y }) -> x + y + z`));
   });
 
-  test.todo("with type", () => testCase(`x is (a: number, b)`));
-
-  test.todo("record pattern with type", () => testCase(`x is { a: number, b }`));
+  test("with type", () => testCase(`x is (a: number, b)`));
+  test("record pattern with type", () => testCase(`x is { a: number, b }`));
   test("value is of type", () => testCase(`x is type number`));
   test("typeof value is type", () => testCase(`typeof x == number`));
 });

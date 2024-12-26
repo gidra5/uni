@@ -126,7 +126,6 @@ const idToPatternOp2 = {
 
 const idToPrefixPatternOp = {
   "...": NodeType.SPREAD,
-  $: NodeType.ATOM,
   export: NodeType.EXPORT,
   unexport: NodeType.UNEXPORT,
   mut: NodeType.MUTABLE,
@@ -186,6 +185,29 @@ const parseValue = Parser.do<TokenGroup[], Tree>(function* () {
       return _node(NodeType.HASH_NAME, { data: { index: token2.value }, position: yield* nodePosition() });
     }
     return error(SystemError.invalidPattern(yield* nodePosition()), yield* nodePosition());
+  }
+
+  if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.StringTemplate) {
+    yield Parser.advance();
+    if (_token.tokens.length === 1) {
+      return token(_token.tokens[0], yield* nodePosition());
+    }
+    const children: Tree[] = [];
+    for (const __token of _token.tokens) {
+      if (__token.type === "string") {
+        children.push(token(__token, yield* nodePosition()));
+      } else {
+        assert(__token.type === "group");
+        assert("kind" in __token);
+        assert(__token.kind === TokenGroupKind.Parentheses);
+        const [exprParseCtx, expr] = parseExpr.parse(__token.tokens, { index: 0 });
+        assert(exprParseCtx.index === __token.tokens.length);
+        children.push(expr);
+      }
+    }
+    const node = _node(NodeType.TEMPLATE, { position: yield* nodePosition(), children });
+    inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+    return node;
   }
 
   const token2 = yield Parser.peek(1);
@@ -797,29 +819,6 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     );
     const precedence = _getExprPrecedence(op);
     inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, precedence[1]]);
-    return node;
-  }
-
-  if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.StringTemplate) {
-    yield Parser.advance();
-    if (_token.tokens.length === 1) {
-      return token(_token.tokens[0], yield* nodePosition());
-    }
-    const children: Tree[] = [];
-    for (const __token of _token.tokens) {
-      if (__token.type === "string") {
-        children.push(token(__token, yield* nodePosition()));
-      } else {
-        assert(__token.type === "group");
-        assert("kind" in __token);
-        assert(__token.kind === TokenGroupKind.Parentheses);
-        const [exprParseCtx, expr] = parseExpr.parse(__token.tokens, { index: 0 });
-        assert(exprParseCtx.index === __token.tokens.length);
-        children.push(expr);
-      }
-    }
-    const node = _node(NodeType.TEMPLATE, { position: yield* nodePosition(), children });
-    inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
     return node;
   }
 

@@ -7088,6 +7088,61 @@ exports[`pattern matching > match 1`] = `
 }
 `;
 
+exports[`pattern matching > record pattern with type 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "number",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "type": ":",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "b",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "object",
+        },
+      ],
+      "data": {},
+      "type": "is",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`pattern matching > set-theoretic patterns > pattern intersection 1`] = `
 {
   "children": [
@@ -8662,6 +8717,67 @@ exports[`pattern matching > with strict pattern 1`] = `
           ],
           "data": {},
           "type": "like",
+        },
+      ],
+      "data": {},
+      "type": "is",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`pattern matching > with type 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "a",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "number",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {},
+                  "type": ":",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "b",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "type": ",",
+            },
+          ],
+          "data": {},
+          "type": "parens",
         },
       ],
       "data": {},
