@@ -7323,6 +7323,76 @@ exports[`pattern matching > set-theoretic patterns > pattern union 1`] = `
 }
 `;
 
+exports[`pattern matching > typeof value is type 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "typeof",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": "number",
+          },
+          "type": "name",
+        },
+      ],
+      "data": {},
+      "type": "==",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`pattern matching > value is of type 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "number",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "type",
+        },
+      ],
+      "data": {},
+      "type": "is",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`pattern matching > with 'is' operator 1`] = `
 {
   "children": [
@@ -7608,6 +7678,154 @@ exports[`pattern matching > with default value second 1`] = `
 }
 `;
 
+exports[`pattern matching > with dynamic name 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "name": "a",
+                  },
+                  "type": "atom",
+                },
+              ],
+              "data": {},
+              "type": "square_brackets",
+            },
+          ],
+          "data": {},
+          "type": "is",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "name": "a",
+                  },
+                  "type": "atom",
+                },
+              ],
+              "data": {},
+              "type": "square_brackets",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "==",
+        },
+      ],
+      "data": {},
+      "type": "and",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`pattern matching > with dynamically nested value 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "b",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "type": "index",
+            },
+          ],
+          "data": {},
+          "type": "is",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "b",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "type": "index",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "==",
+        },
+      ],
+      "data": {},
+      "type": "and",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`pattern matching > with like pattern 1`] = `
 {
   "children": [
@@ -7649,6 +7867,152 @@ exports[`pattern matching > with like pattern 1`] = `
       ],
       "data": {},
       "type": "is",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`pattern matching > with merging nested value 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {
+                            "value": "a",
+                          },
+                          "type": "name",
+                        },
+                        {
+                          "children": [],
+                          "data": {
+                            "name": "b",
+                          },
+                          "type": "atom",
+                        },
+                      ],
+                      "data": {},
+                      "type": "index",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {
+                            "value": "a",
+                          },
+                          "type": "name",
+                        },
+                        {
+                          "children": [],
+                          "data": {
+                            "name": "c",
+                          },
+                          "type": "atom",
+                        },
+                      ],
+                      "data": {},
+                      "type": "index",
+                    },
+                  ],
+                  "data": {},
+                  "type": "and",
+                },
+              ],
+              "data": {},
+              "type": "parens",
+            },
+          ],
+          "data": {},
+          "type": "is",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "name": "b",
+                  },
+                  "type": "atom",
+                },
+              ],
+              "data": {},
+              "type": "index",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "==",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "name": "c",
+                  },
+                  "type": "atom",
+                },
+              ],
+              "data": {},
+              "type": "index",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "==",
+        },
+      ],
+      "data": {},
+      "type": "and",
     },
   ],
   "data": {},

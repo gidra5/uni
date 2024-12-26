@@ -286,10 +286,10 @@ describe("pattern matching", () => {
   it("with like pattern", () => testCase(`x is like { a, b }`));
   it("with strict pattern", () => testCase(`x is like (a, strict { b })`));
   it("with nested value", () => testCase(`x is a.b and a.b == x`));
-  it.todo("with merging nested value", () => testCase(`x is (a.b and a.c) and a.b == x and a.c == x`));
-  it.todo("with dynamically nested value", () => testCase(`x is a[b] and a[b] == x`));
-  it.todo("with dynamic name", () => testCase(`x is [$a] and [$a] == x`));
-  it.todo("with unwrapping", () => testCase(`x is some a`));
+  it("with merging nested value", () => testCase(`x is (a.b and a.c) and a.b == x and a.c == x`));
+  it("with dynamically nested value", () => testCase(`x is a[b] and a[b] == x`));
+  it("with dynamic name", () => testCase(`x is [$a] and [$a] == x`));
+  it.todo("with matcher", () => testCase(`x is some a`));
 
   it("binding visible in scope where it is true", () => testCase(`x is (a, b) and a == b + 1`));
 
@@ -302,6 +302,8 @@ describe("pattern matching", () => {
   test.todo("with type", () => testCase(`x is (a: number, b)`));
 
   test.todo("record pattern with type", () => testCase(`x is { a: number, b }`));
+  test("value is of type", () => testCase(`x is type number`));
+  test("typeof value is type", () => testCase(`typeof x == number`));
 });
 
 describe("types", () => {

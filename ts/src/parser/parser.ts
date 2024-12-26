@@ -102,6 +102,7 @@ const idToPrefixExprOp = {
   async: NodeType.ASYNC,
   await: NodeType.AWAIT,
   loop: NodeType.LOOP,
+  typeof: NodeType.TYPEOF,
   export: NodeType.EXPORT,
 };
 
@@ -127,7 +128,10 @@ const idToPrefixPatternOp = {
   "...": NodeType.SPREAD,
   $: NodeType.ATOM,
   export: NodeType.EXPORT,
+  unexport: NodeType.UNEXPORT,
   mut: NodeType.MUTABLE,
+  const: NodeType.CONST,
+  type: NodeType.TYPE,
   like: NodeType.LIKE,
   strict: NodeType.STRICT,
   not: NodeType.NOT,
