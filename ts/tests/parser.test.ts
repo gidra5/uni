@@ -277,10 +277,10 @@ describe("pattern matching", () => {
   it.todo("with record pattern rename", () => testCase(`x is { a @ c, b }`));
   it.todo("with record pattern key", () => testCase(`x is { [a + b] @ c, b }`));
   it.todo("with record pattern nested", () => testCase(`x is { a @ (c, d), b }`));
-  it.skip("with default value", () => testCase(`x is (b = 4, a)`));
-  it.skip("with default value second", () => testCase(`x is (a, b = 4)`));
-  it.skip("with default value parens", () => testCase(`x is ((b = 4), a)`));
-  it.skip("with record default value", () => testCase(`x is { b = 4, a }`));
+  it("with default value", () => testCase(`x is (b = 4, a)`));
+  it("with default value second", () => testCase(`x is (a, b = 4)`));
+  it("with default value parens", () => testCase(`x is ((b = 4), a)`));
+  it("with record default value", () => testCase(`x is { b = 4, a }`));
   it("with rename", () => testCase(`x is (a @ b, c)`));
   it("with name for match", () => testCase(`x is ((a, b) @ c)`));
   it("with like pattern", () => testCase(`x is like { a, b }`));
@@ -387,6 +387,6 @@ describe("newline handling", () => {
   it("newline at the end", () => testCase(`1\n`));
   it("semicolon-newline at the end", () => testCase(`1;\n`));
   it("empty switch with newline", () => testCase(`match a { \n }`));
-  // it.todo('application-newline-increment', () => testCase(`f a\n ++b`));
+  it.todo("application-newline-increment", () => testCase(`f a\n ++b`));
   it("pipe", () => testCase(`1 \n|> fn x { x + 1 } \n|> fn y { y * 2 }`));
 });
