@@ -43,25 +43,25 @@ exports[`advent of code 1 single file > flat map list impl 1`] = `
                         {
                           "children": [
                             {
-                              "children": [],
-                              "data": {
-                                "value": "reduce",
-                              },
-                              "type": "name",
+                              "children": [
+                                {
+                                  "children": [],
+                                  "data": {
+                                    "value": "reduce",
+                                  },
+                                  "type": "name",
+                                },
+                                {
+                                  "children": [],
+                                  "data": {
+                                    "value": "list",
+                                  },
+                                  "type": "name",
+                                },
+                              ],
+                              "data": {},
+                              "type": "application",
                             },
-                            {
-                              "children": [],
-                              "data": {
-                                "value": "list",
-                              },
-                              "type": "name",
-                            },
-                          ],
-                          "data": {},
-                          "type": "application",
-                        },
-                        {
-                          "children": [
                             {
                               "children": [
                                 {
@@ -143,14 +143,8 @@ exports[`advent of code 1 single file > flat map list impl 1`] = `
                             },
                           ],
                           "data": {},
-                          "type": "parens",
+                          "type": "application",
                         },
-                      ],
-                      "data": {},
-                      "type": "application",
-                    },
-                    {
-                      "children": [
                         {
                           "children": [
                             {
@@ -219,26 +213,20 @@ exports[`advent of code 1 single file > flat map list impl 1`] = `
                         },
                       ],
                       "data": {},
-                      "type": "parens",
-                    },
-                  ],
-                  "data": {},
-                  "type": "application",
-                },
-                {
-                  "children": [
-                    {
-                      "children": [],
-                      "data": {},
-                      "type": "implicit_placeholder",
+                      "type": "application",
                     },
                   ],
                   "data": {},
                   "type": "parens",
                 },
+                {
+                  "children": [],
+                  "data": {},
+                  "type": "implicit_placeholder",
+                },
               ],
               "data": {},
-              "type": "application",
+              "type": "delimited_application",
             },
           ],
           "data": {
@@ -577,43 +565,37 @@ exports[`advent of code 1 single file > parse numbers 1`] = `
                                                 {
                                                   "children": [
                                                     {
-                                                      "children": [
-                                                        {
-                                                          "children": [],
-                                                          "data": {
-                                                            "value": "char_at",
-                                                          },
-                                                          "type": "name",
-                                                        },
-                                                        {
-                                                          "children": [],
-                                                          "data": {
-                                                            "value": "line",
-                                                          },
-                                                          "type": "name",
-                                                        },
-                                                      ],
-                                                      "data": {},
-                                                      "type": "application",
+                                                      "children": [],
+                                                      "data": {
+                                                        "value": "char_at",
+                                                      },
+                                                      "type": "name",
                                                     },
                                                     {
                                                       "children": [],
                                                       "data": {
-                                                        "value": 0,
+                                                        "value": "line",
                                                       },
-                                                      "type": "number",
+                                                      "type": "name",
                                                     },
                                                   ],
                                                   "data": {},
                                                   "type": "application",
                                                 },
+                                                {
+                                                  "children": [],
+                                                  "data": {
+                                                    "value": 0,
+                                                  },
+                                                  "type": "number",
+                                                },
                                               ],
                                               "data": {},
-                                              "type": "parens",
+                                              "type": "application",
                                             },
                                           ],
                                           "data": {},
-                                          "type": "application",
+                                          "type": "delimited_application",
                                         },
                                       ],
                                       "data": {},
@@ -1009,32 +991,26 @@ exports[`advent of code 1 single file > reduce list 1`] = `
                         {
                           "children": [
                             {
-                              "children": [
-                                {
-                                  "children": [],
-                                  "data": {
-                                    "value": "len",
-                                  },
-                                  "type": "name",
-                                },
-                                {
-                                  "children": [],
-                                  "data": {
-                                    "value": 2,
-                                  },
-                                  "type": "number",
-                                },
-                              ],
-                              "data": {},
-                              "type": "/",
+                              "children": [],
+                              "data": {
+                                "value": "len",
+                              },
+                              "type": "name",
+                            },
+                            {
+                              "children": [],
+                              "data": {
+                                "value": 2,
+                              },
+                              "type": "number",
                             },
                           ],
                           "data": {},
-                          "type": "parens",
+                          "type": "/",
                         },
                       ],
                       "data": {},
-                      "type": "application",
+                      "type": "delimited_application",
                     },
                   ],
                   "data": {},
@@ -1117,70 +1093,51 @@ exports[`advent of code 1 single file > reduce list 1`] = `
                                             {
                                               "children": [
                                                 {
+                                                  "children": [],
+                                                  "data": {
+                                                    "value": "reduce",
+                                                  },
+                                                  "type": "name",
+                                                },
+                                                {
                                                   "children": [
                                                     {
-                                                      "children": [
-                                                        {
-                                                          "children": [],
-                                                          "data": {
-                                                            "value": "reduce",
-                                                          },
-                                                          "type": "name",
-                                                        },
-                                                        {
-                                                          "children": [],
-                                                          "data": {
-                                                            "value": "slice",
-                                                          },
-                                                          "type": "name",
-                                                        },
-                                                      ],
-                                                      "data": {},
-                                                      "type": "application",
+                                                      "children": [],
+                                                      "data": {
+                                                        "value": "slice",
+                                                      },
+                                                      "type": "name",
                                                     },
                                                     {
                                                       "children": [
                                                         {
-                                                          "children": [
-                                                            {
-                                                              "children": [],
-                                                              "data": {
-                                                                "value": "list",
-                                                              },
-                                                              "type": "name",
-                                                            },
-                                                            {
-                                                              "children": [],
-                                                              "data": {
-                                                                "value": 0,
-                                                              },
-                                                              "type": "number",
-                                                            },
-                                                            {
-                                                              "children": [],
-                                                              "data": {
-                                                                "value": "midpoint",
-                                                              },
-                                                              "type": "name",
-                                                            },
-                                                          ],
-                                                          "data": {},
-                                                          "type": ",",
+                                                          "children": [],
+                                                          "data": {
+                                                            "value": "list",
+                                                          },
+                                                          "type": "name",
+                                                        },
+                                                        {
+                                                          "children": [],
+                                                          "data": {
+                                                            "value": 0,
+                                                          },
+                                                          "type": "number",
+                                                        },
+                                                        {
+                                                          "children": [],
+                                                          "data": {
+                                                            "value": "midpoint",
+                                                          },
+                                                          "type": "name",
                                                         },
                                                       ],
                                                       "data": {},
-                                                      "type": "parens",
+                                                      "type": ",",
                                                     },
                                                   ],
                                                   "data": {},
-                                                  "type": "application",
-                                                },
-                                                {
-                                                  "children": [],
-                                                  "data": {
-                                                    "value": "reducer",
-                                                  },
-                                                  "type": "name",
+                                                  "type": "delimited_application",
                                                 },
                                               ],
                                               "data": {},
@@ -1189,7 +1146,7 @@ exports[`advent of code 1 single file > reduce list 1`] = `
                                             {
                                               "children": [],
                                               "data": {
-                                                "value": "merge",
+                                                "value": "reducer",
                                               },
                                               "type": "name",
                                             },
@@ -1200,7 +1157,7 @@ exports[`advent of code 1 single file > reduce list 1`] = `
                                         {
                                           "children": [],
                                           "data": {
-                                            "value": "initial",
+                                            "value": "merge",
                                           },
                                           "type": "name",
                                         },
@@ -1208,10 +1165,23 @@ exports[`advent of code 1 single file > reduce list 1`] = `
                                       "data": {},
                                       "type": "application",
                                     },
+                                    {
+                                      "children": [],
+                                      "data": {
+                                        "value": "initial",
+                                      },
+                                      "type": "name",
+                                    },
                                   ],
                                   "data": {},
-                                  "type": "parens",
+                                  "type": "application",
                                 },
+                              ],
+                              "data": {},
+                              "type": "parens",
+                            },
+                            {
+                              "children": [
                                 {
                                   "children": [
                                     {
@@ -1221,76 +1191,57 @@ exports[`advent of code 1 single file > reduce list 1`] = `
                                             {
                                               "children": [
                                                 {
+                                                  "children": [],
+                                                  "data": {
+                                                    "value": "reduce",
+                                                  },
+                                                  "type": "name",
+                                                },
+                                                {
                                                   "children": [
                                                     {
-                                                      "children": [
-                                                        {
-                                                          "children": [],
-                                                          "data": {
-                                                            "value": "reduce",
-                                                          },
-                                                          "type": "name",
-                                                        },
-                                                        {
-                                                          "children": [],
-                                                          "data": {
-                                                            "value": "slice",
-                                                          },
-                                                          "type": "name",
-                                                        },
-                                                      ],
-                                                      "data": {},
-                                                      "type": "application",
+                                                      "children": [],
+                                                      "data": {
+                                                        "value": "slice",
+                                                      },
+                                                      "type": "name",
                                                     },
                                                     {
                                                       "children": [
+                                                        {
+                                                          "children": [],
+                                                          "data": {
+                                                            "value": "list",
+                                                          },
+                                                          "type": "name",
+                                                        },
                                                         {
                                                           "children": [
                                                             {
                                                               "children": [],
                                                               "data": {
-                                                                "value": "list",
+                                                                "value": "midpoint",
                                                               },
                                                               "type": "name",
                                                             },
                                                             {
-                                                              "children": [
-                                                                {
-                                                                  "children": [],
-                                                                  "data": {
-                                                                    "value": "midpoint",
-                                                                  },
-                                                                  "type": "name",
-                                                                },
-                                                                {
-                                                                  "children": [],
-                                                                  "data": {
-                                                                    "value": 1,
-                                                                  },
-                                                                  "type": "number",
-                                                                },
-                                                              ],
-                                                              "data": {},
-                                                              "type": "add",
+                                                              "children": [],
+                                                              "data": {
+                                                                "value": 1,
+                                                              },
+                                                              "type": "number",
                                                             },
                                                           ],
                                                           "data": {},
-                                                          "type": ",",
+                                                          "type": "add",
                                                         },
                                                       ],
                                                       "data": {},
-                                                      "type": "parens",
+                                                      "type": ",",
                                                     },
                                                   ],
                                                   "data": {},
-                                                  "type": "application",
-                                                },
-                                                {
-                                                  "children": [],
-                                                  "data": {
-                                                    "value": "reducer",
-                                                  },
-                                                  "type": "name",
+                                                  "type": "delimited_application",
                                                 },
                                               ],
                                               "data": {},
@@ -1299,7 +1250,7 @@ exports[`advent of code 1 single file > reduce list 1`] = `
                                             {
                                               "children": [],
                                               "data": {
-                                                "value": "merge",
+                                                "value": "reducer",
                                               },
                                               "type": "name",
                                             },
@@ -1310,7 +1261,7 @@ exports[`advent of code 1 single file > reduce list 1`] = `
                                         {
                                           "children": [],
                                           "data": {
-                                            "value": "initial",
+                                            "value": "merge",
                                           },
                                           "type": "name",
                                         },
@@ -1318,21 +1269,28 @@ exports[`advent of code 1 single file > reduce list 1`] = `
                                       "data": {},
                                       "type": "application",
                                     },
+                                    {
+                                      "children": [],
+                                      "data": {
+                                        "value": "initial",
+                                      },
+                                      "type": "name",
+                                    },
                                   ],
                                   "data": {},
-                                  "type": "parens",
+                                  "type": "application",
                                 },
                               ],
                               "data": {},
-                              "type": "parallel",
+                              "type": "parens",
                             },
                           ],
                           "data": {},
-                          "type": "parens",
+                          "type": "parallel",
                         },
                       ],
                       "data": {},
-                      "type": "application",
+                      "type": "delimited_application",
                     },
                   ],
                   "data": {},
@@ -1354,29 +1312,16 @@ exports[`advent of code 1 single file > reduce list 1`] = `
                             {
                               "children": [
                                 {
-                                  "children": [
-                                    {
-                                      "children": [],
-                                      "data": {
-                                        "value": "reducer",
-                                      },
-                                      "type": "name",
-                                    },
-                                    {
-                                      "children": [],
-                                      "data": {
-                                        "value": "first",
-                                      },
-                                      "type": "name",
-                                    },
-                                  ],
-                                  "data": {},
-                                  "type": "application",
+                                  "children": [],
+                                  "data": {
+                                    "value": "reducer",
+                                  },
+                                  "type": "name",
                                 },
                                 {
                                   "children": [],
                                   "data": {
-                                    "value": "item",
+                                    "value": "first",
                                   },
                                   "type": "name",
                                 },
@@ -1384,13 +1329,20 @@ exports[`advent of code 1 single file > reduce list 1`] = `
                               "data": {},
                               "type": "application",
                             },
+                            {
+                              "children": [],
+                              "data": {
+                                "value": "item",
+                              },
+                              "type": "name",
+                            },
                           ],
                           "data": {},
-                          "type": "parens",
+                          "type": "application",
                         },
                       ],
                       "data": {},
-                      "type": "application",
+                      "type": "delimited_application",
                     },
                     {
                       "children": [],
@@ -1500,53 +1452,20 @@ exports[`advent of code 1 single file > split lines 1`] = `
                         {
                           "children": [
                             {
-                              "children": [],
-                              "data": {
-                                "value": "map",
-                              },
-                              "type": "name",
-                            },
-                            {
-                              "children": [],
-                              "data": {
-                                "value": "lines",
-                              },
-                              "type": "name",
-                            },
-                          ],
-                          "data": {},
-                          "type": "application",
-                        },
-                        {
-                          "children": [
-                            {
                               "children": [
                                 {
-                                  "children": [
-                                    {
-                                      "children": [],
-                                      "data": {
-                                        "value": "replace",
-                                      },
-                                      "type": "name",
-                                    },
-                                    {
-                                      "children": [],
-                                      "data": {
-                                        "value": "w+",
-                                      },
-                                      "type": "string",
-                                    },
-                                  ],
-                                  "data": {},
-                                  "type": "application",
+                                  "children": [],
+                                  "data": {
+                                    "value": "map",
+                                  },
+                                  "type": "name",
                                 },
                                 {
                                   "children": [],
                                   "data": {
-                                    "value": "",
+                                    "value": "lines",
                                   },
-                                  "type": "string",
+                                  "type": "name",
                                 },
                               ],
                               "data": {},
@@ -1556,9 +1475,42 @@ exports[`advent of code 1 single file > split lines 1`] = `
                           "data": {},
                           "type": "parens",
                         },
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "data": {
+                                    "value": "replace",
+                                  },
+                                  "type": "name",
+                                },
+                                {
+                                  "children": [],
+                                  "data": {
+                                    "value": "w+",
+                                  },
+                                  "type": "string",
+                                },
+                              ],
+                              "data": {},
+                              "type": "application",
+                            },
+                            {
+                              "children": [],
+                              "data": {
+                                "value": "",
+                              },
+                              "type": "string",
+                            },
+                          ],
+                          "data": {},
+                          "type": "application",
+                        },
                       ],
                       "data": {},
-                      "type": "application",
+                      "type": "delimited_application",
                     },
                   ],
                   "data": {},
@@ -1941,76 +1893,70 @@ exports[`expressions > arithmetics > complex 1`] = `
                             {
                               "children": [
                                 {
-                                  "children": [
-                                    {
-                                      "children": [],
-                                      "data": {
-                                        "value": 2,
-                                      },
-                                      "type": "number",
-                                    },
-                                    {
-                                      "children": [],
-                                      "data": {
-                                        "value": 7,
-                                      },
-                                      "type": "number",
-                                    },
-                                  ],
-                                  "data": {},
-                                  "type": "add",
+                                  "children": [],
+                                  "data": {
+                                    "value": 2,
+                                  },
+                                  "type": "number",
+                                },
+                                {
+                                  "children": [],
+                                  "data": {
+                                    "value": 7,
+                                  },
+                                  "type": "number",
                                 },
                               ],
                               "data": {},
-                              "type": "parens",
+                              "type": "add",
                             },
                           ],
                           "data": {},
-                          "type": "minus",
-                        },
-                        {
-                          "children": [],
-                          "data": {
-                            "value": "A",
-                          },
-                          "type": "name",
+                          "type": "parens",
                         },
                       ],
                       "data": {},
-                      "type": "/",
+                      "type": "minus",
                     },
                     {
                       "children": [],
                       "data": {
-                        "value": "j",
+                        "value": "A",
                       },
                       "type": "name",
-                    },
-                    {
-                      "children": [],
-                      "data": {
-                        "value": "i",
-                      },
-                      "type": "name",
-                    },
-                    {
-                      "children": [],
-                      "data": {
-                        "value": 127,
-                      },
-                      "type": "number",
                     },
                   ],
                   "data": {},
-                  "type": ",",
+                  "type": "/",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "j",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "i",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": 127,
+                  },
+                  "type": "number",
                 },
               ],
               "data": {},
-              "type": "parens",
+              "type": ",",
             },
           ],
           "data": {},
-          "type": "application",
+          "type": "delimited_application",
         },
         {
           "children": [
@@ -2666,19 +2612,13 @@ exports[`expressions > concurrent programming > prefix parallel with code after 
               "type": "name",
             },
             {
-              "children": [
-                {
-                  "children": [],
-                  "data": {},
-                  "type": "implicit_placeholder",
-                },
-              ],
+              "children": [],
               "data": {},
-              "type": "parens",
+              "type": "implicit_placeholder",
             },
           ],
           "data": {},
-          "type": "application",
+          "type": "delimited_application",
         },
       ],
       "data": {},
@@ -3681,32 +3621,26 @@ exports[`expressions > function expressions > application > (send 1 2)(2, 3) 1`]
         {
           "children": [
             {
-              "children": [
-                {
-                  "children": [],
-                  "data": {
-                    "value": 2,
-                  },
-                  "type": "number",
-                },
-                {
-                  "children": [],
-                  "data": {
-                    "value": 3,
-                  },
-                  "type": "number",
-                },
-              ],
-              "data": {},
-              "type": ",",
+              "children": [],
+              "data": {
+                "value": 2,
+              },
+              "type": "number",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 3,
+              },
+              "type": "number",
             },
           ],
           "data": {},
-          "type": "parens",
+          "type": ",",
         },
       ],
       "data": {},
-      "type": "application",
+      "type": "delimited_application",
     },
   ],
   "data": {},
@@ -3748,32 +3682,26 @@ exports[`expressions > function expressions > application > (send 1)(2, 3) 1`] =
         {
           "children": [
             {
-              "children": [
-                {
-                  "children": [],
-                  "data": {
-                    "value": 2,
-                  },
-                  "type": "number",
-                },
-                {
-                  "children": [],
-                  "data": {
-                    "value": 3,
-                  },
-                  "type": "number",
-                },
-              ],
-              "data": {},
-              "type": ",",
+              "children": [],
+              "data": {
+                "value": 2,
+              },
+              "type": "number",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 3,
+              },
+              "type": "number",
             },
           ],
           "data": {},
-          "type": "parens",
+          "type": ",",
         },
       ],
       "data": {},
-      "type": "application",
+      "type": "delimited_application",
     },
   ],
   "data": {},
@@ -3802,32 +3730,26 @@ exports[`expressions > function expressions > application > (send)(2, 3) 1`] = `
         {
           "children": [
             {
-              "children": [
-                {
-                  "children": [],
-                  "data": {
-                    "value": 2,
-                  },
-                  "type": "number",
-                },
-                {
-                  "children": [],
-                  "data": {
-                    "value": 3,
-                  },
-                  "type": "number",
-                },
-              ],
-              "data": {},
-              "type": ",",
+              "children": [],
+              "data": {
+                "value": 2,
+              },
+              "type": "number",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 3,
+              },
+              "type": "number",
             },
           ],
           "data": {},
-          "type": "parens",
+          "type": ",",
         },
       ],
       "data": {},
-      "type": "application",
+      "type": "delimited_application",
     },
   ],
   "data": {},
@@ -3859,93 +3781,26 @@ exports[`expressions > function expressions > application > a + send (2, 3) 1`] 
             {
               "children": [
                 {
-                  "children": [
-                    {
-                      "children": [],
-                      "data": {
-                        "value": 2,
-                      },
-                      "type": "number",
-                    },
-                    {
-                      "children": [],
-                      "data": {
-                        "value": 3,
-                      },
-                      "type": "number",
-                    },
-                  ],
-                  "data": {},
-                  "type": ",",
+                  "children": [],
+                  "data": {
+                    "value": 2,
+                  },
+                  "type": "number",
                 },
-              ],
-              "data": {},
-              "type": "parens",
-            },
-          ],
-          "data": {},
-          "type": "application",
-        },
-      ],
-      "data": {},
-      "type": "add",
-    },
-  ],
-  "data": {},
-  "type": "script",
-}
-`;
-
-exports[`expressions > function expressions > application > a + send (2, 3) 2`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [],
-          "data": {
-            "value": "a",
-          },
-          "type": "name",
-        },
-        {
-          "children": [
-            {
-              "children": [],
-              "data": {
-                "value": "send",
-              },
-              "type": "name",
-            },
-            {
-              "children": [
                 {
-                  "children": [
-                    {
-                      "children": [],
-                      "data": {
-                        "value": 2,
-                      },
-                      "type": "number",
-                    },
-                    {
-                      "children": [],
-                      "data": {
-                        "value": 3,
-                      },
-                      "type": "number",
-                    },
-                  ],
-                  "data": {},
-                  "type": ",",
+                  "children": [],
+                  "data": {
+                    "value": 3,
+                  },
+                  "type": "number",
                 },
               ],
               "data": {},
-              "type": "parens",
+              "type": ",",
             },
           ],
           "data": {},
-          "type": "application",
+          "type": "delimited_application",
         },
       ],
       "data": {},
@@ -4291,21 +4146,15 @@ exports[`expressions > function expressions > application > methods chaining 1`]
                   "type": "index",
                 },
                 {
-                  "children": [
-                    {
-                      "children": [],
-                      "data": {
-                        "value": 1,
-                      },
-                      "type": "number",
-                    },
-                  ],
-                  "data": {},
-                  "type": "parens",
+                  "children": [],
+                  "data": {
+                    "value": 1,
+                  },
+                  "type": "number",
                 },
               ],
               "data": {},
-              "type": "application",
+              "type": "delimited_application",
             },
             {
               "children": [],
@@ -4319,21 +4168,15 @@ exports[`expressions > function expressions > application > methods chaining 1`]
           "type": "index",
         },
         {
-          "children": [
-            {
-              "children": [],
-              "data": {
-                "value": 2,
-              },
-              "type": "number",
-            },
-          ],
-          "data": {},
-          "type": "parens",
+          "children": [],
+          "data": {
+            "value": 2,
+          },
+          "type": "number",
         },
       ],
       "data": {},
-      "type": "application",
+      "type": "delimited_application",
     },
   ],
   "data": {},
@@ -4439,14 +4282,14 @@ exports[`expressions > function expressions > application > send 1 (2, 3) 1`] = 
     {
       "children": [
         {
+          "children": [],
+          "data": {
+            "value": "send",
+          },
+          "type": "name",
+        },
+        {
           "children": [
-            {
-              "children": [],
-              "data": {
-                "value": "send",
-              },
-              "type": "name",
-            },
             {
               "children": [],
               "data": {
@@ -4454,12 +4297,6 @@ exports[`expressions > function expressions > application > send 1 (2, 3) 1`] = 
               },
               "type": "number",
             },
-          ],
-          "data": {},
-          "type": "application",
-        },
-        {
-          "children": [
             {
               "children": [
                 {
@@ -4482,7 +4319,7 @@ exports[`expressions > function expressions > application > send 1 (2, 3) 1`] = 
             },
           ],
           "data": {},
-          "type": "parens",
+          "type": "delimited_application",
         },
       ],
       "data": {},
@@ -4542,14 +4379,14 @@ exports[`expressions > function expressions > application > send a (2, 3) 1`] = 
     {
       "children": [
         {
+          "children": [],
+          "data": {
+            "value": "send",
+          },
+          "type": "name",
+        },
+        {
           "children": [
-            {
-              "children": [],
-              "data": {
-                "value": "send",
-              },
-              "type": "name",
-            },
             {
               "children": [],
               "data": {
@@ -4557,12 +4394,6 @@ exports[`expressions > function expressions > application > send a (2, 3) 1`] = 
               },
               "type": "name",
             },
-          ],
-          "data": {},
-          "type": "application",
-        },
-        {
-          "children": [
             {
               "children": [
                 {
@@ -4585,7 +4416,7 @@ exports[`expressions > function expressions > application > send a (2, 3) 1`] = 
             },
           ],
           "data": {},
-          "type": "parens",
+          "type": "delimited_application",
         },
       ],
       "data": {},
@@ -4616,47 +4447,41 @@ exports[`expressions > function expressions > application > send((1+2), 3) 1`] =
                 {
                   "children": [
                     {
-                      "children": [
-                        {
-                          "children": [],
-                          "data": {
-                            "value": 1,
-                          },
-                          "type": "number",
-                        },
-                        {
-                          "children": [],
-                          "data": {
-                            "value": 2,
-                          },
-                          "type": "number",
-                        },
-                      ],
-                      "data": {},
-                      "type": "add",
+                      "children": [],
+                      "data": {
+                        "value": 1,
+                      },
+                      "type": "number",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": 2,
+                      },
+                      "type": "number",
                     },
                   ],
                   "data": {},
-                  "type": "parens",
-                },
-                {
-                  "children": [],
-                  "data": {
-                    "value": 3,
-                  },
-                  "type": "number",
+                  "type": "add",
                 },
               ],
               "data": {},
-              "type": ",",
+              "type": "parens",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 3,
+              },
+              "type": "number",
             },
           ],
           "data": {},
-          "type": "parens",
+          "type": ",",
         },
       ],
       "data": {},
-      "type": "application",
+      "type": "delimited_application",
     },
   ],
   "data": {},
@@ -4679,32 +4504,26 @@ exports[`expressions > function expressions > application > send(2, 3) 1`] = `
         {
           "children": [
             {
-              "children": [
-                {
-                  "children": [],
-                  "data": {
-                    "value": 2,
-                  },
-                  "type": "number",
-                },
-                {
-                  "children": [],
-                  "data": {
-                    "value": 3,
-                  },
-                  "type": "number",
-                },
-              ],
-              "data": {},
-              "type": ",",
+              "children": [],
+              "data": {
+                "value": 2,
+              },
+              "type": "number",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 3,
+              },
+              "type": "number",
             },
           ],
           "data": {},
-          "type": "parens",
+          "type": ",",
         },
       ],
       "data": {},
-      "type": "application",
+      "type": "delimited_application",
     },
   ],
   "data": {},
@@ -4734,6 +4553,256 @@ exports[`expressions > function expressions > arrow function 1`] = `
       ],
       "data": {},
       "type": "func",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > function expressions > delimited application > delimited args 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "f",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "y",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": ",",
+        },
+      ],
+      "data": {},
+      "type": "delimited_application",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > function expressions > delimited application > named args 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "f",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "x",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": 1,
+                  },
+                  "type": "number",
+                },
+              ],
+              "data": {},
+              "type": ":",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 3,
+              },
+              "type": "number",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "y",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": 2,
+                  },
+                  "type": "number",
+                },
+              ],
+              "data": {},
+              "type": ":",
+            },
+          ],
+          "data": {},
+          "type": ",",
+        },
+      ],
+      "data": {},
+      "type": "delimited_application",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > function expressions > delimited application > placeholder arg 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "f",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "type": "placeholder",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "y",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": ",",
+        },
+      ],
+      "data": {},
+      "type": "delimited_application",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > function expressions > delimited application > placeholder args 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "f",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "type": "placeholder",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "y",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {},
+              "type": "placeholder",
+            },
+          ],
+          "data": {},
+          "type": ",",
+        },
+      ],
+      "data": {},
+      "type": "delimited_application",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > function expressions > delimited application > spread args 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "f",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "x",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "type": "...",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "y",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": ",",
+        },
+      ],
+      "data": {},
+      "type": "delimited_application",
     },
   ],
   "data": {},
@@ -5165,6 +5234,70 @@ exports[`expressions > function expressions > function with placeholder arg 1`] 
         },
       ],
       "data": {},
+      "type": "func",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > function expressions > function with return type 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "y",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": ",",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": "number",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "y",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "add",
+        },
+      ],
+      "data": {
+        "isTopFunction": true,
+      },
       "type": "func",
     },
   ],

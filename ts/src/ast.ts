@@ -44,6 +44,7 @@ export const NodeType = {
   LESS: "<",
   LESS_EQUAL: "<=",
   APPLICATION: "application",
+  DELIMITED_APPLICATION: "delimited_application",
   SEQUENCE: "sequence",
   SEND_STATUS: "?<-",
   GREATER: ">",
@@ -209,6 +210,7 @@ const exprPrecedenceList: [NodeType, Fixity][] = [
   [NodeType.TYPEOF, Fixity.PREFIX],
   [NodeType.APPLICATION, Fixity.INFIX_LEFT],
   [NodeType.INDEX, Fixity.POSTFIX],
+  [NodeType.DELIMITED_APPLICATION, Fixity.POSTFIX],
   [NodeType.TRY, Fixity.POSTFIX],
 ] as const;
 

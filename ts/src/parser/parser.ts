@@ -229,8 +229,6 @@ const parseStatementForm = (innerParser: Parser<TokenGroup[], Tree, {}>) =>
     assert(formToken.type === "group");
     assert("kind" in formToken);
 
-    // const [conditionParseCtx, inner] = innerParser.parse(innerGroup.tokens, { index: 0 });
-    // assert(conditionParseCtx.index === innerGroup.tokens.length);
     const inner = yield Parser.do(function* () {
       if (innerGroup.tokens.length === 0) return implicitPlaceholder(indexPosition(yield Parser.index()));
 
@@ -516,7 +514,72 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
   }
 
   if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Function) {
-    return yield parseStatementForm(parsePattern).chain(function* ([pattern, expr]) {
+    return yield Parser.do<TokenGroup[], [inner: Tree, typeExpr: Tree | null, expr: Tree | null]>(function* () {
+      const _token: TokenGroup = yield Parser.next();
+      assert(_token.type === "group");
+      const [innerGroup, formToken] = _token.tokens;
+      assert(innerGroup.type === "group");
+      assert(formToken.type === "group");
+      assert("kind" in formToken);
+
+      const inner = yield Parser.do(function* () {
+        if (innerGroup.tokens.length === 0) return implicitPlaceholder(indexPosition(yield Parser.index()));
+
+        const [exprParseCtx, expr] = parsePattern.parse(innerGroup.tokens, { index: 0 });
+
+        if (exprParseCtx.index !== innerGroup.tokens.length) {
+          return error(SystemError.unknown(), expr);
+        }
+
+        return expr;
+      });
+
+      return yield Parser.do(function* () {
+        if (formToken.kind === TokenGroupKind.Colon) return [inner, null, null];
+        if (formToken.kind === TokenGroupKind.Braces) {
+          const [exprParseCtx, expr] = parseExpr.parse(formToken.tokens, { index: 0 });
+          if (exprParseCtx.index !== formToken.tokens.length) {
+            return [inner, null, error(SystemError.unknown(), expr)];
+          }
+          return [inner, null, expr];
+        }
+
+        yield Parser.rememberIndex();
+        const typeTokens = yield Parser.do(function* () {
+          const typeTokens: TokenGroup[] = [];
+          while (true) {
+            const _token: TokenGroup | undefined = yield Parser.peek();
+            if (_token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Braces) break;
+            if (yield Parser.isEnd()) return null;
+            typeTokens.push(yield Parser.next());
+          }
+
+          return typeTokens;
+        });
+        if (typeTokens !== null) {
+          const typeExpr = yield Parser.do(function* () {
+            const [exprParseCtx, expr] = parseExpr.parse(typeTokens, { index: 0 });
+            if (exprParseCtx.index !== typeTokens.length) {
+              return error(SystemError.unknown(), expr);
+            }
+            return expr;
+          });
+          const blockToken: TokenGroup | undefined = yield Parser.next();
+          assert(blockToken?.type === "group");
+          assert("kind" in blockToken);
+          assert(blockToken.kind === TokenGroupKind.Braces);
+
+          const [exprParseCtx, expr] = parseExpr.parse(blockToken.tokens, { index: 0 });
+          if (exprParseCtx.index !== blockToken.tokens.length) {
+            return [inner, typeExpr, error(SystemError.unknown(), expr)];
+          }
+          return [inner, typeExpr, expr];
+        }
+        yield Parser.resetIndex();
+        const precedence = _getExprPrecedence(NodeType.SEQUENCE);
+        return [inner, null, yield Parser.scope({ precedence: precedence[1]! - 1 }, parsePratt)];
+      });
+    }).chain(function* ([pattern, typeExpr, expr]) {
       if (!expr) {
         return _node(NodeType.FUNCTION, {
           position: yield* nodePosition(),
@@ -527,7 +590,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
 
       const node = _node(NodeType.FUNCTION, {
         position: yield* nodePosition(),
-        children: [pattern, expr],
+        children: typeExpr ? [pattern, typeExpr, expr] : [pattern, expr],
         data: { isTopFunction: true },
       });
       inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
@@ -794,10 +857,11 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     });
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
+  if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
     yield Parser.advance();
+    const nodeType = lhs ? NodeType.DELIMITED_APPLICATION : NodeType.PARENS;
     if (_token.tokens.length === 0) {
-      return _node(NodeType.PARENS, {
+      return _node(nodeType, {
         position: yield* nodePosition(),
         children: [implicitPlaceholder(yield* nodePosition())],
       });
@@ -806,7 +870,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     const [exprParseCtx, expr] = parseExpr.parse(_token.tokens, { index: 0 });
     assert(exprParseCtx.index === _token.tokens.length);
 
-    return _node(NodeType.PARENS, { position: yield* nodePosition(), children: [expr] });
+    return _node(nodeType, { position: yield* nodePosition(), children: [expr] });
   }
 
   if (lhs && (yield Parser.newline())) {
@@ -855,17 +919,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
   }
 
   if (lhs) {
-    const node = _node(NodeType.APPLICATION);
-
-    // if function call is with parentheses, make precedence higher than field access
-    // so method chaining works as usual
-    if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
-      const indexPrecedence = _getExprPrecedence(NodeType.INDEX);
-      const applicationPrecedence = _getExprPrecedence(NodeType.APPLICATION);
-      inject(Injectable.ASTNodePrecedenceMap).set(node.id, [applicationPrecedence[0], indexPrecedence[0]! + 1]);
-    }
-
-    return node;
+    return _node(NodeType.APPLICATION);
   }
 
   if (!lhs && _token.type === "identifier" && Object.hasOwn(idToExprOp, _token.name)) {

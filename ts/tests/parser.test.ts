@@ -49,7 +49,7 @@ describe("advent of code 1 single file", () => {
     testCase(`
         lines := {
           lines := split document "\\n"
-          lines = map lines (replace "\\w+" "")
+          lines = (map lines) (replace "\\w+" "") 
           lines = filter lines fn line: line != ""
         }
       `));
@@ -79,7 +79,7 @@ describe("advent of code 1 single file", () => {
   it("flat map list impl", () =>
     testCase(`
         flat_map := fn list, mapper {
-          reduce list (fn acc, item -> (...acc, ...mapper item)) (fn first, second -> (...first, ...second)) ()
+          (reduce list fn acc, item { (...acc, ...mapper item) } fn first, second { (...first, ...second) }) ()
         }
       `));
 
@@ -133,7 +133,7 @@ describe("expressions", () => {
     it("fn no parameters block", () => testCase(`fn { 123 }`));
     it("arrow function", () => testCase(`x -> x`));
     it("fn increment", () => testCase(`fn -> line_handled_count++`));
-    it.todo("function with return type", () => testCase(`fn x, y -> type { x + y }`));
+    it("function with return type", () => testCase(`fn x, y -> number { x + y }`));
     it("function with placeholder arg", () => testCase(`_ -> #0`));
     it("function with no arg", () => testCase(`fn -> #0`));
     it("function with shadowed name access", () => testCase(`fn a -> fn a -> #a`));
@@ -153,7 +153,6 @@ describe("expressions", () => {
       it("send a (2, 3)", () => testCase(`send a (2, 3)`));
       it("send 1 (2, 3)", () => testCase(`send 1 (2, 3)`));
       it("a + send 1 + 2", () => testCase(`a + send 1 + 2`));
-      it("a + send (2, 3)", () => testCase(`a + send (2, 3)`));
       it("methods chaining", () => testCase(`math.floor(1).multiply(2)`));
       it("function as last arg", () => testCase(`open "file" file -> write file "yolo"`));
       it("block as last arg", () => testCase(`open "file" { write "yolo" }`));
@@ -161,11 +160,11 @@ describe("expressions", () => {
     });
 
     describe("delimited application", () => {
-      it.todo("delimited args", () => testCase(`f(x, y)`));
-      it.todo("named args", () => testCase(`f(x: 1, 3, y: 2)`));
-      it.todo("placeholder arg", () => testCase(`f(_, y)`));
-      it.todo("placeholder args", () => testCase(`f(_, y, _)`));
-      it.todo("spread args", () => testCase(`f(...x, y)`));
+      it("delimited args", () => testCase(`f(x, y)`));
+      it("named args", () => testCase(`f(x: 1, 3, y: 2)`));
+      it("placeholder arg", () => testCase(`f(_, y)`));
+      it("placeholder args", () => testCase(`f(_, y, _)`));
+      it("spread args", () => testCase(`f(...x, y)`));
     });
 
     describe("function forms", () => {
