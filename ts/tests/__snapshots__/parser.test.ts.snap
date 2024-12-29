@@ -4560,6 +4560,48 @@ exports[`expressions > function expressions > arrow function 1`] = `
 }
 `;
 
+exports[`expressions > function expressions > arrow function with parameter type 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "number",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": ":",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+      ],
+      "data": {},
+      "type": "func",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`expressions > function expressions > delimited application > delimited args 1`] = `
 {
   "children": [
@@ -5202,6 +5244,102 @@ exports[`expressions > function expressions > function with no arg 1`] = `
             "index": 0,
           },
           "type": "hash_name",
+        },
+      ],
+      "data": {
+        "isTopFunction": true,
+      },
+      "type": "func",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > function expressions > function with parameter types 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "x",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "number",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {},
+                  "type": ":",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "y",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "string",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {},
+                  "type": ":",
+                },
+              ],
+              "data": {},
+              "type": ",",
+            },
+          ],
+          "data": {},
+          "type": "parens",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": "number",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "y",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "add",
         },
       ],
       "data": {
@@ -9690,6 +9828,147 @@ exports[`programs > script > dynamic import 1`] = `
       ],
       "data": {},
       "type": ":=",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`types > declaration with type 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "number",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": ":",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": 1,
+          },
+          "type": "number",
+        },
+      ],
+      "data": {},
+      "type": ":=",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`types > type cast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": "number",
+          },
+          "type": "name",
+        },
+      ],
+      "data": {},
+      "type": "as",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`types > type coalesce 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "type": "implicit_placeholder",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "number",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "type": ">",
+            },
+          ],
+          "data": {
+            "cause": [Error: infix/postfix operator in prefix position],
+          },
+          "type": "error",
+        },
+      ],
+      "data": {},
+      "type": ":",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`types > typeof 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+      ],
+      "data": {},
+      "type": "typeof",
     },
   ],
   "data": {},

@@ -84,9 +84,11 @@ const idToExprOp = {
   "|": NodeType.PARALLEL,
   "&": NodeType.SUPERPOSITION,
   "|>": NodeType.PIPE,
+  ":>": NodeType.COALESCE,
   and: NodeType.AND,
   or: NodeType.OR,
   in: NodeType.IN,
+  as: NodeType.AS,
 };
 
 const idToPrefixExprOp = {

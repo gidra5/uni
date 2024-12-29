@@ -123,7 +123,7 @@ describe("expressions", () => {
     it("not", () => testCase(`!123`));
     it('"and", "or" and "not" associativity', () => testCase(`a and b and c or d or !e and f and g or not h or i`));
     it("in operator", () => testCase(`$key in x and y`));
-    it.todo("ranges 1", () => testCase(`123 < 456 < 789`));
+    // it.todo("ranges 1", () => testCase(`123 < 456 < 789`));
   });
 
   describe("function expressions", () => {
@@ -132,8 +132,10 @@ describe("expressions", () => {
     it("fn no parameters", () => testCase(`fn -> 123`));
     it("fn no parameters block", () => testCase(`fn { 123 }`));
     it("arrow function", () => testCase(`x -> x`));
+    it("arrow function with parameter type", () => testCase(`x: number -> x`));
     it("fn increment", () => testCase(`fn -> line_handled_count++`));
     it("function with return type", () => testCase(`fn x, y -> number { x + y }`));
+    it("function with parameter types", () => testCase(`fn (x: number, y: string) -> number { x + y }`));
     it("function with placeholder arg", () => testCase(`_ -> #0`));
     it("function with no arg", () => testCase(`fn -> #0`));
     it("function with shadowed name access", () => testCase(`fn a -> fn a -> #a`));
@@ -306,16 +308,16 @@ describe("pattern matching", () => {
 });
 
 describe("types", () => {
-  it.todo("declaration with type", () => testCase("x: number := 1"));
-  it.todo("typeof", () => testCase("typeof x"));
-  it.todo("type cast", () => testCase("x as number"));
-  it.todo("type coalesce right", () => testCase("x :> number"));
+  it("declaration with type", () => testCase("x: number := 1"));
+  it("typeof", () => testCase("typeof x"));
+  it("type cast", () => testCase("x as number"));
+  it("type coalesce", () => testCase("x :> number"));
 
   describe("functions", () => {
-    it.todo("function type", () => testCase('x: number -> string := fn: "1"'));
+    it.todo("function type", () => testCase('x: (number -> string) := fn: "1"'));
     it.todo("function type with multiple args", () => testCase('x: fn number, string -> string := fn: "1"'));
-    it.todo("function type with named args", () => testCase('x: fn x: number, y: string -> string := fn: "1"'));
-    it.todo("parametric function type", () => testCase('x: fn x: infer y -> y or number := fn: "1"'));
+    it.todo("function type with named args", () => testCase('x: fn (x: number, y: string) -> string := fn: "1"'));
+    it.todo("parametric function type", () => testCase('x: fn (x: infer y) -> y or number := fn: "1"'));
   });
 });
 
@@ -330,7 +332,7 @@ describe("programs", () => {
     it.todo("import project relative", () => testCase(`import ./relative/path/to/folder`));
     it.todo("import project root", () => testCase(`import /`));
     it.todo("import project file", () => testCase(`import /path/to/file.extension`));
-    it.todo("import string file", () => testCase(`import /path/to/"file.extension"`));
+    // it.todo("import string file", () => testCase(`import /path/to/"file 2.extension"`));
     it.todo("import project relative complex", () => testCase(`import ../relative/.././path/to/folder`));
     it.todo("import string folder", () => testCase(`import ../relative/.././path/to/"folder"`));
   });
@@ -377,6 +379,6 @@ describe("newline handling", () => {
   it("newline at the end", () => testCase(`1\n`));
   it("semicolon-newline at the end", () => testCase(`1;\n`));
   it("empty switch with newline", () => testCase(`match a { \n }`));
-  it.todo("application-newline-increment", () => testCase(`f a\n ++b`));
+  // it.todo("application-newline-increment", () => testCase(`f a\n ++b`));
   it("pipe", () => testCase(`1 \n|> fn x { x + 1 } \n|> fn y { y * 2 }`));
 });
