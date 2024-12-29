@@ -229,8 +229,8 @@ const parseValue = Parser.do<TokenGroup[], Tree>(function* () {
 
   if (yield Parser.identifier("#")) {
     if (yield Parser.isEnd()) return error(SystemError.endOfSource(yield* nodePosition()), yield* nodePosition());
-    const token2: TokenGroup | undefined = yield Parser.peek();
     const count = (yield Parser.identifier("#").zeroOrMore()).length + 1;
+    const token2: TokenGroup | undefined = yield Parser.peek();
     if (token2?.type === "identifier") {
       yield Parser.advance();
       return _node(NodeType.HASH_NAME, { data: { name: token2.name, count }, position: yield* nodePosition() });

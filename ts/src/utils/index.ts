@@ -94,6 +94,17 @@ export const isEqual = (a, b) => {
   return true;
 };
 
+export const memoize = <T extends (...args: any[]) => any>(fn: T): T => {
+  const cache = new Map<string, any>();
+  return ((...args: any[]) => {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) return cache.get(key);
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  }) as T;
+};
+
 export const mapField = (path: RecordKey[], fn: (x: any) => any) => (obj: any) => {
   const [head, ...tail] = path;
   if (Array.isArray(obj) && typeof head !== "symbol") {

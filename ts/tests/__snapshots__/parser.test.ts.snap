@@ -5200,7 +5200,7 @@ exports[`expressions > function expressions > function with deep shadowed name a
                   "children": [],
                   "data": {
                     "count": 2,
-                    "name": "#",
+                    "name": "a",
                   },
                   "type": "hash_name",
                 },
