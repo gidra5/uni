@@ -54,7 +54,7 @@ describe("advent of code 1 single file", () => {
         }
       `));
 
-  it.only("parse numbers", () =>
+  it("parse numbers", () =>
     testCase(`
         numbers := flat_map lines fn line {
           digits := ()
@@ -83,7 +83,7 @@ describe("advent of code 1 single file", () => {
         }
       `));
 
-  it.skip("reduce list", () =>
+  it("reduce list", () =>
     testCase(`
         reduce := fn list, reducer, merge, initial {
           len := length list
@@ -133,11 +133,11 @@ describe("expressions", () => {
     it("fn no parameters block", () => testCase(`fn { 123 }`));
     it("arrow function", () => testCase(`x -> x`));
     it("fn increment", () => testCase(`fn -> line_handled_count++`));
-    it.todo("function with return type", () => `fn x, y -> type { x + y }`);
-    it.todo("function with placeholder arg", () => `_ -> #0`);
-    it.todo("function with no arg", () => `fn -> #0`);
-    it.todo("function with shadowed name access", () => `fn a -> fn a -> #a`);
-    it.todo("function with deep shadowed name access", () => `fn a -> fn a -> fn a -> ##a`);
+    it.todo("function with return type", () => testCase(`fn x, y -> type { x + y }`));
+    it("function with placeholder arg", () => testCase(`_ -> #0`));
+    it("function with no arg", () => testCase(`fn -> #0`));
+    it("function with shadowed name access", () => testCase(`fn a -> fn a -> #a`));
+    it("function with deep shadowed name access", () => testCase(`fn a -> fn a -> fn a -> ##a`));
 
     describe("application", () => {
       it("function call", () => testCase(`f x`));

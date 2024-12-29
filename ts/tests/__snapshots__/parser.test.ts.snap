@@ -5055,6 +5055,171 @@ exports[`expressions > function expressions > function multiple params 1`] = `
 }
 `;
 
+exports[`expressions > function expressions > function with deep shadowed name access 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "a",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "a",
+              },
+              "type": "name",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "a",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "count": 2,
+                    "name": "#",
+                  },
+                  "type": "hash_name",
+                },
+              ],
+              "data": {
+                "isTopFunction": true,
+              },
+              "type": "func",
+            },
+          ],
+          "data": {
+            "isTopFunction": true,
+          },
+          "type": "func",
+        },
+      ],
+      "data": {
+        "isTopFunction": true,
+      },
+      "type": "func",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > function expressions > function with no arg 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "type": "implicit_placeholder",
+        },
+        {
+          "children": [],
+          "data": {
+            "index": 0,
+          },
+          "type": "hash_name",
+        },
+      ],
+      "data": {
+        "isTopFunction": true,
+      },
+      "type": "func",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > function expressions > function with placeholder arg 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "type": "placeholder",
+        },
+        {
+          "children": [],
+          "data": {
+            "index": 0,
+          },
+          "type": "hash_name",
+        },
+      ],
+      "data": {},
+      "type": "func",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`expressions > function expressions > function with shadowed name access 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "a",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "a",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "count": 1,
+                "name": "a",
+              },
+              "type": "hash_name",
+            },
+          ],
+          "data": {
+            "isTopFunction": true,
+          },
+          "type": "func",
+        },
+      ],
+      "data": {
+        "isTopFunction": true,
+      },
+      "type": "func",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`expressions > structured programming > block 1`] = `
 {
   "children": [
