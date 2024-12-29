@@ -25,6 +25,7 @@ export enum TokenGroupKind {
   Arrow = "arrow",
   If = "if",
   Match = "match",
+  Record = "record",
   Function = "fn",
 }
 
@@ -69,7 +70,12 @@ const unbalancedCloseToken = function* (startStr: string, endStr: string) {
 };
 
 const parsePair = function* self(start: number, startStr: string, endStr: string, kind: TokenGroupKind) {
-  const { tokens, closed }: TokenGroupResult = yield parseTokenGroup(endStr);
+  const { tokens, closed }: TokenGroupResult = yield Parser.scope(
+    { followSet: (yield Parser.followSet()).filter((x: string) => [")", "]", "}"].includes(x)) },
+    function* () {
+      return yield parseTokenGroup(endStr);
+    }
+  );
   const _token: TokenGroup = yield* group2(tokens, kind, start);
   if (closed) return _token;
 
@@ -242,6 +248,19 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       }
 
       return yield* group(tokens, TokenGroupKind.Match, start);
+    }
+
+    if (token.name === "record") {
+      const start: number = yield Parser.rememberedIndex();
+      yield Parser.rememberIndex();
+      const token2: Token = yield parseToken as any;
+
+      if (token2.type === "identifier" && token2.name === "{") {
+        const g: TokenGroup & { type: "group" } = yield* parseBraces();
+        return yield* group(g.tokens, TokenGroupKind.Record, start);
+      }
+      yield Parser.resetIndex();
+      return error(SystemError.unknown(), token);
     }
   }
 

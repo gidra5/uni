@@ -4,7 +4,7 @@ import { it, fc, test } from "@fast-check/vitest";
 import { parseTokenGroups } from "../src/parser/tokenGroups.ts";
 import { parseScript } from "../src/parser/parser.ts";
 import { Injectable, register } from "../src/utils/injector.ts";
-import { Tree } from "../src/ast.ts";
+import { token, Tree } from "../src/ast.ts";
 import { FileMap } from "codespan-napi";
 
 beforeEach(() => {
@@ -54,13 +54,13 @@ describe("advent of code 1 single file", () => {
         }
       `));
 
-  it.skip("parse numbers", () =>
+  it.only("parse numbers", () =>
     testCase(`
         numbers := flat_map lines fn line {
           digits := ()
   
           while line != "" {
-            if (char_at line 0).match "\d" {
+            if (char_at line 0).matchRegexp "\d" {
               digit := number(char_at line 0)
               if !digits[0]: digits[0] = digit
               digits[1] = digit
@@ -232,10 +232,10 @@ describe("expressions", () => {
   describe("data structures", () => {
     it("unit", () => testCase(`()`));
     it("tuple", () => testCase(`list, reducer, merge, initial`));
-    it.todo("record single", () => testCase(`record { a: 1 }`));
-    it.todo("record", () => testCase(`record { a: 1, b: 2 }`));
+    it("record single", () => testCase(`record { a: 1 }`));
+    it("record", () => testCase(`record { a: 1, b: 2 }`));
+    it("record dynamic", () => testCase(`record { ["a"]: 1, b: 2 }`));
     it("(-(2+7)/A,j, i, 127.0 )", () => testCase(`(-(2+7)/A,j, i, 127.0 )`));
-    it.todo("dictionary", () => testCase(`dict { [1]: 2, [3]: 4 }`));
     it("period operator", () => testCase(`math.floor`));
     it("index", () => testCase(`x[0]`));
     it("field assignment", () => testCase(`x.y = 123`));
@@ -243,10 +243,10 @@ describe("expressions", () => {
   });
 
   describe("effect handlers", () => {
-    it.skip("inject", () => testCase(`inject record { a: 1, b: 2 } { 1 }`));
+    it("inject", () => testCase(`inject record { a: 1, b: 2 } { 1 }`));
     it("mask", () => testCase(`mask $a, $b { 1 }`));
     it("without", () => testCase(`without $a, $b { 1 }`));
-    it.skip("complex", () =>
+    it("complex", () =>
       testCase(`
         inject record { a: 1, b: 2 } ->
         { a, b } := handlers

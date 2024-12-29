@@ -465,6 +465,56 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     return _node(NodeType.IS, { position: yield* nodePosition(), children: [pattern] });
   }
 
+  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Record) {
+    yield Parser.advance();
+
+    const [entriesParseCtx, children] = Parser.do<TokenGroup[], Tree>(function* () {
+      const key: Tree = yield Parser.do(function* () {
+        const start = yield Parser.index();
+        const nodePosition = function* () {
+          const index = yield Parser.index();
+          const src: TokenGroup[] = yield Parser.src();
+          return mapListPosToPos(position(start, index), src.map(getTokenPosition));
+        };
+        const _token: TokenGroup | undefined = yield Parser.peek();
+        if (!_token) return error(SystemError.unknown(), yield* nodePosition());
+        if (_token.type === "identifier") return yield parseValue;
+        if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Brackets) {
+          yield Parser.advance();
+          const [exprParseCtx, expr] = parseExpr.parse(_token.tokens, { index: 0 });
+          if (exprParseCtx.index !== _token.tokens.length) {
+            return error(SystemError.unknown(), expr);
+          }
+          return _node(NodeType.SQUARE_BRACKETS, { position: yield* nodePosition(), children: [expr] });
+        }
+
+        return error(SystemError.unknown(), yield* nodePosition());
+      });
+
+      if (key.type !== NodeType.SQUARE_BRACKETS) {
+        if ((yield Parser.identifier(",")) || (yield Parser.newline())) return key;
+      }
+      if (!(yield Parser.identifier(":")))
+        return error(
+          SystemError.unknown(),
+          _node(NodeType.LABEL, { position: yield* nodePosition(), children: [key] })
+        );
+
+      const expr = yield Parser.scope({ followSet: [",", "\n"] }, function* () {
+        return yield parseExpr;
+      });
+      (yield Parser.identifier(",")) || (yield Parser.newline());
+      return _node(NodeType.LABEL, { position: yield* nodePosition(), children: [key, expr] });
+    })
+      .zeroOrMore()
+      .parse(_token.tokens, { index: 0 });
+    if (entriesParseCtx.index !== _token.tokens.length) {
+      return error(SystemError.unknown(), yield* nodePosition());
+    }
+
+    return _node(NodeType.RECORD, { position: yield* nodePosition(), children });
+  }
+
   if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Function) {
     return yield parseStatementForm(parsePattern).chain(function* ([pattern, expr]) {
       if (!expr) {

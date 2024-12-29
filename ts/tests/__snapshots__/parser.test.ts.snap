@@ -492,61 +492,61 @@ exports[`advent of code 1 single file > parse numbers 1`] = `
                                     {
                                       "children": [
                                         {
-                                          "children": [],
-                                          "data": {
-                                            "value": "match",
-                                          },
-                                          "type": "name",
-                                        },
-                                        {
-                                          "children": [],
-                                          "data": {
-                                            "value": "d",
-                                          },
-                                          "type": "string",
-                                        },
-                                      ],
-                                      "data": {},
-                                      "type": "application",
-                                    },
-                                    {
-                                      "children": [
-                                        {
                                           "children": [
                                             {
                                               "children": [
                                                 {
-                                                  "children": [],
-                                                  "data": {
-                                                    "value": "char_at",
-                                                  },
-                                                  "type": "name",
+                                                  "children": [
+                                                    {
+                                                      "children": [],
+                                                      "data": {
+                                                        "value": "char_at",
+                                                      },
+                                                      "type": "name",
+                                                    },
+                                                    {
+                                                      "children": [],
+                                                      "data": {
+                                                        "value": "line",
+                                                      },
+                                                      "type": "name",
+                                                    },
+                                                  ],
+                                                  "data": {},
+                                                  "type": "application",
                                                 },
                                                 {
                                                   "children": [],
                                                   "data": {
-                                                    "value": "line",
+                                                    "value": 0,
                                                   },
-                                                  "type": "name",
+                                                  "type": "number",
                                                 },
                                               ],
                                               "data": {},
                                               "type": "application",
                                             },
-                                            {
-                                              "children": [],
-                                              "data": {
-                                                "value": 0,
-                                              },
-                                              "type": "number",
-                                            },
                                           ],
                                           "data": {},
-                                          "type": "application",
+                                          "type": "parens",
+                                        },
+                                        {
+                                          "children": [],
+                                          "data": {
+                                            "name": "matchRegexp",
+                                          },
+                                          "type": "atom",
                                         },
                                       ],
                                       "data": {},
-                                      "type": "parens",
+                                      "type": "index",
+                                    },
+                                    {
+                                      "children": [],
+                                      "data": {
+                                        "value": "d",
+                                      },
+                                      "type": "string",
                                     },
                                   ],
                                   "data": {},
@@ -3275,7 +3275,7 @@ exports[`expressions > effect handlers > complex 1`] = `
             },
           ],
           "data": {},
-          "type": ",",
+          "type": "object",
         },
         {
           "children": [
@@ -3384,25 +3384,25 @@ exports[`expressions > effect handlers > complex 1`] = `
                     },
                   ],
                   "data": {},
-                  "type": ",",
+                  "type": "object",
                 },
                 {
                   "children": [
                     {
                       "children": [],
                       "data": {
-                        "value": "a",
+                        "name": "a",
                       },
-                      "type": "string",
+                      "type": "atom",
                     },
                     {
                       "children": [
                         {
                           "children": [],
                           "data": {
-                            "value": "b",
+                            "name": "b",
                           },
-                          "type": "string",
+                          "type": "atom",
                         },
                         {
                           "children": [
@@ -3531,7 +3531,7 @@ exports[`expressions > effect handlers > inject 1`] = `
             },
           ],
           "data": {},
-          "type": ",",
+          "type": "object",
         },
         {
           "children": [],
