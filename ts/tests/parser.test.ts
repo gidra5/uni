@@ -2,7 +2,7 @@ import { beforeEach, describe, expect } from "vitest";
 import { it, fc, test } from "@fast-check/vitest";
 
 import { parseTokenGroups } from "../src/parser/tokenGroups.ts";
-import { parseScript } from "../src/parser/parser.ts";
+import { parseModule, parseScript } from "../src/parser/parser.ts";
 import { Injectable, register } from "../src/utils/injector.ts";
 import { token, Tree } from "../src/ast.ts";
 import { FileMap } from "codespan-napi";
@@ -25,6 +25,13 @@ function clearIds(ast: Tree) {
 const testCase = (input: string) => {
   const tokens = parseTokenGroups(input);
   const ast = parseScript(tokens);
+
+  expect(clearIds(ast)).toMatchSnapshot();
+};
+
+const testCaseModule = (input: string) => {
+  const tokens = parseTokenGroups(input);
+  const ast = parseModule(tokens);
 
   expect(clearIds(ast)).toMatchSnapshot();
 };
@@ -313,45 +320,43 @@ describe("types", () => {
   it("type cast", () => testCase("x as number"));
   it("type coalesce", () => testCase("x :> number"));
 
-  describe("functions", () => {
-    it.todo("function type", () => testCase('x: (number -> string) := fn: "1"'));
-    it.todo("function type with multiple args", () => testCase('x: fn number, string -> string := fn: "1"'));
-    it.todo("function type with named args", () => testCase('x: fn (x: number, y: string) -> string := fn: "1"'));
-    it.todo("parametric function type", () => testCase('x: fn (x: infer y) -> y or number := fn: "1"'));
-  });
+  // describe("functions", () => {
+  //   it.todo("function type", () => testCase('x: (number -> string) := fn: "1"'));
+  //   it.todo("function type with multiple args", () => testCase('x: fn number, string -> string := fn: "1"'));
+  //   it.todo("function type with named args", () => testCase('x: fn (x: number, y: string) -> string := fn: "1"'));
+  //   it.todo("parametric function type", () => testCase('x: fn (x: infer y) -> y or number := fn: "1"'));
+  // });
 });
 
 describe("programs", () => {
-  it.todo("export declaration as", () => testCase(`export x as y := 123`));
-  it.todo("export expr as", () => testCase(`export x as y`));
-  it.todo("external variable", () => testCase(`external y`));
+  // it.todo("export declaration as", () => testCase(`export x as y := 123`));
+  // it.todo("export expr as", () => testCase(`export x as y`));
+  // it.todo("external variable", () => testCase(`external y`));
 
   describe("import descriptor", () => {
-    it.todo("import dependency", () => testCase(`import depName`));
-    it.todo("import project absolute", () => testCase(`import /path/to/folder`));
-    it.todo("import project relative", () => testCase(`import ./relative/path/to/folder`));
-    it.todo("import project root", () => testCase(`import /`));
-    it.todo("import project file", () => testCase(`import /path/to/file.extension`));
-    // it.todo("import string file", () => testCase(`import /path/to/"file 2.extension"`));
-    it.todo("import project relative complex", () => testCase(`import ../relative/.././path/to/folder`));
-    it.todo("import string folder", () => testCase(`import ../relative/.././path/to/"folder"`));
+    it("import dependency", () => testCase(`import "depName"`));
+    it("import project absolute", () => testCase(`import "/path/to/folder"`));
+    it("import project relative", () => testCase(`import "./relative/path/to/folder"`));
+    it("import project root", () => testCase(`import "/"`));
+    it("import project file", () => testCase(`import "/path/to/file.extension"`));
+    it("import project relative complex", () => testCase(`import "../relative/.././path/to/folder"`));
   });
 
-  it.skip("import", () => testCase(`import a as b`));
-  it.todo("import with", () => testCase(`import a as b with x`));
+  it("import", () => testCase(`import "a" as b`));
+  // it.todo("import with", () => testCase(`import a as b with x`));
 
   describe("script", () => {
-    it.skip("dynamic import", () => testCase(`b := import a`));
-    it.skip("dynamic async import", () => testCase(`b := async import a`));
-    it.todo("dynamic import with", () => testCase(`b := import a with x`));
+    it("dynamic import", () => testCase(`b := import "a"`));
+    it("dynamic async import", () => testCase(`b := async import "a"`));
+    // it.todo("dynamic import with", () => testCase(`b := import "a" with x`));
   });
 
   describe("module", () => {
-    it.skip("export declaration", () => testCase(`export x := 123`));
-    it.skip("export default", () => testCase(`export fn args -> 1`));
-    it.todo("operator", () => testCase(`operator _+_ := fn x, y -> x + y`));
-    it.todo("operator with precedence", () => testCase(`operator _+_ precedence 1 := fn x, y -> x + y`));
-    it.todo("operator with tuple precedence", () => testCase(`operator _+_ precedence 1, 2 := fn x, y -> x + y`));
+    it("export declaration", () => testCaseModule(`export x := 123`));
+    it("export default", () => testCaseModule(`export fn args -> 1`));
+    // it.todo("operator", () => testCase(`operator _+_ := fn x, y -> x + y`));
+    // it.todo("operator with precedence", () => testCase(`operator _+_ precedence 1 := fn x, y -> x + y`));
+    // it.todo("operator with tuple precedence", () => testCase(`operator _+_ precedence 1, 2 := fn x, y -> x + y`));
   });
 });
 

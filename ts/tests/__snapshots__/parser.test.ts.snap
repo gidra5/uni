@@ -9689,7 +9689,185 @@ exports[`programs > import 1`] = `
         },
       ],
       "data": {
-        "name": "a",
+        "descriptor": {
+          "name": "a",
+          "segments": [],
+          "type": "dependency",
+        },
+      },
+      "type": "import",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`programs > import descriptor > import dependency 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "descriptor": {
+          "name": "depName",
+          "segments": [],
+          "type": "dependency",
+        },
+      },
+      "type": "import",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`programs > import descriptor > import project absolute 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "descriptor": {
+          "segments": [
+            {
+              "name": "path",
+              "type": "segment",
+            },
+            {
+              "name": "to",
+              "type": "segment",
+            },
+            {
+              "name": "folder",
+              "type": "segment",
+            },
+          ],
+          "type": "absolute",
+        },
+      },
+      "type": "import",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`programs > import descriptor > import project file 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "descriptor": {
+          "segments": [
+            {
+              "name": "path",
+              "type": "segment",
+            },
+            {
+              "name": "to",
+              "type": "segment",
+            },
+            {
+              "name": "file.extension",
+              "type": "segment",
+            },
+          ],
+          "type": "absolute",
+        },
+      },
+      "type": "import",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`programs > import descriptor > import project relative 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "descriptor": {
+          "segments": [
+            {
+              "name": "relative",
+              "type": "segment",
+            },
+            {
+              "name": "path",
+              "type": "segment",
+            },
+            {
+              "name": "to",
+              "type": "segment",
+            },
+            {
+              "name": "folder",
+              "type": "segment",
+            },
+          ],
+          "type": "relative",
+        },
+      },
+      "type": "import",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`programs > import descriptor > import project relative complex 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "descriptor": {
+          "segments": [
+            {
+              "type": "previous",
+            },
+            {
+              "name": "path",
+              "type": "segment",
+            },
+            {
+              "name": "to",
+              "type": "segment",
+            },
+            {
+              "name": "folder",
+              "type": "segment",
+            },
+          ],
+          "type": "relative",
+        },
+      },
+      "type": "import",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`programs > import descriptor > import project root 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "descriptor": {
+          "segments": [],
+          "type": "absolute",
+        },
       },
       "type": "import",
     },
@@ -9730,7 +9908,7 @@ exports[`programs > module > export declaration 1`] = `
     },
   ],
   "data": {},
-  "type": "script",
+  "type": "module",
 }
 `;
 
@@ -9767,7 +9945,7 @@ exports[`programs > module > export default 1`] = `
     },
   ],
   "data": {},
-  "type": "script",
+  "type": "module",
 }
 `;
 
@@ -9788,7 +9966,11 @@ exports[`programs > script > dynamic async import 1`] = `
             {
               "children": [],
               "data": {
-                "name": "a",
+                "descriptor": {
+                  "name": "a",
+                  "segments": [],
+                  "type": "dependency",
+                },
               },
               "type": "import",
             },
@@ -9821,7 +10003,11 @@ exports[`programs > script > dynamic import 1`] = `
         {
           "children": [],
           "data": {
-            "name": "a",
+            "descriptor": {
+              "name": "a",
+              "segments": [],
+              "type": "dependency",
+            },
           },
           "type": "import",
         },
@@ -9919,34 +10105,15 @@ exports[`types > type coalesce 1`] = `
           "type": "name",
         },
         {
-          "children": [
-            {
-              "children": [
-                {
-                  "children": [],
-                  "data": {},
-                  "type": "implicit_placeholder",
-                },
-                {
-                  "children": [],
-                  "data": {
-                    "value": "number",
-                  },
-                  "type": "name",
-                },
-              ],
-              "data": {},
-              "type": ">",
-            },
-          ],
+          "children": [],
           "data": {
-            "cause": [Error: infix/postfix operator in prefix position],
+            "value": "number",
           },
-          "type": "error",
+          "type": "name",
         },
       ],
       "data": {},
-      "type": ":",
+      "type": ":>",
     },
   ],
   "data": {},

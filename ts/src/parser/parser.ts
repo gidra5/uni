@@ -153,6 +153,62 @@ type Context3 = {
   followSet: string[];
 };
 
+type Context2 = {
+  lhs: boolean;
+  isDeepPattern: boolean; // is pattern inside of parens or any other pattern grouping
+};
+
+type PathDescriptorSegment = { type: "previous" } | { type: "segment"; name: string };
+type PathDescriptor =
+  | { segments: PathDescriptorSegment[]; type: "absolute" | "relative" }
+  | { segments: PathDescriptorSegment[]; type: "dependency"; name: string };
+
+const parseImportDescriptor = (path: string): PathDescriptor => {
+  const segments = path.split("/");
+  const pathSegments: PathDescriptorSegment[] = [];
+
+  if (segments[0] === "" && segments.length === 1) {
+    return { segments: [], type: "dependency", name: segments[0] };
+  }
+
+  if (segments[segments.length - 1] === "") segments.pop();
+
+  for (const segment of segments) {
+    if (segment === "..") {
+      if (pathSegments.some((x) => x.type === "segment" && x.name === ".")) {
+        assert(pathSegments.length === 1);
+        pathSegments.pop();
+        pathSegments.push({ type: "previous" });
+        continue;
+      }
+      if (pathSegments.every((x) => x.type === "previous")) {
+        pathSegments.push({ type: "previous" });
+        continue;
+      }
+      pathSegments.pop();
+      continue;
+    } else if (segment === "." && pathSegments.length > 0) {
+      continue;
+    }
+    pathSegments.push({ type: "segment", name: segment });
+  }
+
+  if (pathSegments[0].type === "segment" && pathSegments[0].name === "") {
+    pathSegments.shift();
+    return { segments: pathSegments, type: "absolute" };
+  }
+  if (pathSegments[0].type === "segment" && pathSegments[0].name === ".") {
+    pathSegments.shift();
+    return { segments: pathSegments, type: "relative" };
+  }
+  if (pathSegments[0].type === "previous") {
+    return { segments: pathSegments, type: "relative" };
+  }
+  const name = pathSegments.shift()!;
+  assert(name.type === "segment");
+  return { segments: pathSegments, type: "dependency", name: name.name };
+};
+
 const parseValue = Parser.do<TokenGroup[], Tree>(function* () {
   const start = yield Parser.index();
   const nodePosition = function* () {
@@ -256,11 +312,6 @@ const parseStatementForm = (innerParser: Parser<TokenGroup[], Tree, {}>) =>
       }
     });
   });
-
-type Context2 = {
-  lhs: boolean;
-  isDeepPattern: boolean; // is pattern inside of parens or any other pattern grouping
-};
 
 const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(function* () {
   const { lhs, isDeepPattern }: Context2 = yield Parser.ctx();
@@ -438,23 +489,35 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
   const _token: TokenGroup = yield Parser.peek();
 
   if (yield Parser.identifier("import")) {
-    const nameToken: TokenGroup | undefined = yield Parser.peek();
-    if (nameToken?.type !== "string") {
-      return _node(NodeType.IMPORT, { position: yield* nodePosition() });
-    }
+    const nameTokenGroup: TokenGroup | undefined = yield Parser.peek();
 
+    if (
+      !(
+        nameTokenGroup?.type === "group" &&
+        "kind" in nameTokenGroup &&
+        nameTokenGroup.kind === TokenGroupKind.StringTemplate
+      )
+    ) {
+      return error(SystemError.unknown(), _node(NodeType.IMPORT, { position: yield* nodePosition() }));
+    }
     yield Parser.advance();
+    if (nameTokenGroup.tokens.length !== 1) {
+      return error(SystemError.unknown(), _node(NodeType.IMPORT, { position: yield* nodePosition() }));
+    }
+    const nameToken = nameTokenGroup.tokens[0];
+    if (nameToken.type !== "string") {
+      return error(SystemError.unknown(), _node(NodeType.IMPORT, { position: yield* nodePosition() }));
+    }
     const name = nameToken.value;
-    const pattern: Tree | null = yield Parser.peek<TokenGroup>().chain(function* (next) {
-      if (next?.type === "identifier" && next.name === "as") {
-        yield Parser.advance();
+    const pattern: Tree | null = yield Parser.do(function* () {
+      if (yield Parser.identifier("as")) {
         return yield parsePattern;
       }
       return null;
     });
 
     const node = _node(NodeType.IMPORT, { position: yield* nodePosition() });
-    node.data.name = name;
+    node.data.descriptor = parseImportDescriptor(name);
     if (pattern) node.children.push(pattern);
     inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
     return node;
@@ -1094,39 +1157,43 @@ export const parseScript = (src: TokenGroup[]) =>
     return script([expr]);
   }).parse(src, { index: 0 })[1];
 
+const parseDeclaration = Parser.scope({ followSet: [";", "\n"] }, function* () {
+  return yield parseExpr;
+});
+
 // const parseDeclaration: ParserFunction<TokenGroup[], Tree> = (src, i) => {
 //   const context = newContext({ banned: [";"] });
 //   return parseExpr(context)(src, i);
 // };
 
-export const parseModule = (src: TokenGroup[]) => {
-  const children: Tree[] = [];
-  // let lastExport: Tree | null = null;
-  // let index = 0;
+export const parseModule = (src: TokenGroup[]) =>
+  Parser.do(function* () {
+    const children: Tree[] = [];
+    let lastExport: Tree | null = null;
+    // let index = 0;
 
-  // while (src[index]) {
-  //   if (tokenIncludes(src[index], ["\n", ";"])) {
-  //     index++;
-  //     continue;
-  //   }
-  //   let node: Tree;
-  //   [index, node] = parseDeclaration(src, index);
-  //   if (node.type === NodeType.EXPORT) {
-  //     if (node.children[0].type === NodeType.DECLARE) {
-  //       children.push(node);
-  //       continue;
-  //     }
-  //     if (lastExport) {
-  //       const errorNode = error(SystemError.duplicateDefaultExport(getPosition(lastExport)), lastExport);
-  //       children.push(errorNode);
-  //     }
-  //     lastExport = node;
-  //   } else children.push(node);
-  // }
+    while (yield Parser.isNotEnd()) {
+      if (tokenIncludes(yield Parser.peek(), ["\n", ";"])) {
+        yield Parser.advance();
+        continue;
+      }
+      const node: Tree = yield parseDeclaration;
+      if (node.type === NodeType.EXPORT) {
+        if (node.children[0].type === NodeType.DECLARE) {
+          children.push(node);
+          continue;
+        }
+        if (lastExport) {
+          const errorNode = error(SystemError.duplicateDefaultExport(getPosition(lastExport)), lastExport);
+          children.push(errorNode);
+        }
+        lastExport = node;
+      } else children.push(node);
+    }
 
-  // if (lastExport) children.push(lastExport);
-  return module(children.flatMap((node) => (node.type === "sequence" ? node.children : [node])));
-};
+    if (lastExport) children.push(lastExport);
+    return module(children.flatMap((node) => (node.type === "sequence" ? node.children : [node])));
+  }).parse(src, { index: 0 })[1];
 
 // if (import.meta.vitest) {
 //   const { expect } = import.meta.vitest;
