@@ -216,7 +216,7 @@ const parseValue = Parser.do<TokenGroup[], Tree>(function* () {
     const src: TokenGroup[] = yield Parser.src();
     return mapListPosToPos(position(start, index), src.map(getTokenPosition));
   };
-  const _token: TokenGroup = yield Parser.peek();
+  const _token: TokenGroup | undefined = yield Parser.peek();
 
   if (yield Parser.identifier("$")) {
     if (yield Parser.isEnd()) return error(SystemError.endOfSource(yield* nodePosition()), yield* nodePosition());
@@ -245,7 +245,7 @@ const parseValue = Parser.do<TokenGroup[], Tree>(function* () {
     return error(SystemError.invalidPattern(yield* nodePosition()), yield* nodePosition());
   }
 
-  if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.StringTemplate) {
+  if (_token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.StringTemplate) {
     yield Parser.advance();
     if (_token.tokens.length === 1) {
       return token(_token.tokens[0], yield* nodePosition());
@@ -269,11 +269,12 @@ const parseValue = Parser.do<TokenGroup[], Tree>(function* () {
   }
 
   const token2 = yield Parser.peek(1);
-  if (_token.type === "identifier" && token2?.type === "identifier" && token2.name === "::") {
+  if (_token?.type === "identifier" && token2?.type === "identifier" && token2.name === "::") {
     yield Parser.advance(2);
     return _node(NodeType.CODE_LABEL, { position: yield* nodePosition(), data: { name: _token.name } });
   }
 
+  if (!_token) return error(SystemError.endOfSource(yield* nodePosition()), yield* nodePosition());
   yield Parser.advance();
   return token(_token, yield* nodePosition());
 });
@@ -281,7 +282,7 @@ const parseValue = Parser.do<TokenGroup[], Tree>(function* () {
 const parseStatementForm = (innerParser: Parser<TokenGroup[], Tree, {}>) =>
   Parser.do<TokenGroup[], [inner: Tree, expr: Tree | null]>(function* () {
     const _token: TokenGroup = yield Parser.next();
-    assert(_token.type === "group");
+    assert(_token?.type === "group");
     const [innerGroup, formToken] = _token.tokens;
     assert(innerGroup.type === "group");
     assert(formToken.type === "group");
@@ -324,25 +325,25 @@ const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(functi
 
   const _token: TokenGroup = yield Parser.peek();
 
-  if (!lhs && _token.type === "identifier" && Object.hasOwn(idToPrefixPatternOp, _token.name)) {
+  if (!lhs && _token?.type === "identifier" && Object.hasOwn(idToPrefixPatternOp, _token.name)) {
     const op = idToPrefixPatternOp[_token.name];
     yield Parser.advance();
     return _node(op, { position: yield* nodePosition() });
   }
 
-  if (lhs && _token.type === "identifier" && Object.hasOwn(idToPatternOp, _token.name)) {
+  if (lhs && _token?.type === "identifier" && Object.hasOwn(idToPatternOp, _token.name)) {
     const op = idToPatternOp[_token.name];
     yield Parser.advance();
     return _node(op);
   }
 
-  if (isDeepPattern && lhs && _token.type === "identifier" && Object.hasOwn(idToPatternOp2, _token.name)) {
+  if (isDeepPattern && lhs && _token?.type === "identifier" && Object.hasOwn(idToPatternOp2, _token.name)) {
     const op = idToPatternOp2[_token.name];
     yield Parser.advance();
     return _node(op);
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Braces) {
+  if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Braces) {
     yield Parser.advance();
     if (_token.tokens.length === 0) {
       const node = _node(NodeType.RECORD, {
@@ -369,7 +370,7 @@ const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(functi
     return node;
   }
 
-  if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Brackets) {
+  if (_token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Brackets) {
     yield Parser.advance();
     if (_token.tokens.length === 0)
       return _node(lhs ? NodeType.INDEX : NodeType.SQUARE_BRACKETS, {
@@ -395,7 +396,7 @@ const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(functi
     });
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
+  if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
     yield Parser.advance();
     if (_token.tokens.length === 0) {
       return _node(NodeType.PARENS, {
@@ -467,7 +468,7 @@ const parsePatternGroup: Parser<TokenGroup[], Tree, Context2> = Parser.do(functi
   if (lhs) {
     // if function call is with parentheses, make precedence higher than field access
     // so method chaining works as usual
-    if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
+    if (_token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
       return _node(NodeType.APPLICATION);
     }
 
@@ -486,7 +487,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     return mapListPosToPos(position(start, index), src.map(getTokenPosition));
   };
 
-  const _token: TokenGroup = yield Parser.peek();
+  const _token: TokenGroup | undefined = yield Parser.peek();
 
   if (yield Parser.identifier("import")) {
     const nameTokenGroup: TokenGroup | undefined = yield Parser.peek();
@@ -528,7 +529,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     return _node(NodeType.IS, { position: yield* nodePosition(), children: [pattern] });
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Record) {
+  if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Record) {
     yield Parser.advance();
 
     const [entriesParseCtx, children] = Parser.do<TokenGroup[], Tree>(function* () {
@@ -541,8 +542,8 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
         };
         const _token: TokenGroup | undefined = yield Parser.peek();
         if (!_token) return error(SystemError.unknown(), yield* nodePosition());
-        if (_token.type === "identifier") return yield parseValue;
-        if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Brackets) {
+        if (_token?.type === "identifier") return yield parseValue;
+        if (_token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Brackets) {
           yield Parser.advance();
           const [exprParseCtx, expr] = parseExpr.parse(_token.tokens, { index: 0 });
           if (exprParseCtx.index !== _token.tokens.length) {
@@ -578,10 +579,10 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     return _node(NodeType.RECORD, { position: yield* nodePosition(), children });
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Function) {
+  if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Function) {
     return yield Parser.do<TokenGroup[], [inner: Tree, typeExpr: Tree | null, expr: Tree | null]>(function* () {
       const _token: TokenGroup = yield Parser.next();
-      assert(_token.type === "group");
+      assert(_token?.type === "group");
       const [innerGroup, formToken] = _token.tokens;
       assert(innerGroup.type === "group");
       assert(formToken.type === "group");
@@ -663,7 +664,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     });
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.If) {
+  if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.If) {
     return yield parseStatementForm(parseExpr).chain(function* ([condition, trueBranch]) {
       return yield Parser.do(function* () {
         if (!trueBranch) {
@@ -712,7 +713,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     });
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.While) {
+  if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.While) {
     return yield parseStatementForm(parseExpr).chain(function* ([condition, expr]) {
       if (!expr) {
         return _node(NodeType.WHILE, {
@@ -730,7 +731,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     });
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.ForIn) {
+  if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.ForIn) {
     yield Parser.advance();
     const [patternGroup, exprGroup, formToken] = _token.tokens;
     assert(patternGroup.type === "group");
@@ -771,7 +772,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     });
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Match) {
+  if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Match) {
     yield Parser.advance();
     const [valueGroup, bodyGroup] = _token.tokens;
     assert(valueGroup.type === "group");
@@ -808,7 +809,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     return _node(NodeType.MATCH, { children: [value, ...cases] });
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Inject) {
+  if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Inject) {
     return yield parseStatementForm(parseExpr).chain(function* ([expr, body]) {
       if (!body) {
         return _node(NodeType.INJECT, {
@@ -826,7 +827,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     });
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Without) {
+  if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Without) {
     return yield parseStatementForm(parseExpr).chain(function* ([expr, body]) {
       if (!body) {
         return _node(NodeType.WITHOUT, {
@@ -844,7 +845,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     });
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Mask) {
+  if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Mask) {
     return yield parseStatementForm(parseExpr).chain(function* ([expr, body]) {
       if (!body) {
         return _node(NodeType.MASK, {
@@ -883,19 +884,19 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     yield Parser.resetIndex();
   }
 
-  if (!lhs && _token.type === "identifier" && Object.hasOwn(idToPrefixExprOp, _token.name)) {
+  if (!lhs && _token?.type === "identifier" && Object.hasOwn(idToPrefixExprOp, _token.name)) {
     const op = idToPrefixExprOp[_token.name];
     yield Parser.advance();
     return _node(op, { position: yield* nodePosition() });
   }
 
-  if (lhs && _token.type === "identifier" && Object.hasOwn(idToExprOp, _token.name)) {
+  if (lhs && _token?.type === "identifier" && Object.hasOwn(idToExprOp, _token.name)) {
     const op = idToExprOp[_token.name];
     yield Parser.advance();
     return _node(op);
   }
 
-  if (!lhs && _token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Braces) {
+  if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Braces) {
     yield Parser.advance();
     if (_token.tokens.length === 0) return block(implicitPlaceholder(yield* nodePosition()), yield* nodePosition());
 
@@ -905,7 +906,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     return block(expr, yield* nodePosition());
   }
 
-  if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Brackets) {
+  if (_token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Brackets) {
     yield Parser.advance();
     if (_token.tokens.length === 0)
       return _node(lhs ? NodeType.INDEX : NodeType.SQUARE_BRACKETS, {
@@ -922,7 +923,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     });
   }
 
-  if (_token.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
+  if (_token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Parentheses) {
     yield Parser.advance();
     const nodeType = lhs ? NodeType.DELIMITED_APPLICATION : NodeType.PARENS;
     if (_token.tokens.length === 0) {
@@ -942,7 +943,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     if (yield Parser.isEnd()) return _node(NodeType.SEQUENCE);
 
     const _token: TokenGroup = yield Parser.peek();
-    if (lhs && _token.type === "identifier" && Object.hasOwn(idToExprOp, _token.name)) {
+    if (lhs && _token?.type === "identifier" && Object.hasOwn(idToExprOp, _token.name)) {
       const op = idToExprOp[_token.name];
       yield Parser.advance();
       return _node(op);
@@ -987,7 +988,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     return _node(NodeType.APPLICATION);
   }
 
-  if (!lhs && _token.type === "identifier" && Object.hasOwn(idToExprOp, _token.name)) {
+  if (!lhs && _token?.type === "identifier" && Object.hasOwn(idToExprOp, _token.name)) {
     yield Parser.advance();
     const name = _token.name;
     const op = idToExprOp[name];
@@ -1170,90 +1171,26 @@ export const parseModule = (src: TokenGroup[]) =>
   Parser.do(function* () {
     const children: Tree[] = [];
     let lastExport: Tree | null = null;
-    // let index = 0;
 
     while (yield Parser.isNotEnd()) {
-      if (tokenIncludes(yield Parser.peek(), ["\n", ";"])) {
-        yield Parser.advance();
+      yield Parser.newline();
+      yield Parser.identifier(";");
+      const node: Tree = yield parseDeclaration;
+      if (node.type !== NodeType.EXPORT) {
+        children.push(node);
         continue;
       }
-      const node: Tree = yield parseDeclaration;
-      if (node.type === NodeType.EXPORT) {
-        if (node.children[0].type === NodeType.DECLARE) {
-          children.push(node);
-          continue;
-        }
-        if (lastExport) {
-          const errorNode = error(SystemError.duplicateDefaultExport(getPosition(lastExport)), lastExport);
-          children.push(errorNode);
-        }
-        lastExport = node;
-      } else children.push(node);
+      if (node.children[0].type === NodeType.DECLARE) {
+        children.push(node);
+        continue;
+      }
+      if (lastExport) {
+        const errorNode = error(SystemError.duplicateDefaultExport(getPosition(lastExport)), lastExport);
+        children.push(errorNode);
+      }
+      lastExport = node;
     }
 
     if (lastExport) children.push(lastExport);
     return module(children.flatMap((node) => (node.type === "sequence" ? node.children : [node])));
   }).parse(src, { index: 0 })[1];
-
-// if (import.meta.vitest) {
-//   const { expect } = import.meta.vitest;
-//   const { it, fc } = await import("@fast-check/vitest");
-//   const { tokenArbitrary, tokenListArbitrary } = await import("../src/testing.js");
-//   const zeroPos = { start: 0, end: 0 };
-//   const arb1 = fc.oneof(fc.constant(["(", ")"]), fc.constant(["[", "]"]), fc.constant(["{", "}"]));
-
-//   it.prop([fc.array(tokenArbitrary)])("module parsing never throws", (tokens) => {
-//     try {
-//       parseModule(tokens.map((t) => ({ ...t, ...zeroPos })));
-//     } catch (e) {
-//       const msg = e instanceof Error ? e.stack : e;
-//       expect.unreachable(msg as string);
-//     }
-//   });
-
-//   it.prop([fc.array(tokenArbitrary)])("script parsing never throws", (tokens) => {
-//     try {
-//       parseScript(tokens.map((t) => ({ ...t, ...zeroPos })));
-//     } catch (e) {
-//       const msg = e instanceof Error ? e.stack : e;
-//       expect.unreachable(msg as string);
-//     }
-//   });
-
-//   it.prop([fc.array(tokenArbitrary)])("module is always flat sequence", (tokens) => {
-//     tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
-//     let ast = parseModule(tokens as Token[]);
-//     expect(ast.children.every((node) => (node as Tree).type !== "sequence")).toBe(true);
-//   });
-
-//   it.prop([fc.array(tokenArbitrary)])("script is always flat sequence", (tokens) => {
-//     tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
-//     let ast = parseScript(tokens as Token[]);
-//     expect(ast.children.every((node) => (node as Tree).type !== "sequence")).toBe(true);
-//   });
-
-//   const arb2 = arb1.chain(([open, close]) =>
-//     tokenListArbitrary
-//       .filter((tokens) => !tokens.some((t) => t.src !== open && t.src !== close))
-//       .map((tokens) => [{ type: "identifier", src: open }, ...tokens, { type: "identifier", src: close }])
-//   );
-
-//   it.prop([arb2])("pattern parsing always bound by paired tokens", (tokens) => {
-//     const patternType =
-//       tokens[0].src === "[" ? NodeType.SQUARE_BRACKETS : tokens[0].src === "{" ? NodeType.RECORD : NodeType.PARENS;
-
-//     tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
-//     let ast = parsePattern(newContext())(tokens as Token[], 0)[1];
-//     expect(ast).toMatchObject({ type: patternType });
-//   });
-
-//   it.prop([arb2])("expr parsing always bound by paired tokens", (tokens) => {
-//     const exprType =
-//       tokens[0].src === "(" ? NodeType.PARENS : tokens[0].src === "{" ? NodeType.BLOCK : NodeType.SQUARE_BRACKETS;
-
-//     tokens = tokens.map((t) => ({ ...t, ...zeroPos }));
-
-//     let ast = parseExpr(newContext())(tokens as Token[], 0)[1];
-//     expect(ast).toMatchObject({ type: exprType });
-//   });
-// }

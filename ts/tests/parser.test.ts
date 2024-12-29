@@ -4,7 +4,7 @@ import { it, fc, test } from "@fast-check/vitest";
 import { parseTokenGroups } from "../src/parser/tokenGroups.ts";
 import { parseModule, parseScript } from "../src/parser/parser.ts";
 import { Injectable, register } from "../src/utils/injector.ts";
-import { token, Tree } from "../src/ast.ts";
+import { Tree } from "../src/ast.ts";
 import { FileMap } from "codespan-napi";
 
 beforeEach(() => {
@@ -12,6 +12,34 @@ beforeEach(() => {
   register(Injectable.NextId, 0);
   register(Injectable.ASTNodePrecedenceMap, new Map());
   register(Injectable.PositionMap, new Map());
+});
+
+it.prop([fc.string().map((s) => parseTokenGroups(s))])("module parsing never throws", (tokens) => {
+  try {
+    parseModule(tokens);
+  } catch (e) {
+    const msg = e instanceof Error ? e.stack : e;
+    expect.unreachable(msg as string);
+  }
+});
+
+it.prop([fc.string().map((s) => parseTokenGroups(s))])("script parsing never throws", (tokens) => {
+  try {
+    parseScript(tokens);
+  } catch (e) {
+    const msg = e instanceof Error ? e.stack : e;
+    expect.unreachable(msg as string);
+  }
+});
+
+it.prop([fc.string().map((s) => parseTokenGroups(s))])("module is always flat sequence", (tokens) => {
+  let ast = parseModule(tokens);
+  expect(ast.children.every((node) => (node as Tree).type !== "sequence")).toBe(true);
+});
+
+it.prop([fc.string().map((s) => parseTokenGroups(s))])("script is always flat sequence", (tokens) => {
+  let ast = parseScript(tokens);
+  expect(ast.children.every((node) => (node as Tree).type !== "sequence")).toBe(true);
 });
 
 function clearIds(ast: Tree) {
