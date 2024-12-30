@@ -7,6 +7,7 @@ import { parseScript } from "./parser/parser.js";
 import { parseTokenGroups } from "./parser/tokenGroups.js";
 import { generateLLVMCode } from "./codegen/llvm.js";
 import { exec } from "child_process";
+import { assert, unreachable } from "./utils/index.js";
 
 program
   .command("run <file>")
@@ -67,10 +68,15 @@ program
   });
 
 program
-  .command("lli <file>")
+  .command("lli [file]")
   .description("generate code for llvm and interpret it with lli")
-  .action((file) => {
-    const code = fs.readFileSync(file, "utf-8");
+  .action((file = process.stdin.fd) => {
+    let code: string;
+    try {
+      code = fs.readFileSync(file, "utf-8");
+    } catch (e) {
+      unreachable("either pass a file or pipe an input through stdin");
+    }
     console.log("File is read");
 
     const tokens = parseTokenGroups(code);
@@ -80,7 +86,7 @@ program
     const compiled = generateLLVMCode(x);
     console.log("File is compiled");
 
-    const child = exec("lli");
+    const child = exec("lli-18");
     child.stdin?.write(compiled);
     child.stdin?.end();
     child.stdout?.pipe(process.stdout);

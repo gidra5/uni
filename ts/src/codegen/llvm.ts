@@ -156,14 +156,18 @@ class Builder {
   }
 
   createFunction(name: string, args: LLVMType[], returnType: LLVMType, body: (...args: LLVMValue[]) => void) {
-    const prevFunctionIndex = this.functionIndex;
-    const functionIndex = this.context.module.functions.length;
-    this.context.module.functions.push({ name, args, returnType, body: [] });
-    this.types.set(`@${name}`, { args, returnType });
-    this.functionIndex = functionIndex;
-    this.createBlock("entry", () => body(...args.map((_, i) => `%${i}`)));
-    this.functionIndex = prevFunctionIndex;
-    return `@${name}`;
+    const exists = this.context.module.functions.some((f) => f.name === name);
+    const value = `@${name}`;
+    if (!exists) {
+      const prevFunctionIndex = this.functionIndex;
+      const functionIndex = this.context.module.functions.length;
+      this.context.module.functions.push({ name, args, returnType, body: [] });
+      this.types.set(value, { args, returnType });
+      this.functionIndex = functionIndex;
+      this.createBlock("entry", () => body(...args.map((_, i) => `%${i}`)));
+      this.functionIndex = prevFunctionIndex;
+    }
+    return value;
   }
 
   createBlock(name: string, body: () => void) {
@@ -211,7 +215,15 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     case NodeType.NAME: {
       if (ast.data.value === "print") {
         const name = "printf";
-        return context.builder.declareFunction(name, [{ pointer: "i8" }, "..."], "i32");
+        const printf = context.builder.declareFunction(name, [{ pointer: "i8" }, "..."], "i32");
+
+        context.builder.createFunction("printInt", ["i32"], "i32", (arg1) => {
+          const fmt = context.builder.createString("%i\n");
+          const result = context.builder.createCall(printf, [fmt, arg1], "i32", [{ pointer: "i8" }, "..."]);
+          context.builder.createReturn(`i32 ${result}`);
+        });
+
+        return printf;
       }
       if (ast.data.value === "true") {
         return context.builder.createBool(true);
@@ -225,33 +237,43 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     }
     case NodeType.DELIMITED_APPLICATION:
     case NodeType.APPLICATION: {
-      const callee = codegen(ast.children[0], context);
+      let callee = codegen(ast.children[0], context);
       let arg = codegen(ast.children[1], context);
-      const argType = context.builder.getType(arg);
-      const calleeType = context.builder.getType(callee);
+      let argType = context.builder.getType(arg);
+      let calleeType = context.builder.getType(callee);
 
-      console.log(argType, calleeType);
       assert(typeof calleeType === "object");
       assert("args" in calleeType);
 
-      // if (argType !== calleeType.args[0]) {
-      //   if (typeof argType === "object" && "pointer" in argType) {
-      //     const pointerType = argType.pointer;
-      //     // if (pointerType !== calleeType.args[0]) {
-      //     //   arg = context.builder.createInstruction("getelementptr", [
-      //     //     stringifyLLVMType(pointerType),
-      //     //     `${stringifyLLVMType(pointerType)}* ${arg}`,
-      //     //     "i64 0",
-      //     //     "i64 0",
-      //     //   ]);
-      //     // } else {
-      //     arg = context.builder.createInstruction("load", [
-      //       stringifyLLVMType(pointerType),
-      //       `${stringifyLLVMType(pointerType)}* ${arg}`,
-      //     ]);
-      //     // }
-      //   }
-      // }
+      if (stringifyLLVMType(argType) !== stringifyLLVMType(calleeType.args[0])) {
+        if (typeof argType === "object" && "pointer" in argType) {
+          argType = argType.pointer;
+          if (stringifyLLVMType(argType) === stringifyLLVMType(calleeType.args[0])) {
+            arg = context.builder.createInstruction("load", [
+              stringifyLLVMType(argType),
+              `${stringifyLLVMType(argType)}* ${arg}`,
+            ]);
+          }
+          // else {
+          //   arg = context.builder.createInstruction("getelementptr", [
+          //     stringifyLLVMType(pointerType),
+          //     `${stringifyLLVMType(pointerType)}* ${arg}`,
+          //     "i64 0",
+          //     "i64 0",
+          //   ]);
+          // }
+        }
+      }
+
+      if (ast.children[0].type === NodeType.NAME && ast.children[0].data.value === "print") {
+        if (argType === "i32") {
+          callee = "@printInt";
+          calleeType = context.builder.getType(callee);
+          assert(typeof calleeType === "object");
+          assert("args" in calleeType);
+        }
+      }
+
       return context.builder.createCall(callee, [arg], calleeType.returnType, calleeType.args);
     }
     case NodeType.FUNCTION: {

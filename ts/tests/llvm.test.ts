@@ -35,9 +35,8 @@ const testCase = async (src: string) => {
 };
 
 describe("compilation", () => {
-  test.todo("function closure and multiple args", async () => await testCase(`(fn x -> fn y -> y + 2 * x) 1 2`));
-  test.todo("function application and literal print", async () => await testCase(`print((fn x -> x + x) 2)`));
-  test.todo("function application and literal", async () => await testCase(`(fn x -> x + x) 2`));
+  test.todo("function closure ", async () => await testCase(`print((fn x -> fn y -> y + 2 * x) 1 2)`));
+  test("function application and literal print", async () => await testCase(`print((fn x -> x + x) 2)`));
   test("hello world", async () => await testCase(`print "hello world!"`));
   test("hello world twice", async () => await testCase(`print "hello world!"; print "hello world!"`));
   test("two prints", async () => await testCase(`print "hello world!"; print "hello world 2!"`));

@@ -1,13 +1,54 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`compilation > hello world > compiled 1`] = `
-"@const_11 = constant [13 x i8] c"hello world!\\00"
+exports[`compilation > function application and literal print > compiled 1`] = `
+"@const_55 = constant [4 x i8] c"%i
+\\00"
+@const_59 = constant i32 2
 define i32 @main() {
   main: 
-    %var_12 = call i32 @printf(i8* @const_11)
+    %var_60 = load i32, i32* @const_59
+    %var_61 = call i32 @fn_57(i32 %var_60)
+    %var_62 = call i32 @printInt(i32 %var_61)
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
+define i32 @printInt(i32) {
+  entry: 
+    %var_56 = call i32 @printf(i8* @const_55, i32 %0)
+    ret i32 %var_56
+}
+define i32 @fn_57(i32) {
+  entry: 
+    %var_58 = add i32 %0, %0
+    ret i32 %var_58
+}
+"
+`;
+
+exports[`compilation > function application and literal print > stderr 1`] = `[]`;
+
+exports[`compilation > function application and literal print > stdout 1`] = `
+[
+  "4
+",
+]
+`;
+
+exports[`compilation > hello world > compiled 1`] = `
+"@const_11 = constant [4 x i8] c"%i
+\\00"
+@const_13 = constant [13 x i8] c"hello world!\\00"
+define i32 @main() {
+  main: 
+    %var_14 = call i32 @printf(i8* @const_13)
+    ret i32 0
+}
+declare i32 @printf(i8*, ...)
+define i32 @printInt(i32) {
+  entry: 
+    %var_12 = call i32 @printf(i8* @const_11, i32 %0)
+    ret i32 %var_12
+}
 "
 `;
 
@@ -33,14 +74,21 @@ exports[`compilation > hello world string > stderr 1`] = `[]`;
 exports[`compilation > hello world string > stdout 1`] = `[]`;
 
 exports[`compilation > hello world twice > compiled 1`] = `
-"@const_25 = constant [13 x i8] c"hello world!\\00"
+"@const_25 = constant [4 x i8] c"%i
+\\00"
+@const_27 = constant [13 x i8] c"hello world!\\00"
 define i32 @main() {
   main: 
-    %var_26 = call i32 @printf(i8* @const_25)
-    %var_27 = call i32 @printf(i8* @const_25)
+    %var_28 = call i32 @printf(i8* @const_27)
+    %var_29 = call i32 @printf(i8* @const_27)
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
+define i32 @printInt(i32) {
+  entry: 
+    %var_26 = call i32 @printf(i8* @const_25, i32 %0)
+    ret i32 %var_26
+}
 "
 `;
 
@@ -53,15 +101,22 @@ exports[`compilation > hello world twice > stdout 1`] = `
 `;
 
 exports[`compilation > two prints > compiled 1`] = `
-"@const_25 = constant [13 x i8] c"hello world!\\00"
-@const_27 = constant [15 x i8] c"hello world 2!\\00"
+"@const_25 = constant [4 x i8] c"%i
+\\00"
+@const_27 = constant [13 x i8] c"hello world!\\00"
+@const_29 = constant [15 x i8] c"hello world 2!\\00"
 define i32 @main() {
   main: 
-    %var_26 = call i32 @printf(i8* @const_25)
     %var_28 = call i32 @printf(i8* @const_27)
+    %var_30 = call i32 @printf(i8* @const_29)
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
+define i32 @printInt(i32) {
+  entry: 
+    %var_26 = call i32 @printf(i8* @const_25, i32 %0)
+    ret i32 %var_26
+}
 "
 `;
 
