@@ -22,7 +22,7 @@ const testCase = async (src: string) => {
 
   const stdout: any[] = [];
   const stderr: any[] = [];
-  const child = exec("lli");
+  const child = exec("lli-18");
   child.stdout?.on("data", (data) => stdout.push(data));
   child.stderr?.on("data", (data) => stderr.push(data));
   child.stdin?.write(compiled);
@@ -36,6 +36,7 @@ const testCase = async (src: string) => {
 
 describe("compilation", () => {
   test.todo("function closure and multiple args", async () => await testCase(`(fn x -> fn y -> y + 2 * x) 1 2`));
+  test.todo("function application and literal print", async () => await testCase(`print((fn x -> x + x) 2)`));
   test.todo("function application and literal", async () => await testCase(`(fn x -> x + x) 2`));
   test("hello world", async () => await testCase(`print "hello world!"`));
   test("hello world twice", async () => await testCase(`print "hello world!"; print "hello world!"`));

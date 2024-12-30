@@ -4,11 +4,10 @@ exports[`compilation > hello world > compiled 1`] = `
 "@const_11 = constant [13 x i8] c"hello world!\\00"
 define i32 @main() {
   main: 
-    %var_12 = getelementptr [13 x i8], [13 x i8]* @const_11, i64 0, i64 0
-    %var_13 = call i32 @puts(i8* %var_12)
+    %var_12 = call i32 @printf(i8* @const_11)
     ret i32 0
 }
-declare i32 @puts(i8*)
+declare i32 @printf(i8*, ...)
 "
 `;
 
@@ -16,8 +15,7 @@ exports[`compilation > hello world > stderr 1`] = `[]`;
 
 exports[`compilation > hello world > stdout 1`] = `
 [
-  "hello world!
-",
+  "hello world!",
 ]
 `;
 
@@ -38,13 +36,11 @@ exports[`compilation > hello world twice > compiled 1`] = `
 "@const_25 = constant [13 x i8] c"hello world!\\00"
 define i32 @main() {
   main: 
-    %var_26 = getelementptr [13 x i8], [13 x i8]* @const_25, i64 0, i64 0
-    %var_27 = call i32 @puts(i8* %var_26)
-    %var_28 = getelementptr [13 x i8], [13 x i8]* @const_25, i64 0, i64 0
-    %var_29 = call i32 @puts(i8* %var_28)
+    %var_26 = call i32 @printf(i8* @const_25)
+    %var_27 = call i32 @printf(i8* @const_25)
     ret i32 0
 }
-declare i32 @puts(i8*)
+declare i32 @printf(i8*, ...)
 "
 `;
 
@@ -52,24 +48,20 @@ exports[`compilation > hello world twice > stderr 1`] = `[]`;
 
 exports[`compilation > hello world twice > stdout 1`] = `
 [
-  "hello world!
-hello world!
-",
+  "hello world!hello world!",
 ]
 `;
 
 exports[`compilation > two prints > compiled 1`] = `
 "@const_25 = constant [13 x i8] c"hello world!\\00"
-@const_28 = constant [15 x i8] c"hello world 2!\\00"
+@const_27 = constant [15 x i8] c"hello world 2!\\00"
 define i32 @main() {
   main: 
-    %var_26 = getelementptr [13 x i8], [13 x i8]* @const_25, i64 0, i64 0
-    %var_27 = call i32 @puts(i8* %var_26)
-    %var_29 = getelementptr [15 x i8], [15 x i8]* @const_28, i64 0, i64 0
-    %var_30 = call i32 @puts(i8* %var_29)
+    %var_26 = call i32 @printf(i8* @const_25)
+    %var_28 = call i32 @printf(i8* @const_27)
     ret i32 0
 }
-declare i32 @puts(i8*)
+declare i32 @printf(i8*, ...)
 "
 `;
 
@@ -77,8 +69,6 @@ exports[`compilation > two prints > stderr 1`] = `[]`;
 
 exports[`compilation > two prints > stdout 1`] = `
 [
-  "hello world!
-hello world 2!
-",
+  "hello world!hello world 2!",
 ]
 `;
