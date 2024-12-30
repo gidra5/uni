@@ -3,7 +3,10 @@ import readline from "readline";
 import { stdin as input, stdout as output } from "process";
 import { VM } from "./vm/index.js";
 import fs from "fs";
-import { identity } from "./utils/index.js";
+import { parseScript } from "./parser/parser.js";
+import { parseTokenGroups } from "./parser/tokenGroups.js";
+import { generateLLVMCode } from "./codegen/llvm.js";
+import { exec } from "child_process";
 
 program
   .command("run <file>")
@@ -61,6 +64,27 @@ program
       console.log("Have a great day!");
       process.exit(0);
     });
+  });
+
+program
+  .command("lli <file>")
+  .description("generate code for llvm and interpret it with lli")
+  .action((file) => {
+    const code = fs.readFileSync(file, "utf-8");
+    console.log("File is read");
+
+    const tokens = parseTokenGroups(code);
+    const x = parseScript(tokens);
+    console.log("File is parsed");
+
+    const compiled = generateLLVMCode(x);
+    console.log("File is compiled");
+
+    const child = exec("lli");
+    child.stdin?.write(compiled);
+    child.stdin?.end();
+    child.stdout?.pipe(process.stdout);
+    child.stderr?.pipe(process.stderr);
   });
 
 program

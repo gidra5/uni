@@ -1,6 +1,6 @@
-import { position, type Position } from "../utils/position";
-import { assert } from "../utils";
-import { TokenGroup, TokenGroupKind } from "./tokenGroups";
+import { position, type Position } from "../utils/position.js";
+import { assert } from "../utils/index.js";
+import { TokenGroup, TokenGroupKind } from "./tokenGroups.js";
 
 export type BaseContext = { index: number; rememberedIndex?: number };
 type ParserContext<C> = Readonly<BaseContext & C>;

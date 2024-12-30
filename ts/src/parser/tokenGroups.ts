@@ -1,6 +1,6 @@
-import { SystemError } from "../error";
+import { SystemError } from "../error.js";
 import { indexPosition, intervalPosition, type Position } from "../utils/position.js";
-import { assert, getPos, nextId, setPos } from "../utils";
+import { assert, getPos, nextId, setPos } from "../utils/index.js";
 import {
   parseMultilineStringToken,
   parseStringToken,
@@ -8,8 +8,8 @@ import {
   parseWhitespace,
   type StringToken,
   type Token,
-} from "./tokens";
-import { Parser, BaseContext } from "./utils";
+} from "./tokens.js";
+import { Parser, BaseContext } from "./utils.js";
 
 export enum TokenGroupKind {
   StringTemplate = "string template",
