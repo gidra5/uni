@@ -1,3 +1,4 @@
+import { Iterator } from "iterator-js";
 import { NodeType, Tree } from "../ast.js";
 import { assert, nextId, unreachable } from "../utils/index.js";
 
@@ -31,7 +32,7 @@ type LLVMInstruction = {
   args: LLVMValue[];
 };
 type LLVMValue = string;
-type LLVMType = string | { args: LLVMType[]; returnType: LLVMType } | { pointer: LLVMType };
+type LLVMType = string | { args: LLVMType[]; returnType: LLVMType } | { pointer: LLVMType } | { record: LLVMType[] };
 
 class Builder {
   functionIndex: number = 0;
@@ -52,7 +53,7 @@ class Builder {
     return prefix + nextId().toString();
   }
 
-  getOrCreateConstant(value: string, type: LLVMType): LLVMValue {
+  getOrCreateConstant(value: LLVMValue, type: LLVMType): LLVMValue {
     const _value = this.values.get(value);
     if (_value) return _value;
     const name = this.getFreshName("const_");
@@ -75,7 +76,7 @@ class Builder {
     const value = `@${name}`;
     if (!exists) {
       this.context.module.functions.push({ name, args, returnType });
-      this.types.set(value, { args, returnType });
+      this.types.set(value, { pointer: { args, returnType } });
     }
     return value;
   }
@@ -95,6 +96,18 @@ class Builder {
   createString(value: string): LLVMValue {
     const length = value.length + 1;
     return this.getOrCreateConstant(`c"${value}\\00"`, this.createStringType(length));
+  }
+
+  createRecord(record: LLVMValue[]): LLVMValue {
+    const type = this.createRecordType(record.map((value) => this.getType(value)));
+    const location = this.createAlloca(type);
+    const recordValue = this.createLoad(location);
+    for (const [value, index] of Iterator.iter(record).enumerate()) {
+      this.createInsertValue(recordValue, value, index);
+    }
+    this.createStore(recordValue, location);
+    this.types.set(recordValue, type);
+    return recordValue;
   }
 
   createIntType(size: number): LLVMType {
@@ -121,6 +134,10 @@ class Builder {
     return { args, returnType };
   }
 
+  createRecordType(record: LLVMType[]): LLVMType {
+    return { record };
+  }
+
   createInstructionVoid(name: string, args: LLVMValue[]) {
     this.insertInstruction({ name, args });
   }
@@ -130,9 +147,42 @@ class Builder {
     return `%${twine}`;
   }
 
+  createExtractValue(record: LLVMValue, index: number): LLVMValue {
+    return this.createInstruction("extractvalue", [
+      `${stringifyLLVMType(this.getType(record))} ${record}`,
+      index.toString(),
+    ]);
+  }
+
+  createInsertValue(record: LLVMValue, value: LLVMValue, index: number): LLVMValue {
+    return this.createInstruction("insertvalue", [
+      `${stringifyLLVMType(this.getType(record))} ${record}`,
+      `${stringifyLLVMType(this.getType(value))} ${value}`,
+      index.toString(),
+    ]);
+  }
+
+  createAlloca(type: LLVMType, initial?: LLVMValue): LLVMValue {
+    const typeValue = stringifyLLVMType(type);
+    return this.createInstruction("alloca", [typeValue, `${typeValue} ${initial}`]);
+  }
+
+  createLoad(value: LLVMValue): LLVMValue {
+    return this.createInstruction("load", [stringifyLLVMType(this.getType(value)), `ptr ${value}`]);
+  }
+
+  createStore(value: LLVMValue, location: LLVMValue) {
+    this.createInstructionVoid("store", [`${stringifyLLVMType(this.getType(value))} ${value}`, `ptr ${location}`]);
+  }
+
   createAdd(lhs: LLVMValue, rhs: LLVMValue): LLVMValue {
-    const type = this.getType(lhs);
+    const type = stringifyLLVMType(this.getType(lhs));
     return this.createInstruction("add", [`${type} ${lhs}`, rhs]);
+  }
+
+  createMul(lhs: LLVMValue, rhs: LLVMValue): LLVMValue {
+    const type = stringifyLLVMType(this.getType(lhs));
+    return this.createInstruction("mul", [`${type} ${lhs}`, rhs]);
   }
 
   createCallVoid(callee: LLVMValue, callArgs: LLVMValue[]) {
@@ -146,8 +196,11 @@ class Builder {
       if (argsType[i] === "...") return `${this.getType(arg)} ${arg}`;
       return `${stringifyLLVMType(argsType[i])} ${arg}`;
     });
-    const _args = [`${stringifyLLVMType(returnType)} ${callee}(${args.join(", ")})`];
-    return this.createInstruction("call", _args);
+    const type = stringifyLLVMType(returnType);
+    const _args = [`${type} ${callee}(${args.join(", ")})`];
+    const value = this.createInstruction("call", _args);
+    this.types.set(value, returnType);
+    return value;
   }
 
   createReturn(value: LLVMValue): LLVMValue {
@@ -155,17 +208,23 @@ class Builder {
     return "void";
   }
 
-  createFunction(name: string, args: LLVMType[], returnType: LLVMType, body: (...args: LLVMValue[]) => void) {
+  createFunction(name: string, args: LLVMType[], body: (...args: LLVMValue[]) => LLVMType) {
     const exists = this.context.module.functions.some((f) => f.name === name);
     const value = `@${name}`;
     if (!exists) {
       const prevFunctionIndex = this.functionIndex;
       const functionIndex = this.context.module.functions.length;
-      this.context.module.functions.push({ name, args, returnType, body: [] });
-      this.types.set(value, { args, returnType });
+      const _f = { name, args, returnType: "void" as LLVMType, body: [] };
+      this.context.module.functions.push(_f);
       this.functionIndex = functionIndex;
-      this.createBlock("entry", () => body(...args.map((_, i) => `%${i}`)));
+      let returnType: LLVMType | undefined;
+      this.createBlock("entry", () => {
+        returnType = body(...args.map((_, i) => `%${i}`));
+      });
       this.functionIndex = prevFunctionIndex;
+      assert(returnType);
+      _f.returnType = returnType;
+      this.types.set(value, { pointer: { args, returnType } });
     }
     return value;
   }
@@ -210,6 +269,8 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     }
     case NodeType.ADD:
       return context.builder.createAdd(codegen(ast.children[0], context), codegen(ast.children[1], context));
+    case NodeType.MULT:
+      return context.builder.createMul(codegen(ast.children[0], context), codegen(ast.children[1], context));
     case NodeType.PARENS:
       return codegen(ast.children[0], context);
     case NodeType.NAME: {
@@ -217,10 +278,11 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
         const name = "printf";
         const printf = context.builder.declareFunction(name, [{ pointer: "i8" }, "..."], "i32");
 
-        context.builder.createFunction("printInt", ["i32"], "i32", (arg1) => {
+        context.builder.createFunction("printInt", ["i32"], (arg1) => {
           const fmt = context.builder.createString("%i\n");
           const result = context.builder.createCall(printf, [fmt, arg1], "i32", [{ pointer: "i8" }, "..."]);
           context.builder.createReturn(`i32 ${result}`);
+          return "i32";
         });
 
         return printf;
@@ -237,18 +299,29 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     }
     case NodeType.DELIMITED_APPLICATION:
     case NodeType.APPLICATION: {
-      let callee = codegen(ast.children[0], context);
+      let closure: LLVMValue | null = null;
+      let func = codegen(ast.children[0], context);
       let arg = codegen(ast.children[1], context);
       let argType = context.builder.getType(arg);
-      let calleeType = context.builder.getType(callee);
+      let funcType = context.builder.getType(func);
 
-      assert(typeof calleeType === "object");
-      assert("args" in calleeType);
+      if (typeof funcType === "object" && "record" in funcType) {
+        closure = context.builder.createExtractValue(func, 0);
+        func = context.builder.createExtractValue(func, 1);
+        funcType = funcType.record[1];
+      }
 
-      if (stringifyLLVMType(argType) !== stringifyLLVMType(calleeType.args[0])) {
+      assert(typeof funcType === "object");
+      assert("pointer" in funcType);
+      funcType = funcType.pointer;
+
+      assert(typeof funcType === "object");
+      assert("args" in funcType);
+
+      if (stringifyLLVMType(argType) !== stringifyLLVMType(funcType.args[0])) {
         if (typeof argType === "object" && "pointer" in argType) {
           argType = argType.pointer;
-          if (stringifyLLVMType(argType) === stringifyLLVMType(calleeType.args[0])) {
+          if (stringifyLLVMType(argType) === stringifyLLVMType(funcType.args[0])) {
             arg = context.builder.createInstruction("load", [
               stringifyLLVMType(argType),
               `${stringifyLLVMType(argType)}* ${arg}`,
@@ -267,26 +340,65 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
 
       if (ast.children[0].type === NodeType.NAME && ast.children[0].data.value === "print") {
         if (argType === "i32") {
-          callee = "@printInt";
-          calleeType = context.builder.getType(callee);
-          assert(typeof calleeType === "object");
-          assert("args" in calleeType);
+          func = "@printInt";
+          funcType = context.builder.getType(func);
+          assert(typeof funcType === "object");
+          assert("pointer" in funcType);
+          funcType = funcType.pointer;
+
+          assert(typeof funcType === "object");
+          assert("args" in funcType);
         }
       }
 
-      return context.builder.createCall(callee, [arg], calleeType.returnType, calleeType.args);
+      if (closure) {
+        return context.builder.createCall(func, [closure, arg], funcType.returnType, funcType.args);
+      }
+      return context.builder.createCall(func, [arg], funcType.returnType, funcType.args);
     }
     case NodeType.FUNCTION: {
       const name = context.builder.getFreshName("fn_");
       const binder = ast.children[0];
       assert(binder.type === NodeType.NAME);
       const argName = ast.children[0].data.value;
-      return context.builder.createFunction(name, ["i32"], "i32", (arg1) => {
-        context.names.set(argName, arg1);
+
+      const freeVars = collectFreeVars(ast);
+      assert([...context.names.keys()].every((x) => freeVars.includes(x)));
+
+      if (freeVars.length === 0) {
+        return context.builder.createFunction(name, ["i32"], (arg1) => {
+          context.names.set(argName, arg1);
+          const result = codegen(ast.children[1], context);
+          context.names.delete(argName);
+          const type = context.builder.getType(result);
+          const valueType = stringifyLLVMType(type);
+          context.builder.createReturn(`${valueType} ${result}`);
+          return type;
+        });
+      }
+
+      const closure = context.builder.createRecord(freeVars.map((name) => context.names.get(name)!));
+      const closureType = context.builder.getType(closure);
+      const func = context.builder.createFunction(name, [closureType, "i32"], (closure, arg) => {
+        const prev: LLVMValue[] = [];
+        for (const [name, index] of Iterator.iter(freeVars).enumerate()) {
+          const value = context.builder.createExtractValue(closure, index);
+          prev.push(context.names.get(name)!);
+          context.names.set(name, value);
+        }
+        context.names.set(argName, arg);
         const result = codegen(ast.children[1], context);
         context.names.delete(argName);
-        context.builder.createReturn(`i32 ${result}`);
+        for (const [name, index] of Iterator.iter(freeVars).enumerate()) {
+          context.names.set(name, prev[index]);
+        }
+        const type = context.builder.getType(result);
+        const valueType = stringifyLLVMType(type);
+        context.builder.createReturn(`${valueType} ${result}`);
+        return type;
       });
+
+      return context.builder.createRecord([closure, func]);
     }
     case NodeType.SEQUENCE: {
       const last = ast.children[ast.children.length - 1];
@@ -334,6 +446,7 @@ const generateLLVMModule = (ast: Tree): LLVMModule => {
 const stringifyLLVMType = (type: LLVMType): string => {
   if (typeof type === "string") return type;
   if ("pointer" in type) return `${stringifyLLVMType(type.pointer)}*`;
+  if ("record" in type) return `{ ${type.record.map(stringifyLLVMType).join(", ")} }`;
   return `${type.returnType} (${type.args.map(stringifyLLVMType).join(", ")})`;
 };
 
@@ -366,3 +479,25 @@ export const generateLLVMCode = (ast: Tree) => {
   const module = generateLLVMModule(ast);
   return stringifyLLVMModule(module);
 };
+
+function collectFreeVars(ast: Tree): string[] {
+  switch (ast.type) {
+    case NodeType.NAME:
+      return [ast.data.value];
+    case NodeType.FUNCTION:
+      const boundNames = collectBoundNames(ast.children[0]);
+      const freeVars = collectFreeVars(ast.children[1]);
+      return freeVars.filter((x) => !boundNames.includes(x));
+    default:
+      return ast.children.flatMap((child) => collectFreeVars(child));
+  }
+}
+
+function collectBoundNames(ast: Tree): string[] {
+  switch (ast.type) {
+    case NodeType.NAME:
+      return [ast.data.value];
+    default:
+      return ast.children.flatMap((child) => collectBoundNames(child));
+  }
+}
