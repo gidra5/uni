@@ -21,6 +21,7 @@ export const NodeType = {
   STRING: "string",
   ATOM: "atom",
   HASH_NAME: "hash_name",
+  UNIT: "unit",
 
   ADD: "add",
   PLUS: "plus",

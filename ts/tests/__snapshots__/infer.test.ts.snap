@@ -1,0 +1,338 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`compilation > float 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "type": "float",
+        "value": 1.1,
+      },
+      "type": "number",
+    },
+  ],
+  "data": {
+    "type": "float",
+  },
+  "type": "script",
+}
+`;
+
+exports[`compilation > function application and literal 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "type": "int",
+                    "value": "x",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "type": "int",
+                    "value": "x",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {
+                "type": "int",
+              },
+              "type": "add",
+            },
+          ],
+          "data": {
+            "isTopFunction": true,
+            "type": {
+              "fn": {
+                "arg": "int",
+                "return": {
+                  "variable": 35,
+                },
+              },
+            },
+          },
+          "type": "func",
+        },
+        {
+          "children": [],
+          "data": {
+            "type": "int",
+            "value": 2,
+          },
+          "type": "number",
+        },
+      ],
+      "data": {
+        "type": {
+          "variable": 35,
+        },
+      },
+      "type": "application",
+    },
+  ],
+  "data": {
+    "type": {
+      "variable": 35,
+    },
+  },
+  "type": "script",
+}
+`;
+
+exports[`compilation > function deep closure 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "x",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {
+                            "value": "y",
+                          },
+                          "type": "name",
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [],
+                              "data": {
+                                "value": "z",
+                              },
+                              "type": "name",
+                            },
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "data": {
+                                    "type": "int",
+                                    "value": "x",
+                                  },
+                                  "type": "name",
+                                },
+                                {
+                                  "children": [],
+                                  "data": {
+                                    "type": "int",
+                                    "value": "y",
+                                  },
+                                  "type": "name",
+                                },
+                                {
+                                  "children": [],
+                                  "data": {
+                                    "type": "int",
+                                    "value": "z",
+                                  },
+                                  "type": "name",
+                                },
+                              ],
+                              "data": {
+                                "type": "int",
+                              },
+                              "type": "add",
+                            },
+                          ],
+                          "data": {
+                            "isTopFunction": true,
+                            "type": {
+                              "fn": {
+                                "arg": "int",
+                                "return": {
+                                  "variable": 66,
+                                },
+                              },
+                            },
+                          },
+                          "type": "func",
+                        },
+                      ],
+                      "data": {
+                        "isTopFunction": true,
+                        "type": {
+                          "fn": {
+                            "arg": "int",
+                            "return": {
+                              "fn": {
+                                "arg": "int",
+                                "return": {
+                                  "variable": 66,
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      "type": "func",
+                    },
+                  ],
+                  "data": {
+                    "isTopFunction": true,
+                    "type": {
+                      "fn": {
+                        "arg": "int",
+                        "return": {
+                          "fn": {
+                            "arg": "int",
+                            "return": {
+                              "fn": {
+                                "arg": "int",
+                                "return": {
+                                  "variable": 66,
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  "type": "func",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "type": "int",
+                    "value": 1,
+                  },
+                  "type": "number",
+                },
+              ],
+              "data": {},
+              "type": "application",
+            },
+            {
+              "children": [],
+              "data": {
+                "type": "int",
+                "value": 3,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": "application",
+        },
+        {
+          "children": [],
+          "data": {
+            "type": "int",
+            "value": 5,
+          },
+          "type": "number",
+        },
+      ],
+      "data": {
+        "type": {
+          "variable": 66,
+        },
+      },
+      "type": "application",
+    },
+  ],
+  "data": {
+    "type": {
+      "variable": 66,
+    },
+  },
+  "type": "script",
+}
+`;
+
+exports[`compilation > hello world string 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "type": "string",
+        "value": "hello world!",
+      },
+      "type": "string",
+    },
+  ],
+  "data": {
+    "type": "string",
+  },
+  "type": "script",
+}
+`;
+
+exports[`compilation > int 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "type": "int",
+        "value": 1,
+      },
+      "type": "number",
+    },
+  ],
+  "data": {
+    "type": "int",
+  },
+  "type": "script",
+}
+`;
+
+exports[`compilation > two prints 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "type": "string",
+        "value": "hello world!",
+      },
+      "type": "string",
+    },
+    {
+      "children": [],
+      "data": {
+        "type": "string",
+        "value": "hello world 2!",
+      },
+      "type": "string",
+    },
+  ],
+  "data": {
+    "type": "string",
+  },
+  "type": "script",
+}
+`;
