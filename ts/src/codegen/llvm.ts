@@ -322,12 +322,16 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       return context.builder.createString(ast.data.value);
     case NodeType.TEMPLATE: {
       const values = ast.children.map((child) => codegen(child, context));
-      return values.reduce((acc, value) => context.builder.createAdd(acc, value), values[0]);
+      return values.reduce((acc, value) => context.builder.createAdd(acc, value));
     }
-    case NodeType.ADD:
-      return context.builder.createAdd(codegen(ast.children[0], context), codegen(ast.children[1], context));
-    case NodeType.MULT:
-      return context.builder.createMul(codegen(ast.children[0], context), codegen(ast.children[1], context));
+    case NodeType.ADD: {
+      const values = ast.children.map((child) => codegen(child, context));
+      return values.reduce((acc, value) => context.builder.createAdd(acc, value));
+    }
+    case NodeType.MULT: {
+      const values = ast.children.map((child) => codegen(child, context));
+      return values.reduce((acc, value) => context.builder.createMul(acc, value));
+    }
     case NodeType.PARENS:
       return codegen(ast.children[0], context);
     case NodeType.NAME: {
@@ -375,11 +379,13 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
 
       assert(typeof funcType === "object");
       assert("args" in funcType);
-      funcArgType = closure
-        ? funcType.args[1]
-        : typeof funcType.args[0] === "object" && "structRet" in funcType.args[0]
-        ? funcType.args[1]
-        : funcType.args[0];
+      if (closure) {
+        funcArgType =
+          typeof funcType.args[0] === "object" && "structRet" in funcType.args[0] ? funcType.args[2] : funcType.args[1];
+      } else {
+        funcArgType =
+          typeof funcType.args[0] === "object" && "structRet" in funcType.args[0] ? funcType.args[1] : funcType.args[0];
+      }
 
       if (ast.children[0].type === NodeType.NAME && ast.children[0].data.value === "print") {
         const stringifiedType = stringifyLLVMType(argType);
