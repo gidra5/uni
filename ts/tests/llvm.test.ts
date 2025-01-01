@@ -35,7 +35,8 @@ const testCase = async (src: string) => {
 };
 
 describe("compilation", () => {
-  test("function closure ", async () => await testCase(`print((fn x -> fn y -> y + 2 * x) 1 2)`));
+  test("function closure", async () => await testCase(`print((fn x -> fn y -> y + 2 * x) 1 2)`));
+  test("function deep closure", async () => await testCase(`print((fn x -> fn y -> fn z -> x + y + z) 1 3 5)`));
   test("function application and literal print", async () => await testCase(`print((fn x -> x + x) 2)`));
   test("print number", async () => await testCase(`print 1`));
   test("hello world", async () => await testCase(`print "hello world!"`));
