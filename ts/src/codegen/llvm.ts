@@ -381,25 +381,9 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
         ? funcType.args[1]
         : funcType.args[0];
 
-      if (stringifyLLVMType(argType) !== stringifyLLVMType(funcArgType)) {
-        if (typeof argType === "object" && "pointer" in argType) {
-          argType = argType.pointer;
-          if (stringifyLLVMType(argType) === stringifyLLVMType(funcArgType)) {
-            arg = context.builder.createLoad(arg);
-          }
-          // else {
-          //   arg = context.builder.createInstruction("getelementptr", [
-          //     stringifyLLVMType(pointerType),
-          //     `${stringifyLLVMType(pointerType)}* ${arg}`,
-          //     "i64 0",
-          //     "i64 0",
-          //   ]);
-          // }
-        }
-      }
-
       if (ast.children[0].type === NodeType.NAME && ast.children[0].data.value === "print") {
-        if (argType === "i32") {
+        const stringifiedType = stringifyLLVMType(argType);
+        if (stringifiedType !== "i8*" && !/\[\d+ x i8\]/.test(stringifiedType)) {
           func = "@printInt";
           funcType = context.builder.getType(func);
           assert(typeof funcType === "object");
@@ -408,6 +392,16 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
 
           assert(typeof funcType === "object");
           assert("args" in funcType);
+          funcArgType = funcType.args[0];
+        }
+      }
+
+      if (stringifyLLVMType(argType) !== stringifyLLVMType(funcArgType)) {
+        if (typeof argType === "object" && "pointer" in argType) {
+          if (stringifyLLVMType(argType.pointer) === stringifyLLVMType(funcArgType)) {
+            argType = argType.pointer;
+            arg = context.builder.createLoad(arg);
+          }
         }
       }
 

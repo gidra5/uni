@@ -158,6 +158,34 @@ exports[`compilation > hello world twice > stdout 1`] = `
 ]
 `;
 
+exports[`compilation > print number > compiled 1`] = `
+"@const_10 = constant [4 x i8] c"%i
+\\00"
+@const_12 = constant i32 1
+define i32 @main() {
+  main: 
+    %var_13 = load i32, ptr @const_12
+    %var_14 = call i32 @printInt(i32 %var_13)
+    ret i32 0
+}
+declare i32 @printf(i8*, ...)
+define i32 @printInt(i32 %var_9) {
+  entry: 
+    %var_11 = call i32 @printf(i8* @const_10, i32 %var_9)
+    ret i32 %var_11
+}
+"
+`;
+
+exports[`compilation > print number > stderr 1`] = `[]`;
+
+exports[`compilation > print number > stdout 1`] = `
+[
+  "1
+",
+]
+`;
+
 exports[`compilation > two prints > compiled 1`] = `
 "@const_26 = constant [4 x i8] c"%i
 \\00"
