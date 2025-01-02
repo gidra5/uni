@@ -33,10 +33,10 @@ const testCase = async (input: string) => {
 };
 
 describe("compilation", () => {
-  test.todo("either", async () => await testCase(`((fn x -> fn m -> fn n -> m x) 1) (fn x -> x)) fn x -> x`));
-  test.todo("apply", async () => await testCase(`((fn f -> fn x -> f x) fn x -> x) 2`));
-  test.todo("wrapper", async () => await testCase(`((fn x -> fn m -> m x) 2) fn x -> x`));
-  test.only("church tuple", async () => await testCase(`((fn x -> fn y -> fn m -> m x y) 1 2) fn x -> fn _ -> x`));
+  test("either", async () => await testCase(`(((fn x -> fn m -> fn n -> m x) 1) fn x -> x) fn x -> x`));
+  test("apply", async () => await testCase(`((fn f -> fn x -> f x) fn x -> x) 2`));
+  test("wrapper", async () => await testCase(`((fn x -> fn m -> m x) 2) fn x -> x`));
+  test("church tuple", async () => await testCase(`((fn x -> fn y -> fn m -> m x y) 1 2) fn x -> fn _ -> x`));
   test("function closure", async () => await testCase(`(fn x -> fn y -> y + 2 * x) 1 2`));
   test("function deep closure", async () => await testCase(`(fn x -> fn y -> fn z -> x + y + z) 1 3 5`));
   test("function application and literal", async () => await testCase(`(fn x -> x + x) 2`));
@@ -44,4 +44,7 @@ describe("compilation", () => {
   test("int", async () => await testCase(`1`));
   test("two prints", async () => await testCase(`"hello world!"; "hello world 2!"`));
   test("hello world string", async () => await testCase(`"hello world!"`));
+  test.todo("print 1", async () => await testCase(`print 1`));
+  test.todo("print 2", async () => await testCase(`print "x"`));
+  test.todo("print 3", async () => await testCase(`print 1; print "x"`));
 });

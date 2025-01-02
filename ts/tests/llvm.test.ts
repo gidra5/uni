@@ -6,6 +6,7 @@ import { generateLLVMCode } from "../src/codegen/llvm";
 import { exec } from "child_process";
 import { Injectable, register } from "../src/utils/injector";
 import { FileMap } from "codespan-napi";
+import { inferTypes } from "../src/analysis/types/infer";
 
 const passes = [
   "adce",
@@ -121,8 +122,9 @@ beforeEach(() => {
 
 const testCase = async (src: string) => {
   const tokens = parseTokenGroups(src);
-  const x = parseScript(tokens);
-  const compiled = generateLLVMCode(x);
+  const ast = parseScript(tokens);
+  inferTypes(ast);
+  const compiled = generateLLVMCode(ast);
   expect(compiled).toMatchSnapshot("compiled");
 
   // const optimized: any[] = [];

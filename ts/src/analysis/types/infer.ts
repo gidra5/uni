@@ -34,6 +34,9 @@ class Context {
       const bounds = this.bounds.get(type.variable);
       if (bounds) {
         assert("equals" in bounds);
+        if (typeof bounds.equals === "object" && "variable" in bounds.equals) {
+          if (bounds.equals.variable === type.variable) return "void";
+        }
         const normalized = this.normalize(bounds.equals);
         this.bounds.set(type.variable, { equals: normalized });
         return normalized;
@@ -120,6 +123,24 @@ class Context {
     if (!constraints) this.constraints.set(variable, [constraint]);
     else constraints.push(constraint);
   }
+
+  getFreeTypeVariables() {
+    const variables = new Set<number>();
+    function f(type: Type) {
+      if (typeof type === "object" && "variable" in type) {
+        variables.add(type.variable);
+      }
+      if (typeof type === "object" && "fn" in type) {
+        f(type.fn.arg);
+        f(type.fn.return);
+      }
+    }
+    this.bounds.forEach((bounds) => {
+      assert("equals" in bounds);
+      f(bounds.equals);
+    });
+    return variables;
+  }
 }
 
 // is `a` a subtype of `b`? `a <: b` == true
@@ -174,7 +195,7 @@ const infer = (ast: Tree, context: Context): Type => {
         const returnType = { variable: nextId() };
         const fnType = { fn: { arg: argType, return: returnType } };
         constrain(ast.children[0], context, fnType);
-        console.dir([ast, fnType, context], { depth: null });
+        // console.dir([ast, fnType, context], { depth: null });
 
         return returnType;
       }
@@ -264,6 +285,13 @@ const substituteConstraints = (ast: Tree, context: Context): void => {
 export const inferTypes = (ast: Tree): void => {
   const context = new Context();
   infer(ast, context);
+  context.resolve();
+  const freeTypeVariables = context.getFreeTypeVariables();
+  freeTypeVariables.forEach((variable) => {
+    context.addConstraint(variable, {
+      equals: "unknown",
+    });
+  });
   context.resolve();
   substituteConstraints(ast, context);
   // inferTopTypes(ast, context);
