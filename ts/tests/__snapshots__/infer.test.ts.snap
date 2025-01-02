@@ -1171,7 +1171,28 @@ exports[`compilation > print 1 1`] = `
         {
           "children": [],
           "data": {
-            "type": "void",
+            "type": {
+              "and": [
+                {
+                  "fn": {
+                    "arg": "int",
+                    "return": "void",
+                  },
+                },
+                {
+                  "fn": {
+                    "arg": "float",
+                    "return": "void",
+                  },
+                },
+                {
+                  "fn": {
+                    "arg": "string",
+                    "return": "void",
+                  },
+                },
+              ],
+            },
             "value": "print",
           },
           "type": "name",
@@ -1186,13 +1207,170 @@ exports[`compilation > print 1 1`] = `
         },
       ],
       "data": {
-        "type": "unknown",
+        "type": "void",
       },
       "type": "application",
     },
   ],
   "data": {
-    "type": "unknown",
+    "type": "void",
+  },
+  "type": "script",
+}
+`;
+
+exports[`compilation > print 2 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "type": {
+              "and": [
+                {
+                  "fn": {
+                    "arg": "int",
+                    "return": "void",
+                  },
+                },
+                {
+                  "fn": {
+                    "arg": "float",
+                    "return": "void",
+                  },
+                },
+                {
+                  "fn": {
+                    "arg": "string",
+                    "return": "void",
+                  },
+                },
+              ],
+            },
+            "value": "print",
+          },
+          "type": "name",
+        },
+        {
+          "children": [],
+          "data": {
+            "type": "string",
+            "value": "x",
+          },
+          "type": "string",
+        },
+      ],
+      "data": {
+        "type": "void",
+      },
+      "type": "application",
+    },
+  ],
+  "data": {
+    "type": "void",
+  },
+  "type": "script",
+}
+`;
+
+exports[`compilation > print 3 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "type": {
+              "and": [
+                {
+                  "fn": {
+                    "arg": "int",
+                    "return": "void",
+                  },
+                },
+                {
+                  "fn": {
+                    "arg": "float",
+                    "return": "void",
+                  },
+                },
+                {
+                  "fn": {
+                    "arg": "string",
+                    "return": "void",
+                  },
+                },
+              ],
+            },
+            "value": "print",
+          },
+          "type": "name",
+        },
+        {
+          "children": [],
+          "data": {
+            "type": "int",
+            "value": 1,
+          },
+          "type": "number",
+        },
+      ],
+      "data": {
+        "type": "void",
+      },
+      "type": "application",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "type": {
+              "and": [
+                {
+                  "fn": {
+                    "arg": "int",
+                    "return": "void",
+                  },
+                },
+                {
+                  "fn": {
+                    "arg": "float",
+                    "return": "void",
+                  },
+                },
+                {
+                  "fn": {
+                    "arg": "string",
+                    "return": "void",
+                  },
+                },
+              ],
+            },
+            "value": "print",
+          },
+          "type": "name",
+        },
+        {
+          "children": [],
+          "data": {
+            "type": "string",
+            "value": "x",
+          },
+          "type": "string",
+        },
+      ],
+      "data": {
+        "type": "void",
+      },
+      "type": "application",
+    },
+  ],
+  "data": {
+    "type": "void",
   },
   "type": "script",
 }

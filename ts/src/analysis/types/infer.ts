@@ -19,14 +19,26 @@ type Type =
   | "unit"
   | { atom: string }
   | { variable: number }
-  | { fn: { arg: Type; return: Type } };
+  | { fn: { arg: Type; return: Type } }
+  | { and: Type[] };
 
 type Constraint = { subtype: Type } | { supertype: Type } | { equals: Type };
 type TypeBounds = { supertype: Type; subtype: Type } | { equals: Type };
 class Context {
   constraints: Map<number, Constraint[]> = new Map();
   bounds: Map<number, TypeBounds> = new Map();
-  names: Map<string, Type> = new Map();
+  names: Map<string, Type> = new Map([
+    [
+      "print",
+      {
+        and: [
+          { fn: { arg: "int", return: "void" } },
+          { fn: { arg: "float", return: "void" } },
+          { fn: { arg: "string", return: "void" } },
+        ],
+      } satisfies Type,
+    ],
+  ]);
   constructor() {}
 
   normalize(type: Type): Type {
@@ -47,6 +59,9 @@ class Context {
       const returnType = this.normalize(type.fn.return);
       return { fn: { arg, return: returnType } };
     }
+    if (typeof type === "object" && "and" in type) {
+      return { and: type.and.map((x) => this.normalize(x)) };
+    }
     return type;
   }
 
@@ -55,11 +70,30 @@ class Context {
     const b = this.normalize(_b);
 
     if (a === b) return;
+    if (typeof a === "object" && "and" in a) {
+      if (typeof b === "object" && "and" in b) {
+        a.and.forEach((a1, i) => {
+          this.unify(a1, b.and[i]);
+        });
+        return;
+      }
+    }
     if (typeof a === "object" && "fn" in a) {
       if (typeof b === "object" && "fn" in b) {
         this.unify(a.fn.arg, b.fn.arg);
         this.unify(a.fn.return, b.fn.return);
         return;
+      }
+    }
+    if (typeof a === "object" && "and" in a) {
+      if (typeof b === "object" && "fn" in b) {
+        const arg = b.fn.arg;
+        const overload = a.and.find((t) => typeof t === "object" && "fn" in t && compareTypes(arg, t.fn.arg));
+        console.dir([a, b, overload], { depth: null });
+        if (overload) {
+          this.unify(overload, b);
+          return;
+        }
       }
     }
     if (typeof a === "object" && "variable" in a) {
@@ -148,6 +182,7 @@ class Context {
 const compareTypes = (a: Type, b: Type): boolean => {
   if (b === "unknown") return true;
   if (a === "void") return true;
+  if (a !== b) return false;
   return true;
 };
 

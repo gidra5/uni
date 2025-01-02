@@ -44,7 +44,7 @@ describe("compilation", () => {
   test("int", async () => await testCase(`1`));
   test("two prints", async () => await testCase(`"hello world!"; "hello world 2!"`));
   test("hello world string", async () => await testCase(`"hello world!"`));
-  test.todo("print 1", async () => await testCase(`print 1`));
-  test.todo("print 2", async () => await testCase(`print "x"`));
-  test.todo("print 3", async () => await testCase(`print 1; print "x"`));
+  test("print 1", async () => await testCase(`print 1`));
+  test("print 2", async () => await testCase(`print "x"`));
+  test.only("print 3", async () => await testCase(`print 1; print "x"`));
 });
