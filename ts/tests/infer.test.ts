@@ -28,6 +28,7 @@ const testCase = async (input: string) => {
   const desugared = desugar(ast);
   inferTypes(desugared);
 
+  // expect(ast).toMatchSnapshot();
   expect(clearIds(ast)).toMatchSnapshot();
 };
 
@@ -36,7 +37,7 @@ describe("compilation", () => {
   test.todo("apply", async () => await testCase(`((fn f -> fn x -> f x) fn x -> x) 2`));
   test.todo("wrapper", async () => await testCase(`((fn x -> fn m -> m x) 2) fn x -> x`));
   test.todo("church tuple", async () => await testCase(`((fn x -> fn y -> fn m -> m x y) 1 2) fn x -> fn _ -> x`));
-  test.todo("function closure", async () => await testCase(`(fn x -> fn y -> y + 2 * x) 1 2`));
+  test("function closure", async () => await testCase(`(fn x -> fn y -> y + 2 * x) 1 2`));
   test("function deep closure", async () => await testCase(`(fn x -> fn y -> fn z -> x + y + z) 1 3 5`));
   test("function application and literal", async () => await testCase(`(fn x -> x + x) 2`));
   test("float", async () => await testCase(`1.1`));

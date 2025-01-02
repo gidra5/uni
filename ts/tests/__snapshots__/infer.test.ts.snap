@@ -63,9 +63,7 @@ exports[`compilation > function application and literal 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
-                "return": {
-                  "variable": 35,
-                },
+                "return": "int",
               },
             },
           },
@@ -81,17 +79,148 @@ exports[`compilation > function application and literal 1`] = `
         },
       ],
       "data": {
-        "type": {
-          "variable": 35,
-        },
+        "type": "int",
       },
       "type": "application",
     },
   ],
   "data": {
-    "type": {
-      "variable": 35,
+    "type": "int",
+  },
+  "type": "script",
+}
+`;
+
+exports[`compilation > function closure 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "x",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "y",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {
+                            "type": "int",
+                            "value": "y",
+                          },
+                          "type": "name",
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [],
+                              "data": {
+                                "type": "int",
+                                "value": 2,
+                              },
+                              "type": "number",
+                            },
+                            {
+                              "children": [],
+                              "data": {
+                                "type": "int",
+                                "value": "x",
+                              },
+                              "type": "name",
+                            },
+                          ],
+                          "data": {
+                            "type": "int",
+                          },
+                          "type": "*",
+                        },
+                      ],
+                      "data": {
+                        "type": "int",
+                      },
+                      "type": "add",
+                    },
+                  ],
+                  "data": {
+                    "isTopFunction": true,
+                    "type": {
+                      "fn": {
+                        "arg": "int",
+                        "return": "int",
+                      },
+                    },
+                  },
+                  "type": "func",
+                },
+              ],
+              "data": {
+                "isTopFunction": true,
+                "type": {
+                  "fn": {
+                    "arg": "int",
+                    "return": {
+                      "fn": {
+                        "arg": "int",
+                        "return": "int",
+                      },
+                    },
+                  },
+                },
+              },
+              "type": "func",
+            },
+            {
+              "children": [],
+              "data": {
+                "type": "int",
+                "value": 1,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {
+            "type": {
+              "fn": {
+                "arg": "int",
+                "return": "int",
+              },
+            },
+          },
+          "type": "application",
+        },
+        {
+          "children": [],
+          "data": {
+            "type": "int",
+            "value": 2,
+          },
+          "type": "number",
+        },
+      ],
+      "data": {
+        "type": "int",
+      },
+      "type": "application",
     },
+  ],
+  "data": {
+    "type": "int",
   },
   "type": "script",
 }
@@ -171,9 +300,7 @@ exports[`compilation > function deep closure 1`] = `
                             "type": {
                               "fn": {
                                 "arg": "int",
-                                "return": {
-                                  "variable": 66,
-                                },
+                                "return": "int",
                               },
                             },
                           },
@@ -188,9 +315,7 @@ exports[`compilation > function deep closure 1`] = `
                             "return": {
                               "fn": {
                                 "arg": "int",
-                                "return": {
-                                  "variable": 66,
-                                },
+                                "return": "int",
                               },
                             },
                           },
@@ -210,9 +335,7 @@ exports[`compilation > function deep closure 1`] = `
                             "return": {
                               "fn": {
                                 "arg": "int",
-                                "return": {
-                                  "variable": 66,
-                                },
+                                "return": "int",
                               },
                             },
                           },
@@ -256,17 +379,13 @@ exports[`compilation > function deep closure 1`] = `
         },
       ],
       "data": {
-        "type": {
-          "variable": 66,
-        },
+        "type": "int",
       },
       "type": "application",
     },
   ],
   "data": {
-    "type": {
-      "variable": 66,
-    },
+    "type": "int",
   },
   "type": "script",
 }

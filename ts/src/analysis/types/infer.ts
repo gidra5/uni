@@ -22,60 +22,71 @@ type Type =
   | { fn: { arg: Type; return: Type } };
 
 type Constraint = { subtype: Type } | { supertype: Type } | { equals: Type };
-type TypeBounds = { supertype: Type; subtype: Type };
+type TypeBounds = { supertype: Type; subtype: Type } | { equals: Type };
 class Context {
   constraints: Map<number, Constraint[]> = new Map();
   bounds: Map<number, TypeBounds> = new Map();
   names: Map<string, Type> = new Map();
   constructor() {}
 
+  normalize(type: Type): Type {
+    if (typeof type === "object" && "variable" in type) {
+      const bounds = this.bounds.get(type.variable);
+      if (bounds) {
+        assert("equals" in bounds);
+        return bounds.equals;
+      }
+    }
+    if (typeof type === "object" && "fn" in type) {
+      const arg = this.normalize(type.fn.arg);
+      const returnType = this.normalize(type.fn.return);
+      return { fn: { arg, return: returnType } };
+    }
+    return type;
+  }
+
   resolve() {
-    const types = new Map<number, TypeBounds>();
-    console.log(this.constraints);
+    console.dir(this.constraints, { depth: null });
 
     this.constraints.forEach((constraints, variable) => {
-      const constraint = constraints.find((constraint) => "equals" in constraint);
-      if (!constraint) return;
-      assert("equals" in constraint);
-      const type = constraint.equals;
+      const _constraints = constraints.filter((constraint) => "equals" in constraint);
+      for (const constraint of _constraints) {
+        assert("equals" in constraint);
+        const type = this.normalize(constraint.equals);
 
-      if (!(typeof type === "object" && "variable" in type)) return;
+        if (!(typeof type === "object" && "variable" in type)) continue;
 
-      // variable is exactly equal to another variable `x`
-      // then record type's variable is equal to`x`
-      types.set(variable, { supertype: type, subtype: type });
-      constraints.splice(constraints.indexOf(constraint), 1);
+        // variable is exactly equal to another variable `x`
+        // then record type's variable is equal to`x`
+        this.bounds.set(variable, { equals: type });
+        constraints.splice(constraints.indexOf(constraint), 1);
 
-      // and move all constraints to `x`
-      const otherConstraints = this.constraints.get(type.variable);
-      if (otherConstraints) otherConstraints.push(...constraints);
+        // and move all constraints to `x`
+        const otherConstraints = this.constraints.get(type.variable);
+        if (otherConstraints) otherConstraints.push(...constraints);
+        else this.constraints.set(type.variable, constraints);
 
-      // and remove variable, since it is redundant now
-      this.constraints.delete(variable);
+        // and remove variable, since it is redundant now
+        this.constraints.delete(variable);
+        break;
+      }
     });
 
     this.constraints.forEach((constraints, variable) => {
-      const constraint = constraints.find((constraint) => "subtype" in constraint);
-      if (!constraint) return;
-      assert("subtype" in constraint);
-      const type = constraint.subtype;
+      const _constraints = constraints.filter((constraint) => "equals" in constraint);
+      for (const constraint of _constraints) {
+        assert("equals" in constraint);
+        const type = this.normalize(constraint.equals);
 
-      if (!(typeof type === "object" && "variable" in type)) return;
-
-      // variable is a subtype of another variable `x`
-      // then record type's variable is a supertype of `x`
-      types.set(variable, { supertype: type, subtype: type });
-      constraints.splice(constraints.indexOf(constraint), 1);
-
-      // and move all constraints to `x`
-      const otherConstraints = this.constraints.get(type.variable);
-      if (otherConstraints) otherConstraints.push(...constraints);
-
-      // and remove variable, since it is redundant now
-      this.constraints.delete(variable);
+        this.bounds.set(variable, { equals: type });
+        this.bounds.forEach((element) => {
+          assert("equals" in element);
+          element.equals = this.normalize(element.equals);
+        });
+      }
     });
 
-    console.log(types);
+    console.dir([this.constraints, this.bounds], { depth: null });
   }
 
   addConstraint(variable: number, constraint: Constraint) {
@@ -156,8 +167,7 @@ const infer = (ast: Tree, context: Context): Type => {
         unreachable("cant infer top types");
     }
   })();
-  ast.data.type = type;
-  // context.addConstraint(ast.id, { equals: type });
+  context.addConstraint(ast.id, { equals: type });
   return type;
 };
 
@@ -197,13 +207,14 @@ const constrain = (ast: Tree, context: Context, expectedType: Type): void => {
 
       if (prevNameType) context.names.set(name, prevNameType);
       else context.names.delete(name);
-      ast.data.type = expectedType;
+      context.addConstraint(ast.id, { equals: expectedType });
       return;
     }
     case NodeType.APPLICATION: {
       const argType = infer(ast.children[1], context);
       const fnType = { fn: { arg: argType, return: expectedType } };
       constrain(ast.children[0], context, fnType);
+      context.addConstraint(ast.id, { equals: expectedType });
       return;
     }
   }
@@ -214,7 +225,7 @@ const constrain = (ast: Tree, context: Context, expectedType: Type): void => {
 const substituteConstraints = (ast: Tree, context: Context): void => {
   ast.children.forEach((child) => substituteConstraints(child, context));
   const variable = ast.id;
-  const constraint = context.constraints.get(variable)?.find((constraint) => "equals" in constraint);
+  const constraint = context.bounds.get(variable);
   if (!("type" in ast.data)) {
     if (constraint) {
       assert("equals" in constraint);
