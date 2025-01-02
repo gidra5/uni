@@ -67,7 +67,12 @@ class Builder {
     if ("fn" in type) {
       const arg = this.toLLVMType(type.fn.arg);
       const returnType = this.toLLVMType(type.fn.return);
-      return this.createFunctionType([arg], returnType);
+      const fnType = this.createFunctionType([arg], returnType);
+      if (type.fn.closure.length > 0) {
+        const closureTypes = type.fn.closure.map(({ type }) => this.toLLVMType(type));
+        const closureType = this.createRecordType(closureTypes);
+        return this.createRecordType([closureType, { pointer: fnType }]);
+      }
     }
     if ("atom" in type) return this.createIntType(32);
 

@@ -33,7 +33,7 @@ exports[`compilation > apply 1`] = `
                             "type": {
                               "fn": {
                                 "arg": "int",
-                                "closure": false,
+                                "closure": [],
                                 "return": "int",
                               },
                             },
@@ -61,7 +61,18 @@ exports[`compilation > apply 1`] = `
                     "type": {
                       "fn": {
                         "arg": "int",
-                        "closure": true,
+                        "closure": [
+                          {
+                            "name": "f",
+                            "type": {
+                              "fn": {
+                                "arg": "int",
+                                "closure": [],
+                                "return": "int",
+                              },
+                            },
+                          },
+                        ],
                         "return": "int",
                       },
                     },
@@ -76,15 +87,26 @@ exports[`compilation > apply 1`] = `
                     "arg": {
                       "fn": {
                         "arg": "int",
-                        "closure": false,
+                        "closure": [],
                         "return": "int",
                       },
                     },
-                    "closure": false,
+                    "closure": [],
                     "return": {
                       "fn": {
                         "arg": "int",
-                        "closure": true,
+                        "closure": [
+                          {
+                            "name": "f",
+                            "type": {
+                              "fn": {
+                                "arg": "int",
+                                "closure": [],
+                                "return": "int",
+                              },
+                            },
+                          },
+                        ],
                         "return": "int",
                       },
                     },
@@ -116,7 +138,7 @@ exports[`compilation > apply 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
-                    "closure": false,
+                    "closure": [],
                     "return": "int",
                   },
                 },
@@ -128,7 +150,18 @@ exports[`compilation > apply 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
-                "closure": true,
+                "closure": [
+                  {
+                    "name": "f",
+                    "type": {
+                      "fn": {
+                        "arg": "int",
+                        "closure": [],
+                        "return": "int",
+                      },
+                    },
+                  },
+                ],
                 "return": "int",
               },
             },
@@ -203,11 +236,16 @@ exports[`compilation > church tuple 1`] = `
                                         "type": {
                                           "fn": {
                                             "arg": "int",
-                                            "closure": false,
+                                            "closure": [],
                                             "return": {
                                               "fn": {
                                                 "arg": "int",
-                                                "closure": true,
+                                                "closure": [
+                                                  {
+                                                    "name": "x",
+                                                    "type": "int",
+                                                  },
+                                                ],
                                                 "return": "int",
                                               },
                                             },
@@ -230,7 +268,7 @@ exports[`compilation > church tuple 1`] = `
                                     "type": {
                                       "fn": {
                                         "arg": "int",
-                                        "closure": false,
+                                        "closure": [],
                                         "return": "int",
                                       },
                                     },
@@ -259,17 +297,31 @@ exports[`compilation > church tuple 1`] = `
                                 "arg": {
                                   "fn": {
                                     "arg": "int",
-                                    "closure": false,
+                                    "closure": [],
                                     "return": {
                                       "fn": {
                                         "arg": "int",
-                                        "closure": true,
+                                        "closure": [
+                                          {
+                                            "name": "x",
+                                            "type": "int",
+                                          },
+                                        ],
                                         "return": "int",
                                       },
                                     },
                                   },
                                 },
-                                "closure": true,
+                                "closure": [
+                                  {
+                                    "name": "x",
+                                    "type": "int",
+                                  },
+                                  {
+                                    "name": "y",
+                                    "type": "int",
+                                  },
+                                ],
                                 "return": "int",
                               },
                             },
@@ -282,23 +334,42 @@ exports[`compilation > church tuple 1`] = `
                         "type": {
                           "fn": {
                             "arg": "int",
-                            "closure": true,
+                            "closure": [
+                              {
+                                "name": "x",
+                                "type": "int",
+                              },
+                            ],
                             "return": {
                               "fn": {
                                 "arg": {
                                   "fn": {
                                     "arg": "int",
-                                    "closure": false,
+                                    "closure": [],
                                     "return": {
                                       "fn": {
                                         "arg": "int",
-                                        "closure": true,
+                                        "closure": [
+                                          {
+                                            "name": "x",
+                                            "type": "int",
+                                          },
+                                        ],
                                         "return": "int",
                                       },
                                     },
                                   },
                                 },
-                                "closure": true,
+                                "closure": [
+                                  {
+                                    "name": "x",
+                                    "type": "int",
+                                  },
+                                  {
+                                    "name": "y",
+                                    "type": "int",
+                                  },
+                                ],
                                 "return": "int",
                               },
                             },
@@ -313,27 +384,46 @@ exports[`compilation > church tuple 1`] = `
                     "type": {
                       "fn": {
                         "arg": "int",
-                        "closure": false,
+                        "closure": [],
                         "return": {
                           "fn": {
                             "arg": "int",
-                            "closure": true,
+                            "closure": [
+                              {
+                                "name": "x",
+                                "type": "int",
+                              },
+                            ],
                             "return": {
                               "fn": {
                                 "arg": {
                                   "fn": {
                                     "arg": "int",
-                                    "closure": false,
+                                    "closure": [],
                                     "return": {
                                       "fn": {
                                         "arg": "int",
-                                        "closure": true,
+                                        "closure": [
+                                          {
+                                            "name": "x",
+                                            "type": "int",
+                                          },
+                                        ],
                                         "return": "int",
                                       },
                                     },
                                   },
                                 },
-                                "closure": true,
+                                "closure": [
+                                  {
+                                    "name": "x",
+                                    "type": "int",
+                                  },
+                                  {
+                                    "name": "y",
+                                    "type": "int",
+                                  },
+                                ],
                                 "return": "int",
                               },
                             },
@@ -357,23 +447,42 @@ exports[`compilation > church tuple 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
-                    "closure": true,
+                    "closure": [
+                      {
+                        "name": "x",
+                        "type": "int",
+                      },
+                    ],
                     "return": {
                       "fn": {
                         "arg": {
                           "fn": {
                             "arg": "int",
-                            "closure": false,
+                            "closure": [],
                             "return": {
                               "fn": {
                                 "arg": "int",
-                                "closure": true,
+                                "closure": [
+                                  {
+                                    "name": "x",
+                                    "type": "int",
+                                  },
+                                ],
                                 "return": "int",
                               },
                             },
                           },
                         },
-                        "closure": true,
+                        "closure": [
+                          {
+                            "name": "x",
+                            "type": "int",
+                          },
+                          {
+                            "name": "y",
+                            "type": "int",
+                          },
+                        ],
                         "return": "int",
                       },
                     },
@@ -397,17 +506,31 @@ exports[`compilation > church tuple 1`] = `
                 "arg": {
                   "fn": {
                     "arg": "int",
-                    "closure": false,
+                    "closure": [],
                     "return": {
                       "fn": {
                         "arg": "int",
-                        "closure": true,
+                        "closure": [
+                          {
+                            "name": "x",
+                            "type": "int",
+                          },
+                        ],
                         "return": "int",
                       },
                     },
                   },
                 },
-                "closure": true,
+                "closure": [
+                  {
+                    "name": "x",
+                    "type": "int",
+                  },
+                  {
+                    "name": "y",
+                    "type": "int",
+                  },
+                ],
                 "return": "int",
               },
             },
@@ -444,7 +567,12 @@ exports[`compilation > church tuple 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
-                    "closure": true,
+                    "closure": [
+                      {
+                        "name": "x",
+                        "type": "int",
+                      },
+                    ],
                     "return": "int",
                   },
                 },
@@ -457,11 +585,16 @@ exports[`compilation > church tuple 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
-                "closure": false,
+                "closure": [],
                 "return": {
                   "fn": {
                     "arg": "int",
-                    "closure": true,
+                    "closure": [
+                      {
+                        "name": "x",
+                        "type": "int",
+                      },
+                    ],
                     "return": "int",
                   },
                 },
@@ -528,7 +661,7 @@ exports[`compilation > either 1`] = `
                                     "type": {
                                       "fn": {
                                         "arg": "int",
-                                        "closure": false,
+                                        "closure": [],
                                         "return": "int",
                                       },
                                     },
@@ -558,11 +691,26 @@ exports[`compilation > either 1`] = `
                                 "arg": {
                                   "fn": {
                                     "arg": "unknown",
-                                    "closure": false,
+                                    "closure": [],
                                     "return": "unknown",
                                   },
                                 },
-                                "closure": true,
+                                "closure": [
+                                  {
+                                    "name": "m",
+                                    "type": {
+                                      "fn": {
+                                        "arg": "int",
+                                        "closure": [],
+                                        "return": "int",
+                                      },
+                                    },
+                                  },
+                                  {
+                                    "name": "x",
+                                    "type": "int",
+                                  },
+                                ],
                                 "return": "int",
                               },
                             },
@@ -577,21 +725,41 @@ exports[`compilation > either 1`] = `
                             "arg": {
                               "fn": {
                                 "arg": "int",
-                                "closure": false,
+                                "closure": [],
                                 "return": "int",
                               },
                             },
-                            "closure": true,
+                            "closure": [
+                              {
+                                "name": "x",
+                                "type": "int",
+                              },
+                            ],
                             "return": {
                               "fn": {
                                 "arg": {
                                   "fn": {
                                     "arg": "unknown",
-                                    "closure": false,
+                                    "closure": [],
                                     "return": "unknown",
                                   },
                                 },
-                                "closure": true,
+                                "closure": [
+                                  {
+                                    "name": "m",
+                                    "type": {
+                                      "fn": {
+                                        "arg": "int",
+                                        "closure": [],
+                                        "return": "int",
+                                      },
+                                    },
+                                  },
+                                  {
+                                    "name": "x",
+                                    "type": "int",
+                                  },
+                                ],
                                 "return": "int",
                               },
                             },
@@ -606,27 +774,47 @@ exports[`compilation > either 1`] = `
                     "type": {
                       "fn": {
                         "arg": "int",
-                        "closure": false,
+                        "closure": [],
                         "return": {
                           "fn": {
                             "arg": {
                               "fn": {
                                 "arg": "int",
-                                "closure": false,
+                                "closure": [],
                                 "return": "int",
                               },
                             },
-                            "closure": true,
+                            "closure": [
+                              {
+                                "name": "x",
+                                "type": "int",
+                              },
+                            ],
                             "return": {
                               "fn": {
                                 "arg": {
                                   "fn": {
                                     "arg": "unknown",
-                                    "closure": false,
+                                    "closure": [],
                                     "return": "unknown",
                                   },
                                 },
-                                "closure": true,
+                                "closure": [
+                                  {
+                                    "name": "m",
+                                    "type": {
+                                      "fn": {
+                                        "arg": "int",
+                                        "closure": [],
+                                        "return": "int",
+                                      },
+                                    },
+                                  },
+                                  {
+                                    "name": "x",
+                                    "type": "int",
+                                  },
+                                ],
                                 "return": "int",
                               },
                             },
@@ -652,21 +840,41 @@ exports[`compilation > either 1`] = `
                     "arg": {
                       "fn": {
                         "arg": "int",
-                        "closure": false,
+                        "closure": [],
                         "return": "int",
                       },
                     },
-                    "closure": true,
+                    "closure": [
+                      {
+                        "name": "x",
+                        "type": "int",
+                      },
+                    ],
                     "return": {
                       "fn": {
                         "arg": {
                           "fn": {
                             "arg": "unknown",
-                            "closure": false,
+                            "closure": [],
                             "return": "unknown",
                           },
                         },
-                        "closure": true,
+                        "closure": [
+                          {
+                            "name": "m",
+                            "type": {
+                              "fn": {
+                                "arg": "int",
+                                "closure": [],
+                                "return": "int",
+                              },
+                            },
+                          },
+                          {
+                            "name": "x",
+                            "type": "int",
+                          },
+                        ],
                         "return": "int",
                       },
                     },
@@ -698,7 +906,7 @@ exports[`compilation > either 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
-                    "closure": false,
+                    "closure": [],
                     "return": "int",
                   },
                 },
@@ -712,11 +920,26 @@ exports[`compilation > either 1`] = `
                 "arg": {
                   "fn": {
                     "arg": "unknown",
-                    "closure": false,
+                    "closure": [],
                     "return": "unknown",
                   },
                 },
-                "closure": true,
+                "closure": [
+                  {
+                    "name": "m",
+                    "type": {
+                      "fn": {
+                        "arg": "int",
+                        "closure": [],
+                        "return": "int",
+                      },
+                    },
+                  },
+                  {
+                    "name": "x",
+                    "type": "int",
+                  },
+                ],
                 "return": "int",
               },
             },
@@ -746,7 +969,7 @@ exports[`compilation > either 1`] = `
             "type": {
               "fn": {
                 "arg": "unknown",
-                "closure": false,
+                "closure": [],
                 "return": "unknown",
               },
             },
@@ -830,7 +1053,7 @@ exports[`compilation > function application and literal 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
-                "closure": false,
+                "closure": [],
                 "return": "int",
               },
             },
@@ -870,7 +1093,7 @@ exports[`compilation > function application and literal print 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
-                "closure": false,
+                "closure": [],
                 "return": "void",
               },
             },
@@ -919,7 +1142,7 @@ exports[`compilation > function application and literal print 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
-                    "closure": false,
+                    "closure": [],
                     "return": "int",
                   },
                 },
@@ -1025,7 +1248,12 @@ exports[`compilation > function closure 1`] = `
                     "type": {
                       "fn": {
                         "arg": "int",
-                        "closure": true,
+                        "closure": [
+                          {
+                            "name": "x",
+                            "type": "int",
+                          },
+                        ],
                         "return": "int",
                       },
                     },
@@ -1038,11 +1266,16 @@ exports[`compilation > function closure 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
-                    "closure": false,
+                    "closure": [],
                     "return": {
                       "fn": {
                         "arg": "int",
-                        "closure": true,
+                        "closure": [
+                          {
+                            "name": "x",
+                            "type": "int",
+                          },
+                        ],
                         "return": "int",
                       },
                     },
@@ -1064,7 +1297,12 @@ exports[`compilation > function closure 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
-                "closure": true,
+                "closure": [
+                  {
+                    "name": "x",
+                    "type": "int",
+                  },
+                ],
                 "return": "int",
               },
             },
@@ -1167,7 +1405,16 @@ exports[`compilation > function deep closure 1`] = `
                             "type": {
                               "fn": {
                                 "arg": "int",
-                                "closure": true,
+                                "closure": [
+                                  {
+                                    "name": "x",
+                                    "type": "int",
+                                  },
+                                  {
+                                    "name": "y",
+                                    "type": "int",
+                                  },
+                                ],
                                 "return": "int",
                               },
                             },
@@ -1180,11 +1427,25 @@ exports[`compilation > function deep closure 1`] = `
                         "type": {
                           "fn": {
                             "arg": "int",
-                            "closure": true,
+                            "closure": [
+                              {
+                                "name": "x",
+                                "type": "int",
+                              },
+                            ],
                             "return": {
                               "fn": {
                                 "arg": "int",
-                                "closure": true,
+                                "closure": [
+                                  {
+                                    "name": "x",
+                                    "type": "int",
+                                  },
+                                  {
+                                    "name": "y",
+                                    "type": "int",
+                                  },
+                                ],
                                 "return": "int",
                               },
                             },
@@ -1199,15 +1460,29 @@ exports[`compilation > function deep closure 1`] = `
                     "type": {
                       "fn": {
                         "arg": "int",
-                        "closure": false,
+                        "closure": [],
                         "return": {
                           "fn": {
                             "arg": "int",
-                            "closure": true,
+                            "closure": [
+                              {
+                                "name": "x",
+                                "type": "int",
+                              },
+                            ],
                             "return": {
                               "fn": {
                                 "arg": "int",
-                                "closure": true,
+                                "closure": [
+                                  {
+                                    "name": "x",
+                                    "type": "int",
+                                  },
+                                  {
+                                    "name": "y",
+                                    "type": "int",
+                                  },
+                                ],
                                 "return": "int",
                               },
                             },
@@ -1231,11 +1506,25 @@ exports[`compilation > function deep closure 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
-                    "closure": true,
+                    "closure": [
+                      {
+                        "name": "x",
+                        "type": "int",
+                      },
+                    ],
                     "return": {
                       "fn": {
                         "arg": "int",
-                        "closure": true,
+                        "closure": [
+                          {
+                            "name": "x",
+                            "type": "int",
+                          },
+                          {
+                            "name": "y",
+                            "type": "int",
+                          },
+                        ],
                         "return": "int",
                       },
                     },
@@ -1257,7 +1546,16 @@ exports[`compilation > function deep closure 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
-                "closure": true,
+                "closure": [
+                  {
+                    "name": "x",
+                    "type": "int",
+                  },
+                  {
+                    "name": "y",
+                    "type": "int",
+                  },
+                ],
                 "return": "int",
               },
             },
@@ -1335,7 +1633,7 @@ exports[`compilation > print 1 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
-                "closure": false,
+                "closure": [],
                 "return": "void",
               },
             },
@@ -1376,7 +1674,7 @@ exports[`compilation > print 2 1`] = `
             "type": {
               "fn": {
                 "arg": "string",
-                "closure": false,
+                "closure": [],
                 "return": "void",
               },
             },
@@ -1417,7 +1715,7 @@ exports[`compilation > print 3 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
-                "closure": false,
+                "closure": [],
                 "return": "void",
               },
             },
@@ -1447,7 +1745,7 @@ exports[`compilation > print 3 1`] = `
             "type": {
               "fn": {
                 "arg": "string",
-                "closure": false,
+                "closure": [],
                 "return": "void",
               },
             },
@@ -1537,7 +1835,7 @@ exports[`compilation > wrapper 1`] = `
                             "type": {
                               "fn": {
                                 "arg": "int",
-                                "closure": false,
+                                "closure": [],
                                 "return": "int",
                               },
                             },
@@ -1567,11 +1865,16 @@ exports[`compilation > wrapper 1`] = `
                         "arg": {
                           "fn": {
                             "arg": "int",
-                            "closure": false,
+                            "closure": [],
                             "return": "int",
                           },
                         },
-                        "closure": true,
+                        "closure": [
+                          {
+                            "name": "x",
+                            "type": "int",
+                          },
+                        ],
                         "return": "int",
                       },
                     },
@@ -1584,17 +1887,22 @@ exports[`compilation > wrapper 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
-                    "closure": false,
+                    "closure": [],
                     "return": {
                       "fn": {
                         "arg": {
                           "fn": {
                             "arg": "int",
-                            "closure": false,
+                            "closure": [],
                             "return": "int",
                           },
                         },
-                        "closure": true,
+                        "closure": [
+                          {
+                            "name": "x",
+                            "type": "int",
+                          },
+                        ],
                         "return": "int",
                       },
                     },
@@ -1618,11 +1926,16 @@ exports[`compilation > wrapper 1`] = `
                 "arg": {
                   "fn": {
                     "arg": "int",
-                    "closure": false,
+                    "closure": [],
                     "return": "int",
                   },
                 },
-                "closure": true,
+                "closure": [
+                  {
+                    "name": "x",
+                    "type": "int",
+                  },
+                ],
                 "return": "int",
               },
             },
@@ -1652,7 +1965,7 @@ exports[`compilation > wrapper 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
-                "closure": false,
+                "closure": [],
                 "return": "int",
               },
             },

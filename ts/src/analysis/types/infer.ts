@@ -19,7 +19,7 @@ export type Type =
   | "unit"
   | { atom: string }
   | { variable: number }
-  | { fn: { arg: Type; return: Type; closure: boolean } }
+  | { fn: { arg: Type; return: Type; closure: { name: string; type: Type }[] } }
   | { and: Type[] };
 
 type Constraint = { subtype: Type } | { supertype: Type } | { equals: Type };
@@ -32,9 +32,9 @@ class Context {
       "print",
       {
         and: [
-          { fn: { arg: "int", return: "void", closure: false } },
-          { fn: { arg: "float", return: "void", closure: false } },
-          { fn: { arg: "string", return: "void", closure: false } },
+          { fn: { arg: "int", return: "void", closure: [] } },
+          { fn: { arg: "float", return: "void", closure: [] } },
+          { fn: { arg: "string", return: "void", closure: [] } },
         ],
       } satisfies Type,
     ],
@@ -57,7 +57,8 @@ class Context {
     if (typeof type === "object" && "fn" in type) {
       const arg = this.normalize(type.fn.arg);
       const returnType = this.normalize(type.fn.return);
-      return { fn: { arg, return: returnType, closure: type.fn.closure } };
+      const closure = type.fn.closure.map(({ name, type }) => ({ name, type: this.normalize(type) }));
+      return { fn: { arg, return: returnType, closure } };
     }
     if (typeof type === "object" && "and" in type) {
       return { and: type.and.map((x) => this.normalize(x)) };
@@ -82,6 +83,15 @@ class Context {
       if (typeof b === "object" && "fn" in b) {
         this.unify(a.fn.arg, b.fn.arg);
         this.unify(a.fn.return, b.fn.return);
+        if (a.fn.closure.length === b.fn.closure.length) {
+          a.fn.closure.forEach(({ type }, i) => {
+            const closureA = this.normalize(type);
+            const closureB = this.normalize(b.fn.closure[i].type);
+            this.unify(closureA, closureB);
+          });
+        } else {
+          console.dir([a.fn.closure, b.fn.closure], { depth: null });
+        }
         return;
       }
     }
@@ -114,8 +124,8 @@ class Context {
       return;
     }
 
-    console.dir([this.constraints, this.bounds], { depth: null });
-    console.dir([a, b], { depth: null });
+    // console.dir([this.constraints, this.bounds], { depth: null });
+    // console.dir([a, b], { depth: null });
     unreachable("cant unify");
   }
 
@@ -165,7 +175,7 @@ class Context {
   }
 
   resolveAll() {
-    console.dir(this.constraints, { depth: null });
+    // console.dir(this.constraints, { depth: null });
     this.preresolve();
     this.resolveConstraints();
     this.resolveConstraints();
@@ -176,7 +186,7 @@ class Context {
       });
     });
     this.resolveConstraints();
-    console.dir([this.constraints, this.bounds], { depth: null });
+    // console.dir([this.constraints, this.bounds], { depth: null });
   }
 
   addConstraint(variable: number, constraint: Constraint) {
@@ -274,13 +284,14 @@ const infer = (ast: Tree, context: Context): Type => {
         if (prevNameType) context.names.set(name, prevNameType);
         else context.names.delete(name);
 
-        return { fn: { arg: argType, return: returnType, closure: freeVars.length > 0 } };
+        const closure = freeVars.map((name) => ({ name, type: context.names.get(name)! }));
+        return { fn: { arg: argType, return: returnType, closure } };
       }
       case NodeType.DELIMITED_APPLICATION:
       case NodeType.APPLICATION: {
         const argType = infer(ast.children[1], context);
         const returnType = { variable: nextId() };
-        const fnType = { fn: { arg: argType, return: returnType, closure: false } };
+        const fnType = { fn: { arg: argType, return: returnType, closure: [] } };
         constrain(ast.children[0], context, fnType);
         // console.dir([ast, fnType, context], { depth: null });
 
@@ -342,13 +353,14 @@ const constrain = (ast: Tree, context: Context, expectedType: Type): void => {
 
       if (prevNameType) context.names.set(name, prevNameType);
       else context.names.delete(name);
-      expectedType.fn.closure = freeVars.length > 0;
+      const closure = freeVars.map((name) => ({ name, type: context.names.get(name)! }));
+      expectedType.fn.closure = closure;
       context.addConstraint(ast.id, { equals: expectedType });
       return;
     }
     case NodeType.APPLICATION: {
       const argType = infer(ast.children[1], context);
-      const fnType = { fn: { arg: argType, return: expectedType, closure: false } };
+      const fnType = { fn: { arg: argType, return: expectedType, closure: [] } };
       constrain(ast.children[0], context, fnType);
       context.addConstraint(ast.id, { equals: expectedType });
       return;
