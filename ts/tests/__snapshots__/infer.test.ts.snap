@@ -1,5 +1,307 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`compilation > church tuple 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "x",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {
+                            "value": "y",
+                          },
+                          "type": "name",
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [],
+                              "data": {
+                                "value": "m",
+                              },
+                              "type": "name",
+                            },
+                            {
+                              "children": [
+                                {
+                                  "children": [
+                                    {
+                                      "children": [],
+                                      "data": {
+                                        "type": {
+                                          "fn": {
+                                            "arg": "int",
+                                            "return": {
+                                              "fn": {
+                                                "arg": "int",
+                                                "return": "int",
+                                              },
+                                            },
+                                          },
+                                        },
+                                        "value": "m",
+                                      },
+                                      "type": "name",
+                                    },
+                                    {
+                                      "children": [],
+                                      "data": {
+                                        "type": "int",
+                                        "value": "x",
+                                      },
+                                      "type": "name",
+                                    },
+                                  ],
+                                  "data": {
+                                    "type": {
+                                      "fn": {
+                                        "arg": "int",
+                                        "return": "int",
+                                      },
+                                    },
+                                  },
+                                  "type": "application",
+                                },
+                                {
+                                  "children": [],
+                                  "data": {
+                                    "type": "int",
+                                    "value": "y",
+                                  },
+                                  "type": "name",
+                                },
+                              ],
+                              "data": {
+                                "type": "int",
+                              },
+                              "type": "application",
+                            },
+                          ],
+                          "data": {
+                            "isTopFunction": true,
+                            "type": {
+                              "fn": {
+                                "arg": {
+                                  "fn": {
+                                    "arg": "int",
+                                    "return": {
+                                      "fn": {
+                                        "arg": "int",
+                                        "return": "int",
+                                      },
+                                    },
+                                  },
+                                },
+                                "return": "int",
+                              },
+                            },
+                          },
+                          "type": "func",
+                        },
+                      ],
+                      "data": {
+                        "isTopFunction": true,
+                        "type": {
+                          "fn": {
+                            "arg": "int",
+                            "return": {
+                              "fn": {
+                                "arg": {
+                                  "fn": {
+                                    "arg": "int",
+                                    "return": {
+                                      "fn": {
+                                        "arg": "int",
+                                        "return": "int",
+                                      },
+                                    },
+                                  },
+                                },
+                                "return": "int",
+                              },
+                            },
+                          },
+                        },
+                      },
+                      "type": "func",
+                    },
+                  ],
+                  "data": {
+                    "isTopFunction": true,
+                    "type": {
+                      "fn": {
+                        "arg": "int",
+                        "return": {
+                          "fn": {
+                            "arg": "int",
+                            "return": {
+                              "fn": {
+                                "arg": {
+                                  "fn": {
+                                    "arg": "int",
+                                    "return": {
+                                      "fn": {
+                                        "arg": "int",
+                                        "return": "int",
+                                      },
+                                    },
+                                  },
+                                },
+                                "return": "int",
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  "type": "func",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "type": "int",
+                    "value": 1,
+                  },
+                  "type": "number",
+                },
+              ],
+              "data": {
+                "type": {
+                  "fn": {
+                    "arg": "int",
+                    "return": {
+                      "fn": {
+                        "arg": {
+                          "fn": {
+                            "arg": "int",
+                            "return": {
+                              "fn": {
+                                "arg": "int",
+                                "return": "int",
+                              },
+                            },
+                          },
+                        },
+                        "return": "int",
+                      },
+                    },
+                  },
+                },
+              },
+              "type": "application",
+            },
+            {
+              "children": [],
+              "data": {
+                "type": "int",
+                "value": 2,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {
+            "type": {
+              "fn": {
+                "arg": {
+                  "fn": {
+                    "arg": "int",
+                    "return": {
+                      "fn": {
+                        "arg": "int",
+                        "return": "int",
+                      },
+                    },
+                  },
+                },
+                "return": "int",
+              },
+            },
+          },
+          "type": "application",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "type": "placeholder",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "type": "int",
+                    "value": "x",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {
+                "isTopFunction": true,
+                "type": {
+                  "fn": {
+                    "arg": "int",
+                    "return": "int",
+                  },
+                },
+              },
+              "type": "func",
+            },
+          ],
+          "data": {
+            "isTopFunction": true,
+            "type": {
+              "fn": {
+                "arg": "int",
+                "return": {
+                  "fn": {
+                    "arg": "int",
+                    "return": "int",
+                  },
+                },
+              },
+            },
+          },
+          "type": "func",
+        },
+      ],
+      "data": {
+        "type": "int",
+      },
+      "type": "application",
+    },
+  ],
+  "data": {
+    "type": "int",
+  },
+  "type": "script",
+}
+`;
+
 exports[`compilation > float 1`] = `
 {
   "children": [

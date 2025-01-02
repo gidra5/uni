@@ -34,7 +34,9 @@ class Context {
       const bounds = this.bounds.get(type.variable);
       if (bounds) {
         assert("equals" in bounds);
-        return bounds.equals;
+        const normalized = this.normalize(bounds.equals);
+        this.bounds.set(type.variable, { equals: normalized });
+        return normalized;
       }
     }
     if (typeof type === "object" && "fn" in type) {
@@ -45,8 +47,34 @@ class Context {
     return type;
   }
 
+  unify(_a: Type, _b: Type): void {
+    const a = this.normalize(_a);
+    const b = this.normalize(_b);
+
+    if (a === b) return;
+    if (typeof a === "object" && "fn" in a) {
+      if (typeof b === "object" && "fn" in b) {
+        this.unify(a.fn.arg, b.fn.arg);
+        this.unify(a.fn.return, b.fn.return);
+        return;
+      }
+    }
+    if (typeof a === "object" && "variable" in a) {
+      this.bounds.set(a.variable, { equals: b });
+      return;
+    }
+    if (typeof b === "object" && "variable" in b) {
+      this.bounds.set(b.variable, { equals: a });
+      return;
+    }
+
+    // console.dir([this.constraints, this.bounds], { depth: null });
+    // console.dir([a, b], { depth: null });
+    unreachable("cant unify");
+  }
+
   resolve() {
-    console.dir(this.constraints, { depth: null });
+    // console.dir(this.constraints, { depth: null });
 
     this.constraints.forEach((constraints, variable) => {
       const _constraints = constraints.filter((constraint) => "equals" in constraint);
@@ -76,9 +104,7 @@ class Context {
       const _constraints = constraints.filter((constraint) => "equals" in constraint);
       for (const constraint of _constraints) {
         assert("equals" in constraint);
-        const type = this.normalize(constraint.equals);
-
-        this.bounds.set(variable, { equals: type });
+        this.unify({ variable }, constraint.equals);
         this.bounds.forEach((element) => {
           assert("equals" in element);
           element.equals = this.normalize(element.equals);
@@ -86,7 +112,7 @@ class Context {
       }
     });
 
-    console.dir([this.constraints, this.bounds], { depth: null });
+    // console.dir([this.constraints, this.bounds], { depth: null });
   }
 
   addConstraint(variable: number, constraint: Constraint) {
