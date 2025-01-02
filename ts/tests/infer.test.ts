@@ -46,5 +46,6 @@ describe("compilation", () => {
   test("hello world string", async () => await testCase(`"hello world!"`));
   test("print 1", async () => await testCase(`print 1`));
   test("print 2", async () => await testCase(`print "x"`));
-  test.only("print 3", async () => await testCase(`print 1; print "x"`));
+  test("print 3", async () => await testCase(`print 1; print "x"`));
+  test("function application and literal print", async () => await testCase(`print((fn x -> x + x) 2)`));
 });

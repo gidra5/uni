@@ -7,6 +7,7 @@ import { exec } from "child_process";
 import { Injectable, register } from "../src/utils/injector";
 import { FileMap } from "codespan-napi";
 import { inferTypes } from "../src/analysis/types/infer";
+import { desugar } from "../src/analysis/desugar";
 
 const passes = [
   "adce",
@@ -123,8 +124,9 @@ beforeEach(() => {
 const testCase = async (src: string) => {
   const tokens = parseTokenGroups(src);
   const ast = parseScript(tokens);
-  inferTypes(ast);
-  const compiled = generateLLVMCode(ast);
+  const desugared = desugar(ast);
+  inferTypes(desugared);
+  const compiled = generateLLVMCode(desugared);
   expect(compiled).toMatchSnapshot("compiled");
 
   // const optimized: any[] = [];
@@ -169,13 +171,10 @@ describe("compilation", () => {
         ((fn x -> fn m -> m x) 2) fn x -> x  
       )`)
   );
-  test.todo(
-    "church tuple",
-    async () =>
-      await testCase(`print(
-      ((fn x -> fn y -> fn m -> m x y) 1 2) fn x -> fn _ -> x 
-    )`)
-  );
+  test.only("church tuple", async () =>
+    await testCase(`print(
+        ((fn x -> fn y -> fn m -> m x y) 1 2) fn x -> fn _ -> x 
+      )`));
   test("function closure", async () => await testCase(`print((fn x -> fn y -> y + 2 * x) 1 2)`));
   test("function deep closure", async () => await testCase(`print((fn x -> fn y -> fn z -> x + y + z) 1 3 5)`));
   test("function application and literal print", async () => await testCase(`print((fn x -> x + x) 2)`));

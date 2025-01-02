@@ -1,26 +1,26 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`compilation > function application and literal print > compiled 1`] = `
-"@const_56 = constant [4 x i8] c"%i
+"@const_58 = constant [4 x i8] c"%i
 \\00"
-@const_61 = constant i32 2
+@const_63 = constant i32 2
 define i32 @main() {
   main: 
-    %var_62 = load i32, ptr @const_61
-    %var_63 = call i32 @fn_58(i32 %var_62)
-    %var_64 = call i32 @printInt(i32 %var_63)
+    %var_64 = load i32, ptr @const_63
+    %var_65 = call i32 @fn_60(i32 %var_64)
+    %var_66 = call i32 @printInt(i32 %var_65)
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
-define i32 @printInt(i32 %var_55) {
+define i32 @printInt(i32 %var_57) {
   entry: 
-    %var_57 = call i32 @printf(i8* @const_56, i32 %var_55)
-    ret i32 %var_57
+    %var_59 = call i32 @printf(i8* @const_58, i32 %var_57)
+    ret i32 %var_59
 }
-define i32 @fn_58(i32 %var_59) {
+define i32 @fn_60(i32 %var_61) {
   entry: 
-    %var_60 = add i32 %var_59, %var_59
-    ret i32 %var_60
+    %var_62 = add i32 %var_61, %var_61
+    ret i32 %var_62
 }
 "
 `;
@@ -35,50 +35,50 @@ exports[`compilation > function application and literal print > stdout 1`] = `
 `;
 
 exports[`compilation > function closure > compiled 1`] = `
-"@const_74 = constant [4 x i8] c"%i
+"@const_76 = constant [4 x i8] c"%i
 \\00"
-@const_85 = constant i32 2
-@const_94 = constant i32 1
+@const_87 = constant i32 2
+@const_96 = constant i32 1
 define i32 @main() {
   main: 
-    %var_95 = load i32, ptr @const_94
-    %var_96 = alloca { { i32 }, i32 ({ i32 }, i32)* }
-    call void @fn_76({ { i32 }, i32 ({ i32 }, i32)* }* %var_96, i32 %var_95)
-    %var_97 = load { { i32 }, i32 ({ i32 }, i32)* }, ptr %var_96
-    %var_98 = extractvalue { { i32 }, i32 ({ i32 }, i32)* } %var_97, 0
-    %var_99 = extractvalue { { i32 }, i32 ({ i32 }, i32)* } %var_97, 1
-    %var_100 = load i32, ptr @const_85
-    %var_101 = call i32 %var_99({ i32 } %var_98, i32 %var_100)
-    %var_102 = call i32 @printInt(i32 %var_101)
+    %var_97 = load i32, ptr @const_96
+    %var_98 = alloca { { i32 }, i32 ({ i32 }, i32)* }
+    call void @fn_78({ { i32 }, i32 ({ i32 }, i32)* }* %var_98, i32 %var_97)
+    %var_99 = load { { i32 }, i32 ({ i32 }, i32)* }, ptr %var_98
+    %var_100 = extractvalue { { i32 }, i32 ({ i32 }, i32)* } %var_99, 0
+    %var_101 = extractvalue { { i32 }, i32 ({ i32 }, i32)* } %var_99, 1
+    %var_102 = load i32, ptr @const_87
+    %var_103 = call i32 %var_101({ i32 } %var_100, i32 %var_102)
+    %var_104 = call i32 @printInt(i32 %var_103)
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
-define i32 @printInt(i32 %var_73) {
+define i32 @printInt(i32 %var_75) {
   entry: 
-    %var_75 = call i32 @printf(i8* @const_74, i32 %var_73)
-    ret i32 %var_75
+    %var_77 = call i32 @printf(i8* @const_76, i32 %var_75)
+    ret i32 %var_77
 }
-define void @fn_76(ptr sret({ { i32 }, i32 ({ i32 }, i32)* }) %var_93, i32 %var_77) {
+define void @fn_78(ptr sret({ { i32 }, i32 ({ i32 }, i32)* }) %var_95, i32 %var_79) {
   entry: 
-    %var_79 = alloca { i32 }
-    %var_80 = load { i32 }, ptr %var_79
-    %var_81 = insertvalue { i32 } %var_80, i32 %var_77, 0
-    store { i32 } %var_81, ptr %var_79
-    %var_89 = alloca { { i32 }, i32 ({ i32 }, i32)* }
-    %var_90 = load { { i32 }, i32 ({ i32 }, i32)* }, ptr %var_89
-    %var_91 = insertvalue { { i32 }, i32 ({ i32 }, i32)* } %var_90, { i32 } %var_81, 0
-    %var_92 = insertvalue { { i32 }, i32 ({ i32 }, i32)* } %var_91, i32 ({ i32 }, i32)* @fn_78, 1
-    store { { i32 }, i32 ({ i32 }, i32)* } %var_92, ptr %var_89
-    store { { i32 }, i32 ({ i32 }, i32)* } %var_92, ptr %var_93
+    %var_81 = alloca { i32 }
+    %var_82 = load { i32 }, ptr %var_81
+    %var_83 = insertvalue { i32 } %var_82, i32 %var_79, 0
+    store { i32 } %var_83, ptr %var_81
+    %var_91 = alloca { { i32 }, i32 ({ i32 }, i32)* }
+    %var_92 = load { { i32 }, i32 ({ i32 }, i32)* }, ptr %var_91
+    %var_93 = insertvalue { { i32 }, i32 ({ i32 }, i32)* } %var_92, { i32 } %var_83, 0
+    %var_94 = insertvalue { { i32 }, i32 ({ i32 }, i32)* } %var_93, i32 ({ i32 }, i32)* @fn_80, 1
+    store { { i32 }, i32 ({ i32 }, i32)* } %var_94, ptr %var_91
+    store { { i32 }, i32 ({ i32 }, i32)* } %var_94, ptr %var_95
     ret void
 }
-define i32 @fn_78({ i32 } %var_82, i32 %var_83) {
+define i32 @fn_80({ i32 } %var_84, i32 %var_85) {
   entry: 
-    %var_84 = extractvalue { i32 } %var_82, 0
-    %var_86 = load i32, ptr @const_85
-    %var_87 = mul i32 %var_86, %var_84
-    %var_88 = add i32 %var_83, %var_87
-    ret i32 %var_88
+    %var_86 = extractvalue { i32 } %var_84, 0
+    %var_88 = load i32, ptr @const_87
+    %var_89 = mul i32 %var_88, %var_86
+    %var_90 = add i32 %var_85, %var_89
+    ret i32 %var_90
 }
 "
 `;
@@ -93,73 +93,73 @@ exports[`compilation > function closure > stdout 1`] = `
 `;
 
 exports[`compilation > function deep closure > compiled 1`] = `
-"@const_91 = constant [4 x i8] c"%i
+"@const_93 = constant [4 x i8] c"%i
 \\00"
-@const_123 = constant i32 1
-@const_127 = constant i32 3
-@const_133 = constant i32 5
+@const_125 = constant i32 1
+@const_129 = constant i32 3
+@const_135 = constant i32 5
 define i32 @main() {
   main: 
-    %var_124 = load i32, ptr @const_123
-    %var_125 = alloca { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* }
-    call void @fn_93({ { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* }* %var_125, i32 %var_124)
-    %var_126 = load { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* }, ptr %var_125
-    %var_128 = extractvalue { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* } %var_126, 0
-    %var_129 = extractvalue { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* } %var_126, 1
-    %var_130 = load i32, ptr @const_127
-    %var_131 = alloca { { i32, i32 }, i32 ({ i32, i32 }, i32)* }
-    call void %var_129({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }* %var_131, { i32 } %var_128, i32 %var_130)
-    %var_132 = load { { i32, i32 }, i32 ({ i32, i32 }, i32)* }, ptr %var_131
-    %var_134 = extractvalue { { i32, i32 }, i32 ({ i32, i32 }, i32)* } %var_132, 0
-    %var_135 = extractvalue { { i32, i32 }, i32 ({ i32, i32 }, i32)* } %var_132, 1
-    %var_136 = load i32, ptr @const_133
-    %var_137 = call i32 %var_135({ i32, i32 } %var_134, i32 %var_136)
-    %var_138 = call i32 @printInt(i32 %var_137)
+    %var_126 = load i32, ptr @const_125
+    %var_127 = alloca { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* }
+    call void @fn_95({ { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* }* %var_127, i32 %var_126)
+    %var_128 = load { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* }, ptr %var_127
+    %var_130 = extractvalue { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* } %var_128, 0
+    %var_131 = extractvalue { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* } %var_128, 1
+    %var_132 = load i32, ptr @const_129
+    %var_133 = alloca { { i32, i32 }, i32 ({ i32, i32 }, i32)* }
+    call void %var_131({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }* %var_133, { i32 } %var_130, i32 %var_132)
+    %var_134 = load { { i32, i32 }, i32 ({ i32, i32 }, i32)* }, ptr %var_133
+    %var_136 = extractvalue { { i32, i32 }, i32 ({ i32, i32 }, i32)* } %var_134, 0
+    %var_137 = extractvalue { { i32, i32 }, i32 ({ i32, i32 }, i32)* } %var_134, 1
+    %var_138 = load i32, ptr @const_135
+    %var_139 = call i32 %var_137({ i32, i32 } %var_136, i32 %var_138)
+    %var_140 = call i32 @printInt(i32 %var_139)
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
-define i32 @printInt(i32 %var_90) {
+define i32 @printInt(i32 %var_92) {
   entry: 
-    %var_92 = call i32 @printf(i8* @const_91, i32 %var_90)
-    ret i32 %var_92
+    %var_94 = call i32 @printf(i8* @const_93, i32 %var_92)
+    ret i32 %var_94
 }
-define void @fn_93(ptr sret({ { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* }) %var_122, i32 %var_94) {
+define void @fn_95(ptr sret({ { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* }) %var_124, i32 %var_96) {
   entry: 
-    %var_96 = alloca { i32 }
-    %var_97 = load { i32 }, ptr %var_96
-    %var_98 = insertvalue { i32 } %var_97, i32 %var_94, 0
-    store { i32 } %var_98, ptr %var_96
-    %var_118 = alloca { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* }
-    %var_119 = load { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* }, ptr %var_118
-    %var_120 = insertvalue { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* } %var_119, { i32 } %var_98, 0
-    %var_121 = insertvalue { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* } %var_120, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* @fn_95, 1
-    store { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* } %var_121, ptr %var_118
-    store { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* } %var_121, ptr %var_122
+    %var_98 = alloca { i32 }
+    %var_99 = load { i32 }, ptr %var_98
+    %var_100 = insertvalue { i32 } %var_99, i32 %var_96, 0
+    store { i32 } %var_100, ptr %var_98
+    %var_120 = alloca { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* }
+    %var_121 = load { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* }, ptr %var_120
+    %var_122 = insertvalue { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* } %var_121, { i32 } %var_100, 0
+    %var_123 = insertvalue { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* } %var_122, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* @fn_97, 1
+    store { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* } %var_123, ptr %var_120
+    store { { i32 }, void ({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }*, { i32 }, i32)* } %var_123, ptr %var_124
     ret void
 }
-define void @fn_95(ptr sret({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }) %var_117, { i32 } %var_99, i32 %var_100) {
+define void @fn_97(ptr sret({ { i32, i32 }, i32 ({ i32, i32 }, i32)* }) %var_119, { i32 } %var_101, i32 %var_102) {
   entry: 
-    %var_101 = extractvalue { i32 } %var_99, 0
-    %var_103 = alloca { i32, i32 }
-    %var_104 = load { i32, i32 }, ptr %var_103
-    %var_105 = insertvalue { i32, i32 } %var_104, i32 %var_101, 0
-    %var_106 = insertvalue { i32, i32 } %var_105, i32 %var_100, 1
-    store { i32, i32 } %var_106, ptr %var_103
-    %var_113 = alloca { { i32, i32 }, i32 ({ i32, i32 }, i32)* }
-    %var_114 = load { { i32, i32 }, i32 ({ i32, i32 }, i32)* }, ptr %var_113
-    %var_115 = insertvalue { { i32, i32 }, i32 ({ i32, i32 }, i32)* } %var_114, { i32, i32 } %var_106, 0
-    %var_116 = insertvalue { { i32, i32 }, i32 ({ i32, i32 }, i32)* } %var_115, i32 ({ i32, i32 }, i32)* @fn_102, 1
-    store { { i32, i32 }, i32 ({ i32, i32 }, i32)* } %var_116, ptr %var_113
-    store { { i32, i32 }, i32 ({ i32, i32 }, i32)* } %var_116, ptr %var_117
+    %var_103 = extractvalue { i32 } %var_101, 0
+    %var_105 = alloca { i32, i32 }
+    %var_106 = load { i32, i32 }, ptr %var_105
+    %var_107 = insertvalue { i32, i32 } %var_106, i32 %var_103, 0
+    %var_108 = insertvalue { i32, i32 } %var_107, i32 %var_102, 1
+    store { i32, i32 } %var_108, ptr %var_105
+    %var_115 = alloca { { i32, i32 }, i32 ({ i32, i32 }, i32)* }
+    %var_116 = load { { i32, i32 }, i32 ({ i32, i32 }, i32)* }, ptr %var_115
+    %var_117 = insertvalue { { i32, i32 }, i32 ({ i32, i32 }, i32)* } %var_116, { i32, i32 } %var_108, 0
+    %var_118 = insertvalue { { i32, i32 }, i32 ({ i32, i32 }, i32)* } %var_117, i32 ({ i32, i32 }, i32)* @fn_104, 1
+    store { { i32, i32 }, i32 ({ i32, i32 }, i32)* } %var_118, ptr %var_115
+    store { { i32, i32 }, i32 ({ i32, i32 }, i32)* } %var_118, ptr %var_119
     ret void
 }
-define i32 @fn_102({ i32, i32 } %var_107, i32 %var_108) {
+define i32 @fn_104({ i32, i32 } %var_109, i32 %var_110) {
   entry: 
-    %var_109 = extractvalue { i32, i32 } %var_107, 0
-    %var_110 = extractvalue { i32, i32 } %var_107, 1
-    %var_111 = add i32 %var_109, %var_110
-    %var_112 = add i32 %var_111, %var_108
-    ret i32 %var_112
+    %var_111 = extractvalue { i32, i32 } %var_109, 0
+    %var_112 = extractvalue { i32, i32 } %var_109, 1
+    %var_113 = add i32 %var_111, %var_112
+    %var_114 = add i32 %var_113, %var_110
+    ret i32 %var_114
 }
 "
 `;
@@ -174,20 +174,13 @@ exports[`compilation > function deep closure > stdout 1`] = `
 `;
 
 exports[`compilation > hello world > compiled 1`] = `
-"@const_12 = constant [4 x i8] c"%i
-\\00"
-@const_14 = constant [13 x i8] c"hello world!\\00"
+"@const_12 = constant [13 x i8] c"hello world!\\00"
 define i32 @main() {
   main: 
-    %var_15 = call i32 @printf(i8* @const_14)
+    %var_13 = call i32 @printf(i8* @const_12)
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
-define i32 @printInt(i32 %var_11) {
-  entry: 
-    %var_13 = call i32 @printf(i8* @const_12, i32 %var_11)
-    ret i32 %var_13
-}
 "
 `;
 
@@ -213,21 +206,14 @@ exports[`compilation > hello world string > stderr 1`] = `[]`;
 exports[`compilation > hello world string > stdout 1`] = `[]`;
 
 exports[`compilation > hello world twice > compiled 1`] = `
-"@const_26 = constant [4 x i8] c"%i
-\\00"
-@const_28 = constant [13 x i8] c"hello world!\\00"
+"@const_27 = constant [13 x i8] c"hello world!\\00"
 define i32 @main() {
   main: 
-    %var_29 = call i32 @printf(i8* @const_28)
-    %var_30 = call i32 @printf(i8* @const_28)
+    %var_28 = call i32 @printf(i8* @const_27)
+    %var_29 = call i32 @printf(i8* @const_27)
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
-define i32 @printInt(i32 %var_25) {
-  entry: 
-    %var_27 = call i32 @printf(i8* @const_26, i32 %var_25)
-    ret i32 %var_27
-}
 "
 `;
 
@@ -240,20 +226,20 @@ exports[`compilation > hello world twice > stdout 1`] = `
 `;
 
 exports[`compilation > print number > compiled 1`] = `
-"@const_10 = constant [4 x i8] c"%i
+"@const_11 = constant [4 x i8] c"%i
 \\00"
-@const_12 = constant i32 1
+@const_13 = constant i32 1
 define i32 @main() {
   main: 
-    %var_13 = load i32, ptr @const_12
-    %var_14 = call i32 @printInt(i32 %var_13)
+    %var_14 = load i32, ptr @const_13
+    %var_15 = call i32 @printInt(i32 %var_14)
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
-define i32 @printInt(i32 %var_9) {
+define i32 @printInt(i32 %var_10) {
   entry: 
-    %var_11 = call i32 @printf(i8* @const_10, i32 %var_9)
-    ret i32 %var_11
+    %var_12 = call i32 @printf(i8* @const_11, i32 %var_10)
+    ret i32 %var_12
 }
 "
 `;
@@ -268,22 +254,15 @@ exports[`compilation > print number > stdout 1`] = `
 `;
 
 exports[`compilation > two prints > compiled 1`] = `
-"@const_26 = constant [4 x i8] c"%i
-\\00"
-@const_28 = constant [13 x i8] c"hello world!\\00"
-@const_30 = constant [15 x i8] c"hello world 2!\\00"
+"@const_27 = constant [13 x i8] c"hello world!\\00"
+@const_29 = constant [15 x i8] c"hello world 2!\\00"
 define i32 @main() {
   main: 
-    %var_29 = call i32 @printf(i8* @const_28)
-    %var_31 = call i32 @printf(i8* @const_30)
+    %var_28 = call i32 @printf(i8* @const_27)
+    %var_30 = call i32 @printf(i8* @const_29)
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
-define i32 @printInt(i32 %var_25) {
-  entry: 
-    %var_27 = call i32 @printf(i8* @const_26, i32 %var_25)
-    ret i32 %var_27
-}
 "
 `;
 

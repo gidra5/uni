@@ -26,15 +26,18 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       return codegen(ast.children[0], context);
     case NodeType.NAME: {
       if (ast.data.value === "print") {
-        const name = "printf";
-        const printf = context.builder.declareFunction(name, [{ pointer: "i8" }, "..."], "i32");
+        const printf = context.builder.declareFunction("printf", [{ pointer: "i8" }, "..."], "i32");
 
-        context.builder.createFunction("printInt", ["i32"], (arg1) => {
-          const fmt = context.builder.createString("%i\n");
-          const result = context.builder.createCall(printf, [fmt, arg1], "i32", [{ pointer: "i8" }, "..."]);
-          context.builder.createReturn(`i32 ${result}`);
-          return "i32";
-        });
+        assert(typeof ast.data.type === "object");
+        assert("fn" in ast.data.type);
+        if (ast.data.type.fn.arg === "int") {
+          return context.builder.createFunction("printInt", ["i32"], (arg1) => {
+            const fmt = context.builder.createString("%i\n");
+            const result = context.builder.createCall(printf, [fmt, arg1], "i32", [{ pointer: "i8" }, "..."]);
+            context.builder.createReturn(`i32 ${result}`);
+            return "i32";
+          });
+        }
 
         return printf;
       }
@@ -77,21 +80,6 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
           typeof funcType.args[0] === "object" && "structRet" in funcType.args[0] ? funcType.args[1] : funcType.args[0];
       }
 
-      if (ast.children[0].type === NodeType.NAME && ast.children[0].data.value === "print") {
-        const stringifiedType = context.builder.getTypeString(argType);
-        if (stringifiedType !== "i8*" && !/\[\d+ x i8\]/.test(stringifiedType)) {
-          func = "@printInt";
-          funcType = context.builder.getType(func);
-          assert(typeof funcType === "object");
-          assert("pointer" in funcType);
-          funcType = funcType.pointer;
-
-          assert(typeof funcType === "object");
-          assert("args" in funcType);
-          funcArgType = funcType.args[0];
-        }
-      }
-
       if (!context.builder.compareTypes(argType, funcArgType)) {
         if (typeof argType === "object" && "pointer" in argType) {
           if (context.builder.compareTypes(argType.pointer, funcArgType)) {
@@ -108,11 +96,14 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     }
     case NodeType.FUNCTION: {
       const name = context.builder.getFreshName("fn_");
+      const funcType = context.builder.toLLVMType(ast.data.type);
+      assert(typeof funcType === "object");
+      assert("args" in funcType);
       const argName = ast.children[0].data.value;
 
       const freeVars = collectFreeVars(ast);
       assert([...context.names.keys()].every((x) => freeVars.includes(x)));
-      const argTypes: LLVMType[] = ["i32"];
+      const argTypes: LLVMType[] = funcType.args;
 
       function x(result: LLVMValue) {
         const type = context.builder.getType(result);

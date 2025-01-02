@@ -1,5 +1,6 @@
 import { Iterator } from "iterator-js";
-import { assert, nextId } from "../../utils";
+import { assert, nextId, unreachable } from "../../utils";
+import { Type } from "../../analysis/types/infer";
 
 export type LLVMModule = {
   globals: LLVMGlobal[];
@@ -48,6 +49,29 @@ class Builder {
 
   getTypeString(type: LLVMType): string {
     return stringifyLLVMType(type);
+  }
+
+  toLLVMType(type: Type): LLVMType {
+    if (type === "int") return this.createIntType(32);
+    if (type === "float") return this.createFloatType(32);
+    if (type === "string") return this.createConstantStringType(256);
+    if (type === "void") return "void";
+    if (type === "unit") return this.createIntType(32); // should be type of some global unique value
+    if (type === "unknown") return "void*";
+    assert(typeof type === "object");
+
+    // must be resolved by that point
+    assert(!("variable" in type));
+    assert(!("and" in type));
+
+    if ("fn" in type) {
+      const arg = this.toLLVMType(type.fn.arg);
+      const returnType = this.toLLVMType(type.fn.return);
+      return this.createFunctionType([arg], returnType);
+    }
+    if ("atom" in type) return this.createIntType(32);
+
+    unreachable("cant convert type to LLVM type");
   }
 
   compareTypes(a: LLVMType, b: LLVMType): boolean {
@@ -108,7 +132,7 @@ class Builder {
 
   createString(value: string): LLVMValue {
     const length = value.length + 1;
-    return this.getOrCreateConstant(`c"${value}\\00"`, this.createStringType(length));
+    return this.getOrCreateConstant(`c"${value}\\00"`, this.createConstantStringType(length));
   }
 
   createRecord(record: LLVMValue[]): LLVMValue {
@@ -135,8 +159,12 @@ class Builder {
     return "i1";
   }
 
-  createStringType(length: number): LLVMType {
+  createConstantStringType(length: number): LLVMType {
     return this.createArrayType(this.createIntType(8), length);
+  }
+
+  createCStringType(): LLVMType {
+    return { pointer: this.createIntType(8) };
   }
 
   createArrayType(elementType: LLVMType, length: number): LLVMType {

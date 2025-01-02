@@ -33,6 +33,7 @@ exports[`compilation > apply 1`] = `
                             "type": {
                               "fn": {
                                 "arg": "int",
+                                "closure": false,
                                 "return": "int",
                               },
                             },
@@ -60,6 +61,7 @@ exports[`compilation > apply 1`] = `
                     "type": {
                       "fn": {
                         "arg": "int",
+                        "closure": true,
                         "return": "int",
                       },
                     },
@@ -74,12 +76,15 @@ exports[`compilation > apply 1`] = `
                     "arg": {
                       "fn": {
                         "arg": "int",
+                        "closure": false,
                         "return": "int",
                       },
                     },
+                    "closure": false,
                     "return": {
                       "fn": {
                         "arg": "int",
+                        "closure": true,
                         "return": "int",
                       },
                     },
@@ -111,6 +116,7 @@ exports[`compilation > apply 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
+                    "closure": false,
                     "return": "int",
                   },
                 },
@@ -122,6 +128,7 @@ exports[`compilation > apply 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
+                "closure": true,
                 "return": "int",
               },
             },
@@ -196,9 +203,11 @@ exports[`compilation > church tuple 1`] = `
                                         "type": {
                                           "fn": {
                                             "arg": "int",
+                                            "closure": false,
                                             "return": {
                                               "fn": {
                                                 "arg": "int",
+                                                "closure": true,
                                                 "return": "int",
                                               },
                                             },
@@ -221,6 +230,7 @@ exports[`compilation > church tuple 1`] = `
                                     "type": {
                                       "fn": {
                                         "arg": "int",
+                                        "closure": false,
                                         "return": "int",
                                       },
                                     },
@@ -249,14 +259,17 @@ exports[`compilation > church tuple 1`] = `
                                 "arg": {
                                   "fn": {
                                     "arg": "int",
+                                    "closure": false,
                                     "return": {
                                       "fn": {
                                         "arg": "int",
+                                        "closure": true,
                                         "return": "int",
                                       },
                                     },
                                   },
                                 },
+                                "closure": true,
                                 "return": "int",
                               },
                             },
@@ -269,19 +282,23 @@ exports[`compilation > church tuple 1`] = `
                         "type": {
                           "fn": {
                             "arg": "int",
+                            "closure": true,
                             "return": {
                               "fn": {
                                 "arg": {
                                   "fn": {
                                     "arg": "int",
+                                    "closure": false,
                                     "return": {
                                       "fn": {
                                         "arg": "int",
+                                        "closure": true,
                                         "return": "int",
                                       },
                                     },
                                   },
                                 },
+                                "closure": true,
                                 "return": "int",
                               },
                             },
@@ -296,22 +313,27 @@ exports[`compilation > church tuple 1`] = `
                     "type": {
                       "fn": {
                         "arg": "int",
+                        "closure": false,
                         "return": {
                           "fn": {
                             "arg": "int",
+                            "closure": true,
                             "return": {
                               "fn": {
                                 "arg": {
                                   "fn": {
                                     "arg": "int",
+                                    "closure": false,
                                     "return": {
                                       "fn": {
                                         "arg": "int",
+                                        "closure": true,
                                         "return": "int",
                                       },
                                     },
                                   },
                                 },
+                                "closure": true,
                                 "return": "int",
                               },
                             },
@@ -335,19 +357,23 @@ exports[`compilation > church tuple 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
+                    "closure": true,
                     "return": {
                       "fn": {
                         "arg": {
                           "fn": {
                             "arg": "int",
+                            "closure": false,
                             "return": {
                               "fn": {
                                 "arg": "int",
+                                "closure": true,
                                 "return": "int",
                               },
                             },
                           },
                         },
+                        "closure": true,
                         "return": "int",
                       },
                     },
@@ -371,14 +397,17 @@ exports[`compilation > church tuple 1`] = `
                 "arg": {
                   "fn": {
                     "arg": "int",
+                    "closure": false,
                     "return": {
                       "fn": {
                         "arg": "int",
+                        "closure": true,
                         "return": "int",
                       },
                     },
                   },
                 },
+                "closure": true,
                 "return": "int",
               },
             },
@@ -415,6 +444,7 @@ exports[`compilation > church tuple 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
+                    "closure": true,
                     "return": "int",
                   },
                 },
@@ -427,9 +457,11 @@ exports[`compilation > church tuple 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
+                "closure": false,
                 "return": {
                   "fn": {
                     "arg": "int",
+                    "closure": true,
                     "return": "int",
                   },
                 },
@@ -496,6 +528,7 @@ exports[`compilation > either 1`] = `
                                     "type": {
                                       "fn": {
                                         "arg": "int",
+                                        "closure": false,
                                         "return": "int",
                                       },
                                     },
@@ -525,9 +558,11 @@ exports[`compilation > either 1`] = `
                                 "arg": {
                                   "fn": {
                                     "arg": "unknown",
+                                    "closure": false,
                                     "return": "unknown",
                                   },
                                 },
+                                "closure": true,
                                 "return": "int",
                               },
                             },
@@ -542,17 +577,21 @@ exports[`compilation > either 1`] = `
                             "arg": {
                               "fn": {
                                 "arg": "int",
+                                "closure": false,
                                 "return": "int",
                               },
                             },
+                            "closure": true,
                             "return": {
                               "fn": {
                                 "arg": {
                                   "fn": {
                                     "arg": "unknown",
+                                    "closure": false,
                                     "return": "unknown",
                                   },
                                 },
+                                "closure": true,
                                 "return": "int",
                               },
                             },
@@ -567,22 +606,27 @@ exports[`compilation > either 1`] = `
                     "type": {
                       "fn": {
                         "arg": "int",
+                        "closure": false,
                         "return": {
                           "fn": {
                             "arg": {
                               "fn": {
                                 "arg": "int",
+                                "closure": false,
                                 "return": "int",
                               },
                             },
+                            "closure": true,
                             "return": {
                               "fn": {
                                 "arg": {
                                   "fn": {
                                     "arg": "unknown",
+                                    "closure": false,
                                     "return": "unknown",
                                   },
                                 },
+                                "closure": true,
                                 "return": "int",
                               },
                             },
@@ -608,17 +652,21 @@ exports[`compilation > either 1`] = `
                     "arg": {
                       "fn": {
                         "arg": "int",
+                        "closure": false,
                         "return": "int",
                       },
                     },
+                    "closure": true,
                     "return": {
                       "fn": {
                         "arg": {
                           "fn": {
                             "arg": "unknown",
+                            "closure": false,
                             "return": "unknown",
                           },
                         },
+                        "closure": true,
                         "return": "int",
                       },
                     },
@@ -650,6 +698,7 @@ exports[`compilation > either 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
+                    "closure": false,
                     "return": "int",
                   },
                 },
@@ -663,9 +712,11 @@ exports[`compilation > either 1`] = `
                 "arg": {
                   "fn": {
                     "arg": "unknown",
+                    "closure": false,
                     "return": "unknown",
                   },
                 },
+                "closure": true,
                 "return": "int",
               },
             },
@@ -695,6 +746,7 @@ exports[`compilation > either 1`] = `
             "type": {
               "fn": {
                 "arg": "unknown",
+                "closure": false,
                 "return": "unknown",
               },
             },
@@ -778,6 +830,7 @@ exports[`compilation > function application and literal 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
+                "closure": false,
                 "return": "int",
               },
             },
@@ -801,6 +854,101 @@ exports[`compilation > function application and literal 1`] = `
   ],
   "data": {
     "type": "int",
+  },
+  "type": "script",
+}
+`;
+
+exports[`compilation > function application and literal print 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "type": {
+              "fn": {
+                "arg": "int",
+                "closure": false,
+                "return": "void",
+              },
+            },
+            "value": "print",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "x",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "type": "int",
+                        "value": "x",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "type": "int",
+                        "value": "x",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {
+                    "type": "int",
+                  },
+                  "type": "add",
+                },
+              ],
+              "data": {
+                "isTopFunction": true,
+                "type": {
+                  "fn": {
+                    "arg": "int",
+                    "closure": false,
+                    "return": "int",
+                  },
+                },
+              },
+              "type": "func",
+            },
+            {
+              "children": [],
+              "data": {
+                "type": "int",
+                "value": 2,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {
+            "type": "int",
+          },
+          "type": "application",
+        },
+      ],
+      "data": {
+        "type": "void",
+      },
+      "type": "delimited_application",
+    },
+  ],
+  "data": {
+    "type": "void",
   },
   "type": "script",
 }
@@ -877,6 +1025,7 @@ exports[`compilation > function closure 1`] = `
                     "type": {
                       "fn": {
                         "arg": "int",
+                        "closure": true,
                         "return": "int",
                       },
                     },
@@ -889,9 +1038,11 @@ exports[`compilation > function closure 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
+                    "closure": false,
                     "return": {
                       "fn": {
                         "arg": "int",
+                        "closure": true,
                         "return": "int",
                       },
                     },
@@ -913,6 +1064,7 @@ exports[`compilation > function closure 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
+                "closure": true,
                 "return": "int",
               },
             },
@@ -1015,6 +1167,7 @@ exports[`compilation > function deep closure 1`] = `
                             "type": {
                               "fn": {
                                 "arg": "int",
+                                "closure": true,
                                 "return": "int",
                               },
                             },
@@ -1027,9 +1180,11 @@ exports[`compilation > function deep closure 1`] = `
                         "type": {
                           "fn": {
                             "arg": "int",
+                            "closure": true,
                             "return": {
                               "fn": {
                                 "arg": "int",
+                                "closure": true,
                                 "return": "int",
                               },
                             },
@@ -1044,12 +1199,15 @@ exports[`compilation > function deep closure 1`] = `
                     "type": {
                       "fn": {
                         "arg": "int",
+                        "closure": false,
                         "return": {
                           "fn": {
                             "arg": "int",
+                            "closure": true,
                             "return": {
                               "fn": {
                                 "arg": "int",
+                                "closure": true,
                                 "return": "int",
                               },
                             },
@@ -1073,9 +1231,11 @@ exports[`compilation > function deep closure 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
+                    "closure": true,
                     "return": {
                       "fn": {
                         "arg": "int",
+                        "closure": true,
                         "return": "int",
                       },
                     },
@@ -1097,6 +1257,7 @@ exports[`compilation > function deep closure 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
+                "closure": true,
                 "return": "int",
               },
             },
@@ -1172,26 +1333,11 @@ exports[`compilation > print 1 1`] = `
           "children": [],
           "data": {
             "type": {
-              "and": [
-                {
-                  "fn": {
-                    "arg": "int",
-                    "return": "void",
-                  },
-                },
-                {
-                  "fn": {
-                    "arg": "float",
-                    "return": "void",
-                  },
-                },
-                {
-                  "fn": {
-                    "arg": "string",
-                    "return": "void",
-                  },
-                },
-              ],
+              "fn": {
+                "arg": "int",
+                "closure": false,
+                "return": "void",
+              },
             },
             "value": "print",
           },
@@ -1228,26 +1374,11 @@ exports[`compilation > print 2 1`] = `
           "children": [],
           "data": {
             "type": {
-              "and": [
-                {
-                  "fn": {
-                    "arg": "int",
-                    "return": "void",
-                  },
-                },
-                {
-                  "fn": {
-                    "arg": "float",
-                    "return": "void",
-                  },
-                },
-                {
-                  "fn": {
-                    "arg": "string",
-                    "return": "void",
-                  },
-                },
-              ],
+              "fn": {
+                "arg": "string",
+                "closure": false,
+                "return": "void",
+              },
             },
             "value": "print",
           },
@@ -1284,26 +1415,11 @@ exports[`compilation > print 3 1`] = `
           "children": [],
           "data": {
             "type": {
-              "and": [
-                {
-                  "fn": {
-                    "arg": "int",
-                    "return": "void",
-                  },
-                },
-                {
-                  "fn": {
-                    "arg": "float",
-                    "return": "void",
-                  },
-                },
-                {
-                  "fn": {
-                    "arg": "string",
-                    "return": "void",
-                  },
-                },
-              ],
+              "fn": {
+                "arg": "int",
+                "closure": false,
+                "return": "void",
+              },
             },
             "value": "print",
           },
@@ -1329,26 +1445,11 @@ exports[`compilation > print 3 1`] = `
           "children": [],
           "data": {
             "type": {
-              "and": [
-                {
-                  "fn": {
-                    "arg": "int",
-                    "return": "void",
-                  },
-                },
-                {
-                  "fn": {
-                    "arg": "float",
-                    "return": "void",
-                  },
-                },
-                {
-                  "fn": {
-                    "arg": "string",
-                    "return": "void",
-                  },
-                },
-              ],
+              "fn": {
+                "arg": "string",
+                "closure": false,
+                "return": "void",
+              },
             },
             "value": "print",
           },
@@ -1436,6 +1537,7 @@ exports[`compilation > wrapper 1`] = `
                             "type": {
                               "fn": {
                                 "arg": "int",
+                                "closure": false,
                                 "return": "int",
                               },
                             },
@@ -1465,9 +1567,11 @@ exports[`compilation > wrapper 1`] = `
                         "arg": {
                           "fn": {
                             "arg": "int",
+                            "closure": false,
                             "return": "int",
                           },
                         },
+                        "closure": true,
                         "return": "int",
                       },
                     },
@@ -1480,14 +1584,17 @@ exports[`compilation > wrapper 1`] = `
                 "type": {
                   "fn": {
                     "arg": "int",
+                    "closure": false,
                     "return": {
                       "fn": {
                         "arg": {
                           "fn": {
                             "arg": "int",
+                            "closure": false,
                             "return": "int",
                           },
                         },
+                        "closure": true,
                         "return": "int",
                       },
                     },
@@ -1511,9 +1618,11 @@ exports[`compilation > wrapper 1`] = `
                 "arg": {
                   "fn": {
                     "arg": "int",
+                    "closure": false,
                     "return": "int",
                   },
                 },
+                "closure": true,
                 "return": "int",
               },
             },
@@ -1543,6 +1652,7 @@ exports[`compilation > wrapper 1`] = `
             "type": {
               "fn": {
                 "arg": "int",
+                "closure": false,
                 "return": "int",
               },
             },
