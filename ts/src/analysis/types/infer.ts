@@ -1,5 +1,6 @@
 import { NodeType, Tree } from "../../ast";
 import { assert, nextId, unreachable } from "../../utils";
+import { UnificationTable } from "./unification";
 
 // subtype infers types that values must always satisfy (the actual values will be at least of these types)
 // for example, if a parameter is only used as int (passed to a function that only accepts ints),
@@ -10,23 +11,26 @@ import { assert, nextId, unreachable } from "../../utils";
 // supertype infers types that values will always satisfy (the actual values will be at most of these types)
 // for example, if a function only called with ints, then the type for its arguments will be int
 
+export type Value = number;
+// export type Value = number | string | { atom: string } | { type: Type };
+// | { fn: { arg: Value; return: Value; closure: Value[] } }
+
 export type Type =
   | "int"
   | "float"
   | "string"
   | "unknown"
   | "void"
-  | "unit"
-  | { atom: string }
+  // | "unit"
+  // | { value: Value }
   | { variable: number }
-  | { fn: { arg: Type; return: Type; closure: { name: string; type: Type }[] } }
-  | { and: Type[] };
+  | { fn: { arg: Type; return: Type; closure: Type[] } }
+  | { and: Type[] }
+  | { or: Type[] }
+  | { not: Type };
 
-type Constraint = { subtype: Type } | { supertype: Type } | { equals: Type };
-type TypeBounds = { supertype: Type; subtype: Type } | { equals: Type };
 class Context {
-  constraints: Map<number, Constraint[]> = new Map();
-  bounds: Map<number, TypeBounds> = new Map();
+  unificationTable = new UnificationTable();
   names: Map<string, Type> = new Map([
     [
       "print",
@@ -40,183 +44,11 @@ class Context {
     ],
   ]);
   constructor() {}
-
-  normalize(type: Type): Type {
-    if (typeof type === "object" && "variable" in type) {
-      const bounds = this.bounds.get(type.variable);
-      if (bounds) {
-        assert("equals" in bounds);
-        if (typeof bounds.equals === "object" && "variable" in bounds.equals) {
-          if (bounds.equals.variable === type.variable) return "void";
-        }
-        const normalized = this.normalize(bounds.equals);
-        this.bounds.set(type.variable, { equals: normalized });
-        return normalized;
-      }
-    }
-    if (typeof type === "object" && "fn" in type) {
-      const arg = this.normalize(type.fn.arg);
-      const returnType = this.normalize(type.fn.return);
-      const closure = type.fn.closure.map(({ name, type }) => ({ name, type: this.normalize(type) }));
-      return { fn: { arg, return: returnType, closure } };
-    }
-    if (typeof type === "object" && "and" in type) {
-      return { and: type.and.map((x) => this.normalize(x)) };
-    }
-    return type;
-  }
-
-  unify(_a: Type, _b: Type): void {
-    const a = this.normalize(_a);
-    const b = this.normalize(_b);
-
-    if (a === b) return;
-    if (typeof a === "object" && "and" in a) {
-      if (typeof b === "object" && "and" in b) {
-        a.and.forEach((a1, i) => {
-          this.unify(a1, b.and[i]);
-        });
-        return;
-      }
-    }
-    if (typeof a === "object" && "fn" in a) {
-      if (typeof b === "object" && "fn" in b) {
-        this.unify(a.fn.arg, b.fn.arg);
-        this.unify(a.fn.return, b.fn.return);
-        if (a.fn.closure.length === b.fn.closure.length) {
-          a.fn.closure.forEach(({ type }, i) => {
-            const closureA = this.normalize(type);
-            const closureB = this.normalize(b.fn.closure[i].type);
-            this.unify(closureA, closureB);
-          });
-        } else {
-          console.dir([a.fn.closure, b.fn.closure], { depth: null });
-        }
-        return;
-      }
-    }
-    if (typeof a === "object" && "fn" in a) {
-      if (typeof b === "object" && "and" in b) {
-        this.unify(b, a);
-        return;
-      }
-    }
-    if (typeof a === "object" && "and" in a) {
-      if (typeof b === "object" && "fn" in b) {
-        const arg = b.fn.arg;
-        const overload = a.and.find((t) => typeof t === "object" && "fn" in t && compareTypes(arg, t.fn.arg));
-        // console.dir([a, b, overload], { depth: null });
-        if (overload) {
-          if (typeof _a === "object" && "variable" in _a) {
-            this.bounds.set(_a.variable, { equals: overload });
-          }
-          this.unify(overload, b);
-        }
-        return;
-      }
-    }
-    if (typeof a === "object" && "variable" in a) {
-      this.bounds.set(a.variable, { equals: b });
-      return;
-    }
-    if (typeof b === "object" && "variable" in b) {
-      this.bounds.set(b.variable, { equals: a });
-      return;
-    }
-
-    // console.dir([this.constraints, this.bounds], { depth: null });
-    // console.dir([a, b], { depth: null });
-    unreachable("cant unify");
-  }
-
-  preresolve() {
-    this.constraints.forEach((constraints, variable) => {
-      const _constraints = constraints.filter((constraint) => "equals" in constraint);
-      for (const constraint of _constraints) {
-        assert("equals" in constraint);
-        const type = this.normalize(constraint.equals);
-
-        if (!(typeof type === "object" && "variable" in type)) continue;
-
-        // variable is exactly equal to another variable `x`
-        // then record type's variable is equal to`x`
-        this.bounds.set(variable, { equals: type });
-        constraints.splice(constraints.indexOf(constraint), 1);
-
-        // and move all constraints to `x`
-        const otherConstraints = this.constraints.get(type.variable);
-        if (otherConstraints) otherConstraints.push(...constraints);
-        else this.constraints.set(type.variable, constraints);
-
-        // and remove variable, since it is redundant now
-        this.constraints.delete(variable);
-        break;
-      }
-    });
-  }
-
-  resolve(variable: number) {
-    const _constraints = this.constraints.get(variable);
-    if (!_constraints) return;
-
-    const constraints = _constraints.filter((constraint) => "equals" in constraint);
-    for (const constraint of constraints) {
-      assert("equals" in constraint);
-      this.unify({ variable }, constraint.equals);
-      this.bounds.forEach((element) => {
-        assert("equals" in element);
-        element.equals = this.normalize(element.equals);
-      });
-    }
-  }
-
-  resolveConstraints() {
-    this.constraints.forEach((_, variable) => this.resolve(variable));
-  }
-
-  resolveAll() {
-    // console.dir(this.constraints, { depth: null });
-    this.preresolve();
-    this.resolveConstraints();
-    this.resolveConstraints();
-    const freeTypeVariables = this.getFreeTypeVariables();
-    freeTypeVariables.forEach((variable) => {
-      this.addConstraint(variable, {
-        equals: "unknown",
-      });
-    });
-    this.resolveConstraints();
-    // console.dir([this.constraints, this.bounds], { depth: null });
-  }
-
-  addConstraint(variable: number, constraint: Constraint) {
-    const constraints = this.constraints.get(variable);
-    if (!constraints) this.constraints.set(variable, [constraint]);
-    else constraints.push(constraint);
-  }
-
-  getFreeTypeVariables() {
-    const variables = new Set<number>();
-    function f(type: Type) {
-      if (typeof type === "object" && "variable" in type) {
-        variables.add(type.variable);
-      }
-      if (typeof type === "object" && "fn" in type) {
-        f(type.fn.arg);
-        f(type.fn.return);
-      }
-    }
-    this.bounds.forEach((bounds) => {
-      assert("equals" in bounds);
-      f(bounds.equals);
-    });
-    return variables;
-  }
 }
 
 // is `a` a subtype of `b`? `a <: b` == true
 // the bottom type must always be a subtype of the top type
-const compareTypes = (a: Type, b: Type): boolean => {
+export const compareTypes = (a: Type, b: Type): boolean => {
   if (b === "unknown") return true;
   if (a === "void") return true;
   if (a !== b) return false;
@@ -253,10 +85,10 @@ const infer = (ast: Tree, context: Context): Type => {
         else return "float";
       case NodeType.STRING:
         return "string";
-      case NodeType.ATOM:
-        return { atom: ast.data.value };
-      case NodeType.UNIT:
-        return "unit";
+      // case NodeType.ATOM:
+      //   return { atom: ast.data.value };
+      // case NodeType.UNIT:
+      //   return "unit";
       case NodeType.IMPLICIT_PLACEHOLDER:
       case NodeType.PLACEHOLDER:
         return "unknown";
@@ -312,7 +144,7 @@ const infer = (ast: Tree, context: Context): Type => {
         unreachable("cant infer top types");
     }
   })();
-  context.addConstraint(ast.id, { equals: type });
+  context.unificationTable.addConstraint(ast.id, { equals: type });
   return type;
 };
 
@@ -355,30 +187,29 @@ const constrain = (ast: Tree, context: Context, expectedType: Type): void => {
       else context.names.delete(name);
       const closure = freeVars.map((name) => ({ name, type: context.names.get(name)! }));
       expectedType.fn.closure = closure;
-      context.addConstraint(ast.id, { equals: expectedType });
+      context.unificationTable.addConstraint(ast.id, { equals: expectedType });
       return;
     }
     case NodeType.APPLICATION: {
       const argType = infer(ast.children[1], context);
       const fnType = { fn: { arg: argType, return: expectedType, closure: [] } };
       constrain(ast.children[0], context, fnType);
-      context.addConstraint(ast.id, { equals: expectedType });
+      context.unificationTable.addConstraint(ast.id, { equals: expectedType });
       return;
     }
   }
   infer(ast, context);
-  context.addConstraint(ast.id, { equals: expectedType });
+  context.unificationTable.addConstraint(ast.id, { equals: expectedType });
 };
 
 const substituteConstraints = (ast: Tree, context: Context): void => {
   ast.children.forEach((child) => substituteConstraints(child, context));
   const variable = ast.id;
-  const constraint = context.bounds.get(variable);
+  const type = context.unificationTable.resolve(variable);
   if (!("type" in ast.data)) {
-    if (constraint) {
-      assert("equals" in constraint);
-      ast.data.type = constraint.equals;
-      context.constraints.delete(variable);
+    if (type) {
+      assert("equals" in type);
+      ast.data.type = type.equals;
     }
   }
 };
@@ -386,9 +217,6 @@ const substituteConstraints = (ast: Tree, context: Context): void => {
 export const inferTypes = (ast: Tree): void => {
   const context = new Context();
   infer(ast, context);
-  context.resolveAll();
   // console.dir([context.constraints, context.bounds], { depth: null });
   substituteConstraints(ast, context);
-  // inferTopTypes(ast, context);
-  // inferBottomTypes(ast, context);
 };
