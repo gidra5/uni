@@ -56,7 +56,7 @@ class Builder {
     if (type === "float") return this.createFloatType(32);
     if (type === "string") return this.createConstantStringType(256);
     if (type === "void") return "void";
-    if (type === "unit") return this.createIntType(32); // should be type of some global unique value
+    // if (type === "unit") return this.createIntType(32); // should be type of some global unique value
     if (type === "unknown") return "void*";
     assert(typeof type === "object");
 
@@ -69,7 +69,7 @@ class Builder {
       const returnType = this.toLLVMType(type.fn.return);
       const fnType = this.createFunctionType([arg], returnType);
       if (type.fn.closure.length > 0) {
-        const closureTypes = type.fn.closure.map(({ type }) => this.toLLVMType(type));
+        const closureTypes = type.fn.closure.map((type) => this.toLLVMType(type));
         const closureType = this.createRecordType(closureTypes);
         return this.createRecordType([closureType, { pointer: fnType }]);
       }

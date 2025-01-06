@@ -990,6 +990,392 @@ exports[`compilation > either 1`] = `
 }
 `;
 
+exports[`compilation > fix 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "type": {
+              "variable": 26,
+            },
+            "value": "f",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "type": {
+                      "variable": 45,
+                    },
+                    "value": "x",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "type": {
+                          "and": [
+                            {
+                              "variable": 48,
+                            },
+                            {
+                              "and": [
+                                {
+                                  "fn": {
+                                    "arg": {
+                                      "variable": 74,
+                                    },
+                                    "closure": [
+                                      {
+                                        "variable": 73,
+                                      },
+                                    ],
+                                    "return": {
+                                      "variable": 76,
+                                    },
+                                  },
+                                },
+                                {
+                                  "fn": {
+                                    "arg": {
+                                      "fn": {
+                                        "arg": {
+                                          "variable": 74,
+                                        },
+                                        "closure": [
+                                          {
+                                            "variable": 73,
+                                          },
+                                        ],
+                                        "return": {
+                                          "variable": 76,
+                                        },
+                                      },
+                                    },
+                                    "closure": [],
+                                    "return": {
+                                      "variable": 77,
+                                    },
+                                  },
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                        "value": "x",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "type": {
+                          "and": [
+                            {
+                              "variable": 51,
+                            },
+                            {
+                              "fn": {
+                                "arg": {
+                                  "variable": 74,
+                                },
+                                "closure": [
+                                  {
+                                    "variable": 73,
+                                  },
+                                ],
+                                "return": {
+                                  "variable": 76,
+                                },
+                              },
+                            },
+                          ],
+                        },
+                        "value": "x",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {
+                    "type": {
+                      "and": [
+                        {
+                          "variable": 49,
+                        },
+                        {
+                          "variable": 77,
+                        },
+                      ],
+                    },
+                  },
+                  "type": "application",
+                },
+              ],
+              "data": {
+                "isTopFunction": true,
+                "type": {
+                  "and": [
+                    {
+                      "variable": 52,
+                    },
+                    {
+                      "fn": {
+                        "arg": {
+                          "fn": {
+                            "arg": {
+                              "variable": 74,
+                            },
+                            "closure": [
+                              {
+                                "variable": 73,
+                              },
+                            ],
+                            "return": {
+                              "variable": 76,
+                            },
+                          },
+                        },
+                        "closure": [],
+                        "return": {
+                          "variable": 77,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+              "type": "func",
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "type": {
+                      "variable": 54,
+                    },
+                    "value": "x",
+                  },
+                  "type": "name",
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "type": {
+                          "and": [
+                            {
+                              "variable": 61,
+                            },
+                            {
+                              "and": [
+                                {
+                                  "variable": 73,
+                                },
+                                {
+                                  "fn": {
+                                    "arg": {
+                                      "variable": 75,
+                                    },
+                                    "closure": [],
+                                    "return": {
+                                      "variable": 76,
+                                    },
+                                  },
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                        "value": "f",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "data": {
+                            "type": {
+                              "and": [
+                                {
+                                  "variable": 64,
+                                },
+                                {
+                                  "and": [
+                                    {
+                                      "variable": 74,
+                                    },
+                                    {
+                                      "fn": {
+                                        "arg": {
+                                          "variable": 74,
+                                        },
+                                        "closure": [],
+                                        "return": {
+                                          "variable": 75,
+                                        },
+                                      },
+                                    },
+                                  ],
+                                },
+                              ],
+                            },
+                            "value": "x",
+                          },
+                          "type": "name",
+                        },
+                        {
+                          "children": [],
+                          "data": {
+                            "type": {
+                              "and": [
+                                {
+                                  "variable": 67,
+                                },
+                                {
+                                  "variable": 74,
+                                },
+                              ],
+                            },
+                            "value": "x",
+                          },
+                          "type": "name",
+                        },
+                      ],
+                      "data": {
+                        "type": {
+                          "and": [
+                            {
+                              "variable": 65,
+                            },
+                            {
+                              "variable": 75,
+                            },
+                          ],
+                        },
+                      },
+                      "type": "application",
+                    },
+                  ],
+                  "data": {
+                    "type": {
+                      "and": [
+                        {
+                          "variable": 68,
+                        },
+                        {
+                          "variable": 76,
+                        },
+                      ],
+                    },
+                  },
+                  "type": "delimited_application",
+                },
+              ],
+              "data": {
+                "isTopFunction": true,
+                "type": {
+                  "and": [
+                    {
+                      "variable": 69,
+                    },
+                    {
+                      "fn": {
+                        "arg": {
+                          "variable": 74,
+                        },
+                        "closure": [
+                          {
+                            "variable": 73,
+                          },
+                        ],
+                        "return": {
+                          "variable": 76,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+              "type": "func",
+            },
+          ],
+          "data": {
+            "type": {
+              "and": [
+                {
+                  "variable": 70,
+                },
+                {
+                  "variable": 77,
+                },
+              ],
+            },
+          },
+          "type": "delimited_application",
+        },
+      ],
+      "data": {
+        "isTopFunction": true,
+        "type": {
+          "and": [
+            {
+              "variable": 71,
+            },
+            {
+              "fn": {
+                "arg": {
+                  "variable": 73,
+                },
+                "closure": [],
+                "return": {
+                  "variable": 77,
+                },
+              },
+            },
+          ],
+        },
+      },
+      "type": "func",
+    },
+  ],
+  "data": {
+    "type": {
+      "and": [
+        {
+          "variable": 72,
+        },
+        {
+          "fn": {
+            "arg": {
+              "variable": 73,
+            },
+            "closure": [],
+            "return": {
+              "variable": 77,
+            },
+          },
+        },
+      ],
+    },
+  },
+  "type": "script",
+}
+`;
+
 exports[`compilation > float 1`] = `
 {
   "children": [
@@ -1770,6 +2156,33 @@ exports[`compilation > print 3 1`] = `
   ],
   "data": {
     "type": "void",
+  },
+  "type": "script",
+}
+`;
+
+exports[`compilation > sequence 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "type": "int",
+        "value": 1,
+      },
+      "type": "number",
+    },
+    {
+      "children": [],
+      "data": {
+        "type": "string",
+        "value": "hello world 2!",
+      },
+      "type": "string",
+    },
+  ],
+  "data": {
+    "type": "string",
   },
   "type": "script",
 }

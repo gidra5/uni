@@ -10,6 +10,7 @@ Characteristics of interest for any type theory\lambda calculus:
 9. How does it describe how given values can be used?
 10. How does it describe interaction with environment?
 11. Ad-hoc polymorphism coherence - Every different valid typing derivation for a program leads to a resulting program that has the same dynamic semantics.
+12. Is type inference decidable? Does inference algorithm based on given typing rules terminate?
 
 Given a value we want to know:
 1. How it is stored (for example with algebraic types)
