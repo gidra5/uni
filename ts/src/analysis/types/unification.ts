@@ -1,8 +1,8 @@
 import { assert, unreachable } from "../../utils";
 import { Type } from "./infer";
 
-export type Constraint = { subtype: Type } | { supertype: Type } | { exactly: Type } | { equals: number };
-export type TypeBounds = { supertype?: Type; subtype?: Type; exactly?: Type } | { equals: number };
+export type Constraint = { exactly: Type } | { equals: number };
+export type TypeBounds = { exactly: Type } | { equals: number };
 
 const canonicalLiteralTypesOrder = ["int", "float", "string", "unknown", "void"];
 const canonicalComplexTypesOrder = ["fn", "and", "or", "not"];
@@ -78,164 +78,38 @@ const compareConstraints = (a: Constraint, b: Constraint): number => {
 
 export class UnificationTable {
   constraints: Map<number, Constraint[]> = new Map();
-  resolved: Map<number, TypeBounds | null> = new Map();
+  resolved: Map<number, TypeBounds> = new Map();
 
-  boundsToSubtype(variable: number, bounds: TypeBounds): Type {
+  boundsToType(variable: number, bounds: TypeBounds): Type {
     if ("equals" in bounds) {
-      return this.resolveSubtype(bounds.equals);
-    }
-    // const type = bounds.exactly ?? { variable: 0 };
-    // if (bounds.subtype) {
-    //   return { and: [type, bounds.subtype] };
-    // }
-    // return type;
-
-    if (bounds.subtype) {
-      return bounds.subtype;
-    }
-    return bounds.exactly ?? { variable };
-  }
-
-  boundsToSupertype(variable: number, bounds: TypeBounds): Type {
-    if ("equals" in bounds) {
-      return this.resolveSupertype(bounds.equals);
-    }
-    // const type = bounds.exactly ?? { variable: 0 };
-    // if (bounds.supertype) {
-    //   return { or: [type, bounds.supertype] };
-    // }
-    // return type;
-
-    if (bounds.supertype) {
-      return bounds.supertype;
-    }
-    return bounds.exactly ?? { variable };
-  }
-
-  boundsToExactType(variable: number, bounds: TypeBounds): Type {
-    if ("equals" in bounds) {
-      return this.resolveExactType(bounds.equals);
+      return this.resolveType(bounds.equals);
     }
     const type = bounds.exactly ?? { variable };
-    if (bounds.subtype && bounds.supertype) {
-      return { and: [{ or: [bounds.supertype, type] }, bounds.subtype] };
-    }
-    if (bounds.subtype) {
-      return { and: [type, bounds.subtype] };
-    }
-    if (bounds.supertype) {
-      return { or: [bounds.supertype, type] };
-    }
     return type;
   }
 
-  normalizeSubtype(type: Type): Type | null {
-    if (typeof type === "object" && "and" in type) {
-      const normalized = type.and.map((type) => this.normalizeSubtype(type));
-      if (normalized.some((type) => !type)) return null;
-      return { and: normalized as Type[] };
-    }
-    if (typeof type === "object" && "or" in type) {
-      const normalized = type.or.map((type) => this.normalizeSubtype(type));
-      if (normalized.some((type) => !type)) return null;
-      return { or: normalized as Type[] };
-    }
-    if (typeof type === "object" && "not" in type) {
-      const normalized = this.normalizeSubtype(type.not);
-      if (!normalized) return null;
-      return { not: normalized };
-    }
-    if (typeof type === "object" && "fn" in type) {
-      const normalizedArg = this.normalizeSubtype(type.fn.arg);
-      if (!normalizedArg) return null;
-      const normalizedReturn = this.normalizeSupertype(type.fn.return);
-      if (!normalizedReturn) return null;
-      const normalizedClosure = type.fn.closure.map((t) => this.normalizeSubtype(t));
-      if (normalizedClosure.some((type) => !type)) return null;
-      return { fn: { arg: normalizedArg, return: normalizedReturn, closure: normalizedClosure as Type[] } };
-    }
-    if (typeof type === "object" && "variable" in type) {
-      const variable = type.variable;
-      if (this.resolved.has(variable)) {
-        const bounds = this.resolved.get(variable);
-        if (!bounds) return null;
-      }
-      this.resolved.set(variable, null);
-      return this.resolveSubtype(type.variable);
-    }
-    return type;
-  }
-
-  normalizeSupertype(type: Type): Type | null {
-    if (typeof type === "object" && "and" in type) {
-      const normalized = type.and.map((type) => this.normalizeSupertype(type));
-      if (normalized.some((type) => !type)) return null;
-      return { and: normalized as Type[] };
-    }
-    if (typeof type === "object" && "or" in type) {
-      const normalized = type.or.map((type) => this.normalizeSupertype(type));
-      if (normalized.some((type) => !type)) return null;
-      return { or: normalized as Type[] };
-    }
-    if (typeof type === "object" && "not" in type) {
-      const normalized = this.normalizeSupertype(type.not);
-      if (!normalized) return null;
-      return { not: normalized };
-    }
-    if (typeof type === "object" && "fn" in type) {
-      const normalizedArg = this.normalizeSupertype(type.fn.arg);
-      if (!normalizedArg) return null;
-      const normalizedReturn = this.normalizeSubtype(type.fn.return);
-      if (!normalizedReturn) return null;
-      const normalizedClosure = type.fn.closure.map((t) => this.normalizeSupertype(t));
-      if (normalizedClosure.some((type) => !type)) return null;
-      return { fn: { arg: normalizedArg, return: normalizedReturn, closure: normalizedClosure as Type[] } };
-    }
-    if (typeof type === "object" && "variable" in type) {
-      const variable = type.variable;
-      if (this.resolved.has(variable)) {
-        const bounds = this.resolved.get(variable);
-        if (!bounds) return null;
-      }
-      this.resolved.set(variable, null);
-      return this.resolveSupertype(type.variable);
-    }
-    return type;
-  }
-
-  normalizeType(type: Type): Type | null {
+  normalizeType(type: Type): Type {
     if (typeof type === "object" && "and" in type) {
       const normalized = type.and.map((type) => this.normalizeType(type));
-      if (normalized.some((type) => !type)) return null;
       return { and: normalized as Type[] };
     }
     if (typeof type === "object" && "or" in type) {
       const normalized = type.or.map((type) => this.normalizeType(type));
-      if (normalized.some((type) => !type)) return null;
       return { or: normalized as Type[] };
     }
     if (typeof type === "object" && "not" in type) {
       const normalized = this.normalizeType(type.not);
-      if (!normalized) return null;
       return { not: normalized };
     }
     if (typeof type === "object" && "fn" in type) {
-      const normalizedArg = this.normalizeSubtype(type.fn.arg);
-      if (!normalizedArg) return null;
-      const normalizedReturn = this.normalizeSupertype(type.fn.return);
-      if (!normalizedReturn) return null;
-      const normalizedClosure = type.fn.closure.map((t) => this.normalizeSubtype(t));
-      if (normalizedClosure.some((type) => !type)) return null;
+      const normalizedArg = this.normalizeType(type.fn.arg);
+      const normalizedReturn = this.normalizeType(type.fn.return);
+      const normalizedClosure = type.fn.closure.map((t) => this.normalizeType(t));
       return { fn: { arg: normalizedArg, return: normalizedReturn, closure: normalizedClosure as Type[] } };
     }
     if (typeof type === "object" && "variable" in type) {
       const variable = type.variable;
-      if (this.resolved.has(variable)) {
-        const bounds = this.resolved.get(variable);
-        if (!bounds) return null;
-      }
-      this.resolved.set(variable, null);
-      return this.resolveExactType(variable);
+      return this.resolveType(variable);
     }
     return type;
   }
@@ -246,32 +120,11 @@ export class UnificationTable {
     if ("exactly" in b) {
       const type = this.normalizeType(b.exactly);
       const boundsType = a.exactly;
-      if (!type) return a;
       if (!boundsType) return { ...a, exactly: type };
       if (typeof boundsType === "object" && "and" in boundsType) {
         return { ...a, exactly: { and: [...boundsType.and, type] } };
       }
       return { ...a, exactly: { and: [boundsType, type] } };
-    }
-    if ("subtype" in b) {
-      const type = this.normalizeSubtype(b.subtype);
-      const boundsType = a.subtype;
-      if (!type) return a;
-      if (!boundsType) return { ...a, subtype: type };
-      if (typeof boundsType === "object" && "and" in boundsType) {
-        return { ...a, subtype: { and: [...boundsType.and, type] } };
-      }
-      return { ...a, subtype: { and: [boundsType, type] } };
-    }
-    if ("supertype" in b) {
-      const type = this.normalizeSupertype(b.supertype);
-      const boundsType = a.supertype;
-      if (!type) return a;
-      if (!boundsType) return { ...a, supertype: type };
-      if (typeof boundsType === "object" && "or" in boundsType) {
-        return { ...a, supertype: { or: [...boundsType.or, type] } };
-      }
-      return { ...a, supertype: { or: [boundsType, type] } };
     }
 
     unreachable("cant unify");
@@ -283,23 +136,18 @@ export class UnificationTable {
       if (bounds) return bounds;
     }
 
-    let bounds: TypeBounds = {};
+    let bounds: TypeBounds = { equals: variable };
     const constraints = this.constraints.get(variable);
     if (!constraints) {
       this.resolved.set(variable, bounds);
       return bounds;
     }
 
-    this.resolved.set(variable, null);
     if (constraints.some((c) => "equals" in c)) {
       assert(constraints.length === 1);
       const otherConstraint = constraints[0];
       assert("equals" in otherConstraint);
       const otherVariable = otherConstraint.equals;
-      if (this.resolved.has(variable)) {
-        const bounds = this.resolved.get(variable);
-        if (!bounds) return {};
-      }
       return this.resolve(otherVariable);
     }
 
@@ -311,16 +159,8 @@ export class UnificationTable {
     return bounds;
   }
 
-  resolveSubtype(variable: number): Type {
-    return this.boundsToSubtype(variable, this.resolve(variable));
-  }
-
-  resolveSupertype(variable: number): Type {
-    return this.boundsToSupertype(variable, this.resolve(variable));
-  }
-
-  resolveExactType(variable: number): Type {
-    return this.boundsToExactType(variable, this.resolve(variable));
+  resolveType(variable: number): Type {
+    return this.boundsToType(variable, this.resolve(variable));
   }
 
   addConstraint(variable: number, constraint: Constraint) {
