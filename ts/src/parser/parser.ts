@@ -21,10 +21,10 @@ import { Parser, type ParserGenerator } from "./utils.js";
 import { assert } from "../utils/index.js";
 
 export const getExprPrecedence = (node: Tree): Precedence =>
-  inject(Injectable.ASTNodePrecedenceMap).get(node.id) ?? _getExprPrecedence(node.type);
+  inject(Injectable.PrecedenceMap).get(node.id) ?? _getExprPrecedence(node.type);
 
 export const getPatternPrecedence = (node: Tree): Precedence =>
-  inject(Injectable.ASTNodePrecedenceMap).get(node.id) ?? _getPatternPrecedence(node.type);
+  inject(Injectable.PrecedenceMap).get(node.id) ?? _getPatternPrecedence(node.type);
 
 export const getTokenPosition = (token: TokenGroup): Position => {
   if (token.type === "error") return getTokenPosition(token.token);
@@ -264,7 +264,7 @@ const parseValue = Parser.do<TokenGroup[], Tree>(function* () {
       }
     }
     const node = _node(NodeType.TEMPLATE, { position: yield* nodePosition(), children });
-    inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+    inject(Injectable.PrecedenceMap).set(node.id, [null, null]);
     return node;
   }
 
@@ -520,7 +520,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
     const node = _node(NodeType.IMPORT, { position: yield* nodePosition() });
     node.data.descriptor = parseImportDescriptor(name);
     if (pattern) node.children.push(pattern);
-    inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+    inject(Injectable.PrecedenceMap).set(node.id, [null, null]);
     return node;
   }
 
@@ -659,7 +659,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
         children: typeExpr ? [pattern, typeExpr, expr] : [pattern, expr],
         data: { isTopFunction: true },
       });
-      inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+      inject(Injectable.PrecedenceMap).set(node.id, [null, null]);
       return node;
     });
   }
@@ -707,7 +707,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
           position: yield* nodePosition(),
           children: [condition, trueBranch],
         });
-        inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+        inject(Injectable.PrecedenceMap).set(node.id, [null, null]);
         return node;
       });
     });
@@ -726,7 +726,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
         position: yield* nodePosition(),
         children: [condition, expr],
       });
-      inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+      inject(Injectable.PrecedenceMap).set(node.id, [null, null]);
       return node;
     });
   }
@@ -766,7 +766,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
         position: yield* nodePosition(),
         children: [pattern, expr, body],
       });
-      inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+      inject(Injectable.PrecedenceMap).set(node.id, [null, null]);
 
       return node;
     });
@@ -822,7 +822,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
         position: yield* nodePosition(),
         children: [expr, body],
       });
-      inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+      inject(Injectable.PrecedenceMap).set(node.id, [null, null]);
       return node;
     });
   }
@@ -840,7 +840,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
         position: yield* nodePosition(),
         children: [expr, body],
       });
-      inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+      inject(Injectable.PrecedenceMap).set(node.id, [null, null]);
       return node;
     });
   }
@@ -858,7 +858,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
         position: yield* nodePosition(),
         children: [expr, body],
       });
-      inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, null]);
+      inject(Injectable.PrecedenceMap).set(node.id, [null, null]);
       return node;
     });
   }
@@ -998,7 +998,7 @@ const parseExprGroup: Parser<TokenGroup[], Tree, { lhs: boolean }> = Parser.do(f
       _node(op, { position, children: [implicitPlaceholder(position)] })
     );
     const precedence = _getExprPrecedence(op);
-    inject(Injectable.ASTNodePrecedenceMap).set(node.id, [null, precedence[1]]);
+    inject(Injectable.PrecedenceMap).set(node.id, [null, precedence[1]]);
     return node;
   }
 

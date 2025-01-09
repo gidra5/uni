@@ -116,7 +116,7 @@ const passes = [
 
 beforeEach(() => {
   register(Injectable.FileMap, new FileMap());
-  register(Injectable.ASTNodePrecedenceMap, new Map());
+  register(Injectable.PrecedenceMap, new Map());
   register(Injectable.NextId, 0);
   register(Injectable.PositionMap, new Map());
 });

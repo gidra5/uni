@@ -10,7 +10,7 @@ import { FileMap } from "codespan-napi";
 beforeEach(() => {
   register(Injectable.FileMap, new FileMap());
   register(Injectable.NextId, 0);
-  register(Injectable.ASTNodePrecedenceMap, new Map());
+  register(Injectable.PrecedenceMap, new Map());
   register(Injectable.PositionMap, new Map());
 });
 

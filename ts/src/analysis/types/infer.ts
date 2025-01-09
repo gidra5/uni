@@ -1,5 +1,6 @@
 import { NodeType, Tree } from "../../ast";
 import { nextId, unreachable } from "../../utils";
+import { inject, Injectable } from "../../utils/injector";
 import { UnificationTable } from "./unification";
 
 // subtype infers types that values must always satisfy (the actual values will be at least of these types)
@@ -23,7 +24,7 @@ export type Type =
   | { or: Type[] }
   | { not: Type };
 
-class Context {
+export class Context {
   unificationTable = new UnificationTable();
   names: Map<string, Type> = new Map();
   constructor() {}
@@ -38,7 +39,9 @@ export const compareTypes = (a: Type, b: Type): boolean => {
   return true;
 };
 
-const infer = (ast: Tree, context: Context): Type => {
+export const infer = (ast: Tree, context: Context): Type => {
+  // console.dir({ log: 1, context, ast }, { depth: null });
+
   switch (ast.type) {
     case NodeType.NUMBER:
       const type = Number.isInteger(ast.data.value) ? "int" : "float";
@@ -90,6 +93,8 @@ const infer = (ast: Tree, context: Context): Type => {
     case NodeType.ADD: {
       const firstType = infer(ast.children[0], context);
       ast.children.forEach((child) => constrain(child, context, firstType));
+
+      context.unificationTable.addConstraint(ast.id, { exactly: firstType });
       return firstType;
     }
     case NodeType.MODULE:
@@ -99,6 +104,8 @@ const infer = (ast: Tree, context: Context): Type => {
 };
 
 const constrain = (ast: Tree, context: Context, expectedType: Type): void => {
+  // console.dir({ log: 2, expectedType, ast }, { depth: null });
+
   switch (ast.type) {
     case NodeType.NUMBER: {
       const type = Number.isInteger(ast.data.value) ? "int" : "float";
@@ -145,10 +152,11 @@ const constrain = (ast: Tree, context: Context, expectedType: Type): void => {
   context.unificationTable.addConstraint(ast.id, { exactly: expectedType });
 };
 
-const substituteConstraints = (ast: Tree, context: Context): void => {
+export const substituteConstraints = (ast: Tree, context: Context): void => {
   ast.children.forEach((child) => substituteConstraints(child, context));
-  if ("type" in ast.data) return;
-  ast.data.type = context.unificationTable.resolveType(ast.id);
+  const map = inject(Injectable.TypeMap);
+  if (map.has(ast.id)) return;
+  map.set(ast.id, context.unificationTable.resolveType(ast.id));
 };
 
 export const inferTypes = (ast: Tree): void => {

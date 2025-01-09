@@ -9,9 +9,9 @@ import { Tree } from "../../src/ast.ts";
 
 beforeEach(() => {
   register(Injectable.FileMap, new FileMap());
-  register(Injectable.ASTNodeNextId, 0);
-  register(Injectable.ASTNodePrecedenceMap, new Map());
-  register(Injectable.ASTNodePositionMap, new Map());
+  register(Injectable.NextId, 0);
+  register(Injectable.PrecedenceMap, new Map());
+  register(Injectable.PositionMap, new Map());
 });
 
 const _testCase = (input: string) => {

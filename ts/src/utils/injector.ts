@@ -1,21 +1,24 @@
 import { FileMap } from "codespan-napi";
 import type { Precedence } from "../ast";
 import type { Position } from "./position";
+import { Type } from "../analysis/types/infer";
 
 enum Injectable {
   FileMap = "FileMap",
   RootDir = "RootDir",
   NextId = "NextId",
-  ASTNodePrecedenceMap = "ASTNodePrecedenceMap",
+  PrecedenceMap = "PrecedenceMap",
   PositionMap = "PositionMap",
+  TypeMap = "TypeMap",
 }
 
 type InjectableType = {
   [Injectable.FileMap]: FileMap;
   [Injectable.RootDir]: string;
   [Injectable.NextId]: number;
-  [Injectable.ASTNodePrecedenceMap]: Map<number, Precedence>;
+  [Injectable.PrecedenceMap]: Map<number, Precedence>;
   [Injectable.PositionMap]: Map<number, Position>;
+  [Injectable.TypeMap]: Map<number, Type>;
 };
 
 const registry = new Map<string, any>();
@@ -36,7 +39,8 @@ const inject = <const T extends Injectable>(name: T): InjectableType[T] => {
 register(Injectable.RootDir, process.cwd());
 register(Injectable.FileMap, new FileMap());
 register(Injectable.NextId, 0);
-register(Injectable.ASTNodePrecedenceMap, new Map());
+register(Injectable.PrecedenceMap, new Map());
 register(Injectable.PositionMap, new Map());
+register(Injectable.TypeMap, new Map());
 
 export { register, inject, Injectable };

@@ -88,9 +88,9 @@ const examples = [
 
 beforeEach(() => {
   register(Injectable.FileMap, new FileMap());
-  register(Injectable.ASTNodeNextId, 0);
-  register(Injectable.ASTNodePrecedenceMap, new Map());
-  register(Injectable.ASTNodePositionMap, new Map());
+  register(Injectable.NextId, 0);
+  register(Injectable.PrecedenceMap, new Map());
+  register(Injectable.PositionMap, new Map());
 });
 
 for (const { name, file, expected } of examples) {

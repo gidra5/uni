@@ -2,16 +2,17 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { Tree } from "../src/ast";
 import { parseScript } from "../src/parser/parser";
 import { parseTokenGroups } from "../src/parser/tokenGroups";
-import { Injectable, register } from "../src/utils/injector";
+import { inject, Injectable, register } from "../src/utils/injector";
 import { FileMap } from "codespan-napi";
-import { inferTypes } from "../src/analysis/types/infer";
+import { Context, infer, inferTypes, substituteConstraints } from "../src/analysis/types/infer";
 import { desugar } from "../src/analysis/desugar";
 
 beforeEach(() => {
   register(Injectable.FileMap, new FileMap());
   register(Injectable.NextId, 0);
-  register(Injectable.ASTNodePrecedenceMap, new Map());
+  register(Injectable.PrecedenceMap, new Map());
   register(Injectable.PositionMap, new Map());
+  register(Injectable.TypeMap, new Map());
 });
 
 function clearIds(ast: Tree) {
@@ -26,19 +27,24 @@ const testCase = async (input: string) => {
   const tokens = parseTokenGroups(input);
   const ast = parseScript(tokens);
   const desugared = desugar(ast);
-  inferTypes(desugared);
+  expect(desugared).toMatchSnapshot();
 
-  // expect(ast).toMatchSnapshot();
-  expect(clearIds(ast)).toMatchSnapshot();
+  const context = new Context();
+  infer(ast, context);
+  expect(context.unificationTable).toMatchSnapshot();
+
+  substituteConstraints(ast, context);
+  const map = inject(Injectable.TypeMap);
+  expect(map).toMatchSnapshot();
 };
 
 describe("compilation", () => {
   test("fix", async () => await testCase(`fn f -> (fn x -> x x) (fn x -> f(x x))`));
   test("either", async () => await testCase(`(((fn x -> fn m -> fn n -> m x) 1) fn x -> x) fn x -> x`));
   test("apply", async () => await testCase(`((fn f -> fn x -> f x) fn x -> x) 2`));
-  test("wrapper", async () => await testCase(`((fn x -> fn m -> m x) 2) fn x -> x`));
+  test("wrapper", async () => await testCase(`(fn x -> fn m -> m x) 2 fn x -> x`));
   test("church tuple", async () => await testCase(`((fn x -> fn y -> fn m -> m x y) 1 2) fn x -> fn _ -> x`));
-  test("function closure", async () => await testCase(`(fn x -> fn y -> y + 2 * x) 1 2`));
+  test("function closure", async () => await testCase(`(fn x -> fn y -> y + 2 + x) 1 2`));
   test("function deep closure", async () => await testCase(`(fn x -> fn y -> fn z -> x + y + z) 1 3 5`));
   test.only("function application and literal", async () => await testCase(`(fn x -> x + x) 2`));
   test("float", async () => await testCase(`1.1`));
