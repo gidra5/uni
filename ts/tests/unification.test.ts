@@ -1,72 +1,7 @@
-import { Constraint, TypeBounds, UnificationTable } from "../src/analysis/types/unification";
-import { describe, expect } from "vitest";
+import { UnificationTable } from "../src/analysis/types/unification";
+import { expect } from "vitest";
 import { test, fc } from "@fast-check/vitest";
 import { Type } from "../src/analysis/types/infer";
-import { Iterator } from "iterator-js";
-
-const testCase = (constraints: Record<number, Constraint[]>, expected: Record<number, TypeBounds>) => {
-  const table = new UnificationTable();
-  for (const variable in constraints) {
-    for (const constraint of constraints[variable]) {
-      table.addConstraint(Number(variable), constraint);
-    }
-  }
-
-  for (const variable in expected) {
-    expect(table.resolve(Number(variable))).toEqual(expected[variable]);
-  }
-};
-
-describe("unification", () => {
-  // test("normalize 2", () => testCase({ 0: [{ subtype: "int" }] }, { 0: { subtype: "int" } }));
-  // test("normalize 3", () => testCase({ 0: [{ supertype: "int" }] }, { 0: { supertype: "int" } }));
-  test("normalize 3", () => testCase({ 0: [{ exactly: "int" }] }, { 0: { exactly: "int" } }));
-  // test("normalize 3", () =>
-  //   testCase({ 0: [{ exactly: "int" }, { subtype: "int" }] }, { 0: { exactly: "int", subtype: "int" } }));
-  // test("normalize 3", () =>
-  //   testCase({ 0: [{ exactly: "int" }, { supertype: "string" }] }, { 0: { exactly: "int", supertype: "string" } }));
-  // test("normalize 3", () =>
-  //   testCase(
-  //     { 0: [{ exactly: "int" }, { supertype: "string" }, { subtype: "int" }] },
-  //     { 0: { exactly: "int", supertype: "string", subtype: "int" } }
-  //   ));
-  // test("normalize 4", () =>
-  //   testCase({ 0: [{ subtype: "int" }, { subtype: "string" }] }, { 0: { subtype: { and: ["int", "string"] } } }));
-  // test("normalize 5", () =>
-  //   testCase({ 0: [{ supertype: "int" }, { supertype: "string" }] }, { 0: { supertype: { or: ["int", "string"] } } }));
-  // test("normalize", () =>
-  //   testCase({ 0: [{ subtype: "int" }], 1: [{ equals: 0 }] }, { 0: { subtype: "int" }, 1: { subtype: "int" } }));
-  test("normalize 9", () =>
-    testCase(
-      { 0: [{ exactly: "int" }], 1: [{ exactly: { or: ["int", { variable: 0 }] } }] },
-      { 0: { exactly: "int" }, 1: { exactly: { or: ["int", "int"] } } }
-    ));
-  // test("normalize 8", () =>
-  //   testCase(
-  //     { 0: [{ subtype: "int" }], 1: [{ exactly: { fn: { arg: { variable: 0 }, return: "int", closure: [] } } }] },
-  //     { 0: { subtype: "int" }, 1: { exactly: { fn: { arg: "int", return: "int", closure: [] } } } }
-  //   ));
-  // test("normalize 8", () =>
-  //   testCase(
-  //     { 0: [{ supertype: "int" }], 1: [{ exactly: { fn: { arg: "int", return: { variable: 0 }, closure: [] } } }] },
-  //     { 0: { supertype: "int" }, 1: { exactly: { fn: { arg: "int", return: "int", closure: [] } } } }
-  //   ));
-  // test("normalize 8", () =>
-  //   testCase(
-  //     { 0: [{ subtype: "int" }], 1: [{ exactly: { fn: { arg: "int", return: "int", closure: [{ variable: 0 }] } } }] },
-  //     { 0: { subtype: "int" }, 1: { exactly: { fn: { arg: "int", return: "int", closure: ["int"] } } } }
-  //   ));
-
-  test("normalize 8", () => testCase({ 0: [{ equals: 0 }] }, { 0: { equals: 0 } }));
-  test("normalize 8", () => testCase({ 0: [{ exactly: { variable: 0 } }] }, { 0: { exactly: { variable: 0 } } }));
-  test("normalize 8", () =>
-    testCase({ 0: [{ equals: 1 }], 1: [{ equals: 0 }] }, { 0: { equals: 1 }, 1: { equals: 0 } }));
-  test("normalize 8", () =>
-    testCase(
-      { 0: [{ exactly: { fn: { arg: { variable: 1 }, return: { variable: 2 }, closure: [{ variable: 3 }] } } }] },
-      { 0: { exactly: { fn: { arg: { variable: 1 }, return: { variable: 2 }, closure: [{ variable: 3 }] } } } }
-    ));
-});
 
 const typeArb = fc.letrec<{ type: Type }>((typeArb) => ({
   type: fc.oneof(
@@ -191,23 +126,51 @@ test.prop([fc.array(constraintArb, { minLength: 1 }), fc.array(constraintArb, { 
   }
 );
 
-// test.prop([unificationTableArb])("unification table resolution never throws", (table) => {
-//   expect(() => table.resolve(0)).not.toThrow();
-// });
+test.prop([unificationTableArb])("unification table truncation invariant", (table) => {
+  table.truncate();
 
-// test.prop([constraintSetArb])("unification table resolution order", (sets) => {
-//   const table = new UnificationTable();
-//   for (const { variable, constraints } of sets) {
-//     for (const constraint of constraints) {
-//       table.addConstraint(variable, constraint);
-//     }
-//   }
-//   const first1 = table.resolve(0);
-//   const second1 = table.resolve(1);
-//   table.resolved.clear();
-//   const first2 = table.resolve(1);
-//   const second2 = table.resolve(0);
+  for (const constraints of table.constraints.values()) {
+    if (Array.isArray(constraints)) continue;
+    const otherVariable = constraints.equals;
+    const otherConstraints = table.constraints.get(otherVariable);
+    if (!otherConstraints) continue;
+    if (Array.isArray(otherConstraints)) continue;
+    if (otherConstraints.equals === otherVariable) continue;
+    expect.unreachable("invariant unsatisfied");
+  }
+});
 
-//   expect(first1).toEqual(second2);
-//   expect(second1).toEqual(first2);
-// });
+test.prop([unificationTableArb])("unification table tautology truncation invariant", (table) => {
+  table.truncate();
+  table.truncateTautologies();
+
+  for (const constraints of table.constraints.values()) {
+    if (Array.isArray(constraints)) continue;
+    const otherVariable = constraints.equals;
+    const otherConstraints = table.constraints.get(otherVariable);
+    if (!otherConstraints) continue;
+    if (Array.isArray(otherConstraints)) continue;
+    expect.unreachable("invariant unsatisfied");
+  }
+});
+
+test.prop([unificationTableArb])("unification table resolution never throws", (table) => {
+  expect(() => table.resolve(0)).not.toThrow();
+});
+
+test.prop([constraintSetArb])("unification table resolution order irrelevant", (sets) => {
+  const table = new UnificationTable();
+  for (const { variable, constraints } of sets) {
+    for (const constraint of constraints) {
+      table.addConstraint(variable, constraint);
+    }
+  }
+  const first1 = table.resolve(0);
+  const second1 = table.resolve(1);
+  table.resolved.clear();
+  const first2 = table.resolve(1);
+  const second2 = table.resolve(0);
+
+  expect(first1).toEqual(second2);
+  expect(second1).toEqual(first2);
+});

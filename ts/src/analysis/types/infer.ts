@@ -24,9 +24,21 @@ export type Type =
   | { or: Type[] }
   | { not: Type };
 
+const initialNames = new Map<string, Type>([
+  [
+    "print",
+    {
+      and: [
+        { fn: { arg: "int", return: "void", closure: [] } },
+        { fn: { arg: "string", return: "void", closure: [] } },
+      ],
+    },
+  ],
+]);
+
 export class Context {
   unificationTable = new UnificationTable();
-  names: Map<string, Type> = new Map();
+  names: Map<string, Type> = initialNames;
   constructor() {}
 }
 
@@ -60,7 +72,7 @@ export const infer = (ast: Tree, context: Context): Type => {
     case NodeType.SCRIPT:
     case NodeType.SEQUENCE: {
       const types = ast.children.map((child) => infer(child, context));
-      context.unificationTable.addConstraint(ast.id, { exactly: types[types.length - 1] });
+      context.unificationTable.addConstraint(ast.id, { equals: ast.children[types.length - 1].id });
       return types[types.length - 1];
     }
     case NodeType.FUNCTION: {
@@ -156,6 +168,8 @@ export const substituteConstraints = (ast: Tree, context: Context): void => {
   ast.children.forEach((child) => substituteConstraints(child, context));
   const map = inject(Injectable.TypeMap);
   if (map.has(ast.id)) return;
+  // console.log(ast.id);
+
   map.set(ast.id, context.unificationTable.resolveType(ast.id));
 };
 

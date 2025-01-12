@@ -14,6 +14,7 @@ exports[`compilation > apply 1`] = `
                   "data": {
                     "value": "f",
                   },
+                  "id": 48,
                   "type": "name",
                 },
                 {
@@ -23,6 +24,7 @@ exports[`compilation > apply 1`] = `
                       "data": {
                         "value": "x",
                       },
+                      "id": 49,
                       "type": "name",
                     },
                     {
@@ -30,89 +32,36 @@ exports[`compilation > apply 1`] = `
                         {
                           "children": [],
                           "data": {
-                            "type": {
-                              "fn": {
-                                "arg": "int",
-                                "closure": [],
-                                "return": "int",
-                              },
-                            },
                             "value": "f",
                           },
+                          "id": 52,
                           "type": "name",
                         },
                         {
                           "children": [],
                           "data": {
-                            "type": "int",
                             "value": "x",
                           },
+                          "id": 55,
                           "type": "name",
                         },
                       ],
-                      "data": {
-                        "type": "int",
-                      },
+                      "data": {},
+                      "id": 53,
                       "type": "application",
                     },
                   ],
                   "data": {
                     "isTopFunction": true,
-                    "type": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [
-                          {
-                            "name": "f",
-                            "type": {
-                              "fn": {
-                                "arg": "int",
-                                "closure": [],
-                                "return": "int",
-                              },
-                            },
-                          },
-                        ],
-                        "return": "int",
-                      },
-                    },
                   },
+                  "id": 56,
                   "type": "func",
                 },
               ],
               "data": {
                 "isTopFunction": true,
-                "type": {
-                  "fn": {
-                    "arg": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [],
-                        "return": "int",
-                      },
-                    },
-                    "closure": [],
-                    "return": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [
-                          {
-                            "name": "f",
-                            "type": {
-                              "fn": {
-                                "arg": "int",
-                                "closure": [],
-                                "return": "int",
-                              },
-                            },
-                          },
-                        ],
-                        "return": "int",
-                      },
-                    },
-                  },
-                },
               },
+              "id": 57,
               "type": "func",
             },
             {
@@ -122,71 +71,233 @@ exports[`compilation > apply 1`] = `
                   "data": {
                     "value": "x",
                   },
+                  "id": 60,
                   "type": "name",
                 },
                 {
                   "children": [],
                   "data": {
-                    "type": "int",
                     "value": "x",
                   },
+                  "id": 62,
                   "type": "name",
                 },
               ],
               "data": {
                 "isTopFunction": true,
-                "type": {
-                  "fn": {
-                    "arg": "int",
-                    "closure": [],
-                    "return": "int",
-                  },
-                },
               },
+              "id": 63,
               "type": "func",
             },
           ],
-          "data": {
-            "type": {
-              "fn": {
-                "arg": "int",
-                "closure": [
-                  {
-                    "name": "f",
-                    "type": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [],
-                        "return": "int",
-                      },
-                    },
-                  },
-                ],
-                "return": "int",
-              },
-            },
-          },
+          "data": {},
+          "id": 59,
           "type": "application",
         },
         {
           "children": [],
           "data": {
-            "type": "int",
             "value": 2,
           },
+          "id": 67,
           "type": "number",
         },
       ],
-      "data": {
-        "type": "int",
-      },
+      "data": {},
+      "id": 65,
       "type": "application",
     },
   ],
-  "data": {
-    "type": "int",
-  },
+  "data": {},
+  "id": 68,
   "type": "script",
+}
+`;
+
+exports[`compilation > apply 2`] = `
+Map {
+  67 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  62 => {
+    "equals": 70,
+  },
+  63 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 70,
+          },
+          "closure": [],
+          "return": {
+            "variable": 70,
+          },
+        },
+      },
+    },
+  ],
+  55 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  52 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 70,
+          },
+          "closure": [],
+          "return": {
+            "variable": 70,
+          },
+        },
+      },
+    },
+  ],
+  70 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  69 => {
+    "equals": 70,
+  },
+  53 => {
+    "equals": 70,
+  },
+  56 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "variable": 70,
+          },
+        },
+      },
+    },
+  ],
+  57 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": {
+                "variable": 70,
+              },
+              "closure": [],
+              "return": {
+                "variable": 70,
+              },
+            },
+          },
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": {
+                "variable": 70,
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  59 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "variable": 70,
+          },
+        },
+      },
+    },
+  ],
+  65 => {
+    "equals": 70,
+  },
+  68 => {
+    "equals": 70,
+  },
+}
+`;
+
+exports[`compilation > apply 3`] = `
+Map {
+  48 => {
+    "variable": 48,
+  },
+  49 => {
+    "variable": 49,
+  },
+  52 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  55 => "int",
+  53 => "int",
+  56 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  57 => {
+    "fn": {
+      "arg": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": "int",
+        },
+      },
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": "int",
+        },
+      },
+    },
+  },
+  60 => {
+    "variable": 60,
+  },
+  62 => "int",
+  63 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  59 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  67 => "int",
+  65 => "int",
+  68 => "int",
 }
 `;
 
@@ -206,6 +317,7 @@ exports[`compilation > church tuple 1`] = `
                       "data": {
                         "value": "x",
                       },
+                      "id": 59,
                       "type": "name",
                     },
                     {
@@ -215,6 +327,7 @@ exports[`compilation > church tuple 1`] = `
                           "data": {
                             "value": "y",
                           },
+                          "id": 60,
                           "type": "name",
                         },
                         {
@@ -224,6 +337,7 @@ exports[`compilation > church tuple 1`] = `
                               "data": {
                                 "value": "m",
                               },
+                              "id": 61,
                               "type": "name",
                             },
                             {
@@ -233,308 +347,82 @@ exports[`compilation > church tuple 1`] = `
                                     {
                                       "children": [],
                                       "data": {
-                                        "type": {
-                                          "fn": {
-                                            "arg": "int",
-                                            "closure": [],
-                                            "return": {
-                                              "fn": {
-                                                "arg": "int",
-                                                "closure": [
-                                                  {
-                                                    "name": "x",
-                                                    "type": "int",
-                                                  },
-                                                ],
-                                                "return": "int",
-                                              },
-                                            },
-                                          },
-                                        },
                                         "value": "m",
                                       },
+                                      "id": 64,
                                       "type": "name",
                                     },
                                     {
                                       "children": [],
                                       "data": {
-                                        "type": "int",
                                         "value": "x",
                                       },
+                                      "id": 68,
                                       "type": "name",
                                     },
                                   ],
-                                  "data": {
-                                    "type": {
-                                      "fn": {
-                                        "arg": "int",
-                                        "closure": [],
-                                        "return": "int",
-                                      },
-                                    },
-                                  },
+                                  "data": {},
+                                  "id": 65,
                                   "type": "application",
                                 },
                                 {
                                   "children": [],
                                   "data": {
-                                    "type": "int",
                                     "value": "y",
                                   },
+                                  "id": 72,
                                   "type": "name",
                                 },
                               ],
-                              "data": {
-                                "type": "int",
-                              },
+                              "data": {},
+                              "id": 70,
                               "type": "application",
                             },
                           ],
                           "data": {
                             "isTopFunction": true,
-                            "type": {
-                              "fn": {
-                                "arg": {
-                                  "fn": {
-                                    "arg": "int",
-                                    "closure": [],
-                                    "return": {
-                                      "fn": {
-                                        "arg": "int",
-                                        "closure": [
-                                          {
-                                            "name": "x",
-                                            "type": "int",
-                                          },
-                                        ],
-                                        "return": "int",
-                                      },
-                                    },
-                                  },
-                                },
-                                "closure": [
-                                  {
-                                    "name": "x",
-                                    "type": "int",
-                                  },
-                                  {
-                                    "name": "y",
-                                    "type": "int",
-                                  },
-                                ],
-                                "return": "int",
-                              },
-                            },
                           },
+                          "id": 73,
                           "type": "func",
                         },
                       ],
                       "data": {
                         "isTopFunction": true,
-                        "type": {
-                          "fn": {
-                            "arg": "int",
-                            "closure": [
-                              {
-                                "name": "x",
-                                "type": "int",
-                              },
-                            ],
-                            "return": {
-                              "fn": {
-                                "arg": {
-                                  "fn": {
-                                    "arg": "int",
-                                    "closure": [],
-                                    "return": {
-                                      "fn": {
-                                        "arg": "int",
-                                        "closure": [
-                                          {
-                                            "name": "x",
-                                            "type": "int",
-                                          },
-                                        ],
-                                        "return": "int",
-                                      },
-                                    },
-                                  },
-                                },
-                                "closure": [
-                                  {
-                                    "name": "x",
-                                    "type": "int",
-                                  },
-                                  {
-                                    "name": "y",
-                                    "type": "int",
-                                  },
-                                ],
-                                "return": "int",
-                              },
-                            },
-                          },
-                        },
                       },
+                      "id": 74,
                       "type": "func",
                     },
                   ],
                   "data": {
                     "isTopFunction": true,
-                    "type": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [],
-                        "return": {
-                          "fn": {
-                            "arg": "int",
-                            "closure": [
-                              {
-                                "name": "x",
-                                "type": "int",
-                              },
-                            ],
-                            "return": {
-                              "fn": {
-                                "arg": {
-                                  "fn": {
-                                    "arg": "int",
-                                    "closure": [],
-                                    "return": {
-                                      "fn": {
-                                        "arg": "int",
-                                        "closure": [
-                                          {
-                                            "name": "x",
-                                            "type": "int",
-                                          },
-                                        ],
-                                        "return": "int",
-                                      },
-                                    },
-                                  },
-                                },
-                                "closure": [
-                                  {
-                                    "name": "x",
-                                    "type": "int",
-                                  },
-                                  {
-                                    "name": "y",
-                                    "type": "int",
-                                  },
-                                ],
-                                "return": "int",
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
                   },
+                  "id": 75,
                   "type": "func",
                 },
                 {
                   "children": [],
                   "data": {
-                    "type": "int",
                     "value": 1,
                   },
+                  "id": 80,
                   "type": "number",
                 },
               ],
-              "data": {
-                "type": {
-                  "fn": {
-                    "arg": "int",
-                    "closure": [
-                      {
-                        "name": "x",
-                        "type": "int",
-                      },
-                    ],
-                    "return": {
-                      "fn": {
-                        "arg": {
-                          "fn": {
-                            "arg": "int",
-                            "closure": [],
-                            "return": {
-                              "fn": {
-                                "arg": "int",
-                                "closure": [
-                                  {
-                                    "name": "x",
-                                    "type": "int",
-                                  },
-                                ],
-                                "return": "int",
-                              },
-                            },
-                          },
-                        },
-                        "closure": [
-                          {
-                            "name": "x",
-                            "type": "int",
-                          },
-                          {
-                            "name": "y",
-                            "type": "int",
-                          },
-                        ],
-                        "return": "int",
-                      },
-                    },
-                  },
-                },
-              },
+              "data": {},
+              "id": 77,
               "type": "application",
             },
             {
               "children": [],
               "data": {
-                "type": "int",
                 "value": 2,
               },
+              "id": 84,
               "type": "number",
             },
           ],
-          "data": {
-            "type": {
-              "fn": {
-                "arg": {
-                  "fn": {
-                    "arg": "int",
-                    "closure": [],
-                    "return": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [
-                          {
-                            "name": "x",
-                            "type": "int",
-                          },
-                        ],
-                        "return": "int",
-                      },
-                    },
-                  },
-                },
-                "closure": [
-                  {
-                    "name": "x",
-                    "type": "int",
-                  },
-                  {
-                    "name": "y",
-                    "type": "int",
-                  },
-                ],
-                "return": "int",
-              },
-            },
-          },
+          "data": {},
+          "id": 82,
           "type": "application",
         },
         {
@@ -544,6 +432,7 @@ exports[`compilation > church tuple 1`] = `
               "data": {
                 "value": "x",
               },
+              "id": 87,
               "type": "name",
             },
             {
@@ -551,69 +440,530 @@ exports[`compilation > church tuple 1`] = `
                 {
                   "children": [],
                   "data": {},
+                  "id": 88,
                   "type": "placeholder",
                 },
                 {
                   "children": [],
                   "data": {
-                    "type": "int",
                     "value": "x",
                   },
+                  "id": 90,
                   "type": "name",
                 },
               ],
               "data": {
                 "isTopFunction": true,
-                "type": {
-                  "fn": {
-                    "arg": "int",
-                    "closure": [
-                      {
-                        "name": "x",
-                        "type": "int",
-                      },
-                    ],
-                    "return": "int",
-                  },
-                },
               },
+              "id": 91,
               "type": "func",
             },
           ],
           "data": {
             "isTopFunction": true,
-            "type": {
-              "fn": {
-                "arg": "int",
-                "closure": [],
-                "return": {
-                  "fn": {
-                    "arg": "int",
-                    "closure": [
-                      {
-                        "name": "x",
-                        "type": "int",
-                      },
-                    ],
-                    "return": "int",
+          },
+          "id": 92,
+          "type": "func",
+        },
+      ],
+      "data": {},
+      "id": 86,
+      "type": "application",
+    },
+  ],
+  "data": {},
+  "id": 93,
+  "type": "script",
+}
+`;
+
+exports[`compilation > church tuple 2`] = `
+Map {
+  90 => {
+    "equals": 94,
+  },
+  91 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 95,
+          },
+          "closure": [],
+          "return": {
+            "variable": 94,
+          },
+        },
+      },
+    },
+  ],
+  92 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 94,
+          },
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": {
+                "variable": 95,
+              },
+              "closure": [],
+              "return": {
+                "variable": 94,
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  84 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  80 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  72 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  68 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  64 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 94,
+          },
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": {
+                "variable": 95,
+              },
+              "closure": [],
+              "return": {
+                "variable": 94,
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  94 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  95 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  96 => {
+    "equals": 94,
+  },
+  65 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "variable": 94,
+          },
+        },
+      },
+    },
+  ],
+  70 => {
+    "equals": 94,
+  },
+  73 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": {
+                "variable": 94,
+              },
+              "closure": [],
+              "return": {
+                "fn": {
+                  "arg": {
+                    "variable": 95,
+                  },
+                  "closure": [],
+                  "return": {
+                    "variable": 94,
                   },
                 },
               },
             },
           },
-          "type": "func",
+          "closure": [],
+          "return": {
+            "variable": 94,
+          },
         },
-      ],
-      "data": {
-        "type": "int",
       },
-      "type": "application",
     },
   ],
-  "data": {
-    "type": "int",
+  74 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": {
+                "fn": {
+                  "arg": {
+                    "variable": 94,
+                  },
+                  "closure": [],
+                  "return": {
+                    "fn": {
+                      "arg": {
+                        "variable": 95,
+                      },
+                      "closure": [],
+                      "return": {
+                        "variable": 94,
+                      },
+                    },
+                  },
+                },
+              },
+              "closure": [],
+              "return": {
+                "variable": 94,
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  75 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": {
+                "fn": {
+                  "arg": {
+                    "fn": {
+                      "arg": {
+                        "variable": 94,
+                      },
+                      "closure": [],
+                      "return": {
+                        "fn": {
+                          "arg": {
+                            "variable": 95,
+                          },
+                          "closure": [],
+                          "return": {
+                            "variable": 94,
+                          },
+                        },
+                      },
+                    },
+                  },
+                  "closure": [],
+                  "return": {
+                    "variable": 94,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  77 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": {
+                "fn": {
+                  "arg": {
+                    "variable": 94,
+                  },
+                  "closure": [],
+                  "return": {
+                    "fn": {
+                      "arg": {
+                        "variable": 95,
+                      },
+                      "closure": [],
+                      "return": {
+                        "variable": 94,
+                      },
+                    },
+                  },
+                },
+              },
+              "closure": [],
+              "return": {
+                "variable": 94,
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  82 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": {
+                "variable": 94,
+              },
+              "closure": [],
+              "return": {
+                "fn": {
+                  "arg": {
+                    "variable": 95,
+                  },
+                  "closure": [],
+                  "return": {
+                    "variable": 94,
+                  },
+                },
+              },
+            },
+          },
+          "closure": [],
+          "return": {
+            "variable": 94,
+          },
+        },
+      },
+    },
+  ],
+  86 => {
+    "equals": 94,
   },
-  "type": "script",
+  93 => {
+    "equals": 94,
+  },
+}
+`;
+
+exports[`compilation > church tuple 3`] = `
+Map {
+  59 => {
+    "variable": 59,
+  },
+  60 => {
+    "variable": 60,
+  },
+  61 => {
+    "variable": 61,
+  },
+  64 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": "int",
+        },
+      },
+    },
+  },
+  68 => "int",
+  65 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  72 => "int",
+  70 => "int",
+  73 => {
+    "fn": {
+      "arg": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": "int",
+            },
+          },
+        },
+      },
+      "closure": [],
+      "return": "int",
+    },
+  },
+  74 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": {
+                "fn": {
+                  "arg": "int",
+                  "closure": [],
+                  "return": "int",
+                },
+              },
+            },
+          },
+          "closure": [],
+          "return": "int",
+        },
+      },
+    },
+  },
+  75 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": {
+                "fn": {
+                  "arg": "int",
+                  "closure": [],
+                  "return": {
+                    "fn": {
+                      "arg": "int",
+                      "closure": [],
+                      "return": "int",
+                    },
+                  },
+                },
+              },
+              "closure": [],
+              "return": "int",
+            },
+          },
+        },
+      },
+    },
+  },
+  80 => "int",
+  77 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": {
+                "fn": {
+                  "arg": "int",
+                  "closure": [],
+                  "return": "int",
+                },
+              },
+            },
+          },
+          "closure": [],
+          "return": "int",
+        },
+      },
+    },
+  },
+  84 => "int",
+  82 => {
+    "fn": {
+      "arg": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": "int",
+            },
+          },
+        },
+      },
+      "closure": [],
+      "return": "int",
+    },
+  },
+  87 => {
+    "variable": 87,
+  },
+  88 => {
+    "variable": 88,
+  },
+  90 => "int",
+  91 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  92 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": "int",
+        },
+      },
+    },
+  },
+  86 => "int",
+  93 => "int",
 }
 `;
 
@@ -633,6 +983,7 @@ exports[`compilation > either 1`] = `
                       "data": {
                         "value": "x",
                       },
+                      "id": 76,
                       "type": "name",
                     },
                     {
@@ -642,6 +993,7 @@ exports[`compilation > either 1`] = `
                           "data": {
                             "value": "m",
                           },
+                          "id": 77,
                           "type": "name",
                         },
                         {
@@ -651,6 +1003,7 @@ exports[`compilation > either 1`] = `
                               "data": {
                                 "value": "n",
                               },
+                              "id": 78,
                               "type": "name",
                             },
                             {
@@ -658,229 +1011,56 @@ exports[`compilation > either 1`] = `
                                 {
                                   "children": [],
                                   "data": {
-                                    "type": {
-                                      "fn": {
-                                        "arg": "int",
-                                        "closure": [],
-                                        "return": "int",
-                                      },
-                                    },
                                     "value": "m",
                                   },
+                                  "id": 81,
                                   "type": "name",
                                 },
                                 {
                                   "children": [],
                                   "data": {
-                                    "type": "int",
                                     "value": "x",
                                   },
+                                  "id": 84,
                                   "type": "name",
                                 },
                               ],
-                              "data": {
-                                "type": "int",
-                              },
+                              "data": {},
+                              "id": 82,
                               "type": "application",
                             },
                           ],
                           "data": {
                             "isTopFunction": true,
-                            "type": {
-                              "fn": {
-                                "arg": {
-                                  "fn": {
-                                    "arg": "unknown",
-                                    "closure": [],
-                                    "return": "unknown",
-                                  },
-                                },
-                                "closure": [
-                                  {
-                                    "name": "m",
-                                    "type": {
-                                      "fn": {
-                                        "arg": "int",
-                                        "closure": [],
-                                        "return": "int",
-                                      },
-                                    },
-                                  },
-                                  {
-                                    "name": "x",
-                                    "type": "int",
-                                  },
-                                ],
-                                "return": "int",
-                              },
-                            },
                           },
+                          "id": 85,
                           "type": "func",
                         },
                       ],
                       "data": {
                         "isTopFunction": true,
-                        "type": {
-                          "fn": {
-                            "arg": {
-                              "fn": {
-                                "arg": "int",
-                                "closure": [],
-                                "return": "int",
-                              },
-                            },
-                            "closure": [
-                              {
-                                "name": "x",
-                                "type": "int",
-                              },
-                            ],
-                            "return": {
-                              "fn": {
-                                "arg": {
-                                  "fn": {
-                                    "arg": "unknown",
-                                    "closure": [],
-                                    "return": "unknown",
-                                  },
-                                },
-                                "closure": [
-                                  {
-                                    "name": "m",
-                                    "type": {
-                                      "fn": {
-                                        "arg": "int",
-                                        "closure": [],
-                                        "return": "int",
-                                      },
-                                    },
-                                  },
-                                  {
-                                    "name": "x",
-                                    "type": "int",
-                                  },
-                                ],
-                                "return": "int",
-                              },
-                            },
-                          },
-                        },
                       },
+                      "id": 86,
                       "type": "func",
                     },
                   ],
                   "data": {
                     "isTopFunction": true,
-                    "type": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [],
-                        "return": {
-                          "fn": {
-                            "arg": {
-                              "fn": {
-                                "arg": "int",
-                                "closure": [],
-                                "return": "int",
-                              },
-                            },
-                            "closure": [
-                              {
-                                "name": "x",
-                                "type": "int",
-                              },
-                            ],
-                            "return": {
-                              "fn": {
-                                "arg": {
-                                  "fn": {
-                                    "arg": "unknown",
-                                    "closure": [],
-                                    "return": "unknown",
-                                  },
-                                },
-                                "closure": [
-                                  {
-                                    "name": "m",
-                                    "type": {
-                                      "fn": {
-                                        "arg": "int",
-                                        "closure": [],
-                                        "return": "int",
-                                      },
-                                    },
-                                  },
-                                  {
-                                    "name": "x",
-                                    "type": "int",
-                                  },
-                                ],
-                                "return": "int",
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
                   },
+                  "id": 87,
                   "type": "func",
                 },
                 {
                   "children": [],
                   "data": {
-                    "type": "int",
                     "value": 1,
                   },
+                  "id": 91,
                   "type": "number",
                 },
               ],
-              "data": {
-                "type": {
-                  "fn": {
-                    "arg": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [],
-                        "return": "int",
-                      },
-                    },
-                    "closure": [
-                      {
-                        "name": "x",
-                        "type": "int",
-                      },
-                    ],
-                    "return": {
-                      "fn": {
-                        "arg": {
-                          "fn": {
-                            "arg": "unknown",
-                            "closure": [],
-                            "return": "unknown",
-                          },
-                        },
-                        "closure": [
-                          {
-                            "name": "m",
-                            "type": {
-                              "fn": {
-                                "arg": "int",
-                                "closure": [],
-                                "return": "int",
-                              },
-                            },
-                          },
-                          {
-                            "name": "x",
-                            "type": "int",
-                          },
-                        ],
-                        "return": "int",
-                      },
-                    },
-                  },
-                },
-              },
+              "data": {},
+              "id": 89,
               "type": "application",
             },
             {
@@ -890,60 +1070,27 @@ exports[`compilation > either 1`] = `
                   "data": {
                     "value": "x",
                   },
+                  "id": 94,
                   "type": "name",
                 },
                 {
                   "children": [],
                   "data": {
-                    "type": "int",
                     "value": "x",
                   },
+                  "id": 96,
                   "type": "name",
                 },
               ],
               "data": {
                 "isTopFunction": true,
-                "type": {
-                  "fn": {
-                    "arg": "int",
-                    "closure": [],
-                    "return": "int",
-                  },
-                },
               },
+              "id": 97,
               "type": "func",
             },
           ],
-          "data": {
-            "type": {
-              "fn": {
-                "arg": {
-                  "fn": {
-                    "arg": "unknown",
-                    "closure": [],
-                    "return": "unknown",
-                  },
-                },
-                "closure": [
-                  {
-                    "name": "m",
-                    "type": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [],
-                        "return": "int",
-                      },
-                    },
-                  },
-                  {
-                    "name": "x",
-                    "type": "int",
-                  },
-                ],
-                "return": "int",
-              },
-            },
-          },
+          "data": {},
+          "id": 93,
           "type": "application",
         },
         {
@@ -953,40 +1100,466 @@ exports[`compilation > either 1`] = `
               "data": {
                 "value": "x",
               },
+              "id": 100,
               "type": "name",
             },
             {
               "children": [],
               "data": {
-                "type": "unknown",
                 "value": "x",
               },
+              "id": 102,
               "type": "name",
             },
           ],
           "data": {
             "isTopFunction": true,
-            "type": {
-              "fn": {
-                "arg": "unknown",
-                "closure": [],
-                "return": "unknown",
-              },
-            },
           },
+          "id": 103,
           "type": "func",
         },
       ],
-      "data": {
-        "type": "int",
-      },
+      "data": {},
+      "id": 99,
       "type": "application",
     },
   ],
-  "data": {
-    "type": "int",
-  },
+  "data": {},
+  "id": 104,
   "type": "script",
+}
+`;
+
+exports[`compilation > either 2`] = `
+Map {
+  102 => {
+    "equals": 105,
+  },
+  103 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 105,
+          },
+          "closure": [],
+          "return": {
+            "variable": 105,
+          },
+        },
+      },
+    },
+  ],
+  96 => {
+    "equals": 107,
+  },
+  97 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 107,
+          },
+          "closure": [],
+          "return": {
+            "variable": 107,
+          },
+        },
+      },
+    },
+  ],
+  91 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  84 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  81 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 107,
+          },
+          "closure": [],
+          "return": {
+            "variable": 107,
+          },
+        },
+      },
+    },
+  ],
+  107 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  106 => {
+    "equals": 107,
+  },
+  82 => {
+    "equals": 107,
+  },
+  85 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": {
+                "variable": 105,
+              },
+              "closure": [],
+              "return": {
+                "variable": 105,
+              },
+            },
+          },
+          "closure": [],
+          "return": {
+            "variable": 107,
+          },
+        },
+      },
+    },
+  ],
+  86 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": {
+                "variable": 107,
+              },
+              "closure": [],
+              "return": {
+                "variable": 107,
+              },
+            },
+          },
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": {
+                "fn": {
+                  "arg": {
+                    "variable": 105,
+                  },
+                  "closure": [],
+                  "return": {
+                    "variable": 105,
+                  },
+                },
+              },
+              "closure": [],
+              "return": {
+                "variable": 107,
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  87 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": {
+                "fn": {
+                  "arg": {
+                    "variable": 107,
+                  },
+                  "closure": [],
+                  "return": {
+                    "variable": 107,
+                  },
+                },
+              },
+              "closure": [],
+              "return": {
+                "fn": {
+                  "arg": {
+                    "fn": {
+                      "arg": {
+                        "variable": 105,
+                      },
+                      "closure": [],
+                      "return": {
+                        "variable": 105,
+                      },
+                    },
+                  },
+                  "closure": [],
+                  "return": {
+                    "variable": 107,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  89 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": {
+                "variable": 107,
+              },
+              "closure": [],
+              "return": {
+                "variable": 107,
+              },
+            },
+          },
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": {
+                "fn": {
+                  "arg": {
+                    "variable": 105,
+                  },
+                  "closure": [],
+                  "return": {
+                    "variable": 105,
+                  },
+                },
+              },
+              "closure": [],
+              "return": {
+                "variable": 107,
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  93 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": {
+                "variable": 105,
+              },
+              "closure": [],
+              "return": {
+                "variable": 105,
+              },
+            },
+          },
+          "closure": [],
+          "return": {
+            "variable": 107,
+          },
+        },
+      },
+    },
+  ],
+  99 => {
+    "equals": 107,
+  },
+  104 => {
+    "equals": 107,
+  },
+}
+`;
+
+exports[`compilation > either 3`] = `
+Map {
+  76 => {
+    "variable": 76,
+  },
+  77 => {
+    "variable": 77,
+  },
+  78 => {
+    "variable": 78,
+  },
+  81 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  84 => "int",
+  82 => "int",
+  85 => {
+    "fn": {
+      "arg": {
+        "fn": {
+          "arg": {
+            "variable": 105,
+          },
+          "closure": [],
+          "return": {
+            "variable": 105,
+          },
+        },
+      },
+      "closure": [],
+      "return": "int",
+    },
+  },
+  86 => {
+    "fn": {
+      "arg": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": "int",
+        },
+      },
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": {
+                "variable": 105,
+              },
+              "closure": [],
+              "return": {
+                "variable": 105,
+              },
+            },
+          },
+          "closure": [],
+          "return": "int",
+        },
+      },
+    },
+  },
+  87 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": "int",
+            },
+          },
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": {
+                "fn": {
+                  "arg": {
+                    "variable": 105,
+                  },
+                  "closure": [],
+                  "return": {
+                    "variable": 105,
+                  },
+                },
+              },
+              "closure": [],
+              "return": "int",
+            },
+          },
+        },
+      },
+    },
+  },
+  91 => "int",
+  89 => {
+    "fn": {
+      "arg": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": "int",
+        },
+      },
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": {
+                "variable": 105,
+              },
+              "closure": [],
+              "return": {
+                "variable": 105,
+              },
+            },
+          },
+          "closure": [],
+          "return": "int",
+        },
+      },
+    },
+  },
+  94 => {
+    "variable": 94,
+  },
+  96 => "int",
+  97 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  93 => {
+    "fn": {
+      "arg": {
+        "fn": {
+          "arg": {
+            "variable": 105,
+          },
+          "closure": [],
+          "return": {
+            "variable": 105,
+          },
+        },
+      },
+      "closure": [],
+      "return": "int",
+    },
+  },
+  100 => {
+    "variable": 100,
+  },
+  102 => {
+    "variable": 105,
+  },
+  103 => {
+    "fn": {
+      "arg": {
+        "variable": 105,
+      },
+      "closure": [],
+      "return": {
+        "variable": 105,
+      },
+    },
+  },
+  99 => "int",
+  104 => "int",
 }
 `;
 
@@ -996,27 +1569,63 @@ exports[`compilation > fix 1`] = `
     {
       "children": [
         {
-          "children": [],
-          "data": {
-            "type": {
-              "variable": 26,
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "id": 39,
+              "type": "name",
             },
-            "value": "f",
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {
+                    "value": "x",
+                  },
+                  "id": 42,
+                  "type": "name",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "x",
+                  },
+                  "id": 45,
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "id": 43,
+              "type": "application",
+            },
+          ],
+          "data": {
+            "isTopFunction": true,
           },
-          "type": "name",
+          "id": 46,
+          "type": "func",
         },
         {
           "children": [
             {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "id": 48,
+              "type": "name",
+            },
+            {
               "children": [
                 {
                   "children": [],
                   "data": {
-                    "type": {
-                      "variable": 45,
-                    },
-                    "value": "x",
+                    "value": "f",
                   },
+                  "id": 55,
                   "type": "name",
                 },
                 {
@@ -1024,355 +1633,360 @@ exports[`compilation > fix 1`] = `
                     {
                       "children": [],
                       "data": {
-                        "type": {
-                          "and": [
-                            {
-                              "variable": 48,
-                            },
-                            {
-                              "and": [
-                                {
-                                  "fn": {
-                                    "arg": {
-                                      "variable": 74,
-                                    },
-                                    "closure": [
-                                      {
-                                        "variable": 73,
-                                      },
-                                    ],
-                                    "return": {
-                                      "variable": 76,
-                                    },
-                                  },
-                                },
-                                {
-                                  "fn": {
-                                    "arg": {
-                                      "fn": {
-                                        "arg": {
-                                          "variable": 74,
-                                        },
-                                        "closure": [
-                                          {
-                                            "variable": 73,
-                                          },
-                                        ],
-                                        "return": {
-                                          "variable": 76,
-                                        },
-                                      },
-                                    },
-                                    "closure": [],
-                                    "return": {
-                                      "variable": 77,
-                                    },
-                                  },
-                                },
-                              ],
-                            },
-                          ],
-                        },
                         "value": "x",
                       },
+                      "id": 58,
                       "type": "name",
                     },
                     {
                       "children": [],
                       "data": {
-                        "type": {
-                          "and": [
-                            {
-                              "variable": 51,
-                            },
-                            {
-                              "fn": {
-                                "arg": {
-                                  "variable": 74,
-                                },
-                                "closure": [
-                                  {
-                                    "variable": 73,
-                                  },
-                                ],
-                                "return": {
-                                  "variable": 76,
-                                },
-                              },
-                            },
-                          ],
-                        },
                         "value": "x",
                       },
+                      "id": 61,
                       "type": "name",
                     },
                   ],
-                  "data": {
-                    "type": {
-                      "and": [
-                        {
-                          "variable": 49,
-                        },
-                        {
-                          "variable": 77,
-                        },
-                      ],
-                    },
-                  },
+                  "data": {},
+                  "id": 59,
                   "type": "application",
                 },
               ],
-              "data": {
-                "isTopFunction": true,
-                "type": {
-                  "and": [
-                    {
-                      "variable": 52,
-                    },
-                    {
-                      "fn": {
-                        "arg": {
-                          "fn": {
-                            "arg": {
-                              "variable": 74,
-                            },
-                            "closure": [
-                              {
-                                "variable": 73,
-                              },
-                            ],
-                            "return": {
-                              "variable": 76,
-                            },
-                          },
-                        },
-                        "closure": [],
-                        "return": {
-                          "variable": 77,
-                        },
-                      },
-                    },
-                  ],
-                },
-              },
-              "type": "func",
-            },
-            {
-              "children": [
-                {
-                  "children": [],
-                  "data": {
-                    "type": {
-                      "variable": 54,
-                    },
-                    "value": "x",
-                  },
-                  "type": "name",
-                },
-                {
-                  "children": [
-                    {
-                      "children": [],
-                      "data": {
-                        "type": {
-                          "and": [
-                            {
-                              "variable": 61,
-                            },
-                            {
-                              "and": [
-                                {
-                                  "variable": 73,
-                                },
-                                {
-                                  "fn": {
-                                    "arg": {
-                                      "variable": 75,
-                                    },
-                                    "closure": [],
-                                    "return": {
-                                      "variable": 76,
-                                    },
-                                  },
-                                },
-                              ],
-                            },
-                          ],
-                        },
-                        "value": "f",
-                      },
-                      "type": "name",
-                    },
-                    {
-                      "children": [
-                        {
-                          "children": [],
-                          "data": {
-                            "type": {
-                              "and": [
-                                {
-                                  "variable": 64,
-                                },
-                                {
-                                  "and": [
-                                    {
-                                      "variable": 74,
-                                    },
-                                    {
-                                      "fn": {
-                                        "arg": {
-                                          "variable": 74,
-                                        },
-                                        "closure": [],
-                                        "return": {
-                                          "variable": 75,
-                                        },
-                                      },
-                                    },
-                                  ],
-                                },
-                              ],
-                            },
-                            "value": "x",
-                          },
-                          "type": "name",
-                        },
-                        {
-                          "children": [],
-                          "data": {
-                            "type": {
-                              "and": [
-                                {
-                                  "variable": 67,
-                                },
-                                {
-                                  "variable": 74,
-                                },
-                              ],
-                            },
-                            "value": "x",
-                          },
-                          "type": "name",
-                        },
-                      ],
-                      "data": {
-                        "type": {
-                          "and": [
-                            {
-                              "variable": 65,
-                            },
-                            {
-                              "variable": 75,
-                            },
-                          ],
-                        },
-                      },
-                      "type": "application",
-                    },
-                  ],
-                  "data": {
-                    "type": {
-                      "and": [
-                        {
-                          "variable": 68,
-                        },
-                        {
-                          "variable": 76,
-                        },
-                      ],
-                    },
-                  },
-                  "type": "delimited_application",
-                },
-              ],
-              "data": {
-                "isTopFunction": true,
-                "type": {
-                  "and": [
-                    {
-                      "variable": 69,
-                    },
-                    {
-                      "fn": {
-                        "arg": {
-                          "variable": 74,
-                        },
-                        "closure": [
-                          {
-                            "variable": 73,
-                          },
-                        ],
-                        "return": {
-                          "variable": 76,
-                        },
-                      },
-                    },
-                  ],
-                },
-              },
-              "type": "func",
+              "data": {},
+              "id": 62,
+              "type": "delimited_application",
             },
           ],
           "data": {
-            "type": {
-              "and": [
-                {
-                  "variable": 70,
-                },
-                {
-                  "variable": 77,
-                },
-              ],
-            },
+            "isTopFunction": true,
           },
-          "type": "delimited_application",
+          "id": 63,
+          "type": "func",
         },
       ],
-      "data": {
-        "isTopFunction": true,
-        "type": {
-          "and": [
-            {
-              "variable": 71,
-            },
-            {
-              "fn": {
-                "arg": {
-                  "variable": 73,
-                },
-                "closure": [],
-                "return": {
-                  "variable": 77,
-                },
-              },
-            },
-          ],
-        },
-      },
-      "type": "func",
+      "data": {},
+      "id": 64,
+      "type": "delimited_application",
     },
   ],
-  "data": {
-    "type": {
-      "and": [
-        {
-          "variable": 72,
-        },
-        {
-          "fn": {
-            "arg": {
-              "variable": 73,
-            },
-            "closure": [],
-            "return": {
-              "variable": 77,
-            },
+  "data": {},
+  "id": 65,
+  "type": "script",
+}
+`;
+
+exports[`compilation > fix 2`] = `
+Map {
+  61 => {
+    "equals": 66,
+  },
+  58 => {
+    "equals": 66,
+  },
+  66 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 66,
+          },
+          "closure": [],
+          "return": {
+            "variable": 69,
           },
         },
-      ],
+      },
+    },
+  ],
+  59 => {
+    "equals": 69,
+  },
+  55 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 69,
+          },
+          "closure": [],
+          "return": {
+            "variable": 69,
+          },
+        },
+      },
+    },
+  ],
+  62 => {
+    "equals": 69,
+  },
+  63 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 66,
+          },
+          "closure": [],
+          "return": {
+            "variable": 69,
+          },
+        },
+      },
+    },
+  ],
+  45 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 66,
+          },
+          "closure": [],
+          "return": {
+            "variable": 69,
+          },
+        },
+      },
+    },
+  ],
+  42 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 66,
+          },
+          "closure": [],
+          "return": {
+            "variable": 69,
+          },
+        },
+      },
+    },
+  ],
+  68 => {
+    "equals": 69,
+  },
+  67 => {
+    "equals": 69,
+  },
+  43 => {
+    "equals": 69,
+  },
+  46 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": {
+                "variable": 66,
+              },
+              "closure": [],
+              "return": {
+                "variable": 69,
+              },
+            },
+          },
+          "closure": [],
+          "return": {
+            "variable": 69,
+          },
+        },
+      },
+    },
+  ],
+  64 => {
+    "equals": 69,
+  },
+  65 => {
+    "equals": 69,
+  },
+}
+`;
+
+exports[`compilation > fix 3`] = `
+Map {
+  39 => {
+    "variable": 39,
+  },
+  42 => {
+    "fn": {
+      "arg": {
+        "and": [
+          {
+            "variable": 66,
+          },
+          {
+            "fn": {
+              "arg": {
+                "variable": 66,
+              },
+              "closure": [],
+              "return": {
+                "variable": 69,
+              },
+            },
+          },
+        ],
+      },
+      "closure": [],
+      "return": {
+        "variable": 69,
+      },
     },
   },
-  "type": "script",
+  45 => {
+    "fn": {
+      "arg": {
+        "and": [
+          {
+            "variable": 66,
+          },
+          {
+            "fn": {
+              "arg": {
+                "variable": 66,
+              },
+              "closure": [],
+              "return": {
+                "variable": 69,
+              },
+            },
+          },
+        ],
+      },
+      "closure": [],
+      "return": {
+        "variable": 69,
+      },
+    },
+  },
+  43 => {
+    "variable": 69,
+  },
+  46 => {
+    "fn": {
+      "arg": {
+        "fn": {
+          "arg": {
+            "and": [
+              {
+                "variable": 66,
+              },
+              {
+                "fn": {
+                  "arg": {
+                    "variable": 66,
+                  },
+                  "closure": [],
+                  "return": {
+                    "variable": 69,
+                  },
+                },
+              },
+            ],
+          },
+          "closure": [],
+          "return": {
+            "variable": 69,
+          },
+        },
+      },
+      "closure": [],
+      "return": {
+        "variable": 69,
+      },
+    },
+  },
+  48 => {
+    "variable": 48,
+  },
+  55 => {
+    "fn": {
+      "arg": {
+        "variable": 69,
+      },
+      "closure": [],
+      "return": {
+        "variable": 69,
+      },
+    },
+  },
+  58 => {
+    "and": [
+      {
+        "variable": 66,
+      },
+      {
+        "fn": {
+          "arg": {
+            "variable": 66,
+          },
+          "closure": [],
+          "return": {
+            "variable": 69,
+          },
+        },
+      },
+    ],
+  },
+  61 => {
+    "and": [
+      {
+        "variable": 66,
+      },
+      {
+        "fn": {
+          "arg": {
+            "variable": 66,
+          },
+          "closure": [],
+          "return": {
+            "variable": 69,
+          },
+        },
+      },
+    ],
+  },
+  59 => {
+    "variable": 69,
+  },
+  62 => {
+    "variable": 69,
+  },
+  63 => {
+    "fn": {
+      "arg": {
+        "and": [
+          {
+            "variable": 66,
+          },
+          {
+            "fn": {
+              "arg": {
+                "variable": 66,
+              },
+              "closure": [],
+              "return": {
+                "variable": 69,
+              },
+            },
+          },
+        ],
+      },
+      "closure": [],
+      "return": {
+        "variable": 69,
+      },
+    },
+  },
+  64 => {
+    "variable": 69,
+  },
+  65 => {
+    "variable": 69,
+  },
 }
 `;
 
@@ -1382,16 +1996,35 @@ exports[`compilation > float 1`] = `
     {
       "children": [],
       "data": {
-        "type": "float",
         "value": 1.1,
       },
+      "id": 2,
       "type": "number",
     },
   ],
-  "data": {
-    "type": "float",
-  },
+  "data": {},
+  "id": 3,
   "type": "script",
+}
+`;
+
+exports[`compilation > float 2`] = `
+Map {
+  2 => [
+    {
+      "exactly": "float",
+    },
+  ],
+  3 => {
+    "equals": 2,
+  },
+}
+`;
+
+exports[`compilation > float 3`] = `
+Map {
+  2 => "float",
+  3 => "float",
 }
 `;
 
@@ -1407,6 +2040,7 @@ exports[`compilation > function application and literal 1`] = `
               "data": {
                 "value": "x",
               },
+              "id": 22,
               "type": "name",
             },
             {
@@ -1414,57 +2048,116 @@ exports[`compilation > function application and literal 1`] = `
                 {
                   "children": [],
                   "data": {
-                    "type": "int",
                     "value": "x",
                   },
+                  "id": 25,
                   "type": "name",
                 },
                 {
                   "children": [],
                   "data": {
-                    "type": "int",
                     "value": "x",
                   },
+                  "id": 28,
                   "type": "name",
                 },
               ],
-              "data": {
-                "type": "int",
-              },
+              "data": {},
+              "id": 26,
               "type": "add",
             },
           ],
           "data": {
             "isTopFunction": true,
-            "type": {
-              "fn": {
-                "arg": "int",
-                "closure": [],
-                "return": "int",
-              },
-            },
           },
+          "id": 29,
           "type": "func",
         },
         {
           "children": [],
           "data": {
-            "type": "int",
             "value": 2,
           },
+          "id": 33,
           "type": "number",
         },
       ],
-      "data": {
-        "type": "int",
-      },
+      "data": {},
+      "id": 31,
       "type": "application",
     },
   ],
-  "data": {
-    "type": "int",
-  },
+  "data": {},
+  "id": 34,
   "type": "script",
+}
+`;
+
+exports[`compilation > function application and literal 2`] = `
+Map {
+  33 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  25 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  28 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  26 => {
+    "equals": 35,
+  },
+  35 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  29 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "variable": 35,
+          },
+        },
+      },
+    },
+  ],
+  31 => {
+    "equals": 35,
+  },
+  34 => {
+    "equals": 35,
+  },
+}
+`;
+
+exports[`compilation > function application and literal 3`] = `
+Map {
+  22 => {
+    "variable": 22,
+  },
+  25 => "int",
+  28 => "int",
+  26 => "int",
+  29 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  33 => "int",
+  31 => "int",
+  34 => "int",
 }
 `;
 
@@ -1577,6 +2270,7 @@ exports[`compilation > function closure 1`] = `
                   "data": {
                     "value": "x",
                   },
+                  "id": 28,
                   "type": "name",
                 },
                 {
@@ -1586,6 +2280,7 @@ exports[`compilation > function closure 1`] = `
                       "data": {
                         "value": "y",
                       },
+                      "id": 29,
                       "type": "name",
                     },
                     {
@@ -1593,127 +2288,208 @@ exports[`compilation > function closure 1`] = `
                         {
                           "children": [],
                           "data": {
-                            "type": "int",
                             "value": "y",
                           },
+                          "id": 32,
                           "type": "name",
                         },
                         {
-                          "children": [
-                            {
-                              "children": [],
-                              "data": {
-                                "type": "int",
-                                "value": 2,
-                              },
-                              "type": "number",
-                            },
-                            {
-                              "children": [],
-                              "data": {
-                                "type": "int",
-                                "value": "x",
-                              },
-                              "type": "name",
-                            },
-                          ],
+                          "children": [],
                           "data": {
-                            "type": "int",
+                            "value": 2,
                           },
-                          "type": "*",
+                          "id": 36,
+                          "type": "number",
+                        },
+                        {
+                          "children": [],
+                          "data": {
+                            "value": "x",
+                          },
+                          "id": 40,
+                          "type": "name",
                         },
                       ],
-                      "data": {
-                        "type": "int",
-                      },
+                      "data": {},
+                      "id": 33,
                       "type": "add",
                     },
                   ],
                   "data": {
                     "isTopFunction": true,
-                    "type": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [
-                          {
-                            "name": "x",
-                            "type": "int",
-                          },
-                        ],
-                        "return": "int",
-                      },
-                    },
                   },
+                  "id": 41,
                   "type": "func",
                 },
               ],
               "data": {
                 "isTopFunction": true,
-                "type": {
-                  "fn": {
-                    "arg": "int",
-                    "closure": [],
-                    "return": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [
-                          {
-                            "name": "x",
-                            "type": "int",
-                          },
-                        ],
-                        "return": "int",
-                      },
-                    },
-                  },
-                },
               },
+              "id": 42,
               "type": "func",
             },
             {
               "children": [],
               "data": {
-                "type": "int",
                 "value": 1,
               },
+              "id": 47,
               "type": "number",
             },
           ],
-          "data": {
-            "type": {
-              "fn": {
-                "arg": "int",
-                "closure": [
-                  {
-                    "name": "x",
-                    "type": "int",
-                  },
-                ],
-                "return": "int",
-              },
-            },
-          },
+          "data": {},
+          "id": 44,
           "type": "application",
         },
         {
           "children": [],
           "data": {
-            "type": "int",
             "value": 2,
           },
+          "id": 51,
           "type": "number",
         },
       ],
-      "data": {
-        "type": "int",
-      },
+      "data": {},
+      "id": 49,
       "type": "application",
     },
   ],
-  "data": {
-    "type": "int",
-  },
+  "data": {},
+  "id": 52,
   "type": "script",
+}
+`;
+
+exports[`compilation > function closure 2`] = `
+Map {
+  51 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  47 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  32 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  40 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  33 => {
+    "equals": 53,
+  },
+  53 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  41 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "variable": 53,
+          },
+        },
+      },
+    },
+  ],
+  42 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": {
+                "variable": 53,
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  44 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "variable": 53,
+          },
+        },
+      },
+    },
+  ],
+  49 => {
+    "equals": 53,
+  },
+  52 => {
+    "equals": 53,
+  },
+}
+`;
+
+exports[`compilation > function closure 3`] = `
+Map {
+  28 => {
+    "variable": 28,
+  },
+  29 => {
+    "variable": 29,
+  },
+  32 => "int",
+  36 => {
+    "variable": 36,
+  },
+  40 => "int",
+  33 => "int",
+  41 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  42 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": "int",
+        },
+      },
+    },
+  },
+  47 => "int",
+  44 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  51 => "int",
+  49 => "int",
+  52 => "int",
 }
 `;
 
@@ -1733,6 +2509,7 @@ exports[`compilation > function deep closure 1`] = `
                       "data": {
                         "value": "x",
                       },
+                      "id": 34,
                       "type": "name",
                     },
                     {
@@ -1742,6 +2519,7 @@ exports[`compilation > function deep closure 1`] = `
                           "data": {
                             "value": "y",
                           },
+                          "id": 35,
                           "type": "name",
                         },
                         {
@@ -1751,6 +2529,7 @@ exports[`compilation > function deep closure 1`] = `
                               "data": {
                                 "value": "z",
                               },
+                              "id": 36,
                               "type": "name",
                             },
                             {
@@ -1758,215 +2537,316 @@ exports[`compilation > function deep closure 1`] = `
                                 {
                                   "children": [],
                                   "data": {
-                                    "type": "int",
                                     "value": "x",
                                   },
+                                  "id": 39,
                                   "type": "name",
                                 },
                                 {
                                   "children": [],
                                   "data": {
-                                    "type": "int",
                                     "value": "y",
                                   },
+                                  "id": 43,
                                   "type": "name",
                                 },
                                 {
                                   "children": [],
                                   "data": {
-                                    "type": "int",
                                     "value": "z",
                                   },
+                                  "id": 47,
                                   "type": "name",
                                 },
                               ],
-                              "data": {
-                                "type": "int",
-                              },
+                              "data": {},
+                              "id": 40,
                               "type": "add",
                             },
                           ],
                           "data": {
                             "isTopFunction": true,
-                            "type": {
-                              "fn": {
-                                "arg": "int",
-                                "closure": [
-                                  {
-                                    "name": "x",
-                                    "type": "int",
-                                  },
-                                  {
-                                    "name": "y",
-                                    "type": "int",
-                                  },
-                                ],
-                                "return": "int",
-                              },
-                            },
                           },
+                          "id": 48,
                           "type": "func",
                         },
                       ],
                       "data": {
                         "isTopFunction": true,
-                        "type": {
-                          "fn": {
-                            "arg": "int",
-                            "closure": [
-                              {
-                                "name": "x",
-                                "type": "int",
-                              },
-                            ],
-                            "return": {
-                              "fn": {
-                                "arg": "int",
-                                "closure": [
-                                  {
-                                    "name": "x",
-                                    "type": "int",
-                                  },
-                                  {
-                                    "name": "y",
-                                    "type": "int",
-                                  },
-                                ],
-                                "return": "int",
-                              },
-                            },
-                          },
-                        },
                       },
+                      "id": 49,
                       "type": "func",
                     },
                   ],
                   "data": {
                     "isTopFunction": true,
-                    "type": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [],
-                        "return": {
-                          "fn": {
-                            "arg": "int",
-                            "closure": [
-                              {
-                                "name": "x",
-                                "type": "int",
-                              },
-                            ],
-                            "return": {
-                              "fn": {
-                                "arg": "int",
-                                "closure": [
-                                  {
-                                    "name": "x",
-                                    "type": "int",
-                                  },
-                                  {
-                                    "name": "y",
-                                    "type": "int",
-                                  },
-                                ],
-                                "return": "int",
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
                   },
+                  "id": 50,
                   "type": "func",
                 },
                 {
                   "children": [],
                   "data": {
-                    "type": "int",
                     "value": 1,
                   },
+                  "id": 55,
                   "type": "number",
                 },
               ],
-              "data": {
-                "type": {
-                  "fn": {
-                    "arg": "int",
-                    "closure": [
-                      {
-                        "name": "x",
-                        "type": "int",
-                      },
-                    ],
-                    "return": {
-                      "fn": {
-                        "arg": "int",
-                        "closure": [
-                          {
-                            "name": "x",
-                            "type": "int",
-                          },
-                          {
-                            "name": "y",
-                            "type": "int",
-                          },
-                        ],
-                        "return": "int",
-                      },
-                    },
-                  },
-                },
-              },
+              "data": {},
+              "id": 52,
               "type": "application",
             },
             {
               "children": [],
               "data": {
-                "type": "int",
                 "value": 3,
               },
+              "id": 60,
               "type": "number",
             },
           ],
-          "data": {
-            "type": {
-              "fn": {
-                "arg": "int",
-                "closure": [
-                  {
-                    "name": "x",
-                    "type": "int",
-                  },
-                  {
-                    "name": "y",
-                    "type": "int",
-                  },
-                ],
-                "return": "int",
-              },
-            },
-          },
+          "data": {},
+          "id": 57,
           "type": "application",
         },
         {
           "children": [],
           "data": {
-            "type": "int",
             "value": 5,
           },
+          "id": 64,
           "type": "number",
         },
       ],
-      "data": {
-        "type": "int",
-      },
+      "data": {},
+      "id": 62,
       "type": "application",
     },
   ],
-  "data": {
-    "type": "int",
-  },
+  "data": {},
+  "id": 65,
   "type": "script",
+}
+`;
+
+exports[`compilation > function deep closure 2`] = `
+Map {
+  64 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  60 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  55 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  39 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  43 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  47 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  40 => {
+    "equals": 66,
+  },
+  66 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  48 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "variable": 66,
+          },
+        },
+      },
+    },
+  ],
+  49 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": {
+                "variable": 66,
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  50 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": {
+                "fn": {
+                  "arg": "int",
+                  "closure": [],
+                  "return": {
+                    "variable": 66,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  52 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": {
+                "variable": 66,
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  57 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "variable": 66,
+          },
+        },
+      },
+    },
+  ],
+  62 => {
+    "equals": 66,
+  },
+  65 => {
+    "equals": 66,
+  },
+}
+`;
+
+exports[`compilation > function deep closure 3`] = `
+Map {
+  34 => {
+    "variable": 34,
+  },
+  35 => {
+    "variable": 35,
+  },
+  36 => {
+    "variable": 36,
+  },
+  39 => "int",
+  43 => "int",
+  47 => "int",
+  40 => "int",
+  48 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  49 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": "int",
+        },
+      },
+    },
+  },
+  50 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": "int",
+            },
+          },
+        },
+      },
+    },
+  },
+  55 => "int",
+  52 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": "int",
+        },
+      },
+    },
+  },
+  60 => "int",
+  57 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  64 => "int",
+  62 => "int",
+  65 => "int",
 }
 `;
 
@@ -1976,16 +2856,35 @@ exports[`compilation > hello world string 1`] = `
     {
       "children": [],
       "data": {
-        "type": "string",
         "value": "hello world!",
       },
+      "id": 4,
       "type": "string",
     },
   ],
-  "data": {
-    "type": "string",
-  },
+  "data": {},
+  "id": 5,
   "type": "script",
+}
+`;
+
+exports[`compilation > hello world string 2`] = `
+Map {
+  4 => [
+    {
+      "exactly": "string",
+    },
+  ],
+  5 => {
+    "equals": 4,
+  },
+}
+`;
+
+exports[`compilation > hello world string 3`] = `
+Map {
+  4 => "string",
+  5 => "string",
 }
 `;
 
@@ -1995,16 +2894,35 @@ exports[`compilation > int 1`] = `
     {
       "children": [],
       "data": {
-        "type": "int",
         "value": 1,
       },
+      "id": 2,
       "type": "number",
     },
   ],
-  "data": {
-    "type": "int",
-  },
+  "data": {},
+  "id": 3,
   "type": "script",
+}
+`;
+
+exports[`compilation > int 2`] = `
+Map {
+  2 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  3 => {
+    "equals": 2,
+  },
+}
+`;
+
+exports[`compilation > int 3`] = `
+Map {
+  2 => "int",
+  3 => "int",
 }
 `;
 
@@ -2016,36 +2934,120 @@ exports[`compilation > print 1 1`] = `
         {
           "children": [],
           "data": {
-            "type": {
-              "fn": {
-                "arg": "int",
-                "closure": [],
-                "return": "void",
-              },
-            },
             "value": "print",
           },
+          "id": 4,
           "type": "name",
         },
         {
           "children": [],
           "data": {
-            "type": "int",
             "value": 1,
           },
+          "id": 7,
           "type": "number",
         },
       ],
-      "data": {
-        "type": "void",
-      },
+      "data": {},
+      "id": 5,
       "type": "application",
     },
   ],
-  "data": {
-    "type": "void",
-  },
+  "data": {},
+  "id": 8,
   "type": "script",
+}
+`;
+
+exports[`compilation > print 1 2`] = `
+Map {
+  7 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  4 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "variable": 9,
+          },
+        },
+      },
+    },
+    {
+      "exactly": {
+        "and": [
+          {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": "void",
+            },
+          },
+          {
+            "fn": {
+              "arg": "string",
+              "closure": [],
+              "return": "void",
+            },
+          },
+        ],
+      },
+    },
+  ],
+  5 => {
+    "equals": 9,
+  },
+  8 => {
+    "equals": 9,
+  },
+}
+`;
+
+exports[`compilation > print 1 3`] = `
+Map {
+  4 => {
+    "and": [
+      {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "variable": 9,
+          },
+        },
+      },
+      {
+        "and": [
+          {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": "void",
+            },
+          },
+          {
+            "fn": {
+              "arg": "string",
+              "closure": [],
+              "return": "void",
+            },
+          },
+        ],
+      },
+    ],
+  },
+  7 => "int",
+  5 => {
+    "variable": 9,
+  },
+  8 => {
+    "variable": 9,
+  },
 }
 `;
 
@@ -2167,51 +3169,245 @@ exports[`compilation > sequence 1`] = `
     {
       "children": [],
       "data": {
-        "type": "int",
         "value": 1,
       },
+      "id": 7,
       "type": "number",
     },
     {
       "children": [],
       "data": {
-        "type": "string",
         "value": "hello world 2!",
       },
+      "id": 10,
       "type": "string",
     },
   ],
-  "data": {
-    "type": "string",
-  },
+  "data": {},
+  "id": 11,
   "type": "script",
 }
 `;
 
-exports[`compilation > two prints 1`] = `
+exports[`compilation > sequence 2`] = `
+Map {
+  7 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  10 => [
+    {
+      "exactly": "string",
+    },
+  ],
+  11 => {
+    "equals": 10,
+  },
+}
+`;
+
+exports[`compilation > sequence 3`] = `
+Map {
+  7 => "int",
+  10 => "string",
+  11 => "string",
+}
+`;
+
+exports[`compilation > simple fix 1`] = `
 {
   "children": [
     {
-      "children": [],
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "id": 7,
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "id": 10,
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "id": 13,
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "id": 11,
+          "type": "application",
+        },
+      ],
       "data": {
-        "type": "string",
-        "value": "hello world!",
+        "isTopFunction": true,
       },
-      "type": "string",
-    },
-    {
-      "children": [],
-      "data": {
-        "type": "string",
-        "value": "hello world 2!",
-      },
-      "type": "string",
+      "id": 14,
+      "type": "func",
     },
   ],
-  "data": {
-    "type": "string",
-  },
+  "data": {},
+  "id": 15,
   "type": "script",
+}
+`;
+
+exports[`compilation > simple fix 2`] = `
+Map {
+  13 => {
+    "equals": 16,
+  },
+  10 => {
+    "equals": 16,
+  },
+  16 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 16,
+          },
+          "closure": [],
+          "return": {
+            "variable": 17,
+          },
+        },
+      },
+    },
+  ],
+  11 => {
+    "equals": 17,
+  },
+  14 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 16,
+          },
+          "closure": [],
+          "return": {
+            "variable": 17,
+          },
+        },
+      },
+    },
+  ],
+  15 => {
+    "equals": 14,
+  },
+}
+`;
+
+exports[`compilation > simple fix 3`] = `
+Map {
+  7 => {
+    "variable": 7,
+  },
+  10 => {
+    "and": [
+      {
+        "variable": 16,
+      },
+      {
+        "fn": {
+          "arg": {
+            "variable": 16,
+          },
+          "closure": [],
+          "return": {
+            "variable": 17,
+          },
+        },
+      },
+    ],
+  },
+  13 => {
+    "and": [
+      {
+        "variable": 16,
+      },
+      {
+        "fn": {
+          "arg": {
+            "variable": 16,
+          },
+          "closure": [],
+          "return": {
+            "variable": 17,
+          },
+        },
+      },
+    ],
+  },
+  11 => {
+    "variable": 17,
+  },
+  14 => {
+    "fn": {
+      "arg": {
+        "and": [
+          {
+            "variable": 16,
+          },
+          {
+            "fn": {
+              "arg": {
+                "variable": 16,
+              },
+              "closure": [],
+              "return": {
+                "variable": 17,
+              },
+            },
+          },
+        ],
+      },
+      "closure": [],
+      "return": {
+        "variable": 17,
+      },
+    },
+  },
+  15 => {
+    "fn": {
+      "arg": {
+        "and": [
+          {
+            "variable": 16,
+          },
+          {
+            "fn": {
+              "arg": {
+                "variable": 16,
+              },
+              "closure": [],
+              "return": {
+                "variable": 17,
+              },
+            },
+          },
+        ],
+      },
+      "closure": [],
+      "return": {
+        "variable": 17,
+      },
+    },
+  },
 }
 `;
 
@@ -2229,6 +3425,7 @@ exports[`compilation > wrapper 1`] = `
                   "data": {
                     "value": "x",
                   },
+                  "id": 30,
                   "type": "name",
                 },
                 {
@@ -2238,6 +3435,7 @@ exports[`compilation > wrapper 1`] = `
                       "data": {
                         "value": "m",
                       },
+                      "id": 31,
                       "type": "name",
                     },
                     {
@@ -2245,114 +3443,49 @@ exports[`compilation > wrapper 1`] = `
                         {
                           "children": [],
                           "data": {
-                            "type": {
-                              "fn": {
-                                "arg": "int",
-                                "closure": [],
-                                "return": "int",
-                              },
-                            },
                             "value": "m",
                           },
+                          "id": 34,
                           "type": "name",
                         },
                         {
                           "children": [],
                           "data": {
-                            "type": "int",
                             "value": "x",
                           },
+                          "id": 37,
                           "type": "name",
                         },
                       ],
-                      "data": {
-                        "type": "int",
-                      },
+                      "data": {},
+                      "id": 35,
                       "type": "application",
                     },
                   ],
                   "data": {
                     "isTopFunction": true,
-                    "type": {
-                      "fn": {
-                        "arg": {
-                          "fn": {
-                            "arg": "int",
-                            "closure": [],
-                            "return": "int",
-                          },
-                        },
-                        "closure": [
-                          {
-                            "name": "x",
-                            "type": "int",
-                          },
-                        ],
-                        "return": "int",
-                      },
-                    },
                   },
+                  "id": 38,
                   "type": "func",
                 },
               ],
               "data": {
                 "isTopFunction": true,
-                "type": {
-                  "fn": {
-                    "arg": "int",
-                    "closure": [],
-                    "return": {
-                      "fn": {
-                        "arg": {
-                          "fn": {
-                            "arg": "int",
-                            "closure": [],
-                            "return": "int",
-                          },
-                        },
-                        "closure": [
-                          {
-                            "name": "x",
-                            "type": "int",
-                          },
-                        ],
-                        "return": "int",
-                      },
-                    },
-                  },
-                },
               },
+              "id": 39,
               "type": "func",
             },
             {
               "children": [],
               "data": {
-                "type": "int",
                 "value": 2,
               },
+              "id": 44,
               "type": "number",
             },
           ],
-          "data": {
-            "type": {
-              "fn": {
-                "arg": {
-                  "fn": {
-                    "arg": "int",
-                    "closure": [],
-                    "return": "int",
-                  },
-                },
-                "closure": [
-                  {
-                    "name": "x",
-                    "type": "int",
-                  },
-                ],
-                "return": "int",
-              },
-            },
-          },
+          "data": {},
+          "id": 41,
           "type": "application",
         },
         {
@@ -2362,39 +3495,251 @@ exports[`compilation > wrapper 1`] = `
               "data": {
                 "value": "x",
               },
+              "id": 47,
               "type": "name",
             },
             {
               "children": [],
               "data": {
-                "type": "int",
                 "value": "x",
               },
+              "id": 49,
               "type": "name",
             },
           ],
           "data": {
             "isTopFunction": true,
-            "type": {
-              "fn": {
-                "arg": "int",
-                "closure": [],
-                "return": "int",
-              },
-            },
           },
+          "id": 50,
           "type": "func",
         },
       ],
-      "data": {
-        "type": "int",
-      },
+      "data": {},
+      "id": 46,
       "type": "application",
     },
   ],
-  "data": {
-    "type": "int",
-  },
+  "data": {},
+  "id": 51,
   "type": "script",
+}
+`;
+
+exports[`compilation > wrapper 2`] = `
+Map {
+  49 => {
+    "equals": 52,
+  },
+  50 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 52,
+          },
+          "closure": [],
+          "return": {
+            "variable": 52,
+          },
+        },
+      },
+    },
+  ],
+  44 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  37 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  34 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "variable": 52,
+          },
+          "closure": [],
+          "return": {
+            "variable": 52,
+          },
+        },
+      },
+    },
+  ],
+  52 => [
+    {
+      "exactly": "int",
+    },
+  ],
+  53 => {
+    "equals": 52,
+  },
+  35 => {
+    "equals": 52,
+  },
+  38 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": {
+                "variable": 52,
+              },
+              "closure": [],
+              "return": {
+                "variable": 52,
+              },
+            },
+          },
+          "closure": [],
+          "return": {
+            "variable": 52,
+          },
+        },
+      },
+    },
+  ],
+  39 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "fn": {
+              "arg": {
+                "fn": {
+                  "arg": {
+                    "variable": 52,
+                  },
+                  "closure": [],
+                  "return": {
+                    "variable": 52,
+                  },
+                },
+              },
+              "closure": [],
+              "return": {
+                "variable": 52,
+              },
+            },
+          },
+        },
+      },
+    },
+  ],
+  41 => [
+    {
+      "exactly": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": {
+                "variable": 52,
+              },
+              "closure": [],
+              "return": {
+                "variable": 52,
+              },
+            },
+          },
+          "closure": [],
+          "return": {
+            "variable": 52,
+          },
+        },
+      },
+    },
+  ],
+  46 => {
+    "equals": 52,
+  },
+  51 => {
+    "equals": 52,
+  },
+}
+`;
+
+exports[`compilation > wrapper 3`] = `
+Map {
+  30 => {
+    "variable": 30,
+  },
+  31 => {
+    "variable": 31,
+  },
+  34 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  37 => "int",
+  35 => "int",
+  38 => {
+    "fn": {
+      "arg": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": "int",
+        },
+      },
+      "closure": [],
+      "return": "int",
+    },
+  },
+  39 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": {
+        "fn": {
+          "arg": {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": "int",
+            },
+          },
+          "closure": [],
+          "return": "int",
+        },
+      },
+    },
+  },
+  44 => "int",
+  41 => {
+    "fn": {
+      "arg": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": "int",
+        },
+      },
+      "closure": [],
+      "return": "int",
+    },
+  },
+  47 => {
+    "variable": 47,
+  },
+  49 => "int",
+  50 => {
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
+  },
+  46 => "int",
+  51 => "int",
 }
 `;
