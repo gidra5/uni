@@ -2969,6 +2969,17 @@ Map {
   4 => [
     {
       "exactly": {
+        "fn": {
+          "arg": "int",
+          "closure": [],
+          "return": {
+            "variable": 9,
+          },
+        },
+      },
+    },
+    {
+      "exactly": {
         "and": [
           {
             "fn": {
@@ -3014,11 +3025,22 @@ Map {
         },
       },
       {
-        "fn": {
-          "arg": "string",
-          "closure": [],
-          "return": "string",
-        },
+        "and": [
+          {
+            "fn": {
+              "arg": "int",
+              "closure": [],
+              "return": "int",
+            },
+          },
+          {
+            "fn": {
+              "arg": "string",
+              "closure": [],
+              "return": "string",
+            },
+          },
+        ],
       },
     ],
   },

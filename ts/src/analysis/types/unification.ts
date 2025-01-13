@@ -254,6 +254,7 @@ export class UnificationTable {
 
     constraints.push(constraint);
     constraints.sort(compareConstraints);
+    this.constraints.set(variable, constraints);
 
     this.truncate();
   }
