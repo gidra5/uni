@@ -1,58 +1,13 @@
 import { UnificationTable } from "../src/analysis/types/unification";
 import { expect } from "vitest";
 import { test, fc } from "@fast-check/vitest";
-import { Type } from "../src/analysis/types/infer";
-
-const typeArb = fc.letrec<{ type: Type }>((typeArb) => ({
-  type: fc.oneof(
-    fc.constant<"int">("int"),
-    fc.constant<"float">("float"),
-    fc.constant<"string">("string"),
-    fc.constant<"unknown">("unknown"),
-    fc.constant<"void">("void"),
-    fc.record({ fn: fc.record({ arg: typeArb("type"), return: typeArb("type"), closure: fc.array(typeArb("type")) }) }),
-    fc.record({ and: fc.array(typeArb("type"), { minLength: 2 }) }).map((type) => ({
-      and: type.and.flatMap((type) => (typeof type === "object" && "and" in type ? type.and : [type])),
-    })),
-    fc.record({ or: fc.array(typeArb("type"), { minLength: 2 }) }).map((type) => ({
-      or: type.or.flatMap((type) => (typeof type === "object" && "or" in type ? type.or : [type])),
-    })),
-    fc
-      .record({ not: typeArb("type") })
-      .map((type) => (typeof type.not === "object" && "not" in type.not ? type.not.not : type))
-  ),
-})).type;
+import { typeArb, typeWithVariablesArb } from "../src/analysis/types/utils";
 
 const constraintArb = fc.oneof(
   // fc.record({ subtype: typeArb }),
   // fc.record({ supertype: typeArb }),
   fc.record({ exactly: typeArb })
 );
-
-const typeWithVariablesArb = (variables: number[]) =>
-  fc.letrec<{ type: Type }>((typeArb) => ({
-    type: fc.oneof(
-      fc.constant<"int">("int"),
-      fc.constant<"float">("float"),
-      fc.constant<"string">("string"),
-      fc.constant<"unknown">("unknown"),
-      fc.constant<"void">("void"),
-      fc.record({
-        fn: fc.record({ arg: typeArb("type"), return: typeArb("type"), closure: fc.array(typeArb("type")) }),
-      }),
-      fc.record({ and: fc.array(typeArb("type"), { minLength: 2 }) }).map((type) => ({
-        and: type.and.flatMap((type) => (typeof type === "object" && "and" in type ? type.and : [type])),
-      })),
-      fc.record({ or: fc.array(typeArb("type"), { minLength: 2 }) }).map((type) => ({
-        or: type.or.flatMap((type) => (typeof type === "object" && "or" in type ? type.or : [type])),
-      })),
-      fc
-        .record({ not: typeArb("type") })
-        .map((type) => (typeof type.not === "object" && "not" in type.not ? type.not.not : type)),
-      fc.record({ variable: fc.integer() }),
-      fc.oneof(...variables.map((variable) => fc.record({ variable: fc.constant(variable) })))
-    ),
-  })).type;
 
 const constraintWithVariablesArb = (variables: number[]) =>
   fc.oneof(

@@ -29,8 +29,8 @@ const initialNames = new Map<string, Type>([
     "print",
     {
       and: [
-        { fn: { arg: "int", return: "void", closure: [] } },
-        { fn: { arg: "string", return: "void", closure: [] } },
+        { fn: { arg: "int", return: "int", closure: [] } },
+        { fn: { arg: "string", return: "string", closure: [] } },
       ],
     },
   ],
@@ -44,7 +44,7 @@ export class Context {
 
 // is `a` a subtype of `b`? `a <: b` == true
 // the bottom type must always be a subtype of the top type
-export const compareTypes = (a: Type, b: Type): boolean => {
+export const isSubtype = (a: Type, b: Type): boolean => {
   if (b === "unknown") return true;
   if (a === "void") return true;
   if (a !== b) return false;
@@ -121,16 +121,16 @@ const constrain = (ast: Tree, context: Context, expectedType: Type): void => {
   switch (ast.type) {
     case NodeType.NUMBER: {
       const type = Number.isInteger(ast.data.value) ? "int" : "float";
-      if (compareTypes(expectedType, type)) return;
+      if (isSubtype(expectedType, type)) return;
       break;
     }
     case NodeType.STRING:
-      if (compareTypes(expectedType, "string")) return;
+      if (isSubtype(expectedType, "string")) return;
       break;
     case NodeType.NAME: {
       const type = infer(ast, context);
       if (type) {
-        if (compareTypes(expectedType, type)) return;
+        if (isSubtype(expectedType, type)) return;
         context.unificationTable.addConstraint(ast.id, { exactly: expectedType });
         return;
       }

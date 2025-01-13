@@ -1,178 +1,39 @@
-import { parseToken, parseTokens, type Token } from "../src/parser/tokens.js";
 import { describe, expect } from "vitest";
-import { it, fc, test } from "@fast-check/vitest";
+import { fc, test } from "@fast-check/vitest";
+import { compareTypes, isTypeEqual, typeArb } from "../src/analysis/types/utils";
 
-describe.todo("types", () => {
-  describe("primitives", () => {
-    test("number", () => {
-      const src = `number`;
-      treeTestCase(src);
-    });
+// since type equality is based on type compare, its sufficient to only test symmetricity
+describe("type equality", () => {
+  test.prop([typeArb, typeArb])("type equality is symmetric", (a, b) => {
+    expect(isTypeEqual(a, b)).toBe(isTypeEqual(b, a));
+  });
+});
 
-    test("int", () => {
-      const src = `int`;
-      treeTestCase(src);
-    });
-
-    test("float", () => {
-      const src = `float`;
-      treeTestCase(src);
-    });
-
-    test("string", () => {
-      const src = `string`;
-      treeTestCase(src);
-    });
-
-    test("char", () => {
-      const src = `char`;
-      treeTestCase(src);
-    });
-
-    test("boolean", () => {
-      const src = `boolean`;
-      treeTestCase(src);
-    });
-
-    test("unit", () => {
-      const src = `unit`;
-      treeTestCase(src);
-    });
-
-    test("unknown", () => {
-      const src = `unknown`;
-      treeTestCase(src);
-    });
-
-    test("void", () => {
-      const src = `void`;
-      treeTestCase(src);
-    });
-
-    test("type", () => {
-      const src = `type`;
-      treeTestCase(src);
-    });
-
-    test("type with order", () => {
-      const src = `type[1]`;
-      treeTestCase(src);
-    });
-
-    test("value type", () => {
-      const src = `value 1`;
-      treeTestCase(src);
-    });
+describe("type compare", () => {
+  test.prop([typeArb, typeArb])("type compare result is between -1 and 1", (a, b) => {
+    const ab = compareTypes(a, b);
+    expect(ab).toBeGreaterThanOrEqual(-1);
+    expect(ab).toBeLessThanOrEqual(1);
   });
 
-  describe("algebraic types", () => {
-    test("record", () => {
-      const src = `(a: number; b: string)`;
-      treeTestCase(src);
-    });
-
-    test("map", () => {
-      const src = `([number]: string)`;
-      treeTestCase(src);
-    });
-
-    test("map with key dependency", () => {
-      const src = `([x: number]: (x, string))`;
-      treeTestCase(src);
-    });
-
-    test("tuple", () => {
-      const src = `number, string`;
-      treeTestCase(src);
-    });
-
-    test("type key access", () => {
-      const src = `type[number]`;
-      treeTestCase(src);
-    });
-
-    test("type key access static", () => {
-      const src = `type.key`;
-      treeTestCase(src);
-    });
-
-    test("discriminated union from record type", () => {
-      const src = `enum (a: number; b: string)`;
-      treeTestCase(src);
-    });
-
-    test("discriminated by order union from tuple", () => {
-      const src = `enum (number, string)`;
-      treeTestCase(src);
-    });
+  test.prop([typeArb])("type compare is reflexive", (type) => {
+    expect(compareTypes(type, type)).toBe(0);
   });
 
-  describe("set-theoretic types", () => {
-    test("negated type", () => {
-      const src = `!number`;
-      treeTestCase(src);
-    });
-
-    test("type intersection", () => {
-      const src = `number and string`;
-      treeTestCase(src);
-    });
-
-    test("type union", () => {
-      const src = `number or string`;
-      treeTestCase(src);
-    });
+  test.prop([typeArb, typeArb])("type compare is anti symmetric", (a, b) => {
+    const ab = compareTypes(a, b);
+    const ba = compareTypes(b, a);
+    // because +0 !== -0 for .toBe
+    if (ab === 0) expect(ba).toBe(0);
+    else expect(ab).toBe(-ba);
   });
 
-  describe("functions", () => {
-    test("function type", () => {
-      const src = `number -> string`;
-      treeTestCase(src);
-    });
-
-    test("function type with multiple args", () => {
-      const src = `fn number, string -> string`;
-      treeTestCase(src);
-    });
-
-    test("function type with named args", () => {
-      const src = `fn x: number, y: string -> string`;
-      treeTestCase(src);
-    });
-
-    test("dependent function type", () => {
-      const src = `fn x: boolean -> if x: string else number`;
-      treeTestCase(src);
-    });
-
-    test("parametric function type", () => {
-      const src = `fn x: infer y -> y or number`;
-      treeTestCase(src);
-    });
-
-    test("higher order type", () => {
-      const src = `fn t: type -> fn x: t -> t or number`;
-      treeTestCase(src);
-    });
-  });
-
-  test("typeof", () => {
-    const src = `typeof x`;
-    treeTestCase(src);
-  });
-
-  test("type cast", () => {
-    const src = `x as number`;
-    treeTestCase(src);
-  });
-
-  test("type coalesce", () => {
-    const src = `x :> number`;
-    treeTestCase(src);
-  });
-
-  test("subtyping check", () => {
-    const src = `my_type <= number`;
-    treeTestCase(src);
+  test.prop([typeArb, typeArb, typeArb])("type compare is transitive", (a, b, c) => {
+    const ab = compareTypes(a, b);
+    const bc = compareTypes(b, c);
+    const ac = compareTypes(a, c);
+    if (ab > 0 && bc > 0) expect(ac > 0).toBe(true);
+    else if (ab < 0 && bc < 0) expect(ac < 0).toBe(true);
+    else if (ab === 0 && bc === 0) expect(ac === 0).toBe(true);
   });
 });

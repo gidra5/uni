@@ -1,87 +1,21 @@
 import { assert, unreachable } from "../../utils";
-import { Type } from "./infer";
+import { isSubtype, Type } from "./infer";
+import { compareByList, compareTypes, isTypeReferenceVariable, replaceTypeVariable } from "./utils";
 
 export type Constraint = TableConstraint | { equals: number };
 export type TypeBounds = { exactly: Type } | { equals: number };
 type TableConstraint = { exactly: Type };
 
-const canonicalLiteralTypesOrder = ["int", "float", "string", "unknown", "void"];
-const canonicalComplexTypesOrder = ["fn", "and", "or", "not", "variable"];
-const canonicalConstraintOrder = ["equals", "exactly", "subtype", "supertype"];
-
-const compareTypes = (a: Type, b: Type): number => {
-  if (typeof a === "string") {
-    if (typeof b === "string") {
-      return canonicalLiteralTypesOrder.indexOf(a) - canonicalLiteralTypesOrder.indexOf(b);
-    }
-    return -1;
-  }
-  if (typeof b === "string") {
-    return 1;
-  }
-  assert(typeof a === "object" && typeof b === "object");
-  const aKind = Object.keys(a)[0];
-  const bKind = Object.keys(b)[0];
-  if (aKind !== bKind) {
-    return canonicalComplexTypesOrder.indexOf(aKind) - canonicalComplexTypesOrder.indexOf(bKind);
-  }
-
-  switch (aKind) {
-    case "fn": {
-      assert("fn" in a);
-      assert("fn" in b);
-      const argsCompare = compareTypes(a.fn.arg, b.fn.arg);
-      if (argsCompare !== 0) return argsCompare;
-      return compareTypes(a.fn.return, b.fn.return);
-    }
-    case "and": {
-      assert("and" in a);
-      assert("and" in b);
-      const andCompare = a.and.length - b.and.length;
-      if (andCompare !== 0) return andCompare;
-      for (let i = 0; i < a.and.length; i++) {
-        const andCompare = compareTypes(a.and[i], b.and[i]);
-        if (andCompare !== 0) return andCompare;
-      }
-      return 0;
-    }
-    case "or": {
-      assert("or" in a);
-      assert("or" in b);
-      const orCompare = a.or.length - b.or.length;
-      if (orCompare !== 0) return orCompare;
-      for (let i = 0; i < a.or.length; i++) {
-        const orCompare = compareTypes(a.or[i], b.or[i]);
-        if (orCompare !== 0) return orCompare;
-      }
-      return 0;
-    }
-    case "not": {
-      assert("not" in a);
-      assert("not" in b);
-      return compareTypes(a.not, b.not);
-    }
-    case "variable": {
-      assert("variable" in a);
-      assert("variable" in b);
-      return a.variable - b.variable;
-    }
-  }
-
-  return 0;
-};
-
+const canonicalConstraintOrder = compareByList(["equals", "exactly", "subtype", "supertype"]);
 const compareConstraints = (a: Constraint, b: Constraint): number => {
   const aKind = Object.keys(a)[0];
   const bKind = Object.keys(b)[0];
-  if (aKind !== bKind) {
-    return canonicalConstraintOrder.indexOf(aKind) - canonicalConstraintOrder.indexOf(bKind);
-  }
+  if (aKind !== bKind) return canonicalConstraintOrder(aKind, bKind);
+
   const aType = a[aKind];
   const bType = b[bKind];
   return compareTypes(aType, bType);
 };
-let i = 0;
 
 export class UnificationTable {
   resolved: Map<number, TypeBounds> = new Map();
@@ -125,31 +59,6 @@ export class UnificationTable {
     return type;
   }
 
-  recursive(variable: number, type: Type): boolean {
-    if (typeof type === "object" && "variable" in type && type.variable === variable) return true;
-    if (typeof type === "object" && "fn" in type) {
-      const arg = type.fn.arg;
-      const returnType = type.fn.return;
-      return this.recursive(variable, arg) || this.recursive(variable, returnType);
-    }
-    if (typeof type === "object" && "and" in type) {
-      for (const t of type.and) {
-        if (this.recursive(variable, t)) return true;
-      }
-      return false;
-    }
-    if (typeof type === "object" && "or" in type) {
-      for (const t of type.or) {
-        if (this.recursive(variable, t)) return true;
-      }
-      return false;
-    }
-    // if (typeof type === "object" && "not" in type) {
-    //   return this.recursive(variable, type.not);
-    // }
-    return false;
-  }
-
   unify(bounds: TypeBounds, constraint: Constraint): TypeBounds {
     // console.dir({ bounds, constraint }, { depth: null });
 
@@ -159,7 +68,11 @@ export class UnificationTable {
       const type = this.normalizeType(constraint.exactly);
       const boundsType = bounds.exactly;
       if (boundsType === "unknown") return { ...bounds, exactly: type };
-      if (typeof boundsType === "object" && "variable" in boundsType && !this.recursive(boundsType.variable, type)) {
+      if (
+        typeof boundsType === "object" &&
+        "variable" in boundsType &&
+        !isTypeReferenceVariable(boundsType.variable, type)
+      ) {
         return { ...bounds, exactly: type };
       }
       if (boundsType === type) return bounds;
@@ -167,18 +80,19 @@ export class UnificationTable {
         const x = this.unify({ exactly: boundsType.fn.arg }, { exactly: type.fn.arg });
         const y = this.unify({ exactly: boundsType.fn.return }, { exactly: type.fn.return });
         const z = boundsType.fn.closure.map((t, i) => this.unify({ exactly: t }, { exactly: type.fn.closure[i] }));
+        const closure = z.map((t) => this.boundsToType(0, t));
+        const arg = this.boundsToType(0, x);
+        const returnType = this.boundsToType(0, y);
 
-        return {
-          exactly: {
-            fn: {
-              arg: this.boundsToType(0, x),
-              return: this.boundsToType(0, y),
-              closure: z.map((t) => this.boundsToType(0, t)),
-            },
-          },
-        };
+        return { exactly: { fn: { arg, return: returnType, closure } } };
       }
       if (typeof boundsType === "object" && "and" in boundsType) {
+        if (typeof type === "object" && "fn" in type) {
+          const subtypes = boundsType.and.filter((t) => isSubtype(t, type.fn.arg));
+          if (subtypes.length === 0) return { exactly: "void" };
+          if (subtypes.length === 1) return { exactly: subtypes[0] };
+          return { exactly: { and: subtypes } };
+        }
         return { ...bounds, exactly: { and: [...boundsType.and, type] } };
       }
       return { ...bounds, exactly: { and: [boundsType, type] } };
@@ -238,9 +152,34 @@ export class UnificationTable {
     if ("exactly" in constraint1 && "exactly" in constraint2) {
       const type1 = constraint1.exactly;
       const type2 = constraint2.exactly;
-      if (typeof type1 === "object" && typeof type2 === "object" && "fn" in type1 && "fn" in type2) {
+      if (typeof type1 === "object" && "fn" in type1 && typeof type2 === "object" && "fn" in type2) {
         this.addSecondaryConstraints({ exactly: type1.fn.arg }, { exactly: type2.fn.arg });
         this.addSecondaryConstraints({ exactly: type1.fn.return }, { exactly: type2.fn.return });
+        return;
+      }
+      if (typeof type1 === "object" && "fn" in type1 && typeof type2 === "object" && "and" in type2) {
+        const subtypes = type2.and
+          .filter((t) => typeof t === "object" && "fn" in t)
+          .filter((t) => isSubtype(t.fn.arg, type1.fn.arg));
+
+        if (subtypes.length === 0) {
+          this.addSecondaryConstraints({ exactly: type1.fn.return }, { exactly: "void" });
+          return;
+        }
+
+        if (subtypes.length === 1) {
+          const returnType = subtypes[0].fn.return;
+          this.addSecondaryConstraints({ exactly: type1.fn.return }, { exactly: returnType });
+          return;
+        }
+
+        const returnType = { or: subtypes.map((t) => t.fn.return) };
+        this.addSecondaryConstraints({ exactly: type1.fn.return }, { exactly: returnType });
+        return;
+      }
+      if (typeof type1 === "object" && "fn" in type1 && typeof type2 === "object" && "and" in type2) {
+        this.addSecondaryConstraints(constraint2, constraint1);
+        return;
       }
       if (typeof type1 === "object" && "variable" in type1) {
         this.addConstraint(type1.variable, constraint2);
@@ -319,33 +258,6 @@ export class UnificationTable {
     this.truncate();
   }
 
-  replaceType(type: Type, variable: number, otherVariable: number) {
-    if (typeof type === "object" && "variable" in type && type.variable === variable) {
-      return { variable: otherVariable };
-    }
-    if (typeof type === "object" && "fn" in type) {
-      const arg = type.fn.arg;
-      const returnType = type.fn.return;
-      return {
-        fn: {
-          arg: this.replaceType(arg, variable, otherVariable),
-          return: this.replaceType(returnType, variable, otherVariable),
-          closure: type.fn.closure,
-        },
-      };
-    }
-    if (typeof type === "object" && "and" in type) {
-      return { and: type.and.map((t) => this.replaceType(t, variable, otherVariable)) };
-    }
-    if (typeof type === "object" && "or" in type) {
-      return { or: type.or.map((t) => this.replaceType(t, variable, otherVariable)) };
-    }
-    // if (typeof type === "object" && "not" in type) {
-    //   return { not: this.replaceType(type.not, variable, otherVariable) };
-    // }
-    return type;
-  }
-
   replace(variable: number, otherVariable: number) {
     for (const [_variable, constraints] of this.constraints.entries()) {
       // console.dir(
@@ -366,7 +278,7 @@ export class UnificationTable {
       }
 
       for (const constraint of constraints) {
-        constraint.exactly = this.replaceType(constraint.exactly, variable, otherVariable);
+        constraint.exactly = replaceTypeVariable(constraint.exactly, variable, otherVariable);
       }
     }
   }

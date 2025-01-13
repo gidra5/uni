@@ -20,6 +20,9 @@ useful relations:
 3. `unknown = not void`
 6. De-morgan's law `not (a or b) = not a and not b`
 7. Double negation `not not a = a`
+8. Disjoint intersections `(a -> b) and (c -> d) = (a and not c -> b) and ((a -> b) or (c -> d)) and (not a and c -> d)`
+9. void functions can be anything `void -> a = unknown`
+10. Union of functions `(a -> b) or (c -> d) = a and b -> b or d`
 
 https://inria.hal.science/file/index/docid/76261/filename/RR-0296.pdf
 

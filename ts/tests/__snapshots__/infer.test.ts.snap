@@ -2969,34 +2969,28 @@ Map {
   4 => [
     {
       "exactly": {
-        "fn": {
-          "arg": "int",
-          "closure": [],
-          "return": {
-            "variable": 9,
-          },
-        },
-      },
-    },
-    {
-      "exactly": {
         "and": [
           {
             "fn": {
               "arg": "int",
               "closure": [],
-              "return": "void",
+              "return": "int",
             },
           },
           {
             "fn": {
               "arg": "string",
               "closure": [],
-              "return": "void",
+              "return": "string",
             },
           },
         ],
       },
+    },
+  ],
+  9 => [
+    {
+      "exactly": "int",
     },
   ],
   5 => {
@@ -3016,38 +3010,21 @@ Map {
         "fn": {
           "arg": "int",
           "closure": [],
-          "return": {
-            "variable": 9,
-          },
+          "return": "int",
         },
       },
       {
-        "and": [
-          {
-            "fn": {
-              "arg": "int",
-              "closure": [],
-              "return": "void",
-            },
-          },
-          {
-            "fn": {
-              "arg": "string",
-              "closure": [],
-              "return": "void",
-            },
-          },
-        ],
+        "fn": {
+          "arg": "string",
+          "closure": [],
+          "return": "string",
+        },
       },
     ],
   },
   7 => "int",
-  5 => {
-    "variable": 9,
-  },
-  8 => {
-    "variable": 9,
-  },
+  5 => "int",
+  8 => "int",
 }
 `;
 
