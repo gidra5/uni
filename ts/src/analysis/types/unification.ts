@@ -5,9 +5,9 @@ import { compareByList, compareTypes, isTypeReferenceVariable, replaceTypeVariab
 
 export type Constraint = TableConstraint | { equals: number };
 export type TypeBounds = { exactly: Type } | { equals: number };
-type TableConstraint = { exactly: Type };
+type TableConstraint = { exactly: Type } | { selectArg: Type };
 
-const canonicalConstraintOrder = compareByList(["equals", "exactly", "subtype", "supertype"]);
+const canonicalConstraintOrder = compareByList(["equals", "exactly", "selectArg", "subtype", "supertype"]);
 const compareConstraints = (a: Constraint, b: Constraint): number => {
   const aKind = Object.keys(a)[0];
   const bKind = Object.keys(b)[0];
@@ -97,6 +97,24 @@ export class UnificationTable {
         return { ...bounds, exactly: { and: [...boundsType.and, type] } };
       }
       return { ...bounds, exactly: { and: [boundsType, type] } };
+    }
+
+    if ("selectArg" in constraint) {
+      const type = this.normalizeType(constraint.selectArg);
+      const boundsType = bounds.exactly;
+      if (!isSubtype(boundsType, { fn: { arg: "void", return: "unknown" } })) return { exactly: "void" };
+      if (typeof boundsType === "object" && "fn" in boundsType) {
+        const arg = boundsType.fn.arg;
+        if (!isSubtype(type, arg)) return { exactly: "void" };
+        return bounds;
+      }
+      if (typeof boundsType === "object" && "and" in boundsType) {
+        const t = boundsType.and.find((t) => isSubtype(t, { fn: { arg: type, return: "unknown" } }));
+        if (t) return { exactly: t };
+        return { exactly: "void" };
+      }
+
+      return bounds;
     }
 
     unreachable("cant unify");
@@ -280,7 +298,10 @@ export class UnificationTable {
       }
 
       for (const constraint of constraints) {
-        constraint.exactly = replaceTypeVariable(constraint.exactly, variable, otherVariable);
+        if ("exactly" in constraint)
+          constraint.exactly = replaceTypeVariable(constraint.exactly, variable, otherVariable);
+        if ("selectArg" in constraint)
+          constraint.selectArg = replaceTypeVariable(constraint.selectArg, variable, otherVariable);
       }
     }
   }

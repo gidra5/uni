@@ -45,9 +45,11 @@ export class Context {
 // is `a` a subtype of `b`? `a <: b` == true
 // the bottom type must always be a subtype of the top type
 export const isSubtype = (a: Type, b: Type): boolean => {
-  if (b === "unknown") return true;
   if (a === "void") return true;
-  if (a !== b) return false;
+  if (typeof a === "string") return a === b;
+  if (b === "unknown") return true;
+  if (typeof b === "string") return false;
+
   return true;
 };
 
@@ -100,6 +102,7 @@ export const infer = (ast: Tree, context: Context): Type => {
       constrain(ast.children[0], context, fnType);
 
       context.unificationTable.addConstraint(ast.id, { exactly: returnType });
+      context.unificationTable.addConstraint(ast.children[0].id, { selectArg: argType });
       return returnType;
     }
     case NodeType.ADD: {
@@ -157,6 +160,7 @@ const constrain = (ast: Tree, context: Context, expectedType: Type): void => {
       const fnType = { fn: { arg: argType, return: expectedType, closure: [] } };
       constrain(ast.children[0], context, fnType);
       context.unificationTable.addConstraint(ast.id, { exactly: expectedType });
+      context.unificationTable.addConstraint(ast.children[0].id, { selectArg: argType });
       return;
     }
   }
