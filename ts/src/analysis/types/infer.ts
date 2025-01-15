@@ -19,7 +19,7 @@ export type Type =
   | "unknown"
   | "void"
   | { variable: number }
-  | { fn: { arg: Type; return: Type; closure: Type[] } }
+  | { fn: { arg: Type; return: Type; closure?: Type[] } }
   | { and: Type[] }
   | { or: Type[] }
   | { not: Type };

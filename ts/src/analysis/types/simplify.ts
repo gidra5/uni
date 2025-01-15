@@ -9,7 +9,7 @@ export const simplify = (type: Type): Type => {
     case "fn" in type: {
       const argType = simplify(type.fn.arg);
       const returnType = simplify(type.fn.return);
-      const closure = type.fn.closure.map(simplify);
+      const closure = type.fn.closure?.map(simplify);
 
       return { fn: { arg: argType, return: returnType, closure } };
     }
@@ -18,7 +18,7 @@ export const simplify = (type: Type): Type => {
         .map(simplify)
         .flatMap((type) => (typeof type === "object" && "and" in type ? type.and : [type]))
         .filter((type) => type !== "unknown")
-        .unique()
+        .unique(isTypeEqual)
         .toArray();
 
       if (and.includes("void")) return "void";
@@ -30,19 +30,28 @@ export const simplify = (type: Type): Type => {
         if (negations.some((_type) => isTypeEqual(type, _type.not))) return "void";
       }
 
-      for (const type of and) {
-        if (!(typeof type === "object" && "fn" in type)) continue;
+      // const copy = [...and];
+      // for (const type of copy) {
+      //   if (!(typeof type === "object" && "fn" in type)) continue;
+      //   const index = copy.indexOf(type);
 
-        for (const restType of and) {
-          if (restType === type) continue;
-          if (!(typeof restType === "object" && "fn" in restType)) continue;
-          // if argument types are disjoint, then skip
-          if (isSubtype({ and: [restType.fn.arg, type.fn.arg] }, "void")) continue;
+      //   for (const restType of copy.slice(index + 1)) {
+      //     if (!(typeof restType === "object" && "fn" in restType)) continue;
+      //     // if argument types are disjoint, then skip
+      //     if (isSubtype({ and: [restType.fn.arg, type.fn.arg] }, "void")) continue;
 
-          // if arg types have intersection, then replace this pair
-          // with triplet of disjoint argument types with corresponding return types
-        }
-      }
+      //     // TODO: do closures
+      //     // if arg types have intersection, then replace this pair
+      //     // with triplet of disjoint argument types with corresponding return types
+      //     const firstArg: Type = { and: [restType.fn.arg, { not: type.fn.arg }] };
+      //     const secondArg: Type = { and: [{ not: restType.fn.arg }, type.fn.arg] };
+      //     const first: Type = { fn: { arg: firstArg, return: restType.fn.return, closure: restType.fn.closure } };
+      //     const second: Type = { fn: { arg: secondArg, return: type.fn.return, closure: type.fn.closure } };
+      //     const restIndex = copy.indexOf(restType);
+      //     and.splice(index, 0);
+      //     and.splice(restIndex, 1, simplify(first), simplify({ or: [type, restType] }), simplify(second));
+      //   }
+      // }
 
       return { and };
     }
@@ -51,7 +60,7 @@ export const simplify = (type: Type): Type => {
         .map(simplify)
         .flatMap((type) => (typeof type === "object" && "or" in type ? type.or : [type]))
         .filter((type) => type !== "void")
-        .unique()
+        .unique(isTypeEqual)
         .toArray();
 
       if (or.includes("unknown")) return "unknown";

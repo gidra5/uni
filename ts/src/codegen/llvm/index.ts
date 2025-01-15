@@ -22,8 +22,6 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       const values = ast.children.map((child) => codegen(child, context));
       return values.reduce((acc, value) => context.builder.createMul(acc, value));
     }
-    case NodeType.PARENS:
-      return codegen(ast.children[0], context);
     case NodeType.NAME: {
       if (ast.data.value === "print") {
         const printf = context.builder.declareFunction("printf", [{ pointer: "i8" }, "..."], "i32");

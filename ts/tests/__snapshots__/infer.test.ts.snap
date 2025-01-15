@@ -3016,33 +3016,11 @@ Map {
 exports[`compilation > print 1 3`] = `
 Map {
   4 => {
-    "and": [
-      {
-        "fn": {
-          "arg": "int",
-          "closure": [],
-          "return": "int",
-        },
-      },
-      {
-        "and": [
-          {
-            "fn": {
-              "arg": "int",
-              "closure": [],
-              "return": "int",
-            },
-          },
-          {
-            "fn": {
-              "arg": "string",
-              "closure": [],
-              "return": "string",
-            },
-          },
-        ],
-      },
-    ],
+    "fn": {
+      "arg": "int",
+      "closure": [],
+      "return": "int",
+    },
   },
   7 => "int",
   5 => "int",

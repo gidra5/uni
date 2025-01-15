@@ -68,6 +68,7 @@ class Builder {
       const arg = this.toLLVMType(type.fn.arg);
       const returnType = this.toLLVMType(type.fn.return);
       const fnType = this.createFunctionType([arg], returnType);
+      assert(type.fn.closure);
       if (type.fn.closure.length > 0) {
         const closureTypes = type.fn.closure.map((type) => this.toLLVMType(type));
         const closureType = this.createRecordType(closureTypes);

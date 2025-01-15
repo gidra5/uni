@@ -108,7 +108,7 @@ export const replaceTypeVariable = (type: Type, variable: number, otherVariable:
   if ("fn" in type) {
     const arg = type.fn.arg;
     const returnType = type.fn.return;
-    const closure = type.fn.closure.map((t) => replaceTypeVariable(t, variable, otherVariable));
+    const closure = type.fn.closure?.map((t) => replaceTypeVariable(t, variable, otherVariable));
     return {
       fn: {
         arg: replaceTypeVariable(arg, variable, otherVariable),

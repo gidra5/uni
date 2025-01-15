@@ -28,3 +28,4 @@ https://inria.hal.science/file/index/docid/76261/filename/RR-0296.pdf
 
 Set theoretic types: https://www.irif.fr/~gc/papers/set-theoretic-types-2022.pdf 
 Types that allow set-theoretic operations to be performed with them, such as `union`, `intersection`, `negation` of some types
+

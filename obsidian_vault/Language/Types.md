@@ -3,8 +3,8 @@ Basic algebraic types:
 1. Tagged union type with `union` applied to record or tuple
 2. Untagged union with `or`
 3. Tuple types with `(type, ...)`
-4. Record types with `(label: type, ...)`
-5. Function types with `fn label: type => type<effects>`
+4. Record types with `record { label: type, ... }`
+5. Function types with `fn label: type => <effects> type`
 6. Nominal types with `nominal` operator
 7. Unit type `()`
 8. bottom type `void`. 
