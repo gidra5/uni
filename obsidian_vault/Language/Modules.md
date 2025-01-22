@@ -69,3 +69,4 @@ every module entry must be pure expression. It can be some computation, but shou
 export fully exposes an item to any importer. protected export exposes item only to importers from the same directory.
 
 [modules stuff](https://thunderseethe.dev/posts/whats-in-a-module/)
+https://www.iecc.com/linker/

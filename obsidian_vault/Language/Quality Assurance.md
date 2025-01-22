@@ -13,16 +13,19 @@ Common ways to do that:
 1. Snapshot testing with example programs, based on some translated code from other languages, or a solution to some coding task, like Advent of Code days or Project Euler.
 2. Sanity checks that you expect to always be true or false:
   1. Compiler stages newer throw
+  2. Data structure invariants are respected
 3. Smaller examples that target specific features like:
   1. scoping
   2. function calls
   3. binding
-4. Fuzzy testing programs to find counter examples that violate some invariants or equations. For example:
+  4. type inference
+4. Fuzzy testing programs to find counter examples that violate some expected properties. For example:
   1. executing any code in block scope always leaves parent scope unmodified.
+  2. type system is sound
 5. Snapshot testing error reporting on a set of motivating examples for them.
 6. Benchmarking a set of examples that are going to accentuate different characteristics, like:
-  1. Memory footprint (max, min, avg, etc.)
-  2. Regressions in average and std deviation of time of execution.
+  1. Memory footprint (max, min, avg, mean, std dev, etc.)
+  2. Regressions in time of execution.
   3. Size of emitted code
   4. Overhead of features compared to simpler code that does the same work.
 7. TDD on any non trivial minimal examples that reveal some existing bug. 
@@ -38,3 +41,4 @@ https://www.reddit.com/r/Compilers/comments/z8jovo/how_do_you_test_compiler_proj
 https://langdev.stackexchange.com/questions/1544/how-to-test-a-compiler-interpreter
 https://github.com/smarr/are-we-fast-yet
 https://github.com/sampsyo/flatcalc/blob/c5bbe7bd79f98a3b857f0432d4739a3f4f6241bd/src/main.rs#L118-L136
+

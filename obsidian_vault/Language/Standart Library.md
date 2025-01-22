@@ -31,20 +31,21 @@ Includes tools for:
 7. memory allocation
 8. Iterators
 9.  generators
-10. lenses
+10. arbitraries
 11. streams
 12. animation interpolation
 13. math
   1. linear algebra
-  2. number theory
-  3. complex
-  4. quaternions
-  5. dual
-  6. derivatives
-  7. integration
-  8. fft
-  9. statistics and probability sampling
-  10. [reference frames and geometry](https://www.cs.cornell.edu/~asampson/blog/gator.html)
+  2. tensors and tensor graphs
+  3. number theory
+  4. complex
+  5. quaternions
+  6. dual
+  7. derivatives
+  8. integrals
+  9. fft
+  10. statistics and probability sampling
+  11. [reference frames and geometry](https://www.cs.cornell.edu/~asampson/blog/gator.html)
 14. styling
 15. cli parsing
 16. reflection 
@@ -62,6 +63,7 @@ Includes tools for:
 28. functional stuff
   1. monads
   2. functors
+  3. lenses
 29. crypto
 30. compression
 31. encoding (json, yaml, base64, etc)
@@ -70,8 +72,12 @@ Includes tools for:
 34. algorithms
 35. caching
 36. concurrency
-37. primitives utilities
+37. primitive utilities
 38. plotting
 39. error correction codes
+40. generic device interface
+41. signals
+42. event systems
+43. reactive streams
 
 https://julesjacobs.com/2023/09/21/generalizing-itertools.html
