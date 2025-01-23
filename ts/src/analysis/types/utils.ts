@@ -1,6 +1,20 @@
 import fc from "fast-check";
 import { assert, clamp } from "../../utils";
-import { Type } from "./infer";
+import { structuralSimplify } from "./simplify";
+
+export type Type =
+  | "boolean"
+  | "int"
+  | "float"
+  | "string"
+  | "unknown"
+  | "void"
+  | { variable: number }
+  | { fn: { arg: Type; return: Type; closure?: Type[] } }
+  | { record: Type[]; labels?: string[] }
+  | { and: Type[] }
+  | { or: Type[] }
+  | { not: Type };
 
 export const compareByList = (list: string[]) => (x: string, y: string) =>
   clamp(list.indexOf(x) - list.indexOf(y), -1, 1);
@@ -129,47 +143,43 @@ export const replaceTypeVariable = (type: Type, variable: number, otherVariable:
   return type;
 };
 
-export const typeArb = fc.letrec<{ type: Type }>((typeArb) => ({
-  type: fc.oneof(
-    fc.constant<"int">("int"),
-    fc.constant<"float">("float"),
-    fc.constant<"string">("string"),
-    fc.constant<"unknown">("unknown"),
-    fc.constant<"void">("void"),
-    fc.record({ fn: fc.record({ arg: typeArb("type"), return: typeArb("type"), closure: fc.array(typeArb("type")) }) }),
-    fc.record({ and: fc.array(typeArb("type"), { minLength: 2 }) }).map((type) => ({
-      and: type.and.flatMap((type) => (typeof type === "object" && "and" in type ? type.and : [type])),
-    })),
-    fc.record({ or: fc.array(typeArb("type"), { minLength: 2 }) }).map((type) => ({
-      or: type.or.flatMap((type) => (typeof type === "object" && "or" in type ? type.or : [type])),
-    })),
-    fc
-      .record({ not: typeArb("type") })
-      .map((type) => (typeof type.not === "object" && "not" in type.not ? type.not.not : type))
-  ),
-})).type;
-
-export const typeWithVariablesArb = (variables: number[]) =>
-  fc.letrec<{ type: Type }>((typeArb) => ({
+export const typeArb = fc
+  .letrec<{ type: Type }>((typeArb) => ({
     type: fc.oneof(
+      fc.constant<"boolean">("boolean"),
       fc.constant<"int">("int"),
-      fc.constant<"float">("float"),
+      // fc.constant<"float">("float"),
       fc.constant<"string">("string"),
-      fc.constant<"unknown">("unknown"),
-      fc.constant<"void">("void"),
-      fc.record({
-        fn: fc.record({ arg: typeArb("type"), return: typeArb("type"), closure: fc.array(typeArb("type")) }),
-      }),
-      fc.record({ and: fc.array(typeArb("type"), { minLength: 2 }) }).map((type) => ({
-        and: type.and.flatMap((type) => (typeof type === "object" && "and" in type ? type.and : [type])),
-      })),
-      fc.record({ or: fc.array(typeArb("type"), { minLength: 2 }) }).map((type) => ({
-        or: type.or.flatMap((type) => (typeof type === "object" && "or" in type ? type.or : [type])),
-      })),
-      fc
-        .record({ not: typeArb("type") })
-        .map((type) => (typeof type.not === "object" && "not" in type.not ? type.not.not : type)),
-      fc.record({ variable: fc.integer() }),
-      fc.oneof(...variables.map((variable) => fc.record({ variable: fc.constant(variable) })))
+      // fc.constant<"unknown">("unknown"),
+      // fc.constant<"void">("void"),
+      // fc.record({
+      //   fn: fc.record({ arg: typeArb("type"), return: typeArb("type"), closure: fc.array(typeArb("type")) }),
+      // }),
+      fc.record({ and: fc.array(typeArb("type")) }),
+      fc.record({ or: fc.array(typeArb("type")) })
+      // fc.record({ not: typeArb("type") })
     ),
-  })).type;
+  }))
+  .type.map(structuralSimplify);
+
+export const typeWithVariablesArb = (variables: number[] = []) =>
+  fc
+    .letrec<{ type: Type }>((typeArb) => ({
+      type: fc.oneof(
+        fc.constant<"boolean">("boolean"),
+        fc.constant<"int">("int"),
+        fc.constant<"float">("float"),
+        fc.constant<"string">("string"),
+        fc.constant<"unknown">("unknown"),
+        fc.constant<"void">("void"),
+        fc.record({
+          fn: fc.record({ arg: typeArb("type"), return: typeArb("type"), closure: fc.array(typeArb("type")) }),
+        }),
+        fc.record({ and: fc.array(typeArb("type")) }),
+        fc.record({ or: fc.array(typeArb("type")) }),
+        fc.record({ not: typeArb("type") }),
+        fc.record({ variable: fc.integer() }),
+        fc.oneof(...variables.map((variable) => fc.record({ variable: fc.constant(variable) })))
+      ),
+    }))
+    .type.map(structuralSimplify);

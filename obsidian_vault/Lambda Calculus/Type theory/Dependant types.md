@@ -442,3 +442,4 @@ end
 ```
 
 [dependant types impl](https://www.andres-loeh.de/LambdaPi/LambdaPi.pdf)
+https://lean-lang.org/functional_programming_in_lean/dependent-types/universe-pattern.html

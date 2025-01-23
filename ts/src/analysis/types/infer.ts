@@ -1,7 +1,9 @@
+import { Iterator } from "iterator-js";
 import { NodeType, Tree } from "../../ast";
 import { nextId, unreachable } from "../../utils";
 import { inject, Injectable } from "../../utils/injector";
 import { UnificationTable } from "./unification";
+import { Type } from "./utils";
 
 // subtype infers types that values must always satisfy (the actual values will be at least of these types)
 // for example, if a parameter is only used as int (passed to a function that only accepts ints),
@@ -12,24 +14,13 @@ import { UnificationTable } from "./unification";
 // supertype infers types that values will always satisfy (the actual values will be at most of these types)
 // for example, if a function only called with ints, then the type for its arguments will be int
 
-export type Type =
-  | "int"
-  | "float"
-  | "string"
-  | "unknown"
-  | "void"
-  | { variable: number }
-  | { fn: { arg: Type; return: Type; closure?: Type[] } }
-  | { and: Type[] }
-  | { or: Type[] }
-  | { not: Type };
-
 const initialNames = new Map<string, Type>([
   [
     "print",
     {
       and: [
         { fn: { arg: "int", return: "int", closure: [] } },
+        { fn: { arg: "float", return: "float", closure: [] } },
         { fn: { arg: "string", return: "string", closure: [] } },
       ],
     },
@@ -46,12 +37,49 @@ export class Context {
 // the bottom type must always be a subtype of the top type
 export const isSubtype = (a: Type, b: Type): boolean => {
   if (a === "void") return true;
-  if (typeof a === "string") return a === b;
   if (b === "unknown") return true;
-  if (typeof b === "string") return false;
+  if (a === b) return true;
 
-  return true;
+  // if ("not" in a && "not" in b) return isSubtype(b.not, a.not);
+  if (typeof b === "object" && "not" in b) return !isSubtype(a, b.not);
+  if (typeof a === "object" && "not" in a) return !isSubtype(b, a.not);
+
+  if (typeof b === "object" && "and" in b) return b.and.every((type) => isSubtype(a, type));
+  if (typeof a === "object" && "and" in a) return a.and.some((type) => isSubtype(type, b));
+
+  if (typeof a === "object" && "or" in a) return a.or.every((type) => isSubtype(type, b));
+  if (typeof b === "object" && "or" in b) return b.or.some((type) => isSubtype(a, type));
+
+  if (typeof a === "object" && "fn" in a) {
+    if (!(typeof b === "object" && "fn" in b)) return false;
+    return isSubtype(b.fn.arg, a.fn.arg) && isSubtype(a.fn.return, b.fn.return);
+  }
+  if (typeof b === "object" && "fn" in b) return false;
+
+  if (typeof a === "object" && "variable" in a) {
+    if (typeof b === "object" && "variable" in b) return a.variable === b.variable;
+    return false;
+  }
+  if (typeof b === "object" && "variable" in b) return false;
+
+  if (typeof a === "object" && "record" in a) {
+    if (!(typeof b === "object" && "record" in b)) return false;
+    if (a.record.length > b.record.length) return false;
+    if (a.labels) {
+      if (!b.labels) return false;
+      return Iterator.iter(a.labels)
+        .zip(a.record)
+        .every(([label, type]) => b.labels!.includes(label) && isSubtype(type, b.record[b.labels!.indexOf(label)]));
+    }
+    return Iterator.iter(a.record)
+      .enumerate()
+      .every(([type, i]) => isSubtype(type, b.record[i]));
+  }
+
+  return false;
 };
+
+export const isSubtypeEqual = (a: Type, b: Type): boolean => isSubtype(a, b) && isSubtype(b, a);
 
 export const infer = (ast: Tree, context: Context): Type => {
   // console.dir({ log: 1, context, ast }, { depth: null });

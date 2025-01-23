@@ -1,8 +1,61 @@
 import { Iterator } from "iterator-js";
-import { isSubtype, Type } from "./infer";
-import { isTypeEqual } from "./utils";
+import { isTypeEqual, Type } from "./utils";
+
+// only reduces nesting, without losing information
+export const structuralSimplify = (type: Type): Type => {
+  if (typeof type === "string") return type;
+
+  switch (true) {
+    case "fn" in type: {
+      const argType = structuralSimplify(type.fn.arg);
+      const returnType = structuralSimplify(type.fn.return);
+      const closure = type.fn.closure?.map(structuralSimplify);
+
+      return { fn: { arg: argType, return: returnType, closure } };
+    }
+    case "and" in type: {
+      const and = Iterator.iter(type.and)
+        .map(structuralSimplify)
+        .flatMap((type) => (typeof type === "object" && "and" in type ? type.and : [type]))
+        .filter((type) => type !== "unknown")
+        .unique(isTypeEqual)
+        .toArray();
+
+      if (and.length === 0) return "unknown";
+      if (and.length === 1) return and[0];
+
+      return { and };
+    }
+    case "or" in type: {
+      const or = Iterator.iter(type.or)
+        .map(structuralSimplify)
+        .flatMap((type) => (typeof type === "object" && "or" in type ? type.or : [type]))
+        .filter((type) => type !== "void")
+        .unique(isTypeEqual)
+        .toArray();
+
+      if (or.length === 0) return "void";
+      if (or.length === 1) return or[0];
+
+      return { or };
+    }
+    case "not" in type: {
+      const _type = structuralSimplify(type.not);
+      if (typeof _type === "object" && "not" in _type) {
+        return structuralSimplify(_type.not);
+      }
+
+      if (_type === "void") return "unknown";
+      if (_type === "unknown") return "void";
+      return { not: _type };
+    }
+    default:
+      return type;
+  }
+};
 
 export const simplify = (type: Type): Type => {
+  type = structuralSimplify(type);
   if (typeof type === "string") return type;
 
   switch (true) {
@@ -14,12 +67,7 @@ export const simplify = (type: Type): Type => {
       return { fn: { arg: argType, return: returnType, closure } };
     }
     case "and" in type: {
-      const and = Iterator.iter(type.and)
-        .map(simplify)
-        .flatMap((type) => (typeof type === "object" && "and" in type ? type.and : [type]))
-        .filter((type) => type !== "unknown")
-        .unique(isTypeEqual)
-        .toArray();
+      const and = type.and;
 
       if (and.includes("void")) return "void";
       // if there are two or more primitive types, then it is void (you can't be both int and float)
@@ -56,12 +104,7 @@ export const simplify = (type: Type): Type => {
       return { and };
     }
     case "or" in type: {
-      const or = Iterator.iter(type.or)
-        .map(simplify)
-        .flatMap((type) => (typeof type === "object" && "or" in type ? type.or : [type]))
-        .filter((type) => type !== "void")
-        .unique(isTypeEqual)
-        .toArray();
+      const or = type.or;
 
       if (or.includes("unknown")) return "unknown";
 
@@ -69,12 +112,6 @@ export const simplify = (type: Type): Type => {
     }
     case "not" in type: {
       const not = simplify(type.not);
-      if (typeof not === "object" && "not" in not) {
-        return simplify(not.not);
-      }
-
-      if (not === "void") return "unknown";
-      if (not === "unknown") return "void";
       return { not };
     }
     default:

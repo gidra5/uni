@@ -1,7 +1,7 @@
 import { assert, unreachable } from "../../utils";
-import { isSubtype, Type } from "./infer";
+import { isSubtype } from "./infer";
 import { simplify } from "./simplify";
-import { compareByList, compareTypes, isTypeReferenceVariable, replaceTypeVariable } from "./utils";
+import { compareByList, compareTypes, isTypeReferenceVariable, replaceTypeVariable, Type } from "./utils";
 
 export type Constraint = TableConstraint | { equals: number };
 export type TypeBounds = { exactly: Type } | { equals: number };
