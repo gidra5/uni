@@ -6,6 +6,9 @@ const reportFolder = `test-results/report-${date}`;
 
 export default defineConfig({
   test: {
+    api: {
+      port: 3000,
+    },
     // coverage: {
     //   // enabled: reportName === "node",
     //   provider: "istanbul",

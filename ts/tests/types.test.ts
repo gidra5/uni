@@ -41,6 +41,8 @@ describe("type compare", () => {
   });
 });
 
+// define void and unknown for every primitive type 
+
 describe("subtyping", () => {
   test.prop([typeArb], {
     skipEqualValues: true,
@@ -117,7 +119,7 @@ describe("subtyping", () => {
     expect(isSubtype(lowerBound, meet), "meet is the greatest lower bound").toBe(true);
   });
 
-  test.only.prop([typeArb, typeArb, typeArb], {
+  test.prop([typeArb, typeArb, typeArb], {
     skipEqualValues: true,
     examples: [["float", "string", "void"]],
   })("meet distributes over join", (a, b, c) => {
@@ -127,11 +129,33 @@ describe("subtyping", () => {
     expect(isSubtypeEqual(lhs, rhs)).toBe(true);
   });
 
+  test.prop([typeArb, typeArb], { skipEqualValues: true, examples: [[{ record: [] }, "string"]] })(
+    "meet is commutative",
+    (a, b) => {
+      expect(isSubtypeEqual({ and: [a, b] }, { and: [b, a] })).toBe(true);
+    }
+  );
+
+  test.prop([typeArb, typeArb], { skipEqualValues: true })("join is commutative", (a, b) => {
+    expect(isSubtypeEqual({ or: [a, b] }, { or: [b, a] })).toBe(true);
+  });
+
+  test.prop([typeArb, typeArb, typeArb], {
+    skipEqualValues: true,
+    examples: [["string", "string", { record: [] }]],
+  })("meet is associative", (a, b, c) => {
+    expect(isSubtypeEqual({ and: [a, { and: [b, c] }] }, { and: [{ and: [a, b] }, c] })).toBe(true);
+  });
+
+  test.prop([typeArb, typeArb, typeArb], { skipEqualValues: true })("join is associative", (a, b, c) => {
+    expect(isSubtypeEqual({ or: [{ or: [a, b] }, c] }, { or: [a, { or: [b, c] }] })).toBe(true);
+  });
+
   test.prop([typeArb], { skipEqualValues: true })("double negation", (a) => {
     expect(isSubtypeEqual({ not: { not: a } }, a)).toBe(true);
   });
 
-  test.only.prop([typeArb, typeArb], { skipEqualValues: true, seed: 976283907, path: "3", endOnFailure: true })(
+  test.prop([typeArb, typeArb], { skipEqualValues: true, examples: [["void", { record: [] }]] })(
     "de-morgan's law",
     (a, b) => {
       const lhs = { not: { or: [a, b] } };
@@ -148,6 +172,61 @@ describe("subtyping", () => {
   test.prop([typeArb], { skipEqualValues: true })("void is subtype of anything", (a) => {
     expect(isSubtype("void", a)).toBe(true);
   });
+
+  test.prop([typeArb], { skipEqualValues: true, examples: [[{ record: [] }]] })("excluded middle and", (a) => {
+    expect(isSubtypeEqual({ and: [a, { not: a }] }, "void")).toBe(true);
+  });
+
+  test.prop([typeArb], {
+    skipEqualValues: true,
+    examples: [["float"]],
+  })("excluded middle or", (a) => {
+    expect(isSubtypeEqual({ or: [a, { not: a }] }, "unknown")).toBe(true);
+  });
+
+  test.prop([typeArb.chain((t) => typeArb.filter((t2) => isSubtype(t, t2)).map<[Type, Type]>((t2) => [t, t2]))], {
+    skipEqualValues: true,
+  })("meet chooses min type", ([a, b]) => {
+    expect(isSubtypeEqual({ and: [a, b] }, a)).toBe(true);
+  });
+
+  test.prop([typeArb.chain((t) => typeArb.filter((t2) => isSubtype(t, t2)).map<[Type, Type]>((t2) => [t, t2]))], {
+    skipEqualValues: true,
+  })("join chooses max type", ([a, b]) => {
+    expect(isSubtypeEqual({ or: [a, b] }, b)).toBe(true);
+  });
+
+  test("void and unknown are opposites", () => {
+    expect.soft(isSubtypeEqual("void", { not: "unknown" })).toBe(true);
+    expect.soft(isSubtypeEqual("unknown", { not: "void" })).toBe(true);
+  });
+
+  test.prop([typeArb, typeArb, typeArb, typeArb], { skipEqualValues: true })("disjoint intersections", (a, b, c, d) => {
+    const lhs = { and: [{ fn: { arg: a, return: b } }, { fn: { arg: c, return: d } }] };
+    const rhs = {
+      and: [
+        { fn: { arg: { and: [a, { not: c }] }, return: b } },
+        { fn: { arg: { and: [a, c] }, return: { or: [b, d] } } },
+        { fn: { arg: { and: [{ not: a }, c] }, return: d } },
+      ],
+    };
+
+    expect(isSubtypeEqual(lhs, rhs)).toBe(true);
+  });
+
+  test.prop([typeArb, typeArb, typeArb, typeArb], { skipEqualValues: true })("union of functions", (a, b, c, d) => {
+    const lhs = { or: [{ fn: { arg: a, return: b } }, { fn: { arg: c, return: d } }] };
+    const rhs = { fn: { arg: { and: [a, c] }, return: { or: [b, d] } } };
+
+    expect(isSubtypeEqual(lhs, rhs)).toBe(true);
+  });
+
+  test.prop([typeArb.chain((t) => typeArb.filter((t2) => isSubtype(t, t2)).map<[Type, Type]>((t2) => [t, t2]))], {
+    skipEqualValues: true,
+  })("join chooses max type", ([a, b]) => {
+    expect(isSubtype({ not: b }, { not: a })).toBe(true);
+  });
+
 
   describe("datatype subtyping", () => {
     test.prop(
