@@ -4,6 +4,7 @@ import { nextId, unreachable } from "../../utils";
 import { inject, Injectable } from "../../utils/injector";
 import { UnificationTable } from "./unification";
 import { Type } from "./utils";
+import { structuralSimplify } from "./simplify";
 
 // subtype infers types that values must always satisfy (the actual values will be at least of these types)
 // for example, if a parameter is only used as int (passed to a function that only accepts ints),
@@ -36,19 +37,45 @@ export class Context {
 // is `a` a subtype of `b`? `a <: b` == true
 // the bottom type must always be a subtype of the top type
 export const isSubtype = (a: Type, b: Type): boolean => {
-  if (a === "void") return true;
-  if (b === "unknown") return true;
+  // console.log(a, b);
   if (a === b) return true;
 
-  // if ("not" in a && "not" in b) return isSubtype(b.not, a.not);
-  if (typeof b === "object" && "not" in b) return !isSubtype(a, b.not);
+  if (typeof b === "object" && "not" in b) return !isSubtype(b.not, a);
   if (typeof a === "object" && "not" in a) return !isSubtype(b, a.not);
 
-  if (typeof b === "object" && "and" in b) return b.and.every((type) => isSubtype(a, type));
-  if (typeof a === "object" && "and" in a) return a.and.some((type) => isSubtype(type, b));
+  if (a === "void") return true;
+  if (b === "unknown") return true;
 
-  if (typeof a === "object" && "or" in a) return a.or.every((type) => isSubtype(type, b));
-  if (typeof b === "object" && "or" in b) return b.or.some((type) => isSubtype(a, type));
+  if (typeof a === "object" && "and" in a) {
+    return a.and.some((type) => isSubtype(type, b));
+    // // console.log(a, b);
+    // const x = a.and.map((type) => isSubtype(type, b));
+    // // console.log(3, x);
+    // return x.some((x) => x);
+  }
+  if (typeof b === "object" && "and" in b) {
+    return b.and.every((type) => isSubtype(a, type));
+    // // console.log(a, b);
+    // const x = b.and.map((type) => isSubtype(a, type));
+    // // console.log(4, x);
+    // return x.every((x) => x);
+  }
+
+  if (typeof a === "object" && "or" in a) {
+    return a.or.every((type) => isSubtype(type, b));
+    // console.log(a, b);
+    // const x = a.or.map((type) => isSubtype(type, b));
+    // console.log(2, x);
+    // return x.every((x) => x);
+  }
+  if (typeof b === "object" && "or" in b) {
+    return b.or.some((type) => isSubtype(a, type));
+    // console.log(a, b);
+    // const x = b.or.map((type) => isSubtype(a, type));
+    // console.log(1, x);
+
+    // return x.some((x) => x);
+  }
 
   if (typeof a === "object" && "fn" in a) {
     if (!(typeof b === "object" && "fn" in b)) return false;
@@ -64,16 +91,18 @@ export const isSubtype = (a: Type, b: Type): boolean => {
 
   if (typeof a === "object" && "record" in a) {
     if (!(typeof b === "object" && "record" in b)) return false;
-    if (a.record.length > b.record.length) return false;
+    if (b.record.length === 0) return true;
+    if (b.record.length > a.record.length) return false;
     if (a.labels) {
       if (!b.labels) return false;
+      const bMap = Iterator.iter(b.labels).zip(b.record).toMap();
       return Iterator.iter(a.labels)
         .zip(a.record)
-        .every(([label, type]) => b.labels!.includes(label) && isSubtype(type, b.record[b.labels!.indexOf(label)]));
+        .every(([label, type]) => bMap.has(label) && isSubtype(type, bMap.get(label)!));
     }
     return Iterator.iter(a.record)
-      .enumerate()
-      .every(([type, i]) => isSubtype(type, b.record[i]));
+      .zip(b.record)
+      .every(([a, b]) => isSubtype(a, b));
   }
 
   return false;

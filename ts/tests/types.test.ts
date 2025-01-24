@@ -1,6 +1,6 @@
 import { describe, expect } from "vitest";
 import { fc, test } from "@fast-check/vitest";
-import { compareTypes, isTypeEqual, Type, typeArb } from "../src/analysis/types/utils";
+import { compareTypes, dataTypeArb, isTypeEqual, Type, typeArb } from "../src/analysis/types/utils";
 import { isSubtype, isSubtypeEqual } from "../src/analysis/types/infer";
 import { Iterator } from "iterator-js";
 import { copy } from "../src/utils/copy";
@@ -15,7 +15,7 @@ describe("type equality", () => {
 describe("type compare", () => {
   test.prop([typeArb, typeArb])("type compare result is between -1 and 1", (a, b) => {
     const ab = compareTypes(a, b);
-    expect(ab).toBeGreaterThanOrEqual(-1);
+    expect.soft(ab).toBeGreaterThanOrEqual(-1);
     expect(ab).toBeLessThanOrEqual(1);
   });
 
@@ -42,73 +42,152 @@ describe("type compare", () => {
 });
 
 describe("subtyping", () => {
-  test.only.prop([typeArb], {
+  test.prop([typeArb], {
     skipEqualValues: true,
-    examples: [
-      [{ or: [{ and: ["int", "boolean"] }, "string"] }],
-      // [{ and: [{ not: "boolean" }, "void"] }],
-      // [{ and: ["string", "boolean"] }],
-      // [{ not: { or: [{ not: "boolean" }, "boolean"] } }],
-      // [{ or: [{ not: "boolean" }, "boolean"] }],
-    ],
+    // examples: [
+    //   [{ and: [{ and: [] }, "void"] }],
+    //   [{ not: { not: "void" } }],
+    //   [{ or: [{ not: { or: [] } }] }],
+    //   [{ or: [{ or: [{ not: { or: [] } }] }, { not: { not: "void" } }] }],
+    //   [{ and: [] }],
+    //   [{ or: [] }],
+    //   [{ and: [{ or: [] }, { and: [] }] }],
+    //   [{ not: { and: [] } }],
+    //   [{ or: [{ not: { and: [] } }] }],
+    //   [{ or: [{ not: { and: ["boolean", { not: "boolean" }] } }, { and: ["boolean", { not: "boolean" }] }] }],
+    //   [{ and: ["boolean", { not: "boolean" }] }],
+    //   [{ or: [{ and: ["int", "boolean"] }, "string"] }],
+    //   [{ and: [{ not: "boolean" }, "void"] }],
+    //   [{ and: ["string", "boolean"] }],
+    // ],
   })("subtyping is reflexive", (type) => {
     expect(isSubtype(type, copy(type))).toBe(true);
   });
 
-  test.prop([typeArb, typeArb])("subtyping is anti symmetric", (a, b) => {
-    const ab = isSubtype(a, b);
-    const ba = isSubtype(b, a);
-    expect(ab).toBe(!ba);
-  });
-
-  test.prop([typeArb, typeArb, typeArb])("subtyping is transitive", (a, b, c) => {
+  test.prop([typeArb, typeArb, typeArb], { skipEqualValues: true })("subtyping is transitive", (a, b, c) => {
     const ab = isSubtype(a, b);
     const bc = isSubtype(b, c);
     const ac = isSubtype(a, c);
     if (ab && bc) expect(ac).toBe(true);
-    else if (!ab && !bc) expect(!ac).toBe(true);
   });
 
-  test.prop([
-    fc
-      .array(typeArb)
-      .map((ts) => Iterator.iter(ts).unique(isTypeEqual).toArray())
-      .chain<[Type[], Type]>((types) =>
-        typeArb.filter((t) => types.every((type) => isSubtype(t, type))).map((t) => [types, t])
-      ),
-  ])("union is a lattice join", ([types, upperBound]) => {
+  test.prop(
+    [
+      fc
+        .array(typeArb)
+        .map((ts) => Iterator.iter(ts).unique(isTypeEqual).toArray())
+        .chain<[Type[], Type]>((types) =>
+          typeArb.filter((t) => types.every((type) => isSubtype(type, t))).map((t) => [types, t])
+        ),
+    ],
+    { skipEqualValues: true }
+  )("union is a lattice join", ([types, upperBound]) => {
     const join: Type = { or: types };
 
-    expect(
-      types.every((t) => isSubtype(t, join)),
-      "join is an upper bound"
-    ).toBe(true);
+    expect
+      .soft(
+        types.every((t) => isSubtype(t, join)),
+        "join is an upper bound"
+      )
+      .toBe(true);
 
     expect(isSubtype(join, upperBound), "join is the least upper bound").toBe(true);
   });
 
-  test.prop([
-    fc
-      .array(typeArb)
-      .map((ts) => Iterator.iter(ts).unique(isTypeEqual).toArray())
-      .chain<[Type[], Type]>((types) =>
-        typeArb.filter((t) => types.every((type) => isSubtype(type, t))).map((t) => [types, t])
-      ),
-  ])("intersection is a lattice meet", ([types, lowerBound]) => {
+  test.prop(
+    [
+      fc
+        .array(typeArb)
+        .map((ts) => Iterator.iter(ts).unique(isTypeEqual).toArray())
+        .chain<[Type[], Type]>((types) =>
+          typeArb.filter((t) => types.every((type) => isSubtype(t, type))).map((t) => [types, t])
+        ),
+    ],
+    { skipEqualValues: true }
+  )("intersection is a lattice meet", ([types, lowerBound]) => {
     const meet: Type = { and: types };
 
-    expect(
-      types.every((t) => isSubtype(meet, t)),
-      "meet is a lower bound"
-    ).toBe(true);
+    expect
+      .soft(
+        types.every((t) => isSubtype(meet, t)),
+        "meet is a lower bound"
+      )
+      .toBe(true);
 
     expect(isSubtype(lowerBound, meet), "meet is the greatest lower bound").toBe(true);
   });
 
-  test.prop([typeArb, typeArb, typeArb])("meet distributes over join", (a, b, c) => {
+  test.only.prop([typeArb, typeArb, typeArb], {
+    skipEqualValues: true,
+    examples: [["float", "string", "void"]],
+  })("meet distributes over join", (a, b, c) => {
     const lhs = { and: [a, { or: [b, c] }] };
     const rhs = { or: [{ and: [a, b] }, { and: [a, c] }] };
 
     expect(isSubtypeEqual(lhs, rhs)).toBe(true);
+  });
+
+  test.prop([typeArb], { skipEqualValues: true })("double negation", (a) => {
+    expect(isSubtypeEqual({ not: { not: a } }, a)).toBe(true);
+  });
+
+  test.only.prop([typeArb, typeArb], { skipEqualValues: true, seed: 976283907, path: "3", endOnFailure: true })(
+    "de-morgan's law",
+    (a, b) => {
+      const lhs = { not: { or: [a, b] } };
+      const rhs = { and: [{ not: a }, { not: b }] };
+
+      expect(isSubtypeEqual(lhs, rhs), "de-morgan law").toBe(true);
+    }
+  );
+
+  test.prop([typeArb], { skipEqualValues: true })("anything is subtype of unknown", (a) => {
+    expect(isSubtype(a, "unknown")).toBe(true);
+  });
+
+  test.prop([typeArb], { skipEqualValues: true })("void is subtype of anything", (a) => {
+    expect(isSubtype("void", a)).toBe(true);
+  });
+
+  describe("datatype subtyping", () => {
+    test.prop(
+      [
+        fc.array(typeArb).chain<[Type[], Type[]]>((types) =>
+          fc
+            .array(typeArb, { maxLength: types.length })
+            .filter((_types) => _types.every((type, i) => isSubtype(types[i], type)))
+            .map((_types) => [types, _types])
+        ),
+      ],
+      { skipEqualValues: true }
+    )("tuple subtyping", ([types, supertypes]) => {
+      expect(isSubtype({ record: types }, { record: supertypes })).toBe(true);
+    });
+
+    test.prop([fc.array(typeArb)], { skipEqualValues: true })("empty tuple is tuple top type", (types) => {
+      expect(isSubtype({ record: types }, { record: [] })).toBe(true);
+    });
+
+    // test.prop([fc.array(typeArb)], { skipEqualValues: true })("??? is tuple bottom type", (types) => {
+    //   expect(isSubtype({ record: types }, { record: [] })).toBe(true); // ?
+    // });
+
+    test.prop([typeArb, typeArb, fc.option(fc.array(typeArb), { nil: undefined })], { skipEqualValues: true })(
+      "void -> unknown is a function top type",
+      (arg, _return, closure) => {
+        const fnType = { fn: { arg, return: _return, closure } };
+        const fnTopType: Type = { fn: { arg: "void", return: "unknown" } };
+        expect(isSubtype(fnType, fnTopType)).toBe(true);
+      }
+    );
+
+    test.prop([typeArb, typeArb, fc.option(fc.array(typeArb), { nil: undefined })], { skipEqualValues: true })(
+      "unknown -> void is a function bottom type",
+      (arg, _return, closure) => {
+        const fnType = { fn: { arg, return: _return, closure } };
+        const fnBottomType: Type = { fn: { arg: "unknown", return: "void" } };
+        expect(isSubtype(fnBottomType, fnType)).toBe(true);
+      }
+    );
   });
 });

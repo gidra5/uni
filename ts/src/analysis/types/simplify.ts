@@ -13,6 +13,10 @@ export const structuralSimplify = (type: Type): Type => {
 
       return { fn: { arg: argType, return: returnType, closure } };
     }
+    case "record" in type: {
+      const record = type.record.map(structuralSimplify);
+      return { ...type, record };
+    }
     case "and" in type: {
       const and = Iterator.iter(type.and)
         .map(structuralSimplify)
