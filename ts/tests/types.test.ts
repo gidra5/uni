@@ -41,7 +41,7 @@ describe("type compare", () => {
   });
 });
 
-// define void and unknown for every primitive type 
+// define void and unknown for every primitive type
 
 describe("subtyping", () => {
   test.prop([typeArb], {
@@ -165,6 +165,13 @@ describe("subtyping", () => {
     }
   );
 
+  test.prop([fc.array(typeArb, { minLength: 1 })], { skipEqualValues: true })(
+    "intersection is subtype of union",
+    (a) => {
+      expect(isSubtype({ and: a }, { or: a })).toBe(true);
+    }
+  );
+
   test.prop([typeArb], { skipEqualValues: true })("anything is subtype of unknown", (a) => {
     expect(isSubtype(a, "unknown")).toBe(true);
   });
@@ -223,10 +230,9 @@ describe("subtyping", () => {
 
   test.prop([typeArb.chain((t) => typeArb.filter((t2) => isSubtype(t, t2)).map<[Type, Type]>((t2) => [t, t2]))], {
     skipEqualValues: true,
-  })("join chooses max type", ([a, b]) => {
+  })("negation swaps order", ([a, b]) => {
     expect(isSubtype({ not: b }, { not: a })).toBe(true);
   });
-
 
   describe("datatype subtyping", () => {
     test.prop(

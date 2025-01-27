@@ -49,8 +49,7 @@ export class UnificationTable {
     if (typeof type === "object" && "fn" in type) {
       const normalizedArg = this.normalizeType(type.fn.arg);
       const normalizedReturn = this.normalizeType(type.fn.return);
-      const normalizedClosure = type.fn.closure?.map((t) => this.normalizeType(t));
-      return { fn: { arg: normalizedArg, return: normalizedReturn, closure: normalizedClosure } };
+      return { fn: { arg: normalizedArg, return: normalizedReturn } };
     }
     if (typeof type === "object" && "variable" in type) {
       const variable = type.variable;
@@ -80,12 +79,10 @@ export class UnificationTable {
       if (typeof boundsType === "object" && "fn" in boundsType && typeof type === "object" && "fn" in type) {
         const x = this.unify({ exactly: boundsType.fn.arg }, { exactly: type.fn.arg });
         const y = this.unify({ exactly: boundsType.fn.return }, { exactly: type.fn.return });
-        const z = boundsType.fn.closure?.map((t, i) => this.unify({ exactly: t }, { exactly: type.fn.closure![i] }));
-        const closure = z?.map((t) => this.boundsToType(0, t));
         const arg = this.boundsToType(0, x);
         const returnType = this.boundsToType(0, y);
 
-        return { exactly: { fn: { arg, return: returnType, closure } } };
+        return { exactly: { fn: { arg, return: returnType } } };
       }
       if (typeof boundsType === "object" && "and" in boundsType) {
         if (typeof type === "object" && "fn" in type) {

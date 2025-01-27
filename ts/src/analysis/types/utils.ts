@@ -2,11 +2,27 @@ import fc from "fast-check";
 import { assert, clamp } from "../../utils";
 
 export type PrimitiveType = "boolean" | "int" | "float" | "string" | "unknown" | "void";
-export type DataType =
-  | PrimitiveType
-  | { fn: { arg: Type; return: Type; closure?: Type[] } }
-  | { record: Type[]; labels?: string[] };
+export type DataType = PrimitiveType | { fn: { arg: Type; return: Type } } | { record: Type[]; labels?: string[] };
 export type Type = DataType | { variable: number } | { and: Type[] } | { or: Type[] } | { not: Type };
+
+/** a type that represents how a value must be stored in physical memory */
+export type PhysicalType =
+  | "void" /** zero sized type, has no representation in physical memory */
+  | "unknown" /** unknown type of values, practically can be anything without changing semantics */
+  | { int: number } /** signed integer type, size in bits */
+  | { float: number } /** floating point type, size in bits */
+  | { pointer: PhysicalType }
+  | { fn: { args: PhysicalType[]; return: PhysicalType; closure: PhysicalType[] } }
+  | { tuple: PhysicalType[] }
+  | { array: PhysicalType; length: number }; /** array type, basically a fat pointer */
+
+export const isLargePhysicalType = (
+  type: PhysicalType
+): type is Extract<PhysicalType, { tuple: unknown } | { array: unknown }> => {
+  return (
+    typeof type === "object" && ("tuple" in type || "array" in type || ("fn" in type && type.fn.closure.length > 0))
+  );
+};
 
 export const compareByList = (list: string[]) => (x: string, y: string) =>
   clamp(list.indexOf(x) - list.indexOf(y), -1, 1);
@@ -114,12 +130,10 @@ export const replaceTypeVariable = (type: Type, variable: number, otherVariable:
   if ("fn" in type) {
     const arg = type.fn.arg;
     const returnType = type.fn.return;
-    const closure = type.fn.closure?.map((t) => replaceTypeVariable(t, variable, otherVariable));
     return {
       fn: {
         arg: replaceTypeVariable(arg, variable, otherVariable),
         return: replaceTypeVariable(returnType, variable, otherVariable),
-        closure,
       },
     };
   }

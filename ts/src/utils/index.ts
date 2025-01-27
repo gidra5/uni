@@ -124,3 +124,18 @@ export const mapField = (path: RecordKey[], fn: (x: any) => any) => (obj: any) =
 export const setField = (path: RecordKey[], value: any) => mapField(path, () => value);
 
 export const pushField = (path: RecordKey[], value: any) => mapField(path, (x) => x && [...x, value]);
+
+export const unique = <T>(list: T[], eq?: (a: T, b: T) => boolean) => {
+  if (!eq) return [...new Set(list)];
+  const distinct: T[] = [];
+
+  for (const item of list) {
+    if (distinct.some((x) => eq(x, item))) continue;
+    distinct.push(item);
+  }
+  return distinct;
+};
+
+export const exclude = <T>(list: T[], exclude: T[]) => {
+  return list.filter((x) => !exclude.includes(x));
+};

@@ -2,6 +2,7 @@ import { Iterator } from "iterator-js";
 import { NodeType, Tree } from "../../ast.js";
 import { assert, unreachable } from "../../utils/index.js";
 import { Context, LLVMType, LLVMValue } from "./context.js";
+import { inject, Injectable } from "../../utils/injector.js";
 
 const codegen = (ast: Tree, context: Context): LLVMValue => {
   switch (ast.type) {
@@ -25,10 +26,14 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     case NodeType.NAME: {
       if (ast.data.value === "print") {
         const printf = context.builder.declareFunction("printf", [{ pointer: "i8" }, "..."], "i32");
+        const types = inject(Injectable.PhysicalTypeMap);
+        const type = types.get(ast.id);
 
-        assert(typeof ast.data.type === "object");
-        assert("fn" in ast.data.type);
-        if (ast.data.type.fn.arg === "int") {
+        assert(typeof type === "object");
+        assert("fn" in type);
+        assert(type.fn.args.length === 1);
+        const arg = type.fn.args[0];
+        if (typeof arg === "object" && "int" in arg) {
           return context.builder.createFunction("printInt", ["i32"], (arg1) => {
             const fmt = context.builder.createString("%i\n");
             const result = context.builder.createCall(printf, [fmt, arg1], "i32", [{ pointer: "i8" }, "..."]);
@@ -94,7 +99,11 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     }
     case NodeType.FUNCTION: {
       const name = context.builder.getFreshName("fn_");
-      const funcType = context.builder.toLLVMType(ast.data.type);
+      const types = inject(Injectable.PhysicalTypeMap);
+      const type = types.get(ast.id);
+      assert(typeof type === "object");
+      assert("fn" in type);
+      const funcType = context.builder.toLLVMType(type);
       assert(typeof funcType === "object");
       assert("args" in funcType);
       const argName = ast.children[0].data.value;
@@ -110,8 +119,8 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
         if (typeof type === "object" && "record" in type) {
           const retValue = "%" + context.builder.getFreshName("var_");
           context.builder.types.set(retValue, type);
-          const valueType = context.builder.getTypeString(type);
-          funcDecl.args.unshift(`ptr sret(${valueType}) ${retValue}`);
+          const returnType = context.builder.getTypeString(type);
+          funcDecl.args.unshift(`ptr sret(${returnType}) ${retValue}`);
           argTypes.unshift({ pointer: type, structRet: true });
           context.builder.createStore(result, retValue);
           context.builder.createReturn("void");
@@ -123,7 +132,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
         }
       }
 
-      if (freeVars.length === 0) {
+      if (!type.fn.closure) {
         return context.builder.createFunction(name, argTypes, (arg1) => {
           context.names.set(argName, arg1);
           const result = codegen(ast.children[1], context);
@@ -131,6 +140,8 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
           return x(result);
         });
       }
+
+      assert(type.fn.closure.length > 0);
 
       const closure = context.builder.createRecord(freeVars.map((name) => context.names.get(name)!));
       const closureType = context.builder.getType(closure);

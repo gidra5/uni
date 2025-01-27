@@ -1,7 +1,7 @@
 import { FileMap } from "codespan-napi";
 import type { Precedence } from "../ast";
 import type { Position } from "./position";
-import { Type } from "../analysis/types/infer";
+import { PhysicalType, Type } from "../analysis/types/utils";
 
 enum Injectable {
   FileMap = "FileMap",
@@ -10,6 +10,9 @@ enum Injectable {
   PrecedenceMap = "PrecedenceMap",
   PositionMap = "PositionMap",
   TypeMap = "TypeMap",
+  PhysicalTypeMap = "PhysicalTypeMap",
+  FreeVariablesMap = "FreeVariablesMap",
+  BoundVariablesMap = "BoundVariablesMap",
 }
 
 type InjectableType = {
@@ -19,6 +22,9 @@ type InjectableType = {
   [Injectable.PrecedenceMap]: Map<number, Precedence>;
   [Injectable.PositionMap]: Map<number, Position>;
   [Injectable.TypeMap]: Map<number, Type>;
+  [Injectable.PhysicalTypeMap]: Map<number, PhysicalType>;
+  [Injectable.FreeVariablesMap]: Map<number, string[]>;
+  [Injectable.BoundVariablesMap]: Map<number, string[]>;
 };
 
 const registry = new Map<string, any>();

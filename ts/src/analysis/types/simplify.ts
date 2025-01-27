@@ -9,9 +9,8 @@ export const structuralSimplify = (type: Type): Type => {
     case "fn" in type: {
       const argType = structuralSimplify(type.fn.arg);
       const returnType = structuralSimplify(type.fn.return);
-      const closure = type.fn.closure?.map(structuralSimplify);
 
-      return { fn: { arg: argType, return: returnType, closure } };
+      return { fn: { arg: argType, return: returnType } };
     }
     case "record" in type: {
       const record = type.record.map(structuralSimplify);
@@ -66,9 +65,8 @@ export const simplify = (type: Type): Type => {
     case "fn" in type: {
       const argType = simplify(type.fn.arg);
       const returnType = simplify(type.fn.return);
-      const closure = type.fn.closure?.map(simplify);
 
-      return { fn: { arg: argType, return: returnType, closure } };
+      return { fn: { arg: argType, return: returnType } };
     }
     case "and" in type: {
       const and = type.and;

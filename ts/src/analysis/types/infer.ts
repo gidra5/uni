@@ -20,9 +20,9 @@ const initialNames = new Map<string, Type>([
     "print",
     {
       and: [
-        { fn: { arg: "int", return: "int", closure: [] } },
-        { fn: { arg: "float", return: "float", closure: [] } },
-        { fn: { arg: "string", return: "string", closure: [] } },
+        { fn: { arg: "int", return: "int" } },
+        { fn: { arg: "float", return: "float" } },
+        { fn: { arg: "string", return: "string" } },
       ],
     },
   ],
@@ -145,17 +145,16 @@ export const infer = (ast: Tree, context: Context): Type => {
       if (prevNameType) context.names.set(name, prevNameType);
       else context.names.delete(name);
 
-      const closure = [];
       context.unificationTable.addConstraint(ast.id, {
-        exactly: { fn: { arg: argType, return: returnType, closure } },
+        exactly: { fn: { arg: argType, return: returnType } },
       });
-      return { fn: { arg: argType, return: returnType, closure } };
+      return { fn: { arg: argType, return: returnType } };
     }
     case NodeType.DELIMITED_APPLICATION:
     case NodeType.APPLICATION: {
       const argType = infer(ast.children[1], context);
       const returnType = { variable: nextId() };
-      const fnType = { fn: { arg: argType, return: returnType, closure: [] } };
+      const fnType = { fn: { arg: argType, return: returnType } };
       constrain(ast.children[0], context, fnType);
 
       context.unificationTable.addConstraint(ast.id, { exactly: returnType });

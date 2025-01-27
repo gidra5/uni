@@ -1,6 +1,6 @@
 import { Iterator } from "iterator-js";
 import { assert, nextId, unreachable } from "../../utils";
-import { Type } from "../../analysis/types/infer";
+import { isLargePhysicalType, PhysicalType } from "../../analysis/types/utils";
 
 export type LLVMModule = {
   globals: LLVMGlobal[];
@@ -51,33 +51,33 @@ class Builder {
     return stringifyLLVMType(type);
   }
 
-  toLLVMType(type: Type): LLVMType {
-    if (type === "int") return this.createIntType(32);
-    if (type === "float") return this.createFloatType(32);
-    if (type === "string") return this.createConstantStringType(256);
+  toLLVMType(type: PhysicalType): LLVMType {
     if (type === "void") return "void";
-    // if (type === "unit") return this.createIntType(32); // should be type of some global unique value
-    if (type === "unknown") return "void*";
-    assert(typeof type === "object");
-
-    // must be resolved by that point
-    assert(!("variable" in type));
-    assert(!("and" in type));
+    if (type === "unknown") return "undef";
+    if ("int" in type) return this.createIntType(type.int);
+    if ("float" in type) return this.createFloatType(type.float);
 
     if ("fn" in type) {
-      const arg = this.toLLVMType(type.fn.arg);
-      const returnType = this.toLLVMType(type.fn.return);
-      const fnType = this.createFunctionType([arg], returnType);
-      assert(type.fn.closure);
-      if (type.fn.closure.length > 0) {
-        const closureTypes = type.fn.closure.map((type) => this.toLLVMType(type));
-        const closureType = this.createRecordType(closureTypes);
+      const fnArgs = type.fn.args.map((type) => this.toLLVMType(type));
+      const closure = type.fn.closure.map((type) => this.toLLVMType(type));
+      const isLargeReturnType = isLargePhysicalType(type.fn.return);
+      const LLVMReturnType = this.toLLVMType(type.fn.return);
+      const returnType = isLargeReturnType ? "void" : LLVMReturnType;
+      const closureArgs = closure.length > 0 ? [this.createRecordType(closure)] : [];
+      const args = isLargeReturnType
+        ? [{ pointer: LLVMReturnType, structRet: true }, ...closureArgs, ...fnArgs]
+        : [...closureArgs, ...fnArgs];
+
+      if (closure.length > 0) {
+        const closureType = this.createRecordType(closure);
+        const fnType = this.createFunctionType(args, returnType);
         return this.createRecordType([closureType, { pointer: fnType }]);
       }
+      return this.createFunctionType(args, returnType);
     }
     if ("atom" in type) return this.createIntType(32);
 
-    unreachable("cant convert type to LLVM type");
+    unreachable("cant convert physical type to LLVM type");
   }
 
   compareTypes(a: LLVMType, b: LLVMType): boolean {
@@ -123,6 +123,14 @@ class Builder {
     }
     return value;
   }
+
+  // createValue(value: any, type: PhysicalType): LLVMValue {
+  //   assert(typeof type === "object", "cant create value of void or unknown type");
+  //   if ("int" in type) return this.createInt(value, type.int);
+  //   if ("float" in type) return this.createFloat(value, type.float);
+  //   if ("" in type) return this.createString(value);
+  //   return this.getOrCreateConstant(value, this.toLLVMType(type));
+  // }
 
   createInt(value: number, size: number): LLVMValue {
     return this.getOrCreateConstant(String(value), this.createIntType(size));
@@ -381,6 +389,7 @@ export class Context {
 
 const stringifyLLVMType = (type: LLVMType): string => {
   if (typeof type === "string") return type;
+  if ("pointer" in type && type.structRet) return `ptr sret(${stringifyLLVMType(type.pointer)})`;
   if ("pointer" in type) return `${stringifyLLVMType(type.pointer)}*`;
   if ("record" in type) return `{ ${type.record.map(stringifyLLVMType).join(", ")} }`;
   return `${type.returnType} (${type.args.map(stringifyLLVMType).join(", ")})`;
