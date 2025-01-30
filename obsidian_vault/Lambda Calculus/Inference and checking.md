@@ -10,10 +10,12 @@ That means we do two passes, one for each direction.
 Rules for inference and type checking may be considered mirror reflections of each other.
 
 https://davidchristiansen.dk/tutorials/bidirectional.pdf
+https://bernsteinbear.com/blog/type-inference/
 
 Inference is based on typing rules defined by type system.
 The easiest to implement rules are syntax-driven, that is, types can be inferred only based on the syntactic structure of the program.
 
+Inferring bottom type for args and vars may be bad because it may look like "spooky action at a distance". Yet it is still better than accepting inconsistent code.
 ```
 x x
 

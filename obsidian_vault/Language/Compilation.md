@@ -16,3 +16,4 @@ Compiler follows these steps:
    3. Generate buffer containing image, that can be accepted by [[Virtual Machine|VM]]
 
 https://wren.io/performance.html
+https://www.youtube.com/watch?v=QdnxjYj1pS0&ab_channel=AdamMcDaniel

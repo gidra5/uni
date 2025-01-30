@@ -5,3 +5,5 @@ Lifecycle
 3. writing
 4. aliasing
 5. deinitialization
+
+Allow paths in declaration by merging

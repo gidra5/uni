@@ -42,3 +42,4 @@ https://langdev.stackexchange.com/questions/1544/how-to-test-a-compiler-interpre
 https://github.com/smarr/are-we-fast-yet
 https://github.com/sampsyo/flatcalc/blob/c5bbe7bd79f98a3b857f0432d4739a3f4f6241bd/src/main.rs#L118-L136
 
+https://tigerbeetle.com/blog/2023-03-28-random-fuzzy-thoughts

@@ -31,12 +31,14 @@ Includes tools for:
 7. memory allocation
 8. Iterators
 9.  generators
+  * function wrapper
+  * yield effect
 10. arbitraries
 11. streams
 12. animation interpolation
 13. math
   1. linear algebra
-  2. tensors and tensor graphs
+  2. [tensors and tensor graphs](https://dl.acm.org/doi/10.1145/3704865)
   3. number theory
   4. complex
   5. quaternions
@@ -63,7 +65,7 @@ Includes tools for:
 28. functional stuff
   1. monads
   2. functors
-  3. lenses
+  3. [lenses](https://github.com/akheron/optics-ts)
 29. crypto
 30. compression
 31. encoding (json, yaml, base64, etc)
@@ -77,7 +79,11 @@ Includes tools for:
 39. error correction codes
 40. generic device interface
 41. signals
+  * value wrapper
+  * derived computation
+  * effectful computation
 42. event systems
 43. reactive streams
 
+Signals (signal, derived, effect), generators (gen and yield), iterators and events through channels
 https://julesjacobs.com/2023/09/21/generalizing-itertools.html

@@ -443,3 +443,7 @@ end
 
 [dependant types impl](https://www.andres-loeh.de/LambdaPi/LambdaPi.pdf)
 https://lean-lang.org/functional_programming_in_lean/dependent-types/universe-pattern.html
+
+https://www.aya-prover.org/blog/jit-compile.html
+
+https://hbr.github.io/Lambda-Calculus/cc-tex/cc.pdf
