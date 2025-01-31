@@ -1,9 +1,9 @@
 import { Iterator } from "iterator-js";
 import { NodeType, Tree } from "../../ast";
-import { nextId, unreachable } from "../../utils";
+import { assert, nextId, unreachable } from "../../utils";
 import { inject, Injectable } from "../../utils/injector";
 import { UnificationTable } from "./unification";
-import { Type } from "./utils";
+import { PhysicalType, Type } from "./utils";
 import { resolve } from "../scope";
 
 // subtype infers types that values must always satisfy (the actual values will be at least of these types)
@@ -224,7 +224,45 @@ const constrain = (ast: Tree, context: Context, expectedType: Type): void => {
   context.unificationTable.addConstraint(ast.id, { exactly: expectedType });
 };
 
-const inferPhysical = (): void => {};
+const inferPhysical = (): void => {
+  const physicalTypeMap = inject(Injectable.PhysicalTypeMap);
+  const typeMap = inject(Injectable.TypeMap);
+
+  const translate = (type: Type, id?: number): PhysicalType => {
+    if (type === "int") return { int: 32 };
+    if (type === "float") return { float: 32 };
+    if (type === "string") return { pointer: { int: 8 } };
+    if (type === "void") return "void";
+    if (type === "unknown") return "unknown";
+    assert(typeof type === "object");
+
+    // must be resolved by that point
+    assert(!("variable" in type));
+    assert(!("and" in type));
+
+    if ("fn" in type) {
+      const arg = translate(type.fn.arg);
+      const returnType = translate(type.fn.return);
+      const freeVars = id ? inject(Injectable.FreeVariablesMap).get(id)! : [];
+      const closure = freeVars.map((name) => {
+        const type = typeMap.get(name)!;
+        const physicalType = translate(type, name);
+        physicalTypeMap.set(name, physicalType);
+        return physicalType;
+      });
+
+      return { fn: { args: [arg], return: returnType, closure } };
+    }
+    if ("atom" in type) return { int: 32 };
+
+    unreachable("cant convert type to LLVM type");
+  };
+
+  typeMap.forEach((type, id) => {
+    if (physicalTypeMap.has(id)) return;
+    physicalTypeMap.set(id, translate(type, id));
+  });
+};
 
 export const substituteConstraints = (ast: Tree, context: Context): void => {
   ast.children.forEach((child) => substituteConstraints(child, context));
@@ -241,4 +279,5 @@ export const inferTypes = (ast: Tree): void => {
   infer(ast, context);
   context.unificationTable.truncateTautologies();
   substituteConstraints(ast, context);
+  inferPhysical();
 };
