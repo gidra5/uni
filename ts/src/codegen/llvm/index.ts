@@ -1,7 +1,7 @@
 import { Iterator } from "iterator-js";
 import { NodeType, Tree } from "../../ast.js";
 import { assert, unreachable } from "../../utils/index.js";
-import { Context, LLVMType, LLVMValue } from "./context.js";
+import { Context, LLVMValue } from "./context.js";
 import { inject, Injectable } from "../../utils/injector.js";
 
 const codegen = (ast: Tree, context: Context): LLVMValue => {
@@ -50,119 +50,59 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       if (ast.data.value === "false") {
         return context.builder.createBool(false);
       }
-      const name = context.names.get(ast.data.value);
+      const name = context.variables.get(ast.data.value);
       assert(name);
       return name;
     }
     case NodeType.DELIMITED_APPLICATION:
     case NodeType.APPLICATION: {
-      let closure: LLVMValue | null = null;
-      let func = codegen(ast.children[0], context);
-      let arg = codegen(ast.children[1], context);
-      let argType = context.builder.getType(arg);
-      let funcType = context.builder.getType(func);
-      let funcArgType: LLVMType;
+      const func = codegen(ast.children[0], context);
+      const arg = codegen(ast.children[1], context);
+      const fnPtr = context.builder.createExtractValue(func, 0);
+      const closurePtr = context.builder.createExtractValue(func, 1);
+      const closure = context.builder.createLoad(closurePtr);
 
-      if (typeof funcType === "object" && "record" in funcType) {
-        closure = context.builder.createExtractValue(func, 0);
-        func = context.builder.createExtractValue(func, 1);
-        funcType = funcType.record[1];
-      }
+      const funcType = context.builder.getType(func);
+      assert(typeof funcType === "object" && "args" in funcType);
 
-      assert(typeof funcType === "object");
-      assert("pointer" in funcType);
-      funcType = funcType.pointer;
-
-      assert(typeof funcType === "object");
-      assert("args" in funcType);
-      if (closure) {
-        funcArgType =
-          typeof funcType.args[0] === "object" && "structRet" in funcType.args[0] ? funcType.args[2] : funcType.args[1];
-      } else {
-        funcArgType =
-          typeof funcType.args[0] === "object" && "structRet" in funcType.args[0] ? funcType.args[1] : funcType.args[0];
-      }
-
-      if (!context.builder.compareTypes(argType, funcArgType)) {
-        if (typeof argType === "object" && "pointer" in argType) {
-          if (context.builder.compareTypes(argType.pointer, funcArgType)) {
-            argType = argType.pointer;
-            arg = context.builder.createLoad(arg);
-          }
-        }
-      }
-
-      if (closure) {
-        return context.builder.createCall(func, [closure, arg], funcType.returnType, funcType.args);
-      }
-      return context.builder.createCall(func, [arg], funcType.returnType, funcType.args);
+      return context.builder.createCall(fnPtr, [closure, arg], funcType.returnType, funcType.args);
     }
     case NodeType.FUNCTION: {
       const name = context.builder.getFreshName("fn_");
-      const types = inject(Injectable.PhysicalTypeMap);
-      const type = types.get(ast.id);
-      assert(typeof type === "object");
-      assert("fn" in type);
-      const funcType = context.builder.toLLVMType(type);
-      assert(typeof funcType === "object");
-      assert("args" in funcType);
-      const argName = ast.children[0].data.value;
+      const type = inject(Injectable.PhysicalTypeMap).get(ast.id)!;
+      const freeVars = inject(Injectable.FreeVariablesMap).get(ast.id)!;
+      const boundVariables = inject(Injectable.BoundVariablesMap).get(ast.id)!;
+      const llvmType = context.builder.toLLVMType(type);
+      assert(typeof type === "object" && "fn" in type);
+      assert(typeof llvmType === "object" && "record" in llvmType);
 
-      const freeVars = collectFreeVars(ast);
-      assert([...context.names.keys()].every((x) => freeVars.includes(x)));
-      const argTypes: LLVMType[] = funcType.args;
+      const fnType = llvmType.record[1];
+      assert(typeof fnType === "object" && "args" in fnType);
+      const argsType = fnType.args;
 
-      function x(result: LLVMValue) {
-        const type = context.builder.getType(result);
-        const funcIndex = context.builder.functionIndex;
-        const funcDecl = context.module.functions[funcIndex];
-        if (typeof type === "object" && "record" in type) {
-          const retValue = "%" + context.builder.getFreshName("var_");
-          context.builder.types.set(retValue, type);
-          const returnType = context.builder.getTypeString(type);
-          funcDecl.args.unshift(`ptr sret(${returnType}) ${retValue}`);
-          argTypes.unshift({ pointer: type, structRet: true });
-          context.builder.createStore(result, retValue);
-          context.builder.createReturn("void");
-          return "void";
-        } else {
-          const valueType = context.builder.getTypeString(type);
-          context.builder.createReturn(`${valueType} ${result}`);
-          return type;
-        }
-      }
-
-      if (!type.fn.closure) {
-        return context.builder.createFunction(name, argTypes, (arg1) => {
-          context.names.set(argName, arg1);
-          const result = codegen(ast.children[1], context);
-          context.names.delete(argName);
-          return x(result);
-        });
-      }
-
-      assert(type.fn.closure.length > 0);
-
-      const closure = context.builder.createRecord(freeVars.map((name) => context.names.get(name)!));
-      const closureType = context.builder.getType(closure);
-      argTypes.unshift(closureType);
-      const func = context.builder.createFunction(name, argTypes, (closure, arg) => {
-        const prev: LLVMValue[] = [];
+      const closurePtr = context.builder.createMalloc({ tuple: type.fn.closure });
+      const closure = context.builder.createRecord(freeVars.map((name) => context.variables.get(name)!));
+      context.builder.createStore(closure, closurePtr);
+      const func = context.builder.createFunction(name, argsType, (retValue, closure, ...args) => {
         for (const [name, index] of Iterator.iter(freeVars).enumerate()) {
           const value = context.builder.createExtractValue(closure, index);
-          prev.push(context.names.get(name)!);
-          context.names.set(name, value);
+          context.variables.set(name, value);
         }
-        context.names.set(argName, arg);
+        for (const [name, arg] of Iterator.iter(boundVariables).zip(args)) {
+          context.variables.set(name, arg);
+        }
+
         const result = codegen(ast.children[1], context);
-        context.names.delete(argName);
-        for (const [name, index] of Iterator.iter(freeVars).enumerate()) {
-          context.names.set(name, prev[index]);
-        }
-        return x(result);
+
+        for (const name of boundVariables) context.variables.delete(name);
+        for (const name of freeVars) context.variables.delete(name);
+
+        context.builder.createStore(result, retValue);
+        context.builder.createReturn("void");
+        return "void";
       });
 
-      return context.builder.createRecord([closure, func]);
+      return context.builder.createRecord([func, closurePtr]);
     }
     case NodeType.SEQUENCE: {
       const last = ast.children[ast.children.length - 1];
@@ -206,29 +146,8 @@ const generateLLVM = (ast: Tree): Context => {
       unreachable("can generate LLVM modules only for scripts and modules");
   }
 };
+
 export const generateLLVMCode = (ast: Tree) => {
   const ctx = generateLLVM(ast);
   return ctx.moduleString();
 };
-
-function collectFreeVars(ast: Tree): string[] {
-  switch (ast.type) {
-    case NodeType.NAME:
-      return [ast.data.value];
-    case NodeType.FUNCTION:
-      const boundNames = collectBoundNames(ast.children[0]);
-      const freeVars = collectFreeVars(ast.children[1]);
-      return freeVars.filter((x) => !boundNames.includes(x));
-    default:
-      return ast.children.flatMap((child) => collectFreeVars(child));
-  }
-}
-
-function collectBoundNames(ast: Tree): string[] {
-  switch (ast.type) {
-    case NodeType.NAME:
-      return [ast.data.value];
-    default:
-      return ast.children.flatMap((child) => collectBoundNames(child));
-  }
-}

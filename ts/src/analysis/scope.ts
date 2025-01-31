@@ -1,35 +1,41 @@
 import { NodeType, Tree } from "../ast";
-import { exclude, unique } from "../utils";
+import { assert, exclude, unique, unreachable } from "../utils";
 import { inject, Injectable } from "../utils/injector";
 
-export const free = (ast: Tree): string[] => {
+type Binding = [string, number];
+
+const resolveBindings = (ast: Tree): Binding[] => {
   switch (ast.type) {
     case NodeType.NAME: {
-      const freeVars = [ast.data.value];
-      inject(Injectable.FreeVariablesMap).set(ast.id, freeVars);
-      return freeVars;
-    }
-    case NodeType.FUNCTION: {
-      const boundNames = bound(ast.children[0]);
-      const boundVariablesMap = inject(Injectable.BoundVariablesMap);
-      const otherBoundNames = boundVariablesMap.get(ast.id)!;
-      boundVariablesMap.set(ast.children[1].id, unique(otherBoundNames.concat(boundNames)));
-
-      const freeVars = exclude(free(ast.children[1]), boundNames);
-      inject(Injectable.FreeVariablesMap).set(ast.id, freeVars);
-
-      return freeVars;
+      inject(Injectable.NodeToVariableMap).set(ast.id, ast.id);
+      return [[ast.data.value, ast.id]];
     }
     default:
-      return unique(ast.children.flatMap((child) => free(child)));
+      unreachable("cant resolve bindings");
   }
 };
 
-const bound = (ast: Tree): string[] => {
+/** returns a list of free variables */
+export const resolve = (ast: Tree, names: Binding[] = []): number[] => {
   switch (ast.type) {
-    case NodeType.NAME:
-      return [ast.data.value];
+    case NodeType.NAME: {
+      const binding = names.findLast(([name]) => name === ast.data.value);
+      assert(binding); // TODO: error reporting, undeclared variable
+      inject(Injectable.NodeToVariableMap).set(ast.id, binding[1]);
+      return [binding[1]];
+    }
+    case NodeType.FUNCTION: {
+      const bound = resolveBindings(ast.children[0]);
+      names = [...names, ...bound];
+      const boundVariables = bound.map(([, id]) => id);
+      inject(Injectable.BoundVariablesMap).set(ast.children[1].id, boundVariables);
+
+      const freeVars = exclude(resolve(ast.children[1], names), boundVariables);
+      inject(Injectable.FreeVariablesMap).set(ast.id, freeVars);
+
+      return freeVars;
+    }
     default:
-      return unique(ast.children.flatMap((child) => bound(child)));
+      return unique(ast.children.flatMap((child) => resolve(child, names)));
   }
 };

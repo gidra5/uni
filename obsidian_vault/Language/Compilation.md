@@ -10,6 +10,9 @@ Compiler follows these steps:
    1. Type-checking
    2. Optimization
    3. Simplification using some identities for used operations
+   4. Infer free variables
+   5. Infer bound variables
+   6. Infer physical types
 3. Compiler backend
    1. Traverse AST and produce list of "chunks" and data
    2. Generate bytecode for target architecture from chunks

@@ -5,7 +5,7 @@ import { parseScript } from "../src/parser/parser";
 import { parseTokenGroups } from "../src/parser/tokenGroups";
 import { inject, Injectable, register } from "../src/utils/injector";
 import { FileMap } from "codespan-napi";
-import { Context, infer, inferTypes, substituteConstraints } from "../src/analysis/types/infer";
+import { Context, infer, substituteConstraints } from "../src/analysis/types/infer";
 import { desugar } from "../src/analysis/desugar";
 
 beforeEach(() => {

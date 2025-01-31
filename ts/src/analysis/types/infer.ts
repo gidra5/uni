@@ -4,7 +4,7 @@ import { nextId, unreachable } from "../../utils";
 import { inject, Injectable } from "../../utils/injector";
 import { UnificationTable } from "./unification";
 import { Type } from "./utils";
-import { structuralSimplify } from "./simplify";
+import { resolve } from "../scope";
 
 // subtype infers types that values must always satisfy (the actual values will be at least of these types)
 // for example, if a parameter is only used as int (passed to a function that only accepts ints),
@@ -224,6 +224,8 @@ const constrain = (ast: Tree, context: Context, expectedType: Type): void => {
   context.unificationTable.addConstraint(ast.id, { exactly: expectedType });
 };
 
+const inferPhysical = (): void => {};
+
 export const substituteConstraints = (ast: Tree, context: Context): void => {
   ast.children.forEach((child) => substituteConstraints(child, context));
   const map = inject(Injectable.TypeMap);
@@ -235,6 +237,8 @@ export const substituteConstraints = (ast: Tree, context: Context): void => {
 
 export const inferTypes = (ast: Tree): void => {
   const context = new Context();
+  resolve(ast);
   infer(ast, context);
+  context.unificationTable.truncateTautologies();
   substituteConstraints(ast, context);
 };

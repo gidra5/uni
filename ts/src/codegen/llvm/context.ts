@@ -1,6 +1,6 @@
 import { Iterator } from "iterator-js";
 import { assert, nextId, unreachable } from "../../utils";
-import { isLargePhysicalType, PhysicalType } from "../../analysis/types/utils";
+import { isLargePhysicalType, PhysicalType, physicalTypeSize } from "../../analysis/types/utils";
 
 export type LLVMModule = {
   globals: LLVMGlobal[];
@@ -60,20 +60,19 @@ class Builder {
     if ("fn" in type) {
       const fnArgs = type.fn.args.map((type) => this.toLLVMType(type));
       const closure = type.fn.closure.map((type) => this.toLLVMType(type));
-      const isLargeReturnType = isLargePhysicalType(type.fn.return);
       const LLVMReturnType = this.toLLVMType(type.fn.return);
-      const returnType = isLargeReturnType ? "void" : LLVMReturnType;
-      const closureArgs = closure.length > 0 ? [this.createRecordType(closure)] : [];
-      const args = isLargeReturnType
-        ? [{ pointer: LLVMReturnType, structRet: true }, ...closureArgs, ...fnArgs]
-        : [...closureArgs, ...fnArgs];
+      // const isLargeReturnType = isLargePhysicalType(type.fn.return);
+      // const returnType = isLargeReturnType ? "void" : LLVMReturnType;
+      // const closureArgs = closure.length > 0 ? [this.createRecordType(closure)] : [];
+      // const args = isLargeReturnType
+      //   ? [{ pointer: LLVMReturnType, structRet: true }, ...closureArgs, ...fnArgs]
+      //   : [...closureArgs, ...fnArgs];
+      const returnType = "void";
+      const args = [{ pointer: LLVMReturnType, structRet: true }, this.createRecordType(closure), ...fnArgs];
 
-      if (closure.length > 0) {
-        const closureType = this.createRecordType(closure);
-        const fnType = this.createFunctionType(args, returnType);
-        return this.createRecordType([closureType, { pointer: fnType }]);
-      }
-      return this.createFunctionType(args, returnType);
+      const closureType = this.createRecordType(closure);
+      const fnType = this.createFunctionType(args, returnType);
+      return this.createRecordType([closureType, { pointer: fnType }]);
     }
     if ("atom" in type) return this.createIntType(32);
 
@@ -123,14 +122,6 @@ class Builder {
     }
     return value;
   }
-
-  // createValue(value: any, type: PhysicalType): LLVMValue {
-  //   assert(typeof type === "object", "cant create value of void or unknown type");
-  //   if ("int" in type) return this.createInt(value, type.int);
-  //   if ("float" in type) return this.createFloat(value, type.float);
-  //   if ("" in type) return this.createString(value);
-  //   return this.getOrCreateConstant(value, this.toLLVMType(type));
-  // }
 
   createInt(value: number, size: number): LLVMValue {
     return this.getOrCreateConstant(String(value), this.createIntType(size));
@@ -227,6 +218,14 @@ class Builder {
     const typeValue = stringifyLLVMType(type);
     if (initial) return this.createInstruction("alloca", [typeValue, `${typeValue} ${initial}`], { pointer: type });
     return this.createInstruction("alloca", [typeValue], { pointer: type });
+  }
+
+  createMalloc(type: PhysicalType, initial?: LLVMValue): LLVMValue {
+    const typeSize = physicalTypeSize(type);
+    const malloc = this.declareFunction("malloc", ["i64"], "ptr");
+    const allocated = this.createCall(malloc, [this.createInt(typeSize, 64)], "ptr", ["i64"]);
+    if (initial) this.createStore(initial, allocated);
+    return allocated;
   }
 
   createLoad(value: LLVMValue): LLVMValue {
@@ -351,7 +350,7 @@ class Builder {
 export class Context {
   public module: LLVMModule;
   public builder: Builder;
-  public names: Map<string, LLVMValue> = new Map();
+  public variables: Map<number, LLVMValue> = new Map();
 
   constructor() {
     this.module = {

@@ -1,5 +1,6 @@
 import fc from "fast-check";
-import { assert, clamp } from "../../utils";
+import { assert, clamp, unreachable } from "../../utils";
+import { Iterator } from "iterator-js";
 
 export type PrimitiveType = "boolean" | "int" | "float" | "string" | "unknown" | "void";
 export type DataType = PrimitiveType | { fn: { arg: Type; return: Type } } | { record: Type[]; labels?: string[] };
@@ -9,19 +10,55 @@ export type Type = DataType | { variable: number } | { and: Type[] } | { or: Typ
 export type PhysicalType =
   | "void" /** zero sized type, has no representation in physical memory */
   | "unknown" /** unknown type of values, practically can be anything without changing semantics */
-  | { int: number } /** signed integer type, size in bits */
-  | { float: number } /** floating point type, size in bits */
+  | { int: number } /** signed integer type, size in bytes */
+  | { float: number } /** floating point type, size in bytes */
   | { pointer: PhysicalType }
   | { fn: { args: PhysicalType[]; return: PhysicalType; closure: PhysicalType[] } }
   | { tuple: PhysicalType[] }
-  | { array: PhysicalType; length: number }; /** array type, basically a fat pointer */
+  | { array: PhysicalType; length: number };
 
 export const isLargePhysicalType = (
   type: PhysicalType
 ): type is Extract<PhysicalType, { tuple: unknown } | { array: unknown }> => {
-  return (
-    typeof type === "object" && ("tuple" in type || "array" in type || ("fn" in type && type.fn.closure.length > 0))
-  );
+  return typeof type === "object" && ("tuple" in type || "array" in type || "fn" in type);
+};
+
+export const physicalTypeAlignment = (type: PhysicalType): number => {
+  if (type === "void") return 1;
+  if (type === "unknown") return 1;
+  assert(typeof type === "object");
+  return physicalTypeSize(type); // natural alignment is equal to size
+};
+
+export const physicalTypeSize = (type: PhysicalType, packed = false): number => {
+  if (type === "void") return 0;
+  if (type === "unknown") return 0;
+  assert(typeof type === "object");
+  switch (true) {
+    case "int" in type: {
+      return type.int;
+    }
+    case "float" in type: {
+      return type.float;
+    }
+    case "pointer" in type: {
+      return 8;
+    }
+    case "tuple" in type: {
+      if (packed) return Iterator.iter(type.tuple).sum(physicalTypeSize);
+      const fieldAlignment = Iterator.iter(type.tuple).max(physicalTypeAlignment);
+      return fieldAlignment * type.tuple.length;
+    }
+    case "array" in type: {
+      return type.length * physicalTypeSize(type.array);
+    }
+    case "fn" in type: {
+      return 8 + 8;
+    }
+    default: {
+      unreachable("cant compute physical type size");
+    }
+  }
 };
 
 export const compareByList = (list: string[]) => (x: string, y: string) =>
