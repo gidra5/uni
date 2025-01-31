@@ -34,15 +34,34 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
         assert(type.fn.args.length === 1);
         const arg = type.fn.args[0];
         if (typeof arg === "object" && "int" in arg) {
-          return context.builder.createFunction("printInt", ["i32"], (arg1) => {
-            const fmt = context.builder.createString("%i\n");
-            const result = context.builder.createCall(printf, [fmt, arg1], "i32", [{ pointer: "i8" }, "..."]);
-            context.builder.createReturn(`i32 ${result}`);
-            return "i32";
-          });
+          const printInt = context.builder.createFunction(
+            "printInt",
+            [{ pointer: "i32", structRet: true }, "ptr", "i32"],
+            (ret, _ptr, arg1) => {
+              const fmt = context.builder.createString("%i\n");
+              const result = context.builder.createCall(printf, [fmt, arg1], "i32", [{ pointer: "i8" }, "..."]);
+
+              context.builder.createStore(result, ret);
+              context.builder.createReturn("void");
+              return "void";
+            }
+          );
+          return context.builder.createRecord([printInt, "null"]);
         }
 
-        return printf;
+        const printString = context.builder.createFunction(
+          "printString",
+          [{ pointer: "i32", structRet: true }, "ptr", "ptr"],
+          (ret, _ptr, arg1) => {
+            const result = context.builder.createCall(printf, [arg1], "i32", [{ pointer: "i8" }, "..."]);
+
+            context.builder.createStore(result, ret);
+            context.builder.createReturn("void");
+            return "void";
+          }
+        );
+
+        return context.builder.createRecord([printString, "null"]);
       }
       if (ast.data.value === "true") {
         return context.builder.createBool(true);
@@ -60,17 +79,18 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       const arg = codegen(ast.children[1], context);
       const fnPtr = context.builder.createExtractValue(func, 0);
       const closurePtr = context.builder.createExtractValue(func, 1);
-      const closure = context.builder.createLoad(closurePtr);
 
-      const funcType = context.builder.getType(func);
+      const fnPtrType = context.builder.getType(fnPtr);
+      assert(typeof fnPtrType === "object" && "pointer" in fnPtrType);
+      const funcType = fnPtrType.pointer;
       assert(typeof funcType === "object" && "args" in funcType);
 
-      return context.builder.createCall(fnPtr, [closure, arg], funcType.returnType, funcType.args);
+      return context.builder.createCall(fnPtr, [closurePtr, arg], funcType.returnType, funcType.args);
     }
     case NodeType.FUNCTION: {
       const name = context.builder.getFreshName("fn_");
       const type = inject(Injectable.PhysicalTypeMap).get(ast.id)!;
-      const freeVars = inject(Injectable.FreeVariablesMap).get(ast.id)!;
+      const freeVars = inject(Injectable.ClosureVariablesMap).get(ast.id)!;
       const boundVariables = inject(Injectable.BoundVariablesMap).get(ast.id)!;
       const llvmType = context.builder.toLLVMType(type);
       assert(typeof type === "object" && "fn" in type);
@@ -83,7 +103,8 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       const closurePtr = context.builder.createMalloc({ tuple: type.fn.closure });
       const closure = context.builder.createRecord(freeVars.map((name) => context.variables.get(name)!));
       context.builder.createStore(closure, closurePtr);
-      const func = context.builder.createFunction(name, argsType, (retValue, closure, ...args) => {
+      const func = context.builder.createFunction(name, argsType, (retValue, closurePtr, ...args) => {
+        const closure = context.builder.createLoad(closurePtr);
         for (const [name, index] of Iterator.iter(freeVars).enumerate()) {
           const value = context.builder.createExtractValue(closure, index);
           context.variables.set(name, value);

@@ -11,7 +11,7 @@ enum Injectable {
   PositionMap = "PositionMap",
   TypeMap = "TypeMap",
   PhysicalTypeMap = "PhysicalTypeMap",
-  FreeVariablesMap = "FreeVariablesMap",
+  ClosureVariablesMap = "ClosureVariablesMap",
   BoundVariablesMap = "BoundVariablesMap",
   NodeToVariableMap = "NodeToVariableMap",
 }
@@ -24,7 +24,7 @@ type InjectableType = {
   [Injectable.PositionMap]: Map<number, Position>;
   [Injectable.TypeMap]: Map<number, Type>;
   [Injectable.PhysicalTypeMap]: Map<number, PhysicalType>;
-  [Injectable.FreeVariablesMap]: Map<number, number[]>; // node id -> variable ids
+  [Injectable.ClosureVariablesMap]: Map<number, number[]>; // node id -> variable ids
   [Injectable.BoundVariablesMap]: Map<number, number[]>; // node id -> variable ids
   [Injectable.NodeToVariableMap]: Map<number, number>; // node id -> variable id
 };
@@ -51,7 +51,7 @@ register(Injectable.PrecedenceMap, new Map());
 register(Injectable.PositionMap, new Map());
 register(Injectable.TypeMap, new Map());
 register(Injectable.PhysicalTypeMap, new Map());
-register(Injectable.FreeVariablesMap, new Map());
+register(Injectable.ClosureVariablesMap, new Map());
 register(Injectable.BoundVariablesMap, new Map());
 register(Injectable.NodeToVariableMap, new Map());
 

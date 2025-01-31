@@ -206,14 +206,38 @@ exports[`compilation > hello world string > stderr 1`] = `[]`;
 exports[`compilation > hello world string > stdout 1`] = `[]`;
 
 exports[`compilation > hello world twice > compiled 1`] = `
-"@const_27 = constant [13 x i8] c"hello world!\\00"
+"@const_35 = constant [13 x i8] c"hello world!\\00"
 define i32 @main() {
   main: 
-    %var_28 = call i32 @printf(i8* @const_27)
-    %var_29 = call i32 @printf(i8* @const_27)
+    %var_31 = alloca { void (i32*, ptr, ptr)*, ptr }
+    %var_32 = load { void (i32*, ptr, ptr)*, ptr }, ptr %var_31
+    %var_33 = insertvalue { void (i32*, ptr, ptr)*, ptr } %var_32, void (i32*, ptr, ptr)* @printString, 0
+    %var_34 = insertvalue { void (i32*, ptr, ptr)*, ptr } %var_33, ptr null, 1
+    store { void (i32*, ptr, ptr)*, ptr } %var_34, ptr %var_31
+    %var_36 = extractvalue { void (i32*, ptr, ptr)*, ptr } %var_34, 0
+    %var_37 = extractvalue { void (i32*, ptr, ptr)*, ptr } %var_34, 1
+    %var_38 = alloca i32
+    call void %var_36(i32* %var_38, ptr %var_37, ptr @const_35)
+    %var_39 = load i32, ptr %var_38
+    %var_40 = alloca { void (i32*, ptr, ptr)*, ptr }
+    %var_41 = load { void (i32*, ptr, ptr)*, ptr }, ptr %var_40
+    %var_42 = insertvalue { void (i32*, ptr, ptr)*, ptr } %var_41, void (i32*, ptr, ptr)* @printString, 0
+    %var_43 = insertvalue { void (i32*, ptr, ptr)*, ptr } %var_42, ptr null, 1
+    store { void (i32*, ptr, ptr)*, ptr } %var_43, ptr %var_40
+    %var_44 = extractvalue { void (i32*, ptr, ptr)*, ptr } %var_43, 0
+    %var_45 = extractvalue { void (i32*, ptr, ptr)*, ptr } %var_43, 1
+    %var_46 = alloca i32
+    call void %var_44(i32* %var_46, ptr %var_45, ptr @const_35)
+    %var_47 = load i32, ptr %var_46
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
+define void @printString(ptr sret(i32) %var_27, ptr %var_28, ptr %var_29) {
+  entry: 
+    %var_30 = call i32 @printf(i8* %var_29)
+    store i32 %var_30, ptr %var_27
+    ret void
+}
 "
 `;
 
@@ -226,20 +250,30 @@ exports[`compilation > hello world twice > stdout 1`] = `
 `;
 
 exports[`compilation > print number > compiled 1`] = `
-"@const_11 = constant [4 x i8] c"%i
+"@const_13 = constant [4 x i8] c"%i
 \\00"
-@const_13 = constant i32 1
+@const_19 = constant i32 1
 define i32 @main() {
   main: 
-    %var_14 = load i32, ptr @const_13
-    %var_15 = call i32 @printInt(i32 %var_14)
+    %var_15 = alloca { void (i32*, ptr, i32)*, ptr }
+    %var_16 = load { void (i32*, ptr, i32)*, ptr }, ptr %var_15
+    %var_17 = insertvalue { void (i32*, ptr, i32)*, ptr } %var_16, void (i32*, ptr, i32)* @printInt, 0
+    %var_18 = insertvalue { void (i32*, ptr, i32)*, ptr } %var_17, ptr null, 1
+    store { void (i32*, ptr, i32)*, ptr } %var_18, ptr %var_15
+    %var_20 = load i32, ptr @const_19
+    %var_21 = extractvalue { void (i32*, ptr, i32)*, ptr } %var_18, 0
+    %var_22 = extractvalue { void (i32*, ptr, i32)*, ptr } %var_18, 1
+    %var_23 = alloca i32
+    call void %var_21(i32* %var_23, ptr %var_22, i32 %var_20)
+    %var_24 = load i32, ptr %var_23
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
-define i32 @printInt(i32 %var_10) {
+define void @printInt(ptr sret(i32) %var_10, ptr %var_11, i32 %var_12) {
   entry: 
-    %var_12 = call i32 @printf(i8* @const_11, i32 %var_10)
-    ret i32 %var_12
+    %var_14 = call i32 @printf(i8* @const_13, i32 %var_12)
+    store i32 %var_14, ptr %var_10
+    ret void
 }
 "
 `;
@@ -254,15 +288,39 @@ exports[`compilation > print number > stdout 1`] = `
 `;
 
 exports[`compilation > two prints > compiled 1`] = `
-"@const_27 = constant [13 x i8] c"hello world!\\00"
-@const_29 = constant [15 x i8] c"hello world 2!\\00"
+"@const_35 = constant [13 x i8] c"hello world!\\00"
+@const_44 = constant [15 x i8] c"hello world 2!\\00"
 define i32 @main() {
   main: 
-    %var_28 = call i32 @printf(i8* @const_27)
-    %var_30 = call i32 @printf(i8* @const_29)
+    %var_31 = alloca { void (i32*, ptr, ptr)*, ptr }
+    %var_32 = load { void (i32*, ptr, ptr)*, ptr }, ptr %var_31
+    %var_33 = insertvalue { void (i32*, ptr, ptr)*, ptr } %var_32, void (i32*, ptr, ptr)* @printString, 0
+    %var_34 = insertvalue { void (i32*, ptr, ptr)*, ptr } %var_33, ptr null, 1
+    store { void (i32*, ptr, ptr)*, ptr } %var_34, ptr %var_31
+    %var_36 = extractvalue { void (i32*, ptr, ptr)*, ptr } %var_34, 0
+    %var_37 = extractvalue { void (i32*, ptr, ptr)*, ptr } %var_34, 1
+    %var_38 = alloca i32
+    call void %var_36(i32* %var_38, ptr %var_37, ptr @const_35)
+    %var_39 = load i32, ptr %var_38
+    %var_40 = alloca { void (i32*, ptr, ptr)*, ptr }
+    %var_41 = load { void (i32*, ptr, ptr)*, ptr }, ptr %var_40
+    %var_42 = insertvalue { void (i32*, ptr, ptr)*, ptr } %var_41, void (i32*, ptr, ptr)* @printString, 0
+    %var_43 = insertvalue { void (i32*, ptr, ptr)*, ptr } %var_42, ptr null, 1
+    store { void (i32*, ptr, ptr)*, ptr } %var_43, ptr %var_40
+    %var_45 = extractvalue { void (i32*, ptr, ptr)*, ptr } %var_43, 0
+    %var_46 = extractvalue { void (i32*, ptr, ptr)*, ptr } %var_43, 1
+    %var_47 = alloca i32
+    call void %var_45(i32* %var_47, ptr %var_46, ptr @const_44)
+    %var_48 = load i32, ptr %var_47
     ret i32 0
 }
 declare i32 @printf(i8*, ...)
+define void @printString(ptr sret(i32) %var_27, ptr %var_28, ptr %var_29) {
+  entry: 
+    %var_30 = call i32 @printf(i8* %var_29)
+    store i32 %var_30, ptr %var_27
+    ret void
+}
 "
 `;
 

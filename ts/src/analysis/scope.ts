@@ -2,7 +2,7 @@ import { NodeType, Tree } from "../ast";
 import { assert, exclude, unique, unreachable } from "../utils";
 import { inject, Injectable } from "../utils/injector";
 
-type Binding = [string, number];
+export type Binding = [string, number];
 
 const resolveBindings = (ast: Tree): Binding[] => {
   switch (ast.type) {
@@ -31,7 +31,7 @@ export const resolve = (ast: Tree, names: Binding[] = []): number[] => {
       inject(Injectable.BoundVariablesMap).set(ast.children[1].id, boundVariables);
 
       const freeVars = exclude(resolve(ast.children[1], names), boundVariables);
-      inject(Injectable.FreeVariablesMap).set(ast.id, freeVars);
+      inject(Injectable.ClosureVariablesMap).set(ast.id, freeVars);
 
       return freeVars;
     }

@@ -43,7 +43,7 @@ class Builder {
   blockIndex: number = 0;
   instructionIndex: number = 0;
   values: Map<string, LLVMValue> = new Map();
-  types: Map<string, LLVMType> = new Map();
+  types: Map<string, LLVMType> = new Map([["null", "ptr"]]);
 
   constructor(private context: Context) {}
 
@@ -68,11 +68,11 @@ class Builder {
       //   ? [{ pointer: LLVMReturnType, structRet: true }, ...closureArgs, ...fnArgs]
       //   : [...closureArgs, ...fnArgs];
       const returnType = "void";
-      const args = [{ pointer: LLVMReturnType, structRet: true }, this.createRecordType(closure), ...fnArgs];
-
       const closureType = this.createRecordType(closure);
+      const args = [{ pointer: LLVMReturnType, structRet: true }, { pointer: closureType }, ...fnArgs];
+
       const fnType = this.createFunctionType(args, returnType);
-      return this.createRecordType([closureType, { pointer: fnType }]);
+      return this.createRecordType([{ pointer: fnType }, { pointer: closureType }]);
     }
     if ("atom" in type) return this.createIntType(32);
 
@@ -99,10 +99,10 @@ class Builder {
     if (_value) return _value;
     const name = this.getFreshName("const_");
     this.context.module.globals.push({ name, attributes: ["constant"], type, value });
-    const __value = `@${name}`;
-    this.values.set(value, __value);
-    this.types.set(__value, { pointer: type });
-    return __value;
+    const valuePtr = `@${name}`;
+    this.values.set(value, valuePtr);
+    this.types.set(valuePtr, { pointer: type });
+    return valuePtr;
   }
 
   insertInstruction(instruction: LLVMInstruction) {
@@ -124,11 +124,15 @@ class Builder {
   }
 
   createInt(value: number, size: number): LLVMValue {
-    return this.getOrCreateConstant(String(value), this.createIntType(size));
+    const ptr = this.getOrCreateConstant(String(value), this.createIntType(size));
+    const _value = this.createLoad(ptr);
+    return _value;
   }
 
   createFloat(value: number, size: number): LLVMValue {
-    return this.getOrCreateConstant(String(value), this.createFloatType(size));
+    const ptr = this.getOrCreateConstant(String(value), this.createFloatType(size));
+    const _value = this.createLoad(ptr);
+    return _value;
   }
 
   createBool(value: boolean): LLVMValue {
@@ -272,9 +276,12 @@ class Builder {
   }
 
   createCallVoid(func: LLVMValue, callArgs: LLVMValue[], argsType: LLVMType[]) {
+    assert(argsType.length <= callArgs.length);
     const args = callArgs.map((arg, i) => {
       if (argsType[i] === "...") return `${stringifyLLVMType(this.getType(arg))} ${arg}`;
-      return `${stringifyLLVMType(argsType[i])} ${arg}`;
+      const type = argsType[i];
+      assert(type);
+      return `${stringifyLLVMType(type)} ${arg}`;
     });
     const _args = [`void ${func}(${args.join(", ")})`];
     return this.createInstructionVoid("call", _args);
@@ -309,7 +316,7 @@ class Builder {
       const prevFunctionIndex = this.functionIndex;
       const functionIndex = this.context.module.functions.length;
       const argNames = args.map(() => "%" + this.getFreshName("var_"));
-      const declarationArgs = argNames.map((name, i) => `${stringifyLLVMType(args[i])} ${name}`);
+      const declarationArgs = argNames.map((name, i) => `${stringifyLLVMArgType(args[i])} ${name}`);
       const _f = { name, args: declarationArgs, returnType: "void" as LLVMType, body: [] };
       this.context.module.functions.push(_f);
       this.functionIndex = functionIndex;
@@ -366,7 +373,7 @@ export class Context {
       source += `${[`@${name}`, "=", attributes, stringifyLLVMType(type), value].join(" ")}\n`;
     });
     this.module.functions.forEach(({ name, args, returnType, body }) => {
-      const sig = `${stringifyLLVMType(returnType)} @${name}(${args.map(stringifyLLVMType).join(", ")})`;
+      const sig = `${stringifyLLVMType(returnType)} @${name}(${args.map(stringifyLLVMArgType).join(", ")})`;
       if (!body) {
         source += `declare ${sig}\n`;
         return;
@@ -386,9 +393,14 @@ export class Context {
   }
 }
 
-const stringifyLLVMType = (type: LLVMType): string => {
+const stringifyLLVMArgType = (type: LLVMType): string => {
   if (typeof type === "string") return type;
   if ("pointer" in type && type.structRet) return `ptr sret(${stringifyLLVMType(type.pointer)})`;
+  return stringifyLLVMType(type);
+};
+
+const stringifyLLVMType = (type: LLVMType): string => {
+  if (typeof type === "string") return type;
   if ("pointer" in type) return `${stringifyLLVMType(type.pointer)}*`;
   if ("record" in type) return `{ ${type.record.map(stringifyLLVMType).join(", ")} }`;
   return `${type.returnType} (${type.args.map(stringifyLLVMType).join(", ")})`;

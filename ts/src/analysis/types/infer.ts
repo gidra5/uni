@@ -4,7 +4,7 @@ import { assert, nextId, unreachable } from "../../utils";
 import { inject, Injectable } from "../../utils/injector";
 import { UnificationTable } from "./unification";
 import { PhysicalType, Type } from "./utils";
-import { resolve } from "../scope";
+import { Binding, resolve } from "../scope";
 
 // subtype infers types that values must always satisfy (the actual values will be at least of these types)
 // for example, if a parameter is only used as int (passed to a function that only accepts ints),
@@ -15,7 +15,7 @@ import { resolve } from "../scope";
 // supertype infers types that values will always satisfy (the actual values will be at most of these types)
 // for example, if a function only called with ints, then the type for its arguments will be int
 
-const initialNames = new Map<string, Type>([
+const globalNames = new Map<string, Type>([
   [
     "print",
     {
@@ -28,9 +28,13 @@ const initialNames = new Map<string, Type>([
   ],
 ]);
 
+const globalResolvedNames = Iterator.iter(globalNames.keys())
+  .map<Binding>((name) => [name, nextId()])
+  .toArray();
+
 export class Context {
   unificationTable = new UnificationTable();
-  names: Map<string, Type> = initialNames;
+  names: Map<string, Type> = globalNames;
   constructor() {}
 }
 
@@ -243,7 +247,8 @@ const inferPhysical = (): void => {
     if ("fn" in type) {
       const arg = translate(type.fn.arg);
       const returnType = translate(type.fn.return);
-      const freeVars = id ? inject(Injectable.FreeVariablesMap).get(id)! : [];
+      const freeVars = (id && inject(Injectable.ClosureVariablesMap).get(id)) || [];
+      assert(freeVars);
       const closure = freeVars.map((name) => {
         const type = typeMap.get(name)!;
         const physicalType = translate(type, name);
@@ -275,9 +280,19 @@ export const substituteConstraints = (ast: Tree, context: Context): void => {
 
 export const inferTypes = (ast: Tree): void => {
   const context = new Context();
-  resolve(ast);
+  resolve(ast, globalResolvedNames);
   infer(ast, context);
   context.unificationTable.truncateTautologies();
   substituteConstraints(ast, context);
+  console.dir(
+    {
+      ast,
+      types: inject(Injectable.TypeMap),
+      closures: inject(Injectable.ClosureVariablesMap),
+      bound: inject(Injectable.BoundVariablesMap),
+      nodeToVariable: inject(Injectable.NodeToVariableMap),
+    },
+    { depth: null }
+  );
   inferPhysical();
 };
