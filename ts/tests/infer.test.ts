@@ -58,4 +58,44 @@ describe("compilation", () => {
   test.skip("print 2", async () => await testCase(`print "x"`));
   test.skip("print 3", async () => await testCase(`print 1; print "x"`));
   test.skip("function application and literal print", async () => await testCase(`print((fn x -> x + x) 2)`));
+
+  /* Tree(a) -> List(a); Tree(a) = (a \ List(unknown)) | List(Tree(a)) */
+  test.todo(
+    "flatten",
+    async () =>
+      await testCase(`
+        fn x -> match x {
+          () -> ();
+          h, ...t -> (...self h, ...self t);
+          x -> (x,)
+        }
+    `)
+  );
+
+  /* (true -> false) & (false -> true) */
+  test.todo(
+    "not",
+    async () =>
+      await testCase(`
+        fn x -> if x: false else true
+    `)
+  );
+  /* (false→Any→false) & (¬false → ((¬false→true)&(false→false))) */
+  test.todo(
+    "and",
+    async () =>
+      await testCase(`
+        fn x y -> if x: (if y: true else false) else false
+    `)
+  );
+
+  /* (0→true)&(1→false) */
+  test.todo("pattern matching", async () => {
+    await testCase(`
+      fn x -> match x {
+        0 -> true;
+        1 -> false
+      }
+    `);
+  });
 });
