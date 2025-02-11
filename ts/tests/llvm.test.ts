@@ -25,6 +25,8 @@ const testCase = async (src: string) => {
   const tokens = parseTokenGroups(src);
   const ast = parseScript(tokens);
   const desugared = desugar(ast);
+  console.dir(desugared, { depth: null });
+
   inferTypes(desugared);
   const compiled = generateLLVMCode(desugared);
   expect(compiled).toMatchSnapshot("compiled");
@@ -54,7 +56,7 @@ describe("compilation", () => {
     "either",
     async () =>
       await testCase(`print(
-        (((fn x -> fn m -> fn n -> m x) 1) (fn x -> x)) (fn x -> x)
+        (((fn (x: int) -> fn (m: int -> int) -> fn (n: int -> int) -> m x) 1) (fn (x: int) -> x)) (fn (x: int) -> x) 
       )`)
   );
   test.todo(
@@ -80,7 +82,7 @@ describe("compilation", () => {
   );
   test.todo("function closure", async () => await testCase(`print((fn x -> fn y -> y + 2 * x) 1 2)`));
   test.todo("function deep closure", async () => await testCase(`print((fn x -> fn y -> fn z -> x + y + z) 1 3 5)`));
-  test.only("function application and literal print", async () => await testCase(`print((fn x -> x + x) 2)`));
+  test.only("function application and literal print", async () => await testCase(`print((fn (x: int) -> x + x) 2)`));
   test("print number", async () => await testCase(`print 1`));
   test("hello world", async () => await testCase(`print "hello world!"`));
   test("hello world twice", async () => await testCase(`print "hello world!"; print "hello world!"`));

@@ -17,7 +17,7 @@ Subtyping relation `<:` is defined:
 useful relations:
 1. `a and b = a` if `a <: b`
 2. `a or b = b` if `a <: b`
-3. `not a <: not b` if `b <: a` 
+3. `not a <: not b` if `b <: a`
 4. `unknown = not void`
 5. De-morgan's law `not (a or b) = not a and not b`
 6. Double negation `not not a = a`

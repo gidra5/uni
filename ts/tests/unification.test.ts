@@ -6,7 +6,8 @@ import { typeArb, typeWithVariablesArb } from "../src/analysis/types/utils";
 const constraintArb = fc.oneof(
   // fc.record({ subtype: typeArb }),
   // fc.record({ supertype: typeArb }),
-  fc.record({ exactly: typeArb })
+  fc.record({ exactly: typeArb }),
+  fc.record({ selectArg: typeArb })
 );
 
 const constraintWithVariablesArb = (variables: number[]) =>
@@ -15,6 +16,7 @@ const constraintWithVariablesArb = (variables: number[]) =>
     // fc.record({ supertype: typeWithVariablesArb(variables) }),
     fc.record({ exactly: typeWithVariablesArb(variables) }),
     fc.record({ equals: fc.integer() }),
+    fc.record({ selectArg: typeWithVariablesArb(variables) }),
     fc.oneof(...variables.map((variable) => fc.record({ equals: fc.constant(variable) })))
   );
 

@@ -10,6 +10,8 @@ const resolveBindings = (ast: Tree): Binding[] => {
       inject(Injectable.NodeToVariableMap).set(ast.id, ast.id);
       return [[ast.data.value, ast.id]];
     }
+    case NodeType.LABEL:
+      return resolveBindings(ast.children[0]);
     default:
       unreachable("cant resolve bindings");
   }

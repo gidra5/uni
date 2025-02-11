@@ -15,9 +15,9 @@ import { Binding, resolve } from "../scope";
 // supertype infers types that values will always satisfy (the actual values will be at most of these types)
 // for example, if a function only called with ints, then the type for its arguments will be int
 
-const globalNames = new Map<string, Type>([
+const globalNames = new Map<number, Type>([
   [
-    "print",
+    0,
     {
       and: [
         { fn: { arg: "int", return: "int" } },
@@ -34,8 +34,17 @@ const globalResolvedNames = Iterator.iter(globalNames.keys())
 
 export class Context {
   unificationTable = new UnificationTable();
-  names: Map<string, Type> = globalNames;
+  names: Map<number, Type> = globalNames;
   constructor() {}
+
+  bind(ast: Tree, f: (argType: Type) => Type): Type {
+    const argType = inferPattern(ast);
+    const name = inject(Injectable.NodeToVariableMap).get(ast.children[0].id)!;
+    this.names.set(name, argType);
+    const t = f(argType);
+    this.names.delete(name);
+    return t;
+  }
 }
 
 // is `a` a subtype of `b`? `a <: b` == true
@@ -114,22 +123,44 @@ export const isSubtype = (a: Type, b: Type): boolean => {
 
 export const isSubtypeEqual = (a: Type, b: Type): boolean => isSubtype(a, b) && isSubtype(b, a);
 
+const inferPattern = (a: Tree): Type => {
+  switch (a.type) {
+    case NodeType.NAME:
+      if (a.data.value === "void") return "void";
+      if (a.data.value === "unknown") return "unknown";
+      if (a.data.value === "int") return "int";
+      if (a.data.value === "float") return "float";
+      if (a.data.value === "string") return "string";
+      if (a.data.value === "bool") return "boolean";
+      return { variable: a.id };
+    case NodeType.LABEL:
+      return inferPattern(a.children[1]);
+    case NodeType.FUNCTION:
+      return { fn: { arg: inferPattern(a.children[0]), return: inferPattern(a.children[1]) } };
+    default:
+      unreachable("cant infer type");
+  }
+};
+
 export const infer = (ast: Tree, context: Context): Type => {
-  // console.dir({ log: 1, context, ast }, { depth: null });
+  console.dir({ log: 1, context, ast }, { depth: null });
 
   switch (ast.type) {
-    case NodeType.NUMBER:
+    case NodeType.NUMBER: {
       const type = Number.isInteger(ast.data.value) ? "int" : "float";
       context.unificationTable.addConstraint(ast.id, { exactly: type });
       return type;
+    }
     case NodeType.STRING:
       context.unificationTable.addConstraint(ast.id, { exactly: "string" });
       return "string";
     case NodeType.NAME: {
-      const name = ast.data.value;
+      const name = inject(Injectable.NodeToVariableMap).get(ast.id)!;
       const type = context.names.get(name);
+
       if (type) context.unificationTable.addConstraint(ast.id, { exactly: type });
       else context.names.set(name, { variable: ast.id });
+
       return type ?? { variable: ast.id };
     }
     case NodeType.SCRIPT:
@@ -138,39 +169,30 @@ export const infer = (ast: Tree, context: Context): Type => {
       context.unificationTable.addConstraint(ast.id, { equals: ast.children[types.length - 1].id });
       return types[types.length - 1];
     }
-    case NodeType.FUNCTION: {
-      const argType = { variable: nextId() };
-      const name = ast.children[0].type === NodeType.NAME ? ast.children[0].data.value : null;
-      const prevNameType = context.names.get(name);
-      if (name) context.names.set(name, argType);
-
-      const returnType = infer(ast.children[1], context);
-
-      if (prevNameType) context.names.set(name, prevNameType);
-      else context.names.delete(name);
-
-      context.unificationTable.addConstraint(ast.id, {
-        exactly: { fn: { arg: argType, return: returnType } },
-      });
-      return { fn: { arg: argType, return: returnType } };
-    }
     case NodeType.DELIMITED_APPLICATION:
     case NodeType.APPLICATION: {
-      const argType = infer(ast.children[1], context);
-      const returnType = { variable: nextId() };
-      const fnType = { fn: { arg: argType, return: returnType } };
-      constrain(ast.children[0], context, fnType);
+      infer(ast.children[0], context);
+      const arg_type = infer(ast.children[1], context);
+      const return_type: Type = { variable: ast.id };
 
-      context.unificationTable.addConstraint(ast.id, { exactly: returnType });
-      context.unificationTable.addConstraint(ast.children[0].id, { selectArg: argType });
-      return returnType;
+      context.unificationTable.addConstraint(ast.id, { exactly: return_type });
+      context.unificationTable.addConstraint(ast.children[0].id, {
+        exactly: { fn: { arg: arg_type, return: return_type } },
+      });
+
+      return return_type;
+    }
+    case NodeType.FUNCTION: {
+      return context.bind(ast.children[0], (argType) => {
+        const returnType = infer(ast.children[1], context);
+        const type = { fn: { arg: argType, return: returnType } };
+        context.unificationTable.addConstraint(ast.id, { exactly: type });
+        return type;
+      });
     }
     case NodeType.ADD: {
-      const firstType = infer(ast.children[0], context);
-      ast.children.forEach((child) => constrain(child, context, firstType));
-
-      context.unificationTable.addConstraint(ast.id, { exactly: firstType });
-      return firstType;
+      context.unificationTable.addConstraint(ast.id, { exactly: "int" });
+      return "int";
     }
     case NodeType.MODULE:
     default:
@@ -178,55 +200,7 @@ export const infer = (ast: Tree, context: Context): Type => {
   }
 };
 
-const constrain = (ast: Tree, context: Context, expectedType: Type): void => {
-  // console.dir({ log: 2, expectedType, ast }, { depth: null });
-
-  switch (ast.type) {
-    case NodeType.NUMBER: {
-      const type = Number.isInteger(ast.data.value) ? "int" : "float";
-      if (isSubtype(expectedType, type)) return;
-      break;
-    }
-    case NodeType.STRING:
-      if (isSubtype(expectedType, "string")) return;
-      break;
-    case NodeType.NAME: {
-      const type = infer(ast, context);
-      if (type) {
-        if (isSubtype(expectedType, type)) return;
-        context.unificationTable.addConstraint(ast.id, { exactly: expectedType });
-        return;
-      }
-      break;
-    }
-    case NodeType.FUNCTION: {
-      if (!(typeof expectedType === "object" && "fn" in expectedType)) break;
-      const argType = expectedType.fn.arg;
-      const returnType = expectedType.fn.return;
-
-      const name = ast.children[0].type === NodeType.NAME ? ast.children[0].data.value : null;
-      const prevNameType = context.names.get(name);
-      if (name) context.names.set(name, argType);
-
-      constrain(ast.children[1], context, returnType);
-
-      if (prevNameType) context.names.set(name, prevNameType);
-      else context.names.delete(name);
-      context.unificationTable.addConstraint(ast.id, { exactly: expectedType });
-      return;
-    }
-    case NodeType.APPLICATION: {
-      const argType = infer(ast.children[1], context);
-      const fnType = { fn: { arg: argType, return: expectedType, closure: [] } };
-      constrain(ast.children[0], context, fnType);
-      context.unificationTable.addConstraint(ast.id, { exactly: expectedType });
-      context.unificationTable.addConstraint(ast.children[0].id, { selectArg: argType });
-      return;
-    }
-  }
-  infer(ast, context);
-  context.unificationTable.addConstraint(ast.id, { exactly: expectedType });
-};
+const constrain = (ast: Tree, context: Context, expectedType: Type): void => {};
 
 const inferPhysical = (): void => {
   const physicalTypeMap = inject(Injectable.PhysicalTypeMap);
@@ -286,13 +260,14 @@ export const inferTypes = (ast: Tree): void => {
   substituteConstraints(ast, context);
   console.dir(
     {
-      ast,
-      types: inject(Injectable.TypeMap),
+      // ast,
+      table: context.unificationTable,
+      // types: inject(Injectable.TypeMap),
       closures: inject(Injectable.ClosureVariablesMap),
       bound: inject(Injectable.BoundVariablesMap),
       nodeToVariable: inject(Injectable.NodeToVariableMap),
     },
     { depth: null }
   );
-  inferPhysical();
+  // inferPhysical();
 };

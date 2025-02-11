@@ -60,7 +60,7 @@ export class UnificationTable {
   }
 
   unify(bounds: TypeBounds, constraint: Constraint): TypeBounds {
-    // console.dir({ bounds, constraint }, { depth: null });
+    console.dir({ bounds, constraint }, { depth: null });
 
     assert(!("equals" in bounds));
     assert(!("equals" in constraint));
@@ -99,17 +99,20 @@ export class UnificationTable {
     if ("selectArg" in constraint) {
       const type = this.normalizeType(constraint.selectArg);
       const boundsType = bounds.exactly;
-      if (!isSubtype(boundsType, { fn: { arg: "void", return: "unknown" } })) return { exactly: "void" };
+      console.dir([boundsType, type], { depth: null });
+
       if (typeof boundsType === "object" && "fn" in boundsType) {
         const arg = boundsType.fn.arg;
         if (!isSubtype(type, arg)) return { exactly: "void" };
         return bounds;
       }
       if (typeof boundsType === "object" && "and" in boundsType) {
-        const t = boundsType.and.find((t) => isSubtype(t, { fn: { arg: type, return: "unknown" } }));
+        // const t = boundsType.and.find((t) => isSubtype(t, { fn: { arg: type, return: "unknown" } }));
+        const t = boundsType.and.find((t) => typeof t === "object" && "fn" in t && t.fn.arg === t);
         if (t) return { exactly: t };
         return { exactly: "void" };
       }
+      if (!isSubtype(boundsType, { fn: { arg: "void", return: "unknown" } })) return { exactly: "void" };
 
       return bounds;
     }
@@ -160,7 +163,7 @@ export class UnificationTable {
     return simplify(this.boundsToType(variable, this.resolve(variable)));
   }
 
-  addSecondaryConstraints(constraint1: Constraint, constraint2: Constraint) {
+  addSecondaryConstraints(variable: number, constraint1: Constraint, constraint2: Constraint) {
     // console.log(constraint1, constraint2);
 
     // i++;
@@ -169,32 +172,34 @@ export class UnificationTable {
       const type1 = constraint1.exactly;
       const type2 = constraint2.exactly;
       if (typeof type1 === "object" && "fn" in type1 && typeof type2 === "object" && "fn" in type2) {
-        this.addSecondaryConstraints({ exactly: type1.fn.arg }, { exactly: type2.fn.arg });
-        this.addSecondaryConstraints({ exactly: type1.fn.return }, { exactly: type2.fn.return });
+        this.addSecondaryConstraints(variable, { exactly: type1.fn.arg }, { exactly: type2.fn.arg });
+        this.addSecondaryConstraints(variable, { exactly: type1.fn.return }, { exactly: type2.fn.return });
         return;
       }
       if (typeof type1 === "object" && "fn" in type1 && typeof type2 === "object" && "and" in type2) {
-        const subtypes = type2.and
-          .filter((t) => typeof t === "object" && "fn" in t)
-          .filter((t) => isSubtype(t.fn.arg, type1.fn.arg));
+        // const subtypes = type2.and
+        //   .filter((t) => typeof t === "object" && "fn" in t)
+        //   // .filter((t) => isSubtype(t.fn.arg, type1.fn.arg));
+        //   .filter((t) => t.fn.arg === type1.fn.arg);
 
-        if (subtypes.length === 0) {
-          this.addSecondaryConstraints({ exactly: type1.fn.return }, { exactly: "void" });
-          return;
-        }
+        // if (subtypes.length === 0) {
+        //   this.addSecondaryConstraints({ exactly: type1.fn.return }, { exactly: "void" });
+        //   return;
+        // }
 
-        if (subtypes.length === 1) {
-          const returnType = subtypes[0].fn.return;
-          this.addSecondaryConstraints({ exactly: type1.fn.return }, { exactly: returnType });
-          return;
-        }
+        // if (subtypes.length === 1) {
+        //   const returnType = subtypes[0].fn.return;
+        //   this.addSecondaryConstraints({ exactly: type1.fn.return }, { exactly: returnType });
+        //   return;
+        // }
 
-        const returnType = { or: subtypes.map((t) => t.fn.return) };
-        this.addSecondaryConstraints({ exactly: type1.fn.return }, { exactly: returnType });
+        // const returnType = { or: subtypes.map((t) => t.fn.return) };
+        // this.addSecondaryConstraints({ exactly: type1.fn.return }, { exactly: returnType });
+        this.addConstraint(variable, { selectArg: type1.fn.arg });
         return;
       }
       if (typeof type1 === "object" && "fn" in type1 && typeof type2 === "object" && "and" in type2) {
-        this.addSecondaryConstraints(constraint2, constraint1);
+        this.addSecondaryConstraints(variable, constraint2, constraint1);
         return;
       }
       if (typeof type1 === "object" && "variable" in type1) {
@@ -216,6 +221,11 @@ export class UnificationTable {
   }
 
   addConstraint(variable: number, constraint: Constraint) {
+    // if (variable === 60) {
+    //   console.log(variable, constraint);
+    //   console.log(Error().stack);
+    // }
+
     if ("exactly" in constraint && typeof constraint.exactly === "object" && "variable" in constraint.exactly) {
       this.addConstraint(variable, { equals: constraint.exactly.variable });
       return;
@@ -264,7 +274,7 @@ export class UnificationTable {
     if ("exactly" in constraint) {
       const otherConstraints = constraints.filter((c) => "exactly" in c);
       for (const otherConstraint of otherConstraints) {
-        this.addSecondaryConstraints(constraint, otherConstraint);
+        this.addSecondaryConstraints(variable, constraint, otherConstraint);
       }
     }
 
