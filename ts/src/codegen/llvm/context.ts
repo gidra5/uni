@@ -1,6 +1,7 @@
 import { Iterator } from "iterator-js";
 import { assert, nextId, unreachable } from "../../utils";
 import { isLargePhysicalType, PhysicalType, physicalTypeSize } from "../../analysis/types/utils";
+import { PhysicalTypeSchema } from "../../analysis/types/infer";
 
 export type LLVMModule = {
   globals: LLVMGlobal[];
@@ -60,19 +61,19 @@ class Builder {
     if ("fn" in type) {
       const fnArgs = type.fn.args.map((type) => this.toLLVMType(type));
       const closure = type.fn.closure.map((type) => this.toLLVMType(type));
-      const LLVMReturnType = this.toLLVMType(type.fn.return);
+      const returnType = this.toLLVMType(type.fn.return);
       // const isLargeReturnType = isLargePhysicalType(type.fn.return);
-      // const returnType = isLargeReturnType ? "void" : LLVMReturnType;
+      // const _returnType = isLargeReturnType ? "void" : LLVMReturnType;
       // const closureArgs = closure.length > 0 ? [this.createRecordType(closure)] : [];
       // const args = isLargeReturnType
       //   ? [{ pointer: LLVMReturnType, structRet: true }, ...closureArgs, ...fnArgs]
       //   : [...closureArgs, ...fnArgs];
-      const returnType = "void";
+      const _returnType = "void";
       const closureType = this.createRecordType(closure);
-      const args = [{ pointer: LLVMReturnType, structRet: true }, { pointer: closureType }, ...fnArgs];
+      const args = [{ pointer: returnType, structRet: true }, closureType, ...fnArgs];
 
-      const fnType = this.createFunctionType(args, returnType);
-      return this.createRecordType([{ pointer: fnType }, { pointer: closureType }]);
+      const fnType = this.createFunctionType(args, _returnType);
+      return this.createRecordType([{ pointer: fnType }, closureType]);
     }
     if ("atom" in type) return this.createIntType(32);
 
@@ -359,7 +360,7 @@ export class Context {
   public builder: Builder;
   public variables: Map<number, LLVMValue> = new Map();
 
-  constructor() {
+  constructor(public typeMap: PhysicalTypeSchema) {
     this.module = {
       globals: [],
       functions: [],

@@ -12,6 +12,8 @@ const resolveBindings = (ast: Tree): Binding[] => {
     }
     case NodeType.LABEL:
       return resolveBindings(ast.children[0]);
+    case NodeType.TUPLE:
+      return ast.children.flatMap(resolveBindings);
     default:
       unreachable("cant resolve bindings");
   }

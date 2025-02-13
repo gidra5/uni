@@ -5,7 +5,7 @@ import { VM } from "./vm/index.js";
 import fs from "fs";
 import { parseScript } from "./parser/parser.js";
 import { parseTokenGroups } from "./parser/tokenGroups.js";
-import { generateLLVMCode } from "./codegen/llvm.js";
+import { generateLLVMCode } from "./codegen/llvm/index.js";
 import { exec } from "child_process";
 import { assert, unreachable } from "./utils/index.js";
 

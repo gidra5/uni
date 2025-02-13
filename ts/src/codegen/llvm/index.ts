@@ -3,6 +3,7 @@ import { NodeType, Tree } from "../../ast.js";
 import { assert, unreachable } from "../../utils/index.js";
 import { Context, LLVMValue } from "./context.js";
 import { inject, Injectable } from "../../utils/injector.js";
+import { PhysicalTypeSchema } from "../../analysis/types/infer.js";
 
 const codegen = (ast: Tree, context: Context): LLVMValue => {
   switch (ast.type) {
@@ -26,7 +27,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     case NodeType.NAME: {
       if (ast.data.value === "print") {
         const printf = context.builder.declareFunction("printf", [{ pointer: "i8" }, "..."], "i32");
-        const types = inject(Injectable.PhysicalTypeMap);
+        const types = context.typeMap;
         const type = types.get(ast.id);
 
         assert(typeof type === "object");
@@ -36,8 +37,8 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
         if (typeof arg === "object" && "int" in arg) {
           const printInt = context.builder.createFunction(
             "printInt",
-            [{ pointer: "i32", structRet: true }, "ptr", "i32"],
-            (ret, _ptr, arg1) => {
+            [{ pointer: "i32", structRet: true }, "{ }", "i32"],
+            (ret, _closure, arg1) => {
               const fmt = context.builder.createString("%i\n");
               const result = context.builder.createCall(printf, [fmt, arg1], "i32", [{ pointer: "i8" }, "..."]);
 
@@ -46,13 +47,13 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
               return "void";
             }
           );
-          return context.builder.createRecord([printInt, "null"]);
+          return context.builder.createRecord([printInt, context.builder.createRecord([])]);
         }
 
         const printString = context.builder.createFunction(
           "printString",
-          [{ pointer: "i32", structRet: true }, "ptr", "ptr"],
-          (ret, _ptr, arg1) => {
+          [{ pointer: "i32", structRet: true }, "{ }", "ptr"],
+          (ret, _closure, arg1) => {
             const result = context.builder.createCall(printf, [arg1], "i32", [{ pointer: "i8" }, "..."]);
 
             context.builder.createStore(result, ret);
@@ -61,7 +62,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
           }
         );
 
-        return context.builder.createRecord([printString, "null"]);
+        return context.builder.createRecord([printString, context.builder.createRecord([])]);
       }
       if (ast.data.value === "true") {
         return context.builder.createBool(true);
@@ -69,7 +70,9 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       if (ast.data.value === "false") {
         return context.builder.createBool(false);
       }
-      const name = context.variables.get(ast.data.value);
+      const variable = inject(Injectable.NodeToVariableMap).get(ast.id)!;
+      const name = context.variables.get(variable);
+
       assert(name);
       return name;
     }
@@ -78,33 +81,34 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       const func = codegen(ast.children[0], context);
       const arg = codegen(ast.children[1], context);
       const fnPtr = context.builder.createExtractValue(func, 0);
-      const closurePtr = context.builder.createExtractValue(func, 1);
+      const closure = context.builder.createExtractValue(func, 1);
 
       const fnPtrType = context.builder.getType(fnPtr);
       assert(typeof fnPtrType === "object" && "pointer" in fnPtrType);
       const funcType = fnPtrType.pointer;
       assert(typeof funcType === "object" && "args" in funcType);
 
-      return context.builder.createCall(fnPtr, [closurePtr, arg], funcType.returnType, funcType.args);
+      return context.builder.createCall(fnPtr, [closure, arg], funcType.returnType, funcType.args);
     }
     case NodeType.FUNCTION: {
       const name = context.builder.getFreshName("fn_");
-      const type = inject(Injectable.PhysicalTypeMap).get(ast.id)!;
+      const type = context.typeMap.get(ast.id)!;
       const freeVars = inject(Injectable.ClosureVariablesMap).get(ast.id)!;
-      const boundVariables = inject(Injectable.BoundVariablesMap).get(ast.id)!;
+      const boundVariables = inject(Injectable.BoundVariablesMap).get(ast.children[1].id)!;
       const llvmType = context.builder.toLLVMType(type);
+      // console.dir({ ast, type, llvmType }, { depth: null });
+
       assert(typeof type === "object" && "fn" in type);
       assert(typeof llvmType === "object" && "record" in llvmType);
 
-      const fnType = llvmType.record[1];
+      const fnTypePtr = llvmType.record[0];
+      assert(typeof fnTypePtr === "object" && "pointer" in fnTypePtr);
+      const fnType = fnTypePtr.pointer;
       assert(typeof fnType === "object" && "args" in fnType);
       const argsType = fnType.args;
 
-      const closurePtr = context.builder.createMalloc({ tuple: type.fn.closure });
       const closure = context.builder.createRecord(freeVars.map((name) => context.variables.get(name)!));
-      context.builder.createStore(closure, closurePtr);
-      const func = context.builder.createFunction(name, argsType, (retValue, closurePtr, ...args) => {
-        const closure = context.builder.createLoad(closurePtr);
+      const func = context.builder.createFunction(name, argsType, (retValue, closure, ...args) => {
         for (const [name, index] of Iterator.iter(freeVars).enumerate()) {
           const value = context.builder.createExtractValue(closure, index);
           context.variables.set(name, value);
@@ -123,7 +127,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
         return "void";
       });
 
-      return context.builder.createRecord([func, closurePtr]);
+      return context.builder.createRecord([func, closure]);
     }
     case NodeType.SEQUENCE: {
       const last = ast.children[ast.children.length - 1];
@@ -139,8 +143,8 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
   }
 };
 
-const generateLLVM = (ast: Tree): Context => {
-  const context = new Context();
+const generateLLVM = (ast: Tree, typeMap: PhysicalTypeSchema): Context => {
+  const context = new Context(typeMap);
 
   switch (ast.type) {
     case "script":
@@ -168,7 +172,7 @@ const generateLLVM = (ast: Tree): Context => {
   }
 };
 
-export const generateLLVMCode = (ast: Tree) => {
-  const ctx = generateLLVM(ast);
+export const generateLLVMCode = (ast: Tree, typeMap: PhysicalTypeSchema) => {
+  const ctx = generateLLVM(ast, typeMap);
   return ctx.moduleString();
 };

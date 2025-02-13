@@ -6,6 +6,9 @@ import { UnificationTable } from "./unification";
 import { PhysicalType, Type } from "./utils";
 import { Binding, resolve } from "../scope";
 
+export type TypeSchema = Map<number, Type>;
+export type PhysicalTypeSchema = Map<number, PhysicalType>;
+
 // subtype infers types that values must always satisfy (the actual values will be at least of these types)
 // for example, if a parameter is only used as int (passed to a function that only accepts ints),
 // then the type for the parameter will be int
@@ -15,9 +18,13 @@ import { Binding, resolve } from "../scope";
 // supertype infers types that values will always satisfy (the actual values will be at most of these types)
 // for example, if a function only called with ints, then the type for its arguments will be int
 
+export const globalResolvedNames = Iterator.iter(["print"])
+  .map<Binding>((name) => [name, nextId()])
+  .toArray();
+
 const globalNames = new Map<number, Type>([
   [
-    0,
+    globalResolvedNames[0][1],
     {
       and: [
         { fn: { arg: "int", return: "int" } },
@@ -27,10 +34,6 @@ const globalNames = new Map<number, Type>([
     },
   ],
 ]);
-
-const globalResolvedNames = Iterator.iter(globalNames.keys())
-  .map<Binding>((name) => [name, nextId()])
-  .toArray();
 
 export class Context {
   unificationTable = new UnificationTable();
@@ -202,9 +205,8 @@ export const infer = (ast: Tree, context: Context): Type => {
 
 const constrain = (ast: Tree, context: Context, expectedType: Type): void => {};
 
-const inferPhysical = (): void => {
-  const physicalTypeMap = inject(Injectable.PhysicalTypeMap);
-  const typeMap = inject(Injectable.TypeMap);
+export const inferPhysical = (typeMap: TypeSchema): PhysicalTypeSchema => {
+  const physicalTypeMap: PhysicalTypeSchema = new Map();
 
   const translate = (type: Type, id?: number): PhysicalType => {
     if (type === "int") return { int: 32 };
@@ -241,33 +243,42 @@ const inferPhysical = (): void => {
     if (physicalTypeMap.has(id)) return;
     physicalTypeMap.set(id, translate(type, id));
   });
+
+  return physicalTypeMap;
 };
 
-export const substituteConstraints = (ast: Tree, context: Context): void => {
-  ast.children.forEach((child) => substituteConstraints(child, context));
-  const map = inject(Injectable.TypeMap);
-  if (map.has(ast.id)) return;
-  // console.log(ast.id);
-
-  map.set(ast.id, context.unificationTable.resolveType(ast.id));
+export const substituteConstraints = (ast: Tree, context: Context, map: TypeSchema = new Map()): TypeSchema => {
+  if (map.has(ast.id)) return map;
+  switch (ast.type) {
+    case NodeType.FUNCTION: {
+      substituteConstraints(ast.children[1], context, map);
+      map.set(ast.id, context.unificationTable.resolveType(ast.id));
+      return map;
+    }
+    default: {
+      ast.children.forEach((child) => substituteConstraints(child, context, map));
+      map.set(ast.id, context.unificationTable.resolveType(ast.id));
+      return map;
+    }
+  }
 };
 
-export const inferTypes = (ast: Tree): void => {
+export const inferTypes = (ast: Tree): TypeSchema => {
   const context = new Context();
   resolve(ast, globalResolvedNames);
   infer(ast, context);
   context.unificationTable.truncateTautologies();
-  substituteConstraints(ast, context);
-  console.dir(
-    {
-      // ast,
-      table: context.unificationTable,
-      // types: inject(Injectable.TypeMap),
-      closures: inject(Injectable.ClosureVariablesMap),
-      bound: inject(Injectable.BoundVariablesMap),
-      nodeToVariable: inject(Injectable.NodeToVariableMap),
-    },
-    { depth: null }
-  );
+  return substituteConstraints(ast, context);
+  // console.dir(
+  //   {
+  //     // ast,
+  //     table: context.unificationTable,
+  //     // types: inject(Injectable.TypeMap),
+  //     closures: inject(Injectable.ClosureVariablesMap),
+  //     bound: inject(Injectable.BoundVariablesMap),
+  //     nodeToVariable: inject(Injectable.NodeToVariableMap),
+  //   },
+  //   { depth: null }
+  // );
   // inferPhysical();
 };
