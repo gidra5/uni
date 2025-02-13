@@ -122,7 +122,7 @@ describe.skip("compilation", () => {
 });
 
 class Builder {
-  s: { s: symbol; closure: Set<PhysicalType> }[] = [];
+  private fnStack: { symbol: symbol; closure: Set<PhysicalType> }[] = [];
   constructor(public typeSchema: PhysicalTypeSchema) {}
 
   node(nodeType: NodeType, type: PhysicalType, data: any, children: Tree[]): Tree {
@@ -149,32 +149,25 @@ class Builder {
     return this.node(NodeType.APPLICATION, fType.fn.return, {}, [f, ...x]);
   }
 
-  fn(closure: PhysicalType[], x: Tree, f: Tree) {
-    const argType = this.typeSchema.get(x.id)!;
-    let argsType: PhysicalType[] = [argType];
-    if (typeof argType === "object" && "tuple" in argType) {
-      argsType = argType.tuple;
-    }
-    const retType = this.typeSchema.get(f.id)!;
-    const type = Builder.fnType(argsType, retType, closure);
-    return this.node(NodeType.FUNCTION, type, {}, [x, f]);
-  }
-
-  fn2(x: Tree[], f: (...args: (() => Tree)[]) => Tree) {
-    const arg = x.length === 1 ? x[0] : this.tuple(...x);
+  fn(x: Tree[], f: (...args: (() => Tree)[]) => Tree) {
     const closure = new Set<PhysicalType>();
-    const y = Symbol();
+    const symbol = Symbol();
     const _args = x.map((arg) => () => {
       const type = this.typeSchema.get(arg.id)!;
-      const index = this.s.findIndex((s) => s.s === y);
-      const closures = this.s.slice(index + 1).map((s) => s.closure);
+      const index = this.fnStack.findIndex((s) => s.symbol === symbol);
+      const closures = this.fnStack.slice(index + 1).map((s) => s.closure);
       for (const closure of closures) closure.add(type);
       return this.name(type, arg.data.value);
     });
-    this.s.push({ s: y, closure });
+
+    this.fnStack.push({ symbol, closure });
     const _f = f(..._args);
-    this.s.pop();
-    return this.fn([...closure], arg, _f);
+    this.fnStack.pop();
+
+    const argsType = x.map((arg) => this.typeSchema.get(arg.id)!);
+    const retType = this.typeSchema.get(_f.id)!;
+    const type = Builder.fnType(argsType, retType, [...closure]);
+    return this.node(NodeType.FUNCTION, type, {}, [...x, _f]);
   }
 
   name(type: PhysicalType, value: string) {
@@ -206,7 +199,7 @@ class Builder {
   }
 }
 
-describe.only("compilation 2", () => {
+describe("compilation 2", () => {
   test("either", async () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
@@ -215,7 +208,7 @@ describe.only("compilation 2", () => {
     const int = (value: number) => builder.int(value);
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
-    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn2(x, f);
+    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
 
     await testCase2(
       builder.script(
@@ -241,14 +234,13 @@ describe.only("compilation 2", () => {
     );
   });
 
-  test.todo("either 2", async () => {
+  test("either 2", async () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const fn = (closure: PhysicalType[], x: Tree, f: Tree) => builder.fn(closure, x, f);
+    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const int = (value: number) => builder.int(value);
-    const tuple = (...args: Tree[]) => builder.tuple(...args);
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
@@ -258,17 +250,16 @@ describe.only("compilation 2", () => {
           name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
           app(
             fn(
-              [],
-              tuple(
+              [
                 name({ int: 32 }, "x"),
                 name(fnType([{ int: 32 }], { int: 32 }, []), "m"),
-                name(fnType([{ int: 32 }], { int: 32 }, []), "n")
-              ),
-              app(name(fnType([{ int: 32 }], { int: 32 }, []), "m"), name({ int: 32 }, "x"))
+                name(fnType([{ int: 32 }], { int: 32 }, []), "n"),
+              ],
+              (x, m, n) => app(m(), x())
             ),
             int(1),
-            fn([], name({ int: 32 }, "x"), name({ int: 32 }, "x")),
-            fn([], name({ int: 32 }, "x"), name({ int: 32 }, "x"))
+            fn([name({ int: 32 }, "x")], (x) => x()),
+            fn([name({ int: 32 }, "x")], (x) => x())
           )
         )
       ),
@@ -280,7 +271,7 @@ describe.only("compilation 2", () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn2(x, f);
+    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const int = (value: number) => builder.int(value);
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
@@ -309,7 +300,7 @@ describe.only("compilation 2", () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn2(x, f);
+    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const int = (value: number) => builder.int(value);
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
@@ -341,16 +332,15 @@ describe.only("compilation 2", () => {
     );
   });
 
-  test.todo("church tuple 2", async () => {
+  test("church tuple 2", async () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const fn = (closure: PhysicalType[], x: Tree, f: Tree) => builder.fn(closure, x, f);
+    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const int = (value: number) => builder.int(value);
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
-    const tuple = (...args: Tree[]) => builder.tuple(...args);
 
     await testCase2(
       builder.script(
@@ -358,21 +348,16 @@ describe.only("compilation 2", () => {
           name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
           app(
             fn(
-              [],
-              tuple(
+              [
                 name({ int: 32 }, "x"),
                 name({ int: 32 }, "y"),
-                name(fnType([{ int: 32 }, { int: 32 }], { int: 32 }, []), "m")
-              ),
-              app(
                 name(fnType([{ int: 32 }, { int: 32 }], { int: 32 }, []), "m"),
-                name({ int: 32 }, "x"),
-                name({ int: 32 }, "y")
-              )
+              ],
+              (x, y, m) => app(m(), x(), y())
             ),
             int(1),
             int(2),
-            fn([], name({ int: 32 }, "x"), name({ int: 32 }, "x"))
+            fn([name({ int: 32 }, "x")], (x) => x())
           )
         )
       ),
@@ -392,7 +377,7 @@ describe.only("compilation 2", () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn2(x, f);
+    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const int = (value: number) => builder.int(value);
     const add = (...args: Tree[]) => builder.add(...args);
@@ -417,16 +402,15 @@ describe.only("compilation 2", () => {
     );
   });
 
-  test.todo("function multiple args", async () => {
+  test("function multiple args", async () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const fn = (closure: PhysicalType[], x: Tree, f: Tree) => builder.fn(closure, x, f);
+    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const int = (value: number) => builder.int(value);
     const add = (...args: Tree[]) => builder.add(...args);
     const mult = (...args: Tree[]) => builder.mult(...args);
-    const tuple = (...args: Tree[]) => builder.tuple(...args);
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
@@ -435,11 +419,7 @@ describe.only("compilation 2", () => {
         app(
           name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
           app(
-            fn(
-              [],
-              tuple(name({ int: 32 }, "x"), name({ int: 32 }, "y")),
-              add(name({ int: 32 }, "y"), mult(int(2), name({ int: 32 }, "x")))
-            ),
+            fn([name({ int: 32 }, "x"), name({ int: 32 }, "y")], (x, y) => add(y(), mult(int(2), x()))),
             int(1),
             int(2)
           )
@@ -453,7 +433,7 @@ describe.only("compilation 2", () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn2(x, f);
+    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const int = (value: number) => builder.int(value);
     const add = (...args: Tree[]) => builder.add(...args);
@@ -486,7 +466,7 @@ describe.only("compilation 2", () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn2(x, f);
+    const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const int = (value: number) => builder.int(value);
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>

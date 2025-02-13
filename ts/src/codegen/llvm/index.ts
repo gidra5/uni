@@ -79,7 +79,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     case NodeType.DELIMITED_APPLICATION:
     case NodeType.APPLICATION: {
       const func = codegen(ast.children[0], context);
-      const arg = codegen(ast.children[1], context);
+      const args = ast.children.slice(1).map((arg) => codegen(arg, context));
       const fnPtr = context.builder.createExtractValue(func, 0);
       const closure = context.builder.createExtractValue(func, 1);
 
@@ -88,13 +88,14 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       const funcType = fnPtrType.pointer;
       assert(typeof funcType === "object" && "args" in funcType);
 
-      return context.builder.createCall(fnPtr, [closure, arg], funcType.returnType, funcType.args);
+      return context.builder.createCall(fnPtr, [closure, ...args], funcType.returnType, funcType.args);
     }
     case NodeType.FUNCTION: {
+      const body = ast.children[ast.children.length - 1];
       const name = context.builder.getFreshName("fn_");
       const type = context.typeMap.get(ast.id)!;
       const freeVars = inject(Injectable.ClosureVariablesMap).get(ast.id)!;
-      const boundVariables = inject(Injectable.BoundVariablesMap).get(ast.children[1].id)!;
+      const boundVariables = inject(Injectable.BoundVariablesMap).get(body.id)!;
       const llvmType = context.builder.toLLVMType(type);
       // console.dir({ ast, type, llvmType }, { depth: null });
 
@@ -117,7 +118,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
           context.variables.set(name, arg);
         }
 
-        const result = codegen(ast.children[1], context);
+        const result = codegen(body, context);
 
         for (const name of boundVariables) context.variables.delete(name);
         for (const name of freeVars) context.variables.delete(name);

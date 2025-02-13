@@ -29,12 +29,14 @@ export const resolve = (ast: Tree, names: Binding[] = []): number[] => {
       return [binding[1]];
     }
     case NodeType.FUNCTION: {
-      const bound = resolveBindings(ast.children[0]);
+      const body = ast.children[ast.children.length - 1];
+      const args = ast.children.slice(0, -1);
+      const bound = args.flatMap(resolveBindings);
       names = [...names, ...bound];
       const boundVariables = bound.map(([, id]) => id);
-      inject(Injectable.BoundVariablesMap).set(ast.children[1].id, boundVariables);
+      inject(Injectable.BoundVariablesMap).set(body.id, boundVariables);
 
-      const freeVars = exclude(resolve(ast.children[1], names), boundVariables);
+      const freeVars = exclude(resolve(body, names), boundVariables);
       inject(Injectable.ClosureVariablesMap).set(ast.id, freeVars);
 
       return freeVars;
