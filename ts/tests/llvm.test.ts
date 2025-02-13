@@ -26,18 +26,7 @@ beforeEach(() => {
   register(Injectable.NodeToVariableMap, new Map());
 });
 
-const testCase = async (src: string) => {
-  const tokens = parseTokenGroups(src);
-  const ast = parseScript(tokens);
-  const desugared = desugar(ast);
-  // console.dir(desugared, { depth: null });
-
-  const typeSchema = inferTypes(desugared);
-  const physicalTypeSchema = inferPhysical(typeSchema);
-  testCase2(desugared, physicalTypeSchema);
-};
-
-const testCase2 = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
+const testCase = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
   resolve(ast, globalResolvedNames);
   const compiled = generateLLVMCode(ast, typeSchema);
   expect(compiled).toMatchSnapshot("compiled");
@@ -61,65 +50,6 @@ const testCase2 = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
   expect(stdout).toMatchSnapshot("stdout");
   expect(stderr).toMatchSnapshot("stderr");
 };
-
-describe.skip("compilation", () => {
-  test.todo("either", async () => {
-    await testCase(dedent`
-      print(
-        (
-          (
-            (
-              fn (x: int) -> 
-              fn (m: int -> int) -> 
-              fn (n: int -> int) -> 
-                m x
-            )
-            1
-          )
-          (fn (x: int) -> x)
-        )
-        (fn (x: int) -> x)
-      )`);
-  });
-
-  test.todo("apply", async () => {
-    await testCase(dedent`
-      print(
-        (
-          (fn f -> fn x -> f x) fn x -> x
-        ) 2
-      )`);
-  });
-
-  test.todo("wrapper", async () => {
-    await testCase(dedent`
-      print(
-        (
-          (fn x -> fn m -> m x) 2
-        ) fn x -> x
-      )`);
-  });
-
-  test.todo("church tuple", async () => {
-    await testCase(dedent`
-      print(
-        (
-          (fn x -> fn y -> fn m -> m x y)
-          1 2
-        )
-        fn x -> fn _ -> x
-      )`);
-  });
-
-  test.todo("function closure", async () => await testCase(`print((fn x -> fn y -> y + 2 * x) 1 2)`));
-  test.todo("function deep closure", async () => await testCase(`print((fn x -> fn y -> fn z -> x + y + z) 1 3 5)`));
-  test.only("function application and literal print", async () => await testCase(`print((fn (x: int) -> x + x) 2)`));
-  test("print number", async () => await testCase(`print 1`));
-  test("hello world", async () => await testCase(`print "hello world!"`));
-  test("hello world twice", async () => await testCase(`print "hello world!"; print "hello world!"`));
-  test("two prints", async () => await testCase(`print "hello world!"; print "hello world 2!"`));
-  test("hello world string", async () => await testCase(`"hello world!"`));
-});
 
 class Builder {
   private fnStack: { symbol: symbol; closure: Set<PhysicalType> }[] = [];
@@ -199,7 +129,7 @@ class Builder {
   }
 }
 
-describe("compilation 2", () => {
+describe("simply typed lambda calc compilation", () => {
   test("either", async () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
@@ -210,7 +140,7 @@ describe("compilation 2", () => {
       Builder.fnType(args, returnType, closure);
     const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
 
-    await testCase2(
+    await testCase(
       builder.script(
         app(
           name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
@@ -244,7 +174,7 @@ describe("compilation 2", () => {
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
-    await testCase2(
+    await testCase(
       builder.script(
         app(
           name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
@@ -277,7 +207,7 @@ describe("compilation 2", () => {
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
-    await testCase2(
+    await testCase(
       builder.script(
         app(
           name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
@@ -306,7 +236,7 @@ describe("compilation 2", () => {
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
-    await testCase2(
+    await testCase(
       builder.script(
         app(
           name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
@@ -342,7 +272,7 @@ describe("compilation 2", () => {
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
-    await testCase2(
+    await testCase(
       builder.script(
         app(
           name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
@@ -385,7 +315,7 @@ describe("compilation 2", () => {
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
-    await testCase2(
+    await testCase(
       builder.script(
         app(
           name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
@@ -414,7 +344,7 @@ describe("compilation 2", () => {
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
-    await testCase2(
+    await testCase(
       builder.script(
         app(
           name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
@@ -440,7 +370,7 @@ describe("compilation 2", () => {
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
-    await testCase2(
+    await testCase(
       builder.script(
         app(
           name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
@@ -473,7 +403,7 @@ describe("compilation 2", () => {
       Builder.fnType(args, returnType, closure);
     const add = (...args: Tree[]) => builder.add(...args);
 
-    await testCase2(
+    await testCase(
       builder.script(
         app(
           name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
@@ -496,7 +426,7 @@ describe("compilation 2", () => {
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
-    await testCase2(builder.script(app(name(fnType([{ int: 32 }], { int: 32 }, []), "print"), int(1))), typeSchema);
+    await testCase(builder.script(app(name(fnType([{ int: 32 }], { int: 32 }, []), "print"), int(1))), typeSchema);
   });
 
   test("hello world", async () => {
@@ -508,7 +438,7 @@ describe("compilation 2", () => {
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
-    await testCase2(
+    await testCase(
       builder.script(
         app(name(fnType([{ pointer: { int: 8 } }], { pointer: { int: 8 } }, []), "print"), string("hello world!"))
       ),
@@ -525,7 +455,7 @@ describe("compilation 2", () => {
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
-    await testCase2(
+    await testCase(
       builder.script(
         app(name(fnType([{ pointer: { int: 8 } }], { pointer: { int: 8 } }, []), "print"), string("hello world!")),
         app(name(fnType([{ pointer: { int: 8 } }], { pointer: { int: 8 } }, []), "print"), string("hello world!"))
@@ -543,7 +473,7 @@ describe("compilation 2", () => {
     const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
       Builder.fnType(args, returnType, closure);
 
-    await testCase2(
+    await testCase(
       builder.script(
         app(name(fnType([{ pointer: { int: 8 } }], { pointer: { int: 8 } }, []), "print"), string("hello world!")),
         app(name(fnType([{ pointer: { int: 8 } }], { pointer: { int: 8 } }, []), "print"), string("hello world 2!"))
@@ -557,6 +487,19 @@ describe("compilation 2", () => {
     const builder = new Builder(typeSchema);
     const string = (value: string) => builder.string(value);
 
-    await testCase2(builder.script(string("hello world!")), typeSchema);
+    await testCase(builder.script(string("hello world!")), typeSchema);
   });
 });
+
+describe("process calc compilation", () => {});
+
+describe("effect handlers compilation", () => {});
+
+describe("macros compilation", () => {});
+
+describe("dependent types compilation", () => {});
+
+describe("modules compilation", () => {});
+
+// is type operator
+describe("reflection compilation", () => {});
