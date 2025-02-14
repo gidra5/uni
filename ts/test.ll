@@ -3,6 +3,8 @@
 %closure_type = type { i64 }
 %fn_type = type i64 (i64)*
 %closure_fn_type = type { i64 (%closure_type, %fn_type)*, %closure_type* }
+declare i32 @c_hello()
+declare i32 @cuda_hello()
 
 define i32 @main() {
 entry:
@@ -14,6 +16,8 @@ entry:
   %closure_fn = extractvalue %closure_fn_type %var_0, 0
   %var_1 = call i64 %closure_fn(%closure_type %closure_value, %fn_type @fn)
   call void @printf([4 x i8]* @.str, i64 %var_1)
+  call void @c_hello()
+  call void @cuda_hello()
   ret i32 0
 }
 
