@@ -318,6 +318,7 @@
 
 Оператор `|` достаточно удобен в такой интерпретации - позволяет нативно описывать подобие множеств (set) или случаи когда может быть несколько вариантов значений, как в юнионе типов.
   
+
 [Pi-calculus](https://en.wikipedia.org/wiki/%CE%A0-calculus)
 [concurrent lambda calculus](https://www.researchgate.net/publication/2647424_From_a_Concurrent_lambda-calculus_to_the_pi-calculus)
 [synchronous pi calculus](https://www.cse.iitd.ac.in/~sak/courses/stc/Milner-SCCS.pdf)

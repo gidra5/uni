@@ -17,6 +17,7 @@ invariants include:
 3. Uniqueness - if reference is the only reference to underlying value. That allows opaque in-place mutations. A dual invariant affinity - if reference must be used exactly once or it can be reused. For example to prevent leaks a cleanup function must be called exactly once which allows to preserve uniqueness after function call.
 5. Contention - if reference can be safely read from or written to. In a multithreaded context, writes and reads create data-race conditions, so knowing if given reference is contended is useful to prevent such race conditions. A dual invariant portable - if reference can be safely moved through thread border, which allows to preserve contention after function call.
 6. Mutability - if reference can be changed. If value is immutable, then many other modes can be assumed as well.
+7. Memory region locality - if value is stored in a memory region that is not shared with other threads. This allows to express that value is stored in a GPU memory for example.
 
 Dual invariants are essentially invariants for input and output values of a function respectively.
 Modes can have a submoding relation, similar to subtyping for types. Any submoded value can be used in place of mode value.
