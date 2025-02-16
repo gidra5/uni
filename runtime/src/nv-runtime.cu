@@ -11,8 +11,3 @@ extern "C" int cuda_hello()
   cudaDeviceSynchronize();
   return 0;
 }
-
-// int main()
-// {
-//   return cuda_hello();
-// }

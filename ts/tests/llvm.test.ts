@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect } from "vitest";
+import { beforeAll, beforeEach, describe, expect } from "vitest";
 import { test } from "@fast-check/vitest";
 import { parseTokenGroups } from "../src/parser/tokenGroups";
 import { parseScript } from "../src/parser/parser";
@@ -14,6 +14,28 @@ import { assert, nextId } from "../src/utils";
 import { resolve } from "../src/analysis/scope";
 import { PhysicalType } from "../src/analysis/types/utils";
 
+const _exec = async (command: string, input?: string) => {
+  const cmd = exec(command);
+
+  const stdout: any[] = [];
+  const stderr: any[] = [];
+  cmd.stdout?.on("data", (data) => stdout.push(data));
+  cmd.stderr?.on("data", (data) => stderr.push(data));
+
+  cmd.stdin?.write(input);
+  cmd.stdin?.end();
+
+  await new Promise((resolve) => cmd.on("exit", resolve));
+  return { stdout, stderr };
+};
+const RUNTIME_PATH = "../../runtime/";
+const C_RUNTIME_PATH = RUNTIME_PATH + "build/rt.so";
+const NV_RUNTIME_PATH = RUNTIME_PATH + "build/nv-rt.so";
+
+beforeAll(async () => {
+  await _exec(RUNTIME_PATH + "/compile-shared.sh");
+});
+
 beforeEach(() => {
   register(Injectable.FileMap, new FileMap());
   register(Injectable.PrecedenceMap, new Map());
@@ -26,27 +48,26 @@ beforeEach(() => {
   register(Injectable.NodeToVariableMap, new Map());
 });
 
+const build = async (compiled: string, out: string) => {
+  return await _exec(
+    `clang-18 -O3 ${C_RUNTIME_PATH} ${NV_RUNTIME_PATH} -x ir - -o ${out} -Wno-override-module`,
+    compiled
+  );
+};
+
 const testCase = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
   resolve(ast, globalResolvedNames);
   const compiled = generateLLVMCode(ast, typeSchema);
   expect(compiled).toMatchSnapshot("compiled");
 
-  // const optimized: any[] = [];
-  const stdout: any[] = [];
-  const stderr: any[] = [];
-  const interpreter = exec("lli-18");
-  const optimizer = exec(`opt-18 -f -S -O3`);
-  interpreter.stdout?.on("data", (data) => stdout.push(data));
-  interpreter.stderr?.on("data", (data) => stderr.push(data));
-  optimizer.stderr?.on("data", (data) => stderr.push(data));
-  optimizer.stdout?.pipe(interpreter.stdin!);
-  // optimizer.stdout?.on("data", (data) => optimized.push(data));
-  optimizer.stdin?.write(compiled);
-  optimizer.stdin?.end();
+  const file = "./test";
+  const compileOutput = await build(compiled, file);
+  const runOutput = await _exec(file);
+  await _exec(`rm ${file}`);
 
-  await new Promise((resolve) => interpreter.on("exit", resolve));
+  const stdout = compileOutput.stdout.concat(runOutput.stdout);
+  const stderr = compileOutput.stderr.concat(runOutput.stderr);
 
-  // expect(optimized.join("")).toMatchSnapshot("optimized");
   expect(stdout).toMatchSnapshot("stdout");
   expect(stderr).toMatchSnapshot("stderr");
 };
@@ -491,7 +512,34 @@ describe("simply typed lambda calc compilation", () => {
   });
 });
 
-describe("process calc compilation", () => {});
+describe("structured programming compilation", () => {
+  // test("if-then", () => testCase(`if true: 123`));
+  // test("if-then-else", () => testCase(`if true: 123 else 456`));
+  // test("sequence", () => testCase(`123; 234; 345; 456`));
+  // test("block", () => testCase(`{ 123 }`));
+  // test("for loop", () => testCase(`for x in (1, 2, 3): x`));
+  // test("while loop", () => testCase(`while true: 123`));
+  // test("loop", () => testCase(`loop 123`));
+  // test("increment", () => testCase(`++x`));
+  // test("post increment", () => testCase(`x++`));
+});
+
+describe("process calc compilation", () => {
+  // test("channel send", () => testCase(`c <- 123`));
+  // test("channel receive", () => testCase(`<- c`));
+  // test("channel try send", () => testCase(`c <-? 123`));
+  // test("channel try receive", () => testCase(`<-? c`));
+  // test("try receive with assignment", () => testCase(`status := <-?numbers`));
+  // test("superposition value", () => testCase(`123 & 456`));
+  // test("parallel value", () => testCase(`123 | 456`));
+  // test("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
+  // test("parallel with channels", () => testCase(`c <- 123 | <- c`));
+  // test("select channels", () => testCase(`c1 + c2`));
+  // test("async", () => testCase(`async f x`));
+  // test("async index", () => testCase(`async f.a`));
+  // test("await async", () => testCase(`await async f x`));
+  // test("await", () => testCase(`await x + 1`));
+});
 
 describe("effect handlers compilation", () => {});
 
