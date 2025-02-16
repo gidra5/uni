@@ -18,22 +18,21 @@ export type PhysicalTypeSchema = Map<number, PhysicalType>;
 // supertype infers types that values will always satisfy (the actual values will be at most of these types)
 // for example, if a function only called with ints, then the type for its arguments will be int
 
-export const globalResolvedNames = Iterator.iter(["print"])
-  .map<Binding>((name) => [name, nextId()])
-  .toArray();
+const scope = [
+  ["print_int", { fn: { arg: "int", return: "int" } }],
+  ["print_string", { fn: { arg: "string", return: "string" } }],
+  ["print_float", { fn: { arg: "float", return: "float" } }],
+  ["print_symbol", { fn: { arg: "symbol", return: "symbol" } }],
+  ["true", "boolean"],
+  ["false", "boolean"],
+] as const satisfies [string, Type][];
 
-const globalNames = new Map<number, Type>([
-  [
-    globalResolvedNames[0][1],
-    {
-      and: [
-        { fn: { arg: "int", return: "int" } },
-        { fn: { arg: "float", return: "float" } },
-        { fn: { arg: "string", return: "string" } },
-      ],
-    },
-  ],
-]);
+const globalResolvedNames = Iterator.iter(scope)
+  .map<Binding>(([name]) => [name, nextId()])
+  .toMap();
+export const globalResolvedNamesArray = [...globalResolvedNames.entries()];
+
+const globalNames = new Map<number, Type>(scope.map(([name, type]) => [globalResolvedNames.get(name)!, type]));
 
 export class Context {
   unificationTable = new UnificationTable();
@@ -265,7 +264,7 @@ export const substituteConstraints = (ast: Tree, context: Context, map: TypeSche
 
 export const inferTypes = (ast: Tree): TypeSchema => {
   const context = new Context();
-  resolve(ast, globalResolvedNames);
+  resolve(ast, globalResolvedNamesArray);
   infer(ast, context);
   context.unificationTable.truncateTautologies();
   return substituteConstraints(ast, context);

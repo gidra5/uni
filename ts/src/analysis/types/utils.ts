@@ -2,7 +2,7 @@ import fc from "fast-check";
 import { assert, clamp, unreachable } from "../../utils";
 import { Iterator } from "iterator-js";
 
-export type PrimitiveType = "boolean" | "int" | "float" | "string" | "unknown" | "void";
+export type PrimitiveType = "boolean" | "int" | "float" | "string" | "symbol" | "unknown" | "void";
 export type DataType = PrimitiveType | { fn: { arg: Type; return: Type } } | { record: Type[]; labels?: string[] };
 export type Type = DataType | { variable: number } | { and: Type[] } | { or: Type[] } | { not: Type };
 

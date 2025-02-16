@@ -1,18 +1,15 @@
 import { beforeAll, beforeEach, describe, expect } from "vitest";
 import { test } from "@fast-check/vitest";
-import { parseTokenGroups } from "../src/parser/tokenGroups";
-import { parseScript } from "../src/parser/parser";
 import { generateLLVMCode } from "../src/codegen/llvm";
 import { exec } from "child_process";
 import { Injectable, register } from "../src/utils/injector";
 import { FileMap } from "codespan-napi";
-import { globalResolvedNames, inferPhysical, inferTypes, PhysicalTypeSchema } from "../src/analysis/types/infer";
-import { desugar } from "../src/analysis/desugar";
-import dedent from "dedent";
+import { globalResolvedNamesArray, PhysicalTypeSchema } from "../src/analysis/types/infer";
 import { NodeType, Tree } from "../src/ast";
 import { assert, nextId } from "../src/utils";
 import { resolve } from "../src/analysis/scope";
 import { PhysicalType } from "../src/analysis/types/utils";
+import path from "path";
 
 const _exec = async (command: string, input?: string) => {
   const cmd = exec(command);
@@ -22,15 +19,17 @@ const _exec = async (command: string, input?: string) => {
   cmd.stdout?.on("data", (data) => stdout.push(data));
   cmd.stderr?.on("data", (data) => stderr.push(data));
 
-  cmd.stdin?.write(input);
-  cmd.stdin?.end();
+  if (input) {
+    cmd.stdin?.write(input);
+    cmd.stdin?.end();
+  }
 
   await new Promise((resolve) => cmd.on("exit", resolve));
   return { stdout, stderr };
 };
-const RUNTIME_PATH = "../../runtime/";
-const C_RUNTIME_PATH = RUNTIME_PATH + "build/rt.so";
-const NV_RUNTIME_PATH = RUNTIME_PATH + "build/nv-rt.so";
+const RUNTIME_PATH = path.resolve(__dirname, "../../runtime/");
+const C_RUNTIME_PATH = RUNTIME_PATH + "/build/c-runtime.so";
+const NV_RUNTIME_PATH = RUNTIME_PATH + "/build/nv-runtime.so";
 
 beforeAll(async () => {
   await _exec(RUNTIME_PATH + "/compile-shared.sh");
@@ -56,9 +55,9 @@ const build = async (compiled: string, out: string) => {
 };
 
 const testCase = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
-  resolve(ast, globalResolvedNames);
+  resolve(ast, globalResolvedNamesArray);
   const compiled = generateLLVMCode(ast, typeSchema);
-  expect(compiled).toMatchSnapshot("compiled");
+  expect.soft(compiled).toMatchSnapshot("compiled");
 
   const file = "./test";
   const compileOutput = await build(compiled, file);
@@ -87,10 +86,54 @@ class Builder {
     };
   }
 
+  printInt() {
+    return this.name(Builder.fnType([{ int: 32 }], { int: 32 }, []), "print_int");
+  }
+
+  printString() {
+    return this.name(Builder.fnType([{ pointer: { int: 8 } }], { pointer: { int: 8 } }, []), "print_string");
+  }
+
+  printSymbol() {
+    return this.name(Builder.fnType([{ pointer: "unknown" }], { pointer: "unknown" }, []), "print_symbol");
+  }
+
+  declare(name: string, value: Tree) {
+    const type = this.typeSchema.get(value.id)!;
+    const nameNode = this.name(type, name);
+    return this.node(NodeType.DECLARE, type, {}, [nameNode, value]);
+  }
+
+  assign(name: string, value: Tree) {
+    const type = this.typeSchema.get(value.id)!;
+    const nameNode = this.name(type, name);
+    return this.node(NodeType.ASSIGN, type, {}, [nameNode, value]);
+  }
+
   script(...children: Tree[]) {
     const last = children[children.length - 1];
     const type = this.typeSchema.get(last.id)!;
     return this.node(NodeType.SCRIPT, type, {}, children);
+  }
+
+  sequence(...children: Tree[]) {
+    const last = children[children.length - 1];
+    const type = this.typeSchema.get(last.id)!;
+    return this.node(NodeType.SEQUENCE, type, {}, children);
+  }
+
+  block(...children: Tree[]) {
+    const seq = this.sequence(...children);
+    const type = this.typeSchema.get(seq.id)!;
+    return this.node(NodeType.BLOCK, type, {}, [seq]);
+  }
+
+  if(condition: Tree, then: Tree, _else?: Tree) {
+    const type = this.typeSchema.get(then.id)!;
+    then = this.block(then);
+    if (_else) _else = this.block(_else);
+    if (_else) return this.node(NodeType.IF, type, {}, [condition, then, _else]);
+    return this.node(NodeType.IF, type, {}, [condition, then]);
   }
 
   app(f: Tree, ...x: Tree[]) {
@@ -123,6 +166,21 @@ class Builder {
 
   name(type: PhysicalType, value: string) {
     return this.node(NodeType.NAME, type, { value }, []);
+  }
+
+  symbol(value?: string) {
+    if (!value) value = String(nextId());
+    const name = `symbol_${value}`;
+    return this.node(NodeType.ATOM, { pointer: "unknown" }, { name }, []);
+  }
+
+  atom(value: string) {
+    const name = `atom_${value}`;
+    return this.node(NodeType.ATOM, { pointer: "unknown" }, { name }, []);
+  }
+
+  unit() {
+    return this.node(NodeType.ATOM, { pointer: "unknown" }, { name: "unit" }, []);
   }
 
   int(value: number) {
@@ -164,7 +222,7 @@ describe("simply typed lambda calc compilation", () => {
     await testCase(
       builder.script(
         app(
-          name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
+          builder.printInt(),
           app(
             app(
               app(
@@ -198,7 +256,7 @@ describe("simply typed lambda calc compilation", () => {
     await testCase(
       builder.script(
         app(
-          name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
+          builder.printInt(),
           app(
             fn(
               [
@@ -231,7 +289,7 @@ describe("simply typed lambda calc compilation", () => {
     await testCase(
       builder.script(
         app(
-          name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
+          builder.printInt(),
           app(
             app(
               fn([name(fnType([{ int: 32 }], { int: 32 }, []), "f")], (f) =>
@@ -260,7 +318,7 @@ describe("simply typed lambda calc compilation", () => {
     await testCase(
       builder.script(
         app(
-          name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
+          builder.printInt(),
           app(
             app(
               app(
@@ -296,7 +354,7 @@ describe("simply typed lambda calc compilation", () => {
     await testCase(
       builder.script(
         app(
-          name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
+          builder.printInt(),
           app(
             fn(
               [
@@ -314,14 +372,6 @@ describe("simply typed lambda calc compilation", () => {
       ),
       typeSchema
     );
-    // await testCase2(dedent`
-    //   print(
-    //     (
-    //       (fn x -> fn y -> fn m -> m x y)
-    //       1 2
-    //     )
-    //     fn x -> fn _ -> x
-    //   )`);
   });
 
   test("function closure", async () => {
@@ -333,13 +383,11 @@ describe("simply typed lambda calc compilation", () => {
     const int = (value: number) => builder.int(value);
     const add = (...args: Tree[]) => builder.add(...args);
     const mult = (...args: Tree[]) => builder.mult(...args);
-    const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
-      Builder.fnType(args, returnType, closure);
 
     await testCase(
       builder.script(
         app(
-          name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
+          builder.printInt(),
           app(
             app(
               fn([name({ int: 32 }, "x")], (x) => fn([name({ int: 32 }, "y")], (y) => add(y(), mult(int(2), x())))),
@@ -362,13 +410,11 @@ describe("simply typed lambda calc compilation", () => {
     const int = (value: number) => builder.int(value);
     const add = (...args: Tree[]) => builder.add(...args);
     const mult = (...args: Tree[]) => builder.mult(...args);
-    const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
-      Builder.fnType(args, returnType, closure);
 
     await testCase(
       builder.script(
         app(
-          name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
+          builder.printInt(),
           app(
             fn([name({ int: 32 }, "x"), name({ int: 32 }, "y")], (x, y) => add(y(), mult(int(2), x()))),
             int(1),
@@ -388,13 +434,11 @@ describe("simply typed lambda calc compilation", () => {
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const int = (value: number) => builder.int(value);
     const add = (...args: Tree[]) => builder.add(...args);
-    const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
-      Builder.fnType(args, returnType, closure);
 
     await testCase(
       builder.script(
         app(
-          name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
+          builder.printInt(),
           app(
             app(
               app(
@@ -420,14 +464,12 @@ describe("simply typed lambda calc compilation", () => {
     const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const int = (value: number) => builder.int(value);
-    const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
-      Builder.fnType(args, returnType, closure);
     const add = (...args: Tree[]) => builder.add(...args);
 
     await testCase(
       builder.script(
         app(
-          name(fnType([{ int: 32 }], { int: 32 }, []), "print"),
+          builder.printInt(),
           app(
             fn([name({ int: 32 }, "x")], (x) => add(x(), x())),
             int(2)
@@ -442,44 +484,40 @@ describe("simply typed lambda calc compilation", () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const int = (value: number) => builder.int(value);
-    const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
-      Builder.fnType(args, returnType, closure);
 
-    await testCase(builder.script(app(name(fnType([{ int: 32 }], { int: 32 }, []), "print"), int(1))), typeSchema);
+    await testCase(builder.script(app(builder.printInt(), int(1))), typeSchema);
   });
 
   test("hello world", async () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const string = (value: string) => builder.string(value);
-    const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
-      Builder.fnType(args, returnType, closure);
 
-    await testCase(
-      builder.script(
-        app(name(fnType([{ pointer: { int: 8 } }], { pointer: { int: 8 } }, []), "print"), string("hello world!"))
-      ),
-      typeSchema
-    );
+    await testCase(builder.script(app(builder.printString(), string("hello world!"))), typeSchema);
   });
 
+  test("hello world string", async () => {
+    const typeSchema = new Map<number, PhysicalType>();
+    const builder = new Builder(typeSchema);
+    const string = (value: string) => builder.string(value);
+
+    await testCase(builder.script(string("hello world!")), typeSchema);
+  });
+});
+
+describe("structured programming compilation", () => {
   test("hello world twice", async () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const string = (value: string) => builder.string(value);
-    const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
-      Builder.fnType(args, returnType, closure);
 
     await testCase(
       builder.script(
-        app(name(fnType([{ pointer: { int: 8 } }], { pointer: { int: 8 } }, []), "print"), string("hello world!")),
-        app(name(fnType([{ pointer: { int: 8 } }], { pointer: { int: 8 } }, []), "print"), string("hello world!"))
+        app(builder.printString(), string("hello world!")),
+        app(builder.printString(), string("hello world!"))
       ),
       typeSchema
     );
@@ -496,58 +534,231 @@ describe("simply typed lambda calc compilation", () => {
 
     await testCase(
       builder.script(
-        app(name(fnType([{ pointer: { int: 8 } }], { pointer: { int: 8 } }, []), "print"), string("hello world!")),
-        app(name(fnType([{ pointer: { int: 8 } }], { pointer: { int: 8 } }, []), "print"), string("hello world 2!"))
+        app(builder.printString(), string("hello world!")),
+        app(builder.printString(), string("hello world 2!"))
       ),
       typeSchema
     );
   });
 
-  test("hello world string", async () => {
+  test("sequence", async () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
-    const string = (value: string) => builder.string(value);
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+    const int = (value: number) => builder.int(value);
+    const sequence = (...args: Tree[]) => builder.sequence(...args);
 
-    await testCase(builder.script(string("hello world!")), typeSchema);
+    await testCase(
+      builder.script(app(builder.printInt(), sequence(int(123), int(234), int(345), int(456)))),
+      typeSchema
+    );
+  });
+
+  test("block", async () => {
+    const typeSchema = new Map<number, PhysicalType>();
+    const builder = new Builder(typeSchema);
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+    const int = (value: number) => builder.int(value);
+    const block = (...args: Tree[]) => builder.block(...args);
+
+    await testCase(builder.script(app(builder.printInt(), block(int(123), int(234), int(345), int(456)))), typeSchema);
+  });
+
+  test("block variable declaration", async () => {
+    const typeSchema = new Map<number, PhysicalType>();
+    const builder = new Builder(typeSchema);
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+    const name = (type: PhysicalType, value: string) => builder.name(type, value);
+    const declare = (name: string, value: Tree) => builder.declare(name, value);
+    const int = (value: number) => builder.int(value);
+    const block = (...args: Tree[]) => builder.block(...args);
+
+    await testCase(
+      builder.script(app(builder.printInt(), block(declare("x", int(123)), name({ int: 32 }, "x")))),
+      typeSchema
+    );
+  });
+
+  test("block variable shadowing", async () => {
+    const typeSchema = new Map<number, PhysicalType>();
+    const builder = new Builder(typeSchema);
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+    const name = (type: PhysicalType, value: string) => builder.name(type, value);
+    const declare = (name: string, value: Tree) => builder.declare(name, value);
+    const int = (value: number) => builder.int(value);
+    const block = (...args: Tree[]) => builder.block(...args);
+
+    await testCase(
+      builder.script(
+        app(builder.printInt(), block(declare("x", int(123)), declare("x", int(234)), name({ int: 32 }, "x")))
+      ),
+      typeSchema
+    );
+  });
+
+  test("block variable assingment", async () => {
+    const typeSchema = new Map<number, PhysicalType>();
+    const builder = new Builder(typeSchema);
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+    const name = (type: PhysicalType, value: string) => builder.name(type, value);
+    const declare = (name: string, value: Tree) => builder.declare(name, value);
+    const assign = (name: string, value: Tree) => builder.assign(name, value);
+    const add = (lhs: Tree, rhs: Tree) => builder.add(lhs, rhs);
+    const int = (value: number) => builder.int(value);
+    const block = (...args: Tree[]) => builder.block(...args);
+
+    await testCase(
+      builder.script(
+        app(
+          builder.printInt(),
+          block(declare("x", int(123)), assign("x", add(name({ int: 32 }, "x"), int(1))), name({ int: 32 }, "x"))
+        )
+      ),
+      typeSchema
+    );
+  });
+
+  test("if-then", async () => {
+    const typeSchema = new Map<number, PhysicalType>();
+    const builder = new Builder(typeSchema);
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+    const int = (value: number) => builder.int(value);
+    const _true = () => builder.name({ int: 1 }, "true");
+    const _if = (condition: Tree, then: Tree, _else?: Tree) => builder.if(condition, then, _else);
+
+    await testCase(builder.script(app(builder.printInt(), _if(_true(), int(123)))), typeSchema);
+  });
+
+  test("if-then-else", async () => {
+    const typeSchema = new Map<number, PhysicalType>();
+    const builder = new Builder(typeSchema);
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+    const int = (value: number) => builder.int(value);
+    const _false = () => builder.name({ int: 1 }, "false");
+    const _if = (condition: Tree, then: Tree, _else?: Tree) => builder.if(condition, then, _else);
+
+    await testCase(builder.script(app(builder.printInt(), _if(_false(), int(123), int(456)))), typeSchema);
   });
 });
 
-describe("structured programming compilation", () => {
-  // test("if-then", () => testCase(`if true: 123`));
-  // test("if-then-else", () => testCase(`if true: 123 else 456`));
-  // test("sequence", () => testCase(`123; 234; 345; 456`));
-  // test("block", () => testCase(`{ 123 }`));
-  // test("for loop", () => testCase(`for x in (1, 2, 3): x`));
-  // test("while loop", () => testCase(`while true: 123`));
-  // test("loop", () => testCase(`loop 123`));
-  // test("increment", () => testCase(`++x`));
-  // test("post increment", () => testCase(`x++`));
+describe("data structures compilation", () => {
+  test.only("unit", async () => {
+    const typeSchema = new Map<number, PhysicalType>();
+    const builder = new Builder(typeSchema);
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+    const _unit = () => builder.unit();
+
+    await testCase(builder.script(app(builder.printSymbol(), _unit())), typeSchema);
+  });
+
+  // it("symbol", async () => {
+  //   const input = `symbol "name"`;
+  //   const result = await evaluate(input);
+  //   expect(isSymbol(result)).toBe(true);
+  // });
+
+  // it("channel", async () => {
+  //   const input = `channel "name"`;
+  //   const result = await evaluate(input);
+  //   expect(isChannel(result)).toBe(true);
+  // });
+
+  // it("atom (global symbol)", async () => {
+  //   const input = `:atom`;
+  //   const result = await evaluate(input);
+  //   expect(isSymbol(result)).toBe(true);
+  // });
+
+  // it("tuple", async () => {
+  //   const input = `1, 2`;
+  //   const result = await evaluate(input);
+  //   expect(result).toStrictEqual([1, 2]);
+  // });
+
+  // it("record", async () => {
+  //   const input = `a: 1, b: 2`;
+  //   const result = await evaluate(input);
+  //   expect(result).toStrictEqual(createRecord({ a: 1, b: 2 }));
+  // });
+
+  // it("set", async () => {
+  //   const input = `set(1, 2, 2).values()`;
+  //   const result = await evaluate(input);
+  //   expect(result).toEqual([1, 2]);
+  // });
+
+  // it("dictionary", async () => {
+  //   const input = `[1]: 2, [3]: 4`;
+  //   const result = await evaluate(input);
+  //   expect(result).toStrictEqual(
+  //     createRecord([
+  //       [1, 2],
+  //       [3, 4],
+  //     ])
+  //   );
+  // });
+
+  // it("map without braces", async () => {
+  //   const input = `1+2: 3, 4+5: 6`;
+  //   const result = await evaluate(input);
+  //   expect(result).toStrictEqual(
+  //     createRecord([
+  //       [3, 3],
+  //       [9, 6],
+  //     ])
+  //   );
+  // });
+
+  // it("field access static", async () => {
+  //   const input = `record := a: 1, b: 2; record.a`;
+  //   const result = await evaluate(input);
+  //   expect(result).toBe(1);
+  // });
+
+  // it("field access dynamic", async () => {
+  //   const input = `map := "some string": 1, b: 2; map["some string"]`;
+  //   const result = await evaluate(input);
+  //   expect(result).toBe(1);
+  // });
 });
 
-describe("process calc compilation", () => {
-  // test("channel send", () => testCase(`c <- 123`));
-  // test("channel receive", () => testCase(`<- c`));
-  // test("channel try send", () => testCase(`c <-? 123`));
-  // test("channel try receive", () => testCase(`<-? c`));
-  // test("try receive with assignment", () => testCase(`status := <-?numbers`));
-  // test("superposition value", () => testCase(`123 & 456`));
-  // test("parallel value", () => testCase(`123 | 456`));
-  // test("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
-  // test("parallel with channels", () => testCase(`c <- 123 | <- c`));
-  // test("select channels", () => testCase(`c1 + c2`));
-  // test("async", () => testCase(`async f x`));
-  // test("async index", () => testCase(`async f.a`));
-  // test("await async", () => testCase(`await async f x`));
-  // test("await", () => testCase(`await x + 1`));
-});
+// describe("process calc compilation", () => {
+//   // test("channel send", () => testCase(`c <- 123`));
+//   // test("channel receive", () => testCase(`<- c`));
+//   // test("channel try send", () => testCase(`c <-? 123`));
+//   // test("channel try receive", () => testCase(`<-? c`));
+//   // test("try receive with assignment", () => testCase(`status := <-?numbers`));
+//   // test("superposition value", () => testCase(`123 & 456`));
+//   // test("parallel value", () => testCase(`123 | 456`));
+//   // test("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
+//   // test("parallel with channels", () => testCase(`c <- 123 | <- c`));
+//   // test("select channels", () => testCase(`c1 + c2`));
+//   // test("async", () => testCase(`async f x`));
+//   // test("await", () => testCase(`await x + 1`));
+// });
 
-describe("effect handlers compilation", () => {});
+// describe("gpu kernel compilation", () => {
+//   // test("channel send", () => testCase(`c <- 123`));
+//   // test("channel receive", () => testCase(`<- c`));
+//   // test("channel try send", () => testCase(`c <-? 123`));
+//   // test("channel try receive", () => testCase(`<-? c`));
+//   // test("try receive with assignment", () => testCase(`status := <-?numbers`));
+//   // test("superposition value", () => testCase(`123 & 456`));
+//   // test("parallel value", () => testCase(`123 | 456`));
+//   // test("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
+//   // test("parallel with channels", () => testCase(`c <- 123 | <- c`));
+//   // test("select channels", () => testCase(`c1 + c2`));
+//   // test("async", () => testCase(`async f x`));
+//   // test("await", () => testCase(`await x + 1`));
+// });
 
-describe("macros compilation", () => {});
+// describe("effect handlers compilation", () => {});
 
-describe("dependent types compilation", () => {});
+// describe("macros compilation", () => {});
 
-describe("modules compilation", () => {});
+// describe("dependent types compilation", () => {});
 
-// is type operator
-describe("reflection compilation", () => {});
+// describe("modules compilation", () => {});
+
+// // is type operator
+// describe("reflection compilation", () => {});

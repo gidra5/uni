@@ -25,44 +25,17 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       return values.reduce((acc, value) => context.builder.createMul(acc, value));
     }
     case NodeType.NAME: {
-      if (ast.data.value === "print") {
-        const printf = context.builder.declareFunction("printf", [{ pointer: "i8" }, "..."], "i32");
-        const types = context.typeMap;
-        const type = types.get(ast.id);
-
-        assert(typeof type === "object");
-        assert("fn" in type);
-        assert(type.fn.args.length === 1);
-        const arg = type.fn.args[0];
-        if (typeof arg === "object" && "int" in arg) {
-          const printInt = context.builder.createFunction(
-            "printInt",
-            [{ pointer: "i32", structRet: true }, "{ }", "i32"],
-            (ret, _closure, arg1) => {
-              const fmt = context.builder.createString("%i\n");
-              const result = context.builder.createCall(printf, [fmt, arg1], "i32", [{ pointer: "i8" }, "..."]);
-
-              context.builder.createStore(result, ret);
-              context.builder.createReturn("void");
-              return "void";
-            }
-          );
-          return context.builder.createRecord([printInt, context.builder.createRecord([])]);
-        }
-
-        const printString = context.builder.createFunction(
-          "printString",
-          [{ pointer: "i32", structRet: true }, "{ }", "ptr"],
-          (ret, _closure, arg1) => {
-            const result = context.builder.createCall(printf, [arg1], "i32", [{ pointer: "i8" }, "..."]);
-
-            context.builder.createStore(result, ret);
-            context.builder.createReturn("void");
-            return "void";
-          }
-        );
-
-        return context.builder.createRecord([printString, context.builder.createRecord([])]);
+      if (ast.data.value === "print_symbol") {
+        return context.wrapFnPointer("print_symbol", ["ptr"], "ptr");
+      }
+      if (ast.data.value === "print_float") {
+        return context.wrapFnPointer("print_float", ["f64"], "f64");
+      }
+      if (ast.data.value === "print_string") {
+        return context.wrapFnPointer("print_string", [{ pointer: "i8" }], { pointer: "i8" });
+      }
+      if (ast.data.value === "print_int") {
+        return context.wrapFnPointer("print_int", ["i32"], "i32");
       }
       if (ast.data.value === "true") {
         return context.builder.createBool(true);
@@ -136,9 +109,38 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       beforeLast.forEach((child) => codegen(child, context));
       return codegen(last, context);
     }
-    case NodeType.SCRIPT:
+    case NodeType.BLOCK: {
+      const expr = ast.children[0];
+      const currentVariables = [...context.variables.entries()];
+      const result = codegen(expr, context);
+      context.variables = new Map(currentVariables);
+      return result;
+    }
+    case NodeType.ASSIGN:
+    case NodeType.DECLARE: {
+      const variable = inject(Injectable.NodeToVariableMap).get(ast.children[0].id)!;
+      const value = codegen(ast.children[1], context);
+      context.variables.set(variable, value);
+      return value;
+    }
+    case NodeType.IF: {
+      const condition = codegen(ast.children[0], context);
+      if (ast.children[2]) {
+        return context.builder.createIfElse(
+          condition,
+          () => codegen(ast.children[1], context),
+          () => codegen(ast.children[2], context)
+        );
+      }
+      return context.builder.createIf(condition, () => codegen(ast.children[1], context));
+    }
+    case NodeType.ATOM: {
+      return context.builder.createSymbol(ast.data.name);
+    }
+    case NodeType.SCRIPT: {
       ast.children.forEach((child) => codegen(child, context));
       return context.builder.createReturn("i32 0");
+    }
     default:
       unreachable();
   }
@@ -175,5 +177,6 @@ const generateLLVM = (ast: Tree, typeMap: PhysicalTypeSchema): Context => {
 
 export const generateLLVMCode = (ast: Tree, typeMap: PhysicalTypeSchema) => {
   const ctx = generateLLVM(ast, typeMap);
+  ctx.generateSymbolTable();
   return ctx.moduleString();
 };

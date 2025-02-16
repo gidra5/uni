@@ -32,14 +32,24 @@ export const resolve = (ast: Tree, names: Binding[] = []): number[] => {
       const body = ast.children[ast.children.length - 1];
       const args = ast.children.slice(0, -1);
       const bound = args.flatMap(resolveBindings);
-      names = [...names, ...bound];
+      const _names = [...names, ...bound];
       const boundVariables = bound.map(([, id]) => id);
       inject(Injectable.BoundVariablesMap).set(body.id, boundVariables);
 
-      const freeVars = exclude(resolve(body, names), boundVariables);
+      const freeVars = exclude(resolve(body, _names), boundVariables);
       inject(Injectable.ClosureVariablesMap).set(ast.id, freeVars);
 
       return freeVars;
+    }
+    case NodeType.DECLARE: {
+      const name = ast.children[0];
+      const resolved = resolve(ast.children[1], names);
+      const bound = resolveBindings(name);
+      names.push(...bound);
+      return resolved;
+    }
+    case NodeType.BLOCK: {
+      return resolve(ast.children[0], [...names]);
     }
     default:
       return unique(ast.children.flatMap((child) => resolve(child, names)));
