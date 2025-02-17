@@ -73,7 +73,7 @@ const testCase = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
 
 class Builder {
   private fnStack: { symbol: symbol; closure: Set<PhysicalType> }[] = [];
-  constructor(public typeSchema: PhysicalTypeSchema) {}
+  constructor(public typeSchema = new Map<number, PhysicalType>()) {}
 
   node(nodeType: NodeType, type: PhysicalType, data: any, children: Tree[]): Tree {
     const id = nextId();
@@ -210,8 +210,7 @@ class Builder {
 
 describe("simply typed lambda calc compilation", () => {
   test("either", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const int = (value: number) => builder.int(value);
@@ -239,13 +238,12 @@ describe("simply typed lambda calc compilation", () => {
           )
         )
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("either 2", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
@@ -272,13 +270,12 @@ describe("simply typed lambda calc compilation", () => {
           )
         )
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("apply", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
@@ -301,13 +298,12 @@ describe("simply typed lambda calc compilation", () => {
           )
         )
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("church tuple", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
@@ -337,13 +333,12 @@ describe("simply typed lambda calc compilation", () => {
           )
         )
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("church tuple 2", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
@@ -370,13 +365,12 @@ describe("simply typed lambda calc compilation", () => {
           )
         )
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("function closure", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
@@ -397,13 +391,12 @@ describe("simply typed lambda calc compilation", () => {
           )
         )
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("function multiple args", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
@@ -422,13 +415,12 @@ describe("simply typed lambda calc compilation", () => {
           )
         )
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("function deep closure", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
@@ -453,13 +445,12 @@ describe("simply typed lambda calc compilation", () => {
           )
         )
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("function application and literal print", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
@@ -476,41 +467,37 @@ describe("simply typed lambda calc compilation", () => {
           )
         )
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("print number", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const int = (value: number) => builder.int(value);
 
-    await testCase(builder.script(app(builder.printInt(), int(1))), typeSchema);
+    await testCase(builder.script(app(builder.printInt(), int(1))), builder.typeSchema);
   });
 
   test("hello world", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const string = (value: string) => builder.string(value);
 
-    await testCase(builder.script(app(builder.printString(), string("hello world!"))), typeSchema);
+    await testCase(builder.script(app(builder.printString(), string("hello world!"))), builder.typeSchema);
   });
 
   test("hello world string", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const string = (value: string) => builder.string(value);
 
-    await testCase(builder.script(string("hello world!")), typeSchema);
+    await testCase(builder.script(string("hello world!")), builder.typeSchema);
   });
 });
 
 describe("structured programming compilation", () => {
   test("hello world twice", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const string = (value: string) => builder.string(value);
 
@@ -519,54 +506,50 @@ describe("structured programming compilation", () => {
         app(builder.printString(), string("hello world!")),
         app(builder.printString(), string("hello world!"))
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("two prints", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const string = (value: string) => builder.string(value);
-    const fnType = (args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) =>
-      Builder.fnType(args, returnType, closure);
 
     await testCase(
       builder.script(
         app(builder.printString(), string("hello world!")),
         app(builder.printString(), string("hello world 2!"))
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("sequence", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const int = (value: number) => builder.int(value);
     const sequence = (...args: Tree[]) => builder.sequence(...args);
 
     await testCase(
       builder.script(app(builder.printInt(), sequence(int(123), int(234), int(345), int(456)))),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("block", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const int = (value: number) => builder.int(value);
     const block = (...args: Tree[]) => builder.block(...args);
 
-    await testCase(builder.script(app(builder.printInt(), block(int(123), int(234), int(345), int(456)))), typeSchema);
+    await testCase(
+      builder.script(app(builder.printInt(), block(int(123), int(234), int(345), int(456)))),
+      builder.typeSchema
+    );
   });
 
   test("block variable declaration", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const declare = (name: string, value: Tree) => builder.declare(name, value);
@@ -575,13 +558,12 @@ describe("structured programming compilation", () => {
 
     await testCase(
       builder.script(app(builder.printInt(), block(declare("x", int(123)), name({ int: 32 }, "x")))),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("block variable shadowing", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const declare = (name: string, value: Tree) => builder.declare(name, value);
@@ -592,13 +574,12 @@ describe("structured programming compilation", () => {
       builder.script(
         app(builder.printInt(), block(declare("x", int(123)), declare("x", int(234)), name({ int: 32 }, "x")))
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("block variable assingment", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
     const declare = (name: string, value: Tree) => builder.declare(name, value);
@@ -614,60 +595,63 @@ describe("structured programming compilation", () => {
           block(declare("x", int(123)), assign("x", add(name({ int: 32 }, "x"), int(1))), name({ int: 32 }, "x"))
         )
       ),
-      typeSchema
+      builder.typeSchema
     );
   });
 
   test("if-then", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const int = (value: number) => builder.int(value);
     const _true = () => builder.name({ int: 1 }, "true");
     const _if = (condition: Tree, then: Tree, _else?: Tree) => builder.if(condition, then, _else);
 
-    await testCase(builder.script(app(builder.printInt(), _if(_true(), int(123)))), typeSchema);
+    await testCase(builder.script(app(builder.printInt(), _if(_true(), int(123)))), builder.typeSchema);
   });
 
   test("if-then-else", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const int = (value: number) => builder.int(value);
     const _false = () => builder.name({ int: 1 }, "false");
     const _if = (condition: Tree, then: Tree, _else?: Tree) => builder.if(condition, then, _else);
 
-    await testCase(builder.script(app(builder.printInt(), _if(_false(), int(123), int(456)))), typeSchema);
+    await testCase(builder.script(app(builder.printInt(), _if(_false(), int(123), int(456)))), builder.typeSchema);
   });
 });
 
 describe("data structures compilation", () => {
   test("unit", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const _unit = () => builder.unit();
 
-    await testCase(builder.script(app(builder.printSymbol(), _unit())), typeSchema);
+    await testCase(builder.script(app(builder.printSymbol(), _unit())), builder.typeSchema);
   });
 
   test("atom (global symbol)", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const atom = (name: string) => builder.atom(name);
 
-    await testCase(builder.script(app(builder.printSymbol(), atom("a"))), typeSchema);
+    await testCase(builder.script(app(builder.printSymbol(), atom("a"))), builder.typeSchema);
   });
 
   test("symbol", async () => {
-    const typeSchema = new Map<number, PhysicalType>();
-    const builder = new Builder(typeSchema);
+    const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const symbol = (name: string) => builder.symbol(name);
 
-    await testCase(builder.script(app(builder.printSymbol(), symbol("ab"))), typeSchema);
+    await testCase(builder.script(app(builder.printSymbol(), symbol("ab"))), builder.typeSchema);
   });
+
+  // test("tuple", async () => {
+  //   const builder = new Builder();
+  //   const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+  //   const symbol = (name: string) => builder.symbol(name);
+
+  //   await testCase(builder.script(app(builder.printSymbol(), symbol("ab"))), builder.typeSchema);
+  // });
 
   // it("channel", async () => {
   //   const input = `channel "name"`;
@@ -675,22 +659,10 @@ describe("data structures compilation", () => {
   //   expect(isChannel(result)).toBe(true);
   // });
 
-  // it("tuple", async () => {
-  //   const input = `1, 2`;
-  //   const result = await evaluate(input);
-  //   expect(result).toStrictEqual([1, 2]);
-  // });
-
   // it("record", async () => {
   //   const input = `a: 1, b: 2`;
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual(createRecord({ a: 1, b: 2 }));
-  // });
-
-  // it("set", async () => {
-  //   const input = `set(1, 2, 2).values()`;
-  //   const result = await evaluate(input);
-  //   expect(result).toEqual([1, 2]);
   // });
 
   // it("dictionary", async () => {
@@ -700,17 +672,6 @@ describe("data structures compilation", () => {
   //     createRecord([
   //       [1, 2],
   //       [3, 4],
-  //     ])
-  //   );
-  // });
-
-  // it("map without braces", async () => {
-  //   const input = `1+2: 3, 4+5: 6`;
-  //   const result = await evaluate(input);
-  //   expect(result).toStrictEqual(
-  //     createRecord([
-  //       [3, 3],
-  //       [9, 6],
   //     ])
   //   );
   // });
