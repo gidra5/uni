@@ -26,9 +26,9 @@ char *print_string(char *x)
   return x;
 }
 
-void *print_symbol(void *x)
+uint64_t print_symbol(uint64_t x)
 {
-  struct symbol_metadata_t sym = symbols_metadata[(uint64_t)x];
+  struct symbol_metadata_t sym = symbols_metadata[x];
   printf("Symbol(%s)\n", sym.name);
   return x;
 }

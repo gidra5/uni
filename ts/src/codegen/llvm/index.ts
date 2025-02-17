@@ -26,7 +26,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     }
     case NodeType.NAME: {
       if (ast.data.value === "print_symbol") {
-        return context.wrapFnPointer("print_symbol", ["ptr"], "ptr");
+        return context.wrapFnPointer("print_symbol", ["i64"], "i64");
       }
       if (ast.data.value === "print_float") {
         return context.wrapFnPointer("print_float", ["f64"], "f64");

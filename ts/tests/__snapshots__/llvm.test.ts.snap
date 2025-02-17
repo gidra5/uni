@@ -283,44 +283,46 @@ define void @printString(ptr sret(i32) %var_7, { } %var_8, ptr %var_9) {
 `;
 
 exports[`data structures compilation > unit > compiled 1`] = `
-"@const_15 = constant ptr inttoptr (i64 0 to ptr)
-@const_20 = constant [5 x i8] c"unit\\00"
-@symbols_metadata = constant [1 x { i8* }] [{ i8* } { i8* @const_20 }]
+"@const_15 = constant i64 0
+@const_21 = constant [5 x i8] c"unit\\00"
+@symbols_metadata_array = constant [1 x { i8* }] [{ i8* } { i8* @const_21 }]
+@symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
     %var_9 = alloca {  }
     %var_10 = load {  }, ptr %var_9
     store {  } %var_10, ptr %var_9
-    %var_11 = alloca { void (ptr, { }, ptr)*, {  } }
-    %var_12 = load { void (ptr, { }, ptr)*, {  } }, ptr %var_11
-    %var_13 = insertvalue { void (ptr, { }, ptr)*, {  } } %var_12, void (ptr, { }, ptr)* @print_symbol_wrap, 0
-    %var_14 = insertvalue { void (ptr, { }, ptr)*, {  } } %var_13, {  } %var_10, 1
-    store { void (ptr, { }, ptr)*, {  } } %var_14, ptr %var_11
-    %var_16 = extractvalue { void (ptr, { }, ptr)*, {  } } %var_14, 0
-    %var_17 = extractvalue { void (ptr, { }, ptr)*, {  } } %var_14, 1
-    %var_18 = alloca ptr
-    call void %var_16(ptr %var_18, { } %var_17, ptr @const_15)
-    %var_19 = load ptr, ptr %var_18
+    %var_11 = alloca { void (i64*, { }, i64)*, {  } }
+    %var_12 = load { void (i64*, { }, i64)*, {  } }, ptr %var_11
+    %var_13 = insertvalue { void (i64*, { }, i64)*, {  } } %var_12, void (i64*, { }, i64)* @print_symbol_wrap, 0
+    %var_14 = insertvalue { void (i64*, { }, i64)*, {  } } %var_13, {  } %var_10, 1
+    store { void (i64*, { }, i64)*, {  } } %var_14, ptr %var_11
+    %var_16 = load i64, ptr @const_15
+    %var_17 = extractvalue { void (i64*, { }, i64)*, {  } } %var_14, 0
+    %var_18 = extractvalue { void (i64*, { }, i64)*, {  } } %var_14, 1
+    %var_19 = alloca i64
+    call void %var_17(i64* %var_19, { } %var_18, i64 %var_16)
+    %var_20 = load i64, ptr %var_19
     ret i32 0
 }
-declare ptr @print_symbol(ptr)
-define void @print_symbol_wrap(ptr sret(ptr) %var_4, { } %var_5, ptr %var_6) {
+declare i64 @print_symbol(i64)
+define void @print_symbol_wrap(ptr sret(i64) %var_4, { } %var_5, i64 %var_6) {
   entry7: 
-    %var_8 = call ptr @print_symbol(ptr %var_6)
-    store ptr %var_8, ptr %var_4
+    %var_8 = call i64 @print_symbol(i64 %var_6)
+    store i64 %var_8, ptr %var_4
     ret void
 }
 "
 `;
 
-exports[`data structures compilation > unit > stderr 1`] = `
+exports[`data structures compilation > unit > stderr 1`] = `[]`;
+
+exports[`data structures compilation > unit > stdout 1`] = `
 [
   "Symbol(unit)
 ",
 ]
 `;
-
-exports[`data structures compilation > unit > stdout 1`] = `[]`;
 
 exports[`simply typed lambda calc compilation > apply > compiled 1`] = `
 "@const_66 = constant i32 2

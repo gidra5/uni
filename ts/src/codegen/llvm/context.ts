@@ -39,7 +39,7 @@ export type LLVMType =
   | { pointer: LLVMType; structRet?: boolean }
   | { record: LLVMType[] };
 
-type SymbolMetadata = { name: string };
+type SymbolMetadata = { name: string; id: number; value: LLVMValue };
 
 class Builder {
   functionIndex: number = 0;
@@ -47,7 +47,7 @@ class Builder {
   instructionIndex: number = 0;
   values: Map<string, LLVMValue> = new Map();
   types: Map<string, LLVMType> = new Map([["null", "ptr"]]);
-  symbols: SymbolMetadata[] = [];
+  symbols: Map<string, SymbolMetadata> = new Map();
 
   constructor(private context: Context) {}
 
@@ -151,12 +151,20 @@ class Builder {
   }
 
   createSymbol(name: string): LLVMValue {
-    const id = this.symbols.length;
-    const _value = `inttoptr (i64 ${String(id)} to ptr)`;
-    const value = this.getOrCreateConstant(_value, "ptr");
+    const ptr = (() => {
+      if (this.symbols.has(name)) {
+        return this.symbols.get(name)!.value;
+      }
 
-    this.symbols.push({ name });
+      const id = this.symbols.size;
+      const value = this.getOrCreateConstant(String(id), "i64");
 
+      this.symbols.set(name, { name, id, value });
+
+      return value;
+    })();
+
+    const value = this.createLoad(ptr);
     return value;
   }
 
@@ -456,16 +464,17 @@ export class Context {
   }
 
   generateSymbolTable() {
-    const symbolsCount = this.builder.symbols.length;
+    const symbolsCount = this.builder.symbols.size;
     const symbolMetadataType = this.builder.createRecordType([{ pointer: "i8" }]);
-    const symbolsMetadata = this.builder.symbols
+    const symbolsMetadata = [...this.builder.symbols.values()]
       .map(({ name }) => {
         const value = this.builder.createString(name);
         return `{ i8* } { i8* ${value} }`;
       })
       .join(", ");
     const tableType = this.builder.createArrayType(symbolMetadataType, symbolsCount);
-    this.builder.getOrCreateConstant(`[${symbolsMetadata}]`, tableType, "symbols_metadata");
+    const array = this.builder.getOrCreateConstant(`[${symbolsMetadata}]`, tableType, "symbols_metadata_array");
+    this.builder.getOrCreateConstant(array, "ptr", "symbols_metadata");
   }
 
   moduleString(): string {
