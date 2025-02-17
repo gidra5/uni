@@ -642,7 +642,7 @@ describe("structured programming compilation", () => {
 });
 
 describe("data structures compilation", () => {
-  test.only("unit", async () => {
+  test("unit", async () => {
     const typeSchema = new Map<number, PhysicalType>();
     const builder = new Builder(typeSchema);
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
@@ -651,22 +651,28 @@ describe("data structures compilation", () => {
     await testCase(builder.script(app(builder.printSymbol(), _unit())), typeSchema);
   });
 
-  // it("symbol", async () => {
-  //   const input = `symbol "name"`;
-  //   const result = await evaluate(input);
-  //   expect(isSymbol(result)).toBe(true);
-  // });
+  test("atom (global symbol)", async () => {
+    const typeSchema = new Map<number, PhysicalType>();
+    const builder = new Builder(typeSchema);
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+    const atom = (name: string) => builder.atom(name);
+
+    await testCase(builder.script(app(builder.printSymbol(), atom("a"))), typeSchema);
+  });
+
+  test("symbol", async () => {
+    const typeSchema = new Map<number, PhysicalType>();
+    const builder = new Builder(typeSchema);
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+    const symbol = (name: string) => builder.symbol(name);
+
+    await testCase(builder.script(app(builder.printSymbol(), symbol("ab"))), typeSchema);
+  });
 
   // it("channel", async () => {
   //   const input = `channel "name"`;
   //   const result = await evaluate(input);
   //   expect(isChannel(result)).toBe(true);
-  // });
-
-  // it("atom (global symbol)", async () => {
-  //   const input = `:atom`;
-  //   const result = await evaluate(input);
-  //   expect(isSymbol(result)).toBe(true);
   // });
 
   // it("tuple", async () => {
