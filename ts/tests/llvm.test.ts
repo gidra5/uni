@@ -49,7 +49,8 @@ beforeEach(() => {
 
 const build = async (compiled: string, out: string) => {
   return await _exec(
-    `clang-18 -O3 ${C_RUNTIME_PATH} ${NV_RUNTIME_PATH} -x ir - -o ${out} -Wno-override-module`,
+    `clang-18 -O3 ${C_RUNTIME_PATH} -x ir - -o ${out} -Wno-override-module`,
+    // `clang-18 -O3 ${C_RUNTIME_PATH} ${NV_RUNTIME_PATH} -x ir - -o ${out} -Wno-override-module`,
     compiled
   );
 };
@@ -95,7 +96,7 @@ class Builder {
   }
 
   printSymbol() {
-    return this.name(Builder.fnType([{ pointer: "unknown" }], { pointer: "unknown" }, []), "print_symbol");
+    return this.name(Builder.fnType([{ int: 64 }], { int: 64 }, []), "print_symbol");
   }
 
   printTuple() {
