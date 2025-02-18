@@ -145,7 +145,7 @@ class Builder {
     const fType = this.typeSchema.get(f.id)!;
     assert(typeof fType === "object");
     assert("fn" in fType);
-    return this.node(NodeType.APPLICATION, fType.fn.return, {}, [f, ...x]);
+    return this.node(NodeType.APPLICATION, fType.fn.ret, {}, [f, ...x]);
   }
 
   fn(x: Tree[], f: (...args: (() => Tree)[]) => Tree) {
@@ -208,8 +208,8 @@ class Builder {
     return this.node(NodeType.MULT, { int: 32 }, {}, args);
   }
 
-  static fnType(args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]) {
-    return { fn: { args, return: returnType, closure } };
+  static fnType(args: PhysicalType[], returnType: PhysicalType, closure: PhysicalType[]): PhysicalType {
+    return { fn: { args, ret: returnType, closure } };
   }
 }
 
@@ -650,14 +650,15 @@ describe("data structures compilation", () => {
     await testCase(builder.script(app(builder.printSymbol(), symbol("ab"))), builder.typeSchema);
   });
 
-  test("tuple", async () => {
+  test.only("tuple", async () => {
     const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const tuple = (...args: Tree[]) => builder.tuple(...args);
     const int = (value: number) => builder.int(value);
     const string = (value: string) => builder.string(value);
 
-    await testCase(builder.script(app(builder.printTuple(), tuple(int(1), string("ab")))), builder.typeSchema);
+    const tupleAst = tuple(int(1), string("ab"));
+    await testCase(builder.script(app(builder.printTuple(), tupleAst)), builder.typeSchema);
   });
 
   // it("channel", async () => {

@@ -231,7 +231,7 @@ export const inferPhysical = (typeMap: TypeSchema): PhysicalTypeSchema => {
         return physicalType;
       });
 
-      return { fn: { args: [arg], return: returnType, closure } };
+      return { fn: { args: [arg], ret: returnType, closure } };
     }
     if ("atom" in type) return { int: 32 };
 

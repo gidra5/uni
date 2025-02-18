@@ -13,7 +13,7 @@ export type PhysicalType =
   | { int: number } /** signed integer type, size in bytes */
   | { float: number } /** floating point type, size in bytes */
   | { pointer: PhysicalType }
-  | { fn: { args: PhysicalType[]; return: PhysicalType; closure: PhysicalType[] } }
+  | { fn: { args: PhysicalType[]; ret: PhysicalType; closure: PhysicalType[] } }
   | { tuple: PhysicalType[] }
   | { array: PhysicalType; length: number };
 

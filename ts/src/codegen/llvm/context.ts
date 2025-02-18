@@ -64,7 +64,7 @@ class Builder {
     if ("fn" in type) {
       const fnArgs = type.fn.args.map((type) => this.toLLVMType(type));
       const closure = type.fn.closure.map((type) => this.toLLVMType(type));
-      const returnType = this.toLLVMType(type.fn.return);
+      const returnType = this.toLLVMType(type.fn.ret);
       // const isLargeReturnType = isLargePhysicalType(type.fn.return);
       // const _returnType = isLargeReturnType ? "void" : LLVMReturnType;
       // const closureArgs = closure.length > 0 ? [this.createRecordType(closure)] : [];
