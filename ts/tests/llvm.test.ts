@@ -98,6 +98,11 @@ class Builder {
     return this.name(Builder.fnType([{ pointer: "unknown" }], { pointer: "unknown" }, []), "print_symbol");
   }
 
+  printTuple() {
+    const tupleType: PhysicalType = "void";
+    return this.name(Builder.fnType([tupleType], tupleType, []), "print_tuple");
+  }
+
   declare(name: string, value: Tree) {
     const type = this.typeSchema.get(value.id)!;
     const nameNode = this.name(type, name);
@@ -645,13 +650,15 @@ describe("data structures compilation", () => {
     await testCase(builder.script(app(builder.printSymbol(), symbol("ab"))), builder.typeSchema);
   });
 
-  // test("tuple", async () => {
-  //   const builder = new Builder();
-  //   const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-  //   const symbol = (name: string) => builder.symbol(name);
+  test("tuple", async () => {
+    const builder = new Builder();
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+    const tuple = (...args: Tree[]) => builder.tuple(...args);
+    const int = (value: number) => builder.int(value);
+    const string = (value: string) => builder.string(value);
 
-  //   await testCase(builder.script(app(builder.printSymbol(), symbol("ab"))), builder.typeSchema);
-  // });
+    await testCase(builder.script(app(builder.printTuple(), tuple(int(1), string("ab")))), builder.typeSchema);
+  });
 
   // it("channel", async () => {
   //   const input = `channel "name"`;
