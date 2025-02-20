@@ -42,6 +42,88 @@ exports[`data structures compilation > atom (global symbol) > stdout 1`] = `
 ]
 `;
 
+exports[`data structures compilation > boolean false > compiled 1`] = `
+"@const_15 = constant i1 0
+@symbols_metadata_array = constant [0 x { i8* }] []
+@symbols_metadata = constant ptr @symbols_metadata_array
+define i32 @main() {
+  main: 
+    %var_9 = alloca {  }
+    %var_10 = load {  }, ptr %var_9
+    store {  } %var_10, ptr %var_9
+    %var_11 = alloca { void (i1*, { }, i1)*, {  } }
+    %var_12 = load { void (i1*, { }, i1)*, {  } }, ptr %var_11
+    %var_13 = insertvalue { void (i1*, { }, i1)*, {  } } %var_12, void (i1*, { }, i1)* @print_bool_wrap, 0
+    %var_14 = insertvalue { void (i1*, { }, i1)*, {  } } %var_13, {  } %var_10, 1
+    store { void (i1*, { }, i1)*, {  } } %var_14, ptr %var_11
+    %var_16 = load i1, ptr @const_15
+    %var_17 = extractvalue { void (i1*, { }, i1)*, {  } } %var_14, 0
+    %var_18 = extractvalue { void (i1*, { }, i1)*, {  } } %var_14, 1
+    %var_19 = alloca i1
+    call void %var_17(i1* %var_19, { } %var_18, i1 %var_16)
+    %var_20 = load i1, ptr %var_19
+    ret i32 0
+}
+declare i1 @print_bool(i1)
+define void @print_bool_wrap(ptr sret(i1) %var_4, { } %var_5, i1 %var_6) {
+  entry7: 
+    %var_8 = call i1 @print_bool(i1 %var_6)
+    store i1 %var_8, ptr %var_4
+    ret void
+}
+"
+`;
+
+exports[`data structures compilation > boolean false > stderr 1`] = `[]`;
+
+exports[`data structures compilation > boolean false > stdout 1`] = `
+[
+  "false
+",
+]
+`;
+
+exports[`data structures compilation > boolean true > compiled 1`] = `
+"@const_15 = constant i1 1
+@symbols_metadata_array = constant [0 x { i8* }] []
+@symbols_metadata = constant ptr @symbols_metadata_array
+define i32 @main() {
+  main: 
+    %var_9 = alloca {  }
+    %var_10 = load {  }, ptr %var_9
+    store {  } %var_10, ptr %var_9
+    %var_11 = alloca { void (i1*, { }, i1)*, {  } }
+    %var_12 = load { void (i1*, { }, i1)*, {  } }, ptr %var_11
+    %var_13 = insertvalue { void (i1*, { }, i1)*, {  } } %var_12, void (i1*, { }, i1)* @print_bool_wrap, 0
+    %var_14 = insertvalue { void (i1*, { }, i1)*, {  } } %var_13, {  } %var_10, 1
+    store { void (i1*, { }, i1)*, {  } } %var_14, ptr %var_11
+    %var_16 = load i1, ptr @const_15
+    %var_17 = extractvalue { void (i1*, { }, i1)*, {  } } %var_14, 0
+    %var_18 = extractvalue { void (i1*, { }, i1)*, {  } } %var_14, 1
+    %var_19 = alloca i1
+    call void %var_17(i1* %var_19, { } %var_18, i1 %var_16)
+    %var_20 = load i1, ptr %var_19
+    ret i32 0
+}
+declare i1 @print_bool(i1)
+define void @print_bool_wrap(ptr sret(i1) %var_4, { } %var_5, i1 %var_6) {
+  entry7: 
+    %var_8 = call i1 @print_bool(i1 %var_6)
+    store i1 %var_8, ptr %var_4
+    ret void
+}
+"
+`;
+
+exports[`data structures compilation > boolean true > stderr 1`] = `[]`;
+
+exports[`data structures compilation > boolean true > stdout 1`] = `
+[
+  "true
+",
+]
+`;
+
 exports[`data structures compilation > symbol > compiled 1`] = `
 "@const_15 = constant i64 0
 @const_21 = constant [10 x i8] c"symbol_ab\\00"

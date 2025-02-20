@@ -99,6 +99,10 @@ class Builder {
     return this.name(Builder.fnType([{ int: 64 }], { int: 64 }, []), "print_symbol");
   }
 
+  printBoolean() {
+    return this.name(Builder.fnType([{ int: 1 }], { int: 1 }, []), "print_bool");
+  }
+
   printTuple() {
     const tupleType: PhysicalType = "void";
     return this.name(Builder.fnType([tupleType], tupleType, []), "print_tuple");
@@ -195,6 +199,10 @@ class Builder {
 
   string(value: string) {
     return this.node(NodeType.STRING, { array: { int: 8 }, length: value.length }, { value }, []);
+  }
+
+  bool(value: boolean) {
+    return this.name({ int: 1 }, value ? "true" : "false");
   }
 
   tuple(...args: Tree[]) {
@@ -651,12 +659,19 @@ describe("data structures compilation", () => {
     await testCase(builder.script(app(builder.printSymbol(), symbol("ab"))), builder.typeSchema);
   });
 
-  test.only("tuple", async () => {
+  test("boolean true", async () => {
     const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
-    const tuple = (...args: Tree[]) => builder.tuple(...args);
-    const int = (value: number) => builder.int(value);
-    const string = (value: string) => builder.string(value);
+
+    await testCase(builder.script(app(builder.printBoolean(), builder.bool(true))), builder.typeSchema);
+  });
+
+  test("boolean false", async () => {
+    const builder = new Builder();
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+
+    await testCase(builder.script(app(builder.printBoolean(), builder.bool(false))), builder.typeSchema);
+  });
 
     const tupleAst = tuple(int(1), string("ab"));
     await testCase(builder.script(app(builder.printTuple(), tupleAst)), builder.typeSchema);

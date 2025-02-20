@@ -534,6 +534,7 @@ export class Context {
       this.wrapFnPointer("print_string", [{ pointer: "i8" }], { pointer: "i8" })
     );
     this.variables.set(names.get("print_int")!, () => this.wrapFnPointer("print_int", ["i32"], "i32"));
+    this.variables.set(names.get("print_bool")!, () => this.wrapFnPointer("print_bool", ["i1"], "i1"));
     this.variables.set(names.get("true")!, () => this.builder.createBool(true));
     this.variables.set(names.get("false")!, () => this.builder.createBool(false));
   }

@@ -23,6 +23,7 @@ const scope = [
   ["print_string", { fn: { arg: "string", return: "string" } }],
   ["print_float", { fn: { arg: "float", return: "float" } }],
   ["print_symbol", { fn: { arg: "symbol", return: "symbol" } }],
+  ["print_bool", { fn: { arg: "boolean", return: "boolean" } }],
   ["true", "boolean"],
   ["false", "boolean"],
 ] as const satisfies [string, Type][];
