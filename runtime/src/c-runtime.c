@@ -1,11 +1,13 @@
-#include <stdio.h>
+#include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 
 enum type_t {
   INT,
   FLOAT,
   STRING,
   SYMBOL,
+  BOOLEAN,
   TUPLE,
   POINTER,
   FUNCTION,
@@ -25,19 +27,21 @@ struct string_type_metadata_t {
 
 struct tuple_type_metadata_t {
   int count;
-  enum type_t *types;
+  enum type_t* types;
 };
 
 struct pointer_type_metadata_t {
-  struct type_metadata_t *type;
+  struct type_metadata_t* type;
 };
 
 struct function_type_metadata_t {
-  struct type_metadata_t *ret;
+  struct type_metadata_t* ret;
+
   int args_count;
-  struct type_metadata_t *args;
+  struct type_metadata_t* args;
+
   int closure_count;
-  struct type_metadata_t *closure;
+  struct type_metadata_t* closure;
 };
 
 struct type_metadata_t {
@@ -52,11 +56,14 @@ struct type_metadata_t {
   } metadata;
 };
 
-struct type_metadata_t function_closure_type(struct function_type_metadata_t type) {
+struct type_metadata_t function_closure_type(
+  struct function_type_metadata_t type
+) {
   struct type_metadata_t closure_type = {
-      .type = TUPLE,
-      .metadata.tuple.count = type.closure_count,
-      .metadata.tuple.types = type.closure};
+    .type = TUPLE,
+    .metadata.tuple.count = type.closure_count,
+    .metadata.tuple.types = type.closure
+  };
   return closure_type;
 }
 
@@ -67,28 +74,30 @@ int type_size(struct type_metadata_t type) {
     case FLOAT:
       return type.metadata._float.size;
     case STRING:
-      return type.metadata.string.size;
+      return 8;
+    case BOOLEAN:
+      return 1;
     case TUPLE:
       return type.metadata.tuple.count;
     case POINTER:
       return 8;
     case FUNCTION:
       struct type_metadata_t closure = {
-          .type = TUPLE,
-          .metadata.tuple.count = type.metadata.function.closure_count,
-          .metadata.tuple.types = type.metadata.function.closure};
+        .type = TUPLE,
+        .metadata.tuple.count = type.metadata.function.closure_count,
+        .metadata.tuple.types = type.metadata.function.closure
+      };
       return type_size(closure) + 8;
     default:
       unreachable("cant compute type size");
   }
 }
 
-struct symbol_metadata_t
-{
-  char *name;
+struct symbol_metadata_t {
+  char* name;
 };
 
-extern struct symbol_metadata_t *symbols_metadata;
+extern struct symbol_metadata_t* symbols_metadata;
 
 void print_int(int x) {
   printf("%i\n", x);
@@ -98,7 +107,7 @@ void print_float(float x) {
   printf("%f\n", x);
 }
 
-void print_string(char *x) {
+void print_string(char* x) {
   printf("%s\n", x);
 }
 
@@ -107,54 +116,61 @@ void print_symbol(uint64_t x) {
   printf("Symbol(%s)\n", sym.name);
 }
 
-void print_function(void *x, struct function_type_metadata_t type) {
-  int closure_size = type_size(
-      function_closure_type(type));
+void print_bool(bool x) {
+  printf("%s\n", x ? "true" : "false");
+}
 
-  void *fn = x;
-  x = (void *)((char *)x + 8);
+void print_function(void* x, struct function_type_metadata_t type) {
+  int closure_size = type_size(function_closure_type(type));
+
+  void* fn = x;
+  x = (void*)((char*)x + 8);
 
   printf("Function[");
 
   if (type.closure_count > 0) {
     print_by_type(x, type.closure[0]);
-    x += type_size(type.closure[0]);
+    x = (char*)x + type_size(type.closure[0]);
   }
 
   for (int i = 1; i < type.closure_count; i++) {
     printf(", ");
     print_by_type(x, type.closure[i]);
-    x += type_size(type.closure[i]);
+    x = (char*)x + type_size(type.closure[i]);
   }
 
-  printf("](%p)\n", *(void **)x);
+  printf("](%p)\n", *(void**)x);
 }
 
-void print_tuple(void *x, int count, struct type_metadata_t *types) {
+void print_tuple(void* x, int count, struct type_metadata_t* types) {
   printf("Tuple(");
 
   for (int i = 0; i < count; i++) {
-    if (i > 0) printf(", ");
+    if (i > 0)
+      printf(", ");
     print_by_type(x, types[i]);
-    x += type_size(types[i]);
+    x = (char*)x + type_size(types[i]);
   }
 
   printf(")\n");
 }
 
-void print_by_type(void *x, struct type_metadata_t type) {
+void print_by_type(void* x, struct type_metadata_t type) {
   switch (type.type) {
     case INT:
-      print_int(*(int *)x);
+      print_int(*(int*)x);
       break;
     case FLOAT:
-      print_float(*(float *)x);
+      print_float(*(float*)x);
       break;
     case STRING:
-      print_string(*(char **)x);
+      print_string(*(char**)x);
+      break;
+    case BOOLEAN:
+      print_bool(*(bool*)x);
       break;
     case SYMBOL:
-      print_symbol(*(uint64_t *)x);
+      print_symbol(*(uint64_t*)x);
       break;
     case TUPLE:
       print_tuple(x, type.metadata.tuple.count, type.metadata.tuple.types);
