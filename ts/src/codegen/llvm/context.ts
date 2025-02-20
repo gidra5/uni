@@ -1,7 +1,7 @@
 import { Iterator } from "iterator-js";
 import { assert, nextId, unreachable } from "../../utils";
 import { PhysicalType, physicalTypeSize } from "../../analysis/types/utils";
-import { PhysicalTypeSchema } from "../../analysis/types/infer";
+import { PhysicalTypeSchema, globalResolvedNames as names } from "../../analysis/types/infer";
 
 export type LLVMModule = {
   globals: LLVMGlobal[];
@@ -477,7 +477,7 @@ class Builder {
 export class Context {
   public module: LLVMModule;
   public builder: Builder;
-  public variables: Map<number, LLVMValue> = new Map();
+  public variables: Map<number, () => LLVMValue> = new Map();
 
   constructor(public typeMap: PhysicalTypeSchema) {
     this.module = {
@@ -485,6 +485,7 @@ export class Context {
       functions: [],
     };
     this.builder = new Builder(this);
+    this.declareCRuntimeFunctions();
   }
 
   generateSymbolTable() {
@@ -524,6 +525,17 @@ export class Context {
       source += "}\n";
     });
     return source;
+  }
+
+  declareCRuntimeFunctions() {
+    this.variables.set(names.get("print_symbol")!, () => this.wrapFnPointer("print_symbol", ["i64"], "i64"));
+    this.variables.set(names.get("print_float")!, () => this.wrapFnPointer("print_float", ["f64"], "f64"));
+    this.variables.set(names.get("print_string")!, () =>
+      this.wrapFnPointer("print_string", [{ pointer: "i8" }], { pointer: "i8" })
+    );
+    this.variables.set(names.get("print_int")!, () => this.wrapFnPointer("print_int", ["i32"], "i32"));
+    this.variables.set(names.get("true")!, () => this.builder.createBool(true));
+    this.variables.set(names.get("false")!, () => this.builder.createBool(false));
   }
 
   wrapFnPointer(name: string, argsType: LLVMType[], retType: LLVMType): LLVMValue {

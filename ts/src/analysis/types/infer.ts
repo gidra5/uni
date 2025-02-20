@@ -27,7 +27,7 @@ const scope = [
   ["false", "boolean"],
 ] as const satisfies [string, Type][];
 
-const globalResolvedNames = Iterator.iter(scope)
+export const globalResolvedNames = Iterator.iter(scope)
   .map<Binding>(([name]) => [name, nextId()])
   .toMap();
 export const globalResolvedNamesArray = [...globalResolvedNames.entries()];

@@ -25,29 +25,11 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       return values.reduce((acc, value) => context.builder.createMul(acc, value));
     }
     case NodeType.NAME: {
-      if (ast.data.value === "print_symbol") {
-        return context.wrapFnPointer("print_symbol", ["i64"], "i64");
-      }
-      if (ast.data.value === "print_float") {
-        return context.wrapFnPointer("print_float", ["f64"], "f64");
-      }
-      if (ast.data.value === "print_string") {
-        return context.wrapFnPointer("print_string", [{ pointer: "i8" }], { pointer: "i8" });
-      }
-      if (ast.data.value === "print_int") {
-        return context.wrapFnPointer("print_int", ["i32"], "i32");
-      }
-      if (ast.data.value === "true") {
-        return context.builder.createBool(true);
-      }
-      if (ast.data.value === "false") {
-        return context.builder.createBool(false);
-      }
       const variable = inject(Injectable.NodeToVariableMap).get(ast.id)!;
       const name = context.variables.get(variable);
 
       assert(name);
-      return name;
+      return name();
     }
     case NodeType.DELIMITED_APPLICATION:
     case NodeType.APPLICATION: {
@@ -82,13 +64,13 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       assert(typeof fnType === "object" && "args" in fnType);
       const argsType = fnType.args.slice(2);
 
-      const closureValues = freeVars.map((name) => context.variables.get(name)!);
+      const closureValues = freeVars.map((name) => context.variables.get(name)!());
       return context.builder.createClosure(name, argsType, closureValues, retType, (closure, ...args) => {
         for (const [name, value] of Iterator.zip(freeVars, closure)) {
-          context.variables.set(name, value);
+          context.variables.set(name, () => value);
         }
         for (const [name, arg] of Iterator.zip(boundVariables, args)) {
-          context.variables.set(name, arg);
+          context.variables.set(name, () => arg);
         }
 
         const result = codegen(body, context);
@@ -115,7 +97,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     case NodeType.DECLARE: {
       const variable = inject(Injectable.NodeToVariableMap).get(ast.children[0].id)!;
       const value = codegen(ast.children[1], context);
-      context.variables.set(variable, value);
+      context.variables.set(variable, () => value);
       return value;
     }
     case NodeType.IF: {
