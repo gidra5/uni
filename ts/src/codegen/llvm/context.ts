@@ -362,6 +362,32 @@ class Builder {
     return value;
   }
 
+  createFunctionSRet(name: string, args: LLVMType[], retType: LLVMType, body: (...args: LLVMValue[]) => LLVMValue) {
+    return this.createFunction(name, [{ pointer: retType, structRet: true }, ...args], (ret, ...args) => {
+      const value = body(...args);
+      this.createStore(value, ret);
+      this.createReturn("void");
+      return "void";
+    });
+  }
+
+  createClosure(
+    name: string,
+    argsType: LLVMType[],
+    closure: LLVMValue[],
+    retType: LLVMType,
+    body: (closure: LLVMValue[], ...args: LLVMValue[]) => LLVMValue
+  ): LLVMValue {
+    const closureValue = this.createRecord(closure);
+    const closureType = this.getType(closureValue);
+    const func = this.createFunctionSRet(name, [closureType, ...argsType], retType, (closureValue, ...args) => {
+      const _closure = closure.map((_, i) => this.createExtractValue(closureValue, i));
+      return body(_closure, ...args);
+    });
+
+    return this.createRecord([func, closureValue]);
+  }
+
   createBlock(name: string, body: () => void): LLVMValue {
     name = this.getFreshName(name);
     const prevBlockIndex = this.blockIndex;
@@ -443,9 +469,7 @@ class Builder {
     return this.createInstruction(
       "getelementptr",
       [stringifyLLVMType(this.getType(pointer)), stringifyLLVMType(this.getType(index))],
-      {
-        pointer: this.getType(pointer),
-      }
+      { pointer: this.getType(pointer) }
     );
   }
 }

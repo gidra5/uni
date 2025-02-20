@@ -67,27 +67,27 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       const body = ast.children[ast.children.length - 1];
       const name = context.builder.getFreshName("fn_");
       const type = context.typeMap.get(ast.id)!;
+      assert(typeof type === "object" && "fn" in type);
+
       const freeVars = inject(Injectable.ClosureVariablesMap).get(ast.id)!;
       const boundVariables = inject(Injectable.BoundVariablesMap).get(body.id)!;
       const llvmType = context.builder.toLLVMType(type);
-      // console.dir({ ast, type, llvmType }, { depth: null });
-
-      assert(typeof type === "object" && "fn" in type);
+      const retType = context.builder.toLLVMType(type.fn.ret);
       assert(typeof llvmType === "object" && "record" in llvmType);
+      // console.dir({ ast, type, llvmType }, { depth: null });
 
       const fnTypePtr = llvmType.record[0];
       assert(typeof fnTypePtr === "object" && "pointer" in fnTypePtr);
       const fnType = fnTypePtr.pointer;
       assert(typeof fnType === "object" && "args" in fnType);
-      const argsType = fnType.args;
+      const argsType = fnType.args.slice(2);
 
-      const closure = context.builder.createRecord(freeVars.map((name) => context.variables.get(name)!));
-      const func = context.builder.createFunction(name, argsType, (retValue, closure, ...args) => {
-        for (const [name, index] of Iterator.iter(freeVars).enumerate()) {
-          const value = context.builder.createExtractValue(closure, index);
+      const closureValues = freeVars.map((name) => context.variables.get(name)!);
+      return context.builder.createClosure(name, argsType, closureValues, retType, (closure, ...args) => {
+        for (const [name, value] of Iterator.zip(freeVars, closure)) {
           context.variables.set(name, value);
         }
-        for (const [name, arg] of Iterator.iter(boundVariables).zip(args)) {
+        for (const [name, arg] of Iterator.zip(boundVariables, args)) {
           context.variables.set(name, arg);
         }
 
@@ -95,13 +95,8 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
 
         for (const name of boundVariables) context.variables.delete(name);
         for (const name of freeVars) context.variables.delete(name);
-
-        context.builder.createStore(result, retValue);
-        context.builder.createReturn("void");
-        return "void";
+        return result;
       });
-
-      return context.builder.createRecord([func, closure]);
     }
     case NodeType.SEQUENCE: {
       const last = ast.children[ast.children.length - 1];
