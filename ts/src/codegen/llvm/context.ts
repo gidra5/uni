@@ -530,19 +530,53 @@ export class Context {
   declareCRuntimeFunctions() {
     const createWrapper = (name: string, argsType: LLVMType[], retType: LLVMType) => () => {
       const fnPtr = this.builder.declareFunction(name, argsType, retType);
-      const fn = this.builder.createClosure(name + "_wrap", argsType, [], retType, (_closure, ...args) => {
+      return this.builder.createClosure(name + "_wrap", argsType, [], retType, (_closure, ...args) => {
         return this.builder.createCall(fnPtr, args, retType, argsType);
       });
-      return fn;
     };
-    this.variables.set(names.get("print_symbol")!, createWrapper("print_symbol", ["i64"], "i64"));
-    this.variables.set(names.get("print_float")!, createWrapper("print_float", ["f64"], "f64"));
-    this.variables.set(
-      names.get("print_string")!,
-      createWrapper("print_string", [{ pointer: "i8" }], { pointer: "i8" })
-    );
-    this.variables.set(names.get("print_int")!, createWrapper("print_int", ["i32"], "i32"));
-    this.variables.set(names.get("print_bool")!, createWrapper("print_bool", ["i1"], "i1"));
+    const createPrintWrapper = (name: string, argType: LLVMType) => () => {
+      const fnPtr = this.builder.declareFunction(name, [argType], "void");
+      return this.builder.createClosure(name + "_wrap", [argType], [], "void", (_closure, arg) => {
+        this.builder.createCallVoid(fnPtr, [arg], [argType]);
+        return arg;
+      });
+    };
+
+    this.variables.set(names.get("print_by_type")!, () => {
+      const fnPtr = this.builder.declareFunction(
+        "print_by_type",
+        ["ptr", "ptr byval(%struct.type_metadata_t)"],
+        "void"
+      );
+      return this.builder.createClosure(
+        "print_by_type_wrap",
+        ["ptr", "ptr byval(%struct.type_metadata_t)"],
+        [],
+        "void",
+        (_closure, arg, type) => {
+          this.builder.createCallVoid(fnPtr, [arg, type], ["ptr", "ptr byval(%struct.type_metadata_t)"]);
+          return arg;
+        }
+      );
+    });
+    this.variables.set(names.get("print_tuple")!, () => {
+      const fnPtr = this.builder.declareFunction("print_tuple", ["ptr", "i32", "ptr"], "void");
+      return this.builder.createClosure(
+        "print_tuple_wrap",
+        ["ptr", "i32", "ptr"],
+        [],
+        "void",
+        (_closure, arg, count, types) => {
+          this.builder.createCallVoid(fnPtr, [arg, count, types], ["ptr", "i32", "ptr"]);
+          return arg;
+        }
+      );
+    });
+    this.variables.set(names.get("print_symbol")!, createPrintWrapper("print_symbol", "i64"));
+    this.variables.set(names.get("print_float")!, createPrintWrapper("print_float", "f64"));
+    this.variables.set(names.get("print_string")!, createPrintWrapper("print_string", { pointer: "i8" }));
+    this.variables.set(names.get("print_int")!, createPrintWrapper("print_int", "i32"));
+    this.variables.set(names.get("print_bool")!, createPrintWrapper("print_bool", "i1"));
     this.variables.set(names.get("true")!, () => this.builder.createBool(true));
     this.variables.set(names.get("false")!, () => this.builder.createBool(false));
   }
