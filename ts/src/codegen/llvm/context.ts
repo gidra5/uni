@@ -528,31 +528,23 @@ export class Context {
   }
 
   declareCRuntimeFunctions() {
-    this.variables.set(names.get("print_symbol")!, () => this.wrapFnPointer("print_symbol", ["i64"], "i64"));
-    this.variables.set(names.get("print_float")!, () => this.wrapFnPointer("print_float", ["f64"], "f64"));
-    this.variables.set(names.get("print_string")!, () =>
-      this.wrapFnPointer("print_string", [{ pointer: "i8" }], { pointer: "i8" })
+    const createWrapper = (name: string, argsType: LLVMType[], retType: LLVMType) => () => {
+      const fnPtr = this.builder.declareFunction(name, argsType, retType);
+      const fn = this.builder.createClosure(name + "_wrap", argsType, [], retType, (_closure, ...args) => {
+        return this.builder.createCall(fnPtr, args, retType, argsType);
+      });
+      return fn;
+    };
+    this.variables.set(names.get("print_symbol")!, createWrapper("print_symbol", ["i64"], "i64"));
+    this.variables.set(names.get("print_float")!, createWrapper("print_float", ["f64"], "f64"));
+    this.variables.set(
+      names.get("print_string")!,
+      createWrapper("print_string", [{ pointer: "i8" }], { pointer: "i8" })
     );
-    this.variables.set(names.get("print_int")!, () => this.wrapFnPointer("print_int", ["i32"], "i32"));
-    this.variables.set(names.get("print_bool")!, () => this.wrapFnPointer("print_bool", ["i1"], "i1"));
+    this.variables.set(names.get("print_int")!, createWrapper("print_int", ["i32"], "i32"));
+    this.variables.set(names.get("print_bool")!, createWrapper("print_bool", ["i1"], "i1"));
     this.variables.set(names.get("true")!, () => this.builder.createBool(true));
     this.variables.set(names.get("false")!, () => this.builder.createBool(false));
-  }
-
-  wrapFnPointer(name: string, argsType: LLVMType[], retType: LLVMType): LLVMValue {
-    const fnPtr = this.builder.declareFunction(name, argsType, retType);
-    const printString = this.builder.createFunction(
-      name + "_wrap",
-      [{ pointer: retType, structRet: true }, "{ }", ...argsType],
-      (ret, _closure, ...args) => {
-        const result = this.builder.createCall(fnPtr, args, retType, argsType);
-
-        this.builder.createStore(result, ret);
-        this.builder.createReturn("void");
-        return "void";
-      }
-    );
-    return this.builder.createRecord([printString, this.builder.createRecord([])]);
   }
 }
 
