@@ -4,6 +4,7 @@ import { PhysicalType, physicalTypeSize } from "../../analysis/types/utils";
 import { PhysicalTypeSchema, globalResolvedNames as names } from "../../analysis/types/infer";
 
 export type LLVMModule = {
+  types: LLVMGlobalType[];
   globals: LLVMGlobal[];
   functions: LLVMFunction[];
 };
@@ -13,6 +14,12 @@ type LLVMGlobal = {
   name: string;
   type: LLVMType;
   value: LLVMValue;
+};
+
+type LLVMGlobalType = {
+  attributes: string[];
+  name: string;
+  type: LLVMType;
 };
 
 type LLVMFunction = {
@@ -109,6 +116,13 @@ class Builder {
     this.types.set(valuePtr, { pointer: type });
 
     return valuePtr;
+  }
+
+  createType(type: LLVMType, _name = ""): LLVMType {
+    const name = this.getFreshName("type_" + _name);
+    this.context.module.types.push({ name, attributes: ["type"], type });
+
+    return `%${name}`;
   }
 
   insertInstruction(instruction: LLVMInstruction) {
@@ -481,6 +495,7 @@ export class Context {
 
   constructor(public typeMap: PhysicalTypeSchema) {
     this.module = {
+      types: [],
       globals: [],
       functions: [],
     };
@@ -504,9 +519,16 @@ export class Context {
 
   moduleString(): string {
     let source = "";
-    this.module.globals.forEach(({ name, attributes, type, value }) => {
-      source += `${[`@${name}`, "=", attributes, stringifyLLVMType(type), value].join(" ")}\n`;
+    this.module.types.forEach((global) => {
+      const { name, attributes, type } = global;
+      source += `${[`%${name} =`, attributes, stringifyLLVMType(type)].join(" ")}\n`;
     });
+
+    this.module.globals.forEach((global) => {
+      const { name, attributes, type, value } = global;
+      source += `${[`@${name} =`, attributes, stringifyLLVMType(type), value].join(" ")}\n`;
+    });
+
     this.module.functions.forEach(({ name, args, returnType, body }) => {
       const sig = `${stringifyLLVMType(returnType)} @${name}(${args.map(stringifyLLVMArgType).join(", ")})`;
       if (!body) {
@@ -524,6 +546,7 @@ export class Context {
       });
       source += "}\n";
     });
+
     return source;
   }
 
@@ -542,19 +565,17 @@ export class Context {
       });
     };
 
+    const typeMetadata = this.builder.createType({ pointer: "i8" });
+
     this.variables.set(names.get("print_by_type")!, () => {
-      const fnPtr = this.builder.declareFunction(
-        "print_by_type",
-        ["ptr", "ptr byval(%struct.type_metadata_t)"],
-        "void"
-      );
+      const fnPtr = this.builder.declareFunction("print_by_type", ["ptr", `ptr byval(${typeMetadata})`], "void");
       return this.builder.createClosure(
         "print_by_type_wrap",
-        ["ptr", "ptr byval(%struct.type_metadata_t)"],
+        ["ptr", `ptr byval(${typeMetadata})`],
         [],
         "void",
         (_closure, arg, type) => {
-          this.builder.createCallVoid(fnPtr, [arg, type], ["ptr", "ptr byval(%struct.type_metadata_t)"]);
+          this.builder.createCallVoid(fnPtr, [arg, type], ["ptr", `ptr byval(${typeMetadata})`]);
           return arg;
         }
       );

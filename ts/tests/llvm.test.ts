@@ -673,9 +673,24 @@ describe("data structures compilation", () => {
     await testCase(builder.script(app(builder.printBoolean(), builder.bool(false))), builder.typeSchema);
   });
 
+  test.only("tuple", async () => {
+    const builder = new Builder();
+    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+    const tuple = (...args: Tree[]) => builder.tuple(...args);
+    const int = (value: number) => builder.int(value);
+    const string = (value: string) => builder.string(value);
+
     const tupleAst = tuple(int(1), string("ab"));
     await testCase(builder.script(app(builder.printTuple(), tupleAst)), builder.typeSchema);
   });
+
+  // test.only("fn print", async () => {
+  //   const builder = new Builder();
+  //   const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
+
+  //   const tupleAst = tuple(int(1), string("ab"));
+  //   await testCase(builder.script(app(builder.printTuple(), tupleAst)), builder.typeSchema);
+  // });
 
   // it("channel", async () => {
   //   const input = `channel "name"`;
