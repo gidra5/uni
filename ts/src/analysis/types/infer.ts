@@ -19,6 +19,7 @@ export type PhysicalTypeSchema = Map<number, PhysicalType>;
 // for example, if a function only called with ints, then the type for its arguments will be int
 
 const scope = [
+  ["print", { fn: { arg: "unknown", return: "unknown" } }],
   ["print_int", { fn: { arg: "int", return: "int" } }],
   ["print_string", { fn: { arg: "string", return: "string" } }],
   ["print_float", { fn: { arg: "float", return: "float" } }],

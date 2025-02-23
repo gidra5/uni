@@ -104,8 +104,14 @@ class Builder {
   }
 
   printTuple(ast: Tree) {
-    const tupleType: PhysicalType = this.typeSchema.get(ast.id)!;
-    const fn = this.templateName(Builder.fnType([tupleType], tupleType, []), "print_tuple", [tupleType]);
+    const type: PhysicalType = this.typeSchema.get(ast.id)!;
+    const fn = this.templateName(Builder.fnType([type], type, []), "print_tuple", [type]);
+    return this.app(fn, ast);
+  }
+
+  print(ast: Tree) {
+    const type: PhysicalType = this.typeSchema.get(ast.id)!;
+    const fn = this.templateName(Builder.fnType([type], type, []), "print", [type]);
     return this.app(fn, ast);
   }
 
@@ -200,6 +206,10 @@ class Builder {
 
   int(value: number) {
     return this.node(NodeType.NUMBER, { int: 32 }, { value }, []);
+  }
+
+  float(value: number) {
+    return this.node(NodeType.NUMBER, { float: 64 }, { value }, []);
   }
 
   string(value: string) {
@@ -703,9 +713,8 @@ describe("data structures compilation", () => {
     await testCase(builder.script(app(builder.printBoolean(), builder.bool(false))), builder.typeSchema);
   });
 
-  test.only("tuple", async () => {
+  test("tuple", async () => {
     const builder = new Builder();
-    const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const tuple = (...args: Tree[]) => builder.tuple(...args);
     const int = (value: number) => builder.int(value);
     const string = (value: string) => builder.string(value);
@@ -755,6 +764,34 @@ describe("data structures compilation", () => {
   //   const result = await evaluate(input);
   //   expect(result).toBe(1);
   // });
+});
+
+test.only("generic print", async () => {
+  const builder = new Builder();
+  const name = (type: PhysicalType, value: string) => builder.name(type, value);
+  const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);
+  const tuple = (...args: Tree[]) => builder.tuple(...args);
+  const int = (value: number) => builder.int(value);
+  const float = (value: number) => builder.float(value);
+  const string = (value: string) => builder.string(value);
+
+  await testCase(
+    builder.script(
+      builder.print(fn([name({ int: 32 }, "x")], (x) => x())),
+      builder.print(fn([name({ int: 32 }, "x")], (x) => fn([name({ int: 32 }, "y")], (y) => x()))),
+      builder.print(fn([name({ int: 32 }, "x"), name({ int: 32 }, "y")], (x, y) => x())),
+      builder.print(tuple(int(1), string("ab"))),
+      builder.print(int(1)),
+      builder.print(float(1.2)),
+      builder.print(string("ab")),
+      builder.print(builder.bool(true)),
+      builder.print(builder.bool(false)),
+      builder.print(builder.unit()),
+      builder.print(builder.atom("atom_a")),
+      builder.print(builder.symbol("atom_a"))
+    ),
+    builder.typeSchema
+  );
 });
 
 // describe("process calc compilation", () => {

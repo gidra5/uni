@@ -44,8 +44,8 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       assert(name);
       const value = name();
       if (typeof value === "function") {
-        const types = ast.data.types ?? [];
-        return value(types);
+        const types = ast.data.types;
+        return value(...types);
       }
       return value;
     }
