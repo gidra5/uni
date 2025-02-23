@@ -20,3 +20,5 @@ Compiler follows these steps:
 
 https://wren.io/performance.html
 https://www.youtube.com/watch?v=QdnxjYj1pS0&ab_channel=AdamMcDaniel
+https://tibleiz.net/blog/2024-02-04-writing-a-fast-compiler.html
+https://www.pathsensitive.com/2019/07/the-best-refactoring-youve-never-heard.html

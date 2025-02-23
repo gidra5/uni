@@ -327,3 +327,5 @@
 [another type system](https://www.lacl.fr/~dvaracca/papers/es-pi-mfps.pdf)
 [even more type systems](https://hal.science/tel-03920089v2/preview/PREBET_Enguerrand_2022ENSL0017_These.pdf#page=2)
 [join calculus](https://github.com/maandree/join-python/blob/master/join-python.pdf)
+
+https://github.com/faiface/par-lang

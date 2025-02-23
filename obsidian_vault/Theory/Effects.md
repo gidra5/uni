@@ -171,3 +171,4 @@ def helloWorld() = {
 ```
 https://player.vimeo.com/video/833791219#t=3h42m48s
 https://ryanbrewer.dev/posts/safe-mmm-with-coeffects
+https://mikeinnes.io/posts/transducers/
