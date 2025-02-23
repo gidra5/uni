@@ -2,18 +2,16 @@ import fc from "fast-check";
 import { assert, clamp, unreachable } from "../../utils";
 import { Iterator } from "iterator-js";
 
-export type PrimitiveType =
-  | "function"
-  | "tuple"
-  | "boolean"
-  | "int"
-  | "float"
-  | "string"
-  | "symbol"
-  | "unknown"
-  | "void";
+export type PrimitiveType = "function" | "tuple" | "boolean" | "int" | "float" | "string" | "symbol";
 export type DataType = PrimitiveType | { fn: { arg: Type; return: Type } } | { record: Type[]; labels?: string[] };
-export type Type = DataType | { variable: number } | { and: Type[] } | { or: Type[] } | { not: Type };
+export type Type =
+  | DataType
+  | "unknown"
+  | "void"
+  | { variable: number }
+  | { and: Type[] }
+  | { or: Type[] }
+  | { not: Type };
 
 /** a type that represents how a value must be stored in physical memory */
 export type PhysicalType =
@@ -199,9 +197,7 @@ export const primitiveTypeArb = fc.oneof(
   fc.constant<"boolean">("boolean"),
   fc.constant<"int">("int"),
   fc.constant<"float">("float"),
-  fc.constant<"string">("string"),
-  fc.constant<"unknown">("unknown"),
-  fc.constant<"void">("void")
+  fc.constant<"string">("string")
 );
 
 export const dataTypeArb = fc.letrec<{ type: DataType }>((typeArb) => ({
@@ -220,6 +216,8 @@ export const dataTypeArb = fc.letrec<{ type: DataType }>((typeArb) => ({
 
 export const typeArb = fc.letrec<{ type: Type }>((typeArb) => ({
   type: fc.oneof(
+    fc.constant<"unknown">("unknown"),
+    fc.constant<"void">("void"),
     dataTypeArb
     // fc.record({ and: fc.uniqueArray(typeArb("type")) }),
     // fc.record({ or: fc.uniqueArray(typeArb("type")) }),

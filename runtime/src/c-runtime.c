@@ -19,28 +19,31 @@ enum type_t {
   TYPE_BOOLEAN = 5,
   TYPE_TUPLE = 6,
   TYPE_POINTER = 7,
-  // TYPE_FUNCTION,
+  TYPE_FUNCTION = 8,
+  TYPE_ARRAY = 9,
+  TYPE_VOID = 10,
+  TYPE_UNKNOWN = 11,
 };
 
 struct int_type_metadata_t {
-  int size;
+  const int size;
 };
 
 struct float_type_metadata_t {
-  int size;
+  const int size;
 };
 
 struct string_type_metadata_t {
-  int size;
+  const int size;
 };
 
 struct tuple_type_metadata_t {
-  int count;
-  struct type_metadata_t* types;
+  const struct type_metadata_t* types;
+  const int count;
 };
 
 struct pointer_type_metadata_t {
-  struct type_metadata_t* type;
+  const struct type_metadata_t* type;
 };
 
 // struct function_type_metadata_t {
@@ -54,8 +57,8 @@ struct pointer_type_metadata_t {
 // };
 
 struct type_metadata_t {
-  enum type_t type;
-  union {
+  const enum type_t type;
+  const union {
     struct int_type_metadata_t _int;
     struct float_type_metadata_t _float;
     struct string_type_metadata_t string;
@@ -63,6 +66,41 @@ struct type_metadata_t {
     struct pointer_type_metadata_t pointer;
     // struct function_type_metadata_t function;
   } metadata;
+};
+
+const struct type_metadata_t _bool = {
+  .type = TYPE_BOOLEAN,
+};
+const struct type_metadata_t _int = {
+  .type = TYPE_INT,
+  .metadata._int.size = 32,
+};
+const struct type_metadata_t _float = {
+  .type = TYPE_FLOAT,
+  .metadata._float.size = 64,
+};
+const struct type_metadata_t _string = {
+  .type = TYPE_STRING,
+  .metadata.string.size = 8,
+};
+const struct type_metadata_t _tuple_types[2] = {
+  {
+    .type = TYPE_INT,
+    .metadata._int.size = 32,
+  },
+  {
+    .type = TYPE_STRING,
+    .metadata.string.size = 8,
+  },
+};
+const struct type_metadata_t _tuple = {
+  .type = TYPE_TUPLE,
+  .metadata.tuple.count = 2,
+  .metadata.tuple.types = _tuple_types,
+};
+const struct type_metadata_t _pointer = {
+  .type = TYPE_POINTER,
+  .metadata.pointer.type = &_int,
 };
 
 // struct type_metadata_t function_closure_type(
@@ -76,8 +114,8 @@ struct type_metadata_t {
 //   return closure_type;
 // }
 
-int type_alignment(struct type_metadata_t type);
-int max_alignment(int count, struct type_metadata_t* types) {
+int type_alignment(const struct type_metadata_t type);
+int max_alignment(int count, const struct type_metadata_t* types) {
   int alignment = 0;
   for (int i = 0; i < count; i++) {
     alignment = max(alignment, type_alignment(types[i]));
@@ -85,7 +123,7 @@ int max_alignment(int count, struct type_metadata_t* types) {
   return alignment;
 }
 
-int type_alignment(struct type_metadata_t type) {
+int type_alignment(const struct type_metadata_t type) {
   switch (type.type) {
     case TYPE_INT:
       return type.metadata._int.size;
@@ -114,7 +152,7 @@ int type_alignment(struct type_metadata_t type) {
   }
 }
 
-int type_size(struct type_metadata_t type) {
+int type_size(const struct type_metadata_t type) {
   switch (type.type) {
     case TYPE_INT:
       return type.metadata._int.size;
@@ -159,7 +197,7 @@ void* get_element_ptr(
   void* x,
   int index,
   int count,
-  struct type_metadata_t* types
+  const struct type_metadata_t* types
 ) {
   assert(index < count);
 
@@ -182,10 +220,10 @@ void* get_element_ptr(
 }
 
 struct symbol_metadata_t {
-  char* name;
+  const char* name;
 };
 
-extern struct symbol_metadata_t* symbols_metadata;
+extern const struct symbol_metadata_t* symbols_metadata;
 
 void print_int(int x) {
   printf("%i", x);
@@ -206,73 +244,4 @@ void print_symbol(uint64_t x) {
 
 void print_bool(bool x) {
   printf("%s", x ? "true" : "false");
-}
-
-// void print_function(void* x, struct function_type_metadata_t type) {
-//   int closure_size = type_size(function_closure_type(type));
-
-//   void* fn = x;
-//   x = (void*)((char*)x + 8);
-
-//   printf("Function[");
-
-//   if (type.closure_count > 0) {
-//     print_by_type(x, type.closure[0]);
-//     x = (char*)x + type_size(type.closure[0]);
-//   }
-
-//   for (int i = 1; i < type.closure_count; i++) {
-//     printf(", ");
-//     print_by_type(x, type.closure[i]);
-//     x = (char*)x + type_size(type.closure[i]);
-//   }
-
-//   printf("](%p)\n", *(void**)x);
-// }
-
-void print_by_type(void* x, struct type_metadata_t type);
-
-void print_tuple(void* x, int count, struct type_metadata_t* types) {
-  printf("Tuple(");
-
-  for (int i = 0; i < count; i++) {
-    if (i > 0)
-      printf(", ");
-
-    void* element_ptr = get_element_ptr(x, i, count, types);
-    print_by_type(element_ptr, types[i]);
-  }
-
-  printf(")");
-}
-
-void print_by_type(void* x, struct type_metadata_t type) {
-  switch (type.type) {
-    case TYPE_INT:
-      print_int(*(int*)x);
-      break;
-    case TYPE_FLOAT:
-      print_float(*(float*)x);
-      break;
-    case TYPE_STRING:
-      print_string(*(char**)x);
-      break;
-    case TYPE_BOOLEAN:
-      print_bool(*(bool*)x);
-      break;
-    case TYPE_SYMBOL:
-      print_symbol(*(uint64_t*)x);
-      break;
-    case TYPE_TUPLE:
-      print_tuple(x, type.metadata.tuple.count, type.metadata.tuple.types);
-      break;
-    case TYPE_POINTER:
-      printf("Pointer(%p)", x);
-      break;
-    // case TYPE_FUNCTION:
-    //   print_function(x, type.metadata.function);
-    //   break;
-    default:
-      unreachable("cant print by type");
-  }
 }

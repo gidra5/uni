@@ -16,6 +16,19 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       const values = ast.children.map((child) => codegen(child, context));
       return values.reduce((acc, value) => context.builder.createAdd(acc, value));
     }
+    case NodeType.TUPLE_PUSH: {
+      const tuple = codegen(ast.children[0], context);
+      const value = codegen(ast.children[1], context);
+      const tupleType = context.typeMap.get(ast.children[0].id)!;
+      assert(typeof tupleType === "object");
+      assert("tuple" in tupleType);
+      const innerValues = tupleType.tuple.map((_, i) => context.builder.createExtractValue(tuple, i));
+      return context.builder.createRecord([...innerValues, value]);
+    }
+    case NodeType.TUPLE: {
+      const value = codegen(ast.children[0], context);
+      return context.builder.createRecord([value]);
+    }
     case NodeType.ADD: {
       const values = ast.children.map((child) => codegen(child, context));
       return values.reduce((acc, value) => context.builder.createAdd(acc, value));
@@ -29,7 +42,12 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       const name = context.variables.get(variable);
 
       assert(name);
-      return name();
+      const value = name();
+      if (typeof value === "function") {
+        const types = ast.data.types ?? [];
+        return value(types);
+      }
+      return value;
     }
     case NodeType.DELIMITED_APPLICATION:
     case NodeType.APPLICATION: {
@@ -65,6 +83,8 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       const argsType = fnType.args.slice(2);
 
       const closureValues = freeVars.map((name) => context.variables.get(name)!());
+      assert(closureValues.every((value) => typeof value !== "function"));
+
       return context.builder.createClosure(name, argsType, closureValues, retType, (closure, ...args) => {
         for (const [name, value] of Iterator.zip(freeVars, closure)) {
           context.variables.set(name, () => value);
@@ -119,6 +139,8 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       return context.builder.createReturn("i32 0");
     }
     default:
+      console.log(ast);
+
       unreachable();
   }
 };

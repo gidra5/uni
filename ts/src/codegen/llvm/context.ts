@@ -40,6 +40,7 @@ type LLVMInstruction = {
   args: LLVMValue[];
 };
 export type LLVMValue = string;
+export type LLVMValue2 = LLVMValue | ((types: PhysicalType[]) => LLVMValue);
 export type LLVMType =
   | string
   | { args: LLVMType[]; returnType: LLVMType }
@@ -86,6 +87,18 @@ class Builder {
       return this.createRecordType([{ pointer: fnType }, closureType]);
     }
 
+    if ("tuple" in type) {
+      return this.createRecordType(type.tuple.map((t) => this.toLLVMType(t)));
+    }
+    if ("array" in type) {
+      return this.createArrayType(this.toLLVMType(type.array), type.length);
+    }
+    if ("pointer" in type) {
+      return { pointer: this.toLLVMType(type.pointer) };
+    }
+
+    console.log(type);
+
     unreachable("cant convert physical type to LLVM type");
   }
 
@@ -118,8 +131,16 @@ class Builder {
     return valuePtr;
   }
 
-  createType(type: LLVMType, _name = ""): LLVMType {
+  createType(type: LLVMType, _name?: string): LLVMValue {
+    if (!_name) {
+      const name = this.getFreshName("type_");
+
+      this.context.module.types.push({ name, attributes: ["type"], type });
+
+      return `%${name}`;
+    }
     const name = this.getFreshName("type_" + _name);
+
     this.context.module.types.push({ name, attributes: ["type"], type });
 
     return `%${name}`;
@@ -486,12 +507,22 @@ class Builder {
       { pointer: this.getType(pointer) }
     );
   }
+
+  physicalTypeToLLVMValue(type: PhysicalType): LLVMValue {
+    switch (true) {
+      case typeof type === "object" && "int" in type: {
+        return this.getOrCreateConstant("", "");
+      }
+    }
+
+    unreachable("cant convert physical type to LLVM type");
+  }
 }
 
 export class Context {
   public module: LLVMModule;
   public builder: Builder;
-  public variables: Map<number, () => LLVMValue> = new Map();
+  public variables: Map<number, () => LLVMValue2> = new Map();
 
   constructor(public typeMap: PhysicalTypeSchema) {
     this.module = {
@@ -551,47 +582,139 @@ export class Context {
   }
 
   declareCRuntimeFunctions() {
-    const createWrapper = (name: string, argsType: LLVMType[], retType: LLVMType) => () => {
-      const fnPtr = this.builder.declareFunction(name, argsType, retType);
-      return this.builder.createClosure(name + "_wrap", argsType, [], retType, (_closure, ...args) => {
-        return this.builder.createCall(fnPtr, args, retType, argsType);
-      });
+    const createClosureCall = (func: LLVMValue, args: LLVMValue[]) => {
+      const fnPtr = this.builder.createExtractValue(func, 0);
+      const closure = this.builder.createExtractValue(func, 1);
+
+      const fnPtrType = this.builder.getType(fnPtr);
+      assert(typeof fnPtrType === "object" && "pointer" in fnPtrType);
+      const funcType = fnPtrType.pointer;
+      assert(typeof funcType === "object" && "args" in funcType);
+
+      return this.builder.createCall(fnPtr, [closure, ...args], funcType.returnType, funcType.args);
+    };
+    const createPrintString = (str: string) => {
+      const printf = this.builder.declareFunction("printf", ["i8*", "..."], "i32");
+      const _str = this.builder.createString(str);
+      const fmt = this.builder.createString("%s");
+      return this.builder.createCallVoid(printf, [fmt, _str], ["i8*", "..."]);
     };
     const createPrintWrapper = (name: string, argType: LLVMType) => () => {
       const fnPtr = this.builder.declareFunction(name, [argType], "void");
-      return this.builder.createClosure(name + "_wrap", [argType], [], "void", (_closure, arg) => {
+      return this.builder.createClosure(name + "_wrap", [argType], [], argType, (_closure, arg) => {
         this.builder.createCallVoid(fnPtr, [arg], [argType]);
         return arg;
       });
     };
 
-    const typeMetadata = this.builder.createType({ pointer: "i8" });
+    // const tupleTypeMetadata = this.builder.createType({ record: ["i32", "ptr"] });
+    // const intTypeMetadata = this.builder.createType({ record: ["i32"] });
+    // const floatTypeMetadata = this.builder.createType({ record: ["i32"] });
+    // const stringTypeMetadata = this.builder.createType({ record: ["i32"] });
+    // const pointerTypeMetadata = this.builder.createType({ record: ["ptr"] });
+    // const intTypeMetadataPadded = this.builder.createType({ record: ["i32", "i32", 'i64'] });
+    // const floatTypeMetadataPadded = this.builder.createType({ record: ["i32", "i32", 'i64'] });
+    // const stringTypeMetadataPadded = this.builder.createType({ record: ["i32", "i32", 'i64'] });
+    // const pointerTypeMetadataPadded = this.builder.createType({ record: ["ptr", 'i64'] });
+    // const typeMetadataUnion = this.builder.createType({ record: [tupleTypeMetadata] });
+    // const typeMetadata = this.builder.createType({ record: ["i32", typeMetadataUnion] });
 
-    this.variables.set(names.get("print_by_type")!, () => {
-      const fnPtr = this.builder.declareFunction("print_by_type", ["ptr", `ptr byval(${typeMetadata})`], "void");
-      return this.builder.createClosure(
-        "print_by_type_wrap",
-        ["ptr", `ptr byval(${typeMetadata})`],
-        [],
-        "void",
-        (_closure, arg, type) => {
-          this.builder.createCallVoid(fnPtr, [arg, type], ["ptr", `ptr byval(${typeMetadata})`]);
-          return arg;
+    // this.variables.set(names.get("print_by_type")!, () => {
+    //   const fnPtr = this.builder.declareFunction("print_by_type", ["ptr", `ptr byval(${typeMetadata})`], "void");
+    //   return this.builder.createClosure(
+    //     "print_by_type_wrap",
+    //     ["ptr", `ptr byval(${typeMetadata})`],
+    //     [],
+    //     "void",
+    //     (_closure, arg, type) => {
+    //       this.builder.createCallVoid(fnPtr, [arg, type], ["ptr", `ptr byval(${typeMetadata})`]);
+    //       return arg;
+    //     }
+    //   );
+    // });
+    // this.variables.set(names.get("print_tuple")!, () => {
+    //   const fnPtr = this.builder.declareFunction("print_tuple", ["ptr", "i32", "ptr"], "void");
+    //   return this.builder.createClosure(
+    //     "print_tuple_wrap",
+    //     ["ptr", "i32", "ptr"],
+    //     [],
+    //     "void",
+    //     (_closure, arg, count, types) => {
+    //       this.builder.createCallVoid(fnPtr, [arg, count, types], ["ptr", "i32", "ptr"]);
+    //       return arg;
+    //     }
+    //   );
+    // });
+    this.variables.set(names.get("print_tuple")!, () => (types) => {
+      assert(types.length === 1);
+      const type = types[0];
+      assert(typeof type === "object");
+      assert("tuple" in type);
+      const tupleTypes = type.tuple;
+      const llvmType = this.builder.toLLVMType(type);
+      const name = this.builder.getFreshName("print_tuple_");
+      return this.builder.createClosure(name, [llvmType], [], llvmType, (_closure, arg) => {
+        createPrintString("Tuple(");
+
+        for (const [valueType, index] of Iterator.iter(tupleTypes).enumerate()) {
+          if (index > 0) createPrintString(", ");
+
+          const value = this.builder.createExtractValue(arg, index);
+          switch (true) {
+            case typeof valueType === "object" && "int" in valueType: {
+              const printInt = this.variables.get(names.get("print_int")!)!();
+              assert(typeof printInt !== "function");
+              createClosureCall(printInt, [value]);
+              break;
+            }
+            case typeof valueType === "object" && "float" in valueType: {
+              const printFloat = this.variables.get(names.get("print_float")!)!();
+              assert(typeof printFloat !== "function");
+              createClosureCall(printFloat, [value]);
+              break;
+            }
+            case typeof valueType === "object" &&
+              "array" in valueType &&
+              typeof valueType.array === "object" &&
+              "int" in valueType.array &&
+              valueType.array.int === 8: {
+              const printString = this.variables.get(names.get("print_string")!)!();
+              assert(typeof printString !== "function");
+              createClosureCall(printString, [value]);
+              break;
+            }
+            case typeof valueType === "object" &&
+              "pointer" in valueType &&
+              typeof valueType.pointer === "object" &&
+              "int" in valueType.pointer &&
+              valueType.pointer.int === 8: {
+              const printString = this.variables.get(names.get("print_string")!)!();
+              assert(typeof printString !== "function");
+              createClosureCall(printString, [value]);
+              break;
+            }
+            case typeof valueType === "object" && "boolean" in valueType: {
+              const printBool = this.variables.get(names.get("print_bool")!)!();
+              assert(typeof printBool !== "function");
+              createClosureCall(printBool, [value]);
+              break;
+            }
+            case typeof valueType === "object" && "symbol" in valueType: {
+              const printSymbol = this.variables.get(names.get("print_symbol")!)!();
+              assert(typeof printSymbol !== "function");
+              createClosureCall(printSymbol, [value]);
+              break;
+            }
+            default: {
+              unreachable("cant print by type");
+            }
+          }
         }
-      );
-    });
-    this.variables.set(names.get("print_tuple")!, () => {
-      const fnPtr = this.builder.declareFunction("print_tuple", ["ptr", "i32", "ptr"], "void");
-      return this.builder.createClosure(
-        "print_tuple_wrap",
-        ["ptr", "i32", "ptr"],
-        [],
-        "void",
-        (_closure, arg, count, types) => {
-          this.builder.createCallVoid(fnPtr, [arg, count, types], ["ptr", "i32", "ptr"]);
-          return arg;
-        }
-      );
+
+        createPrintString(")");
+
+        return arg;
+      });
     });
     this.variables.set(names.get("print_symbol")!, createPrintWrapper("print_symbol", "i64"));
     this.variables.set(names.get("print_float")!, createPrintWrapper("print_float", "f64"));

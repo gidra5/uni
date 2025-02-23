@@ -103,9 +103,10 @@ class Builder {
     return this.name(Builder.fnType([{ int: 1 }], { int: 1 }, []), "print_bool");
   }
 
-  printTuple() {
-    const tupleType: PhysicalType = "void";
-    return this.name(Builder.fnType([tupleType], tupleType, []), "print_tuple");
+  printTuple(ast: Tree) {
+    const tupleType: PhysicalType = this.typeSchema.get(ast.id)!;
+    const fn = this.templateName(Builder.fnType([tupleType], tupleType, []), "print_tuple", [tupleType]);
+    return this.app(fn, ast);
   }
 
   declare(name: string, value: Tree) {
@@ -174,6 +175,10 @@ class Builder {
     return this.node(NodeType.FUNCTION, type, {}, [...x, _f]);
   }
 
+  templateName(type: PhysicalType, value: string, types: PhysicalType[]) {
+    return this.node(NodeType.NAME, type, { value, types }, []);
+  }
+
   name(type: PhysicalType, value: string) {
     return this.node(NodeType.NAME, type, { value }, []);
   }
@@ -198,15 +203,40 @@ class Builder {
   }
 
   string(value: string) {
-    return this.node(NodeType.STRING, { array: { int: 8 }, length: value.length }, { value }, []);
+    return this.node(NodeType.STRING, { pointer: { int: 8 } }, { value }, []);
   }
 
   bool(value: boolean) {
     return this.name({ int: 1 }, value ? "true" : "false");
   }
 
+  tuplePush(tuple: Tree, value: Tree) {
+    const tupleType = this.typeSchema.get(tuple.id)!;
+    const valueType = this.typeSchema.get(value.id)!;
+    assert(typeof tupleType === "object");
+    assert("tuple" in tupleType);
+    const type = { tuple: [...tupleType.tuple, valueType] };
+    return this.node(NodeType.TUPLE_PUSH, type, {}, [tuple, value]);
+  }
+
+  tupleJoin(tuple1: Tree, tuple2: Tree) {
+    const tuple1Type = this.typeSchema.get(tuple1.id)!;
+    const tuple2Type = this.typeSchema.get(tuple2.id)!;
+    assert(typeof tuple1Type === "object");
+    assert("tuple" in tuple1Type);
+    assert(typeof tuple2Type === "object");
+    assert("tuple" in tuple2Type);
+    const type = { tuple: [...tuple1Type.tuple, ...tuple2Type.tuple] };
+    return this.node(NodeType.TUPLE_JOIN, type, {}, [tuple1, tuple2]);
+  }
+
   tuple(...args: Tree[]) {
-    return this.node(NodeType.TUPLE, { tuple: args.map((node) => this.typeSchema.get(node.id)!) }, {}, args);
+    const argTypes = args.map((node) => this.typeSchema.get(node.id)!);
+    let tuple = this.node(NodeType.TUPLE, { tuple: [argTypes[0]] }, {}, [args[0]]);
+    for (let i = 1; i < args.length; i++) {
+      tuple = this.tuplePush(tuple, args[i]);
+    }
+    return tuple;
   }
 
   add(...args: Tree[]) {
@@ -680,8 +710,7 @@ describe("data structures compilation", () => {
     const int = (value: number) => builder.int(value);
     const string = (value: string) => builder.string(value);
 
-    const tupleAst = tuple(int(1), string("ab"));
-    await testCase(builder.script(app(builder.printTuple(), tupleAst)), builder.typeSchema);
+    await testCase(builder.script(builder.printTuple(tuple(int(1), string("ab")))), builder.typeSchema);
   });
 
   // test.only("fn print", async () => {
