@@ -66,6 +66,7 @@ class Builder {
   toLLVMType(type: PhysicalType): LLVMType {
     if (type === "void") return "void";
     if (type === "unknown") return "undef";
+    if (type === "symbol") return "i64";
     if ("int" in type) return this.createIntType(type.int);
     if ("float" in type) return this.createFloatType(type.float);
 
@@ -118,14 +119,15 @@ class Builder {
   }
 
   getOrCreateConstant(value: LLVMValue, type: LLVMType, name?: string): LLVMValue {
-    const _value = this.values.get(value);
+    const key = `${type}:${value}`;
+    const _value = this.values.get(key);
     if (_value) return _value;
 
     name = name ?? this.getFreshName("const_");
     this.context.module.globals.push({ name, attributes: ["constant"], type, value });
 
     const valuePtr = `@${name}`;
-    this.values.set(value, valuePtr);
+    this.values.set(key, valuePtr);
     this.types.set(valuePtr, { pointer: type });
 
     return valuePtr;
@@ -220,7 +222,16 @@ class Builder {
   }
 
   createFloatType(size: number): LLVMType {
-    return "f" + size;
+    if (size === 32) {
+      return "float";
+    } else if (size === 64) {
+      return "double";
+    }
+    if (size === 128) {
+      return "fp128";
+    } else {
+      unreachable("unsupported float size");
+    }
   }
 
   createBoolType(): LLVMType {
@@ -661,13 +672,24 @@ export class Context {
       });
     };
 
-    this.variables.set(names.get("print")!, () => (type) => {
+    const printTemplate = (type: PhysicalType) => {
       const llvmType = this.builder.toLLVMType(type);
       const name = this.builder.getFreshName("print_");
-      const fnPtr = `@${name}`;
 
       return this.builder.createClosure(name, [llvmType], [], llvmType, (_closure, arg) => {
         switch (true) {
+          case type === "symbol": {
+            const printSymbol = this.variables.get(names.get("print_symbol")!)!();
+            assert(typeof printSymbol !== "function");
+            createClosureCall(printSymbol, [arg]);
+            break;
+          }
+          case typeof type === "object" && "int" in type && type.int === 1: {
+            const printInt = this.variables.get(names.get("print_bool")!)!();
+            assert(typeof printInt !== "function");
+            createClosureCall(printInt, [arg]);
+            break;
+          }
           case typeof type === "object" && "int" in type: {
             const printInt = this.variables.get(names.get("print_int")!)!();
             assert(typeof printInt !== "function");
@@ -707,7 +729,10 @@ export class Context {
               });
 
               const item = this.builder.createExtractValue(arg, idx);
-              createClosureCall2(fnPtr, [item]);
+              const itemType = type.array;
+              const printItem = printTemplate(itemType);
+
+              createClosureCall(printItem, [item]);
 
               return [condition, nextIdx];
             });
@@ -718,7 +743,7 @@ export class Context {
           }
           case typeof type === "object" && "fn" in type: {
             const closureTypes = type.fn.closure;
-            const fnPtr = this.builder.createExtractValue(arg, 0);
+            // const fnPtr = this.builder.createExtractValue(arg, 0);
             const closure = this.builder.createExtractValue(arg, 1);
 
             createPrintString("fn[");
@@ -726,11 +751,14 @@ export class Context {
               if (index > 0) createPrintString(", ");
 
               const value = this.builder.createExtractValue(closure, index);
-              createClosureCall2(fnPtr, [value]);
+              const valueType = closureTypes[index];
+              const printItem = printTemplate(valueType);
+              createClosureCall(printItem, [value]);
             }
-            createPrintString("](");
-            createPrintPointer(fnPtr);
-            createPrintString(")");
+            createPrintString("]");
+            // createPrintString("](");
+            // createPrintPointer(fnPtr);
+            // createPrintString(")");
 
             break;
           }
@@ -742,7 +770,9 @@ export class Context {
               if (index > 0) createPrintString(", ");
 
               const value = this.builder.createExtractValue(arg, index);
-              createClosureCall2(fnPtr, [value]);
+              const valueType = types[index];
+              const printItem = printTemplate(valueType);
+              createClosureCall(printItem, [value]);
             }
             createPrintString(")");
 
@@ -758,26 +788,31 @@ export class Context {
             createClosureCall(printString, [arg]);
             break;
           }
+          case typeof type === "object" && "pointer" in type: {
+            createPrintString("ptr");
+            // createPrintString("ptr(");
+            // createPrintPointer(arg);
+            // createPrintString(")");
+            break;
+          }
           case typeof type === "object" && "boolean" in type: {
             const printBool = this.variables.get(names.get("print_bool")!)!();
             assert(typeof printBool !== "function");
             createClosureCall(printBool, [arg]);
             break;
           }
-          case typeof type === "object" && "symbol" in type: {
-            const printSymbol = this.variables.get(names.get("print_symbol")!)!();
-            assert(typeof printSymbol !== "function");
-            createClosureCall(printSymbol, [arg]);
-            break;
-          }
           default: {
+            console.log(type);
+
             unreachable("cant print by type");
           }
         }
 
         return arg;
       });
-    });
+    };
+
+    this.variables.set(names.get("print")!, () => printTemplate);
 
     this.variables.set(names.get("print_tuple")!, () => (type) => {
       assert(typeof type === "object");
@@ -849,7 +884,7 @@ export class Context {
       });
     });
     this.variables.set(names.get("print_symbol")!, createPrintWrapper("print_symbol", "i64"));
-    this.variables.set(names.get("print_float")!, createPrintWrapper("print_float", "f64"));
+    this.variables.set(names.get("print_float")!, createPrintWrapper("print_float", "float"));
     this.variables.set(names.get("print_string")!, createPrintWrapper("print_string", { pointer: "i8" }));
     this.variables.set(names.get("print_int")!, createPrintWrapper("print_int", "i32"));
     this.variables.set(names.get("print_bool")!, createPrintWrapper("print_bool", "i1"));

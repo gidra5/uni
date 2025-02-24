@@ -16,6 +16,13 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       const values = ast.children.map((child) => codegen(child, context));
       return values.reduce((acc, value) => context.builder.createAdd(acc, value));
     }
+    case NodeType.REF: {
+      const value = codegen(ast.children[0], context);
+      const type = context.typeMap.get(ast.children[0].id)!;
+      assert(typeof type === "object");
+      assert("pointer" in type);
+      return context.builder.createLoad(value);
+    }
     case NodeType.TUPLE_PUSH: {
       const tuple = codegen(ast.children[0], context);
       const value = codegen(ast.children[1], context);

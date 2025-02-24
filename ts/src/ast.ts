@@ -97,6 +97,9 @@ export const NodeType = {
   TYPEOF: "typeof",
   TYPE: "type",
 
+  REF: "ref",
+  DEREF: "deref",
+
   SPREAD: "...",
   MUTABLE: "mut",
   CONST: "const",

@@ -17,6 +17,7 @@ export type Type =
 export type PhysicalType =
   | "void" /** zero sized type, has no representation in physical memory */
   | "unknown" /** unknown type of values, practically can be anything without changing semantics */
+  | "symbol"
   | { int: number } /** signed integer type, size in bytes */
   | { float: number } /** floating point type, size in bytes */
   | { pointer: PhysicalType }

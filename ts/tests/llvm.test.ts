@@ -38,7 +38,7 @@ beforeAll(async () => {
 beforeEach(() => {
   register(Injectable.FileMap, new FileMap());
   register(Injectable.PrecedenceMap, new Map());
-  register(Injectable.NextId, 0);
+  register(Injectable.NextId, globalResolvedNamesArray.length);
   register(Injectable.PositionMap, new Map());
   register(Injectable.TypeMap, new Map());
   register(Injectable.PhysicalTypeMap, new Map());
@@ -67,6 +67,9 @@ const testCase = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
 
   const stdout = compileOutput.stdout.concat(runOutput.stdout);
   const stderr = compileOutput.stderr.concat(runOutput.stderr);
+
+  // stderr.forEach((line) => console.log(line));
+  // stdout.forEach((line) => console.log(line));
 
   expect(stdout).toMatchSnapshot("stdout");
   expect(stderr).toMatchSnapshot("stderr");
@@ -189,19 +192,24 @@ class Builder {
     return this.node(NodeType.NAME, type, { value }, []);
   }
 
+  pointer(value: Tree) {
+    const type = this.typeSchema.get(value.id)!;
+    return this.node(NodeType.REF, { pointer: type }, {}, [value]);
+  }
+
   symbol(value?: string) {
     if (!value) value = String(nextId());
     const name = `symbol_${value}`;
-    return this.node(NodeType.ATOM, { pointer: "unknown" }, { name }, []);
+    return this.node(NodeType.ATOM, "symbol", { name }, []);
   }
 
   atom(value: string) {
     const name = `atom_${value}`;
-    return this.node(NodeType.ATOM, { pointer: "unknown" }, { name }, []);
+    return this.node(NodeType.ATOM, "symbol", { name }, []);
   }
 
   unit() {
-    return this.node(NodeType.ATOM, { pointer: "unknown" }, { name: "unit" }, []);
+    return this.node(NodeType.ATOM, "symbol", { name: "unit" }, []);
   }
 
   int(value: number) {
@@ -209,7 +217,7 @@ class Builder {
   }
 
   float(value: number) {
-    return this.node(NodeType.NUMBER, { float: 64 }, { value }, []);
+    return this.node(NodeType.NUMBER, { float: 32 }, { value }, []);
   }
 
   string(value: string) {
@@ -778,17 +786,35 @@ test.only("generic print", async () => {
   await testCase(
     builder.script(
       builder.print(fn([name({ int: 32 }, "x")], (x) => x())),
-      builder.print(fn([name({ int: 32 }, "x")], (x) => fn([name({ int: 32 }, "y")], (y) => x()))),
+      builder.print(string("\n")),
+      builder.print(
+        builder.app(
+          fn([name({ int: 32 }, "x")], (x) => fn([name({ int: 32 }, "y")], (y) => x())),
+          int(1)
+        )
+      ),
+      builder.print(string("\n")),
       builder.print(fn([name({ int: 32 }, "x"), name({ int: 32 }, "y")], (x, y) => x())),
+      builder.print(string("\n")),
       builder.print(tuple(int(1), string("ab"))),
+      builder.print(string("\n")),
       builder.print(int(1)),
-      builder.print(float(1.2)),
+      builder.print(string("\n")),
+      builder.print(float(1.25)),
+      builder.print(string("\n")),
       builder.print(string("ab")),
+      builder.print(string("\n")),
       builder.print(builder.bool(true)),
+      builder.print(string("\n")),
       builder.print(builder.bool(false)),
+      builder.print(string("\n")),
       builder.print(builder.unit()),
+      builder.print(string("\n")),
       builder.print(builder.atom("atom_a")),
-      builder.print(builder.symbol("atom_a"))
+      builder.print(string("\n")),
+      builder.print(builder.symbol("symbol_a"))
+      // builder.print(string("\n")),
+      // builder.print(builder.pointer(builder.int(1)))
     ),
     builder.typeSchema
   );

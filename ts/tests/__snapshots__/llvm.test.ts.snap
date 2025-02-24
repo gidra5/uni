@@ -307,6 +307,937 @@ exports[`data structures compilation > unit > stdout 1`] = `
 ]
 `;
 
+exports[`generic print > compiled 1`] = `
+"@const_102 = constant [4 x i8] c"fn[\\00"
+@const_103 = constant [3 x i8] c"%s\\00"
+@const_104 = constant [2 x i8] c"]\\00"
+@const_149 = constant [2 x i8] c"
+\\00"
+@const_220 = constant i32 1
+@const_315 = constant [7 x i8] c"tuple(\\00"
+@const_342 = constant [3 x i8] c", \\00"
+@const_369 = constant [2 x i8] c")\\00"
+@const_378 = constant [3 x i8] c"ab\\00"
+@const_489 = constant float 1.25
+@const_595 = constant i1 1
+@const_647 = constant i1 0
+@const_703 = constant i64 0
+@const_755 = constant i64 1
+@const_807 = constant i64 2
+@const_813 = constant [5 x i8] c"unit\\00"
+@const_814 = constant [12 x i8] c"atom_atom_a\\00"
+@const_815 = constant [16 x i8] c"symbol_symbol_a\\00"
+@symbols_metadata_array = constant [3 x { i8* }] [{ i8* } { i8* @const_813 }, { i8* } { i8* @const_814 }, { i8* } { i8* @const_815 }]
+@symbols_metadata = constant ptr @symbols_metadata_array
+define i32 @main() {
+  main: 
+    %var_95 = alloca {  }
+    %var_96 = load {  }, ptr %var_95
+    store {  } %var_96, ptr %var_95
+    %var_105 = alloca { void ({ void (i32*, {  }, i32)*, {  } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } }
+    %var_106 = load { void ({ void (i32*, {  }, i32)*, {  } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } }, ptr %var_105
+    %var_107 = insertvalue { void ({ void (i32*, {  }, i32)*, {  } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_106, void ({ void (i32*, {  }, i32)*, {  } }*, {  }, { void (i32*, {  }, i32)*, {  } })* @print_94, 0
+    %var_108 = insertvalue { void ({ void (i32*, {  }, i32)*, {  } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_107, {  } %var_96, 1
+    store { void ({ void (i32*, {  }, i32)*, {  } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_108, ptr %var_105
+    %var_110 = alloca {  }
+    %var_111 = load {  }, ptr %var_110
+    store {  } %var_111, ptr %var_110
+    %var_116 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_117 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_116
+    %var_118 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_117, void (i32*, {  }, i32)* @fn_109, 0
+    %var_119 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_118, {  } %var_111, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_119, ptr %var_116
+    %var_120 = extractvalue { void ({ void (i32*, {  }, i32)*, {  } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_108, 0
+    %var_121 = extractvalue { void ({ void (i32*, {  }, i32)*, {  } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_108, 1
+    %var_122 = alloca { void (i32*, {  }, i32)*, {  } }
+    call void %var_120({ void (i32*, {  }, i32)*, {  } }* %var_122, {  } %var_121, { void (i32*, {  }, i32)*, {  } } %var_119)
+    %var_123 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_122
+    %var_125 = alloca {  }
+    %var_126 = load {  }, ptr %var_125
+    store {  } %var_126, ptr %var_125
+    %var_145 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_146 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_145
+    %var_147 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_146, void (i8**, {  }, i8*)* @print_124, 0
+    %var_148 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_147, {  } %var_126, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_148, ptr %var_145
+    %var_150 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_148, 0
+    %var_151 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_148, 1
+    %var_152 = alloca i8*
+    call void %var_150(i8** %var_152, {  } %var_151, i8* @const_149)
+    %var_153 = load i8*, ptr %var_152
+    %var_155 = alloca {  }
+    %var_156 = load {  }, ptr %var_155
+    store {  } %var_156, ptr %var_155
+    %var_192 = alloca { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, { void (i32*, { i32 }, i32)*, { i32 } })*, {  } }
+    %var_193 = load { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, { void (i32*, { i32 }, i32)*, { i32 } })*, {  } }, ptr %var_192
+    %var_194 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, { void (i32*, { i32 }, i32)*, { i32 } })*, {  } } %var_193, void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, { void (i32*, { i32 }, i32)*, { i32 } })* @print_154, 0
+    %var_195 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, { void (i32*, { i32 }, i32)*, { i32 } })*, {  } } %var_194, {  } %var_156, 1
+    store { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, { void (i32*, { i32 }, i32)*, { i32 } })*, {  } } %var_195, ptr %var_192
+    %var_197 = alloca {  }
+    %var_198 = load {  }, ptr %var_197
+    store {  } %var_198, ptr %var_197
+    %var_216 = alloca { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
+    %var_217 = load { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_216
+    %var_218 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_217, void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_196, 0
+    %var_219 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_218, {  } %var_198, 1
+    store { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_219, ptr %var_216
+    %var_221 = load i32, ptr @const_220
+    %var_222 = extractvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_219, 0
+    %var_223 = extractvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_219, 1
+    %var_224 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
+    call void %var_222({ void (i32*, { i32 }, i32)*, { i32 } }* %var_224, {  } %var_223, i32 %var_221)
+    %var_225 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_224
+    %var_226 = extractvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, { void (i32*, { i32 }, i32)*, { i32 } })*, {  } } %var_195, 0
+    %var_227 = extractvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, { void (i32*, { i32 }, i32)*, { i32 } })*, {  } } %var_195, 1
+    %var_228 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
+    call void %var_226({ void (i32*, { i32 }, i32)*, { i32 } }* %var_228, {  } %var_227, { void (i32*, { i32 }, i32)*, { i32 } } %var_225)
+    %var_229 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_228
+    %var_231 = alloca {  }
+    %var_232 = load {  }, ptr %var_231
+    store {  } %var_232, ptr %var_231
+    %var_247 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_248 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_247
+    %var_249 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_248, void (i8**, {  }, i8*)* @print_230, 0
+    %var_250 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_249, {  } %var_232, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_250, ptr %var_247
+    %var_251 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_250, 0
+    %var_252 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_250, 1
+    %var_253 = alloca i8*
+    call void %var_251(i8** %var_253, {  } %var_252, i8* @const_149)
+    %var_254 = load i8*, ptr %var_253
+    %var_256 = alloca {  }
+    %var_257 = load {  }, ptr %var_256
+    store {  } %var_257, ptr %var_256
+    %var_263 = alloca { void ({ void (i32*, {  }, i32, i32)*, {  } }*, {  }, { void (i32*, {  }, i32, i32)*, {  } })*, {  } }
+    %var_264 = load { void ({ void (i32*, {  }, i32, i32)*, {  } }*, {  }, { void (i32*, {  }, i32, i32)*, {  } })*, {  } }, ptr %var_263
+    %var_265 = insertvalue { void ({ void (i32*, {  }, i32, i32)*, {  } }*, {  }, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_264, void ({ void (i32*, {  }, i32, i32)*, {  } }*, {  }, { void (i32*, {  }, i32, i32)*, {  } })* @print_255, 0
+    %var_266 = insertvalue { void ({ void (i32*, {  }, i32, i32)*, {  } }*, {  }, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_265, {  } %var_257, 1
+    store { void ({ void (i32*, {  }, i32, i32)*, {  } }*, {  }, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_266, ptr %var_263
+    %var_268 = alloca {  }
+    %var_269 = load {  }, ptr %var_268
+    store {  } %var_269, ptr %var_268
+    %var_275 = alloca { void (i32*, {  }, i32, i32)*, {  } }
+    %var_276 = load { void (i32*, {  }, i32, i32)*, {  } }, ptr %var_275
+    %var_277 = insertvalue { void (i32*, {  }, i32, i32)*, {  } } %var_276, void (i32*, {  }, i32, i32)* @fn_267, 0
+    %var_278 = insertvalue { void (i32*, {  }, i32, i32)*, {  } } %var_277, {  } %var_269, 1
+    store { void (i32*, {  }, i32, i32)*, {  } } %var_278, ptr %var_275
+    %var_279 = extractvalue { void ({ void (i32*, {  }, i32, i32)*, {  } }*, {  }, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_266, 0
+    %var_280 = extractvalue { void ({ void (i32*, {  }, i32, i32)*, {  } }*, {  }, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_266, 1
+    %var_281 = alloca { void (i32*, {  }, i32, i32)*, {  } }
+    call void %var_279({ void (i32*, {  }, i32, i32)*, {  } }* %var_281, {  } %var_280, { void (i32*, {  }, i32, i32)*, {  } } %var_278)
+    %var_282 = load { void (i32*, {  }, i32, i32)*, {  } }, ptr %var_281
+    %var_284 = alloca {  }
+    %var_285 = load {  }, ptr %var_284
+    store {  } %var_285, ptr %var_284
+    %var_300 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_301 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_300
+    %var_302 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_301, void (i8**, {  }, i8*)* @print_283, 0
+    %var_303 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_302, {  } %var_285, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_303, ptr %var_300
+    %var_304 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_303, 0
+    %var_305 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_303, 1
+    %var_306 = alloca i8*
+    call void %var_304(i8** %var_306, {  } %var_305, i8* @const_149)
+    %var_307 = load i8*, ptr %var_306
+    %var_309 = alloca {  }
+    %var_310 = load {  }, ptr %var_309
+    store {  } %var_310, ptr %var_309
+    %var_370 = alloca { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } }
+    %var_371 = load { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } }, ptr %var_370
+    %var_372 = insertvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_371, void ({ i32, i8* }*, {  }, { i32, i8* })* @print_308, 0
+    %var_373 = insertvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_372, {  } %var_310, 1
+    store { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_373, ptr %var_370
+    %var_374 = load i32, ptr @const_220
+    %var_375 = alloca { i32 }
+    %var_376 = load { i32 }, ptr %var_375
+    %var_377 = insertvalue { i32 } %var_376, i32 %var_374, 0
+    store { i32 } %var_377, ptr %var_375
+    %var_379 = extractvalue { i32 } %var_377, 0
+    %var_380 = alloca { i32, [3 x i8]* }
+    %var_381 = load { i32, [3 x i8]* }, ptr %var_380
+    %var_382 = insertvalue { i32, [3 x i8]* } %var_381, i32 %var_379, 0
+    %var_383 = insertvalue { i32, [3 x i8]* } %var_382, [3 x i8]* @const_378, 1
+    store { i32, [3 x i8]* } %var_383, ptr %var_380
+    %var_384 = extractvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_373, 0
+    %var_385 = extractvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_373, 1
+    %var_386 = alloca { i32, i8* }
+    call void %var_384({ i32, i8* }* %var_386, {  } %var_385, { i32, i8* } %var_383)
+    %var_387 = load { i32, i8* }, ptr %var_386
+    %var_389 = alloca {  }
+    %var_390 = load {  }, ptr %var_389
+    store {  } %var_390, ptr %var_389
+    %var_405 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_406 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_405
+    %var_407 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_406, void (i8**, {  }, i8*)* @print_388, 0
+    %var_408 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_407, {  } %var_390, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_408, ptr %var_405
+    %var_409 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_408, 0
+    %var_410 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_408, 1
+    %var_411 = alloca i8*
+    call void %var_409(i8** %var_411, {  } %var_410, i8* @const_149)
+    %var_412 = load i8*, ptr %var_411
+    %var_414 = alloca {  }
+    %var_415 = load {  }, ptr %var_414
+    store {  } %var_415, ptr %var_414
+    %var_430 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_431 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_430
+    %var_432 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_431, void (i32*, {  }, i32)* @print_413, 0
+    %var_433 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_432, {  } %var_415, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_433, ptr %var_430
+    %var_434 = load i32, ptr @const_220
+    %var_435 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_433, 0
+    %var_436 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_433, 1
+    %var_437 = alloca i32
+    call void %var_435(i32* %var_437, {  } %var_436, i32 %var_434)
+    %var_438 = load i32, ptr %var_437
+    %var_440 = alloca {  }
+    %var_441 = load {  }, ptr %var_440
+    store {  } %var_441, ptr %var_440
+    %var_456 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_457 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_456
+    %var_458 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_457, void (i8**, {  }, i8*)* @print_439, 0
+    %var_459 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_458, {  } %var_441, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_459, ptr %var_456
+    %var_460 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_459, 0
+    %var_461 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_459, 1
+    %var_462 = alloca i8*
+    call void %var_460(i8** %var_462, {  } %var_461, i8* @const_149)
+    %var_463 = load i8*, ptr %var_462
+    %var_465 = alloca {  }
+    %var_466 = load {  }, ptr %var_465
+    store {  } %var_466, ptr %var_465
+    %var_485 = alloca { void (float*, {  }, float)*, {  } }
+    %var_486 = load { void (float*, {  }, float)*, {  } }, ptr %var_485
+    %var_487 = insertvalue { void (float*, {  }, float)*, {  } } %var_486, void (float*, {  }, float)* @print_464, 0
+    %var_488 = insertvalue { void (float*, {  }, float)*, {  } } %var_487, {  } %var_466, 1
+    store { void (float*, {  }, float)*, {  } } %var_488, ptr %var_485
+    %var_490 = load float, ptr @const_489
+    %var_491 = extractvalue { void (float*, {  }, float)*, {  } } %var_488, 0
+    %var_492 = extractvalue { void (float*, {  }, float)*, {  } } %var_488, 1
+    %var_493 = alloca float
+    call void %var_491(float* %var_493, {  } %var_492, float %var_490)
+    %var_494 = load float, ptr %var_493
+    %var_496 = alloca {  }
+    %var_497 = load {  }, ptr %var_496
+    store {  } %var_497, ptr %var_496
+    %var_512 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_513 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_512
+    %var_514 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_513, void (i8**, {  }, i8*)* @print_495, 0
+    %var_515 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_514, {  } %var_497, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_515, ptr %var_512
+    %var_516 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_515, 0
+    %var_517 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_515, 1
+    %var_518 = alloca i8*
+    call void %var_516(i8** %var_518, {  } %var_517, i8* @const_149)
+    %var_519 = load i8*, ptr %var_518
+    %var_521 = alloca {  }
+    %var_522 = load {  }, ptr %var_521
+    store {  } %var_522, ptr %var_521
+    %var_537 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_538 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_537
+    %var_539 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_538, void (i8**, {  }, i8*)* @print_520, 0
+    %var_540 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_539, {  } %var_522, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_540, ptr %var_537
+    %var_541 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_540, 0
+    %var_542 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_540, 1
+    %var_543 = alloca i8*
+    call void %var_541(i8** %var_543, {  } %var_542, i8* @const_378)
+    %var_544 = load i8*, ptr %var_543
+    %var_546 = alloca {  }
+    %var_547 = load {  }, ptr %var_546
+    store {  } %var_547, ptr %var_546
+    %var_562 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_563 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_562
+    %var_564 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_563, void (i8**, {  }, i8*)* @print_545, 0
+    %var_565 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_564, {  } %var_547, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_565, ptr %var_562
+    %var_566 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_565, 0
+    %var_567 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_565, 1
+    %var_568 = alloca i8*
+    call void %var_566(i8** %var_568, {  } %var_567, i8* @const_149)
+    %var_569 = load i8*, ptr %var_568
+    %var_571 = alloca {  }
+    %var_572 = load {  }, ptr %var_571
+    store {  } %var_572, ptr %var_571
+    %var_591 = alloca { void (i1*, {  }, i1)*, {  } }
+    %var_592 = load { void (i1*, {  }, i1)*, {  } }, ptr %var_591
+    %var_593 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_592, void (i1*, {  }, i1)* @print_570, 0
+    %var_594 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_593, {  } %var_572, 1
+    store { void (i1*, {  }, i1)*, {  } } %var_594, ptr %var_591
+    %var_596 = load i1, ptr @const_595
+    %var_597 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_594, 0
+    %var_598 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_594, 1
+    %var_599 = alloca i1
+    call void %var_597(i1* %var_599, {  } %var_598, i1 %var_596)
+    %var_600 = load i1, ptr %var_599
+    %var_602 = alloca {  }
+    %var_603 = load {  }, ptr %var_602
+    store {  } %var_603, ptr %var_602
+    %var_618 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_619 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_618
+    %var_620 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_619, void (i8**, {  }, i8*)* @print_601, 0
+    %var_621 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_620, {  } %var_603, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_621, ptr %var_618
+    %var_622 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_621, 0
+    %var_623 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_621, 1
+    %var_624 = alloca i8*
+    call void %var_622(i8** %var_624, {  } %var_623, i8* @const_149)
+    %var_625 = load i8*, ptr %var_624
+    %var_627 = alloca {  }
+    %var_628 = load {  }, ptr %var_627
+    store {  } %var_628, ptr %var_627
+    %var_643 = alloca { void (i1*, {  }, i1)*, {  } }
+    %var_644 = load { void (i1*, {  }, i1)*, {  } }, ptr %var_643
+    %var_645 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_644, void (i1*, {  }, i1)* @print_626, 0
+    %var_646 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_645, {  } %var_628, 1
+    store { void (i1*, {  }, i1)*, {  } } %var_646, ptr %var_643
+    %var_648 = load i1, ptr @const_647
+    %var_649 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_646, 0
+    %var_650 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_646, 1
+    %var_651 = alloca i1
+    call void %var_649(i1* %var_651, {  } %var_650, i1 %var_648)
+    %var_652 = load i1, ptr %var_651
+    %var_654 = alloca {  }
+    %var_655 = load {  }, ptr %var_654
+    store {  } %var_655, ptr %var_654
+    %var_670 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_671 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_670
+    %var_672 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_671, void (i8**, {  }, i8*)* @print_653, 0
+    %var_673 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_672, {  } %var_655, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_673, ptr %var_670
+    %var_674 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_673, 0
+    %var_675 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_673, 1
+    %var_676 = alloca i8*
+    call void %var_674(i8** %var_676, {  } %var_675, i8* @const_149)
+    %var_677 = load i8*, ptr %var_676
+    %var_679 = alloca {  }
+    %var_680 = load {  }, ptr %var_679
+    store {  } %var_680, ptr %var_679
+    %var_699 = alloca { void (i64*, {  }, i64)*, {  } }
+    %var_700 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_699
+    %var_701 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_700, void (i64*, {  }, i64)* @print_678, 0
+    %var_702 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_701, {  } %var_680, 1
+    store { void (i64*, {  }, i64)*, {  } } %var_702, ptr %var_699
+    %var_704 = load i64, ptr @const_703
+    %var_705 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_702, 0
+    %var_706 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_702, 1
+    %var_707 = alloca i64
+    call void %var_705(i64* %var_707, {  } %var_706, i64 %var_704)
+    %var_708 = load i64, ptr %var_707
+    %var_710 = alloca {  }
+    %var_711 = load {  }, ptr %var_710
+    store {  } %var_711, ptr %var_710
+    %var_726 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_727 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_726
+    %var_728 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_727, void (i8**, {  }, i8*)* @print_709, 0
+    %var_729 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_728, {  } %var_711, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_729, ptr %var_726
+    %var_730 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_729, 0
+    %var_731 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_729, 1
+    %var_732 = alloca i8*
+    call void %var_730(i8** %var_732, {  } %var_731, i8* @const_149)
+    %var_733 = load i8*, ptr %var_732
+    %var_735 = alloca {  }
+    %var_736 = load {  }, ptr %var_735
+    store {  } %var_736, ptr %var_735
+    %var_751 = alloca { void (i64*, {  }, i64)*, {  } }
+    %var_752 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_751
+    %var_753 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_752, void (i64*, {  }, i64)* @print_734, 0
+    %var_754 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_753, {  } %var_736, 1
+    store { void (i64*, {  }, i64)*, {  } } %var_754, ptr %var_751
+    %var_756 = load i64, ptr @const_755
+    %var_757 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_754, 0
+    %var_758 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_754, 1
+    %var_759 = alloca i64
+    call void %var_757(i64* %var_759, {  } %var_758, i64 %var_756)
+    %var_760 = load i64, ptr %var_759
+    %var_762 = alloca {  }
+    %var_763 = load {  }, ptr %var_762
+    store {  } %var_763, ptr %var_762
+    %var_778 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_779 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_778
+    %var_780 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_779, void (i8**, {  }, i8*)* @print_761, 0
+    %var_781 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_780, {  } %var_763, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_781, ptr %var_778
+    %var_782 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_781, 0
+    %var_783 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_781, 1
+    %var_784 = alloca i8*
+    call void %var_782(i8** %var_784, {  } %var_783, i8* @const_149)
+    %var_785 = load i8*, ptr %var_784
+    %var_787 = alloca {  }
+    %var_788 = load {  }, ptr %var_787
+    store {  } %var_788, ptr %var_787
+    %var_803 = alloca { void (i64*, {  }, i64)*, {  } }
+    %var_804 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_803
+    %var_805 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_804, void (i64*, {  }, i64)* @print_786, 0
+    %var_806 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_805, {  } %var_788, 1
+    store { void (i64*, {  }, i64)*, {  } } %var_806, ptr %var_803
+    %var_808 = load i64, ptr @const_807
+    %var_809 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_806, 0
+    %var_810 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_806, 1
+    %var_811 = alloca i64
+    call void %var_809(i64* %var_811, {  } %var_810, i64 %var_808)
+    %var_812 = load i64, ptr %var_811
+    ret i32 0
+}
+define void @print_94(ptr sret({ void (i32*, {  }, i32)*, {  } }) %var_97, {  } %var_98, { void (i32*, {  }, i32)*, {  } } %var_99) {
+  entry100: 
+    %var_101 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_99, 1
+    call void @printf(i8* @const_103, [4 x i8]* @const_102)
+    call void @printf(i8* @const_103, [2 x i8]* @const_104)
+    store { void (i32*, {  }, i32)*, {  } } %var_99, ptr %var_97
+    ret void
+}
+declare i32 @printf(i8*, ...)
+define void @fn_109(ptr sret(i32) %var_112, {  } %var_113, i32 %var_114) {
+  entry115: 
+    store i32 %var_114, ptr %var_112
+    ret void
+}
+define void @print_124(ptr sret(i8*) %var_127, {  } %var_128, i8* %var_129) {
+  entry130: 
+    %var_131 = alloca {  }
+    %var_132 = load {  }, ptr %var_131
+    store {  } %var_132, ptr %var_131
+    %var_137 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_138 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_137
+    %var_139 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_138, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_140 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_139, {  } %var_132, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_140, ptr %var_137
+    %var_141 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_140, 0
+    %var_142 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_140, 1
+    %var_143 = alloca i8*
+    call void %var_141(i8** %var_143, {  } %var_142, i8* %var_129)
+    %var_144 = load i8*, ptr %var_143
+    store i8* %var_129, ptr %var_127
+    ret void
+}
+declare void @print_string(i8*)
+define void @print_string_wrap(ptr sret(i8*) %var_133, {  } %var_134, i8* %var_135) {
+  entry136: 
+    call void @print_string(i8* %var_135)
+    store i8* %var_135, ptr %var_133
+    ret void
+}
+define void @print_154(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %var_157, {  } %var_158, { void (i32*, { i32 }, i32)*, { i32 } } %var_159) {
+  entry160: 
+    %var_161 = extractvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_159, 1
+    call void @printf(i8* @const_103, [4 x i8]* @const_102)
+    %var_162 = extractvalue { i32 } %var_161, 0
+    %var_164 = alloca {  }
+    %var_165 = load {  }, ptr %var_164
+    store {  } %var_165, ptr %var_164
+    %var_184 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_185 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_184
+    %var_186 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_185, void (i32*, {  }, i32)* @print_163, 0
+    %var_187 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_186, {  } %var_165, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_187, ptr %var_184
+    %var_188 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_187, 0
+    %var_189 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_187, 1
+    %var_190 = alloca i32
+    call void %var_188(i32* %var_190, {  } %var_189, i32 %var_162)
+    %var_191 = load i32, ptr %var_190
+    call void @printf(i8* @const_103, [2 x i8]* @const_104)
+    store { void (i32*, { i32 }, i32)*, { i32 } } %var_159, ptr %var_157
+    ret void
+}
+define void @print_163(ptr sret(i32) %var_166, {  } %var_167, i32 %var_168) {
+  entry169: 
+    %var_170 = alloca {  }
+    %var_171 = load {  }, ptr %var_170
+    store {  } %var_171, ptr %var_170
+    %var_176 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_177 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_176
+    %var_178 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_177, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_179 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_178, {  } %var_171, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_179, ptr %var_176
+    %var_180 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_179, 0
+    %var_181 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_179, 1
+    %var_182 = alloca i32
+    call void %var_180(i32* %var_182, {  } %var_181, i32 %var_168)
+    %var_183 = load i32, ptr %var_182
+    store i32 %var_168, ptr %var_166
+    ret void
+}
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_172, {  } %var_173, i32 %var_174) {
+  entry175: 
+    call void @print_int(i32 %var_174)
+    store i32 %var_174, ptr %var_172
+    ret void
+}
+define void @fn_196(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %var_199, {  } %var_200, i32 %var_201) {
+  entry202: 
+    %var_204 = alloca { i32 }
+    %var_205 = load { i32 }, ptr %var_204
+    %var_206 = insertvalue { i32 } %var_205, i32 %var_201, 0
+    store { i32 } %var_206, ptr %var_204
+    %var_212 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
+    %var_213 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_212
+    %var_214 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_213, void (i32*, { i32 }, i32)* @fn_203, 0
+    %var_215 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_214, { i32 } %var_206, 1
+    store { void (i32*, { i32 }, i32)*, { i32 } } %var_215, ptr %var_212
+    store { void (i32*, { i32 }, i32)*, { i32 } } %var_215, ptr %var_199
+    ret void
+}
+define void @fn_203(ptr sret(i32) %var_207, { i32 } %var_208, i32 %var_209) {
+  entry210: 
+    %var_211 = extractvalue { i32 } %var_208, 0
+    store i32 %var_211, ptr %var_207
+    ret void
+}
+define void @print_230(ptr sret(i8*) %var_233, {  } %var_234, i8* %var_235) {
+  entry236: 
+    %var_237 = alloca {  }
+    %var_238 = load {  }, ptr %var_237
+    store {  } %var_238, ptr %var_237
+    %var_239 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_240 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_239
+    %var_241 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_240, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_242 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_241, {  } %var_238, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_242, ptr %var_239
+    %var_243 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_242, 0
+    %var_244 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_242, 1
+    %var_245 = alloca i8*
+    call void %var_243(i8** %var_245, {  } %var_244, i8* %var_235)
+    %var_246 = load i8*, ptr %var_245
+    store i8* %var_235, ptr %var_233
+    ret void
+}
+define void @print_255(ptr sret({ void (i32*, {  }, i32, i32)*, {  } }) %var_258, {  } %var_259, { void (i32*, {  }, i32, i32)*, {  } } %var_260) {
+  entry261: 
+    %var_262 = extractvalue { void (i32*, {  }, i32, i32)*, {  } } %var_260, 1
+    call void @printf(i8* @const_103, [4 x i8]* @const_102)
+    call void @printf(i8* @const_103, [2 x i8]* @const_104)
+    store { void (i32*, {  }, i32, i32)*, {  } } %var_260, ptr %var_258
+    ret void
+}
+define void @fn_267(ptr sret(i32) %var_270, {  } %var_271, i32 %var_272, i32 %var_273) {
+  entry274: 
+    store i32 %var_272, ptr %var_270
+    ret void
+}
+define void @print_283(ptr sret(i8*) %var_286, {  } %var_287, i8* %var_288) {
+  entry289: 
+    %var_290 = alloca {  }
+    %var_291 = load {  }, ptr %var_290
+    store {  } %var_291, ptr %var_290
+    %var_292 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_293 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_292
+    %var_294 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_293, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_295 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_294, {  } %var_291, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_295, ptr %var_292
+    %var_296 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_295, 0
+    %var_297 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_295, 1
+    %var_298 = alloca i8*
+    call void %var_296(i8** %var_298, {  } %var_297, i8* %var_288)
+    %var_299 = load i8*, ptr %var_298
+    store i8* %var_288, ptr %var_286
+    ret void
+}
+define void @print_308(ptr sret({ i32, i8* }) %var_311, {  } %var_312, { i32, i8* } %var_313) {
+  entry314: 
+    call void @printf(i8* @const_103, [7 x i8]* @const_315)
+    %var_316 = extractvalue { i32, i8* } %var_313, 0
+    %var_318 = alloca {  }
+    %var_319 = load {  }, ptr %var_318
+    store {  } %var_319, ptr %var_318
+    %var_334 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_335 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_334
+    %var_336 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_335, void (i32*, {  }, i32)* @print_317, 0
+    %var_337 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_336, {  } %var_319, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_337, ptr %var_334
+    %var_338 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_337, 0
+    %var_339 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_337, 1
+    %var_340 = alloca i32
+    call void %var_338(i32* %var_340, {  } %var_339, i32 %var_316)
+    %var_341 = load i32, ptr %var_340
+    call void @printf(i8* @const_103, [3 x i8]* @const_342)
+    %var_343 = extractvalue { i32, i8* } %var_313, 1
+    %var_345 = alloca {  }
+    %var_346 = load {  }, ptr %var_345
+    store {  } %var_346, ptr %var_345
+    %var_361 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_362 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_361
+    %var_363 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_362, void (i8**, {  }, i8*)* @print_344, 0
+    %var_364 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_363, {  } %var_346, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_364, ptr %var_361
+    %var_365 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_364, 0
+    %var_366 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_364, 1
+    %var_367 = alloca i8*
+    call void %var_365(i8** %var_367, {  } %var_366, i8* %var_343)
+    %var_368 = load i8*, ptr %var_367
+    call void @printf(i8* @const_103, [2 x i8]* @const_369)
+    store { i32, i8* } %var_313, ptr %var_311
+    ret void
+}
+define void @print_317(ptr sret(i32) %var_320, {  } %var_321, i32 %var_322) {
+  entry323: 
+    %var_324 = alloca {  }
+    %var_325 = load {  }, ptr %var_324
+    store {  } %var_325, ptr %var_324
+    %var_326 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_327 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_326
+    %var_328 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_327, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_329 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_328, {  } %var_325, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_329, ptr %var_326
+    %var_330 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_329, 0
+    %var_331 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_329, 1
+    %var_332 = alloca i32
+    call void %var_330(i32* %var_332, {  } %var_331, i32 %var_322)
+    %var_333 = load i32, ptr %var_332
+    store i32 %var_322, ptr %var_320
+    ret void
+}
+define void @print_344(ptr sret(i8*) %var_347, {  } %var_348, i8* %var_349) {
+  entry350: 
+    %var_351 = alloca {  }
+    %var_352 = load {  }, ptr %var_351
+    store {  } %var_352, ptr %var_351
+    %var_353 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_354 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_353
+    %var_355 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_354, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_356 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_355, {  } %var_352, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_356, ptr %var_353
+    %var_357 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_356, 0
+    %var_358 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_356, 1
+    %var_359 = alloca i8*
+    call void %var_357(i8** %var_359, {  } %var_358, i8* %var_349)
+    %var_360 = load i8*, ptr %var_359
+    store i8* %var_349, ptr %var_347
+    ret void
+}
+define void @print_388(ptr sret(i8*) %var_391, {  } %var_392, i8* %var_393) {
+  entry394: 
+    %var_395 = alloca {  }
+    %var_396 = load {  }, ptr %var_395
+    store {  } %var_396, ptr %var_395
+    %var_397 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_398 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_397
+    %var_399 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_398, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_400 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_399, {  } %var_396, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_400, ptr %var_397
+    %var_401 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_400, 0
+    %var_402 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_400, 1
+    %var_403 = alloca i8*
+    call void %var_401(i8** %var_403, {  } %var_402, i8* %var_393)
+    %var_404 = load i8*, ptr %var_403
+    store i8* %var_393, ptr %var_391
+    ret void
+}
+define void @print_413(ptr sret(i32) %var_416, {  } %var_417, i32 %var_418) {
+  entry419: 
+    %var_420 = alloca {  }
+    %var_421 = load {  }, ptr %var_420
+    store {  } %var_421, ptr %var_420
+    %var_422 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_423 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_422
+    %var_424 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_423, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_425 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_424, {  } %var_421, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_425, ptr %var_422
+    %var_426 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_425, 0
+    %var_427 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_425, 1
+    %var_428 = alloca i32
+    call void %var_426(i32* %var_428, {  } %var_427, i32 %var_418)
+    %var_429 = load i32, ptr %var_428
+    store i32 %var_418, ptr %var_416
+    ret void
+}
+define void @print_439(ptr sret(i8*) %var_442, {  } %var_443, i8* %var_444) {
+  entry445: 
+    %var_446 = alloca {  }
+    %var_447 = load {  }, ptr %var_446
+    store {  } %var_447, ptr %var_446
+    %var_448 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_449 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_448
+    %var_450 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_449, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_451 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_450, {  } %var_447, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_451, ptr %var_448
+    %var_452 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_451, 0
+    %var_453 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_451, 1
+    %var_454 = alloca i8*
+    call void %var_452(i8** %var_454, {  } %var_453, i8* %var_444)
+    %var_455 = load i8*, ptr %var_454
+    store i8* %var_444, ptr %var_442
+    ret void
+}
+define void @print_464(ptr sret(float) %var_467, {  } %var_468, float %var_469) {
+  entry470: 
+    %var_471 = alloca {  }
+    %var_472 = load {  }, ptr %var_471
+    store {  } %var_472, ptr %var_471
+    %var_477 = alloca { void (float*, {  }, float)*, {  } }
+    %var_478 = load { void (float*, {  }, float)*, {  } }, ptr %var_477
+    %var_479 = insertvalue { void (float*, {  }, float)*, {  } } %var_478, void (float*, {  }, float)* @print_float_wrap, 0
+    %var_480 = insertvalue { void (float*, {  }, float)*, {  } } %var_479, {  } %var_472, 1
+    store { void (float*, {  }, float)*, {  } } %var_480, ptr %var_477
+    %var_481 = extractvalue { void (float*, {  }, float)*, {  } } %var_480, 0
+    %var_482 = extractvalue { void (float*, {  }, float)*, {  } } %var_480, 1
+    %var_483 = alloca float
+    call void %var_481(float* %var_483, {  } %var_482, float %var_469)
+    %var_484 = load float, ptr %var_483
+    store float %var_469, ptr %var_467
+    ret void
+}
+declare void @print_float(float)
+define void @print_float_wrap(ptr sret(float) %var_473, {  } %var_474, float %var_475) {
+  entry476: 
+    call void @print_float(float %var_475)
+    store float %var_475, ptr %var_473
+    ret void
+}
+define void @print_495(ptr sret(i8*) %var_498, {  } %var_499, i8* %var_500) {
+  entry501: 
+    %var_502 = alloca {  }
+    %var_503 = load {  }, ptr %var_502
+    store {  } %var_503, ptr %var_502
+    %var_504 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_505 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_504
+    %var_506 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_505, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_507 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_506, {  } %var_503, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_507, ptr %var_504
+    %var_508 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_507, 0
+    %var_509 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_507, 1
+    %var_510 = alloca i8*
+    call void %var_508(i8** %var_510, {  } %var_509, i8* %var_500)
+    %var_511 = load i8*, ptr %var_510
+    store i8* %var_500, ptr %var_498
+    ret void
+}
+define void @print_520(ptr sret(i8*) %var_523, {  } %var_524, i8* %var_525) {
+  entry526: 
+    %var_527 = alloca {  }
+    %var_528 = load {  }, ptr %var_527
+    store {  } %var_528, ptr %var_527
+    %var_529 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_530 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_529
+    %var_531 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_530, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_532 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_531, {  } %var_528, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_532, ptr %var_529
+    %var_533 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_532, 0
+    %var_534 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_532, 1
+    %var_535 = alloca i8*
+    call void %var_533(i8** %var_535, {  } %var_534, i8* %var_525)
+    %var_536 = load i8*, ptr %var_535
+    store i8* %var_525, ptr %var_523
+    ret void
+}
+define void @print_545(ptr sret(i8*) %var_548, {  } %var_549, i8* %var_550) {
+  entry551: 
+    %var_552 = alloca {  }
+    %var_553 = load {  }, ptr %var_552
+    store {  } %var_553, ptr %var_552
+    %var_554 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_555 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_554
+    %var_556 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_555, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_557 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_556, {  } %var_553, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_557, ptr %var_554
+    %var_558 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_557, 0
+    %var_559 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_557, 1
+    %var_560 = alloca i8*
+    call void %var_558(i8** %var_560, {  } %var_559, i8* %var_550)
+    %var_561 = load i8*, ptr %var_560
+    store i8* %var_550, ptr %var_548
+    ret void
+}
+define void @print_570(ptr sret(i1) %var_573, {  } %var_574, i1 %var_575) {
+  entry576: 
+    %var_577 = alloca {  }
+    %var_578 = load {  }, ptr %var_577
+    store {  } %var_578, ptr %var_577
+    %var_583 = alloca { void (i1*, {  }, i1)*, {  } }
+    %var_584 = load { void (i1*, {  }, i1)*, {  } }, ptr %var_583
+    %var_585 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_584, void (i1*, {  }, i1)* @print_bool_wrap, 0
+    %var_586 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_585, {  } %var_578, 1
+    store { void (i1*, {  }, i1)*, {  } } %var_586, ptr %var_583
+    %var_587 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_586, 0
+    %var_588 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_586, 1
+    %var_589 = alloca i1
+    call void %var_587(i1* %var_589, {  } %var_588, i1 %var_575)
+    %var_590 = load i1, ptr %var_589
+    store i1 %var_575, ptr %var_573
+    ret void
+}
+declare void @print_bool(i1)
+define void @print_bool_wrap(ptr sret(i1) %var_579, {  } %var_580, i1 %var_581) {
+  entry582: 
+    call void @print_bool(i1 %var_581)
+    store i1 %var_581, ptr %var_579
+    ret void
+}
+define void @print_601(ptr sret(i8*) %var_604, {  } %var_605, i8* %var_606) {
+  entry607: 
+    %var_608 = alloca {  }
+    %var_609 = load {  }, ptr %var_608
+    store {  } %var_609, ptr %var_608
+    %var_610 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_611 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_610
+    %var_612 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_611, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_613 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_612, {  } %var_609, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_613, ptr %var_610
+    %var_614 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_613, 0
+    %var_615 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_613, 1
+    %var_616 = alloca i8*
+    call void %var_614(i8** %var_616, {  } %var_615, i8* %var_606)
+    %var_617 = load i8*, ptr %var_616
+    store i8* %var_606, ptr %var_604
+    ret void
+}
+define void @print_626(ptr sret(i1) %var_629, {  } %var_630, i1 %var_631) {
+  entry632: 
+    %var_633 = alloca {  }
+    %var_634 = load {  }, ptr %var_633
+    store {  } %var_634, ptr %var_633
+    %var_635 = alloca { void (i1*, {  }, i1)*, {  } }
+    %var_636 = load { void (i1*, {  }, i1)*, {  } }, ptr %var_635
+    %var_637 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_636, void (i1*, {  }, i1)* @print_bool_wrap, 0
+    %var_638 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_637, {  } %var_634, 1
+    store { void (i1*, {  }, i1)*, {  } } %var_638, ptr %var_635
+    %var_639 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_638, 0
+    %var_640 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_638, 1
+    %var_641 = alloca i1
+    call void %var_639(i1* %var_641, {  } %var_640, i1 %var_631)
+    %var_642 = load i1, ptr %var_641
+    store i1 %var_631, ptr %var_629
+    ret void
+}
+define void @print_653(ptr sret(i8*) %var_656, {  } %var_657, i8* %var_658) {
+  entry659: 
+    %var_660 = alloca {  }
+    %var_661 = load {  }, ptr %var_660
+    store {  } %var_661, ptr %var_660
+    %var_662 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_663 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_662
+    %var_664 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_663, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_665 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_664, {  } %var_661, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_665, ptr %var_662
+    %var_666 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_665, 0
+    %var_667 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_665, 1
+    %var_668 = alloca i8*
+    call void %var_666(i8** %var_668, {  } %var_667, i8* %var_658)
+    %var_669 = load i8*, ptr %var_668
+    store i8* %var_658, ptr %var_656
+    ret void
+}
+define void @print_678(ptr sret(i64) %var_681, {  } %var_682, i64 %var_683) {
+  entry684: 
+    %var_685 = alloca {  }
+    %var_686 = load {  }, ptr %var_685
+    store {  } %var_686, ptr %var_685
+    %var_691 = alloca { void (i64*, {  }, i64)*, {  } }
+    %var_692 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_691
+    %var_693 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_692, void (i64*, {  }, i64)* @print_symbol_wrap, 0
+    %var_694 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_693, {  } %var_686, 1
+    store { void (i64*, {  }, i64)*, {  } } %var_694, ptr %var_691
+    %var_695 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_694, 0
+    %var_696 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_694, 1
+    %var_697 = alloca i64
+    call void %var_695(i64* %var_697, {  } %var_696, i64 %var_683)
+    %var_698 = load i64, ptr %var_697
+    store i64 %var_683, ptr %var_681
+    ret void
+}
+declare void @print_symbol(i64)
+define void @print_symbol_wrap(ptr sret(i64) %var_687, {  } %var_688, i64 %var_689) {
+  entry690: 
+    call void @print_symbol(i64 %var_689)
+    store i64 %var_689, ptr %var_687
+    ret void
+}
+define void @print_709(ptr sret(i8*) %var_712, {  } %var_713, i8* %var_714) {
+  entry715: 
+    %var_716 = alloca {  }
+    %var_717 = load {  }, ptr %var_716
+    store {  } %var_717, ptr %var_716
+    %var_718 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_719 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_718
+    %var_720 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_719, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_721 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_720, {  } %var_717, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_721, ptr %var_718
+    %var_722 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_721, 0
+    %var_723 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_721, 1
+    %var_724 = alloca i8*
+    call void %var_722(i8** %var_724, {  } %var_723, i8* %var_714)
+    %var_725 = load i8*, ptr %var_724
+    store i8* %var_714, ptr %var_712
+    ret void
+}
+define void @print_734(ptr sret(i64) %var_737, {  } %var_738, i64 %var_739) {
+  entry740: 
+    %var_741 = alloca {  }
+    %var_742 = load {  }, ptr %var_741
+    store {  } %var_742, ptr %var_741
+    %var_743 = alloca { void (i64*, {  }, i64)*, {  } }
+    %var_744 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_743
+    %var_745 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_744, void (i64*, {  }, i64)* @print_symbol_wrap, 0
+    %var_746 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_745, {  } %var_742, 1
+    store { void (i64*, {  }, i64)*, {  } } %var_746, ptr %var_743
+    %var_747 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_746, 0
+    %var_748 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_746, 1
+    %var_749 = alloca i64
+    call void %var_747(i64* %var_749, {  } %var_748, i64 %var_739)
+    %var_750 = load i64, ptr %var_749
+    store i64 %var_739, ptr %var_737
+    ret void
+}
+define void @print_761(ptr sret(i8*) %var_764, {  } %var_765, i8* %var_766) {
+  entry767: 
+    %var_768 = alloca {  }
+    %var_769 = load {  }, ptr %var_768
+    store {  } %var_769, ptr %var_768
+    %var_770 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_771 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_770
+    %var_772 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_771, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_773 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_772, {  } %var_769, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_773, ptr %var_770
+    %var_774 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_773, 0
+    %var_775 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_773, 1
+    %var_776 = alloca i8*
+    call void %var_774(i8** %var_776, {  } %var_775, i8* %var_766)
+    %var_777 = load i8*, ptr %var_776
+    store i8* %var_766, ptr %var_764
+    ret void
+}
+define void @print_786(ptr sret(i64) %var_789, {  } %var_790, i64 %var_791) {
+  entry792: 
+    %var_793 = alloca {  }
+    %var_794 = load {  }, ptr %var_793
+    store {  } %var_794, ptr %var_793
+    %var_795 = alloca { void (i64*, {  }, i64)*, {  } }
+    %var_796 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_795
+    %var_797 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_796, void (i64*, {  }, i64)* @print_symbol_wrap, 0
+    %var_798 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_797, {  } %var_794, 1
+    store { void (i64*, {  }, i64)*, {  } } %var_798, ptr %var_795
+    %var_799 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_798, 0
+    %var_800 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_798, 1
+    %var_801 = alloca i64
+    call void %var_799(i64* %var_801, {  } %var_800, i64 %var_791)
+    %var_802 = load i64, ptr %var_801
+    store i64 %var_791, ptr %var_789
+    ret void
+}
+"
+`;
+
+exports[`generic print > stderr 1`] = `[]`;
+
+exports[`generic print > stdout 1`] = `
+[
+  "fn[]
+fn[1]
+fn[]
+tuple(1, ab)
+1
+1.250000
+ab
+true
+false
+Symbol(unit)
+Symbol(atom_atom_a)
+Symbol(symbol_symbol_a)",
+]
+`;
+
 exports[`simply typed lambda calc compilation > apply > compiled 1`] = `
 "@const_70 = constant i32 2
 @symbols_metadata_array = constant [0 x { i8* }] []
