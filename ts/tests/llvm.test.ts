@@ -91,15 +91,15 @@ class Builder {
   }
 
   printInt() {
-    return this.name(Builder.fnType([{ int: 32 }], { int: 32 }, []), "print_int");
+    return this.printInstance({ int: 32 });
   }
 
   printString() {
-    return this.name(Builder.fnType([{ pointer: { int: 8 } }], { pointer: { int: 8 } }, []), "print_string");
+    return this.printInstance({ pointer: { int: 8 } });
   }
 
   printSymbol() {
-    return this.name(Builder.fnType([{ int: 64 }], { int: 64 }, []), "print_symbol");
+    return this.printInstance("symbol");
   }
 
   printBoolean() {
