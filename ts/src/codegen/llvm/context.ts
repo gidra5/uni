@@ -645,15 +645,6 @@ export class Context {
   }
 
   declareCRuntimeFunctions() {
-    const createClosureCall2 = (fnPtr: LLVMValue, args: LLVMValue[]) => {
-      const closure = this.builder.createRecord([]);
-      const fnPtrType = this.builder.getType(fnPtr);
-      assert(typeof fnPtrType === "object" && "pointer" in fnPtrType);
-      const funcType = fnPtrType.pointer;
-      assert(typeof funcType === "object" && "args" in funcType);
-
-      return this.builder.createCall(fnPtr, [closure, ...args], funcType.returnType, funcType.args);
-    };
     const createClosureCall = (func: LLVMValue, args: LLVMValue[]) => {
       const fnPtr = this.builder.createExtractValue(func, 0);
       const closure = this.builder.createExtractValue(func, 1);
@@ -673,11 +664,6 @@ export class Context {
     const createPrintString = (str: string) => {
       return createPrintFmtValue("%s", this.builder.createString(str));
     };
-    const createPrintPointer = (value: LLVMValue) => {
-      const printf = this.builder.declareFunction("printf", ["i8*", "..."], "i32");
-      const fmt = this.builder.createString("%p");
-      return this.builder.createCallVoid(printf, [fmt, value], ["i8*", "..."]);
-    };
     const createPrintWrapper = (name: string, argType: LLVMType) => () => {
       const fnPtr = this.builder.declareFunction(name, [argType], "void");
       return this.builder.createClosure(name + "_wrap", [argType], [], argType, (_closure, arg) => {
@@ -688,7 +674,7 @@ export class Context {
 
     const printTemplate = (type: PhysicalType) => {
       const llvmType = this.builder.toLLVMType(type);
-      const name = this.builder.getFreshName("print_");
+      const name = `"generated_print_${stringifyPhysicalType(type)}"`;
 
       return this.builder.createClosure(name, [llvmType], [], llvmType, (_closure, arg) => {
         switch (true) {
@@ -807,7 +793,6 @@ export class Context {
           }
           default: {
             console.log(type);
-
             unreachable("cant print by type");
           }
         }
@@ -817,11 +802,7 @@ export class Context {
     };
 
     this.variables.set(names.get("print")!, () => printTemplate);
-
     this.variables.set(names.get("print_symbol")!, createPrintWrapper("print_symbol", "i64"));
-    this.variables.set(names.get("print_float")!, createPrintWrapper("print_float", "float"));
-    this.variables.set(names.get("print_string")!, createPrintWrapper("print_string", { pointer: "i8" }));
-    this.variables.set(names.get("print_int")!, createPrintWrapper("print_int", "i32"));
     this.variables.set(names.get("true")!, () => this.builder.createBool(true));
     this.variables.set(names.get("false")!, () => this.builder.createBool(false));
   }
@@ -841,4 +822,21 @@ const stringifyLLVMType = (type: LLVMType): string => {
   }
   if ("record" in type) return `{ ${type.record.map(stringifyLLVMType).join(", ")} }`;
   return `${type.returnType} (${type.args.map(stringifyLLVMType).join(", ")})`;
+};
+
+const stringifyPhysicalType = (type: PhysicalType): string => {
+  if (typeof type === "string") return type;
+  if ("int" in type) return `i${type.int}`;
+  if ("float" in type) return `f${type.float}`;
+  if ("pointer" in type) return `${stringifyPhysicalType(type.pointer)}*`;
+  if ("array" in type) return `${stringifyPhysicalType(type.array)}[${type.length}]`;
+  if ("tuple" in type) return `(${type.tuple.map(stringifyPhysicalType).join(", ")})`;
+  if ("fn" in type) {
+    const ret = stringifyPhysicalType(type.fn.ret);
+    const closure = type.fn.closure.map(stringifyPhysicalType).join(", ");
+    const args = type.fn.args.map(stringifyPhysicalType).join(", ");
+    return `${ret}[${closure}](${args})`;
+  }
+
+  unreachable("cant stringify physical type");
 };

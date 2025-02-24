@@ -225,23 +225,7 @@ struct symbol_metadata_t {
 
 extern const struct symbol_metadata_t* symbols_metadata;
 
-void print_int(int x) {
-  printf("%i", x);
-}
-
-void print_float(float x) {
-  printf("%f", x);
-}
-
-void print_string(char* x) {
-  printf("%s", x);
-}
-
 void print_symbol(uint64_t x) {
   struct symbol_metadata_t sym = symbols_metadata[x];
-  printf("Symbol(%s)", sym.name);
-}
-
-void print_bool(bool x) {
-  printf("%s", x ? "true" : "false");
+  printf("symbol(%s)", sym.name);
 }
