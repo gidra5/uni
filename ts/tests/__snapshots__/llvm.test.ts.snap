@@ -1,33 +1,33 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`data structures compilation > atom (global symbol) > compiled 1`] = `
-"@const_15 = constant i64 0
-@const_21 = constant [7 x i8] c"atom_a\\00"
-@symbols_metadata_array = constant [1 x { i8* }] [{ i8* } { i8* @const_21 }]
+"@const_24 = constant i64 0
+@const_30 = constant [7 x i8] c"atom_a\\00"
+@symbols_metadata_array = constant [1 x { i8* }] [{ i8* } { i8* @const_30 }]
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_4 = alloca {  }
-    %var_5 = load {  }, ptr %var_4
-    store {  } %var_5, ptr %var_4
-    %var_11 = alloca { void (i64*, {  }, i64)*, {  } }
-    %var_12 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_11
-    %var_13 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_12, void (i64*, {  }, i64)* @print_symbol_wrap, 0
-    %var_14 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_13, {  } %var_5, 1
-    store { void (i64*, {  }, i64)*, {  } } %var_14, ptr %var_11
-    %var_16 = load i64, ptr @const_15
-    %var_17 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_14, 0
-    %var_18 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_14, 1
-    %var_19 = alloca i64
-    call void %var_17(i64* %var_19, {  } %var_18, i64 %var_16)
-    %var_20 = load i64, ptr %var_19
+    %var_14 = alloca {  }
+    %var_15 = load {  }, ptr %var_14
+    store {  } %var_15, ptr %var_14
+    %var_20 = alloca { void (i64*, {  }, i64)*, {  } }
+    %var_21 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_20
+    %var_22 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_21, void (i64*, {  }, i64)* @print_symbol_wrap, 0
+    %var_23 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_22, {  } %var_15, 1
+    store { void (i64*, {  }, i64)*, {  } } %var_23, ptr %var_20
+    %var_25 = load i64, ptr @const_24
+    %var_26 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_23, 0
+    %var_27 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_23, 1
+    %var_28 = alloca i64
+    call void %var_26(i64* %var_28, {  } %var_27, i64 %var_25)
+    %var_29 = load i64, ptr %var_28
     ret i32 0
 }
-declare i64 @print_symbol(i64)
-define void @print_symbol_wrap(ptr sret(i64) %var_6, {  } %var_7, i64 %var_8) {
-  entry9: 
-    %var_10 = call i64 @print_symbol(i64 %var_8)
-    store i64 %var_10, ptr %var_6
+declare void @print_symbol(i64)
+define void @print_symbol_wrap(ptr sret(i64) %var_16, {  } %var_17, i64 %var_18) {
+  entry19: 
+    call void @print_symbol(i64 %var_18)
+    store i64 %var_18, ptr %var_16
     ret void
 }
 "
@@ -37,38 +37,37 @@ exports[`data structures compilation > atom (global symbol) > stderr 1`] = `[]`;
 
 exports[`data structures compilation > atom (global symbol) > stdout 1`] = `
 [
-  "Symbol(atom_a)
-",
+  "Symbol(atom_a)",
 ]
 `;
 
 exports[`data structures compilation > boolean false > compiled 1`] = `
-"@const_15 = constant i1 0
+"@const_24 = constant i1 0
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_4 = alloca {  }
-    %var_5 = load {  }, ptr %var_4
-    store {  } %var_5, ptr %var_4
-    %var_11 = alloca { void (i1*, {  }, i1)*, {  } }
-    %var_12 = load { void (i1*, {  }, i1)*, {  } }, ptr %var_11
-    %var_13 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_12, void (i1*, {  }, i1)* @print_bool_wrap, 0
-    %var_14 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_13, {  } %var_5, 1
-    store { void (i1*, {  }, i1)*, {  } } %var_14, ptr %var_11
-    %var_16 = load i1, ptr @const_15
-    %var_17 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_14, 0
-    %var_18 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_14, 1
-    %var_19 = alloca i1
-    call void %var_17(i1* %var_19, {  } %var_18, i1 %var_16)
-    %var_20 = load i1, ptr %var_19
+    %var_14 = alloca {  }
+    %var_15 = load {  }, ptr %var_14
+    store {  } %var_15, ptr %var_14
+    %var_20 = alloca { void (i1*, {  }, i1)*, {  } }
+    %var_21 = load { void (i1*, {  }, i1)*, {  } }, ptr %var_20
+    %var_22 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_21, void (i1*, {  }, i1)* @print_bool_wrap, 0
+    %var_23 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_22, {  } %var_15, 1
+    store { void (i1*, {  }, i1)*, {  } } %var_23, ptr %var_20
+    %var_25 = load i1, ptr @const_24
+    %var_26 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_23, 0
+    %var_27 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_23, 1
+    %var_28 = alloca i1
+    call void %var_26(i1* %var_28, {  } %var_27, i1 %var_25)
+    %var_29 = load i1, ptr %var_28
     ret i32 0
 }
-declare i1 @print_bool(i1)
-define void @print_bool_wrap(ptr sret(i1) %var_6, {  } %var_7, i1 %var_8) {
-  entry9: 
-    %var_10 = call i1 @print_bool(i1 %var_8)
-    store i1 %var_10, ptr %var_6
+declare void @print_bool(i1)
+define void @print_bool_wrap(ptr sret(i1) %var_16, {  } %var_17, i1 %var_18) {
+  entry19: 
+    call void @print_bool(i1 %var_18)
+    store i1 %var_18, ptr %var_16
     ret void
 }
 "
@@ -78,38 +77,37 @@ exports[`data structures compilation > boolean false > stderr 1`] = `[]`;
 
 exports[`data structures compilation > boolean false > stdout 1`] = `
 [
-  "false
-",
+  "false",
 ]
 `;
 
 exports[`data structures compilation > boolean true > compiled 1`] = `
-"@const_15 = constant i1 1
+"@const_24 = constant i1 1
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_4 = alloca {  }
-    %var_5 = load {  }, ptr %var_4
-    store {  } %var_5, ptr %var_4
-    %var_11 = alloca { void (i1*, {  }, i1)*, {  } }
-    %var_12 = load { void (i1*, {  }, i1)*, {  } }, ptr %var_11
-    %var_13 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_12, void (i1*, {  }, i1)* @print_bool_wrap, 0
-    %var_14 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_13, {  } %var_5, 1
-    store { void (i1*, {  }, i1)*, {  } } %var_14, ptr %var_11
-    %var_16 = load i1, ptr @const_15
-    %var_17 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_14, 0
-    %var_18 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_14, 1
-    %var_19 = alloca i1
-    call void %var_17(i1* %var_19, {  } %var_18, i1 %var_16)
-    %var_20 = load i1, ptr %var_19
+    %var_14 = alloca {  }
+    %var_15 = load {  }, ptr %var_14
+    store {  } %var_15, ptr %var_14
+    %var_20 = alloca { void (i1*, {  }, i1)*, {  } }
+    %var_21 = load { void (i1*, {  }, i1)*, {  } }, ptr %var_20
+    %var_22 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_21, void (i1*, {  }, i1)* @print_bool_wrap, 0
+    %var_23 = insertvalue { void (i1*, {  }, i1)*, {  } } %var_22, {  } %var_15, 1
+    store { void (i1*, {  }, i1)*, {  } } %var_23, ptr %var_20
+    %var_25 = load i1, ptr @const_24
+    %var_26 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_23, 0
+    %var_27 = extractvalue { void (i1*, {  }, i1)*, {  } } %var_23, 1
+    %var_28 = alloca i1
+    call void %var_26(i1* %var_28, {  } %var_27, i1 %var_25)
+    %var_29 = load i1, ptr %var_28
     ret i32 0
 }
-declare i1 @print_bool(i1)
-define void @print_bool_wrap(ptr sret(i1) %var_6, {  } %var_7, i1 %var_8) {
-  entry9: 
-    %var_10 = call i1 @print_bool(i1 %var_8)
-    store i1 %var_10, ptr %var_6
+declare void @print_bool(i1)
+define void @print_bool_wrap(ptr sret(i1) %var_16, {  } %var_17, i1 %var_18) {
+  entry19: 
+    call void @print_bool(i1 %var_18)
+    store i1 %var_18, ptr %var_16
     ret void
 }
 "
@@ -119,39 +117,38 @@ exports[`data structures compilation > boolean true > stderr 1`] = `[]`;
 
 exports[`data structures compilation > boolean true > stdout 1`] = `
 [
-  "true
-",
+  "true",
 ]
 `;
 
 exports[`data structures compilation > symbol > compiled 1`] = `
-"@const_15 = constant i64 0
-@const_21 = constant [10 x i8] c"symbol_ab\\00"
-@symbols_metadata_array = constant [1 x { i8* }] [{ i8* } { i8* @const_21 }]
+"@const_24 = constant i64 0
+@const_30 = constant [10 x i8] c"symbol_ab\\00"
+@symbols_metadata_array = constant [1 x { i8* }] [{ i8* } { i8* @const_30 }]
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_4 = alloca {  }
-    %var_5 = load {  }, ptr %var_4
-    store {  } %var_5, ptr %var_4
-    %var_11 = alloca { void (i64*, {  }, i64)*, {  } }
-    %var_12 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_11
-    %var_13 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_12, void (i64*, {  }, i64)* @print_symbol_wrap, 0
-    %var_14 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_13, {  } %var_5, 1
-    store { void (i64*, {  }, i64)*, {  } } %var_14, ptr %var_11
-    %var_16 = load i64, ptr @const_15
-    %var_17 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_14, 0
-    %var_18 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_14, 1
-    %var_19 = alloca i64
-    call void %var_17(i64* %var_19, {  } %var_18, i64 %var_16)
-    %var_20 = load i64, ptr %var_19
+    %var_14 = alloca {  }
+    %var_15 = load {  }, ptr %var_14
+    store {  } %var_15, ptr %var_14
+    %var_20 = alloca { void (i64*, {  }, i64)*, {  } }
+    %var_21 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_20
+    %var_22 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_21, void (i64*, {  }, i64)* @print_symbol_wrap, 0
+    %var_23 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_22, {  } %var_15, 1
+    store { void (i64*, {  }, i64)*, {  } } %var_23, ptr %var_20
+    %var_25 = load i64, ptr @const_24
+    %var_26 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_23, 0
+    %var_27 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_23, 1
+    %var_28 = alloca i64
+    call void %var_26(i64* %var_28, {  } %var_27, i64 %var_25)
+    %var_29 = load i64, ptr %var_28
     ret i32 0
 }
-declare i64 @print_symbol(i64)
-define void @print_symbol_wrap(ptr sret(i64) %var_6, {  } %var_7, i64 %var_8) {
-  entry9: 
-    %var_10 = call i64 @print_symbol(i64 %var_8)
-    store i64 %var_10, ptr %var_6
+declare void @print_symbol(i64)
+define void @print_symbol_wrap(ptr sret(i64) %var_16, {  } %var_17, i64 %var_18) {
+  entry19: 
+    call void @print_symbol(i64 %var_18)
+    store i64 %var_18, ptr %var_16
     ret void
 }
 "
@@ -161,97 +158,96 @@ exports[`data structures compilation > symbol > stderr 1`] = `[]`;
 
 exports[`data structures compilation > symbol > stdout 1`] = `
 [
-  "Symbol(symbol_ab)
-",
+  "Symbol(symbol_ab)",
 ]
 `;
 
 exports[`data structures compilation > tuple > compiled 1`] = `
-"@const_14 = constant [7 x i8] c"Tuple(\\00"
-@const_15 = constant [3 x i8] c"%s\\00"
-@const_31 = constant [3 x i8] c", \\00"
-@const_47 = constant [2 x i8] c")\\00"
-@const_52 = constant i32 1
-@const_57 = constant [3 x i8] c"ab\\00"
+"@const_24 = constant [7 x i8] c"Tuple(\\00"
+@const_25 = constant [3 x i8] c"%s\\00"
+@const_41 = constant [3 x i8] c", \\00"
+@const_57 = constant [2 x i8] c")\\00"
+@const_62 = constant i32 1
+@const_67 = constant [3 x i8] c"ab\\00"
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_8 = alloca {  }
-    %var_9 = load {  }, ptr %var_8
-    store {  } %var_9, ptr %var_8
-    %var_48 = alloca { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } }
-    %var_49 = load { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } }, ptr %var_48
-    %var_50 = insertvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_49, void ({ i32, i8* }*, {  }, { i32, i8* })* @print_tuple_7, 0
-    %var_51 = insertvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_50, {  } %var_9, 1
-    store { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_51, ptr %var_48
-    %var_53 = load i32, ptr @const_52
-    %var_54 = alloca { i32 }
-    %var_55 = load { i32 }, ptr %var_54
-    %var_56 = insertvalue { i32 } %var_55, i32 %var_53, 0
-    store { i32 } %var_56, ptr %var_54
-    %var_58 = extractvalue { i32 } %var_56, 0
-    %var_59 = alloca { i32, [3 x i8]* }
-    %var_60 = load { i32, [3 x i8]* }, ptr %var_59
-    %var_61 = insertvalue { i32, [3 x i8]* } %var_60, i32 %var_58, 0
-    %var_62 = insertvalue { i32, [3 x i8]* } %var_61, [3 x i8]* @const_57, 1
-    store { i32, [3 x i8]* } %var_62, ptr %var_59
-    %var_63 = extractvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_51, 0
-    %var_64 = extractvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_51, 1
-    %var_65 = alloca { i32, i8* }
-    call void %var_63({ i32, i8* }* %var_65, {  } %var_64, { i32, i8* } %var_62)
-    %var_66 = load { i32, i8* }, ptr %var_65
+    %var_18 = alloca {  }
+    %var_19 = load {  }, ptr %var_18
+    store {  } %var_19, ptr %var_18
+    %var_58 = alloca { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } }
+    %var_59 = load { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } }, ptr %var_58
+    %var_60 = insertvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_59, void ({ i32, i8* }*, {  }, { i32, i8* })* @print_tuple_17, 0
+    %var_61 = insertvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_60, {  } %var_19, 1
+    store { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_61, ptr %var_58
+    %var_63 = load i32, ptr @const_62
+    %var_64 = alloca { i32 }
+    %var_65 = load { i32 }, ptr %var_64
+    %var_66 = insertvalue { i32 } %var_65, i32 %var_63, 0
+    store { i32 } %var_66, ptr %var_64
+    %var_68 = extractvalue { i32 } %var_66, 0
+    %var_69 = alloca { i32, [3 x i8]* }
+    %var_70 = load { i32, [3 x i8]* }, ptr %var_69
+    %var_71 = insertvalue { i32, [3 x i8]* } %var_70, i32 %var_68, 0
+    %var_72 = insertvalue { i32, [3 x i8]* } %var_71, [3 x i8]* @const_67, 1
+    store { i32, [3 x i8]* } %var_72, ptr %var_69
+    %var_73 = extractvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_61, 0
+    %var_74 = extractvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_61, 1
+    %var_75 = alloca { i32, i8* }
+    call void %var_73({ i32, i8* }* %var_75, {  } %var_74, { i32, i8* } %var_72)
+    %var_76 = load { i32, i8* }, ptr %var_75
     ret i32 0
 }
-define void @print_tuple_7(ptr sret({ i32, i8* }) %var_10, {  } %var_11, { i32, i8* } %var_12) {
-  entry13: 
-    call void @printf(i8* @const_15, [7 x i8]* @const_14)
-    %var_16 = extractvalue { i32, i8* } %var_12, 0
-    %var_17 = alloca {  }
-    %var_18 = load {  }, ptr %var_17
-    store {  } %var_18, ptr %var_17
-    %var_23 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_24 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_23
-    %var_25 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_24, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_26 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_25, {  } %var_18, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_26, ptr %var_23
-    %var_27 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_26, 0
-    %var_28 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_26, 1
-    %var_29 = alloca i32
-    call void %var_27(i32* %var_29, {  } %var_28, i32 %var_16)
-    %var_30 = load i32, ptr %var_29
-    call void @printf(i8* @const_15, [3 x i8]* @const_31)
-    %var_32 = extractvalue { i32, i8* } %var_12, 1
-    %var_33 = alloca {  }
-    %var_34 = load {  }, ptr %var_33
-    store {  } %var_34, ptr %var_33
-    %var_39 = alloca { void (i8**, {  }, i8*)*, {  } }
-    %var_40 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_39
-    %var_41 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_40, void (i8**, {  }, i8*)* @print_string_wrap, 0
-    %var_42 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_41, {  } %var_34, 1
-    store { void (i8**, {  }, i8*)*, {  } } %var_42, ptr %var_39
-    %var_43 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_42, 0
-    %var_44 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_42, 1
-    %var_45 = alloca i8*
-    call void %var_43(i8** %var_45, {  } %var_44, i8* %var_32)
-    %var_46 = load i8*, ptr %var_45
-    call void @printf(i8* @const_15, [2 x i8]* @const_47)
-    store { i32, i8* } %var_12, ptr %var_10
+define void @print_tuple_17(ptr sret({ i32, i8* }) %var_20, {  } %var_21, { i32, i8* } %var_22) {
+  entry23: 
+    call void @printf(i8* @const_25, [7 x i8]* @const_24)
+    %var_26 = extractvalue { i32, i8* } %var_22, 0
+    %var_27 = alloca {  }
+    %var_28 = load {  }, ptr %var_27
+    store {  } %var_28, ptr %var_27
+    %var_33 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_34 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_33
+    %var_35 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_34, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_36 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_35, {  } %var_28, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_36, ptr %var_33
+    %var_37 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_36, 0
+    %var_38 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_36, 1
+    %var_39 = alloca i32
+    call void %var_37(i32* %var_39, {  } %var_38, i32 %var_26)
+    %var_40 = load i32, ptr %var_39
+    call void @printf(i8* @const_25, [3 x i8]* @const_41)
+    %var_42 = extractvalue { i32, i8* } %var_22, 1
+    %var_43 = alloca {  }
+    %var_44 = load {  }, ptr %var_43
+    store {  } %var_44, ptr %var_43
+    %var_49 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_50 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_49
+    %var_51 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_50, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_52 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_51, {  } %var_44, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_52, ptr %var_49
+    %var_53 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_52, 0
+    %var_54 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_52, 1
+    %var_55 = alloca i8*
+    call void %var_53(i8** %var_55, {  } %var_54, i8* %var_42)
+    %var_56 = load i8*, ptr %var_55
+    call void @printf(i8* @const_25, [2 x i8]* @const_57)
+    store { i32, i8* } %var_22, ptr %var_20
     ret void
 }
 declare i32 @printf(i8*, ...)
 declare void @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_19, {  } %var_20, i32 %var_21) {
-  entry22: 
-    call void @print_int(i32 %var_21)
-    store i32 %var_21, ptr %var_19
+define void @print_int_wrap(ptr sret(i32) %var_29, {  } %var_30, i32 %var_31) {
+  entry32: 
+    call void @print_int(i32 %var_31)
+    store i32 %var_31, ptr %var_29
     ret void
 }
 declare void @print_string(i8*)
-define void @print_string_wrap(ptr sret(i8*) %var_35, {  } %var_36, i8* %var_37) {
-  entry38: 
-    call void @print_string(i8* %var_37)
-    store i8* %var_37, ptr %var_35
+define void @print_string_wrap(ptr sret(i8*) %var_45, {  } %var_46, i8* %var_47) {
+  entry48: 
+    call void @print_string(i8* %var_47)
+    store i8* %var_47, ptr %var_45
     ret void
 }
 "
@@ -266,33 +262,33 @@ exports[`data structures compilation > tuple > stdout 1`] = `
 `;
 
 exports[`data structures compilation > unit > compiled 1`] = `
-"@const_15 = constant i64 0
-@const_21 = constant [5 x i8] c"unit\\00"
-@symbols_metadata_array = constant [1 x { i8* }] [{ i8* } { i8* @const_21 }]
+"@const_24 = constant i64 0
+@const_30 = constant [5 x i8] c"unit\\00"
+@symbols_metadata_array = constant [1 x { i8* }] [{ i8* } { i8* @const_30 }]
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_4 = alloca {  }
-    %var_5 = load {  }, ptr %var_4
-    store {  } %var_5, ptr %var_4
-    %var_11 = alloca { void (i64*, {  }, i64)*, {  } }
-    %var_12 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_11
-    %var_13 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_12, void (i64*, {  }, i64)* @print_symbol_wrap, 0
-    %var_14 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_13, {  } %var_5, 1
-    store { void (i64*, {  }, i64)*, {  } } %var_14, ptr %var_11
-    %var_16 = load i64, ptr @const_15
-    %var_17 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_14, 0
-    %var_18 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_14, 1
-    %var_19 = alloca i64
-    call void %var_17(i64* %var_19, {  } %var_18, i64 %var_16)
-    %var_20 = load i64, ptr %var_19
+    %var_14 = alloca {  }
+    %var_15 = load {  }, ptr %var_14
+    store {  } %var_15, ptr %var_14
+    %var_20 = alloca { void (i64*, {  }, i64)*, {  } }
+    %var_21 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_20
+    %var_22 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_21, void (i64*, {  }, i64)* @print_symbol_wrap, 0
+    %var_23 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_22, {  } %var_15, 1
+    store { void (i64*, {  }, i64)*, {  } } %var_23, ptr %var_20
+    %var_25 = load i64, ptr @const_24
+    %var_26 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_23, 0
+    %var_27 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_23, 1
+    %var_28 = alloca i64
+    call void %var_26(i64* %var_28, {  } %var_27, i64 %var_25)
+    %var_29 = load i64, ptr %var_28
     ret i32 0
 }
-declare i64 @print_symbol(i64)
-define void @print_symbol_wrap(ptr sret(i64) %var_6, {  } %var_7, i64 %var_8) {
-  entry9: 
-    %var_10 = call i64 @print_symbol(i64 %var_8)
-    store i64 %var_10, ptr %var_6
+declare void @print_symbol(i64)
+define void @print_symbol_wrap(ptr sret(i64) %var_16, {  } %var_17, i64 %var_18) {
+  entry19: 
+    call void @print_symbol(i64 %var_18)
+    store i64 %var_18, ptr %var_16
     ret void
 }
 "
@@ -302,8 +298,7 @@ exports[`data structures compilation > unit > stderr 1`] = `[]`;
 
 exports[`data structures compilation > unit > stdout 1`] = `
 [
-  "Symbol(unit)
-",
+  "Symbol(unit)",
 ]
 `;
 
@@ -1239,88 +1234,88 @@ Symbol(symbol_symbol_a)",
 `;
 
 exports[`simply typed lambda calc compilation > apply > compiled 1`] = `
-"@const_70 = constant i32 2
+"@const_79 = constant i32 2
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_16 = alloca {  }
-    %var_17 = load {  }, ptr %var_16
-    store {  } %var_17, ptr %var_16
-    %var_23 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_24 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_23
-    %var_25 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_24, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_26 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_25, {  } %var_17, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_26, ptr %var_23
-    %var_28 = alloca {  }
-    %var_29 = load {  }, ptr %var_28
-    store {  } %var_29, ptr %var_28
-    %var_51 = alloca { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } }
-    %var_52 = load { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } }, ptr %var_51
-    %var_53 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_52, void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })* @fn_27, 0
-    %var_54 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_53, {  } %var_29, 1
-    store { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_54, ptr %var_51
-    %var_56 = alloca {  }
-    %var_57 = load {  }, ptr %var_56
-    store {  } %var_57, ptr %var_56
-    %var_62 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_63 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_62
-    %var_64 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_63, void (i32*, {  }, i32)* @fn_55, 0
-    %var_65 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_64, {  } %var_57, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_65, ptr %var_62
-    %var_66 = extractvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_54, 0
-    %var_67 = extractvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_54, 1
-    %var_68 = alloca { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }
-    call void %var_66({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }* %var_68, {  } %var_67, { void (i32*, {  }, i32)*, {  } } %var_65)
-    %var_69 = load { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }, ptr %var_68
-    %var_71 = load i32, ptr @const_70
-    %var_72 = extractvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_69, 0
-    %var_73 = extractvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_69, 1
-    %var_74 = alloca i32
-    call void %var_72(i32* %var_74, { { void (i32*, {  }, i32)*, {  } } } %var_73, i32 %var_71)
-    %var_75 = load i32, ptr %var_74
-    %var_76 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_26, 0
-    %var_77 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_26, 1
-    %var_78 = alloca i32
-    call void %var_76(i32* %var_78, {  } %var_77, i32 %var_75)
-    %var_79 = load i32, ptr %var_78
+    %var_26 = alloca {  }
+    %var_27 = load {  }, ptr %var_26
+    store {  } %var_27, ptr %var_26
+    %var_32 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_33 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_32
+    %var_34 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_33, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_35 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_34, {  } %var_27, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_35, ptr %var_32
+    %var_37 = alloca {  }
+    %var_38 = load {  }, ptr %var_37
+    store {  } %var_38, ptr %var_37
+    %var_60 = alloca { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } }
+    %var_61 = load { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } }, ptr %var_60
+    %var_62 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_61, void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })* @fn_36, 0
+    %var_63 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_62, {  } %var_38, 1
+    store { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_63, ptr %var_60
+    %var_65 = alloca {  }
+    %var_66 = load {  }, ptr %var_65
+    store {  } %var_66, ptr %var_65
+    %var_71 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_72 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_71
+    %var_73 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_72, void (i32*, {  }, i32)* @fn_64, 0
+    %var_74 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_73, {  } %var_66, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_74, ptr %var_71
+    %var_75 = extractvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_63, 0
+    %var_76 = extractvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_63, 1
+    %var_77 = alloca { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }
+    call void %var_75({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }* %var_77, {  } %var_76, { void (i32*, {  }, i32)*, {  } } %var_74)
+    %var_78 = load { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }, ptr %var_77
+    %var_80 = load i32, ptr @const_79
+    %var_81 = extractvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_78, 0
+    %var_82 = extractvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_78, 1
+    %var_83 = alloca i32
+    call void %var_81(i32* %var_83, { { void (i32*, {  }, i32)*, {  } } } %var_82, i32 %var_80)
+    %var_84 = load i32, ptr %var_83
+    %var_85 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_35, 0
+    %var_86 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_35, 1
+    %var_87 = alloca i32
+    call void %var_85(i32* %var_87, {  } %var_86, i32 %var_84)
+    %var_88 = load i32, ptr %var_87
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_18, {  } %var_19, i32 %var_20) {
-  entry21: 
-    %var_22 = call i32 @print_int(i32 %var_20)
-    store i32 %var_22, ptr %var_18
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_28, {  } %var_29, i32 %var_30) {
+  entry31: 
+    call void @print_int(i32 %var_30)
+    store i32 %var_30, ptr %var_28
     ret void
 }
-define void @fn_27(ptr sret({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }) %var_30, {  } %var_31, { void (i32*, {  }, i32)*, {  } } %var_32) {
-  entry33: 
-    %var_35 = alloca { { void (i32*, {  }, i32)*, {  } } }
-    %var_36 = load { { void (i32*, {  }, i32)*, {  } } }, ptr %var_35
-    %var_37 = insertvalue { { void (i32*, {  }, i32)*, {  } } } %var_36, { void (i32*, {  }, i32)*, {  } } %var_32, 0
-    store { { void (i32*, {  }, i32)*, {  } } } %var_37, ptr %var_35
-    %var_47 = alloca { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }
-    %var_48 = load { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }, ptr %var_47
-    %var_49 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_48, void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)* @fn_34, 0
-    %var_50 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_49, { { void (i32*, {  }, i32)*, {  } } } %var_37, 1
-    store { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_50, ptr %var_47
-    store { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_50, ptr %var_30
+define void @fn_36(ptr sret({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }) %var_39, {  } %var_40, { void (i32*, {  }, i32)*, {  } } %var_41) {
+  entry42: 
+    %var_44 = alloca { { void (i32*, {  }, i32)*, {  } } }
+    %var_45 = load { { void (i32*, {  }, i32)*, {  } } }, ptr %var_44
+    %var_46 = insertvalue { { void (i32*, {  }, i32)*, {  } } } %var_45, { void (i32*, {  }, i32)*, {  } } %var_41, 0
+    store { { void (i32*, {  }, i32)*, {  } } } %var_46, ptr %var_44
+    %var_56 = alloca { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }
+    %var_57 = load { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }, ptr %var_56
+    %var_58 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_57, void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)* @fn_43, 0
+    %var_59 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_58, { { void (i32*, {  }, i32)*, {  } } } %var_46, 1
+    store { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_59, ptr %var_56
+    store { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_59, ptr %var_39
     ret void
 }
-define void @fn_34(ptr sret(i32) %var_38, { { void (i32*, {  }, i32)*, {  } } } %var_39, i32 %var_40) {
-  entry41: 
-    %var_42 = extractvalue { { void (i32*, {  }, i32)*, {  } } } %var_39, 0
-    %var_43 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_42, 0
-    %var_44 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_42, 1
-    %var_45 = alloca i32
-    call void %var_43(i32* %var_45, {  } %var_44, i32 %var_40)
-    %var_46 = load i32, ptr %var_45
-    store i32 %var_46, ptr %var_38
+define void @fn_43(ptr sret(i32) %var_47, { { void (i32*, {  }, i32)*, {  } } } %var_48, i32 %var_49) {
+  entry50: 
+    %var_51 = extractvalue { { void (i32*, {  }, i32)*, {  } } } %var_48, 0
+    %var_52 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_51, 0
+    %var_53 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_51, 1
+    %var_54 = alloca i32
+    call void %var_52(i32* %var_54, {  } %var_53, i32 %var_49)
+    %var_55 = load i32, ptr %var_54
+    store i32 %var_55, ptr %var_47
     ret void
 }
-define void @fn_55(ptr sret(i32) %var_58, {  } %var_59, i32 %var_60) {
-  entry61: 
-    store i32 %var_60, ptr %var_58
+define void @fn_64(ptr sret(i32) %var_67, {  } %var_68, i32 %var_69) {
+  entry70: 
+    store i32 %var_69, ptr %var_67
     ret void
 }
 "
@@ -1330,138 +1325,137 @@ exports[`simply typed lambda calc compilation > apply > stderr 1`] = `[]`;
 
 exports[`simply typed lambda calc compilation > apply > stdout 1`] = `
 [
-  "2
-",
+  "2",
 ]
 `;
 
 exports[`simply typed lambda calc compilation > church tuple > compiled 1`] = `
-"@const_82 = constant i32 1
-@const_88 = constant i32 2
+"@const_91 = constant i32 1
+@const_97 = constant i32 2
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_24 = alloca {  }
-    %var_25 = load {  }, ptr %var_24
-    store {  } %var_25, ptr %var_24
-    %var_31 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_32 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_31
-    %var_33 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_32, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_34 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_33, {  } %var_25, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_34, ptr %var_31
-    %var_36 = alloca {  }
-    %var_37 = load {  }, ptr %var_36
-    store {  } %var_37, ptr %var_36
-    %var_78 = alloca { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
-    %var_79 = load { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_78
-    %var_80 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_79, void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_35, 0
-    %var_81 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_80, {  } %var_37, 1
-    store { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_81, ptr %var_78
-    %var_83 = load i32, ptr @const_82
-    %var_84 = extractvalue { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_81, 0
-    %var_85 = extractvalue { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_81, 1
-    %var_86 = alloca { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }
-    call void %var_84({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }* %var_86, {  } %var_85, i32 %var_83)
-    %var_87 = load { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }, ptr %var_86
-    %var_89 = load i32, ptr @const_88
-    %var_90 = extractvalue { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_87, 0
-    %var_91 = extractvalue { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_87, 1
-    %var_92 = alloca { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }
-    call void %var_90({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }* %var_92, { i32 } %var_91, i32 %var_89)
-    %var_93 = load { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }, ptr %var_92
-    %var_95 = alloca {  }
-    %var_96 = load {  }, ptr %var_95
-    store {  } %var_96, ptr %var_95
-    %var_114 = alloca { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
-    %var_115 = load { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_114
-    %var_116 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_115, void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_94, 0
-    %var_117 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_116, {  } %var_96, 1
-    store { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_117, ptr %var_114
-    %var_118 = extractvalue { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_93, 0
-    %var_119 = extractvalue { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_93, 1
-    %var_120 = alloca i32
-    call void %var_118(i32* %var_120, { i32, i32 } %var_119, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_117)
-    %var_121 = load i32, ptr %var_120
-    %var_122 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_34, 0
-    %var_123 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_34, 1
-    %var_124 = alloca i32
-    call void %var_122(i32* %var_124, {  } %var_123, i32 %var_121)
-    %var_125 = load i32, ptr %var_124
+    %var_34 = alloca {  }
+    %var_35 = load {  }, ptr %var_34
+    store {  } %var_35, ptr %var_34
+    %var_40 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_41 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_40
+    %var_42 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_41, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_43 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_42, {  } %var_35, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_43, ptr %var_40
+    %var_45 = alloca {  }
+    %var_46 = load {  }, ptr %var_45
+    store {  } %var_46, ptr %var_45
+    %var_87 = alloca { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
+    %var_88 = load { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_87
+    %var_89 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_88, void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_44, 0
+    %var_90 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_89, {  } %var_46, 1
+    store { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_90, ptr %var_87
+    %var_92 = load i32, ptr @const_91
+    %var_93 = extractvalue { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_90, 0
+    %var_94 = extractvalue { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_90, 1
+    %var_95 = alloca { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }
+    call void %var_93({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }* %var_95, {  } %var_94, i32 %var_92)
+    %var_96 = load { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }, ptr %var_95
+    %var_98 = load i32, ptr @const_97
+    %var_99 = extractvalue { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_96, 0
+    %var_100 = extractvalue { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_96, 1
+    %var_101 = alloca { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }
+    call void %var_99({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }* %var_101, { i32 } %var_100, i32 %var_98)
+    %var_102 = load { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }, ptr %var_101
+    %var_104 = alloca {  }
+    %var_105 = load {  }, ptr %var_104
+    store {  } %var_105, ptr %var_104
+    %var_123 = alloca { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
+    %var_124 = load { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_123
+    %var_125 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_124, void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_103, 0
+    %var_126 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_125, {  } %var_105, 1
+    store { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_126, ptr %var_123
+    %var_127 = extractvalue { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_102, 0
+    %var_128 = extractvalue { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_102, 1
+    %var_129 = alloca i32
+    call void %var_127(i32* %var_129, { i32, i32 } %var_128, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_126)
+    %var_130 = load i32, ptr %var_129
+    %var_131 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_43, 0
+    %var_132 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_43, 1
+    %var_133 = alloca i32
+    call void %var_131(i32* %var_133, {  } %var_132, i32 %var_130)
+    %var_134 = load i32, ptr %var_133
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_26, {  } %var_27, i32 %var_28) {
-  entry29: 
-    %var_30 = call i32 @print_int(i32 %var_28)
-    store i32 %var_30, ptr %var_26
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_36, {  } %var_37, i32 %var_38) {
+  entry39: 
+    call void @print_int(i32 %var_38)
+    store i32 %var_38, ptr %var_36
     ret void
 }
-define void @fn_35(ptr sret({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }) %var_38, {  } %var_39, i32 %var_40) {
-  entry41: 
-    %var_43 = alloca { i32 }
-    %var_44 = load { i32 }, ptr %var_43
-    %var_45 = insertvalue { i32 } %var_44, i32 %var_40, 0
-    store { i32 } %var_45, ptr %var_43
-    %var_74 = alloca { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }
-    %var_75 = load { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }, ptr %var_74
-    %var_76 = insertvalue { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_75, void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)* @fn_42, 0
-    %var_77 = insertvalue { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_76, { i32 } %var_45, 1
-    store { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_77, ptr %var_74
-    store { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_77, ptr %var_38
+define void @fn_44(ptr sret({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }) %var_47, {  } %var_48, i32 %var_49) {
+  entry50: 
+    %var_52 = alloca { i32 }
+    %var_53 = load { i32 }, ptr %var_52
+    %var_54 = insertvalue { i32 } %var_53, i32 %var_49, 0
+    store { i32 } %var_54, ptr %var_52
+    %var_83 = alloca { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }
+    %var_84 = load { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }, ptr %var_83
+    %var_85 = insertvalue { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_84, void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)* @fn_51, 0
+    %var_86 = insertvalue { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_85, { i32 } %var_54, 1
+    store { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_86, ptr %var_83
+    store { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_86, ptr %var_47
     ret void
 }
-define void @fn_42(ptr sret({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }) %var_46, { i32 } %var_47, i32 %var_48) {
-  entry49: 
-    %var_50 = extractvalue { i32 } %var_47, 0
-    %var_52 = alloca { i32, i32 }
-    %var_53 = load { i32, i32 }, ptr %var_52
-    %var_54 = insertvalue { i32, i32 } %var_53, i32 %var_50, 0
-    %var_55 = insertvalue { i32, i32 } %var_54, i32 %var_48, 1
-    store { i32, i32 } %var_55, ptr %var_52
-    %var_70 = alloca { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }
-    %var_71 = load { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }, ptr %var_70
-    %var_72 = insertvalue { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_71, void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })* @fn_51, 0
-    %var_73 = insertvalue { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_72, { i32, i32 } %var_55, 1
-    store { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_73, ptr %var_70
-    store { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_73, ptr %var_46
+define void @fn_51(ptr sret({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }) %var_55, { i32 } %var_56, i32 %var_57) {
+  entry58: 
+    %var_59 = extractvalue { i32 } %var_56, 0
+    %var_61 = alloca { i32, i32 }
+    %var_62 = load { i32, i32 }, ptr %var_61
+    %var_63 = insertvalue { i32, i32 } %var_62, i32 %var_59, 0
+    %var_64 = insertvalue { i32, i32 } %var_63, i32 %var_57, 1
+    store { i32, i32 } %var_64, ptr %var_61
+    %var_79 = alloca { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }
+    %var_80 = load { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }, ptr %var_79
+    %var_81 = insertvalue { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_80, void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })* @fn_60, 0
+    %var_82 = insertvalue { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_81, { i32, i32 } %var_64, 1
+    store { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_82, ptr %var_79
+    store { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_82, ptr %var_55
     ret void
 }
-define void @fn_51(ptr sret(i32) %var_56, { i32, i32 } %var_57, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_58) {
-  entry59: 
-    %var_60 = extractvalue { i32, i32 } %var_57, 0
-    %var_61 = extractvalue { i32, i32 } %var_57, 1
-    %var_62 = extractvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_58, 0
-    %var_63 = extractvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_58, 1
-    %var_64 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
-    call void %var_62({ void (i32*, { i32 }, i32)*, { i32 } }* %var_64, {  } %var_63, i32 %var_60)
-    %var_65 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_64
-    %var_66 = extractvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_65, 0
-    %var_67 = extractvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_65, 1
-    %var_68 = alloca i32
-    call void %var_66(i32* %var_68, { i32 } %var_67, i32 %var_61)
-    %var_69 = load i32, ptr %var_68
-    store i32 %var_69, ptr %var_56
+define void @fn_60(ptr sret(i32) %var_65, { i32, i32 } %var_66, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_67) {
+  entry68: 
+    %var_69 = extractvalue { i32, i32 } %var_66, 0
+    %var_70 = extractvalue { i32, i32 } %var_66, 1
+    %var_71 = extractvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_67, 0
+    %var_72 = extractvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_67, 1
+    %var_73 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
+    call void %var_71({ void (i32*, { i32 }, i32)*, { i32 } }* %var_73, {  } %var_72, i32 %var_69)
+    %var_74 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_73
+    %var_75 = extractvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_74, 0
+    %var_76 = extractvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_74, 1
+    %var_77 = alloca i32
+    call void %var_75(i32* %var_77, { i32 } %var_76, i32 %var_70)
+    %var_78 = load i32, ptr %var_77
+    store i32 %var_78, ptr %var_65
     ret void
 }
-define void @fn_94(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %var_97, {  } %var_98, i32 %var_99) {
-  entry100: 
-    %var_102 = alloca { i32 }
-    %var_103 = load { i32 }, ptr %var_102
-    %var_104 = insertvalue { i32 } %var_103, i32 %var_99, 0
-    store { i32 } %var_104, ptr %var_102
-    %var_110 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
-    %var_111 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_110
-    %var_112 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_111, void (i32*, { i32 }, i32)* @fn_101, 0
-    %var_113 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_112, { i32 } %var_104, 1
-    store { void (i32*, { i32 }, i32)*, { i32 } } %var_113, ptr %var_110
-    store { void (i32*, { i32 }, i32)*, { i32 } } %var_113, ptr %var_97
+define void @fn_103(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %var_106, {  } %var_107, i32 %var_108) {
+  entry109: 
+    %var_111 = alloca { i32 }
+    %var_112 = load { i32 }, ptr %var_111
+    %var_113 = insertvalue { i32 } %var_112, i32 %var_108, 0
+    store { i32 } %var_113, ptr %var_111
+    %var_119 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
+    %var_120 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_119
+    %var_121 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_120, void (i32*, { i32 }, i32)* @fn_110, 0
+    %var_122 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_121, { i32 } %var_113, 1
+    store { void (i32*, { i32 }, i32)*, { i32 } } %var_122, ptr %var_119
+    store { void (i32*, { i32 }, i32)*, { i32 } } %var_122, ptr %var_106
     ret void
 }
-define void @fn_101(ptr sret(i32) %var_105, { i32 } %var_106, i32 %var_107) {
-  entry108: 
-    %var_109 = extractvalue { i32 } %var_106, 0
-    store i32 %var_109, ptr %var_105
+define void @fn_110(ptr sret(i32) %var_114, { i32 } %var_115, i32 %var_116) {
+  entry117: 
+    %var_118 = extractvalue { i32 } %var_115, 0
+    store i32 %var_118, ptr %var_114
     ret void
 }
 "
@@ -1471,76 +1465,75 @@ exports[`simply typed lambda calc compilation > church tuple > stderr 1`] = `[]`
 
 exports[`simply typed lambda calc compilation > church tuple > stdout 1`] = `
 [
-  "1
-",
+  "1",
 ]
 `;
 
 exports[`simply typed lambda calc compilation > church tuple 2 > compiled 1`] = `
-"@const_45 = constant i32 1
-@const_47 = constant i32 2
+"@const_54 = constant i32 1
+@const_56 = constant i32 2
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_17 = alloca {  }
-    %var_18 = load {  }, ptr %var_17
-    store {  } %var_18, ptr %var_17
-    %var_24 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_25 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_24
-    %var_26 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_25, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_27 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_26, {  } %var_18, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_27, ptr %var_24
-    %var_29 = alloca {  }
-    %var_30 = load {  }, ptr %var_29
-    store {  } %var_30, ptr %var_29
-    %var_41 = alloca { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } }
-    %var_42 = load { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } }, ptr %var_41
-    %var_43 = insertvalue { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_42, void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })* @fn_28, 0
-    %var_44 = insertvalue { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_43, {  } %var_30, 1
-    store { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_44, ptr %var_41
-    %var_46 = load i32, ptr @const_45
-    %var_48 = load i32, ptr @const_47
-    %var_50 = alloca {  }
-    %var_51 = load {  }, ptr %var_50
-    store {  } %var_51, ptr %var_50
-    %var_56 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_57 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_56
-    %var_58 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_57, void (i32*, {  }, i32)* @fn_49, 0
-    %var_59 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_58, {  } %var_51, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_59, ptr %var_56
-    %var_60 = extractvalue { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_44, 0
-    %var_61 = extractvalue { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_44, 1
-    %var_62 = alloca i32
-    call void %var_60(i32* %var_62, {  } %var_61, i32 %var_46, i32 %var_48, { void (i32*, {  }, i32, i32)*, {  } } %var_59)
-    %var_63 = load i32, ptr %var_62
-    %var_64 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_27, 0
-    %var_65 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_27, 1
-    %var_66 = alloca i32
-    call void %var_64(i32* %var_66, {  } %var_65, i32 %var_63)
-    %var_67 = load i32, ptr %var_66
+    %var_27 = alloca {  }
+    %var_28 = load {  }, ptr %var_27
+    store {  } %var_28, ptr %var_27
+    %var_33 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_34 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_33
+    %var_35 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_34, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_36 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_35, {  } %var_28, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_36, ptr %var_33
+    %var_38 = alloca {  }
+    %var_39 = load {  }, ptr %var_38
+    store {  } %var_39, ptr %var_38
+    %var_50 = alloca { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } }
+    %var_51 = load { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } }, ptr %var_50
+    %var_52 = insertvalue { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_51, void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })* @fn_37, 0
+    %var_53 = insertvalue { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_52, {  } %var_39, 1
+    store { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_53, ptr %var_50
+    %var_55 = load i32, ptr @const_54
+    %var_57 = load i32, ptr @const_56
+    %var_59 = alloca {  }
+    %var_60 = load {  }, ptr %var_59
+    store {  } %var_60, ptr %var_59
+    %var_65 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_66 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_65
+    %var_67 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_66, void (i32*, {  }, i32)* @fn_58, 0
+    %var_68 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_67, {  } %var_60, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_68, ptr %var_65
+    %var_69 = extractvalue { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_53, 0
+    %var_70 = extractvalue { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_53, 1
+    %var_71 = alloca i32
+    call void %var_69(i32* %var_71, {  } %var_70, i32 %var_55, i32 %var_57, { void (i32*, {  }, i32, i32)*, {  } } %var_68)
+    %var_72 = load i32, ptr %var_71
+    %var_73 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_36, 0
+    %var_74 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_36, 1
+    %var_75 = alloca i32
+    call void %var_73(i32* %var_75, {  } %var_74, i32 %var_72)
+    %var_76 = load i32, ptr %var_75
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_19, {  } %var_20, i32 %var_21) {
-  entry22: 
-    %var_23 = call i32 @print_int(i32 %var_21)
-    store i32 %var_23, ptr %var_19
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_29, {  } %var_30, i32 %var_31) {
+  entry32: 
+    call void @print_int(i32 %var_31)
+    store i32 %var_31, ptr %var_29
     ret void
 }
-define void @fn_28(ptr sret(i32) %var_31, {  } %var_32, i32 %var_33, i32 %var_34, { void (i32*, {  }, i32, i32)*, {  } } %var_35) {
-  entry36: 
-    %var_37 = extractvalue { void (i32*, {  }, i32, i32)*, {  } } %var_35, 0
-    %var_38 = extractvalue { void (i32*, {  }, i32, i32)*, {  } } %var_35, 1
-    %var_39 = alloca i32
-    call void %var_37(i32* %var_39, {  } %var_38, i32 %var_33, i32 %var_34)
-    %var_40 = load i32, ptr %var_39
-    store i32 %var_40, ptr %var_31
+define void @fn_37(ptr sret(i32) %var_40, {  } %var_41, i32 %var_42, i32 %var_43, { void (i32*, {  }, i32, i32)*, {  } } %var_44) {
+  entry45: 
+    %var_46 = extractvalue { void (i32*, {  }, i32, i32)*, {  } } %var_44, 0
+    %var_47 = extractvalue { void (i32*, {  }, i32, i32)*, {  } } %var_44, 1
+    %var_48 = alloca i32
+    call void %var_46(i32* %var_48, {  } %var_47, i32 %var_42, i32 %var_43)
+    %var_49 = load i32, ptr %var_48
+    store i32 %var_49, ptr %var_40
     ret void
 }
-define void @fn_49(ptr sret(i32) %var_52, {  } %var_53, i32 %var_54) {
-  entry55: 
-    store i32 %var_54, ptr %var_52
+define void @fn_58(ptr sret(i32) %var_61, {  } %var_62, i32 %var_63) {
+  entry64: 
+    store i32 %var_63, ptr %var_61
     ret void
 }
 "
@@ -1550,129 +1543,128 @@ exports[`simply typed lambda calc compilation > church tuple 2 > stderr 1`] = `[
 
 exports[`simply typed lambda calc compilation > church tuple 2 > stdout 1`] = `
 [
-  "1
-",
+  "1",
 ]
 `;
 
 exports[`simply typed lambda calc compilation > either > compiled 1`] = `
-"@const_76 = constant i32 1
+"@const_85 = constant i32 1
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_22 = alloca {  }
-    %var_23 = load {  }, ptr %var_22
-    store {  } %var_23, ptr %var_22
-    %var_29 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_30 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_29
-    %var_31 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_30, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_32 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_31, {  } %var_23, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_32, ptr %var_29
-    %var_34 = alloca {  }
-    %var_35 = load {  }, ptr %var_34
-    store {  } %var_35, ptr %var_34
-    %var_72 = alloca { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } }
-    %var_73 = load { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_72
-    %var_74 = insertvalue { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_73, void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)* @fn_33, 0
-    %var_75 = insertvalue { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_74, {  } %var_35, 1
-    store { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_75, ptr %var_72
-    %var_77 = load i32, ptr @const_76
-    %var_78 = extractvalue { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_75, 0
-    %var_79 = extractvalue { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_75, 1
-    %var_80 = alloca { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }
-    call void %var_78({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }* %var_80, {  } %var_79, i32 %var_77)
-    %var_81 = load { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }, ptr %var_80
-    %var_83 = alloca {  }
-    %var_84 = load {  }, ptr %var_83
-    store {  } %var_84, ptr %var_83
-    %var_89 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_90 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_89
-    %var_91 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_90, void (i32*, {  }, i32)* @fn_82, 0
-    %var_92 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_91, {  } %var_84, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_92, ptr %var_89
-    %var_93 = extractvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_81, 0
-    %var_94 = extractvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_81, 1
-    %var_95 = alloca { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }
-    call void %var_93({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }* %var_95, { i32 } %var_94, { void (i32*, {  }, i32)*, {  } } %var_92)
-    %var_96 = load { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }, ptr %var_95
-    %var_98 = alloca {  }
-    %var_99 = load {  }, ptr %var_98
-    store {  } %var_99, ptr %var_98
-    %var_104 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_105 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_104
-    %var_106 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_105, void (i32*, {  }, i32)* @fn_97, 0
-    %var_107 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_106, {  } %var_99, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_107, ptr %var_104
-    %var_108 = extractvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_96, 0
-    %var_109 = extractvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_96, 1
-    %var_110 = alloca i32
-    call void %var_108(i32* %var_110, { { void (i32*, {  }, i32)*, {  } }, i32 } %var_109, { void (i32*, {  }, i32)*, {  } } %var_107)
-    %var_111 = load i32, ptr %var_110
-    %var_112 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_32, 0
-    %var_113 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_32, 1
-    %var_114 = alloca i32
-    call void %var_112(i32* %var_114, {  } %var_113, i32 %var_111)
-    %var_115 = load i32, ptr %var_114
+    %var_32 = alloca {  }
+    %var_33 = load {  }, ptr %var_32
+    store {  } %var_33, ptr %var_32
+    %var_38 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_39 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_38
+    %var_40 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_39, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_41 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_40, {  } %var_33, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_41, ptr %var_38
+    %var_43 = alloca {  }
+    %var_44 = load {  }, ptr %var_43
+    store {  } %var_44, ptr %var_43
+    %var_81 = alloca { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } }
+    %var_82 = load { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_81
+    %var_83 = insertvalue { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_82, void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)* @fn_42, 0
+    %var_84 = insertvalue { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_83, {  } %var_44, 1
+    store { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_84, ptr %var_81
+    %var_86 = load i32, ptr @const_85
+    %var_87 = extractvalue { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_84, 0
+    %var_88 = extractvalue { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_84, 1
+    %var_89 = alloca { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }
+    call void %var_87({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }* %var_89, {  } %var_88, i32 %var_86)
+    %var_90 = load { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }, ptr %var_89
+    %var_92 = alloca {  }
+    %var_93 = load {  }, ptr %var_92
+    store {  } %var_93, ptr %var_92
+    %var_98 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_99 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_98
+    %var_100 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_99, void (i32*, {  }, i32)* @fn_91, 0
+    %var_101 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_100, {  } %var_93, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_101, ptr %var_98
+    %var_102 = extractvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_90, 0
+    %var_103 = extractvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_90, 1
+    %var_104 = alloca { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }
+    call void %var_102({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }* %var_104, { i32 } %var_103, { void (i32*, {  }, i32)*, {  } } %var_101)
+    %var_105 = load { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }, ptr %var_104
+    %var_107 = alloca {  }
+    %var_108 = load {  }, ptr %var_107
+    store {  } %var_108, ptr %var_107
+    %var_113 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_114 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_113
+    %var_115 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_114, void (i32*, {  }, i32)* @fn_106, 0
+    %var_116 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_115, {  } %var_108, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_116, ptr %var_113
+    %var_117 = extractvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_105, 0
+    %var_118 = extractvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_105, 1
+    %var_119 = alloca i32
+    call void %var_117(i32* %var_119, { { void (i32*, {  }, i32)*, {  } }, i32 } %var_118, { void (i32*, {  }, i32)*, {  } } %var_116)
+    %var_120 = load i32, ptr %var_119
+    %var_121 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_41, 0
+    %var_122 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_41, 1
+    %var_123 = alloca i32
+    call void %var_121(i32* %var_123, {  } %var_122, i32 %var_120)
+    %var_124 = load i32, ptr %var_123
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_24, {  } %var_25, i32 %var_26) {
-  entry27: 
-    %var_28 = call i32 @print_int(i32 %var_26)
-    store i32 %var_28, ptr %var_24
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_34, {  } %var_35, i32 %var_36) {
+  entry37: 
+    call void @print_int(i32 %var_36)
+    store i32 %var_36, ptr %var_34
     ret void
 }
-define void @fn_33(ptr sret({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }) %var_36, {  } %var_37, i32 %var_38) {
-  entry39: 
-    %var_41 = alloca { i32 }
-    %var_42 = load { i32 }, ptr %var_41
-    %var_43 = insertvalue { i32 } %var_42, i32 %var_38, 0
-    store { i32 } %var_43, ptr %var_41
-    %var_68 = alloca { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }
-    %var_69 = load { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }, ptr %var_68
-    %var_70 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_69, void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })* @fn_40, 0
-    %var_71 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_70, { i32 } %var_43, 1
-    store { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_71, ptr %var_68
-    store { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_71, ptr %var_36
+define void @fn_42(ptr sret({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }) %var_45, {  } %var_46, i32 %var_47) {
+  entry48: 
+    %var_50 = alloca { i32 }
+    %var_51 = load { i32 }, ptr %var_50
+    %var_52 = insertvalue { i32 } %var_51, i32 %var_47, 0
+    store { i32 } %var_52, ptr %var_50
+    %var_77 = alloca { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }
+    %var_78 = load { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }, ptr %var_77
+    %var_79 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_78, void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })* @fn_49, 0
+    %var_80 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_79, { i32 } %var_52, 1
+    store { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_80, ptr %var_77
+    store { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_80, ptr %var_45
     ret void
 }
-define void @fn_40(ptr sret({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }) %var_44, { i32 } %var_45, { void (i32*, {  }, i32)*, {  } } %var_46) {
-  entry47: 
-    %var_48 = extractvalue { i32 } %var_45, 0
-    %var_50 = alloca { { void (i32*, {  }, i32)*, {  } }, i32 }
-    %var_51 = load { { void (i32*, {  }, i32)*, {  } }, i32 }, ptr %var_50
-    %var_52 = insertvalue { { void (i32*, {  }, i32)*, {  } }, i32 } %var_51, { void (i32*, {  }, i32)*, {  } } %var_46, 0
-    %var_53 = insertvalue { { void (i32*, {  }, i32)*, {  } }, i32 } %var_52, i32 %var_48, 1
-    store { { void (i32*, {  }, i32)*, {  } }, i32 } %var_53, ptr %var_50
-    %var_64 = alloca { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }
-    %var_65 = load { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }, ptr %var_64
-    %var_66 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_65, void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })* @fn_49, 0
-    %var_67 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_66, { { void (i32*, {  }, i32)*, {  } }, i32 } %var_53, 1
-    store { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_67, ptr %var_64
-    store { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_67, ptr %var_44
+define void @fn_49(ptr sret({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }) %var_53, { i32 } %var_54, { void (i32*, {  }, i32)*, {  } } %var_55) {
+  entry56: 
+    %var_57 = extractvalue { i32 } %var_54, 0
+    %var_59 = alloca { { void (i32*, {  }, i32)*, {  } }, i32 }
+    %var_60 = load { { void (i32*, {  }, i32)*, {  } }, i32 }, ptr %var_59
+    %var_61 = insertvalue { { void (i32*, {  }, i32)*, {  } }, i32 } %var_60, { void (i32*, {  }, i32)*, {  } } %var_55, 0
+    %var_62 = insertvalue { { void (i32*, {  }, i32)*, {  } }, i32 } %var_61, i32 %var_57, 1
+    store { { void (i32*, {  }, i32)*, {  } }, i32 } %var_62, ptr %var_59
+    %var_73 = alloca { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }
+    %var_74 = load { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }, ptr %var_73
+    %var_75 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_74, void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })* @fn_58, 0
+    %var_76 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_75, { { void (i32*, {  }, i32)*, {  } }, i32 } %var_62, 1
+    store { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_76, ptr %var_73
+    store { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_76, ptr %var_53
     ret void
 }
-define void @fn_49(ptr sret(i32) %var_54, { { void (i32*, {  }, i32)*, {  } }, i32 } %var_55, { void (i32*, {  }, i32)*, {  } } %var_56) {
-  entry57: 
-    %var_58 = extractvalue { { void (i32*, {  }, i32)*, {  } }, i32 } %var_55, 0
-    %var_59 = extractvalue { { void (i32*, {  }, i32)*, {  } }, i32 } %var_55, 1
-    %var_60 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_58, 0
-    %var_61 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_58, 1
-    %var_62 = alloca i32
-    call void %var_60(i32* %var_62, {  } %var_61, i32 %var_59)
-    %var_63 = load i32, ptr %var_62
-    store i32 %var_63, ptr %var_54
+define void @fn_58(ptr sret(i32) %var_63, { { void (i32*, {  }, i32)*, {  } }, i32 } %var_64, { void (i32*, {  }, i32)*, {  } } %var_65) {
+  entry66: 
+    %var_67 = extractvalue { { void (i32*, {  }, i32)*, {  } }, i32 } %var_64, 0
+    %var_68 = extractvalue { { void (i32*, {  }, i32)*, {  } }, i32 } %var_64, 1
+    %var_69 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_67, 0
+    %var_70 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_67, 1
+    %var_71 = alloca i32
+    call void %var_69(i32* %var_71, {  } %var_70, i32 %var_68)
+    %var_72 = load i32, ptr %var_71
+    store i32 %var_72, ptr %var_63
     ret void
 }
-define void @fn_82(ptr sret(i32) %var_85, {  } %var_86, i32 %var_87) {
-  entry88: 
-    store i32 %var_87, ptr %var_85
+define void @fn_91(ptr sret(i32) %var_94, {  } %var_95, i32 %var_96) {
+  entry97: 
+    store i32 %var_96, ptr %var_94
     ret void
 }
-define void @fn_97(ptr sret(i32) %var_100, {  } %var_101, i32 %var_102) {
-  entry103: 
-    store i32 %var_102, ptr %var_100
+define void @fn_106(ptr sret(i32) %var_109, {  } %var_110, i32 %var_111) {
+  entry112: 
+    store i32 %var_111, ptr %var_109
     ret void
 }
 "
@@ -1682,87 +1674,86 @@ exports[`simply typed lambda calc compilation > either > stderr 1`] = `[]`;
 
 exports[`simply typed lambda calc compilation > either > stdout 1`] = `
 [
-  "1
-",
+  "1",
 ]
 `;
 
 exports[`simply typed lambda calc compilation > either 2 > compiled 1`] = `
-"@const_46 = constant i32 1
+"@const_55 = constant i32 1
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_18 = alloca {  }
-    %var_19 = load {  }, ptr %var_18
-    store {  } %var_19, ptr %var_18
-    %var_25 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_26 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_25
-    %var_27 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_26, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_28 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_27, {  } %var_19, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_28, ptr %var_25
-    %var_30 = alloca {  }
-    %var_31 = load {  }, ptr %var_30
-    store {  } %var_31, ptr %var_30
-    %var_42 = alloca { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } }
-    %var_43 = load { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } }, ptr %var_42
-    %var_44 = insertvalue { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_43, void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })* @fn_29, 0
-    %var_45 = insertvalue { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_44, {  } %var_31, 1
-    store { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_45, ptr %var_42
-    %var_47 = load i32, ptr @const_46
-    %var_49 = alloca {  }
-    %var_50 = load {  }, ptr %var_49
-    store {  } %var_50, ptr %var_49
-    %var_55 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_56 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_55
-    %var_57 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_56, void (i32*, {  }, i32)* @fn_48, 0
-    %var_58 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_57, {  } %var_50, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_58, ptr %var_55
-    %var_60 = alloca {  }
-    %var_61 = load {  }, ptr %var_60
-    store {  } %var_61, ptr %var_60
-    %var_66 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_67 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_66
-    %var_68 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_67, void (i32*, {  }, i32)* @fn_59, 0
-    %var_69 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_68, {  } %var_61, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_69, ptr %var_66
-    %var_70 = extractvalue { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_45, 0
-    %var_71 = extractvalue { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_45, 1
-    %var_72 = alloca i32
-    call void %var_70(i32* %var_72, {  } %var_71, i32 %var_47, { void (i32*, {  }, i32)*, {  } } %var_58, { void (i32*, {  }, i32)*, {  } } %var_69)
-    %var_73 = load i32, ptr %var_72
-    %var_74 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_28, 0
-    %var_75 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_28, 1
-    %var_76 = alloca i32
-    call void %var_74(i32* %var_76, {  } %var_75, i32 %var_73)
-    %var_77 = load i32, ptr %var_76
+    %var_28 = alloca {  }
+    %var_29 = load {  }, ptr %var_28
+    store {  } %var_29, ptr %var_28
+    %var_34 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_35 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_34
+    %var_36 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_35, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_37 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_36, {  } %var_29, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_37, ptr %var_34
+    %var_39 = alloca {  }
+    %var_40 = load {  }, ptr %var_39
+    store {  } %var_40, ptr %var_39
+    %var_51 = alloca { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } }
+    %var_52 = load { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } }, ptr %var_51
+    %var_53 = insertvalue { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_52, void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })* @fn_38, 0
+    %var_54 = insertvalue { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_53, {  } %var_40, 1
+    store { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_54, ptr %var_51
+    %var_56 = load i32, ptr @const_55
+    %var_58 = alloca {  }
+    %var_59 = load {  }, ptr %var_58
+    store {  } %var_59, ptr %var_58
+    %var_64 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_65 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_64
+    %var_66 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_65, void (i32*, {  }, i32)* @fn_57, 0
+    %var_67 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_66, {  } %var_59, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_67, ptr %var_64
+    %var_69 = alloca {  }
+    %var_70 = load {  }, ptr %var_69
+    store {  } %var_70, ptr %var_69
+    %var_75 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_76 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_75
+    %var_77 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_76, void (i32*, {  }, i32)* @fn_68, 0
+    %var_78 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_77, {  } %var_70, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_78, ptr %var_75
+    %var_79 = extractvalue { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_54, 0
+    %var_80 = extractvalue { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_54, 1
+    %var_81 = alloca i32
+    call void %var_79(i32* %var_81, {  } %var_80, i32 %var_56, { void (i32*, {  }, i32)*, {  } } %var_67, { void (i32*, {  }, i32)*, {  } } %var_78)
+    %var_82 = load i32, ptr %var_81
+    %var_83 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_37, 0
+    %var_84 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_37, 1
+    %var_85 = alloca i32
+    call void %var_83(i32* %var_85, {  } %var_84, i32 %var_82)
+    %var_86 = load i32, ptr %var_85
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_20, {  } %var_21, i32 %var_22) {
-  entry23: 
-    %var_24 = call i32 @print_int(i32 %var_22)
-    store i32 %var_24, ptr %var_20
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_30, {  } %var_31, i32 %var_32) {
+  entry33: 
+    call void @print_int(i32 %var_32)
+    store i32 %var_32, ptr %var_30
     ret void
 }
-define void @fn_29(ptr sret(i32) %var_32, {  } %var_33, i32 %var_34, { void (i32*, {  }, i32)*, {  } } %var_35, { void (i32*, {  }, i32)*, {  } } %var_36) {
-  entry37: 
-    %var_38 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_35, 0
-    %var_39 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_35, 1
-    %var_40 = alloca i32
-    call void %var_38(i32* %var_40, {  } %var_39, i32 %var_34)
-    %var_41 = load i32, ptr %var_40
-    store i32 %var_41, ptr %var_32
+define void @fn_38(ptr sret(i32) %var_41, {  } %var_42, i32 %var_43, { void (i32*, {  }, i32)*, {  } } %var_44, { void (i32*, {  }, i32)*, {  } } %var_45) {
+  entry46: 
+    %var_47 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_44, 0
+    %var_48 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_44, 1
+    %var_49 = alloca i32
+    call void %var_47(i32* %var_49, {  } %var_48, i32 %var_43)
+    %var_50 = load i32, ptr %var_49
+    store i32 %var_50, ptr %var_41
     ret void
 }
-define void @fn_48(ptr sret(i32) %var_51, {  } %var_52, i32 %var_53) {
-  entry54: 
-    store i32 %var_53, ptr %var_51
+define void @fn_57(ptr sret(i32) %var_60, {  } %var_61, i32 %var_62) {
+  entry63: 
+    store i32 %var_62, ptr %var_60
     ret void
 }
-define void @fn_59(ptr sret(i32) %var_62, {  } %var_63, i32 %var_64) {
-  entry65: 
-    store i32 %var_64, ptr %var_62
+define void @fn_68(ptr sret(i32) %var_71, {  } %var_72, i32 %var_73) {
+  entry74: 
+    store i32 %var_73, ptr %var_71
     ret void
 }
 "
@@ -1772,57 +1763,56 @@ exports[`simply typed lambda calc compilation > either 2 > stderr 1`] = `[]`;
 
 exports[`simply typed lambda calc compilation > either 2 > stdout 1`] = `
 [
-  "1
-",
+  "1",
 ]
 `;
 
 exports[`simply typed lambda calc compilation > function application and literal print > compiled 1`] = `
-"@const_33 = constant i32 2
+"@const_42 = constant i32 2
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_10 = alloca {  }
-    %var_11 = load {  }, ptr %var_10
-    store {  } %var_11, ptr %var_10
-    %var_17 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_18 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_17
-    %var_19 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_18, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_20 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_19, {  } %var_11, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_20, ptr %var_17
-    %var_22 = alloca {  }
-    %var_23 = load {  }, ptr %var_22
-    store {  } %var_23, ptr %var_22
-    %var_29 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_30 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_29
-    %var_31 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_30, void (i32*, {  }, i32)* @fn_21, 0
-    %var_32 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_31, {  } %var_23, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_32, ptr %var_29
-    %var_34 = load i32, ptr @const_33
-    %var_35 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_32, 0
-    %var_36 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_32, 1
-    %var_37 = alloca i32
-    call void %var_35(i32* %var_37, {  } %var_36, i32 %var_34)
-    %var_38 = load i32, ptr %var_37
-    %var_39 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_20, 0
-    %var_40 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_20, 1
-    %var_41 = alloca i32
-    call void %var_39(i32* %var_41, {  } %var_40, i32 %var_38)
-    %var_42 = load i32, ptr %var_41
+    %var_20 = alloca {  }
+    %var_21 = load {  }, ptr %var_20
+    store {  } %var_21, ptr %var_20
+    %var_26 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_27 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_26
+    %var_28 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_27, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_29 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_28, {  } %var_21, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_29, ptr %var_26
+    %var_31 = alloca {  }
+    %var_32 = load {  }, ptr %var_31
+    store {  } %var_32, ptr %var_31
+    %var_38 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_39 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_38
+    %var_40 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_39, void (i32*, {  }, i32)* @fn_30, 0
+    %var_41 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_40, {  } %var_32, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_41, ptr %var_38
+    %var_43 = load i32, ptr @const_42
+    %var_44 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_41, 0
+    %var_45 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_41, 1
+    %var_46 = alloca i32
+    call void %var_44(i32* %var_46, {  } %var_45, i32 %var_43)
+    %var_47 = load i32, ptr %var_46
+    %var_48 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_29, 0
+    %var_49 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_29, 1
+    %var_50 = alloca i32
+    call void %var_48(i32* %var_50, {  } %var_49, i32 %var_47)
+    %var_51 = load i32, ptr %var_50
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_12, {  } %var_13, i32 %var_14) {
-  entry15: 
-    %var_16 = call i32 @print_int(i32 %var_14)
-    store i32 %var_16, ptr %var_12
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_22, {  } %var_23, i32 %var_24) {
+  entry25: 
+    call void @print_int(i32 %var_24)
+    store i32 %var_24, ptr %var_22
     ret void
 }
-define void @fn_21(ptr sret(i32) %var_24, {  } %var_25, i32 %var_26) {
-  entry27: 
-    %var_28 = add i32 %var_26, %var_26
-    store i32 %var_28, ptr %var_24
+define void @fn_30(ptr sret(i32) %var_33, {  } %var_34, i32 %var_35) {
+  entry36: 
+    %var_37 = add i32 %var_35, %var_35
+    store i32 %var_37, ptr %var_33
     ret void
 }
 "
@@ -1832,81 +1822,80 @@ exports[`simply typed lambda calc compilation > function application and literal
 
 exports[`simply typed lambda calc compilation > function application and literal print > stdout 1`] = `
 [
-  "4
-",
+  "4",
 ]
 `;
 
 exports[`simply typed lambda calc compilation > function closure > compiled 1`] = `
-"@const_43 = constant i32 2
-@const_55 = constant i32 1
+"@const_52 = constant i32 2
+@const_64 = constant i32 1
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_16 = alloca {  }
-    %var_17 = load {  }, ptr %var_16
-    store {  } %var_17, ptr %var_16
-    %var_23 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_24 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_23
-    %var_25 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_24, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_26 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_25, {  } %var_17, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_26, ptr %var_23
-    %var_28 = alloca {  }
-    %var_29 = load {  }, ptr %var_28
-    store {  } %var_29, ptr %var_28
-    %var_51 = alloca { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
-    %var_52 = load { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_51
-    %var_53 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_52, void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_27, 0
-    %var_54 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_53, {  } %var_29, 1
-    store { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_54, ptr %var_51
-    %var_56 = load i32, ptr @const_55
-    %var_57 = extractvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_54, 0
-    %var_58 = extractvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_54, 1
-    %var_59 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
-    call void %var_57({ void (i32*, { i32 }, i32)*, { i32 } }* %var_59, {  } %var_58, i32 %var_56)
-    %var_60 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_59
-    %var_61 = load i32, ptr @const_43
-    %var_62 = extractvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_60, 0
-    %var_63 = extractvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_60, 1
-    %var_64 = alloca i32
-    call void %var_62(i32* %var_64, { i32 } %var_63, i32 %var_61)
-    %var_65 = load i32, ptr %var_64
-    %var_66 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_26, 0
-    %var_67 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_26, 1
-    %var_68 = alloca i32
-    call void %var_66(i32* %var_68, {  } %var_67, i32 %var_65)
-    %var_69 = load i32, ptr %var_68
+    %var_26 = alloca {  }
+    %var_27 = load {  }, ptr %var_26
+    store {  } %var_27, ptr %var_26
+    %var_32 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_33 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_32
+    %var_34 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_33, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_35 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_34, {  } %var_27, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_35, ptr %var_32
+    %var_37 = alloca {  }
+    %var_38 = load {  }, ptr %var_37
+    store {  } %var_38, ptr %var_37
+    %var_60 = alloca { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
+    %var_61 = load { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_60
+    %var_62 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_61, void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_36, 0
+    %var_63 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_62, {  } %var_38, 1
+    store { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_63, ptr %var_60
+    %var_65 = load i32, ptr @const_64
+    %var_66 = extractvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_63, 0
+    %var_67 = extractvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_63, 1
+    %var_68 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
+    call void %var_66({ void (i32*, { i32 }, i32)*, { i32 } }* %var_68, {  } %var_67, i32 %var_65)
+    %var_69 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_68
+    %var_70 = load i32, ptr @const_52
+    %var_71 = extractvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_69, 0
+    %var_72 = extractvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_69, 1
+    %var_73 = alloca i32
+    call void %var_71(i32* %var_73, { i32 } %var_72, i32 %var_70)
+    %var_74 = load i32, ptr %var_73
+    %var_75 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_35, 0
+    %var_76 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_35, 1
+    %var_77 = alloca i32
+    call void %var_75(i32* %var_77, {  } %var_76, i32 %var_74)
+    %var_78 = load i32, ptr %var_77
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_18, {  } %var_19, i32 %var_20) {
-  entry21: 
-    %var_22 = call i32 @print_int(i32 %var_20)
-    store i32 %var_22, ptr %var_18
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_28, {  } %var_29, i32 %var_30) {
+  entry31: 
+    call void @print_int(i32 %var_30)
+    store i32 %var_30, ptr %var_28
     ret void
 }
-define void @fn_27(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %var_30, {  } %var_31, i32 %var_32) {
-  entry33: 
-    %var_35 = alloca { i32 }
-    %var_36 = load { i32 }, ptr %var_35
-    %var_37 = insertvalue { i32 } %var_36, i32 %var_32, 0
-    store { i32 } %var_37, ptr %var_35
-    %var_47 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
-    %var_48 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_47
-    %var_49 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_48, void (i32*, { i32 }, i32)* @fn_34, 0
-    %var_50 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_49, { i32 } %var_37, 1
-    store { void (i32*, { i32 }, i32)*, { i32 } } %var_50, ptr %var_47
-    store { void (i32*, { i32 }, i32)*, { i32 } } %var_50, ptr %var_30
+define void @fn_36(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %var_39, {  } %var_40, i32 %var_41) {
+  entry42: 
+    %var_44 = alloca { i32 }
+    %var_45 = load { i32 }, ptr %var_44
+    %var_46 = insertvalue { i32 } %var_45, i32 %var_41, 0
+    store { i32 } %var_46, ptr %var_44
+    %var_56 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
+    %var_57 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_56
+    %var_58 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_57, void (i32*, { i32 }, i32)* @fn_43, 0
+    %var_59 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_58, { i32 } %var_46, 1
+    store { void (i32*, { i32 }, i32)*, { i32 } } %var_59, ptr %var_56
+    store { void (i32*, { i32 }, i32)*, { i32 } } %var_59, ptr %var_39
     ret void
 }
-define void @fn_34(ptr sret(i32) %var_38, { i32 } %var_39, i32 %var_40) {
-  entry41: 
-    %var_42 = extractvalue { i32 } %var_39, 0
-    %var_44 = load i32, ptr @const_43
-    %var_45 = mul i32 %var_44, %var_42
-    %var_46 = add i32 %var_40, %var_45
-    store i32 %var_46, ptr %var_38
+define void @fn_43(ptr sret(i32) %var_47, { i32 } %var_48, i32 %var_49) {
+  entry50: 
+    %var_51 = extractvalue { i32 } %var_48, 0
+    %var_53 = load i32, ptr @const_52
+    %var_54 = mul i32 %var_53, %var_51
+    %var_55 = add i32 %var_49, %var_54
+    store i32 %var_55, ptr %var_47
     ret void
 }
 "
@@ -1916,104 +1905,103 @@ exports[`simply typed lambda calc compilation > function closure > stderr 1`] = 
 
 exports[`simply typed lambda calc compilation > function closure > stdout 1`] = `
 [
-  "4
-",
+  "4",
 ]
 `;
 
 exports[`simply typed lambda calc compilation > function deep closure > compiled 1`] = `
-"@const_72 = constant i32 1
-@const_78 = constant i32 3
-@const_84 = constant i32 5
+"@const_81 = constant i32 1
+@const_87 = constant i32 3
+@const_93 = constant i32 5
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_20 = alloca {  }
-    %var_21 = load {  }, ptr %var_20
-    store {  } %var_21, ptr %var_20
-    %var_27 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_28 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_27
-    %var_29 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_28, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_30 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_29, {  } %var_21, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_30, ptr %var_27
-    %var_32 = alloca {  }
-    %var_33 = load {  }, ptr %var_32
-    store {  } %var_33, ptr %var_32
-    %var_68 = alloca { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
-    %var_69 = load { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_68
-    %var_70 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_69, void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_31, 0
-    %var_71 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_70, {  } %var_33, 1
-    store { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_71, ptr %var_68
-    %var_73 = load i32, ptr @const_72
-    %var_74 = extractvalue { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_71, 0
-    %var_75 = extractvalue { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_71, 1
-    %var_76 = alloca { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }
-    call void %var_74({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }* %var_76, {  } %var_75, i32 %var_73)
-    %var_77 = load { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }, ptr %var_76
-    %var_79 = load i32, ptr @const_78
-    %var_80 = extractvalue { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_77, 0
-    %var_81 = extractvalue { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_77, 1
-    %var_82 = alloca { void (i32*, { i32, i32 }, i32)*, { i32, i32 } }
-    call void %var_80({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }* %var_82, { i32 } %var_81, i32 %var_79)
-    %var_83 = load { void (i32*, { i32, i32 }, i32)*, { i32, i32 } }, ptr %var_82
-    %var_85 = load i32, ptr @const_84
-    %var_86 = extractvalue { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_83, 0
-    %var_87 = extractvalue { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_83, 1
-    %var_88 = alloca i32
-    call void %var_86(i32* %var_88, { i32, i32 } %var_87, i32 %var_85)
-    %var_89 = load i32, ptr %var_88
-    %var_90 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_30, 0
-    %var_91 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_30, 1
-    %var_92 = alloca i32
-    call void %var_90(i32* %var_92, {  } %var_91, i32 %var_89)
-    %var_93 = load i32, ptr %var_92
+    %var_30 = alloca {  }
+    %var_31 = load {  }, ptr %var_30
+    store {  } %var_31, ptr %var_30
+    %var_36 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_37 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_36
+    %var_38 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_37, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_39 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_38, {  } %var_31, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_39, ptr %var_36
+    %var_41 = alloca {  }
+    %var_42 = load {  }, ptr %var_41
+    store {  } %var_42, ptr %var_41
+    %var_77 = alloca { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
+    %var_78 = load { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_77
+    %var_79 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_78, void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_40, 0
+    %var_80 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_79, {  } %var_42, 1
+    store { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_80, ptr %var_77
+    %var_82 = load i32, ptr @const_81
+    %var_83 = extractvalue { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_80, 0
+    %var_84 = extractvalue { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_80, 1
+    %var_85 = alloca { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }
+    call void %var_83({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }* %var_85, {  } %var_84, i32 %var_82)
+    %var_86 = load { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }, ptr %var_85
+    %var_88 = load i32, ptr @const_87
+    %var_89 = extractvalue { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_86, 0
+    %var_90 = extractvalue { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_86, 1
+    %var_91 = alloca { void (i32*, { i32, i32 }, i32)*, { i32, i32 } }
+    call void %var_89({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }* %var_91, { i32 } %var_90, i32 %var_88)
+    %var_92 = load { void (i32*, { i32, i32 }, i32)*, { i32, i32 } }, ptr %var_91
+    %var_94 = load i32, ptr @const_93
+    %var_95 = extractvalue { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_92, 0
+    %var_96 = extractvalue { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_92, 1
+    %var_97 = alloca i32
+    call void %var_95(i32* %var_97, { i32, i32 } %var_96, i32 %var_94)
+    %var_98 = load i32, ptr %var_97
+    %var_99 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_39, 0
+    %var_100 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_39, 1
+    %var_101 = alloca i32
+    call void %var_99(i32* %var_101, {  } %var_100, i32 %var_98)
+    %var_102 = load i32, ptr %var_101
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_22, {  } %var_23, i32 %var_24) {
-  entry25: 
-    %var_26 = call i32 @print_int(i32 %var_24)
-    store i32 %var_26, ptr %var_22
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_32, {  } %var_33, i32 %var_34) {
+  entry35: 
+    call void @print_int(i32 %var_34)
+    store i32 %var_34, ptr %var_32
     ret void
 }
-define void @fn_31(ptr sret({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }) %var_34, {  } %var_35, i32 %var_36) {
-  entry37: 
-    %var_39 = alloca { i32 }
-    %var_40 = load { i32 }, ptr %var_39
-    %var_41 = insertvalue { i32 } %var_40, i32 %var_36, 0
-    store { i32 } %var_41, ptr %var_39
-    %var_64 = alloca { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }
-    %var_65 = load { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }, ptr %var_64
-    %var_66 = insertvalue { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_65, void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)* @fn_38, 0
-    %var_67 = insertvalue { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_66, { i32 } %var_41, 1
-    store { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_67, ptr %var_64
-    store { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_67, ptr %var_34
+define void @fn_40(ptr sret({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }) %var_43, {  } %var_44, i32 %var_45) {
+  entry46: 
+    %var_48 = alloca { i32 }
+    %var_49 = load { i32 }, ptr %var_48
+    %var_50 = insertvalue { i32 } %var_49, i32 %var_45, 0
+    store { i32 } %var_50, ptr %var_48
+    %var_73 = alloca { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }
+    %var_74 = load { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }, ptr %var_73
+    %var_75 = insertvalue { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_74, void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)* @fn_47, 0
+    %var_76 = insertvalue { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_75, { i32 } %var_50, 1
+    store { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_76, ptr %var_73
+    store { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_76, ptr %var_43
     ret void
 }
-define void @fn_38(ptr sret({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }) %var_42, { i32 } %var_43, i32 %var_44) {
-  entry45: 
-    %var_46 = extractvalue { i32 } %var_43, 0
-    %var_48 = alloca { i32, i32 }
-    %var_49 = load { i32, i32 }, ptr %var_48
-    %var_50 = insertvalue { i32, i32 } %var_49, i32 %var_46, 0
-    %var_51 = insertvalue { i32, i32 } %var_50, i32 %var_44, 1
-    store { i32, i32 } %var_51, ptr %var_48
-    %var_60 = alloca { void (i32*, { i32, i32 }, i32)*, { i32, i32 } }
-    %var_61 = load { void (i32*, { i32, i32 }, i32)*, { i32, i32 } }, ptr %var_60
-    %var_62 = insertvalue { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_61, void (i32*, { i32, i32 }, i32)* @fn_47, 0
-    %var_63 = insertvalue { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_62, { i32, i32 } %var_51, 1
-    store { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_63, ptr %var_60
-    store { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_63, ptr %var_42
+define void @fn_47(ptr sret({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }) %var_51, { i32 } %var_52, i32 %var_53) {
+  entry54: 
+    %var_55 = extractvalue { i32 } %var_52, 0
+    %var_57 = alloca { i32, i32 }
+    %var_58 = load { i32, i32 }, ptr %var_57
+    %var_59 = insertvalue { i32, i32 } %var_58, i32 %var_55, 0
+    %var_60 = insertvalue { i32, i32 } %var_59, i32 %var_53, 1
+    store { i32, i32 } %var_60, ptr %var_57
+    %var_69 = alloca { void (i32*, { i32, i32 }, i32)*, { i32, i32 } }
+    %var_70 = load { void (i32*, { i32, i32 }, i32)*, { i32, i32 } }, ptr %var_69
+    %var_71 = insertvalue { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_70, void (i32*, { i32, i32 }, i32)* @fn_56, 0
+    %var_72 = insertvalue { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_71, { i32, i32 } %var_60, 1
+    store { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_72, ptr %var_69
+    store { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_72, ptr %var_51
     ret void
 }
-define void @fn_47(ptr sret(i32) %var_52, { i32, i32 } %var_53, i32 %var_54) {
-  entry55: 
-    %var_56 = extractvalue { i32, i32 } %var_53, 0
-    %var_57 = extractvalue { i32, i32 } %var_53, 1
-    %var_58 = add i32 %var_57, %var_54
-    %var_59 = add i32 %var_56, %var_58
-    store i32 %var_59, ptr %var_52
+define void @fn_56(ptr sret(i32) %var_61, { i32, i32 } %var_62, i32 %var_63) {
+  entry64: 
+    %var_65 = extractvalue { i32, i32 } %var_62, 0
+    %var_66 = extractvalue { i32, i32 } %var_62, 1
+    %var_67 = add i32 %var_66, %var_63
+    %var_68 = add i32 %var_65, %var_67
+    store i32 %var_68, ptr %var_61
     ret void
 }
 "
@@ -2023,61 +2011,60 @@ exports[`simply typed lambda calc compilation > function deep closure > stderr 1
 
 exports[`simply typed lambda calc compilation > function deep closure > stdout 1`] = `
 [
-  "9
-",
+  "9",
 ]
 `;
 
 exports[`simply typed lambda calc compilation > function multiple args > compiled 1`] = `
-"@const_33 = constant i32 2
-@const_41 = constant i32 1
+"@const_42 = constant i32 2
+@const_50 = constant i32 1
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_14 = alloca {  }
-    %var_15 = load {  }, ptr %var_14
-    store {  } %var_15, ptr %var_14
-    %var_21 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_22 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_21
-    %var_23 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_22, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_24 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_23, {  } %var_15, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_24, ptr %var_21
-    %var_26 = alloca {  }
-    %var_27 = load {  }, ptr %var_26
-    store {  } %var_27, ptr %var_26
-    %var_37 = alloca { void (i32*, {  }, i32, i32)*, {  } }
-    %var_38 = load { void (i32*, {  }, i32, i32)*, {  } }, ptr %var_37
-    %var_39 = insertvalue { void (i32*, {  }, i32, i32)*, {  } } %var_38, void (i32*, {  }, i32, i32)* @fn_25, 0
-    %var_40 = insertvalue { void (i32*, {  }, i32, i32)*, {  } } %var_39, {  } %var_27, 1
-    store { void (i32*, {  }, i32, i32)*, {  } } %var_40, ptr %var_37
-    %var_42 = load i32, ptr @const_41
-    %var_43 = load i32, ptr @const_33
-    %var_44 = extractvalue { void (i32*, {  }, i32, i32)*, {  } } %var_40, 0
-    %var_45 = extractvalue { void (i32*, {  }, i32, i32)*, {  } } %var_40, 1
-    %var_46 = alloca i32
-    call void %var_44(i32* %var_46, {  } %var_45, i32 %var_42, i32 %var_43)
-    %var_47 = load i32, ptr %var_46
-    %var_48 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_24, 0
-    %var_49 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_24, 1
-    %var_50 = alloca i32
-    call void %var_48(i32* %var_50, {  } %var_49, i32 %var_47)
-    %var_51 = load i32, ptr %var_50
+    %var_24 = alloca {  }
+    %var_25 = load {  }, ptr %var_24
+    store {  } %var_25, ptr %var_24
+    %var_30 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_31 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_30
+    %var_32 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_31, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_33 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_32, {  } %var_25, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_33, ptr %var_30
+    %var_35 = alloca {  }
+    %var_36 = load {  }, ptr %var_35
+    store {  } %var_36, ptr %var_35
+    %var_46 = alloca { void (i32*, {  }, i32, i32)*, {  } }
+    %var_47 = load { void (i32*, {  }, i32, i32)*, {  } }, ptr %var_46
+    %var_48 = insertvalue { void (i32*, {  }, i32, i32)*, {  } } %var_47, void (i32*, {  }, i32, i32)* @fn_34, 0
+    %var_49 = insertvalue { void (i32*, {  }, i32, i32)*, {  } } %var_48, {  } %var_36, 1
+    store { void (i32*, {  }, i32, i32)*, {  } } %var_49, ptr %var_46
+    %var_51 = load i32, ptr @const_50
+    %var_52 = load i32, ptr @const_42
+    %var_53 = extractvalue { void (i32*, {  }, i32, i32)*, {  } } %var_49, 0
+    %var_54 = extractvalue { void (i32*, {  }, i32, i32)*, {  } } %var_49, 1
+    %var_55 = alloca i32
+    call void %var_53(i32* %var_55, {  } %var_54, i32 %var_51, i32 %var_52)
+    %var_56 = load i32, ptr %var_55
+    %var_57 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_33, 0
+    %var_58 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_33, 1
+    %var_59 = alloca i32
+    call void %var_57(i32* %var_59, {  } %var_58, i32 %var_56)
+    %var_60 = load i32, ptr %var_59
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_16, {  } %var_17, i32 %var_18) {
-  entry19: 
-    %var_20 = call i32 @print_int(i32 %var_18)
-    store i32 %var_20, ptr %var_16
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_26, {  } %var_27, i32 %var_28) {
+  entry29: 
+    call void @print_int(i32 %var_28)
+    store i32 %var_28, ptr %var_26
     ret void
 }
-define void @fn_25(ptr sret(i32) %var_28, {  } %var_29, i32 %var_30, i32 %var_31) {
-  entry32: 
-    %var_34 = load i32, ptr @const_33
-    %var_35 = mul i32 %var_34, %var_30
-    %var_36 = add i32 %var_31, %var_35
-    store i32 %var_36, ptr %var_28
+define void @fn_34(ptr sret(i32) %var_37, {  } %var_38, i32 %var_39, i32 %var_40) {
+  entry41: 
+    %var_43 = load i32, ptr @const_42
+    %var_44 = mul i32 %var_43, %var_39
+    %var_45 = add i32 %var_40, %var_44
+    store i32 %var_45, ptr %var_37
     ret void
 }
 "
@@ -2087,37 +2074,36 @@ exports[`simply typed lambda calc compilation > function multiple args > stderr 
 
 exports[`simply typed lambda calc compilation > function multiple args > stdout 1`] = `
 [
-  "4
-",
+  "4",
 ]
 `;
 
 exports[`simply typed lambda calc compilation > hello world > compiled 1`] = `
-"@const_15 = constant [13 x i8] c"hello world!\\00"
+"@const_24 = constant [13 x i8] c"hello world!\\00"
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_4 = alloca {  }
-    %var_5 = load {  }, ptr %var_4
-    store {  } %var_5, ptr %var_4
-    %var_11 = alloca { void (i8**, {  }, i8*)*, {  } }
-    %var_12 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_11
-    %var_13 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_12, void (i8**, {  }, i8*)* @print_string_wrap, 0
-    %var_14 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_13, {  } %var_5, 1
-    store { void (i8**, {  }, i8*)*, {  } } %var_14, ptr %var_11
-    %var_16 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_14, 0
-    %var_17 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_14, 1
-    %var_18 = alloca i8*
-    call void %var_16(i8** %var_18, {  } %var_17, i8* @const_15)
-    %var_19 = load i8*, ptr %var_18
+    %var_14 = alloca {  }
+    %var_15 = load {  }, ptr %var_14
+    store {  } %var_15, ptr %var_14
+    %var_20 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_21 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_20
+    %var_22 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_21, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_23 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_22, {  } %var_15, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_23, ptr %var_20
+    %var_25 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_23, 0
+    %var_26 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_23, 1
+    %var_27 = alloca i8*
+    call void %var_25(i8** %var_27, {  } %var_26, i8* @const_24)
+    %var_28 = load i8*, ptr %var_27
     ret i32 0
 }
-declare i8* @print_string(i8*)
-define void @print_string_wrap(ptr sret(i8*) %var_6, {  } %var_7, i8* %var_8) {
-  entry9: 
-    %var_10 = call i8* @print_string(i8* %var_8)
-    store i8* %var_10, ptr %var_6
+declare void @print_string(i8*)
+define void @print_string_wrap(ptr sret(i8*) %var_16, {  } %var_17, i8* %var_18) {
+  entry19: 
+    call void @print_string(i8* %var_18)
+    store i8* %var_18, ptr %var_16
     ret void
 }
 "
@@ -2127,13 +2113,12 @@ exports[`simply typed lambda calc compilation > hello world > stderr 1`] = `[]`;
 
 exports[`simply typed lambda calc compilation > hello world > stdout 1`] = `
 [
-  "hello world!
-",
+  "hello world!",
 ]
 `;
 
 exports[`simply typed lambda calc compilation > hello world string > compiled 1`] = `
-"@const_2 = constant [13 x i8] c"hello world!\\00"
+"@const_12 = constant [13 x i8] c"hello world!\\00"
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
@@ -2148,32 +2133,32 @@ exports[`simply typed lambda calc compilation > hello world string > stderr 1`] 
 exports[`simply typed lambda calc compilation > hello world string > stdout 1`] = `[]`;
 
 exports[`simply typed lambda calc compilation > print number > compiled 1`] = `
-"@const_15 = constant i32 1
+"@const_24 = constant i32 1
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_4 = alloca {  }
-    %var_5 = load {  }, ptr %var_4
-    store {  } %var_5, ptr %var_4
-    %var_11 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_12 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_11
-    %var_13 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_12, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_14 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_13, {  } %var_5, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_14, ptr %var_11
-    %var_16 = load i32, ptr @const_15
-    %var_17 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_14, 0
-    %var_18 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_14, 1
-    %var_19 = alloca i32
-    call void %var_17(i32* %var_19, {  } %var_18, i32 %var_16)
-    %var_20 = load i32, ptr %var_19
+    %var_14 = alloca {  }
+    %var_15 = load {  }, ptr %var_14
+    store {  } %var_15, ptr %var_14
+    %var_20 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_21 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_20
+    %var_22 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_21, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_23 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_22, {  } %var_15, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_23, ptr %var_20
+    %var_25 = load i32, ptr @const_24
+    %var_26 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_23, 0
+    %var_27 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_23, 1
+    %var_28 = alloca i32
+    call void %var_26(i32* %var_28, {  } %var_27, i32 %var_25)
+    %var_29 = load i32, ptr %var_28
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_6, {  } %var_7, i32 %var_8) {
-  entry9: 
-    %var_10 = call i32 @print_int(i32 %var_8)
-    store i32 %var_10, ptr %var_6
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_16, {  } %var_17, i32 %var_18) {
+  entry19: 
+    call void @print_int(i32 %var_18)
+    store i32 %var_18, ptr %var_16
     ret void
 }
 "
@@ -2183,44 +2168,43 @@ exports[`simply typed lambda calc compilation > print number > stderr 1`] = `[]`
 
 exports[`simply typed lambda calc compilation > print number > stdout 1`] = `
 [
-  "1
-",
+  "1",
 ]
 `;
 
 exports[`structured programming compilation > block > compiled 1`] = `
-"@const_20 = constant i32 123
-@const_22 = constant i32 234
-@const_24 = constant i32 345
-@const_26 = constant i32 456
+"@const_29 = constant i32 123
+@const_31 = constant i32 234
+@const_33 = constant i32 345
+@const_35 = constant i32 456
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_9 = alloca {  }
-    %var_10 = load {  }, ptr %var_9
-    store {  } %var_10, ptr %var_9
-    %var_16 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_17 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_16
-    %var_18 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_17, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_19 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_18, {  } %var_10, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_19, ptr %var_16
-    %var_21 = load i32, ptr @const_20
-    %var_23 = load i32, ptr @const_22
-    %var_25 = load i32, ptr @const_24
-    %var_27 = load i32, ptr @const_26
-    %var_28 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_19, 0
-    %var_29 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_19, 1
-    %var_30 = alloca i32
-    call void %var_28(i32* %var_30, {  } %var_29, i32 %var_27)
-    %var_31 = load i32, ptr %var_30
+    %var_19 = alloca {  }
+    %var_20 = load {  }, ptr %var_19
+    store {  } %var_20, ptr %var_19
+    %var_25 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_26 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_25
+    %var_27 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_26, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_28 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_27, {  } %var_20, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_28, ptr %var_25
+    %var_30 = load i32, ptr @const_29
+    %var_32 = load i32, ptr @const_31
+    %var_34 = load i32, ptr @const_33
+    %var_36 = load i32, ptr @const_35
+    %var_37 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_28, 0
+    %var_38 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_28, 1
+    %var_39 = alloca i32
+    call void %var_37(i32* %var_39, {  } %var_38, i32 %var_36)
+    %var_40 = load i32, ptr %var_39
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_11, {  } %var_12, i32 %var_13) {
-  entry14: 
-    %var_15 = call i32 @print_int(i32 %var_13)
-    store i32 %var_15, ptr %var_11
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_21, {  } %var_22, i32 %var_23) {
+  entry24: 
+    call void @print_int(i32 %var_23)
+    store i32 %var_23, ptr %var_21
     ret void
 }
 "
@@ -2230,41 +2214,40 @@ exports[`structured programming compilation > block > stderr 1`] = `[]`;
 
 exports[`structured programming compilation > block > stdout 1`] = `
 [
-  "456
-",
+  "456",
 ]
 `;
 
 exports[`structured programming compilation > block variable assingment > compiled 1`] = `
-"@const_25 = constant i32 123
-@const_27 = constant i32 1
+"@const_34 = constant i32 123
+@const_36 = constant i32 1
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_14 = alloca {  }
-    %var_15 = load {  }, ptr %var_14
-    store {  } %var_15, ptr %var_14
-    %var_21 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_22 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_21
-    %var_23 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_22, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_24 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_23, {  } %var_15, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_24, ptr %var_21
-    %var_26 = load i32, ptr @const_25
-    %var_28 = load i32, ptr @const_27
-    %var_29 = add i32 %var_26, %var_28
-    %var_30 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_24, 0
-    %var_31 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_24, 1
-    %var_32 = alloca i32
-    call void %var_30(i32* %var_32, {  } %var_31, i32 %var_29)
-    %var_33 = load i32, ptr %var_32
+    %var_24 = alloca {  }
+    %var_25 = load {  }, ptr %var_24
+    store {  } %var_25, ptr %var_24
+    %var_30 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_31 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_30
+    %var_32 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_31, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_33 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_32, {  } %var_25, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_33, ptr %var_30
+    %var_35 = load i32, ptr @const_34
+    %var_37 = load i32, ptr @const_36
+    %var_38 = add i32 %var_35, %var_37
+    %var_39 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_33, 0
+    %var_40 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_33, 1
+    %var_41 = alloca i32
+    call void %var_39(i32* %var_41, {  } %var_40, i32 %var_38)
+    %var_42 = load i32, ptr %var_41
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_16, {  } %var_17, i32 %var_18) {
-  entry19: 
-    %var_20 = call i32 @print_int(i32 %var_18)
-    store i32 %var_20, ptr %var_16
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_26, {  } %var_27, i32 %var_28) {
+  entry29: 
+    call void @print_int(i32 %var_28)
+    store i32 %var_28, ptr %var_26
     ret void
 }
 "
@@ -2274,38 +2257,37 @@ exports[`structured programming compilation > block variable assingment > stderr
 
 exports[`structured programming compilation > block variable assingment > stdout 1`] = `
 [
-  "124
-",
+  "124",
 ]
 `;
 
 exports[`structured programming compilation > block variable declaration > compiled 1`] = `
-"@const_20 = constant i32 123
+"@const_29 = constant i32 123
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_9 = alloca {  }
-    %var_10 = load {  }, ptr %var_9
-    store {  } %var_10, ptr %var_9
-    %var_16 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_17 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_16
-    %var_18 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_17, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_19 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_18, {  } %var_10, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_19, ptr %var_16
-    %var_21 = load i32, ptr @const_20
-    %var_22 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_19, 0
-    %var_23 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_19, 1
-    %var_24 = alloca i32
-    call void %var_22(i32* %var_24, {  } %var_23, i32 %var_21)
-    %var_25 = load i32, ptr %var_24
+    %var_19 = alloca {  }
+    %var_20 = load {  }, ptr %var_19
+    store {  } %var_20, ptr %var_19
+    %var_25 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_26 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_25
+    %var_27 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_26, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_28 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_27, {  } %var_20, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_28, ptr %var_25
+    %var_30 = load i32, ptr @const_29
+    %var_31 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_28, 0
+    %var_32 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_28, 1
+    %var_33 = alloca i32
+    call void %var_31(i32* %var_33, {  } %var_32, i32 %var_30)
+    %var_34 = load i32, ptr %var_33
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_11, {  } %var_12, i32 %var_13) {
-  entry14: 
-    %var_15 = call i32 @print_int(i32 %var_13)
-    store i32 %var_15, ptr %var_11
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_21, {  } %var_22, i32 %var_23) {
+  entry24: 
+    call void @print_int(i32 %var_23)
+    store i32 %var_23, ptr %var_21
     ret void
 }
 "
@@ -2315,40 +2297,39 @@ exports[`structured programming compilation > block variable declaration > stder
 
 exports[`structured programming compilation > block variable declaration > stdout 1`] = `
 [
-  "123
-",
+  "123",
 ]
 `;
 
 exports[`structured programming compilation > block variable shadowing > compiled 1`] = `
-"@const_23 = constant i32 123
-@const_25 = constant i32 234
+"@const_32 = constant i32 123
+@const_34 = constant i32 234
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_12 = alloca {  }
-    %var_13 = load {  }, ptr %var_12
-    store {  } %var_13, ptr %var_12
-    %var_19 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_20 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_19
-    %var_21 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_20, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_22 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_21, {  } %var_13, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_22, ptr %var_19
-    %var_24 = load i32, ptr @const_23
-    %var_26 = load i32, ptr @const_25
-    %var_27 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_22, 0
-    %var_28 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_22, 1
-    %var_29 = alloca i32
-    call void %var_27(i32* %var_29, {  } %var_28, i32 %var_26)
-    %var_30 = load i32, ptr %var_29
+    %var_22 = alloca {  }
+    %var_23 = load {  }, ptr %var_22
+    store {  } %var_23, ptr %var_22
+    %var_28 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_29 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_28
+    %var_30 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_29, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_31 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_30, {  } %var_23, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_31, ptr %var_28
+    %var_33 = load i32, ptr @const_32
+    %var_35 = load i32, ptr @const_34
+    %var_36 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_31, 0
+    %var_37 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_31, 1
+    %var_38 = alloca i32
+    call void %var_36(i32* %var_38, {  } %var_37, i32 %var_35)
+    %var_39 = load i32, ptr %var_38
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_14, {  } %var_15, i32 %var_16) {
-  entry17: 
-    %var_18 = call i32 @print_int(i32 %var_16)
-    store i32 %var_18, ptr %var_14
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_24, {  } %var_25, i32 %var_26) {
+  entry27: 
+    call void @print_int(i32 %var_26)
+    store i32 %var_26, ptr %var_24
     ret void
 }
 "
@@ -2358,50 +2339,49 @@ exports[`structured programming compilation > block variable shadowing > stderr 
 
 exports[`structured programming compilation > block variable shadowing > stdout 1`] = `
 [
-  "234
-",
+  "234",
 ]
 `;
 
 exports[`structured programming compilation > hello world twice > compiled 1`] = `
-"@const_18 = constant [13 x i8] c"hello world!\\00"
+"@const_27 = constant [13 x i8] c"hello world!\\00"
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_7 = alloca {  }
-    %var_8 = load {  }, ptr %var_7
-    store {  } %var_8, ptr %var_7
-    %var_14 = alloca { void (i8**, {  }, i8*)*, {  } }
-    %var_15 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_14
-    %var_16 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_15, void (i8**, {  }, i8*)* @print_string_wrap, 0
-    %var_17 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_16, {  } %var_8, 1
-    store { void (i8**, {  }, i8*)*, {  } } %var_17, ptr %var_14
-    %var_19 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_17, 0
-    %var_20 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_17, 1
-    %var_21 = alloca i8*
-    call void %var_19(i8** %var_21, {  } %var_20, i8* @const_18)
-    %var_22 = load i8*, ptr %var_21
-    %var_23 = alloca {  }
-    %var_24 = load {  }, ptr %var_23
-    store {  } %var_24, ptr %var_23
-    %var_25 = alloca { void (i8**, {  }, i8*)*, {  } }
-    %var_26 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_25
-    %var_27 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_26, void (i8**, {  }, i8*)* @print_string_wrap, 0
-    %var_28 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_27, {  } %var_24, 1
-    store { void (i8**, {  }, i8*)*, {  } } %var_28, ptr %var_25
-    %var_29 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_28, 0
-    %var_30 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_28, 1
-    %var_31 = alloca i8*
-    call void %var_29(i8** %var_31, {  } %var_30, i8* @const_18)
-    %var_32 = load i8*, ptr %var_31
+    %var_17 = alloca {  }
+    %var_18 = load {  }, ptr %var_17
+    store {  } %var_18, ptr %var_17
+    %var_23 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_24 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_23
+    %var_25 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_24, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_26 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_25, {  } %var_18, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_26, ptr %var_23
+    %var_28 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_26, 0
+    %var_29 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_26, 1
+    %var_30 = alloca i8*
+    call void %var_28(i8** %var_30, {  } %var_29, i8* @const_27)
+    %var_31 = load i8*, ptr %var_30
+    %var_32 = alloca {  }
+    %var_33 = load {  }, ptr %var_32
+    store {  } %var_33, ptr %var_32
+    %var_34 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_35 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_34
+    %var_36 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_35, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_37 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_36, {  } %var_33, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_37, ptr %var_34
+    %var_38 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_37, 0
+    %var_39 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_37, 1
+    %var_40 = alloca i8*
+    call void %var_38(i8** %var_40, {  } %var_39, i8* @const_27)
+    %var_41 = load i8*, ptr %var_40
     ret i32 0
 }
-declare i8* @print_string(i8*)
-define void @print_string_wrap(ptr sret(i8*) %var_9, {  } %var_10, i8* %var_11) {
-  entry12: 
-    %var_13 = call i8* @print_string(i8* %var_11)
-    store i8* %var_13, ptr %var_9
+declare void @print_string(i8*)
+define void @print_string_wrap(ptr sret(i8*) %var_19, {  } %var_20, i8* %var_21) {
+  entry22: 
+    call void @print_string(i8* %var_21)
+    store i8* %var_21, ptr %var_19
     ret void
 }
 "
@@ -2411,46 +2391,44 @@ exports[`structured programming compilation > hello world twice > stderr 1`] = `
 
 exports[`structured programming compilation > hello world twice > stdout 1`] = `
 [
-  "hello world!
-hello world!
-",
+  "hello world!hello world!",
 ]
 `;
 
 exports[`structured programming compilation > if-then > compiled 1`] = `
-"@const_19 = constant i1 1
-@const_23 = constant i32 123
+"@const_28 = constant i1 1
+@const_32 = constant i32 123
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_8 = alloca {  }
-    %var_9 = load {  }, ptr %var_8
-    store {  } %var_9, ptr %var_8
-    %var_15 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_16 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_15
-    %var_17 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_16, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_18 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_17, {  } %var_9, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_18, ptr %var_15
-    %var_20 = load i1, ptr @const_19
-    br i1 %var_20, label %then22, label %if_rest21
-  then22: 
-    %var_24 = load i32, ptr @const_23
-    br label %if_rest21
-  if_rest21: 
-    %var_25 = phi i32 [%var_24, %then22], [undef, %main]
-    %var_26 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_18, 0
-    %var_27 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_18, 1
-    %var_28 = alloca i32
-    call void %var_26(i32* %var_28, {  } %var_27, i32 %var_25)
-    %var_29 = load i32, ptr %var_28
+    %var_18 = alloca {  }
+    %var_19 = load {  }, ptr %var_18
+    store {  } %var_19, ptr %var_18
+    %var_24 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_25 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_24
+    %var_26 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_25, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_27 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_26, {  } %var_19, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_27, ptr %var_24
+    %var_29 = load i1, ptr @const_28
+    br i1 %var_29, label %then31, label %if_rest30
+  then31: 
+    %var_33 = load i32, ptr @const_32
+    br label %if_rest30
+  if_rest30: 
+    %var_34 = phi i32 [%var_33, %then31], [undef, %main]
+    %var_35 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_27, 0
+    %var_36 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_27, 1
+    %var_37 = alloca i32
+    call void %var_35(i32* %var_37, {  } %var_36, i32 %var_34)
+    %var_38 = load i32, ptr %var_37
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_10, {  } %var_11, i32 %var_12) {
-  entry13: 
-    %var_14 = call i32 @print_int(i32 %var_12)
-    store i32 %var_14, ptr %var_10
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_20, {  } %var_21, i32 %var_22) {
+  entry23: 
+    call void @print_int(i32 %var_22)
+    store i32 %var_22, ptr %var_20
     ret void
 }
 "
@@ -2460,49 +2438,48 @@ exports[`structured programming compilation > if-then > stderr 1`] = `[]`;
 
 exports[`structured programming compilation > if-then > stdout 1`] = `
 [
-  "123
-",
+  "123",
 ]
 `;
 
 exports[`structured programming compilation > if-then-else > compiled 1`] = `
-"@const_22 = constant i1 0
-@const_26 = constant i32 123
-@const_29 = constant i32 456
+"@const_31 = constant i1 0
+@const_35 = constant i32 123
+@const_38 = constant i32 456
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_11 = alloca {  }
-    %var_12 = load {  }, ptr %var_11
-    store {  } %var_12, ptr %var_11
-    %var_18 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_19 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_18
-    %var_20 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_19, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_21 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_20, {  } %var_12, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_21, ptr %var_18
-    %var_23 = load i1, ptr @const_22
-    br i1 %var_23, label %then25, label %else28
-  then25: 
-    %var_27 = load i32, ptr @const_26
-    br label %if_rest24
-  else28: 
-    %var_30 = load i32, ptr @const_29
-    br label %if_rest24
-  if_rest24: 
-    %var_31 = phi i32 [%var_27, %then25], [%var_30, %else28]
-    %var_32 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_21, 0
-    %var_33 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_21, 1
-    %var_34 = alloca i32
-    call void %var_32(i32* %var_34, {  } %var_33, i32 %var_31)
-    %var_35 = load i32, ptr %var_34
+    %var_21 = alloca {  }
+    %var_22 = load {  }, ptr %var_21
+    store {  } %var_22, ptr %var_21
+    %var_27 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_28 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_27
+    %var_29 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_28, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_30 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_29, {  } %var_22, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_30, ptr %var_27
+    %var_32 = load i1, ptr @const_31
+    br i1 %var_32, label %then34, label %else37
+  then34: 
+    %var_36 = load i32, ptr @const_35
+    br label %if_rest33
+  else37: 
+    %var_39 = load i32, ptr @const_38
+    br label %if_rest33
+  if_rest33: 
+    %var_40 = phi i32 [%var_36, %then34], [%var_39, %else37]
+    %var_41 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_30, 0
+    %var_42 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_30, 1
+    %var_43 = alloca i32
+    call void %var_41(i32* %var_43, {  } %var_42, i32 %var_40)
+    %var_44 = load i32, ptr %var_43
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_13, {  } %var_14, i32 %var_15) {
-  entry16: 
-    %var_17 = call i32 @print_int(i32 %var_15)
-    store i32 %var_17, ptr %var_13
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_23, {  } %var_24, i32 %var_25) {
+  entry26: 
+    call void @print_int(i32 %var_25)
+    store i32 %var_25, ptr %var_23
     ret void
 }
 "
@@ -2512,44 +2489,43 @@ exports[`structured programming compilation > if-then-else > stderr 1`] = `[]`;
 
 exports[`structured programming compilation > if-then-else > stdout 1`] = `
 [
-  "456
-",
+  "456",
 ]
 `;
 
 exports[`structured programming compilation > sequence > compiled 1`] = `
-"@const_19 = constant i32 123
-@const_21 = constant i32 234
-@const_23 = constant i32 345
-@const_25 = constant i32 456
+"@const_28 = constant i32 123
+@const_30 = constant i32 234
+@const_32 = constant i32 345
+@const_34 = constant i32 456
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_8 = alloca {  }
-    %var_9 = load {  }, ptr %var_8
-    store {  } %var_9, ptr %var_8
-    %var_15 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_16 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_15
-    %var_17 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_16, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_18 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_17, {  } %var_9, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_18, ptr %var_15
-    %var_20 = load i32, ptr @const_19
-    %var_22 = load i32, ptr @const_21
-    %var_24 = load i32, ptr @const_23
-    %var_26 = load i32, ptr @const_25
-    %var_27 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_18, 0
-    %var_28 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_18, 1
-    %var_29 = alloca i32
-    call void %var_27(i32* %var_29, {  } %var_28, i32 %var_26)
-    %var_30 = load i32, ptr %var_29
+    %var_18 = alloca {  }
+    %var_19 = load {  }, ptr %var_18
+    store {  } %var_19, ptr %var_18
+    %var_24 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_25 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_24
+    %var_26 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_25, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_27 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_26, {  } %var_19, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_27, ptr %var_24
+    %var_29 = load i32, ptr @const_28
+    %var_31 = load i32, ptr @const_30
+    %var_33 = load i32, ptr @const_32
+    %var_35 = load i32, ptr @const_34
+    %var_36 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_27, 0
+    %var_37 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_27, 1
+    %var_38 = alloca i32
+    call void %var_36(i32* %var_38, {  } %var_37, i32 %var_35)
+    %var_39 = load i32, ptr %var_38
     ret i32 0
 }
-declare i32 @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_10, {  } %var_11, i32 %var_12) {
-  entry13: 
-    %var_14 = call i32 @print_int(i32 %var_12)
-    store i32 %var_14, ptr %var_10
+declare void @print_int(i32)
+define void @print_int_wrap(ptr sret(i32) %var_20, {  } %var_21, i32 %var_22) {
+  entry23: 
+    call void @print_int(i32 %var_22)
+    store i32 %var_22, ptr %var_20
     ret void
 }
 "
@@ -2559,51 +2535,50 @@ exports[`structured programming compilation > sequence > stderr 1`] = `[]`;
 
 exports[`structured programming compilation > sequence > stdout 1`] = `
 [
-  "456
-",
+  "456",
 ]
 `;
 
 exports[`structured programming compilation > two prints > compiled 1`] = `
-"@const_18 = constant [13 x i8] c"hello world!\\00"
-@const_29 = constant [15 x i8] c"hello world 2!\\00"
+"@const_27 = constant [13 x i8] c"hello world!\\00"
+@const_38 = constant [15 x i8] c"hello world 2!\\00"
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
   main: 
-    %var_7 = alloca {  }
-    %var_8 = load {  }, ptr %var_7
-    store {  } %var_8, ptr %var_7
-    %var_14 = alloca { void (i8**, {  }, i8*)*, {  } }
-    %var_15 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_14
-    %var_16 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_15, void (i8**, {  }, i8*)* @print_string_wrap, 0
-    %var_17 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_16, {  } %var_8, 1
-    store { void (i8**, {  }, i8*)*, {  } } %var_17, ptr %var_14
-    %var_19 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_17, 0
-    %var_20 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_17, 1
-    %var_21 = alloca i8*
-    call void %var_19(i8** %var_21, {  } %var_20, i8* @const_18)
-    %var_22 = load i8*, ptr %var_21
-    %var_23 = alloca {  }
-    %var_24 = load {  }, ptr %var_23
-    store {  } %var_24, ptr %var_23
-    %var_25 = alloca { void (i8**, {  }, i8*)*, {  } }
-    %var_26 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_25
-    %var_27 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_26, void (i8**, {  }, i8*)* @print_string_wrap, 0
-    %var_28 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_27, {  } %var_24, 1
-    store { void (i8**, {  }, i8*)*, {  } } %var_28, ptr %var_25
-    %var_30 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_28, 0
-    %var_31 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_28, 1
-    %var_32 = alloca i8*
-    call void %var_30(i8** %var_32, {  } %var_31, i8* @const_29)
-    %var_33 = load i8*, ptr %var_32
+    %var_17 = alloca {  }
+    %var_18 = load {  }, ptr %var_17
+    store {  } %var_18, ptr %var_17
+    %var_23 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_24 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_23
+    %var_25 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_24, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_26 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_25, {  } %var_18, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_26, ptr %var_23
+    %var_28 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_26, 0
+    %var_29 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_26, 1
+    %var_30 = alloca i8*
+    call void %var_28(i8** %var_30, {  } %var_29, i8* @const_27)
+    %var_31 = load i8*, ptr %var_30
+    %var_32 = alloca {  }
+    %var_33 = load {  }, ptr %var_32
+    store {  } %var_33, ptr %var_32
+    %var_34 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_35 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_34
+    %var_36 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_35, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_37 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_36, {  } %var_33, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_37, ptr %var_34
+    %var_39 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_37, 0
+    %var_40 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_37, 1
+    %var_41 = alloca i8*
+    call void %var_39(i8** %var_41, {  } %var_40, i8* @const_38)
+    %var_42 = load i8*, ptr %var_41
     ret i32 0
 }
-declare i8* @print_string(i8*)
-define void @print_string_wrap(ptr sret(i8*) %var_9, {  } %var_10, i8* %var_11) {
-  entry12: 
-    %var_13 = call i8* @print_string(i8* %var_11)
-    store i8* %var_13, ptr %var_9
+declare void @print_string(i8*)
+define void @print_string_wrap(ptr sret(i8*) %var_19, {  } %var_20, i8* %var_21) {
+  entry22: 
+    call void @print_string(i8* %var_21)
+    store i8* %var_21, ptr %var_19
     ret void
 }
 "
@@ -2613,8 +2588,6 @@ exports[`structured programming compilation > two prints > stderr 1`] = `[]`;
 
 exports[`structured programming compilation > two prints > stdout 1`] = `
 [
-  "hello world!
-hello world 2!
-",
+  "hello world!hello world 2!",
 ]
 `;
