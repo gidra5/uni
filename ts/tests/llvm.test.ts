@@ -103,19 +103,20 @@ class Builder {
   }
 
   printBoolean() {
-    return this.name(Builder.fnType([{ int: 1 }], { int: 1 }, []), "print_bool");
+    return this.printInstance({ int: 1 });
   }
 
   printTuple(ast: Tree) {
-    // const type: PhysicalType = this.typeSchema.get(ast.id)!;
-    // const fn = this.templateName(Builder.fnType([type], type, []), "print_tuple", [type]);
-    // return this.app(fn, ast);
     return this.print(ast);
+  }
+
+  printInstance(type: PhysicalType) {
+    return this.templateName(Builder.fnType([type], type, []), "print", [type]);
   }
 
   print(ast: Tree) {
     const type: PhysicalType = this.typeSchema.get(ast.id)!;
-    const fn = this.templateName(Builder.fnType([type], type, []), "print", [type]);
+    const fn = this.printInstance(type);
     return this.app(fn, ast);
   }
 
