@@ -665,11 +665,13 @@ export class Context {
 
       return this.builder.createCall(fnPtr, [closure, ...args], funcType.returnType, funcType.args);
     };
-    const createPrintString = (str: string) => {
+    const createPrintFmtValue = (_fmt: string, value: LLVMValue) => {
       const printf = this.builder.declareFunction("printf", ["i8*", "..."], "i32");
-      const _str = this.builder.createString(str);
-      const fmt = this.builder.createString("%s");
-      return this.builder.createCallVoid(printf, [fmt, _str], ["i8*", "..."]);
+      const fmt = this.builder.createString(_fmt);
+      return this.builder.createCallVoid(printf, [fmt, value], ["i8*", "..."]);
+    };
+    const createPrintString = (str: string) => {
+      return createPrintFmtValue("%s", this.builder.createString(str));
     };
     const createPrintPointer = (value: LLVMValue) => {
       const printf = this.builder.declareFunction("printf", ["i8*", "..."], "i32");
@@ -697,21 +699,21 @@ export class Context {
             break;
           }
           case typeof type === "object" && "int" in type && type.int === 1: {
-            const printInt = this.variables.get(names.get("print_bool")!)!();
-            assert(typeof printInt !== "function");
-            createClosureCall(printInt, [arg]);
+            const selected = this.builder.createSelect(
+              arg,
+              this.builder.createString("true"),
+              this.builder.createString("false")
+            );
+            createPrintFmtValue("%s", selected);
+
             break;
           }
           case typeof type === "object" && "int" in type: {
-            const printInt = this.variables.get(names.get("print_int")!)!();
-            assert(typeof printInt !== "function");
-            createClosureCall(printInt, [arg]);
+            createPrintFmtValue("%i", arg);
             break;
           }
           case typeof type === "object" && "float" in type: {
-            const printFloat = this.variables.get(names.get("print_float")!)!();
-            assert(typeof printFloat !== "function");
-            createClosureCall(printFloat, [arg]);
+            createPrintFmtValue("%f", arg);
             break;
           }
           case typeof type === "object" &&
@@ -719,9 +721,7 @@ export class Context {
             typeof type.array === "object" &&
             "int" in type.array &&
             type.array.int === 8: {
-            const printString = this.variables.get(names.get("print_string")!)!();
-            assert(typeof printString !== "function");
-            createClosureCall(printString, [arg]);
+            createPrintFmtValue("%s", arg);
             break;
           }
           case typeof type === "object" && "array" in type: {
@@ -795,9 +795,7 @@ export class Context {
             typeof type.pointer === "object" &&
             "int" in type.pointer &&
             type.pointer.int === 8: {
-            const printString = this.variables.get(names.get("print_string")!)!();
-            assert(typeof printString !== "function");
-            createClosureCall(printString, [arg]);
+            createPrintFmtValue("%s", arg);
             break;
           }
           case typeof type === "object" && "pointer" in type: {
@@ -805,18 +803,6 @@ export class Context {
             // createPrintString("ptr(");
             // createPrintPointer(arg);
             // createPrintString(")");
-            break;
-          }
-          case typeof type === "object" && "boolean" in type: {
-            const selected = this.builder.createSelect(
-              arg,
-              this.builder.createString("true"),
-              this.builder.createString("false")
-            );
-            const printf = this.builder.declareFunction("printf", ["i8*", "..."], "i32");
-            const fmt = this.builder.createString("%s");
-            this.builder.createCallVoid(printf, [fmt, selected], ["i8*", "..."]);
-
             break;
           }
           default: {
@@ -832,80 +818,10 @@ export class Context {
 
     this.variables.set(names.get("print")!, () => printTemplate);
 
-    this.variables.set(names.get("print_tuple")!, () => (type) => {
-      assert(typeof type === "object");
-      assert("tuple" in type);
-      const tupleTypes = type.tuple;
-      const llvmType = this.builder.toLLVMType(type);
-      const name = this.builder.getFreshName("print_tuple_");
-      return this.builder.createClosure(name, [llvmType], [], llvmType, (_closure, arg) => {
-        createPrintString("Tuple(");
-
-        for (const [valueType, index] of Iterator.iter(tupleTypes).enumerate()) {
-          if (index > 0) createPrintString(", ");
-
-          const value = this.builder.createExtractValue(arg, index);
-          switch (true) {
-            case typeof valueType === "object" && "int" in valueType: {
-              const printInt = this.variables.get(names.get("print_int")!)!();
-              assert(typeof printInt !== "function");
-              createClosureCall(printInt, [value]);
-              break;
-            }
-            case typeof valueType === "object" && "float" in valueType: {
-              const printFloat = this.variables.get(names.get("print_float")!)!();
-              assert(typeof printFloat !== "function");
-              createClosureCall(printFloat, [value]);
-              break;
-            }
-            case typeof valueType === "object" &&
-              "array" in valueType &&
-              typeof valueType.array === "object" &&
-              "int" in valueType.array &&
-              valueType.array.int === 8: {
-              const printString = this.variables.get(names.get("print_string")!)!();
-              assert(typeof printString !== "function");
-              createClosureCall(printString, [value]);
-              break;
-            }
-            case typeof valueType === "object" &&
-              "pointer" in valueType &&
-              typeof valueType.pointer === "object" &&
-              "int" in valueType.pointer &&
-              valueType.pointer.int === 8: {
-              const printString = this.variables.get(names.get("print_string")!)!();
-              assert(typeof printString !== "function");
-              createClosureCall(printString, [value]);
-              break;
-            }
-            case typeof valueType === "object" && "boolean" in valueType: {
-              const printBool = this.variables.get(names.get("print_bool")!)!();
-              assert(typeof printBool !== "function");
-              createClosureCall(printBool, [value]);
-              break;
-            }
-            case typeof valueType === "object" && "symbol" in valueType: {
-              const printSymbol = this.variables.get(names.get("print_symbol")!)!();
-              assert(typeof printSymbol !== "function");
-              createClosureCall(printSymbol, [value]);
-              break;
-            }
-            default: {
-              unreachable("cant print by type");
-            }
-          }
-        }
-
-        createPrintString(")");
-
-        return arg;
-      });
-    });
     this.variables.set(names.get("print_symbol")!, createPrintWrapper("print_symbol", "i64"));
     this.variables.set(names.get("print_float")!, createPrintWrapper("print_float", "float"));
     this.variables.set(names.get("print_string")!, createPrintWrapper("print_string", { pointer: "i8" }));
     this.variables.set(names.get("print_int")!, createPrintWrapper("print_int", "i32"));
-    this.variables.set(names.get("print_bool")!, createPrintWrapper("print_bool", "i1"));
     this.variables.set(names.get("true")!, () => this.builder.createBool(true));
     this.variables.set(names.get("false")!, () => this.builder.createBool(false));
   }
