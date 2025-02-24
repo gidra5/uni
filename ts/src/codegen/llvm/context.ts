@@ -119,7 +119,7 @@ class Builder {
   }
 
   getOrCreateConstant(value: LLVMValue, type: LLVMType, name?: string): LLVMValue {
-    const key = `${type}:${value}`;
+    const key = `${stringifyLLVMType(type)}_${value}`;
     const _value = this.values.get(key);
     if (_value) return _value;
 
@@ -222,16 +222,10 @@ class Builder {
   }
 
   createFloatType(size: number): LLVMType {
-    if (size === 32) {
-      return "float";
-    } else if (size === 64) {
-      return "double";
-    }
-    if (size === 128) {
-      return "fp128";
-    } else {
-      unreachable("unsupported float size");
-    }
+    if (size === 32) return "float";
+    if (size === 64) return "double";
+    if (size === 128) return "fp128";
+    unreachable("unsupported float size");
   }
 
   createBoolType(): LLVMType {
@@ -597,6 +591,13 @@ export class Context {
     this.declareCRuntimeFunctions();
   }
 
+  variablesBlock<T>(body: () => T): T {
+    const currentVariables = [...this.variables.entries()];
+    const result = body();
+    this.variables = new Map(currentVariables);
+    return result;
+  }
+
   generateSymbolTable() {
     const symbolsCount = this.builder.symbols.size;
     const symbolMetadataType = this.builder.createRecordType([{ pointer: "i8" }]);
@@ -789,6 +790,10 @@ export class Context {
             // createPrintString("ptr(");
             // createPrintPointer(arg);
             // createPrintString(")");
+            break;
+          }
+          case type === "unknown": {
+            createPrintString("unknown");
             break;
           }
           default: {

@@ -114,11 +114,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       return codegen(last, context);
     }
     case NodeType.BLOCK: {
-      const expr = ast.children[0];
-      const currentVariables = [...context.variables.entries()];
-      const result = codegen(expr, context);
-      context.variables = new Map(currentVariables);
-      return result;
+      return context.variablesBlock(() => codegen(ast.children[0], context));
     }
     case NodeType.ASSIGN:
     case NodeType.DECLARE: {
