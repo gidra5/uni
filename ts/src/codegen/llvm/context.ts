@@ -467,6 +467,18 @@ class Builder {
     this.createInstructionVoid("br", blocks);
   }
 
+  createSelect(condition: LLVMValue, then: LLVMValue, _else: LLVMValue) {
+    return this.createInstruction(
+      "select",
+      [
+        `${stringifyLLVMType(this.getType(condition))} ${condition}`,
+        `${stringifyLLVMType(this.getType(then))} ${then}`,
+        `${stringifyLLVMType(this.getType(then))} ${_else}`,
+      ],
+      this.getType(then)
+    );
+  }
+
   createIf(condition: LLVMValue, then: () => LLVMValue) {
     const restBlockName = this.getFreshName("if_rest");
     let thenResult: LLVMValue;
@@ -796,9 +808,15 @@ export class Context {
             break;
           }
           case typeof type === "object" && "boolean" in type: {
-            const printBool = this.variables.get(names.get("print_bool")!)!();
-            assert(typeof printBool !== "function");
-            createClosureCall(printBool, [arg]);
+            const selected = this.builder.createSelect(
+              arg,
+              this.builder.createString("true"),
+              this.builder.createString("false")
+            );
+            const printf = this.builder.declareFunction("printf", ["i8*", "..."], "i32");
+            const fmt = this.builder.createString("%s");
+            this.builder.createCallVoid(printf, [fmt, selected], ["i8*", "..."]);
+
             break;
           }
           default: {

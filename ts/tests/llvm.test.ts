@@ -107,9 +107,10 @@ class Builder {
   }
 
   printTuple(ast: Tree) {
-    const type: PhysicalType = this.typeSchema.get(ast.id)!;
-    const fn = this.templateName(Builder.fnType([type], type, []), "print_tuple", [type]);
-    return this.app(fn, ast);
+    // const type: PhysicalType = this.typeSchema.get(ast.id)!;
+    // const fn = this.templateName(Builder.fnType([type], type, []), "print_tuple", [type]);
+    // return this.app(fn, ast);
+    return this.print(ast);
   }
 
   print(ast: Tree) {
@@ -774,7 +775,7 @@ describe("data structures compilation", () => {
   // });
 });
 
-test.only("generic print", async () => {
+test("generic print", async () => {
   const builder = new Builder();
   const name = (type: PhysicalType, value: string) => builder.name(type, value);
   const fn = (x: Tree[], f: (...args: (() => Tree)[]) => Tree) => builder.fn(x, f);

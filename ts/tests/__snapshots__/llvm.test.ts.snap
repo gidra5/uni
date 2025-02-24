@@ -163,12 +163,12 @@ exports[`data structures compilation > symbol > stdout 1`] = `
 `;
 
 exports[`data structures compilation > tuple > compiled 1`] = `
-"@const_24 = constant [7 x i8] c"Tuple(\\00"
+"@const_24 = constant [7 x i8] c"tuple(\\00"
 @const_25 = constant [3 x i8] c"%s\\00"
-@const_41 = constant [3 x i8] c", \\00"
-@const_57 = constant [2 x i8] c")\\00"
-@const_62 = constant i32 1
-@const_67 = constant [3 x i8] c"ab\\00"
+@const_56 = constant [3 x i8] c", \\00"
+@const_87 = constant [2 x i8] c")\\00"
+@const_92 = constant i32 1
+@const_97 = constant [3 x i8] c"ab\\00"
 @symbols_metadata_array = constant [0 x { i8* }] []
 @symbols_metadata = constant ptr @symbols_metadata_array
 define i32 @main() {
@@ -176,78 +176,114 @@ define i32 @main() {
     %var_18 = alloca {  }
     %var_19 = load {  }, ptr %var_18
     store {  } %var_19, ptr %var_18
-    %var_58 = alloca { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } }
-    %var_59 = load { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } }, ptr %var_58
-    %var_60 = insertvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_59, void ({ i32, i8* }*, {  }, { i32, i8* })* @print_tuple_17, 0
-    %var_61 = insertvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_60, {  } %var_19, 1
-    store { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_61, ptr %var_58
-    %var_63 = load i32, ptr @const_62
-    %var_64 = alloca { i32 }
-    %var_65 = load { i32 }, ptr %var_64
-    %var_66 = insertvalue { i32 } %var_65, i32 %var_63, 0
-    store { i32 } %var_66, ptr %var_64
-    %var_68 = extractvalue { i32 } %var_66, 0
-    %var_69 = alloca { i32, [3 x i8]* }
-    %var_70 = load { i32, [3 x i8]* }, ptr %var_69
-    %var_71 = insertvalue { i32, [3 x i8]* } %var_70, i32 %var_68, 0
-    %var_72 = insertvalue { i32, [3 x i8]* } %var_71, [3 x i8]* @const_67, 1
-    store { i32, [3 x i8]* } %var_72, ptr %var_69
-    %var_73 = extractvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_61, 0
-    %var_74 = extractvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_61, 1
-    %var_75 = alloca { i32, i8* }
-    call void %var_73({ i32, i8* }* %var_75, {  } %var_74, { i32, i8* } %var_72)
-    %var_76 = load { i32, i8* }, ptr %var_75
+    %var_88 = alloca { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } }
+    %var_89 = load { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } }, ptr %var_88
+    %var_90 = insertvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_89, void ({ i32, i8* }*, {  }, { i32, i8* })* @print_17, 0
+    %var_91 = insertvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_90, {  } %var_19, 1
+    store { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_91, ptr %var_88
+    %var_93 = load i32, ptr @const_92
+    %var_94 = alloca { i32 }
+    %var_95 = load { i32 }, ptr %var_94
+    %var_96 = insertvalue { i32 } %var_95, i32 %var_93, 0
+    store { i32 } %var_96, ptr %var_94
+    %var_98 = extractvalue { i32 } %var_96, 0
+    %var_99 = alloca { i32, [3 x i8]* }
+    %var_100 = load { i32, [3 x i8]* }, ptr %var_99
+    %var_101 = insertvalue { i32, [3 x i8]* } %var_100, i32 %var_98, 0
+    %var_102 = insertvalue { i32, [3 x i8]* } %var_101, [3 x i8]* @const_97, 1
+    store { i32, [3 x i8]* } %var_102, ptr %var_99
+    %var_103 = extractvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_91, 0
+    %var_104 = extractvalue { void ({ i32, i8* }*, {  }, { i32, i8* })*, {  } } %var_91, 1
+    %var_105 = alloca { i32, i8* }
+    call void %var_103({ i32, i8* }* %var_105, {  } %var_104, { i32, i8* } %var_102)
+    %var_106 = load { i32, i8* }, ptr %var_105
     ret i32 0
 }
-define void @print_tuple_17(ptr sret({ i32, i8* }) %var_20, {  } %var_21, { i32, i8* } %var_22) {
+define void @print_17(ptr sret({ i32, i8* }) %var_20, {  } %var_21, { i32, i8* } %var_22) {
   entry23: 
     call void @printf(i8* @const_25, [7 x i8]* @const_24)
     %var_26 = extractvalue { i32, i8* } %var_22, 0
-    %var_27 = alloca {  }
-    %var_28 = load {  }, ptr %var_27
-    store {  } %var_28, ptr %var_27
-    %var_33 = alloca { void (i32*, {  }, i32)*, {  } }
-    %var_34 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_33
-    %var_35 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_34, void (i32*, {  }, i32)* @print_int_wrap, 0
-    %var_36 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_35, {  } %var_28, 1
-    store { void (i32*, {  }, i32)*, {  } } %var_36, ptr %var_33
-    %var_37 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_36, 0
-    %var_38 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_36, 1
-    %var_39 = alloca i32
-    call void %var_37(i32* %var_39, {  } %var_38, i32 %var_26)
-    %var_40 = load i32, ptr %var_39
-    call void @printf(i8* @const_25, [3 x i8]* @const_41)
-    %var_42 = extractvalue { i32, i8* } %var_22, 1
-    %var_43 = alloca {  }
-    %var_44 = load {  }, ptr %var_43
-    store {  } %var_44, ptr %var_43
-    %var_49 = alloca { void (i8**, {  }, i8*)*, {  } }
-    %var_50 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_49
-    %var_51 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_50, void (i8**, {  }, i8*)* @print_string_wrap, 0
-    %var_52 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_51, {  } %var_44, 1
-    store { void (i8**, {  }, i8*)*, {  } } %var_52, ptr %var_49
-    %var_53 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_52, 0
-    %var_54 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_52, 1
-    %var_55 = alloca i8*
-    call void %var_53(i8** %var_55, {  } %var_54, i8* %var_42)
-    %var_56 = load i8*, ptr %var_55
-    call void @printf(i8* @const_25, [2 x i8]* @const_57)
+    %var_28 = alloca {  }
+    %var_29 = load {  }, ptr %var_28
+    store {  } %var_29, ptr %var_28
+    %var_48 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_49 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_48
+    %var_50 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_49, void (i32*, {  }, i32)* @print_27, 0
+    %var_51 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_50, {  } %var_29, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_51, ptr %var_48
+    %var_52 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_51, 0
+    %var_53 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_51, 1
+    %var_54 = alloca i32
+    call void %var_52(i32* %var_54, {  } %var_53, i32 %var_26)
+    %var_55 = load i32, ptr %var_54
+    call void @printf(i8* @const_25, [3 x i8]* @const_56)
+    %var_57 = extractvalue { i32, i8* } %var_22, 1
+    %var_59 = alloca {  }
+    %var_60 = load {  }, ptr %var_59
+    store {  } %var_60, ptr %var_59
+    %var_79 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_80 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_79
+    %var_81 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_80, void (i8**, {  }, i8*)* @print_58, 0
+    %var_82 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_81, {  } %var_60, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_82, ptr %var_79
+    %var_83 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_82, 0
+    %var_84 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_82, 1
+    %var_85 = alloca i8*
+    call void %var_83(i8** %var_85, {  } %var_84, i8* %var_57)
+    %var_86 = load i8*, ptr %var_85
+    call void @printf(i8* @const_25, [2 x i8]* @const_87)
     store { i32, i8* } %var_22, ptr %var_20
     ret void
 }
 declare i32 @printf(i8*, ...)
+define void @print_27(ptr sret(i32) %var_30, {  } %var_31, i32 %var_32) {
+  entry33: 
+    %var_34 = alloca {  }
+    %var_35 = load {  }, ptr %var_34
+    store {  } %var_35, ptr %var_34
+    %var_40 = alloca { void (i32*, {  }, i32)*, {  } }
+    %var_41 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_40
+    %var_42 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_41, void (i32*, {  }, i32)* @print_int_wrap, 0
+    %var_43 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_42, {  } %var_35, 1
+    store { void (i32*, {  }, i32)*, {  } } %var_43, ptr %var_40
+    %var_44 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_43, 0
+    %var_45 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_43, 1
+    %var_46 = alloca i32
+    call void %var_44(i32* %var_46, {  } %var_45, i32 %var_32)
+    %var_47 = load i32, ptr %var_46
+    store i32 %var_32, ptr %var_30
+    ret void
+}
 declare void @print_int(i32)
-define void @print_int_wrap(ptr sret(i32) %var_29, {  } %var_30, i32 %var_31) {
-  entry32: 
-    call void @print_int(i32 %var_31)
-    store i32 %var_31, ptr %var_29
+define void @print_int_wrap(ptr sret(i32) %var_36, {  } %var_37, i32 %var_38) {
+  entry39: 
+    call void @print_int(i32 %var_38)
+    store i32 %var_38, ptr %var_36
+    ret void
+}
+define void @print_58(ptr sret(i8*) %var_61, {  } %var_62, i8* %var_63) {
+  entry64: 
+    %var_65 = alloca {  }
+    %var_66 = load {  }, ptr %var_65
+    store {  } %var_66, ptr %var_65
+    %var_71 = alloca { void (i8**, {  }, i8*)*, {  } }
+    %var_72 = load { void (i8**, {  }, i8*)*, {  } }, ptr %var_71
+    %var_73 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_72, void (i8**, {  }, i8*)* @print_string_wrap, 0
+    %var_74 = insertvalue { void (i8**, {  }, i8*)*, {  } } %var_73, {  } %var_66, 1
+    store { void (i8**, {  }, i8*)*, {  } } %var_74, ptr %var_71
+    %var_75 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_74, 0
+    %var_76 = extractvalue { void (i8**, {  }, i8*)*, {  } } %var_74, 1
+    %var_77 = alloca i8*
+    call void %var_75(i8** %var_77, {  } %var_76, i8* %var_63)
+    %var_78 = load i8*, ptr %var_77
+    store i8* %var_63, ptr %var_61
     ret void
 }
 declare void @print_string(i8*)
-define void @print_string_wrap(ptr sret(i8*) %var_45, {  } %var_46, i8* %var_47) {
-  entry48: 
-    call void @print_string(i8* %var_47)
-    store i8* %var_47, ptr %var_45
+define void @print_string_wrap(ptr sret(i8*) %var_67, {  } %var_68, i8* %var_69) {
+  entry70: 
+    call void @print_string(i8* %var_69)
+    store i8* %var_69, ptr %var_67
     ret void
 }
 "
@@ -257,7 +293,7 @@ exports[`data structures compilation > tuple > stderr 1`] = `[]`;
 
 exports[`data structures compilation > tuple > stdout 1`] = `
 [
-  "Tuple(1, ab)",
+  "tuple(1, ab)",
 ]
 `;
 
