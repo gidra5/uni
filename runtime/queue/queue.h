@@ -20,35 +20,30 @@
 // then commit it. With a single-consumer queue, this element store need not
 // be atomic. The value will appear in the queue after the commit. Returns
 // -1 if the queue is full.
-static int
-queue_push(_Atomic uint32_t *q, int exp);
+int queue_push(_Atomic uint32_t *q, int exp);
 
 // Commits and completes the push operation. Do this after storing into the
 // array. This operation cannot fail.
-static void
-queue_push_commit(_Atomic uint32_t *q);
+void queue_push_commit(_Atomic uint32_t *q);
 
 // Return the array index for the next value to be popped. The size of this
 // array must be (1 << exp) elements. Read from this array index, then
 // commit the pop. This element load need not be atomic. The value will be
 // removed from the queue after the commit. Returns -1 if the queue is
 // empty.
-static int
-queue_pop(_Atomic uint32_t *q, int exp);
+int queue_pop(_Atomic uint32_t *q, int exp);
 
 // Commits and completes the pop operation. Do this after loading from the
 // array. This operation cannot fail.
-static void
-queue_pop_commit(_Atomic uint32_t *q);
+void queue_pop_commit(_Atomic uint32_t *q);
 
 // Like queue_pop() but for multiple-consumer queues. The element load must
 // be atomic since it is concurrent with the producer's push, though it can
 // use a relaxed memory order. The loaded value must not be used unless the
 // commit is successful. Stores a temporary "save" to be used at commit.
-static int queue_mpop(_Atomic uint32_t *q, int exp, uint32_t *save);
+int queue_mpop(_Atomic uint32_t *q, int exp, uint32_t *save);
 
 // Like queue_pop_commit() but for multiple-consumer queues. It may fail if
 // another consumer pops concurrently, in which case the pop must be retried
 // from the beginning.
-static bool
-queue_mpop_commit(_Atomic uint32_t *q, uint32_t save);
+_Bool queue_mpop_commit(_Atomic uint32_t *q, uint32_t save);
