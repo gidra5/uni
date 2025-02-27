@@ -21,3 +21,4 @@ POC: https://github.com/gidra5/js-benchmarking
 https://people.freebsd.org/~lstewart/articles/cpumemory.pdf
 https://blog.reverberate.org/2021/04/21/musttail-efficient-interpreters.html
 https://spidermonkey.dev/blog/2024/10/16/75x-faster-optimizing-the-ion-compiler-backend.html
+https://github.com/effect-handlers/effect-handlers-bench
