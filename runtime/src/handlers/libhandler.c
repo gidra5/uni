@@ -79,18 +79,6 @@ typedef void* lh_jmp_buf[ASM_JMPBUF_SIZE / sizeof(void*)];
 __externc __returnstwice int _lh_setjmp(lh_jmp_buf buf);
 __externc __noreturn void _lh_longjmp(lh_jmp_buf buf, int arg);
 
-// On most platforms C++ exception handling is done without exception frames on the stack.
-// An exception is 32-bit windows (x86). On such platform, when we resume we chain the
-// exception handling frames in the resumption to the outer-most exception frame below the resumption
-// so the debugger and OS always see a valid exception handler chain. (This is not strictly
-// necessary since the bottom exception handling frame in a resumption always catches all
-// exceptions and re-throws after restoring the fragment)
-struct exn_frame {
-  struct exn_frame* previous;
-};
-// Most platforms have no exception handler chains on the stack; always return NULL.
-static struct exn_frame* _lh_get_exn_top() { return NULL; }
-
 #include <alloca.h>
 #define lh_alloca alloca
 
@@ -159,7 +147,6 @@ typedef struct _resume {
   struct _hstack hstack;         // captured hstack  always `size == count`
   volatile lh_value arg;         // the argument to `resume` is passed through `arg`.
   count resumptions;             // how often was this resumption resumed?
-  struct exn_frame* exn_bottom;  //
 } resume;
 
 // An optimized resumption that can only used for tail-call resumptions (`lh_tail_resume`).
@@ -201,7 +188,6 @@ typedef struct _effecthandler {
   resume* arg_resume;          // the resumption function for the yielded operation
   void* stackbase;             // pointer to the c-stack just below the handler
   lh_value local;
-  struct exn_frame* exn_frame;
 } effecthandler;
 
 // A skip handler.
@@ -930,7 +916,6 @@ static effecthandler* hstack_push_effect(ref hstack* hs, const lh_handlerdef* hd
   h->hdef = hdef;
   h->stackbase = stackbase;
   h->local = local;
-  h->exn_frame = NULL;
   h->arg = lh_value_null;
   h->arg_op = NULL;
   h->arg_resume = NULL;
@@ -1129,19 +1114,11 @@ static void hstack_pop_upto(ref hstack* hs, ref handler* h, bool do_release, out
 -----------------------------------------------------------------*/
 
 static bool initialized = false;
-static struct exn_frame* exn_bottom = NULL;
 
 static __noinline bool _lh_init(hstack* hs) {
   if (!initialized) {
     initialized = true;
     infer_stackdir();
-    exn_bottom = _lh_get_exn_top();
-    if (exn_bottom != NULL) {
-      // find the outermost exception handler (on win32, the chain is stopped with a -1)
-      while (exn_bottom->previous != NULL && exn_bottom->previous != (struct exn_frame*)(-1)) {
-        exn_bottom = exn_bottom->previous;
-      }
-    }
   }
   stackbottom = get_stack_top();  // in debug mode we use this to check if operation arguments are not passed on the stack
   assert(__hstack.size == 0 && hs == &__hstack);
@@ -1179,7 +1156,7 @@ static __noinline void lh_done(hstack* hs) {
 // smart compilers (i.e. clang) will not optimize away the `alloca` in `jumpto`.
 static __noinline __noreturn void _jumpto_stack(
     byte* cframes, ptrdiff_t size, byte* base,
-    lh_jmp_buf* entry, bool freecframes, struct exn_frame* exnframe, byte* no_opt) {
+    lh_jmp_buf* entry, bool freecframes, byte* no_opt) {
   if (no_opt != NULL) no_opt[0] = 0;
   // copy the saved stack onto our stack
   memcpy(base, cframes, size);  // this will not overwrite our stack frame
@@ -1188,10 +1165,7 @@ static __noinline __noreturn void _jumpto_stack(
   }  // should be fine to call `free` (assuming it will not mess with the stack above its frame)
   // and jump
   // _lh_longjmp_chain(*entry, cstack_bottom(&cs), exnframe);
-  if (exnframe != NULL) {
-    assert(stack_isbelow(exn_bottom, exnframe));
-    exnframe->previous = exn_bottom;
-  }
+  
   _lh_longjmp(*entry, 1);
 }
 
@@ -1199,11 +1173,10 @@ static __noinline __noreturn void _jumpto_stack(
    Set `freecframes` to `true` to release the cstack after jumping.
 */
 static __noinline __noreturn void jumpto(
-    cstack* cs, lh_jmp_buf* entry, bool freecframes, struct exn_frame* exnframe) {
+    cstack* cs, lh_jmp_buf* entry, bool freecframes) {
   if (cs->frames == NULL) {
     // if no stack, just jump back down the stack;
     // sanity: check if the entry is really below us!
-    assert(exnframe == NULL);
     void* top = get_stack_top();
     if (cs->base != NULL && stack_isbelow(top, cstack_top(cs))) {
       fatal(EFAULT, "Trying to jump up the stack to a scope that was already exited!");
@@ -1221,11 +1194,9 @@ static __noinline __noreturn void jumpto(
     if (extra > 0) {
       no_opt = (byte*)lh_alloca(extra);  // allocate room on the stack; in here the new stack will get copied.
     }
-    // since we allocated more, the execution of `_jumpto_stack` will be in a stack frame
-    // that will not get overwritten itself when copying the new stack
-    // void* exnframe = (resuming ? _lh_get_exn_frame(cstack_bottom(cs)) : NULL);
+    
     _jumpto_stack(cs->frames, cs->size, (byte*)cstack_base(cs),
-                  entry, freecframes, exnframe, no_opt);
+                  entry, freecframes, no_opt);
   }
 }
 
@@ -1233,7 +1204,7 @@ static __noinline __noreturn void jumpto(
 static __noinline __noreturn void jumpto_fragment(fragment* f, lh_value res) {
   assert(f->refcount >= 1);
   f->res = res;  // set the argument in the cont slot
-  jumpto(&f->cstack, &f->entry, false, NULL);
+  jumpto(&f->cstack, &f->entry, false);
 }
 
 // jump to a resumption
@@ -1255,7 +1226,7 @@ static __noinline __noreturn void jumpto_resume(resume* r, lh_value local, lh_va
   // and then restore the cstack and jump
   r->arg = arg;      // set the argument in the cont slot
   r->resumptions++;  // increment resume count
-  jumpto(&r->cstack, &r->entry, false, r->exn_bottom);
+  jumpto(&r->cstack, &r->entry, false);
 }
 
 /*-----------------------------------------------------------------
@@ -1303,7 +1274,7 @@ static void __noinline __noreturn yield_to_handler(hstack* hs, effecthandler* h,
   h->arg = oparg;
   h->arg_op = op;
   h->arg_resume = resume;
-  jumpto(&cs, &h->entry, true, NULL);
+  jumpto(&cs, &h->entry, true);
 }
 
 /*-----------------------------------------------------------------
@@ -1356,7 +1327,6 @@ static __noinline lh_value capture_resume_yield(hstack* hs, effecthandler* h, co
   r->lhresume.rkind = (op->opkind <= LH_OP_SCOPED ? ScopedResume : GeneralResume);
   r->refcount = 1;
   r->resumptions = 0;
-  r->exn_bottom = h->exn_frame;
   r->arg = lh_value_null;
 #ifdef _STATS
   stats.rcont_captured_resume++;
