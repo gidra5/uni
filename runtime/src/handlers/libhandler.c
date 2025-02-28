@@ -58,19 +58,11 @@
 #define ref
 #define out
 
-// define __thread, __noinline, and __noreturn
-#if defined(_MSC_VER) && !defined(__clang__) && !defined(__GNUC__)
-#define __thread __declspec(thread)
-#define __noinline __declspec(noinline)
-#define __noreturn __declspec(noreturn)
-#define __returnstwice
-#else
 // assume gcc or clang
 // __thread is already defined
 #define __noinline __attribute__((noinline))
 #define __noreturn __attribute__((noreturn))
 #define __returnstwice __attribute__((returns_twice))
-#endif
 
 #define __externc
 
@@ -82,31 +74,10 @@
    to unwind the stack on a longjmp to invoke finalizers or saving and restoring signal
    masks. In those cases we try to substitute our own definitions.
 */
-#if defined(HAS_ASMSETJMP)
 // define the lh_jmp_buf in terms of `void*` elements to have natural alignment
 typedef void* lh_jmp_buf[ASM_JMPBUF_SIZE / sizeof(void*)];
 __externc __returnstwice int _lh_setjmp(lh_jmp_buf buf);
 __externc __noreturn void _lh_longjmp(lh_jmp_buf buf, int arg);
-
-#elif defined(HAS__SETJMP)
-#define lh_jmp_buf jmp_buf
-#define _lh_setjmp _setjmp
-#define _lh_longjmp longjmp
-
-#elif defined(HAS_SIGSETJMP)
-// We use sigsetjmp with a 0 flag to not save the signal mask.
-#define lh_jmp_buf sigjmp_buf
-#define _lh_setjmp(x) sigsetjmp(x, 0)
-#define _lh_longjmp siglongjmp
-
-#elif defined(HAS_SETJMP)
-#define lh_jmp_buf jmp_buf
-#define _lh_setjmp setjmp
-#define _lh_longjmp longjmp
-
-#else
-#error "setjmp not found!"
-#endif
 
 // On most platforms C++ exception handling is done without exception frames on the stack.
 // An exception is 32-bit windows (x86). On such platform, when we resume we chain the
@@ -117,29 +88,13 @@ __externc __noreturn void _lh_longjmp(lh_jmp_buf buf, int arg);
 struct exn_frame {
   struct exn_frame* previous;
 };
-#if defined(ASM_HAS_EXN_FRAMES)
-__externc struct exn_frame* _lh_get_exn_top();
-#else
 // Most platforms have no exception handler chains on the stack; always return NULL.
 static struct exn_frame* _lh_get_exn_top() { return NULL; }
-#endif
 
-#ifdef HAS__ALLOCA  // msvc runtime
-#include <malloc.h>
-#define lh_alloca _alloca
-#else
 #include <alloca.h>
 #define lh_alloca alloca
-#endif
 
-#ifdef HAS_STDBOOL_H
 #include <stdbool.h>
-#endif
-#ifndef __bool_true_false_are_defined
-typedef char bool;
-#define true (1 == 1)
-#define false (1 == 0)
-#endif
 
 /*-----------------------------------------------------------------
   Types
