@@ -1,8 +1,8 @@
 #include <assert.h>
+#include <pthread.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <threads.h>
 
 #define assert_msg(x, msg) \
   printf(msg);             \
