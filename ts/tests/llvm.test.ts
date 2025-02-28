@@ -55,13 +55,20 @@ const build = async (compiled: string, out: string) => {
   );
 };
 
+const optimize = async (compiled: string) => {
+  const result = await _exec(`clang-18 -O3 -x ir - -o - -emit-llvm -S`, compiled);
+  return result.stdout.join("\n");
+};
+
 const testCase = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
   resolve(ast, globalResolvedNamesArray);
   const compiled = generateLLVMCode(ast, typeSchema);
   expect.soft(compiled).toMatchSnapshot("compiled");
+  const optimized = await optimize(compiled);
+  expect.soft(optimized).toMatchSnapshot("optimized");
 
   const file = "./test";
-  const compileOutput = await build(compiled, file);
+  const compileOutput = await build(optimized, file);
   const runOutput = await _exec(file);
   await _exec(`rm ${file}`);
 

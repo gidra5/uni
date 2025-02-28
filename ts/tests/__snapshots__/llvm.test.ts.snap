@@ -51,6 +51,41 @@ define void @print_symbol_wrap(ptr sret(i64) %var_15, {  } %var_16, i64 %var_17)
 "
 `;
 
+exports[`data structures compilation > atom (global symbol) > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_31 = local_unnamed_addr constant i64 0
+@const_37 = constant [7 x i8] c"atom_a\\00"
+@symbols_metadata_array = constant [1 x { ptr }] [{ ptr } { ptr @const_37 }]
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @print_symbol(i64 0)
+  ret i32 0
+}
+
+define void @generated_print_symbol(ptr nocapture writeonly sret(i64) %var_9, {} %var_10, i64 %var_11) local_unnamed_addr {
+entry12:
+  tail call void @print_symbol(i64 %var_11)
+  store i64 %var_11, ptr %var_9, align 8
+  ret void
+}
+
+declare void @print_symbol(i64) local_unnamed_addr
+
+define void @print_symbol_wrap(ptr nocapture writeonly sret(i64) %var_15, {} %var_16, i64 %var_17) local_unnamed_addr {
+entry18:
+  tail call void @print_symbol(i64 %var_17)
+  store i64 %var_17, ptr %var_15, align 8
+  ret void
+}
+"
+`;
+
 exports[`data structures compilation > atom (global symbol) > stderr 1`] = `[]`;
 
 exports[`data structures compilation > atom (global symbol) > stdout 1`] = `
@@ -95,6 +130,40 @@ declare i32 @printf(i8*, ...)
 "
 `;
 
+exports[`data structures compilation > boolean false > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_13 = constant [5 x i8] c"true\\00"
+@const_14 = constant [6 x i8] c"false\\00"
+@const_16 = constant [3 x i8] c"%s\\00"
+@const_21 = local_unnamed_addr constant i1 false
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_16, ptr nonnull @const_14)
+  ret i32 0
+}
+
+define void @generated_print_i1(ptr nocapture writeonly sret(i1) %var_9, {} %var_10, i1 %var_11) local_unnamed_addr {
+entry12:
+  %var_15 = select i1 %var_11, ptr @const_13, ptr @const_14
+  tail call void @printf(ptr nonnull @const_16, ptr nonnull %var_15)
+  store i1 %var_11, ptr %var_9, align 1
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
+"
+`;
+
 exports[`data structures compilation > boolean false > stderr 1`] = `[]`;
 
 exports[`data structures compilation > boolean false > stdout 1`] = `
@@ -136,6 +205,40 @@ define void @"generated_print_i1"(ptr sret(i1) %var_9, {  } %var_10, i1 %var_11)
     ret void
 }
 declare i32 @printf(i8*, ...)
+"
+`;
+
+exports[`data structures compilation > boolean true > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_13 = constant [5 x i8] c"true\\00"
+@const_14 = constant [6 x i8] c"false\\00"
+@const_16 = constant [3 x i8] c"%s\\00"
+@const_21 = local_unnamed_addr constant i1 true
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_16, ptr nonnull @const_13)
+  ret i32 0
+}
+
+define void @generated_print_i1(ptr nocapture writeonly sret(i1) %var_9, {} %var_10, i1 %var_11) local_unnamed_addr {
+entry12:
+  %var_15 = select i1 %var_11, ptr @const_13, ptr @const_14
+  tail call void @printf(ptr nonnull @const_16, ptr nonnull %var_15)
+  store i1 %var_11, ptr %var_9, align 1
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
 "
 `;
 
@@ -194,6 +297,41 @@ define void @print_symbol_wrap(ptr sret(i64) %var_15, {  } %var_16, i64 %var_17)
     call void @print_symbol(i64 %var_17)
     store i64 %var_17, ptr %var_15
     ret void
+}
+"
+`;
+
+exports[`data structures compilation > symbol > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_31 = local_unnamed_addr constant i64 0
+@const_37 = constant [10 x i8] c"symbol_ab\\00"
+@symbols_metadata_array = constant [1 x { ptr }] [{ ptr } { ptr @const_37 }]
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @print_symbol(i64 0)
+  ret i32 0
+}
+
+define void @generated_print_symbol(ptr nocapture writeonly sret(i64) %var_9, {} %var_10, i64 %var_11) local_unnamed_addr {
+entry12:
+  tail call void @print_symbol(i64 %var_11)
+  store i64 %var_11, ptr %var_9, align 8
+  ret void
+}
+
+declare void @print_symbol(i64) local_unnamed_addr
+
+define void @print_symbol_wrap(ptr nocapture writeonly sret(i64) %var_15, {} %var_16, i64 %var_17) local_unnamed_addr {
+entry18:
+  tail call void @print_symbol(i64 %var_17)
+  store i64 %var_17, ptr %var_15, align 8
+  ret void
 }
 "
 `;
@@ -296,6 +434,66 @@ define void @"generated_print_i8*"(ptr sret(i8*) %var_38, {  } %var_39, i8* %var
 "
 `;
 
+exports[`data structures compilation > tuple > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_16 = constant [7 x i8] c"tuple(\\00"
+@const_17 = constant [3 x i8] c"%s\\00"
+@const_25 = constant [3 x i8] c"%i\\00"
+@const_34 = constant [3 x i8] c", \\00"
+@const_50 = constant [2 x i8] c")\\00"
+@const_55 = local_unnamed_addr constant i32 1
+@const_60 = constant [3 x i8] c"ab\\00"
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_17, ptr nonnull @const_16)
+  tail call void @printf(ptr nonnull @const_25, i32 1)
+  tail call void @printf(ptr nonnull @const_17, ptr nonnull @const_34)
+  tail call void @printf(ptr nonnull @const_17, ptr nonnull @const_60)
+  tail call void @printf(ptr nonnull @const_17, ptr nonnull @const_50)
+  ret i32 0
+}
+
+define void @"generated_print_(i32, i8*)"(ptr nocapture writeonly sret({ i32, ptr }) %var_12, {} %var_13, { i32, ptr } %var_14) local_unnamed_addr {
+entry15:
+  tail call void @printf(ptr nonnull @const_17, ptr nonnull @const_16)
+  %var_18 = extractvalue { i32, ptr } %var_14, 0
+  tail call void @printf(ptr nonnull @const_25, i32 %var_18)
+  tail call void @printf(ptr nonnull @const_17, ptr nonnull @const_34)
+  %var_35 = extractvalue { i32, ptr } %var_14, 1
+  tail call void @printf(ptr nonnull @const_17, ptr %var_35)
+  tail call void @printf(ptr nonnull @const_17, ptr nonnull @const_50)
+  store { i32, ptr } %var_14, ptr %var_12, align 8
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_21, {} %var_22, i32 %var_23) local_unnamed_addr {
+entry24:
+  tail call void @printf(ptr nonnull @const_25, i32 %var_23)
+  store i32 %var_23, ptr %var_21, align 4
+  ret void
+}
+
+define void @"generated_print_i8*"(ptr nocapture writeonly sret(ptr) %var_38, {} %var_39, ptr %var_40) local_unnamed_addr {
+entry41:
+  tail call void @printf(ptr nonnull @const_17, ptr %var_40)
+  store ptr %var_40, ptr %var_38, align 8
+  ret void
+}
+
+attributes #0 = { nofree nounwind }
+"
+`;
+
 exports[`data structures compilation > tuple > stderr 1`] = `[]`;
 
 exports[`data structures compilation > tuple > stdout 1`] = `
@@ -351,6 +549,41 @@ define void @print_symbol_wrap(ptr sret(i64) %var_15, {  } %var_16, i64 %var_17)
     call void @print_symbol(i64 %var_17)
     store i64 %var_17, ptr %var_15
     ret void
+}
+"
+`;
+
+exports[`data structures compilation > unit > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_31 = local_unnamed_addr constant i64 0
+@const_37 = constant [5 x i8] c"unit\\00"
+@symbols_metadata_array = constant [1 x { ptr }] [{ ptr } { ptr @const_37 }]
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @print_symbol(i64 0)
+  ret i32 0
+}
+
+define void @generated_print_symbol(ptr nocapture writeonly sret(i64) %var_9, {} %var_10, i64 %var_11) local_unnamed_addr {
+entry12:
+  tail call void @print_symbol(i64 %var_11)
+  store i64 %var_11, ptr %var_9, align 8
+  ret void
+}
+
+declare void @print_symbol(i64) local_unnamed_addr
+
+define void @print_symbol_wrap(ptr nocapture writeonly sret(i64) %var_15, {} %var_16, i64 %var_17) local_unnamed_addr {
+entry18:
+  tail call void @print_symbol(i64 %var_17)
+  store i64 %var_17, ptr %var_15, align 8
+  ret void
 }
 "
 `;
@@ -898,6 +1131,200 @@ define void @print_symbol_wrap(ptr sret(i64) %var_425, {  } %var_426, i64 %var_4
 "
 `;
 
+exports[`generic print > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_94 = constant [4 x i8] c"fn[\\00"
+@const_95 = constant [3 x i8] c"%s\\00"
+@const_96 = constant [2 x i8] c"]\\00"
+@const_126 = constant [2 x i8] c"\\0A\\00"
+@const_145 = constant [3 x i8] c"%i\\00"
+@const_182 = local_unnamed_addr constant i32 1
+@const_245 = constant [7 x i8] c"tuple(\\00"
+@const_257 = constant [3 x i8] c", \\00"
+@const_269 = constant [2 x i8] c")\\00"
+@const_278 = constant [3 x i8] c"ab\\00"
+@const_325 = constant [3 x i8] c"%f\\00"
+@const_330 = local_unnamed_addr constant float 1.250000e+00
+@const_372 = constant [5 x i8] c"true\\00"
+@const_373 = constant [6 x i8] c"false\\00"
+@const_379 = local_unnamed_addr constant i1 true
+@const_401 = local_unnamed_addr constant i1 false
+@const_441 = local_unnamed_addr constant i64 0
+@const_463 = local_unnamed_addr constant i64 1
+@const_485 = local_unnamed_addr constant i64 2
+@const_491 = constant [5 x i8] c"unit\\00"
+@const_492 = constant [12 x i8] c"atom_atom_a\\00"
+@const_493 = constant [16 x i8] c"symbol_symbol_a\\00"
+@symbols_metadata_array = constant [3 x { ptr }] [{ ptr } { ptr @const_491 }, { ptr } { ptr @const_492 }, { ptr } { ptr @const_493 }]
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_94)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_96)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_126)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_94)
+  tail call void @printf(ptr nonnull @const_145, i32 1)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_96)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_126)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_94)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_96)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_126)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_245)
+  tail call void @printf(ptr nonnull @const_145, i32 1)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_257)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_278)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_269)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_126)
+  tail call void @printf(ptr nonnull @const_145, i32 1)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_126)
+  tail call void @printf(ptr nonnull @const_325, float 1.250000e+00)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_126)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_278)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_126)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_372)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_126)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_373)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_126)
+  tail call void @print_symbol(i64 0)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_126)
+  tail call void @print_symbol(i64 1)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_126)
+  tail call void @print_symbol(i64 2)
+  ret i32 0
+}
+
+define void @"generated_print_i32[](i32)"(ptr nocapture writeonly sret({ ptr, {} }) %var_89, {} %var_90, { ptr, {} } %var_91) local_unnamed_addr {
+entry92:
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_94)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_96)
+  %var_91.elt = extractvalue { ptr, {} } %var_91, 0
+  store ptr %var_91.elt, ptr %var_89, align 8
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_101(ptr nocapture writeonly sret(i32) %var_104, {} %var_105, i32 %var_106) local_unnamed_addr #1 {
+entry107:
+  store i32 %var_106, ptr %var_104, align 4
+  ret void
+}
+
+define void @"generated_print_i8*"(ptr nocapture writeonly sret(ptr) %var_118, {} %var_119, ptr %var_120) local_unnamed_addr {
+entry121:
+  tail call void @printf(ptr nonnull @const_95, ptr %var_120)
+  store ptr %var_120, ptr %var_118, align 8
+  ret void
+}
+
+define void @"generated_print_i32[i32](i32)"(ptr nocapture writeonly sret({ ptr, { i32 } }) %var_133, {} %var_134, { ptr, { i32 } } %var_135) local_unnamed_addr {
+entry136:
+  %var_137 = extractvalue { ptr, { i32 } } %var_135, 1
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_94)
+  %var_138 = extractvalue { i32 } %var_137, 0
+  tail call void @printf(ptr nonnull @const_145, i32 %var_138)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_96)
+  store { ptr, { i32 } } %var_135, ptr %var_133, align 8
+  ret void
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_141, {} %var_142, i32 %var_143) local_unnamed_addr {
+entry144:
+  tail call void @printf(ptr nonnull @const_145, i32 %var_143)
+  store i32 %var_143, ptr %var_141, align 4
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_158(ptr nocapture writeonly sret({ ptr, { i32 } }) %var_161, {} %var_162, i32 %var_163) local_unnamed_addr #1 {
+entry164:
+  %var_168 = insertvalue { i32 } undef, i32 %var_163, 0
+  %var_177 = insertvalue { ptr, { i32 } } { ptr @fn_165, { i32 } undef }, { i32 } %var_168, 1
+  store { ptr, { i32 } } %var_177, ptr %var_161, align 8
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_165(ptr nocapture writeonly sret(i32) %var_169, { i32 } %var_170, i32 %var_171) #1 {
+entry172:
+  %var_173 = extractvalue { i32 } %var_170, 0
+  store i32 %var_173, ptr %var_169, align 4
+  ret void
+}
+
+define void @"generated_print_i32[](i32, i32)"(ptr nocapture writeonly sret({ ptr, {} }) %var_204, {} %var_205, { ptr, {} } %var_206) local_unnamed_addr {
+entry207:
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_94)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_96)
+  %var_206.elt = extractvalue { ptr, {} } %var_206, 0
+  store ptr %var_206.elt, ptr %var_204, align 8
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_213(ptr nocapture writeonly sret(i32) %var_216, {} %var_217, i32 %var_218, i32 %var_219) local_unnamed_addr #1 {
+entry220:
+  store i32 %var_218, ptr %var_216, align 4
+  ret void
+}
+
+define void @"generated_print_(i32, i8*)"(ptr nocapture writeonly sret({ i32, ptr }) %var_241, {} %var_242, { i32, ptr } %var_243) local_unnamed_addr {
+entry244:
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_245)
+  %var_246 = extractvalue { i32, ptr } %var_243, 0
+  tail call void @printf(ptr nonnull @const_145, i32 %var_246)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_257)
+  %var_258 = extractvalue { i32, ptr } %var_243, 1
+  tail call void @printf(ptr nonnull @const_95, ptr %var_258)
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull @const_269)
+  store { i32, ptr } %var_243, ptr %var_241, align 8
+  ret void
+}
+
+define void @generated_print_f32(ptr nocapture writeonly sret(float) %var_321, {} %var_322, float %var_323) local_unnamed_addr {
+entry324:
+  tail call void @printf(ptr nonnull @const_325, float %var_323)
+  store float %var_323, ptr %var_321, align 4
+  ret void
+}
+
+define void @generated_print_i1(ptr nocapture writeonly sret(i1) %var_368, {} %var_369, i1 %var_370) local_unnamed_addr {
+entry371:
+  %var_374 = select i1 %var_370, ptr @const_372, ptr @const_373
+  tail call void @printf(ptr nonnull @const_95, ptr nonnull %var_374)
+  store i1 %var_370, ptr %var_368, align 1
+  ret void
+}
+
+define void @generated_print_symbol(ptr nocapture
+ writeonly sret(i64) %var_419, {} %var_420, i64 %var_421) local_unnamed_addr {
+entry422:
+  tail call void @print_symbol(i64 %var_421)
+  store i64 %var_421, ptr %var_419, align 8
+  ret void
+}
+
+declare void @print_symbol(i64) local_unnamed_addr
+
+define void @print_symbol_wrap(ptr nocapture writeonly sret(i64) %var_425, {} %var_426, i64 %var_427) local_unnamed_addr {
+entry428:
+  tail call void @print_symbol(i64 %var_427)
+  store i64 %var_427, ptr %var_425, align 8
+  ret void
+}
+
+attributes #0 = { nofree nounwind }
+attributes #1 = { mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write) }
+"
+`;
+
 exports[`generic print > stderr 1`] = `[]`;
 
 exports[`generic print > stdout 1`] = `
@@ -1003,6 +1430,66 @@ define void @fn_58(ptr sret(i32) %var_61, {  } %var_62, i32 %var_63) {
     store i32 %var_63, ptr %var_61
     ret void
 }
+"
+`;
+
+exports[`simply typed lambda calc compilation > apply > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_25 = constant [3 x i8] c"%i\\00"
+@const_73 = local_unnamed_addr constant i32 2
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_25, i32 2)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_21, {} %var_22, i32 %var_23) local_unnamed_addr {
+entry24:
+  tail call void @printf(ptr nonnull @const_25, i32 %var_23)
+  store i32 %var_23, ptr %var_21, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_30(ptr nocapture writeonly sret({ ptr, { { ptr, {} } } }) %var_33, {} %var_34, { ptr, {} } %var_35) local_unnamed_addr #1 {
+entry36:
+  store ptr @fn_37, ptr %var_33, align 8
+  %var_33.repack1 = getelementptr inbounds { ptr, { { ptr, {} } } }, ptr %var_33, i64 0, i32 1
+  %var_35.elt = extractvalue { ptr, {} } %var_35, 0
+  store ptr %var_35.elt, ptr %var_33.repack1, align 8
+  ret void
+}
+
+define void @fn_37(ptr nocapture writeonly sret(i32) %var_41, { { ptr, {} } } %var_42, i32 %var_43) {
+entry44:
+  %var_45 = extractvalue { { ptr, {} } } %var_42, 0
+  %var_46 = extractvalue { ptr, {} } %var_45, 0
+  %var_48 = alloca i32, align 4
+  call void %var_46(ptr nonnull %var_48, {} zeroinitializer, i32 %var_43)
+  %var_49 = load i32, ptr %var_48, align 4
+  store i32 %var_49, ptr %var_41, align 4
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_58(ptr nocapture writeonly sret(i32) %var_61, {} %var_62, i32 %var_63) local_unnamed_addr #1 {
+entry64:
+  store i32 %var_63, ptr %var_61, align 4
+  ret void
+}
+
+attributes #0 = { nofree nounwind }
+attributes #1 = { mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write) }
 "
 `;
 
@@ -1147,6 +1634,95 @@ define void @fn_104(ptr sret(i32) %var_108, { i32 } %var_109, i32 %var_110) {
 "
 `;
 
+exports[`simply typed lambda calc compilation > church tuple > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_33 = constant [3 x i8] c"%i\\00"
+@const_85 = local_unnamed_addr constant i32 1
+@const_91 = local_unnamed_addr constant i32 2
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_33, i32 1)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_29, {} %var_30, i32 %var_31) local_unnamed_addr {
+entry32:
+  tail call void @printf(ptr nonnull @const_33, i32 %var_31)
+  store i32 %var_31, ptr %var_29, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_38(ptr nocapture writeonly sret({ ptr, { i32 } }) %var_41, {} %var_42, i32 %var_43) local_unnamed_addr #1 {
+entry44:
+  %var_48 = insertvalue { i32 } undef, i32 %var_43, 0
+  %var_80 = insertvalue { ptr, { i32 } } { ptr @fn_45, { i32 } undef }, { i32 } %var_48, 1
+  store { ptr, { i32 } } %var_80, ptr %var_41, align 8
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_45(ptr nocapture writeonly sret({ ptr, { i32, i32 } }) %var_49, { i32 } %var_50, i32 %var_51) #1 {
+entry52:
+  %var_53 = extractvalue { i32 } %var_50, 0
+  store ptr @fn_54, ptr %var_49, align 8
+  %var_49.repack1 = getelementptr inbounds { ptr, { i32, i32 } }, ptr %var_49, i64 0, i32 1
+  store i32 %var_53, ptr %var_49.repack1, align 8
+  %var_49.repack1.repack3 = getelementptr inbounds { ptr, { i32, i32 } }, ptr %var_49, i64 0, i32 1, i32 1
+  store i32 %var_51, ptr %var_49.repack1.repack3, align 4
+  ret void
+}
+
+define void @fn_54(ptr nocapture writeonly sret(i32) %var_59, { i32, i32 } %var_60, { ptr, {} } %var_61) {
+entry62:
+  %var_63 = extractvalue { i32, i32 } %var_60, 0
+  %var_64 = extractvalue { i32, i32 } %var_60, 1
+  %var_65 = extractvalue { ptr, {} } %var_61, 0
+  %var_67 = alloca { ptr, { i32 } }, align 8
+  call void %var_65(ptr nonnull %var_67, {} zeroinitializer, i32 %var_63)
+  %var_68.fca.0.load = load ptr, ptr %var_67, align 8
+  %var_68.fca.1.0.gep = getelementptr inbounds { ptr, { i32 } }, ptr %var_67, i64 0, i32 1, i32 0
+  %var_68.fca.1.0.load = load i32, ptr %var_68.fca.1.0.gep, align 8
+  %var_70 = insertvalue { i32 } poison, i32 %var_68.fca.1.0.load, 0
+  %var_71 = alloca i32, align 4
+  call void %var_68.fca.0.load(ptr nonnull %var_71, { i32 } %var_70, i32 %var_64)
+  %var_72 = load i32, ptr %var_71, align 4
+  store i32 %var_72, ptr %var_59, align 4
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_97(ptr nocapture writeonly sret({ ptr, { i32 } }) %var_100, {} %var_101, i32 %var_102) local_unnamed_addr #1 {
+entry103:
+  %var_107 = insertvalue { i32 } undef, i32 %var_102, 0
+  %var_116 = insertvalue { ptr, { i32 } } { ptr @fn_104, { i32 } undef }, { i32 } %var_107, 1
+  store { ptr, { i32 } } %var_116, ptr %var_100, align 8
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_104(ptr nocapture writeonly sret(i32) %var_108, { i32 } %var_109, i32 %var_110) #1 {
+entry111:
+  %var_112 = extractvalue { i32 } %var_109, 0
+  store i32 %var_112, ptr %var_108, align 4
+  ret void
+}
+
+attributes #0 = { nofree nounwind }
+attributes #1 = { mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write) }
+"
+`;
+
 exports[`simply typed lambda calc compilation > church tuple > stderr 1`] = `[]`;
 
 exports[`simply typed lambda calc compilation > church tuple > stdout 1`] = `
@@ -1223,6 +1799,56 @@ define void @fn_52(ptr sret(i32) %var_55, {  } %var_56, i32 %var_57) {
     store i32 %var_57, ptr %var_55
     ret void
 }
+"
+`;
+
+exports[`simply typed lambda calc compilation > church tuple 2 > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_26 = constant [3 x i8] c"%i\\00"
+@const_48 = local_unnamed_addr constant i32 1
+@const_50 = local_unnamed_addr constant i32 2
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_26, i32 1)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_22, {} %var_23, i32 %var_24) local_unnamed_addr {
+entry25:
+  tail call void @printf(ptr nonnull @const_26, i32 %var_24)
+  store i32 %var_24, ptr %var_22, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+define void @fn_31(ptr nocapture writeonly sret(i32) %var_34, {} %var_35, i32 %var_36, i32 %var_37, { ptr, {} } %var_38) local_unnamed_addr {
+entry39:
+  %var_40 = extractvalue { ptr, {} } %var_38, 0
+  %var_42 = alloca i32, align 4
+  call void %var_40(ptr nonnull %var_42, {} zeroinitializer, i32 %var_36, i32 %var_37)
+  %var_43 = load i32, ptr %var_42, align 4
+  store i32 %var_43, ptr %var_34, align 4
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_52(ptr nocapture writeonly sret(i32) %var_55, {} %var_56, i32 %var_57) local_unnamed_addr #1 {
+entry58:
+  store i32 %var_57, ptr %var_55, align 4
+  ret void
+}
+
+attributes #0 = { nofree nounwind }
+attributes #1 = { mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write) }
 "
 `;
 
@@ -1358,6 +1984,85 @@ define void @fn_100(ptr sret(i32) %var_103, {  } %var_104, i32 %var_105) {
 "
 `;
 
+exports[`simply typed lambda calc compilation > either > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_31 = constant [3 x i8] c"%i\\00"
+@const_79 = local_unnamed_addr constant i32 1
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_31, i32 1)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_27, {} %var_28, i32 %var_29) local_unnamed_addr {
+entry30:
+  tail call void @printf(ptr nonnull @const_31, i32 %var_29)
+  store i32 %var_29, ptr %var_27, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_36(ptr nocapture writeonly sret({ ptr, { i32 } }) %var_39, {} %var_40, i32 %var_41) local_unnamed_addr #1 {
+entry42:
+  %var_46 = insertvalue { i32 } undef, i32 %var_41, 0
+  %var_74 = insertvalue { ptr, { i32 } } { ptr @fn_43, { i32 } undef }, { i32 } %var_46, 1
+  store { ptr, { i32 } } %var_74, ptr %var_39, align 8
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_43(ptr nocapture writeonly sret({ ptr, { { ptr, {} }, i32 } }) %var_47, { i32 } %var_48, { ptr, {} } %var_49) #1 {
+entry50:
+  %var_51 = extractvalue { i32 } %var_48, 0
+  %var_55 = insertvalue { { ptr, {} }, i32 } { { ptr, {} } { ptr undef, {} poison }, i32 undef }, { ptr, {} } %var_49, 0
+  %var_56 = insertvalue { { ptr, {} }, i32 } %var_55, i32 %var_51, 1
+  store ptr @fn_52, ptr %var_47, align 8
+  %var_47.repack1 = getelementptr inbounds { ptr, { { ptr, {} }, i32 } }, ptr %var_47, i64 0, i32 1
+  store { { ptr, {} }, i32 } %var_56, ptr %var_47.repack1, align 8
+  ret void
+}
+
+define void @fn_52(ptr nocapture writeonly sret(i32) %var_57, { { ptr, {} }, i32 } %var_58, { ptr, {} } %var_59) {
+entry60:
+  %var_61 = extractvalue { { ptr, {} }, i32 } %var_58, 0
+  %var_62 = extractvalue { { ptr, {} }, i32 } %var_58, 1
+  %var_63 = extractvalue { ptr, {} } %var_61, 0
+  %var_65 = alloca i32, align 4
+  call void %var_63(ptr nonnull %var_65, {} zeroinitializer, i32 %var_62)
+  %var_66 = load i32, ptr %var_65, align 4
+  store i32 %var_66, ptr %var_57, align 4
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_85(ptr nocapture writeonly sret(i32) %var_88, {} %var_89, i32 %var_90) local_unnamed_addr #1 {
+entry91:
+  store i32 %var_90, ptr %var_88, align 4
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_100(ptr nocapture writeonly sret(i32) %var_103, {} %var_104, i32 %var_105) local_unnamed_addr #1 {
+entry106:
+  store i32 %var_105, ptr %var_103, align 4
+  ret void
+}
+
+attributes #0 = { nofree nounwind }
+attributes #1 = { mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write) }
+"
+`;
+
 exports[`simply typed lambda calc compilation > either > stderr 1`] = `[]`;
 
 exports[`simply typed lambda calc compilation > either > stdout 1`] = `
@@ -1448,6 +2153,62 @@ define void @fn_62(ptr sret(i32) %var_65, {  } %var_66, i32 %var_67) {
 "
 `;
 
+exports[`simply typed lambda calc compilation > either 2 > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_27 = constant [3 x i8] c"%i\\00"
+@const_49 = local_unnamed_addr constant i32 1
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_27, i32 1)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_23, {} %var_24, i32 %var_25) local_unnamed_addr {
+entry26:
+  tail call void @printf(ptr nonnull @const_27, i32 %var_25)
+  store i32 %var_25, ptr %var_23, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+define void @fn_32(ptr nocapture writeonly sret(i32) %var_35, {} %var_36, i32 %var_37, { ptr, {} } %var_38, { ptr, {} } %var_39) local_unnamed_addr {
+entry40:
+  %var_41 = extractvalue { ptr, {} } %var_38, 0
+  %var_43 = alloca i32, align 4
+  call void %var_41(ptr nonnull %var_43, {} zeroinitializer, i32 %var_37)
+  %var_44 = load i32, ptr %var_43, align 4
+  store i32 %var_44, ptr %var_35, align 4
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_51(ptr nocapture writeonly sret(i32) %var_54, {} %var_55, i32 %var_56) local_unnamed_addr #1 {
+entry57:
+  store i32 %var_56, ptr %var_54, align 4
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_62(ptr nocapture writeonly sret(i32) %var_65, {} %var_66, i32 %var_67) local_unnamed_addr #1 {
+entry68:
+  store i32 %var_67, ptr %var_65, align 4
+  ret void
+}
+
+attributes #0 = { nofree nounwind }
+attributes #1 = { mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write) }
+"
+`;
+
 exports[`simply typed lambda calc compilation > either 2 > stderr 1`] = `[]`;
 
 exports[`simply typed lambda calc compilation > either 2 > stdout 1`] = `
@@ -1505,6 +2266,46 @@ define void @fn_24(ptr sret(i32) %var_27, {  } %var_28, i32 %var_29) {
     store i32 %var_31, ptr %var_27
     ret void
 }
+"
+`;
+
+exports[`simply typed lambda calc compilation > function application and literal print > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_19 = constant [3 x i8] c"%i\\00"
+@const_36 = local_unnamed_addr constant i32 2
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_19, i32 4)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_15, {} %var_16, i32 %var_17) local_unnamed_addr {
+entry18:
+  tail call void @printf(ptr nonnull @const_19, i32 %var_17)
+  store i32 %var_17, ptr %var_15, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_24(ptr nocapture writeonly sret(i32) %var_27, {} %var_28, i32 %var_29) local_unnamed_addr #1 {
+entry30:
+  %var_31 = shl i32 %var_29, 1
+  store i32 %var_31, ptr %var_27, align 4
+  ret void
+}
+
+attributes #0 = { nofree nounwind }
+attributes #1 = { mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write) }
 "
 `;
 
@@ -1589,6 +2390,58 @@ define void @fn_37(ptr sret(i32) %var_41, { i32 } %var_42, i32 %var_43) {
     store i32 %var_49, ptr %var_41
     ret void
 }
+"
+`;
+
+exports[`simply typed lambda calc compilation > function closure > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_25 = constant [3 x i8] c"%i\\00"
+@const_46 = local_unnamed_addr constant i32 2
+@const_58 = local_unnamed_addr constant i32 1
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_25, i32 4)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_21, {} %var_22, i32 %var_23) local_unnamed_addr {
+entry24:
+  tail call void @printf(ptr nonnull @const_25, i32 %var_23)
+  store i32 %var_23, ptr %var_21, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_30(ptr nocapture writeonly sret({ ptr, { i32 } }) %var_33, {} %var_34, i32 %var_35) local_unnamed_addr #1 {
+entry36:
+  %var_40 = insertvalue { i32 } undef, i32 %var_35, 0
+  %var_53 = insertvalue { ptr, { i32 } } { ptr @fn_37, { i32 } undef }, { i32 } %var_40, 1
+  store { ptr, { i32 } } %var_53, ptr %var_33, align 8
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_37(ptr nocapture writeonly sret(i32) %var_41, { i32 } %var_42, i32 %var_43) #1 {
+entry44:
+  %var_45 = extractvalue { i32 } %var_42, 0
+  %var_48 = shl i32 %var_45, 1
+  %var_49 = add i32 %var_48, %var_43
+  store i32 %var_49, ptr %var_41, align 4
+  ret void
+}
+
+attributes #0 = { nofree nounwind }
+attributes #1 = { mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write) }
 "
 `;
 
@@ -1699,6 +2552,72 @@ define void @fn_50(ptr sret(i32) %var_55, { i32, i32 } %var_56, i32 %var_57) {
 "
 `;
 
+exports[`simply typed lambda calc compilation > function deep closure > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_29 = constant [3 x i8] c"%i\\00"
+@const_75 = local_unnamed_addr constant i32 1
+@const_81 = local_unnamed_addr constant i32 3
+@const_87 = local_unnamed_addr constant i32 5
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_29, i32 9)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_25, {} %var_26, i32 %var_27) local_unnamed_addr {
+entry28:
+  tail call void @printf(ptr nonnull @const_29, i32 %var_27)
+  store i32 %var_27, ptr %var_25, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_34(ptr nocapture writeonly sret({ ptr, { i32 } }) %var_37, {} %var_38, i32 %var_39) local_unnamed_addr #1 {
+entry40:
+  %var_44 = insertvalue { i32 } undef, i32 %var_39, 0
+  %var_70 = insertvalue { ptr, { i32 } } { ptr @fn_41, { i32 } undef }, { i32 } %var_44, 1
+  store { ptr, { i32 } } %var_70, ptr %var_37, align 8
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_41(ptr nocapture writeonly sret({ ptr, { i32, i32 } }) %var_45, { i32 } %var_46, i32 %var_47) #1 {
+entry48:
+  %var_49 = extractvalue { i32 } %var_46, 0
+  store ptr @fn_50, ptr %var_45, align 8
+  %var_45.repack1 = getelementptr inbounds { ptr, { i32, i32 } }, ptr %var_45, i64 0, i32 1
+  store i32 %var_49, ptr %var_45.repack1, align 8
+  %var_45.repack1.repack3 = getelementptr inbounds { ptr, { i32, i32 } }, ptr %var_45, i64 0, i32 1, i32 1
+  store i32 %var_47, ptr %var_45.repack1.repack3, align 4
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_50(ptr nocapture writeonly sret(i32) %var_55, { i32, i32 } %var_56, i32 %var_57) #1 {
+entry58:
+  %var_59 = extractvalue { i32, i32 } %var_56, 0
+  %var_60 = extractvalue { i32, i32 } %var_56, 1
+  %var_61 = add i32 %var_60, %var_57
+  %var_62 = add i32 %var_61, %var_59
+  store i32 %var_62, ptr %var_55, align 4
+  ret void
+}
+
+attributes #0 = { nofree nounwind }
+attributes #1 = { mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write) }
+"
+`;
+
 exports[`simply typed lambda calc compilation > function deep closure > stderr 1`] = `[]`;
 
 exports[`simply typed lambda calc compilation > function deep closure > stdout 1`] = `
@@ -1763,6 +2682,48 @@ define void @fn_28(ptr sret(i32) %var_31, {  } %var_32, i32 %var_33, i32 %var_34
 "
 `;
 
+exports[`simply typed lambda calc compilation > function multiple args > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_23 = constant [3 x i8] c"%i\\00"
+@const_36 = local_unnamed_addr constant i32 2
+@const_44 = local_unnamed_addr constant i32 1
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_23, i32 4)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_19, {} %var_20, i32 %var_21) local_unnamed_addr {
+entry22:
+  tail call void @printf(ptr nonnull @const_23, i32 %var_21)
+  store i32 %var_21, ptr %var_19, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
+define void @fn_28(ptr nocapture writeonly sret(i32) %var_31, {} %var_32, i32 %var_33, i32 %var_34) local_unnamed_addr #1 {
+entry35:
+  %var_38 = shl i32 %var_33, 1
+  %var_39 = add i32 %var_38, %var_34
+  store i32 %var_39, ptr %var_31, align 4
+  ret void
+}
+
+attributes #0 = { nofree nounwind }
+attributes #1 = { mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write) }
+"
+`;
+
 exports[`simply typed lambda calc compilation > function multiple args > stderr 1`] = `[]`;
 
 exports[`simply typed lambda calc compilation > function multiple args > stdout 1`] = `
@@ -1803,6 +2764,37 @@ declare i32 @printf(i8*, ...)
 "
 `;
 
+exports[`simply typed lambda calc compilation > hello world > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_13 = constant [3 x i8] c"%s\\00"
+@const_18 = constant [13 x i8] c"hello world!\\00"
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_13, ptr nonnull @const_18)
+  ret i32 0
+}
+
+define void @"generated_print_i8*"(ptr nocapture writeonly sret(ptr) %var_9, {} %var_10, ptr %var_11) local_unnamed_addr {
+entry12:
+  tail call void @printf(ptr nonnull @const_13, ptr %var_11)
+  store ptr %var_11, ptr %var_9, align 8
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
+"
+`;
+
 exports[`simply typed lambda calc compilation > hello world > stderr 1`] = `[]`;
 
 exports[`simply typed lambda calc compilation > hello world > stdout 1`] = `
@@ -1819,6 +2811,26 @@ define i32 @main() {
   main: 
     ret i32 0
 }
+"
+`;
+
+exports[`simply typed lambda calc compilation > hello world string > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_5 = local_unnamed_addr constant [13 x i8] c"hello world!\\00"
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(none)
+define noundef i32 @main() local_unnamed_addr #0 {
+main:
+  ret i32 0
+}
+
+attributes #0 = { mustprogress nofree norecurse nosync nounwind willreturn memory(none) }
 "
 `;
 
@@ -1856,6 +2868,37 @@ define void @"generated_print_i32"(ptr sret(i32) %var_9, {  } %var_10, i32 %var_
     ret void
 }
 declare i32 @printf(i8*, ...)
+"
+`;
+
+exports[`simply typed lambda calc compilation > print number > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_13 = constant [3 x i8] c"%i\\00"
+@const_18 = local_unnamed_addr constant i32 1
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_13, i32 1)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_9, {} %var_10, i32 %var_11) local_unnamed_addr {
+entry12:
+  tail call void @printf(ptr nonnull @const_13, i32 %var_11)
+  store i32 %var_11, ptr %var_9, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
 "
 `;
 
@@ -1906,6 +2949,40 @@ declare i32 @printf(i8*, ...)
 "
 `;
 
+exports[`structured programming compilation > block > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_18 = constant [3 x i8] c"%i\\00"
+@const_23 = local_unnamed_addr constant i32 123
+@const_25 = local_unnamed_addr constant i32 234
+@const_27 = local_unnamed_addr constant i32 345
+@const_29 = local_unnamed_addr constant i32 456
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_18, i32 456)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_14, {} %var_15, i32 %var_16) local_unnamed_addr {
+entry17:
+  tail call void @printf(ptr nonnull @const_18, i32 %var_16)
+  store i32 %var_16, ptr %var_14, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
+"
+`;
+
 exports[`structured programming compilation > block > stderr 1`] = `[]`;
 
 exports[`structured programming compilation > block > stdout 1`] = `
@@ -1950,6 +3027,38 @@ declare i32 @printf(i8*, ...)
 "
 `;
 
+exports[`structured programming compilation > block variable assingment > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_23 = constant [3 x i8] c"%i\\00"
+@const_28 = local_unnamed_addr constant i32 123
+@const_30 = local_unnamed_addr constant i32 1
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_23, i32 124)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_19, {} %var_20, i32 %var_21) local_unnamed_addr {
+entry22:
+  tail call void @printf(ptr nonnull @const_23, i32 %var_21)
+  store i32 %var_21, ptr %var_19, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
+"
+`;
+
 exports[`structured programming compilation > block variable assingment > stderr 1`] = `[]`;
 
 exports[`structured programming compilation > block variable assingment > stdout 1`] = `
@@ -1988,6 +3097,37 @@ define void @"generated_print_i32"(ptr sret(i32) %var_14, {  } %var_15, i32 %var
     ret void
 }
 declare i32 @printf(i8*, ...)
+"
+`;
+
+exports[`structured programming compilation > block variable declaration > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_18 = constant [3 x i8] c"%i\\00"
+@const_23 = local_unnamed_addr constant i32 123
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_18, i32 123)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_14, {} %var_15, i32 %var_16) local_unnamed_addr {
+entry17:
+  tail call void @printf(ptr nonnull @const_18, i32 %var_16)
+  store i32 %var_16, ptr %var_14, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
 "
 `;
 
@@ -2031,6 +3171,38 @@ define void @"generated_print_i32"(ptr sret(i32) %var_17, {  } %var_18, i32 %var
     ret void
 }
 declare i32 @printf(i8*, ...)
+"
+`;
+
+exports[`structured programming compilation > block variable shadowing > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_21 = constant [3 x i8] c"%i\\00"
+@const_26 = local_unnamed_addr constant i32 123
+@const_28 = local_unnamed_addr constant i32 234
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_21, i32 234)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_17, {} %var_18, i32 %var_19) local_unnamed_addr {
+entry20:
+  tail call void @printf(ptr nonnull @const_21, i32 %var_19)
+  store i32 %var_19, ptr %var_17, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
 "
 `;
 
@@ -2087,6 +3259,38 @@ declare i32 @printf(i8*, ...)
 "
 `;
 
+exports[`structured programming compilation > hello world twice > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_16 = constant [3 x i8] c"%s\\00"
+@const_21 = constant [13 x i8] c"hello world!\\00"
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_16, ptr nonnull @const_21)
+  tail call void @printf(ptr nonnull @const_16, ptr nonnull @const_21)
+  ret i32 0
+}
+
+define void @"generated_print_i8*"(ptr nocapture writeonly sret(ptr) %var_12, {} %var_13, ptr %var_14) local_unnamed_addr {
+entry15:
+  tail call void @printf(ptr nonnull @const_16, ptr %var_14)
+  store ptr %var_14, ptr %var_12, align 8
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
+"
+`;
+
 exports[`structured programming compilation > hello world twice > stderr 1`] = `[]`;
 
 exports[`structured programming compilation > hello world twice > stdout 1`] = `
@@ -2132,6 +3336,38 @@ define void @"generated_print_i32"(ptr sret(i32) %var_13, {  } %var_14, i32 %var
     ret void
 }
 declare i32 @printf(i8*, ...)
+"
+`;
+
+exports[`structured programming compilation > if-then > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_17 = constant [3 x i8] c"%i\\00"
+@const_22 = local_unnamed_addr constant i1 true
+@const_26 = local_unnamed_addr constant i32 123
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_17, i32 123)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_13, {} %var_14, i32 %var_15) local_unnamed_addr {
+entry16:
+  tail call void @printf(ptr nonnull @const_17, i32 %var_15)
+  store i32 %var_15, ptr %var_13, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
 "
 `;
 
@@ -2187,6 +3423,39 @@ declare i32 @printf(i8*, ...)
 "
 `;
 
+exports[`structured programming compilation > if-then-else > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_20 = constant [3 x i8] c"%i\\00"
+@const_25 = local_unnamed_addr constant i1 false
+@const_29 = local_unnamed_addr constant i32 123
+@const_32 = local_unnamed_addr constant i32 456
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_20, i32 456)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_16, {} %var_17, i32 %var_18) local_unnamed_addr {
+entry19:
+  tail call void @printf(ptr nonnull @const_20, i32 %var_18)
+  store i32 %var_18, ptr %var_16, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
+"
+`;
+
 exports[`structured programming compilation > if-then-else > stderr 1`] = `[]`;
 
 exports[`structured programming compilation > if-then-else > stdout 1`] = `
@@ -2231,6 +3500,40 @@ define void @"generated_print_i32"(ptr sret(i32) %var_13, {  } %var_14, i32 %var
     ret void
 }
 declare i32 @printf(i8*, ...)
+"
+`;
+
+exports[`structured programming compilation > sequence > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_17 = constant [3 x i8] c"%i\\00"
+@const_22 = local_unnamed_addr constant i32 123
+@const_24 = local_unnamed_addr constant i32 234
+@const_26 = local_unnamed_addr constant i32 345
+@const_28 = local_unnamed_addr constant i32 456
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_17, i32 456)
+  ret i32 0
+}
+
+define void @generated_print_i32(ptr nocapture writeonly sret(i32) %var_13, {} %var_14, i32 %var_15) local_unnamed_addr {
+entry16:
+  tail call void @printf(ptr nonnull @const_17, i32 %var_15)
+  store i32 %var_15, ptr %var_13, align 4
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
 "
 `;
 
@@ -2285,6 +3588,39 @@ define void @"generated_print_i8*"(ptr sret(i8*) %var_12, {  } %var_13, i8* %var
     ret void
 }
 declare i32 @printf(i8*, ...)
+"
+`;
+
+exports[`structured programming compilation > two prints > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_16 = constant [3 x i8] c"%s\\00"
+@const_21 = constant [13 x i8] c"hello world!\\00"
+@const_32 = constant [15 x i8] c"hello world 2!\\00"
+@symbols_metadata_array = constant [0 x { ptr }] undef
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  tail call void @printf(ptr nonnull @const_16, ptr nonnull @const_21)
+  tail call void @printf(ptr nonnull @const_16, ptr nonnull @const_32)
+  ret i32 0
+}
+
+define void @"generated_print_i8*"(ptr nocapture writeonly sret(ptr) %var_12, {} %var_13, ptr %var_14) local_unnamed_addr {
+entry15:
+  tail call void @printf(ptr nonnull @const_16, ptr %var_14)
+  store ptr %var_14, ptr %var_12, align 8
+  ret void
+}
+
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
+
+attributes #0 = { nofree nounwind }
 "
 `;
 
