@@ -339,10 +339,6 @@ void* lh_calloc(size_t count, size_t size);
 void* lh_realloc(void* p, size_t newsize);
 /// Default `free`.
 void lh_free(void* p);
-/// Default `strdup`.
-char* lh_strdup(const char* s);
-/// Default `strndup`.
-char* lh_strndup(const char* s, size_t max);
 
 #ifdef LH_IN_ENCLAVE
 void lh_print_stats(void* out);
