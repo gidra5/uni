@@ -1,0 +1,1 @@
+clang-18 -O3 queue.c queue_example.c -lpthread
