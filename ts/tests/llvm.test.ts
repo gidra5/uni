@@ -10,6 +10,7 @@ import { assert, nextId } from "../src/utils";
 import { resolve } from "../src/analysis/scope";
 import { PhysicalType } from "../src/analysis/types/utils";
 import path from "path";
+import fs from "fs/promises";
 
 const _exec = async (command: string, input?: string) => {
   const cmd = exec(command);
@@ -56,8 +57,10 @@ const build = async (compiled: string, out: string) => {
 };
 
 const optimize = async (compiled: string) => {
-  const result = await _exec(`clang-18 -O3 -x ir - -o - -emit-llvm -S`, compiled);
-  return result.stdout.join("\n");
+  await _exec(`clang-18 -O3 -x ir - -o ./_test.ll -emit-llvm -S`, compiled);
+  const result = await fs.readFile("./_test.ll", "utf-8");
+  await _exec(`rm ./_test.ll`);
+  return result;
 };
 
 const testCase = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
@@ -67,7 +70,7 @@ const testCase = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
   const optimized = await optimize(compiled);
   expect.soft(optimized).toMatchSnapshot("optimized");
 
-  const file = "./test";
+  const file = "./_test";
   const compileOutput = await build(optimized, file);
   const runOutput = await _exec(file);
   await _exec(`rm ${file}`);
