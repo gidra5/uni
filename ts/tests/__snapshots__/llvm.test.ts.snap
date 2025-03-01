@@ -1303,8 +1303,7 @@ entry371:
   ret void
 }
 
-define void @generated_print_symbol(ptr nocapture
- writeonly sret(i64) %var_419, {} %var_420, i64 %var_421) local_unnamed_addr {
+define void @generated_print_symbol(ptr nocapture writeonly sret(i64) %var_419, {} %var_420, i64 %var_421) local_unnamed_addr {
 entry422:
   tail call void @print_symbol(i64 %var_421)
   store i64 %var_421, ptr %var_419, align 8
