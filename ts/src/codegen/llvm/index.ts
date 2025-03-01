@@ -16,12 +16,22 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       const values = ast.children.map((child) => codegen(child, context));
       return values.reduce((acc, value) => context.builder.createAdd(acc, value));
     }
-    case NodeType.REF: {
+    case NodeType.DEREF: {
       const value = codegen(ast.children[0], context);
       const type = context.typeMap.get(ast.children[0].id)!;
       assert(typeof type === "object");
       assert("pointer" in type);
       return context.builder.createLoad(value);
+    }
+    case NodeType.TUPLE_SET: {
+      const tuple = codegen(ast.children[0], context);
+      // const key = codegen(ast.children[1], context);
+      const value = codegen(ast.children[2], context);
+      const tupleType = context.typeMap.get(ast.children[0].id)!;
+      assert(typeof tupleType === "object");
+      assert("tuple" in tupleType);
+      const innerValues = tupleType.tuple.map((_, i) => context.builder.createExtractValue(tuple, i));
+      return context.builder.createRecord([...innerValues, value]);
     }
     case NodeType.TUPLE_PUSH: {
       const tuple = codegen(ast.children[0], context);
@@ -56,7 +66,6 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       }
       return value;
     }
-    case NodeType.DELIMITED_APPLICATION:
     case NodeType.APPLICATION: {
       const func = codegen(ast.children[0], context);
       const args = ast.children.slice(1).map((arg) => codegen(arg, context));
@@ -137,6 +146,10 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     case NodeType.ATOM: {
       return context.builder.createSymbol(ast.data.name);
     }
+    // case NodeType.INJECT: {
+    //   const value = codegen(ast.children[0], context);
+    //   const body = codegen(ast.children[1], context);
+    // }
     case NodeType.SCRIPT: {
       ast.children.forEach((child) => codegen(child, context));
       return context.builder.createReturn("i32 0");

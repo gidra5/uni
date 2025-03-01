@@ -89,15 +89,26 @@ class Builder {
   private fnStack: { symbol: symbol; closure: Set<PhysicalType> }[] = [];
   constructor(public typeSchema = new Map<number, PhysicalType>()) {}
 
+  getType(node: Tree) {
+    return this.typeSchema.get(node.id);
+  }
+
   node(nodeType: NodeType, type: PhysicalType, data: any, children: Tree[]): Tree {
     const id = nextId();
     this.typeSchema.set(id, type);
-    return {
-      type: nodeType,
-      id,
-      children,
-      data,
-    };
+    return { type: nodeType, id, children, data };
+  }
+
+  inject(record: Record<string, Tree>, body: Tree) {
+    return this.node(NodeType.INJECT, this.getType(body)!, {}, [this.record(record), body]);
+  }
+
+  handle(type: PhysicalType, name: string) {
+    return this.app(
+      this.name(Builder.fnType(["symbol", "unknown"], type, []), "handle"),
+      this.symbol(name),
+      this.unit()
+    );
   }
 
   printInt() {
@@ -240,6 +251,15 @@ class Builder {
     return this.name({ int: 1 }, value ? "true" : "false");
   }
 
+  tupleSetKey(tuple: Tree, key: string, value: Tree) {
+    const tupleType = this.typeSchema.get(tuple.id)!;
+    const valueType = this.typeSchema.get(value.id)!;
+    assert(typeof tupleType === "object");
+    assert("tuple" in tupleType);
+    const type = { tuple: [...tupleType.tuple, valueType] };
+    return this.node(NodeType.TUPLE_SET, type, {}, [tuple, this.symbol(key), value]);
+  }
+
   tuplePush(tuple: Tree, value: Tree) {
     const tupleType = this.typeSchema.get(tuple.id)!;
     const valueType = this.typeSchema.get(value.id)!;
@@ -261,10 +281,19 @@ class Builder {
   }
 
   tuple(...args: Tree[]) {
-    const argTypes = args.map((node) => this.typeSchema.get(node.id)!);
-    let tuple = this.node(NodeType.TUPLE, { tuple: [argTypes[0]] }, {}, [args[0]]);
+    let tuple = this.node(NodeType.TUPLE, { tuple: [this.getType(args[0])!] }, {}, [args[0]]);
     for (let i = 1; i < args.length; i++) {
       tuple = this.tuplePush(tuple, args[i]);
+    }
+    return tuple;
+  }
+
+  record(record: Record<string, Tree>) {
+    const entries = Object.entries(record);
+    const args = Object.values(record);
+    let tuple = this.unit();
+    for (let i = 0; i < args.length; i++) {
+      tuple = this.tupleSetKey(tuple, entries[i][0], args[i]);
     }
     return tuple;
   }
@@ -750,19 +779,19 @@ describe("data structures compilation", () => {
   //   await testCase(builder.script(app(builder.printTuple(), tupleAst)), builder.typeSchema);
   // });
 
-  // it("channel", async () => {
+  // test("channel", async () => {
   //   const input = `channel "name"`;
   //   const result = await evaluate(input);
   //   expect(isChannel(result)).toBe(true);
   // });
 
-  // it("record", async () => {
+  // test("record", async () => {
   //   const input = `a: 1, b: 2`;
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual(createRecord({ a: 1, b: 2 }));
   // });
 
-  // it("dictionary", async () => {
+  // test("dictionary", async () => {
   //   const input = `[1]: 2, [3]: 4`;
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual(
@@ -773,13 +802,13 @@ describe("data structures compilation", () => {
   //   );
   // });
 
-  // it("field access static", async () => {
+  // test("field access static", async () => {
   //   const input = `record := a: 1, b: 2; record.a`;
   //   const result = await evaluate(input);
   //   expect(result).toBe(1);
   // });
 
-  // it("field access dynamic", async () => {
+  // test("field access dynamic", async () => {
   //   const input = `map := "some string": 1, b: 2; map["some string"]`;
   //   const result = await evaluate(input);
   //   expect(result).toBe(1);
@@ -862,7 +891,403 @@ test("generic print", async () => {
 //   // test("await", () => testCase(`await x + 1`));
 // });
 
-// describe("effect handlers compilation", () => {});
+// describe("effect handlers compilation", () => {
+//   // test("all in one", async () => {
+//   //   const input = `
+//   //     inject a: 1, b: 2 {
+//   //       a := handle (:a) ()
+//   //       b := handle (:b) ()
+//   //       inject a: a+1, b: b+2 {
+//   //         mask :a {
+//   //           without :b {
+//   //             a := handle (:a) ()
+//   //             a + 1
+//   //           }
+//   //         }
+//   //       }
+//   //     }
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toEqual(2);
+//   // });
+
+//   // test("inject", async () => {
+//   //   const builder = new Builder();
+
+//   //   await testCase(
+//   //     builder.script(
+//   //       builder.inject(
+//   //         { a: builder.int(1), b: builder.int(2) },
+//   //         builder.tuple(builder.handle({ int: 32 }, "a"), builder.handle({ int: 32 }, "b"))
+//   //       )
+//   //     ),
+//   //     builder.typeSchema
+//   //   );
+//   // });
+
+//   // test("inject shadowing", async () => {
+//   //   const input = `
+//   //     inject a: 1, b: 2 ->
+//   //     a := handle (:a) ()
+//   //     b := handle (:b) ()
+
+//   //     inject a: a+1, b: b+2 ->
+
+//   //     handle (:a) (),
+//   //     handle (:b) ()
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toEqual([2, 4]);
+//   // });
+
+//   // test("mask", async () => {
+//   //   const input = `
+//   //     inject a: 1, b: 2 ->
+//   //     a := handle (:a) ()
+//   //     b := handle (:b) ()
+
+//   //     inject a: a+1, b: b+2 ->
+//   //     mask :a ->
+//   //     a := handle (:a) ()
+//   //     b := handle (:b) ()
+//   //     a, b
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toEqual([1, 4]);
+//   // });
+
+//   // test("without", async () => {
+//   //   const input = `
+//   //     inject a: 1 ->
+//   //     without :a ->
+//   //     (:a |> handle) ()
+//   //   `;
+//   //   expect(async () => await evaluate(input)).rejects.toThrow();
+//   // });
+
+//   // test("pythagorean triple example", async () => {
+//   //   const input = `
+//   //     import "std/math" as { floor, sqrt }
+
+//   //     decide := :decide |> handle
+//   //     fail := :fail |> handle
+//   //     choose_int := fn (m, n) {
+//   //       if m > n do fail()
+//   //       if decide() do m else self(m+1, n)
+//   //     }
+
+//   //     pythagorean_triple := fn m, n {
+//   //       a := choose_int(m, n);
+//   //       b := choose_int(a + 1, n + 1);
+//   //       c := sqrt (a^2 + b^2);
+//   //       if floor c != c do fail()
+
+//   //       (a, b, c)
+//   //     };
+
+//   //     false_branch_first :=
+//   //       decide: handler fn (callback, _) {
+//   //         fail_handler := fail: handler fn do callback false
+//   //         inject fail_handler { callback true }
+//   //       };
+//   //     true_branch_first :=
+//   //       decide: handler fn (callback, _) {
+//   //         fail_handler := fail: handler fn do callback true
+//   //         inject fail_handler { callback false }
+//   //       };
+
+//   //     inject false_branch_first { pythagorean_triple 4 15 },
+//   //     inject true_branch_first { pythagorean_triple 4 15 }
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual([
+//   //     [5, 12, 13],
+//   //     [12, 16, 20],
+//   //   ]);
+//   // });
+
+//   // test("logger example", async () => {
+//   //   const input = `
+//   //     logger :=
+//   //       log: handler fn (callback, msg) {
+//   //         result, logs := callback msg
+//   //         result, (msg, ...logs)
+//   //       },
+//   //       [return_handler]: fn x do x, ()
+
+//   //     log := handle(:log)
+
+//   //     f := fn do log 234
+
+//   //     inject logger {
+//   //       log 123
+//   //       log 456
+//   //       123, f()
+//   //     }
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual([
+//   //     [123, 234],
+//   //     [123, 456, 234],
+//   //   ]);
+//   // });
+
+//   // test("transaction example", async () => {
+//   //   const input = `
+//   //     // can abstract db queries for example, instead of simple value state
+//   //     state :=
+//   //       get: handler fn (callback, _) {
+//   //         fn state do (callback state) state
+//   //       },
+//   //       set: handler fn (callback, state) {
+//   //         fn do (callback state) state
+//   //       },
+//   //       [return_handler]: fn x {
+//   //         fn state do state, x
+//   //       }
+//   //     transaction :=
+//   //       get: handler fn (callback, _) {
+//   //         fn state do (callback state) state
+//   //       },
+//   //       set: handler fn (callback, state) {
+//   //         fn do (callback state) state
+//   //       },
+//   //       [return_handler]: fn x {
+//   //         fn state { set state; x }
+//   //       }
+
+//   //     set := :set |> handle
+//   //     get := :get |> handle
+
+//   //     inject state {
+//   //       set 123
+//   //       inject transaction {
+//   //         set(get() + 1)
+//   //         get()
+//   //       }
+//   //       get() + 234
+//   //     } 1
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual([123, 357]);
+//   // });
+
+//   // test("block-inject-fn-handle twice backtracking", async () => {
+//   //   const input = `
+//   //     f := fn {
+//   //       handle (:a) ()
+//   //       handle (:a) ()
+//   //     }
+
+//   //     { inject a: 3 do f() }
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toEqual(3);
+//   // });
+
+//   // test("block-inject-fn-handle backtracking", async () => {
+//   //   const input = `
+//   //     f := fn do handle (:a) ()
+//   //     { inject a: 3 do f() }
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toEqual(3);
+//   // });
+
+//   // test("multiple continuation calls", async () => {
+//   //   const input = `
+//   //     decide := :decide |> handle
+//   //     _handler := decide: handler fn (callback, value) {
+//   //         x1 := callback(true)
+//   //         x2 := callback(false)
+//   //         x1, x2
+//   //       }
+//   //     inject _handler ->
+//   //     if decide() do 123 else 456
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual([123, 456]);
+//   // });
+
+//   // test("multiple continuation calls with mutations and refs", async () => {
+//   //   const input = `
+//   //     _handler :=
+//   //       do: handler fn (callback, _) {
+//   //         callback()
+//   //         callback()
+//   //       }
+
+//   //     m := inject _handler {
+//   //       m := (1,)
+//   //       handle (:do) ()
+//   //       m[0] = m[0] + 1
+//   //       m
+//   //     }
+
+//   //     m
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual([3]);
+//   // });
+
+//   // test("multiple continuation calls with mutations and closure", async () => {
+//   //   const input = `
+//   //       _handler :=
+//   //         do: handler fn (callback, _) {
+//   //           callback()
+//   //           callback()
+//   //         }
+
+//   //       mut n := 1
+//   //       m, f := inject _handler {
+//   //         mut m := 1
+//   //         f := fn do m
+//   //         handle (:do) ()
+//   //         g := fn do m, f()
+//   //         m = m + 1
+//   //         n = n + 1
+//   //         m, g
+//   //       }
+
+//   //       m, n, f()
+//   //     `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual([2, 3, [2, 2]]);
+//   // });
+
+//   // test("multiple continuation calls with mutations", async () => {
+//   //   const input = `
+//   //     _handler :=
+//   //       do: handler fn (callback, _) {
+//   //         callback()
+//   //         callback()
+//   //       }
+
+//   //     mut n := 1
+//   //     inject _handler {
+//   //       mut m := 1
+//   //       handle (:do) ()
+//   //       m = m + 1
+//   //       n = n + 1
+//   //       m, n
+//   //     }
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual([2, 3]);
+//   // });
+
+//   // test("multiple continuation calls with inner mutation", async () => {
+//   //   const input = `
+//   //     _handler :=
+//   //       do: handler fn (callback, _) {
+//   //         callback()
+//   //         callback()
+//   //       }
+
+//   //     inject _handler {
+//   //       mut m := 1
+//   //       handle (:do) ()
+//   //       m = m + 1
+//   //       m
+//   //     }
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual(2);
+//   // });
+
+//   // test("no continuation calls sequential", async () => {
+//   //   const input = `
+//   //     decide := :decide |> handle
+//   //     _handler := decide: handler fn (callback, value) do 126
+//   //     inject _handler ->
+//   //     decide(); 123
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual(126);
+//   // });
+
+//   // test("no continuation calls", async () => {
+//   //   const input = `
+//   //     decide := :decide |> handle
+//   //     _handler := decide: handler fn (callback, value) do 126
+//   //     inject _handler ->
+//   //     if decide() do 123 else 456
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual(126);
+//   // });
+
+//   // test("single continuation call", async () => {
+//   //   const input = `
+//   //     decide := :decide |> handle
+//   //     _handler := decide: handler fn (callback, value) do callback true
+//   //     inject _handler ->
+//   //     if decide() do 123 else 456
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual(123);
+//   // });
+
+//   // test("multi-level state backtracking", async () => {
+//   //   const input = `
+//   //     inject
+//   //       [:do]: handler fn (callback, _) {
+//   //         callback false
+//   //         callback true
+//   //       }
+//   //     {
+//   //       mut m := 1
+//   //       without () -> // just creates new scope
+//   //       if (:do |> handle)() do m
+//   //       else m++
+//   //     }
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual(1);
+//   // });
+
+//   // test("disjoint-level state backtracking", async () => {
+//   //   const input = `
+//   //     inject
+//   //       [:do]: handler fn (callback, _) {
+//   //         break_handler := [:break]: handler fn (_, v) { v }
+//   //         inject break_handler { callback() }
+//   //       }
+//   //     {
+//   //       (:do |> handle) ()
+//   //       (:break |> handle) 1
+//   //     }
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual(1);
+//   // });
+
+//   // test("choose int loop", async () => {
+//   //   const input = `
+//   //     decide := :decide |> handle
+//   //     fail := :fail |> handle
+
+//   //     false_branch_first :=
+//   //       decide: handler fn (callback, _) {
+//   //         fail_handler := fail: handler fn { callback true }
+//   //         inject fail_handler { callback false }
+//   //       };
+
+//   //     inject false_branch_first {
+//   //       mut m, n := 1, 3
+//   //       a := loop {
+//   //         if m > n do fail()
+//   //         if decide() do break m
+//   //         m++
+//   //       }
+//   //       if a != 2 do fail()
+//   //       a
+//   //     }
+//   //   `;
+//   //   const result = await evaluate(input);
+//   //   expect(result).toStrictEqual(2);
+//   // });
+// });
 
 // describe("macros compilation", () => {});
 
