@@ -1343,6 +1343,342 @@ symbol(symbol_symbol_a)",
 ]
 `;
 
+exports[`inject > compiled 1`] = `
+"@const_0 = constant i64 0
+@const_1 = constant i64 1
+@const_2 = constant i64 2
+@const_3 = constant [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }] [{ i32, { i64*, i64 }, i64 (ptr, i64, i64)* } { i32 7, { i64*, i64 } { i64* @const_0, i64 0 }, i64 (ptr, i64, i64)* @handler_a }, { i32, { i64*, i64 }, i64 (ptr, i64, i64)* } zeroinitializer]
+@const_4 = constant [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }] [{ i32, { i64*, i64 }, i64 (ptr, i64, i64)* } { i32 7, { i64*, i64 } { i64* @const_2, i64 0 }, i64 (ptr, i64, i64)* @handler_b }, { i32, { i64*, i64 }, i64 (ptr, i64, i64)* } zeroinitializer]
+@const_5 = constant [10 x i8] c"handler_a\\00"
+@const_6 = constant [5 x i8] c"unit\\00"
+@const_7 = constant [10 x i8] c"handler_b\\00"
+@symbols_metadata_array = constant [3 x { i8* }] [{ i8* } { i8* @const_5 }, { i8* } { i8* @const_6 }, { i8* } { i8* @const_7 }]
+@symbols_metadata = constant ptr @symbols_metadata_array
+define i32 @main() {
+  main: 
+    %var_0 = alloca { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* }
+    %var_1 = load { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* }, ptr %var_0
+    %var_2 = insertvalue { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* } %var_1, i64* @const_2, 0
+    %var_3 = insertvalue { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* } %var_2, ptr null, 1
+    %var_4 = insertvalue { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* } %var_3, ptr null, 2
+    %var_5 = insertvalue { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* } %var_4, i64 (i64, i64)* @identity_ret_handler, 3
+    %var_6 = insertvalue { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* } %var_5, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* @const_4, 4
+    store { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* } %var_6, ptr %var_0
+    %var_7 = alloca { i64, i64 }
+    %var_8 = ptrtoint ptr %var_7 to i64
+    call void @lh_handle(ptr %var_0, i64 0, ptr @handleable_44, i64 %var_8)
+    %var_9 = load { i64, i64 }, ptr %var_7
+    ret i32 0
+}
+define void @handleable_44(ptr sret({ i64, i64 }) %arg_0) {
+  entry_0: 
+    %var_0 = alloca { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* }
+    %var_1 = load { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* }, ptr %var_0
+    %var_2 = insertvalue { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* } %var_1, i64* @const_0, 0
+    %var_3 = insertvalue { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* } %var_2, ptr null, 1
+    %var_4 = insertvalue { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* } %var_3, ptr null, 2
+    %var_5 = insertvalue { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* } %var_4, i64 (i64, i64)* @identity_ret_handler, 3
+    %var_6 = insertvalue { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* } %var_5, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* @const_3, 4
+    store { i64*, ptr, ptr, i64 (i64, i64)*, [2 x { i32, { i64*, i64 }, i64 (ptr, i64, i64)* }]* } %var_6, ptr %var_0
+    %var_7 = alloca { i64, i64 }
+    %var_8 = ptrtoint ptr %var_7 to i64
+    call void @lh_handle(ptr %var_0, i64 0, ptr @handleable_35, i64 %var_8)
+    %var_9 = load { i64, i64 }, ptr %var_7
+    store { i64, i64 } %var_9, ptr %arg_0
+    ret void
+}
+define void @handleable_35(ptr sret({ i64, i64 }) %arg_0) {
+  entry_0: 
+    %var_0 = alloca {  }
+    %var_1 = load {  }, ptr %var_0
+    store {  } %var_1, ptr %var_0
+    %var_2 = alloca { void (i64*, {  }, ptr, i64)*, {  } }
+    %var_3 = load { void (i64*, {  }, ptr, i64)*, {  } }, ptr %var_2
+    %var_4 = insertvalue { void (i64*, {  }, ptr, i64)*, {  } } %var_3, void (i64*, {  }, ptr, i64)* @lh_yield_wrap, 0
+    %var_5 = insertvalue { void (i64*, {  }, ptr, i64)*, {  } } %var_4, {  } %var_1, 1
+    store { void (i64*, {  }, ptr, i64)*, {  } } %var_5, ptr %var_2
+    %var_6 = load i64, ptr @const_0
+    %var_7 = alloca { i64 }
+    %var_8 = load { i64 }, ptr %var_7
+    %var_9 = insertvalue { i64 } %var_8, i64 %var_6, 0
+    store { i64 } %var_9, ptr %var_7
+    %var_10 = load i64, ptr @const_1
+    %var_11 = extractvalue { void (i64*, {  }, ptr, i64)*, {  } } %var_5, 0
+    %var_12 = extractvalue { void (i64*, {  }, ptr, i64)*, {  } } %var_5, 1
+    %var_13 = alloca i64
+    call void %var_11(i64* %var_13, {  } %var_12, ptr %var_7, i64 %var_10)
+    %var_14 = load i64, ptr %var_13
+    %var_15 = alloca { i64 }
+    %var_16 = load { i64 }, ptr %var_15
+    %var_17 = insertvalue { i64 } %var_16, i64 %var_14, 0
+    store { i64 } %var_17, ptr %var_15
+    %var_18 = alloca {  }
+    %var_19 = load {  }, ptr %var_18
+    store {  } %var_19, ptr %var_18
+    %var_20 = alloca { void (i64*, {  }, ptr, i64)*, {  } }
+    %var_21 = load { void (i64*, {  }, ptr, i64)*, {  } }, ptr %var_20
+    %var_22 = insertvalue { void (i64*, {  }, ptr, i64)*, {  } } %var_21, void (i64*, {  }, ptr, i64)* @lh_yield_wrap, 0
+    %var_23 = insertvalue { void (i64*, {  }, ptr, i64)*, {  } } %var_22, {  } %var_19, 1
+    store { void (i64*, {  }, ptr, i64)*, {  } } %var_23, ptr %var_20
+    %var_24 = load i64, ptr @const_2
+    %var_25 = alloca { i64 }
+    %var_26 = load { i64 }, ptr %var_25
+    %var_27 = insertvalue { i64 } %var_26, i64 %var_24, 0
+    store { i64 } %var_27, ptr %var_25
+    %var_28 = load i64, ptr @const_1
+    %var_29 = extractvalue { void (i64*, {  }, ptr, i64)*, {  } } %var_23, 0
+    %var_30 = extractvalue { void (i64*, {  }, ptr, i64)*, {  } } %var_23, 1
+    %var_31 = alloca i64
+    call void %var_29(i64* %var_31, {  } %var_30, ptr %var_25, i64 %var_28)
+    %var_32 = load i64, ptr %var_31
+    %var_33 = extractvalue { i64 } %var_17, 0
+    %var_34 = alloca { i64, i64 }
+    %var_35 = load { i64, i64 }, ptr %var_34
+    %var_36 = insertvalue { i64, i64 } %var_35, i64 %var_33, 0
+    %var_37 = insertvalue { i64, i64 } %var_36, i64 %var_32, 1
+    store { i64, i64 } %var_37, ptr %var_34
+    store { i64, i64 } %var_37, ptr %arg_0
+    ret void
+}
+declare i64 @lh_yield(ptr, i64)
+define void @lh_yield_wrap(ptr sret(i64) %arg_0, {  } %arg_1, ptr %arg_2, i64 %arg_3) {
+  entry_0: 
+    %var_0 = call i64 @lh_yield(ptr %arg_2, i64 %arg_3)
+    store i64 %var_0, ptr %arg_0
+    ret void
+}
+define i64 @identity_ret_handler(i64 %arg_0, i64 %arg_1) {
+  entry_0: 
+    ret i64 %arg_1
+}
+define i64 @handler_a(ptr %arg_0, i64 %arg_1, i64 %arg_2) {
+  entry_0: 
+    %var_0 = alloca {  }
+    %var_1 = load {  }, ptr %var_0
+    store {  } %var_1, ptr %var_0
+    %var_2 = alloca { void (i64*, {  }, ptr, i64, i64)*, {  } }
+    %var_3 = load { void (i64*, {  }, ptr, i64, i64)*, {  } }, ptr %var_2
+    %var_4 = insertvalue { void (i64*, {  }, ptr, i64, i64)*, {  } } %var_3, void (i64*, {  }, ptr, i64, i64)* @lh_release_resume_wrap, 0
+    %var_5 = insertvalue { void (i64*, {  }, ptr, i64, i64)*, {  } } %var_4, {  } %var_1, 1
+    store { void (i64*, {  }, ptr, i64, i64)*, {  } } %var_5, ptr %var_2
+    %var_6 = alloca { { void (i64*, {  }, ptr, i64, i64)*, {  } } }
+    %var_7 = load { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr %var_6
+    %var_8 = insertvalue { { void (i64*, {  }, ptr, i64, i64)*, {  } } } %var_7, { void (i64*, {  }, ptr, i64, i64)*, {  } } %var_5, 0
+    store { { void (i64*, {  }, ptr, i64, i64)*, {  } } } %var_8, ptr %var_6
+    %var_9 = alloca { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } }
+    %var_10 = load { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } }, ptr %var_9
+    %var_11 = insertvalue { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } } %var_10, void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)* @fn_46, 0
+    %var_12 = insertvalue { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } } %var_11, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } %var_8, 1
+    store { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } } %var_12, ptr %var_9
+    %var_13 = extractvalue { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } } %var_12, 0
+    %var_14 = extractvalue { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } } %var_12, 1
+    %var_15 = alloca i64
+    call void %var_13(i64* %var_15, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } %var_14, ptr %arg_0, i64 %arg_1, i64 %arg_2)
+    %var_16 = load i64, ptr %var_15
+    ret i64 %var_16
+}
+declare i64 @lh_release_resume(ptr, i64, i64)
+define void @lh_release_resume_wrap(ptr sret(i64) %arg_0, {  } %arg_1, ptr %arg_2, i64 %arg_3, i64 %arg_4) {
+  entry_0: 
+    %var_0 = call i64 @lh_release_resume(ptr %arg_2, i64 %arg_3)
+    store i64 %var_0, ptr %arg_0
+    ret void
+}
+define void @fn_46(ptr sret(i64) %arg_0, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } %arg_1, ptr %arg_2, i64 %arg_3, i64 %arg_4) {
+  entry_0: 
+    %var_0 = extractvalue { { void (i64*, {  }, ptr, i64, i64)*, {  } } } %arg_1, 0
+    %var_1 = load i64, ptr @const_1
+    %var_2 = extractvalue { void (i64*, {  }, ptr, i64, i64)*, {  } } %var_0, 0
+    %var_3 = extractvalue { void (i64*, {  }, ptr, i64, i64)*, {  } } %var_0, 1
+    %var_4 = alloca i64
+    call void %var_2(i64* %var_4, {  } %var_3, ptr %arg_2, i64 %arg_3, i64 %var_1)
+    %var_5 = load i64, ptr %var_4
+    store i64 %var_5, ptr %arg_0
+    ret void
+}
+declare i64 @lh_handle(ptr, i64, ptr, i64)
+define i64 @handler_b(ptr %arg_0, i64 %arg_1, i64 %arg_2) {
+  entry_0: 
+    %var_0 = alloca {  }
+    %var_1 = load {  }, ptr %var_0
+    store {  } %var_1, ptr %var_0
+    %var_2 = alloca { void (i64*, {  }, ptr, i64, i64)*, {  } }
+    %var_3 = load { void (i64*, {  }, ptr, i64, i64)*, {  } }, ptr %var_2
+    %var_4 = insertvalue { void (i64*, {  }, ptr, i64, i64)*, {  } } %var_3, void (i64*, {  }, ptr, i64, i64)* @lh_release_resume_wrap, 0
+    %var_5 = insertvalue { void (i64*, {  }, ptr, i64, i64)*, {  } } %var_4, {  } %var_1, 1
+    store { void (i64*, {  }, ptr, i64, i64)*, {  } } %var_5, ptr %var_2
+    %var_6 = alloca { { void (i64*, {  }, ptr, i64, i64)*, {  } } }
+    %var_7 = load { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr %var_6
+    %var_8 = insertvalue { { void (i64*, {  }, ptr, i64, i64)*, {  } } } %var_7, { void (i64*, {  }, ptr, i64, i64)*, {  } } %var_5, 0
+    store { { void (i64*, {  }, ptr, i64, i64)*, {  } } } %var_8, ptr %var_6
+    %var_9 = alloca { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } }
+    %var_10 = load { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } }, ptr %var_9
+    %var_11 = insertvalue { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } } %var_10, void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)* @fn_47, 0
+    %var_12 = insertvalue { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } } %var_11, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } %var_8, 1
+    store { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } } %var_12, ptr %var_9
+    %var_13 = extractvalue { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } } %var_12, 0
+    %var_14 = extractvalue { void (i64*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } }, ptr, i64, i64)*, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } } %var_12, 1
+    %var_15 = alloca i64
+    call void %var_13(i64* %var_15, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } %var_14, ptr %arg_0, i64 %arg_1, i64 %arg_2)
+    %var_16 = load i64, ptr %var_15
+    ret i64 %var_16
+}
+define void @fn_47(ptr sret(i64) %arg_0, { { void (i64*, {  }, ptr, i64, i64)*, {  } } } %arg_1, ptr %arg_2, i64 %arg_3, i64 %arg_4) {
+  entry_0: 
+    %var_0 = extractvalue { { void (i64*, {  }, ptr, i64, i64)*, {  } } } %arg_1, 0
+    %var_1 = load i64, ptr @const_2
+    %var_2 = extractvalue { void (i64*, {  }, ptr, i64, i64)*, {  } } %var_0, 0
+    %var_3 = extractvalue { void (i64*, {  }, ptr, i64, i64)*, {  } } %var_0, 1
+    %var_4 = alloca i64
+    call void %var_2(i64* %var_4, {  } %var_3, ptr %arg_2, i64 %arg_3, i64 %var_1)
+    %var_5 = load i64, ptr %var_4
+    store i64 %var_5, ptr %arg_0
+    ret void
+}
+"
+`;
+
+exports[`inject > optimized 1`] = `
+"; ModuleID = '<stdin>'
+source_filename = "<stdin>"
+target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu"
+
+@const_0 = constant i64 0
+@const_1 = local_unnamed_addr constant i64 1
+@const_2 = constant i64 2
+@const_3 = constant [2 x { i32, { ptr, i64 }, ptr }] [{ i32, { ptr, i64 }, ptr } { i32 7, { ptr, i64 } { ptr @const_0, i64 0 }, ptr @handler_a }, { i32, { ptr, i64 }, ptr } zeroinitializer]
+@const_4 = constant [2 x { i32, { ptr, i64 }, ptr }] [{ i32, { ptr, i64 }, ptr } { i32 7, { ptr, i64 } { ptr @const_2, i64 0 }, ptr @handler_b }, { i32, { ptr, i64 }, ptr } zeroinitializer]
+@const_5 = constant [10 x i8] c"handler_a\\00"
+@const_6 = constant [5 x i8] c"unit\\00"
+@const_7 = constant [10 x i8] c"handler_b\\00"
+@symbols_metadata_array = constant [3 x { ptr }] [{ ptr } { ptr @const_5 }, { ptr } { ptr @const_6 }, { ptr } { ptr @const_7 }]
+@symbols_metadata = local_unnamed_addr constant ptr @symbols_metadata_array
+
+define noundef i32 @main() local_unnamed_addr {
+main:
+  %var_0 = alloca { ptr, ptr, ptr, ptr, ptr }, align 8
+  %var_1.fca.1.gep = getelementptr inbounds { ptr, ptr, ptr, ptr, ptr }, ptr %var_0, i64 0, i32 1
+  %var_1.fca.3.gep = getelementptr inbounds { ptr, ptr, ptr, ptr, ptr }, ptr %var_0, i64 0, i32 3
+  %var_1.fca.4.gep = getelementptr inbounds { ptr, ptr, ptr, ptr, ptr }, ptr %var_0, i64 0, i32 4
+  store ptr @const_2, ptr %var_0, align 8
+  call void @llvm.memset.p0.i64(ptr noundef nonnull align 8 dereferenceable(16) %var_1.fca.1.gep, i8 0, i64 16, i1 false)
+  store ptr @identity_ret_handler, ptr %var_1.fca.3.gep, align 8
+  store ptr @const_4, ptr %var_1.fca.4.gep, align 8
+  %var_7 = alloca { i64, i64 }, align 8
+  %var_8 = ptrtoint ptr %var_7 to i64
+  call void @lh_handle(ptr nonnull %var_0, i64 0, ptr nonnull @handleable_44, i64 %var_8)
+  ret i32 0
+}
+
+define void @handleable_44(ptr nocapture writeonly sret({ i64, i64 }) %arg_0) {
+entry_0:
+  %var_0 = alloca { ptr, ptr, ptr, ptr, ptr }, align 8
+  %var_1.fca.1.gep = getelementptr inbounds { ptr, ptr, ptr, ptr, ptr }, ptr %var_0, i64 0, i32 1
+  %var_1.fca.3.gep = getelementptr inbounds { ptr, ptr, ptr, ptr, ptr }, ptr %var_0, i64 0, i32 3
+  %var_1.fca.4.gep = getelementptr inbounds { ptr, ptr, ptr, ptr, ptr }, ptr %var_0, i64 0, i32 4
+  store ptr @const_0, ptr %var_0, align 8
+  call void @llvm.memset.p0.i64(ptr noundef nonnull align 8 dereferenceable(16) %var_1.fca.1.gep, i8 0, i64 16, i1 false)
+  store ptr @identity_ret_handler, ptr %var_1.fca.3.gep, align 8
+  store ptr @const_3, ptr %var_1.fca.4.gep, align 8
+  %var_7 = alloca { i64, i64 }, align 16
+  %var_8 = ptrtoint ptr %var_7 to i64
+  call void @lh_handle(ptr nonnull %var_0, i64 0, ptr nonnull @handleable_35, i64 %var_8)
+  %0 = load <2 x i64>, ptr %var_7, align 16
+  store <2 x i64> %0, ptr %arg_0, align 8
+  ret void
+}
+
+define void @handleable_35(ptr nocapture writeonly sret({ i64, i64 }) %arg_0) {
+entry_0:
+  %var_7 = alloca { i64 }, align 8
+  store i64 0, ptr %var_7, align 8
+  %var_0.i = call i64 @lh_yield(ptr nonnull %var_7, i64 1)
+  %var_25 = alloca { i64 }, align 8
+  store i64 2, ptr %var_25, align 8
+  %var_0.i3 = call i64 @lh_yield(ptr nonnull %var_25, i64 1)
+  store i64 %var_0.i, ptr %arg_0, align 8
+  %arg_0.repack1 = getelementptr inbounds { i64, i64 }, ptr %arg_0, i64 0, i32 1
+  store i64 %var_0.i3, ptr %arg_0.repack1, align 8
+  ret void
+}
+
+declare i64 @lh_yield(ptr, i64) local_unnamed_addr
+
+define void @lh_yield_wrap(ptr nocapture writeonly sret(i64) %arg_0, {} %arg_1, ptr %arg_2, i64 %arg_3) local_unnamed_addr {
+entry_0:
+  %var_0 = tail call i64 @lh_yield(ptr %arg_2, i64 %arg_3)
+  store i64 %var_0, ptr %arg_0, align 8
+  ret void
+}
+
+; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(none)
+define i64 @identity_ret_handler(i64 %arg_0, i64 returned %arg_1) #0 {
+entry_0:
+  ret i64 %arg_1
+}
+
+define i64 @handler_a(ptr %arg_0, i64 %arg_1, i64 %arg_2) {
+entry_0:
+  %var_0.i = tail call i64 @lh_release_resume(ptr %arg_0, i64 %arg_1, i64 0)
+  ret i64 %var_0.i
+}
+
+declare i64 @lh_release_resume(ptr, i64, i64) local_unnamed_addr
+
+define void @lh_release_resume_wrap(ptr nocapture writeonly sret(i64) %arg_0, {} %arg_1, ptr %arg_2, i64 %arg_3, i64 %arg_4) local_unnamed_addr {
+entry_0:
+  %var_0 = tail call i64 @lh_release_resume(ptr %arg_2, i64 %arg_3, i64 0)
+  store i64 %var_0, ptr %arg_0, align 8
+  ret void
+}
+
+define void @fn_46(ptr nocapture writeonly sret(i64) %arg_0, { { ptr, {} } } %arg_1, ptr %arg_2, i64 %arg_3, i64 %arg_4) local_unnamed_addr {
+entry_0:
+  %var_0 = extractvalue { { ptr, {} } } %arg_1, 0
+  %var_2 = extractvalue { ptr, {} } %var_0, 0
+  %var_4 = alloca i64, align 8
+  call void %var_2(ptr nonnull %var_4, {} zeroinitializer, ptr %arg_2, i64 %arg_3, i64 1)
+  %var_5 = load i64, ptr %var_4, align 8
+  store i64 %var_5, ptr %arg_0, align 8
+  ret void
+}
+
+declare i64 @lh_handle(ptr, i64, ptr, i64) local_unnamed_addr
+
+define i64 @handler_b(ptr %arg_0, i64 %arg_1, i64 %arg_2) {
+entry_0:
+  %var_0.i = tail call i64 @lh_release_resume(ptr %arg_0, i64 %arg_1, i64 0)
+  ret i64 %var_0.i
+}
+
+define void @fn_47(ptr nocapture writeonly sret(i64) %arg_0, { { ptr, {} } } %arg_1, ptr %arg_2, i64 %arg_3, i64 %arg_4) local_unnamed_addr {
+entry_0:
+  %var_0 = extractvalue { { ptr, {} } } %arg_1, 0
+  %var_2 = extractvalue { ptr, {} } %var_0, 0
+  %var_4 = alloca i64, align 8
+  call void %var_2(ptr nonnull %var_4, {} zeroinitializer, ptr %arg_2, i64 %arg_3, i64 2)
+  %var_5 = load i64, ptr %var_4, align 8
+  store i64 %var_5, ptr %arg_0, align 8
+  ret void
+}
+
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: write)
+declare void @llvm.memset.p0.i64(ptr nocapture writeonly, i8, i64, i1 immarg) #1
+
+attributes #0 = { mustprogress nofree norecurse nosync nounwind willreturn memory(none) }
+attributes #1 = { nocallback nofree nounwind willreturn memory(argmem: write) }
+"
+`;
+
+exports[`inject > stderr 1`] = `
+[
+  "Segmentation fault",
+]
+`;
+
+exports[`inject > stdout 1`] = `[]`;
+
 exports[`simply typed lambda calc compilation > apply > compiled 1`] = `
 "@const_0 = constant [3 x i8] c"%i\\00"
 @const_1 = constant i32 2

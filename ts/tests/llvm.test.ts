@@ -109,16 +109,47 @@ class Builder {
     return { type: nodeType, id, children, data };
   }
 
-  inject(record: Record<string, Tree>, body: Tree) {
-    return this.node(NodeType.INJECT, this.getType(body)!, {}, [this.record(record), body]);
+  injectHandler(name: string, handler: Tree, body: Tree) {
+    return this.node(NodeType.INJECT, this.getType(body)!, { name }, [
+      this.fn(
+        [this.name("pointer", "cont"), this.name({ int: 64 }, "local"), this.name({ int: 64 }, "arg")],
+        (cont, local, arg) =>
+          this.app(
+            this.name(Builder.fnType(["pointer", { int: 64 }, { int: 64 }], { int: 64 }, []), "lh_release_resume"),
+            cont(),
+            local(),
+            handler
+          )
+      ),
+      body,
+    ]);
+  }
+
+  injectHandlers(record: Record<string, Tree>, body: Tree) {
+    for (const [name, handler] of Object.entries(record)) {
+      body = this.injectHandler(name, handler, body);
+    }
+
+    return body;
   }
 
   handle(type: PhysicalType, name: string) {
     return this.app(
-      this.name(Builder.fnType(["symbol", "unknown"], type, []), "handle"),
-      this.symbol(name),
+      this.name(Builder.fnType([{ pointer: { tuple: ["symbol", { int: 64 }] } }, "unknown"], type, []), "lh_yield"),
+      this.tupleRef(this.handlerSymbol(name), this.int(0)),
       this.unit()
     );
+  }
+
+  ref(value: Tree) {
+    return this.node(NodeType.REF, { pointer: this.getType(value)! }, {}, [value]);
+  }
+
+  deref(value: Tree) {
+    const type = this.typeSchema.get(value.id)!;
+    assert(typeof type === "object");
+    assert("pointer" in type);
+    return this.node(NodeType.DEREF, type.pointer, {}, [value]);
   }
 
   printInt() {
@@ -230,6 +261,11 @@ class Builder {
     return this.node(NodeType.REF, { pointer: type }, {}, [value]);
   }
 
+  handlerSymbol(value: string) {
+    const name = `handler_${value}`;
+    return this.node(NodeType.ATOM, "symbol", { name }, []);
+  }
+
   symbol(value?: string) {
     if (!value) value = String(nextId());
     const name = `symbol_${value}`;
@@ -247,6 +283,10 @@ class Builder {
 
   int(value: number) {
     return this.node(NodeType.NUMBER, { int: 32 }, { value }, []);
+  }
+
+  int64(value: number) {
+    return this.node(NodeType.NUMBER, { int: 64 }, { value }, []);
   }
 
   float(value: number) {
@@ -288,6 +328,17 @@ class Builder {
     assert("tuple" in tuple2Type);
     const type = { tuple: [...tuple1Type.tuple, ...tuple2Type.tuple] };
     return this.node(NodeType.TUPLE_JOIN, type, {}, [tuple1, tuple2]);
+  }
+
+  tupleRef(...args: Tree[]) {
+    let tupleRef = this.node(NodeType.TUPLE, { pointer: { tuple: [this.getType(args[0])!] } }, { ref: true }, [
+      args[0],
+    ]);
+    let tuple = this.deref(tupleRef);
+    for (let i = 1; i < args.length; i++) {
+      tuple = this.tuplePush(tuple, args[i]);
+    }
+    return tupleRef;
   }
 
   tuple(...args: Tree[]) {
@@ -921,19 +972,19 @@ test("generic print", async () => {
 //   //   expect(result).toEqual(2);
 //   // });
 
-//   // test("inject", async () => {
-//   //   const builder = new Builder();
+test.only("inject", async () => {
+  const builder = new Builder();
 
-//   //   await testCase(
-//   //     builder.script(
-//   //       builder.inject(
-//   //         { a: builder.int(1), b: builder.int(2) },
-//   //         builder.tuple(builder.handle({ int: 32 }, "a"), builder.handle({ int: 32 }, "b"))
-//   //       )
-//   //     ),
-//   //     builder.typeSchema
-//   //   );
-//   // });
+  await testCase(
+    builder.script(
+      builder.injectHandlers(
+        { a: builder.int64(1), b: builder.int64(2) },
+        builder.tuple(builder.handle({ int: 64 }, "a"), builder.handle({ int: 64 }, "b"))
+      )
+    ),
+    builder.typeSchema
+  );
+});
 
 //   // test("inject shadowing", async () => {
 //   //   const input = `

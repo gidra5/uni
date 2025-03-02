@@ -69,6 +69,7 @@ class Builder {
     if (type === "void") return "void";
     if (type === "unknown") return "undef";
     if (type === "symbol") return "i64";
+    if (type === "pointer") return "ptr";
     if ("int" in type) return this.createIntType(type.int);
     if ("float" in type) return this.createFloatType(type.float);
 
@@ -111,6 +112,8 @@ class Builder {
 
   getType(value: LLVMValue): LLVMType {
     const _type = this.localTypes.get(value) ?? this.types.get(value);
+    // console.log(value, this.localTypes, this.types);
+
     assert(_type);
     return _type;
   }
@@ -126,6 +129,12 @@ class Builder {
 
   getFreshName(prefix = ""): string {
     return prefix + nextId().toString();
+  }
+
+  createConstant(value: LLVMValue, type: LLVMType): LLVMValue {
+    this.types.set(value, type);
+
+    return value;
   }
 
   getOrCreateConstant(value: LLVMValue, type: LLVMType, name?: string): LLVMValue {
@@ -176,6 +185,10 @@ class Builder {
     return value;
   }
 
+  createConstantInt(value: number, size: number): LLVMValue {
+    return this.createConstant(String(value), this.createIntType(size));
+  }
+
   createInt(value: number, size: number): LLVMValue {
     const ptr = this.getOrCreateConstant(String(value), this.createIntType(size));
     const _value = this.createLoad(ptr);
@@ -220,13 +233,32 @@ class Builder {
   createConstantRecord(...record: LLVMValue[]): LLVMValue {
     const type = this.createRecordType(record.map((value) => this.getType(value)));
     const value = `{ ${record.map((value) => `${this.getTypeString(this.getType(value))} ${value}`).join(", ")} }`;
-    return this.getOrCreateConstant(value, type);
+    return this.createConstant(value, type);
+    // return this.getOrCreateConstant(value, type);
   }
 
   createConstantArray(...items: LLVMValue[]): LLVMValue {
-    const type = this.createArrayType(this.getType(items[0]), items.length);
-    const value = `{ ${items.map((value) => `${this.getTypeString(this.getType(value))} ${value}`).join(", ")} }`;
+    const itemType = this.getType(items[0]);
+    const type = this.createArrayType(itemType, items.length);
+    const value = `[${items
+      .map((value) => {
+        if (value === "zeroinitializer") return `${this.getTypeString(itemType)} zeroinitializer`;
+        return `${this.getTypeString(this.getType(value))} ${value}`;
+      })
+      .join(", ")}]`;
     return this.getOrCreateConstant(value, type);
+  }
+
+  createRecordRef(record: LLVMValue[]): LLVMValue {
+    const type = this.createRecordType(record.map((value) => this.getType(value)));
+    const location = this.createAlloca(type);
+    let recordValue = this.createLoad(location);
+    for (const [value, index] of Iterator.iter(record).enumerate()) {
+      recordValue = this.createInsertValue(recordValue, value, index);
+    }
+    this.createStore(recordValue, location);
+    this.types.set(recordValue, type);
+    return location;
   }
 
   createRecord(record: LLVMValue[]): LLVMValue {
@@ -315,9 +347,11 @@ class Builder {
 
   createIntToPtr(value: LLVMValue): LLVMValue {
     const type = this.getType(value);
-    assert(typeof type === "object");
-    assert("int" in type);
-    return this.createInstruction("inttoptr", [`${stringifyLLVMType(type)} ${value}`], "ptr");
+    return this.createInstruction("inttoptr", [`${this.getTypeString(type)} ${value}`], "ptr");
+  }
+
+  createPtrToInt(value: LLVMValue): LLVMValue {
+    return this.createInstruction("ptrtoint", [`ptr ${value} to i64`], "i64");
   }
 
   createMalloc(type: PhysicalType, initial?: LLVMValue): LLVMValue {
@@ -429,7 +463,13 @@ class Builder {
   }
 
   createReturn(value: LLVMValue): LLVMValue {
-    this.createInstructionVoid("ret", [value]);
+    if (value === "void") {
+      this.createInstructionVoid("ret", ["void"]);
+      return "void";
+    }
+
+    const type = this.getType(value);
+    this.createInstructionVoid("ret", [`${this.getTypeString(type)} ${value}`]);
     return "void";
   }
 
@@ -454,7 +494,7 @@ class Builder {
       this.functionIndex = functionIndex;
       argNames.forEach((name, i) => this.localTypes.set(name, args[i]));
 
-      this.createBlock("entry", () => this.createReturn(body(...argNames)));
+      this.createBlock("entry", () => this.createReturn(this.context.variablesBlock(() => body(...argNames))));
 
       this.functionIndex = prevFunctionIndex;
       this.localTypes = prevTypeMap;
@@ -646,9 +686,9 @@ export class Context {
   }
 
   variablesBlock<T>(body: () => T): T {
-    const currentVariables = [...this.variables.entries()];
+    const currentVariables = new Map(this.variables);
     const result = body();
-    this.variables = new Map(currentVariables);
+    this.variables = currentVariables;
     return result;
   }
 
@@ -859,9 +899,10 @@ export class Context {
     };
 
     this.variables.set(names.get("print")!, () => printTemplate);
-    this.variables.set(names.get("print_symbol")!, createPrintWrapper("print_symbol", "i64"));
     this.variables.set(names.get("lh_yield")!, wrap("lh_yield", ["ptr", "i64"], "i64"));
     this.variables.set(names.get("lh_handle")!, wrap("lh_handle", ["ptr", "i64", "ptr", "i64"], "i64"));
+    this.variables.set(names.get("lh_release_resume")!, wrap("lh_release_resume", ["ptr", "i64", "i64"], "i64"));
+    this.variables.set(names.get("lh_call_resume")!, wrap("lh_call_resume", ["ptr", "i64", "i64"], "i64"));
     this.variables.set(names.get("true")!, () => this.builder.createBool(true));
     this.variables.set(names.get("false")!, () => this.builder.createBool(false));
   }
