@@ -177,6 +177,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
 
       const handlerSymbol = context.builder.createConstantSymbol("handler_" + ast.data.name);
       const action = context.builder.createConstantRecord(handlerSymbol, context.builder.createConstantInt(0, 64));
+      const actionPtr = context.builder.getOrCreateConstant(action, context.builder.getType(action));
       const handlerFn = context.builder.createFunction(
         `handler_${ast.data.name}`,
         ["ptr", "i64", "i64"],
@@ -187,16 +188,14 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
         }
       );
       const handlerActions = context.builder.createConstantArray(
-        context.builder.createConstantRecord(context.builder.createConstantInt(7, 32), action, handlerFn),
+        context.builder.createConstantRecord(context.builder.createConstantInt(7, 32), actionPtr, handlerFn),
         "zeroinitializer"
       );
-      const handlerDefRef = context.builder.createRecordRef([
-        handlerSymbol,
-        "null",
-        "null",
-        retHandler,
-        handlerActions,
-      ]);
+      const handlerDef = context.builder.createRecord([handlerSymbol, "null", "null", retHandler, handlerActions]);
+      const handlerDefRef = context.builder.createMalloc({
+        tuple: ["pointer", "pointer", "pointer", "pointer", "pointer"],
+      });
+      context.builder.createStore(handlerDef, handlerDefRef);
       const out = context.builder.createAlloca(llvmType);
       const _int = context.builder.createPtrToInt(out);
       const _handle = context.builder.declareFunction("lh_handle", ["ptr", "i64", "ptr", "i64"], "i64");
@@ -205,7 +204,9 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
         [handlerDefRef, context.builder.createConstantInt(0, 64), fn, _int],
         ["ptr", "i64", "ptr", "i64"]
       );
-      return context.builder.createLoad(out);
+      const res = context.builder.createLoad(out);
+      context.builder.createFree(handlerDefRef);
+      return res;
     }
     case NodeType.SCRIPT: {
       ast.children.forEach((child) => codegen(child, context));

@@ -35,6 +35,8 @@ export const isLargePhysicalType = (
 export const physicalTypeAlignment = (type: PhysicalType): number => {
   if (type === "void") return 1;
   if (type === "unknown") return 1;
+  if (type === "symbol") return 8;
+  if (type === "pointer") return 8;
   assert(typeof type === "object");
   return physicalTypeSize(type); // natural alignment is equal to size
 };

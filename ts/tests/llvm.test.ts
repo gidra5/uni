@@ -977,9 +977,11 @@ test.only("inject", async () => {
 
   await testCase(
     builder.script(
-      builder.injectHandlers(
-        { a: builder.int64(1), b: builder.int64(2) },
-        builder.tuple(builder.handle({ int: 64 }, "a"), builder.handle({ int: 64 }, "b"))
+      builder.print(
+        builder.injectHandlers(
+          { a: builder.int64(1), b: builder.int64(2) },
+          builder.tuple(builder.handle({ int: 64 }, "a"), builder.handle({ int: 64 }, "b"))
+        )
       )
     ),
     builder.typeSchema

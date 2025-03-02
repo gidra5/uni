@@ -234,7 +234,6 @@ class Builder {
     const type = this.createRecordType(record.map((value) => this.getType(value)));
     const value = `{ ${record.map((value) => `${this.getTypeString(this.getType(value))} ${value}`).join(", ")} }`;
     return this.createConstant(value, type);
-    // return this.getOrCreateConstant(value, type);
   }
 
   createConstantArray(...items: LLVMValue[]): LLVMValue {
@@ -360,6 +359,11 @@ class Builder {
     const allocated = this.createCall(malloc, [this.createInt(typeSize, 64)], "ptr", ["i64"]);
     if (initial) this.createStore(initial, allocated);
     return allocated;
+  }
+
+  createFree(value: LLVMValue) {
+    const free = this.declareFunction("free", ["ptr"], "void");
+    this.createCallVoid(free, [value], ["ptr"]);
   }
 
   createLoad(value: LLVMValue): LLVMValue {
