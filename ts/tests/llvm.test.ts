@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, describe, expect } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect } from "vitest";
 import { test } from "@fast-check/vitest";
 import { generateLLVMCode } from "../src/codegen/llvm";
 import { exec } from "child_process";
@@ -34,6 +34,7 @@ const NV_RUNTIME_PATH = RUNTIME_PATH + "/build/nv-runtime.so";
 
 beforeAll(async () => {
   await _exec(RUNTIME_PATH + "/compile-shared.sh");
+  await _exec(`mkdir ./tests/temp`);
 });
 
 beforeEach(() => {
@@ -48,6 +49,10 @@ beforeEach(() => {
   register(Injectable.NodeToVariableMap, new Map());
 });
 
+afterAll(() => {
+  _exec(`rm -rf ./tests/temp`);
+});
+
 const build = async (compiled: string, out: string) => {
   return await _exec(
     `clang-18 -O3 ${C_RUNTIME_PATH} -x ir - -o ${out} -Wno-override-module`,
@@ -57,9 +62,13 @@ const build = async (compiled: string, out: string) => {
 };
 
 const optimize = async (compiled: string) => {
-  await _exec(`clang-18 -O3 -x ir - -o ./_test.ll -emit-llvm -S`, compiled);
-  const result = await fs.readFile("./_test.ll", "utf-8");
-  await _exec(`rm ./_test.ll`);
+  const rand = Math.random().toString(36).slice(2);
+  const name = `./tests/temp/_test_${rand}.ll`;
+  const output = await _exec(`clang-18 -O3 -x ir - -o ${name} -emit-llvm -S -Wno-override-module`, compiled);
+  if (output.stderr.length > 0) {
+    return output.stderr.join("\n");
+  }
+  const result = await fs.readFile(name, "utf-8");
   return result;
 };
 
@@ -70,10 +79,11 @@ const testCase = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
   const optimized = await optimize(compiled);
   expect.soft(optimized).toMatchSnapshot("optimized");
 
-  const file = "./_test";
+  const rand = Math.random().toString(36).slice(2);
+  const file = `./tests/temp/_test_${rand}`;
   const compileOutput = await build(optimized, file);
+  // const compileOutput = await build(compiled, file);
   const runOutput = await _exec(file);
-  await _exec(`rm ${file}`);
 
   const stdout = compileOutput.stdout.concat(runOutput.stdout);
   const stderr = compileOutput.stderr.concat(runOutput.stderr);

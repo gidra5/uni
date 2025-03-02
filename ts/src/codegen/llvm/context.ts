@@ -672,6 +672,14 @@ export class Context {
         return arg;
       });
     };
+    const wrap = (name: string, argsType: LLVMType[], returnType: LLVMType) => {
+      return () => {
+        const f = this.builder.declareFunction(name, argsType, returnType);
+        return this.builder.createClosure(`${name}_wrap`, argsType, [], returnType, (_closure, arg1, arg2) => {
+          return this.builder.createCall(f, [arg1, arg2], returnType, argsType);
+        });
+      };
+    };
 
     const printTemplate = (type: PhysicalType) => {
       const llvmType = this.builder.toLLVMType(type);
@@ -808,6 +816,8 @@ export class Context {
 
     this.variables.set(names.get("print")!, () => printTemplate);
     this.variables.set(names.get("print_symbol")!, createPrintWrapper("print_symbol", "i64"));
+    this.variables.set(names.get("lh_yield")!, wrap("lh_yield", ["ptr", "i64"], "i64"));
+    this.variables.set(names.get("lh_handle")!, wrap("lh_handle", ["ptr", "i64", "ptr", "i64"], "i64"));
     this.variables.set(names.get("true")!, () => this.builder.createBool(true));
     this.variables.set(names.get("false")!, () => this.builder.createBool(false));
   }
