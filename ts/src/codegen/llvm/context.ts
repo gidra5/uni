@@ -114,6 +114,10 @@ class Builder {
     return _type;
   }
 
+  getFreshConstantName(name = ""): string {
+    return `const_${this.values.size}${name ? `_${name}` : ""}`;
+  }
+
   getFreshName(prefix = ""): string {
     return prefix + nextId().toString();
   }
@@ -123,7 +127,7 @@ class Builder {
     const _value = this.values.get(key);
     if (_value) return _value;
 
-    name = name ?? this.getFreshName("const_");
+    name = name ?? this.getFreshConstantName();
     this.context.module.globals.push({ name, attributes: ["constant"], type, value });
 
     const valuePtr = `@${name}`;
