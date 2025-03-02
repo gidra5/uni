@@ -172,8 +172,11 @@ const generateLLVM = (ast: Tree, typeMap: PhysicalTypeSchema): Context => {
         returnType: "i32",
         body: [{ name: "main", instructions: [] }],
       });
-      // console.dir(ast, { depth: null });
+      // try {
       codegen(ast, context);
+      // } catch (e) {
+      //   console.log(e);
+      // }
 
       return context;
     case "module":

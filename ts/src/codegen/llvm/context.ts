@@ -55,6 +55,7 @@ class Builder {
   instructionIndex: number = 0;
   values: Map<string, LLVMValue> = new Map();
   types: Map<string, LLVMType> = new Map([["null", "ptr"]]);
+  localTypes: Map<string, LLVMType> = new Map();
   symbols: Map<string, SymbolMetadata> = new Map();
 
   constructor(private context: Context) {}
@@ -108,8 +109,7 @@ class Builder {
   }
 
   getType(value: LLVMValue): LLVMType {
-    const _type = this.types.get(value);
-    if (!_type) return "i32";
+    const _type = this.types.get(value) ?? this.localTypes.get(value);
     assert(_type);
     return _type;
   }
@@ -390,29 +390,36 @@ class Builder {
   }
 
   createFunction(name: string, args: LLVMType[], returnType: LLVMType, body: (...args: LLVMValue[]) => LLVMValue) {
-    const exists = this.context.module.functions.some((f) => f.name === name);
     const value = `@${name}`;
+
+    const exists = this.context.module.functions.some((f) => f.name === name);
     if (!exists) {
       const prevFunctionIndex = this.functionIndex;
       const functionIndex = this.context.module.functions.length;
-      const argNames = args.map(() => "%" + this.getFreshName("var_"));
+
+      const argNames = args.map((_arg, i) => "%arg_" + i);
       const declarationArgs = argNames.map((name, i) => `${stringifyLLVMArgType(args[i])} ${name}`);
       const _f = { name, args: declarationArgs, returnType, body: [] };
       this.types.set(value, { pointer: { args, returnType } });
+
+      const prevTypeMap = new Map(this.localTypes);
+
       this.context.module.functions.push(_f);
       this.functionIndex = functionIndex;
-      this.createBlock("entry", () => {
-        argNames.forEach((name, i) => {
-          this.types.set(name, args[i]);
-        });
-        const result = body(...argNames);
-        this.createReturn(result);
-        argNames.forEach((name) => {
-          this.types.delete(name);
-        });
-      });
+      argNames.forEach((name, i) => this.localTypes.set(name, args[i]));
+
+      this.createBlock("entry", () => this.createReturn(body(...argNames)));
+
       this.functionIndex = prevFunctionIndex;
+      this.localTypes = prevTypeMap;
     }
+
+    const type = this.getType(value);
+    assert(typeof type === "object");
+    assert("pointer" in type);
+    assert(typeof type.pointer === "object");
+    assert("args" in type.pointer);
+
     return value;
   }
 
@@ -442,12 +449,12 @@ class Builder {
   }
 
   createBlock(name: string, body: () => void): LLVMValue {
-    name = this.getFreshName(name);
     const prevBlockIndex = this.blockIndex;
     const prevInstructionIndex = this.instructionIndex;
     const functionBody = this.context.module.functions[this.functionIndex].body;
     assert(functionBody);
     const blockIndex = functionBody.length;
+    name = `${name}_${blockIndex}`;
     functionBody.push({ name, instructions: [] });
     this.blockIndex = blockIndex;
     this.instructionIndex = 0;
@@ -778,8 +785,9 @@ export class Context {
 
               const value = this.builder.createExtractValue(arg, index);
               const valueType = types[index];
-              const printItem = printTemplate(valueType);
-              createClosureCall(printItem, [value]);
+              const printInstance = printTemplate(valueType);
+
+              createClosureCall(printInstance, [value]);
             }
             createPrintString(")");
 
