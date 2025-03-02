@@ -56,6 +56,7 @@ class Builder {
   values: Map<string, LLVMValue> = new Map();
   types: Map<string, LLVMType> = new Map([["null", "ptr"]]);
   localTypes: Map<string, LLVMType> = new Map();
+  nextVariableId: number = 0;
   symbols: Map<string, SymbolMetadata> = new Map();
 
   constructor(private context: Context) {}
@@ -109,13 +110,18 @@ class Builder {
   }
 
   getType(value: LLVMValue): LLVMType {
-    const _type = this.types.get(value) ?? this.localTypes.get(value);
+    const _type = this.localTypes.get(value) ?? this.types.get(value);
     assert(_type);
     return _type;
   }
 
   getFreshConstantName(name = ""): string {
     return `const_${this.values.size}${name ? `_${name}` : ""}`;
+  }
+
+  getFreshVariableName(name = ""): string {
+    const id = this.nextVariableId++;
+    return `var_${id}${name ? `_${name}` : ""}`;
   }
 
   getFreshName(prefix = ""): string {
@@ -274,10 +280,11 @@ class Builder {
     this.insertInstruction({ name, args });
   }
 
-  createInstruction(name: string, args: LLVMValue[], type: LLVMType, twine = this.getFreshName("var_")): LLVMValue {
+  // createInstruction(name: string, args: LLVMValue[], type: LLVMType, twine = this.getFreshName("var_")): LLVMValue {
+  createInstruction(name: string, args: LLVMValue[], type: LLVMType, twine = this.getFreshVariableName()): LLVMValue {
     this.insertInstruction({ name, args, twine });
     const value = `%${twine}`;
-    this.types.set(value, type);
+    this.localTypes.set(value, type);
     return value;
   }
 
@@ -440,6 +447,8 @@ class Builder {
       this.types.set(value, { pointer: { args, returnType } });
 
       const prevTypeMap = new Map(this.localTypes);
+      const prevVariableId = this.nextVariableId;
+      this.nextVariableId = 0;
 
       this.context.module.functions.push(_f);
       this.functionIndex = functionIndex;
@@ -449,6 +458,7 @@ class Builder {
 
       this.functionIndex = prevFunctionIndex;
       this.localTypes = prevTypeMap;
+      this.nextVariableId = prevVariableId;
     }
 
     const type = this.getType(value);
