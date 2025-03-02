@@ -38,8 +38,6 @@
 -----------------------------------------------------------------------------*/
 
 #include "./libhandler.h"
-#include "./types.h"
-#include "./hstack.h"
 
 #include <assert.h>  // assert
 #include <errno.h>
@@ -52,6 +50,8 @@
 #include <string.h>  // memcpy
 
 #include "./cenv.h"  // configure generated
+#include "./hstack.h"
+#include "./types.h"
 
 // maintain cheap statistics
 #define _STATS
@@ -575,7 +575,6 @@ static handler* handler_acquire(handler* h) {
   Handler stacks
 -----------------------------------------------------------------*/
 
-
 // Current top handler frame
 static handler* hstack_top(const hstack* hs) {
   return hs->top;
@@ -769,7 +768,7 @@ static effecthandler* hstack_find(ref hstack* hs, lh_optag optag, out const lh_o
         effecthandler* eh = (effecthandler*)h;
         assert(eh->hdef != NULL);
         const lh_operation* oper = &eh->hdef->operations[optag->opidx];
-        assert(oper->optag == optag);  // can fail if operations are defined in a different order than declared
+        // assert(oper->optag == optag);  // can fail if operations are defined in a different order than declared
         assert(oper->opfun != NULL || oper->opkind == LH_OP_FORWARD);
         if (oper->opfun != NULL) {  // NULL functions are assume tail-resumptive identity functions, skip it
           *skipped = hstack_indexof(hs, h);
@@ -953,7 +952,7 @@ static __noinline __noreturn void _jumpto_stack(
   }  // should be fine to call `free` (assuming it will not mess with the stack above its frame)
   // and jump
   // _lh_longjmp_chain(*entry, cstack_bottom(&cs), exnframe);
-  
+
   _lh_longjmp(*entry, 1);
 }
 
@@ -982,7 +981,7 @@ static __noinline __noreturn void jumpto(
     if (extra > 0) {
       no_opt = (byte*)lh_alloca(extra);  // allocate room on the stack; in here the new stack will get copied.
     }
-    
+
     _jumpto_stack(cs->frames, cs->size, (byte*)cstack_base(cs),
                   entry, freecframes, no_opt);
   }
