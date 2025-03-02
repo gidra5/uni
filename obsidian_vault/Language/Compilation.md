@@ -22,3 +22,5 @@ https://wren.io/performance.html
 https://www.youtube.com/watch?v=QdnxjYj1pS0&ab_channel=AdamMcDaniel
 https://tibleiz.net/blog/2024-02-04-writing-a-fast-compiler.html
 https://www.pathsensitive.com/2019/07/the-best-refactoring-youve-never-heard.html
+https://mapping-high-level-constructs-to-llvm-ir.readthedocs.io/en/latest/exception-handling/setjmp+longjmp-exception-handling.html
+https://monkeywritescode.blogspot.com/p/c-exceptions-under-hood.html?m=1

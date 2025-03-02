@@ -188,21 +188,35 @@ class Builder {
   }
 
   createSymbol(name: string): LLVMValue {
-    const ptr = (() => {
-      if (this.symbols.has(name)) {
-        return this.symbols.get(name)!.value;
-      }
-
-      const id = this.symbols.size;
-      const value = this.getOrCreateConstant(String(id), "i64");
-
-      this.symbols.set(name, { name, id, value });
-
-      return value;
-    })();
+    const ptr = this.createConstantSymbol(name);
 
     const value = this.createLoad(ptr);
     return value;
+  }
+
+  createConstantSymbol(name: string): LLVMValue {
+    if (this.symbols.has(name)) {
+      return this.symbols.get(name)!.value;
+    }
+
+    const id = this.symbols.size;
+    const value = this.getOrCreateConstant(String(id), "i64");
+
+    this.symbols.set(name, { name, id, value });
+
+    return value;
+  }
+
+  createConstantRecord(...record: LLVMValue[]): LLVMValue {
+    const type = this.createRecordType(record.map((value) => this.getType(value)));
+    const value = `{ ${record.map((value) => `${this.getTypeString(this.getType(value))} ${value}`).join(", ")} }`;
+    return this.getOrCreateConstant(value, type);
+  }
+
+  createConstantArray(...items: LLVMValue[]): LLVMValue {
+    const type = this.createArrayType(this.getType(items[0]), items.length);
+    const value = `{ ${items.map((value) => `${this.getTypeString(this.getType(value))} ${value}`).join(", ")} }`;
+    return this.getOrCreateConstant(value, type);
   }
 
   createRecord(record: LLVMValue[]): LLVMValue {
@@ -286,6 +300,13 @@ class Builder {
     const typeValue = stringifyLLVMType(type);
     if (initial) return this.createInstruction("alloca", [typeValue, `${typeValue} ${initial}`], { pointer: type });
     return this.createInstruction("alloca", [typeValue], { pointer: type });
+  }
+
+  createIntToPtr(value: LLVMValue): LLVMValue {
+    const type = this.getType(value);
+    assert(typeof type === "object");
+    assert("int" in type);
+    return this.createInstruction("inttoptr", [`${stringifyLLVMType(type)} ${value}`], "ptr");
   }
 
   createMalloc(type: PhysicalType, initial?: LLVMValue): LLVMValue {
@@ -382,6 +403,18 @@ class Builder {
     const type = stringifyLLVMType(returnType);
     const _args = [`${type} ${func}(${args.join(", ")})`];
     return this.createInstruction("call", _args, returnType);
+  }
+
+  createClosureCall(func: LLVMValue, args: LLVMValue[]) {
+    const fnPtr = this.createExtractValue(func, 0);
+    const closure = this.createExtractValue(func, 1);
+
+    const fnPtrType = this.getType(fnPtr);
+    assert(typeof fnPtrType === "object" && "pointer" in fnPtrType);
+    const funcType = fnPtrType.pointer;
+    assert(typeof funcType === "object" && "args" in funcType);
+
+    return this.createCall(fnPtr, [closure, ...args], funcType.returnType, funcType.args);
   }
 
   createReturn(value: LLVMValue): LLVMValue {
@@ -653,17 +686,6 @@ export class Context {
   }
 
   declareCRuntimeFunctions() {
-    const createClosureCall = (func: LLVMValue, args: LLVMValue[]) => {
-      const fnPtr = this.builder.createExtractValue(func, 0);
-      const closure = this.builder.createExtractValue(func, 1);
-
-      const fnPtrType = this.builder.getType(fnPtr);
-      assert(typeof fnPtrType === "object" && "pointer" in fnPtrType);
-      const funcType = fnPtrType.pointer;
-      assert(typeof funcType === "object" && "args" in funcType);
-
-      return this.builder.createCall(fnPtr, [closure, ...args], funcType.returnType, funcType.args);
-    };
     const createPrintFmtValue = (_fmt: string, value: LLVMValue) => {
       const printf = this.builder.declareFunction("printf", ["i8*", "..."], "i32");
       const fmt = this.builder.createString(_fmt);
@@ -697,7 +719,7 @@ export class Context {
           case type === "symbol": {
             const printSymbol = this.variables.get(names.get("print_symbol")!)!();
             assert(typeof printSymbol !== "function");
-            createClosureCall(printSymbol, [arg]);
+            this.builder.createClosureCall(printSymbol, [arg]);
             break;
           }
           case typeof type === "object" && "int" in type && type.int === 1: {
@@ -746,7 +768,7 @@ export class Context {
               const itemType = type.array;
               const printItem = printTemplate(itemType);
 
-              createClosureCall(printItem, [item]);
+              this.builder.createClosureCall(printItem, [item]);
 
               return [condition, nextIdx];
             });
@@ -767,7 +789,7 @@ export class Context {
               const value = this.builder.createExtractValue(closure, index);
               const valueType = closureTypes[index];
               const printItem = printTemplate(valueType);
-              createClosureCall(printItem, [value]);
+              this.builder.createClosureCall(printItem, [value]);
             }
             createPrintString("]");
             // createPrintString("](");
@@ -787,7 +809,7 @@ export class Context {
               const valueType = types[index];
               const printInstance = printTemplate(valueType);
 
-              createClosureCall(printInstance, [value]);
+              this.builder.createClosureCall(printInstance, [value]);
             }
             createPrintString(")");
 

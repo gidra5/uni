@@ -22,6 +22,8 @@ const scope = [
   ["print", { fn: { arg: "unknown", return: "unknown" } }],
   ["lh_yield", { fn: { arg: "unknown", return: "unknown" } }],
   ["lh_handle", { fn: { arg: "unknown", return: "unknown" } }],
+  ["lh_release_resume", { fn: { arg: "unknown", return: "unknown" } }],
+  ["lh_call_resume", { fn: { arg: "unknown", return: "unknown" } }],
   ["true", "boolean"],
   ["false", "boolean"],
 ] as const satisfies [string, Type][];
