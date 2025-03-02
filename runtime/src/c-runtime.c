@@ -11,6 +11,11 @@
 #define _assert(x, msg) assert_msg(false, "\n\nASSERTION FAILED: " x "\n")
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
+typedef struct {
+  void* function_ptr;
+  uint8_t closure[0];
+} closure_t;
+
 enum type_t {
   TYPE_INT = 1,
   TYPE_FLOAT = 2,
