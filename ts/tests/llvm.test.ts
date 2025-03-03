@@ -134,11 +134,40 @@ class Builder {
   }
 
   handle(type: PhysicalType, name: string) {
-    return this.app(
-      this.name(Builder.fnType([{ pointer: { tuple: ["symbol", { int: 64 }] } }, "unknown"], type, []), "lh_yield"),
-      this.tupleRef(this.handlerSymbol(name), this.int(0)),
-      this.unit()
+    return this.block(
+      this.declare("x", this.malloc(16)),
+      this.set("x", this.tuple(this.handlerSymbol(name), this.int64(0))),
+      this.app(
+        this.name(Builder.fnType([{ pointer: { tuple: ["symbol", { int: 64 }] } }, "unknown"], type, []), "lh_yield"),
+        this.name({ pointer: { tuple: ["symbol", { int: 64 }] } }, "x"),
+        this.unit()
+      )
     );
+  }
+
+  handleFree(type: PhysicalType, name: string) {
+    return this.block(
+      this.declare("x", this.malloc(16)),
+      this.set("x", this.tuple(this.handlerSymbol(name), this.int64(0))),
+      this.declare(
+        "y",
+        this.app(
+          this.name(Builder.fnType([{ pointer: { tuple: ["symbol", { int: 64 }] } }, "unknown"], type, []), "lh_yield"),
+          this.name({ pointer: { tuple: ["symbol", { int: 64 }] } }, "x"),
+          this.unit()
+        )
+      ),
+      this.free(this.name("pointer", "x")),
+      this.name(type, "y")
+    );
+  }
+
+  malloc(size: number) {
+    return this.app(this.name(Builder.fnType([{ int: 64 }], "pointer", []), "malloc"), this.int64(size));
+  }
+
+  free(value: Tree) {
+    return this.app(this.name(Builder.fnType([{ pointer: "pointer" }], "void", []), "free"), value);
   }
 
   ref(value: Tree) {
@@ -186,6 +215,12 @@ class Builder {
     const type = this.typeSchema.get(value.id)!;
     const nameNode = this.name(type, name);
     return this.node(NodeType.DECLARE, type, {}, [nameNode, value]);
+  }
+
+  set(name: string, value: Tree) {
+    const type = this.typeSchema.get(value.id)!;
+    const nameNode = this.ref(this.name(type, name));
+    return this.node(NodeType.ASSIGN, type, {}, [nameNode, value]);
   }
 
   assign(name: string, value: Tree) {
@@ -980,7 +1015,7 @@ test.only("inject", async () => {
       builder.print(
         builder.injectHandlers(
           { a: builder.int64(1), b: builder.int64(2) },
-          builder.tuple(builder.handle({ int: 64 }, "a"), builder.handle({ int: 64 }, "b"))
+          builder.tuple(builder.handleFree({ int: 64 }, "a"), builder.handle({ int: 64 }, "b"))
         )
       )
     ),

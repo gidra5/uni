@@ -24,7 +24,7 @@ export const resolve = (ast: Tree, names: Binding[] = []): number[] => {
   switch (ast.type) {
     case NodeType.NAME: {
       const binding = names.findLast(([name]) => name === ast.data.value);
-      assert(binding); // TODO: error reporting, undeclared variable
+      assert(binding, `undeclared variable: ${ast.data.value} [${names.map((x) => x[0]).join(", ")}]`); // TODO: error reporting, undeclared variable
       inject(Injectable.NodeToVariableMap).set(ast.id, binding[1]);
       return [binding[1]];
     }

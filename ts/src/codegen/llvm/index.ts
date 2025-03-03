@@ -140,12 +140,31 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     case NodeType.BLOCK: {
       return context.variablesBlock(() => codegen(ast.children[0], context));
     }
-    case NodeType.ASSIGN:
+    case NodeType.ASSIGN: {
+      if (ast.children[0].type === NodeType.REF) {
+        const value = codegen(ast.children[1], context);
+        const target = codegen(ast.children[0].children[0], context);
+
+        context.builder.createStore(value, target);
+
+        return value;
+      } else {
+        const value = codegen(ast.children[1], context);
+
+        const variable = inject(Injectable.NodeToVariableMap).get(ast.children[0].id)!;
+        assert(variable !== undefined, `undeclared variable: ${ast.children[0].data.value}`);
+        context.variables.set(variable, () => value);
+
+        return value;
+      }
+    }
     case NodeType.DECLARE: {
-      const variable = inject(Injectable.NodeToVariableMap).get(ast.children[0].id)!;
       const value = codegen(ast.children[1], context);
+
+      const variable = inject(Injectable.NodeToVariableMap).get(ast.children[0].id)!;
       assert(variable !== undefined);
       context.variables.set(variable, () => value);
+
       return value;
     }
     case NodeType.IF: {
@@ -196,7 +215,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
         tuple: ["pointer", "pointer", "pointer", "pointer", "pointer"],
       });
       context.builder.createStore(handlerDef, handlerDefRef);
-      const out = context.builder.createAlloca(llvmType);
+      const out = context.builder.createMalloc(type);
       const _int = context.builder.createPtrToInt(out);
       const _handle = context.builder.declareFunction("lh_handle", ["ptr", "i64", "ptr", "i64"], "i64");
       context.builder.createCallVoid(
@@ -205,6 +224,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
         ["ptr", "i64", "ptr", "i64"]
       );
       const res = context.builder.createLoad(out);
+      context.builder.createFree(out);
       context.builder.createFree(handlerDefRef);
       return res;
     }

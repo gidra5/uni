@@ -355,8 +355,10 @@ class Builder {
 
   createMalloc(type: PhysicalType, initial?: LLVMValue): LLVMValue {
     const typeSize = physicalTypeSize(type);
+    const llvmType = this.toLLVMType(type);
     const malloc = this.declareFunction("malloc", ["i64"], "ptr");
-    const allocated = this.createCall(malloc, [this.createInt(typeSize, 64)], "ptr", ["i64"]);
+    const allocated = this.createCall(malloc, [this.createInt(typeSize, 64)], { pointer: llvmType }, ["i64"]);
+
     if (initial) this.createStore(initial, allocated);
     return allocated;
   }
@@ -752,18 +754,11 @@ export class Context {
     const createPrintString = (str: string) => {
       return createPrintFmtValue("%s", this.builder.createString(str));
     };
-    const createPrintWrapper = (name: string, argType: LLVMType) => () => {
-      const fnPtr = this.builder.declareFunction(name, [argType], "void");
-      return this.builder.createClosure(name + "_wrap", [argType], [], argType, (_closure, arg) => {
-        this.builder.createCallVoid(fnPtr, [arg], [argType]);
-        return arg;
-      });
-    };
     const wrap = (name: string, argsType: LLVMType[], returnType: LLVMType) => {
       return () => {
         const f = this.builder.declareFunction(name, argsType, returnType);
-        return this.builder.createClosure(`${name}_wrap`, argsType, [], returnType, (_closure, arg1, arg2) => {
-          return this.builder.createCall(f, [arg1, arg2], returnType, argsType);
+        return this.builder.createClosure(`${name}_wrap`, argsType, [], returnType, (_closure, ...args) => {
+          return this.builder.createCall(f, args, returnType, argsType);
         });
       };
     };
@@ -907,6 +902,8 @@ export class Context {
     this.variables.set(names.get("lh_handle")!, wrap("lh_handle", ["ptr", "i64", "ptr", "i64"], "i64"));
     this.variables.set(names.get("lh_release_resume")!, wrap("lh_release_resume", ["ptr", "i64", "i64"], "i64"));
     this.variables.set(names.get("lh_call_resume")!, wrap("lh_call_resume", ["ptr", "i64", "i64"], "i64"));
+    this.variables.set(names.get("malloc")!, wrap("malloc", ["i64"], "ptr"));
+    this.variables.set(names.get("free")!, wrap("free", ["ptr"], "i8"));
     this.variables.set(names.get("true")!, () => this.builder.createBool(true));
     this.variables.set(names.get("false")!, () => this.builder.createBool(false));
   }
