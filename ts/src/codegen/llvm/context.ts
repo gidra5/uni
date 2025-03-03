@@ -211,7 +211,18 @@ class Builder {
   }
 
   createSymbol(name: string): LLVMValue {
-    const ptr = this.createConstantSymbol(name);
+    const ptr = (() => {
+      if (this.symbols.has(name)) {
+        return this.symbols.get(name)!.value;
+      }
+  
+      const id = this.symbols.size;
+      const value = this.getOrCreateConstant(String(id), "i64");
+  
+      this.symbols.set(name, { name, id, value });
+  
+      return value;
+    })();
 
     const value = this.createLoad(ptr);
     return value;
@@ -219,7 +230,7 @@ class Builder {
 
   createConstantSymbol(name: string): LLVMValue {
     if (this.symbols.has(name)) {
-      return this.symbols.get(name)!.value;
+      return this.createConstantInt(this.symbols.get(name)!.id, 64);
     }
 
     const id = this.symbols.size;
@@ -227,7 +238,7 @@ class Builder {
 
     this.symbols.set(name, { name, id, value });
 
-    return value;
+    return this.createConstantInt(id, 64);
   }
 
   createConstantRecord(...record: LLVMValue[]): LLVMValue {
