@@ -781,9 +781,8 @@ export class Context {
       return this.builder.createClosure(name, [llvmType], [], llvmType, (_closure, arg) => {
         switch (true) {
           case type === "symbol": {
-            const printSymbol = this.variables.get(names.get("print_symbol")!)!();
-            assert(typeof printSymbol !== "function");
-            this.builder.createClosureCall(printSymbol, [arg]);
+            const fnPtr = this.builder.declareFunction('print_symbol', ["i64"], "void");
+            this.builder.createCallVoid(fnPtr, [arg], ["i64"]);
             break;
           }
           case typeof type === "object" && "int" in type && type.int === 1: {

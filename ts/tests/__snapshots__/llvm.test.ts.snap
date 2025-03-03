@@ -25,29 +25,11 @@ define i32 @main() {
 }
 define void @"generated_print_symbol"(ptr sret(i64) %arg_0, {  } %arg_1, i64 %arg_2) {
   entry_0: 
-    %var_0 = alloca {  }
-    %var_1 = load {  }, ptr %var_0
-    store {  } %var_1, ptr %var_0
-    %var_2 = alloca { void (i64*, {  }, i64)*, {  } }
-    %var_3 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_2
-    %var_4 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_3, void (i64*, {  }, i64)* @print_symbol_wrap, 0
-    %var_5 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_4, {  } %var_1, 1
-    store { void (i64*, {  }, i64)*, {  } } %var_5, ptr %var_2
-    %var_6 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_5, 0
-    %var_7 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_5, 1
-    %var_8 = alloca i64
-    call void %var_6(i64* %var_8, {  } %var_7, i64 %arg_2)
-    %var_9 = load i64, ptr %var_8
-    store i64 %arg_2, ptr %arg_0
-    ret void
-}
-declare void @print_symbol(i64)
-define void @print_symbol_wrap(ptr sret(i64) %arg_0, {  } %arg_1, i64 %arg_2) {
-  entry_0: 
     call void @print_symbol(i64 %arg_2)
     store i64 %arg_2, ptr %arg_0
     ret void
 }
+declare void @print_symbol(i64)
 "
 `;
 
@@ -76,13 +58,6 @@ entry_0:
 }
 
 declare void @print_symbol(i64) local_unnamed_addr
-
-define void @print_symbol_wrap(ptr nocapture writeonly sret(i64) %arg_0, {} %arg_1, i64 %arg_2) local_unnamed_addr {
-entry_0:
-  tail call void @print_symbol(i64 %arg_2)
-  store i64 %arg_2, ptr %arg_0, align 8
-  ret void
-}
 "
 `;
 
@@ -275,29 +250,11 @@ define i32 @main() {
 }
 define void @"generated_print_symbol"(ptr sret(i64) %arg_0, {  } %arg_1, i64 %arg_2) {
   entry_0: 
-    %var_0 = alloca {  }
-    %var_1 = load {  }, ptr %var_0
-    store {  } %var_1, ptr %var_0
-    %var_2 = alloca { void (i64*, {  }, i64)*, {  } }
-    %var_3 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_2
-    %var_4 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_3, void (i64*, {  }, i64)* @print_symbol_wrap, 0
-    %var_5 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_4, {  } %var_1, 1
-    store { void (i64*, {  }, i64)*, {  } } %var_5, ptr %var_2
-    %var_6 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_5, 0
-    %var_7 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_5, 1
-    %var_8 = alloca i64
-    call void %var_6(i64* %var_8, {  } %var_7, i64 %arg_2)
-    %var_9 = load i64, ptr %var_8
-    store i64 %arg_2, ptr %arg_0
-    ret void
-}
-declare void @print_symbol(i64)
-define void @print_symbol_wrap(ptr sret(i64) %arg_0, {  } %arg_1, i64 %arg_2) {
-  entry_0: 
     call void @print_symbol(i64 %arg_2)
     store i64 %arg_2, ptr %arg_0
     ret void
 }
+declare void @print_symbol(i64)
 "
 `;
 
@@ -326,13 +283,6 @@ entry_0:
 }
 
 declare void @print_symbol(i64) local_unnamed_addr
-
-define void @print_symbol_wrap(ptr nocapture writeonly sret(i64) %arg_0, {} %arg_1, i64 %arg_2) local_unnamed_addr {
-entry_0:
-  tail call void @print_symbol(i64 %arg_2)
-  store i64 %arg_2, ptr %arg_0, align 8
-  ret void
-}
 "
 `;
 
@@ -527,29 +477,11 @@ define i32 @main() {
 }
 define void @"generated_print_symbol"(ptr sret(i64) %arg_0, {  } %arg_1, i64 %arg_2) {
   entry_0: 
-    %var_0 = alloca {  }
-    %var_1 = load {  }, ptr %var_0
-    store {  } %var_1, ptr %var_0
-    %var_2 = alloca { void (i64*, {  }, i64)*, {  } }
-    %var_3 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_2
-    %var_4 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_3, void (i64*, {  }, i64)* @print_symbol_wrap, 0
-    %var_5 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_4, {  } %var_1, 1
-    store { void (i64*, {  }, i64)*, {  } } %var_5, ptr %var_2
-    %var_6 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_5, 0
-    %var_7 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_5, 1
-    %var_8 = alloca i64
-    call void %var_6(i64* %var_8, {  } %var_7, i64 %arg_2)
-    %var_9 = load i64, ptr %var_8
-    store i64 %arg_2, ptr %arg_0
-    ret void
-}
-declare void @print_symbol(i64)
-define void @print_symbol_wrap(ptr sret(i64) %arg_0, {  } %arg_1, i64 %arg_2) {
-  entry_0: 
     call void @print_symbol(i64 %arg_2)
     store i64 %arg_2, ptr %arg_0
     ret void
 }
+declare void @print_symbol(i64)
 "
 `;
 
@@ -578,13 +510,6 @@ entry_0:
 }
 
 declare void @print_symbol(i64) local_unnamed_addr
-
-define void @print_symbol_wrap(ptr nocapture writeonly sret(i64) %arg_0, {} %arg_1, i64 %arg_2) local_unnamed_addr {
-entry_0:
-  tail call void @print_symbol(i64 %arg_2)
-  store i64 %arg_2, ptr %arg_0, align 8
-  ret void
-}
 "
 `;
 
@@ -1196,7 +1121,7 @@ define i32 @main() {
     store {  } %var_7, ptr %var_6
     %var_8 = alloca { void (i32*, {  }, i32)*, {  } }
     %var_9 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_8
-    %var_10 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_9, void (i32*, {  }, i32)* @fn_91, 0
+    %var_10 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_9, void (i32*, {  }, i32)* @fn_93, 0
     %var_11 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_10, {  } %var_7, 1
     store { void (i32*, {  }, i32)*, {  } } %var_11, ptr %var_8
     %var_12 = extractvalue { void ({ void (i32*, {  }, i32)*, {  } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_5, 0
@@ -1230,7 +1155,7 @@ define i32 @main() {
     store {  } %var_33, ptr %var_32
     %var_34 = alloca { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
     %var_35 = load { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_34
-    %var_36 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_35, void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_92, 0
+    %var_36 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_35, void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_94, 0
     %var_37 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_36, {  } %var_33, 1
     store { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_37, ptr %var_34
     %var_38 = load i32, ptr @const_5
@@ -1270,7 +1195,7 @@ define i32 @main() {
     store {  } %var_64, ptr %var_63
     %var_65 = alloca { void (i32*, {  }, i32, i32)*, {  } }
     %var_66 = load { void (i32*, {  }, i32, i32)*, {  } }, ptr %var_65
-    %var_67 = insertvalue { void (i32*, {  }, i32, i32)*, {  } } %var_66, void (i32*, {  }, i32, i32)* @fn_94, 0
+    %var_67 = insertvalue { void (i32*, {  }, i32, i32)*, {  } } %var_66, void (i32*, {  }, i32, i32)* @fn_96, 0
     %var_68 = insertvalue { void (i32*, {  }, i32, i32)*, {  } } %var_67, {  } %var_64, 1
     store { void (i32*, {  }, i32, i32)*, {  } } %var_68, ptr %var_65
     %var_69 = extractvalue { void ({ void (i32*, {  }, i32, i32)*, {  } }*, {  }, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_62, 0
@@ -1541,7 +1466,7 @@ define void @"generated_print_i32[](i32)"(ptr sret({ void (i32*, {  }, i32)*, { 
     ret void
 }
 declare i32 @printf(i8*, ...)
-define void @fn_91(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_93(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     store i32 %arg_2, ptr %arg_0
     ret void
@@ -1580,7 +1505,7 @@ define void @"generated_print_i32"(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2
     store i32 %arg_2, ptr %arg_0
     ret void
 }
-define void @fn_92(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_94(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = alloca { i32 }
     %var_1 = load { i32 }, ptr %var_0
@@ -1588,13 +1513,13 @@ define void @fn_92(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %arg_0, {  
     store { i32 } %var_2, ptr %var_0
     %var_3 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
     %var_4 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_3
-    %var_5 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_4, void (i32*, { i32 }, i32)* @fn_93, 0
+    %var_5 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_4, void (i32*, { i32 }, i32)* @fn_95, 0
     %var_6 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_5, { i32 } %var_2, 1
     store { void (i32*, { i32 }, i32)*, { i32 } } %var_6, ptr %var_3
     store { void (i32*, { i32 }, i32)*, { i32 } } %var_6, ptr %arg_0
     ret void
 }
-define void @fn_93(ptr sret(i32) %arg_0, { i32 } %arg_1, i32 %arg_2) {
+define void @fn_95(ptr sret(i32) %arg_0, { i32 } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = extractvalue { i32 } %arg_1, 0
     store i32 %var_0, ptr %arg_0
@@ -1608,7 +1533,7 @@ define void @"generated_print_i32[](i32, i32)"(ptr sret({ void (i32*, {  }, i32,
     store { void (i32*, {  }, i32, i32)*, {  } } %arg_2, ptr %arg_0
     ret void
 }
-define void @fn_94(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2, i32 %arg_3) {
+define void @fn_96(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2, i32 %arg_3) {
   entry_0: 
     store i32 %arg_2, ptr %arg_0
     ret void
@@ -1664,29 +1589,11 @@ define void @"generated_print_i1"(ptr sret(i1) %arg_0, {  } %arg_1, i1 %arg_2) {
 }
 define void @"generated_print_symbol"(ptr sret(i64) %arg_0, {  } %arg_1, i64 %arg_2) {
   entry_0: 
-    %var_0 = alloca {  }
-    %var_1 = load {  }, ptr %var_0
-    store {  } %var_1, ptr %var_0
-    %var_2 = alloca { void (i64*, {  }, i64)*, {  } }
-    %var_3 = load { void (i64*, {  }, i64)*, {  } }, ptr %var_2
-    %var_4 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_3, void (i64*, {  }, i64)* @print_symbol_wrap, 0
-    %var_5 = insertvalue { void (i64*, {  }, i64)*, {  } } %var_4, {  } %var_1, 1
-    store { void (i64*, {  }, i64)*, {  } } %var_5, ptr %var_2
-    %var_6 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_5, 0
-    %var_7 = extractvalue { void (i64*, {  }, i64)*, {  } } %var_5, 1
-    %var_8 = alloca i64
-    call void %var_6(i64* %var_8, {  } %var_7, i64 %arg_2)
-    %var_9 = load i64, ptr %var_8
-    store i64 %arg_2, ptr %arg_0
-    ret void
-}
-declare void @print_symbol(i64)
-define void @print_symbol_wrap(ptr sret(i64) %arg_0, {  } %arg_1, i64 %arg_2) {
-  entry_0: 
     call void @print_symbol(i64 %arg_2)
     store i64 %arg_2, ptr %arg_0
     ret void
 }
+declare void @print_symbol(i64)
 "
 `;
 
@@ -1770,7 +1677,7 @@ entry_0:
 declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_91(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_93(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   store i32 %arg_2, ptr %arg_0, align 4
   ret void
@@ -1802,16 +1709,16 @@ entry_0:
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_92(ptr nocapture writeonly sret({ ptr, { i32 } }) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_94(ptr nocapture writeonly sret({ ptr, { i32 } }) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   %var_2 = insertvalue { i32 } undef, i32 %arg_2, 0
-  %var_6 = insertvalue { ptr, { i32 } } { ptr @fn_93, { i32 } undef }, { i32 } %var_2, 1
+  %var_6 = insertvalue { ptr, { i32 } } { ptr @fn_95, { i32 } undef }, { i32 } %var_2, 1
   store { ptr, { i32 } } %var_6, ptr %arg_0, align 8
   ret void
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_93(ptr nocapture writeonly sret(i32) %arg_0, { i32 } %arg_1, i32 %arg_2) #1 {
+define void @fn_95(ptr nocapture writeonly sret(i32) %arg_0, { i32 } %arg_1, i32 %arg_2) #1 {
 entry_0:
   %var_0 = extractvalue { i32 } %arg_1, 0
   store i32 %var_0, ptr %arg_0, align 4
@@ -1828,7 +1735,7 @@ entry_0:
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_94(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2, i32 %arg_3) local_unnamed_addr #1 {
+define void @fn_96(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2, i32 %arg_3) local_unnamed_addr #1 {
 entry_0:
   store i32 %arg_2, ptr %arg_0, align 4
   ret void
@@ -1870,13 +1777,6 @@ entry_0:
 }
 
 declare void @print_symbol(i64) local_unnamed_addr
-
-define void @print_symbol_wrap(ptr nocapture writeonly sret(i64) %arg_0, {} %arg_1, i64 %arg_2) local_unnamed_addr {
-entry_0:
-  tail call void @print_symbol(i64 %arg_2)
-  store i64 %arg_2, ptr %arg_0, align 8
-  ret void
-}
 
 attributes #0 = { nofree nounwind }
 attributes #1 = { mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write) }
@@ -1922,7 +1822,7 @@ define i32 @main() {
     store {  } %var_7, ptr %var_6
     %var_8 = alloca { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } }
     %var_9 = load { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } }, ptr %var_8
-    %var_10 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_9, void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })* @fn_23, 0
+    %var_10 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_9, void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })* @fn_25, 0
     %var_11 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_10, {  } %var_7, 1
     store { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_11, ptr %var_8
     %var_12 = alloca {  }
@@ -1930,7 +1830,7 @@ define i32 @main() {
     store {  } %var_13, ptr %var_12
     %var_14 = alloca { void (i32*, {  }, i32)*, {  } }
     %var_15 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_14
-    %var_16 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_15, void (i32*, {  }, i32)* @fn_25, 0
+    %var_16 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_15, void (i32*, {  }, i32)* @fn_27, 0
     %var_17 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_16, {  } %var_13, 1
     store { void (i32*, {  }, i32)*, {  } } %var_17, ptr %var_14
     %var_18 = extractvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }*, {  }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_11, 0
@@ -1958,7 +1858,7 @@ define void @"generated_print_i32"(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2
     ret void
 }
 declare i32 @printf(i8*, ...)
-define void @fn_23(ptr sret({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }) %arg_0, {  } %arg_1, { void (i32*, {  }, i32)*, {  } } %arg_2) {
+define void @fn_25(ptr sret({ void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }) %arg_0, {  } %arg_1, { void (i32*, {  }, i32)*, {  } } %arg_2) {
   entry_0: 
     %var_0 = alloca { { void (i32*, {  }, i32)*, {  } } }
     %var_1 = load { { void (i32*, {  }, i32)*, {  } } }, ptr %var_0
@@ -1966,13 +1866,13 @@ define void @fn_23(ptr sret({ void (i32*, { { void (i32*, {  }, i32)*, {  } } },
     store { { void (i32*, {  }, i32)*, {  } } } %var_2, ptr %var_0
     %var_3 = alloca { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }
     %var_4 = load { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } }, ptr %var_3
-    %var_5 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_4, void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)* @fn_24, 0
+    %var_5 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_4, void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)* @fn_26, 0
     %var_6 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_5, { { void (i32*, {  }, i32)*, {  } } } %var_2, 1
     store { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_6, ptr %var_3
     store { void (i32*, { { void (i32*, {  }, i32)*, {  } } }, i32)*, { { void (i32*, {  }, i32)*, {  } } } } %var_6, ptr %arg_0
     ret void
 }
-define void @fn_24(ptr sret(i32) %arg_0, { { void (i32*, {  }, i32)*, {  } } } %arg_1, i32 %arg_2) {
+define void @fn_26(ptr sret(i32) %arg_0, { { void (i32*, {  }, i32)*, {  } } } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = extractvalue { { void (i32*, {  }, i32)*, {  } } } %arg_1, 0
     %var_1 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_0, 0
@@ -1983,7 +1883,7 @@ define void @fn_24(ptr sret(i32) %arg_0, { { void (i32*, {  }, i32)*, {  } } } %
     store i32 %var_4, ptr %arg_0
     ret void
 }
-define void @fn_25(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_27(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     store i32 %arg_2, ptr %arg_0
     ret void
@@ -2019,16 +1919,16 @@ entry_0:
 declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_23(ptr nocapture writeonly sret({ ptr, { { ptr, {} } } }) %arg_0, {} %arg_1, { ptr, {} } %arg_2) local_unnamed_addr #1 {
+define void @fn_25(ptr nocapture writeonly sret({ ptr, { { ptr, {} } } }) %arg_0, {} %arg_1, { ptr, {} } %arg_2) local_unnamed_addr #1 {
 entry_0:
-  store ptr @fn_24, ptr %arg_0, align 8
+  store ptr @fn_26, ptr %arg_0, align 8
   %arg_0.repack1 = getelementptr inbounds { ptr, { { ptr, {} } } }, ptr %arg_0, i64 0, i32 1
   %arg_2.elt = extractvalue { ptr, {} } %arg_2, 0
   store ptr %arg_2.elt, ptr %arg_0.repack1, align 8
   ret void
 }
 
-define void @fn_24(ptr nocapture writeonly sret(i32) %arg_0, { { ptr, {} } } %arg_1, i32 %arg_2) {
+define void @fn_26(ptr nocapture writeonly sret(i32) %arg_0, { { ptr, {} } } %arg_1, i32 %arg_2) {
 entry_0:
   %var_0 = extractvalue { { ptr, {} } } %arg_1, 0
   %var_1 = extractvalue { ptr, {} } %var_0, 0
@@ -2040,7 +1940,7 @@ entry_0:
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_25(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_27(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   store i32 %arg_2, ptr %arg_0, align 4
   ret void
@@ -2080,7 +1980,7 @@ define i32 @main() {
     store {  } %var_7, ptr %var_6
     %var_8 = alloca { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
     %var_9 = load { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_8
-    %var_10 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_9, void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_31, 0
+    %var_10 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_9, void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_33, 0
     %var_11 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_10, {  } %var_7, 1
     store { void ({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_11, ptr %var_8
     %var_12 = load i32, ptr @const_1
@@ -2100,7 +2000,7 @@ define i32 @main() {
     store {  } %var_23, ptr %var_22
     %var_24 = alloca { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
     %var_25 = load { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_24
-    %var_26 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_25, void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_34, 0
+    %var_26 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_25, void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_36, 0
     %var_27 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_26, {  } %var_23, 1
     store { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_27, ptr %var_24
     %var_28 = extractvalue { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_21, 0
@@ -2122,7 +2022,7 @@ define void @"generated_print_i32"(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2
     ret void
 }
 declare i32 @printf(i8*, ...)
-define void @fn_31(ptr sret({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_33(ptr sret({ void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = alloca { i32 }
     %var_1 = load { i32 }, ptr %var_0
@@ -2130,13 +2030,13 @@ define void @fn_31(ptr sret({ void ({ void (i32*, { i32, i32 }, { void ({ void (
     store { i32 } %var_2, ptr %var_0
     %var_3 = alloca { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }
     %var_4 = load { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }, ptr %var_3
-    %var_5 = insertvalue { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_4, void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)* @fn_32, 0
+    %var_5 = insertvalue { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_4, void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)* @fn_34, 0
     %var_6 = insertvalue { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_5, { i32 } %var_2, 1
     store { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_6, ptr %var_3
     store { void ({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_6, ptr %arg_0
     ret void
 }
-define void @fn_32(ptr sret({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }) %arg_0, { i32 } %arg_1, i32 %arg_2) {
+define void @fn_34(ptr sret({ void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }) %arg_0, { i32 } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = extractvalue { i32 } %arg_1, 0
     %var_1 = alloca { i32, i32 }
@@ -2146,13 +2046,13 @@ define void @fn_32(ptr sret({ void (i32*, { i32, i32 }, { void ({ void (i32*, { 
     store { i32, i32 } %var_4, ptr %var_1
     %var_5 = alloca { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }
     %var_6 = load { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } }, ptr %var_5
-    %var_7 = insertvalue { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_6, void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })* @fn_33, 0
+    %var_7 = insertvalue { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_6, void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })* @fn_35, 0
     %var_8 = insertvalue { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_7, { i32, i32 } %var_4, 1
     store { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_8, ptr %var_5
     store { void (i32*, { i32, i32 }, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } })*, { i32, i32 } } %var_8, ptr %arg_0
     ret void
 }
-define void @fn_33(ptr sret(i32) %arg_0, { i32, i32 } %arg_1, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %arg_2) {
+define void @fn_35(ptr sret(i32) %arg_0, { i32, i32 } %arg_1, { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %arg_2) {
   entry_0: 
     %var_0 = extractvalue { i32, i32 } %arg_1, 0
     %var_1 = extractvalue { i32, i32 } %arg_1, 1
@@ -2169,7 +2069,7 @@ define void @fn_33(ptr sret(i32) %arg_0, { i32, i32 } %arg_1, { void ({ void (i3
     store i32 %var_9, ptr %arg_0
     ret void
 }
-define void @fn_34(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_36(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = alloca { i32 }
     %var_1 = load { i32 }, ptr %var_0
@@ -2177,13 +2077,13 @@ define void @fn_34(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %arg_0, {  
     store { i32 } %var_2, ptr %var_0
     %var_3 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
     %var_4 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_3
-    %var_5 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_4, void (i32*, { i32 }, i32)* @fn_35, 0
+    %var_5 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_4, void (i32*, { i32 }, i32)* @fn_37, 0
     %var_6 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_5, { i32 } %var_2, 1
     store { void (i32*, { i32 }, i32)*, { i32 } } %var_6, ptr %var_3
     store { void (i32*, { i32 }, i32)*, { i32 } } %var_6, ptr %arg_0
     ret void
 }
-define void @fn_35(ptr sret(i32) %arg_0, { i32 } %arg_1, i32 %arg_2) {
+define void @fn_37(ptr sret(i32) %arg_0, { i32 } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = extractvalue { i32 } %arg_1, 0
     store i32 %var_0, ptr %arg_0
@@ -2221,19 +2121,19 @@ entry_0:
 declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_31(ptr nocapture writeonly sret({ ptr, { i32 } }) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_33(ptr nocapture writeonly sret({ ptr, { i32 } }) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   %var_2 = insertvalue { i32 } undef, i32 %arg_2, 0
-  %var_6 = insertvalue { ptr, { i32 } } { ptr @fn_32, { i32 } undef }, { i32 } %var_2, 1
+  %var_6 = insertvalue { ptr, { i32 } } { ptr @fn_34, { i32 } undef }, { i32 } %var_2, 1
   store { ptr, { i32 } } %var_6, ptr %arg_0, align 8
   ret void
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_32(ptr nocapture writeonly sret({ ptr, { i32, i32 } }) %arg_0, { i32 } %arg_1, i32 %arg_2) #1 {
+define void @fn_34(ptr nocapture writeonly sret({ ptr, { i32, i32 } }) %arg_0, { i32 } %arg_1, i32 %arg_2) #1 {
 entry_0:
   %var_0 = extractvalue { i32 } %arg_1, 0
-  store ptr @fn_33, ptr %arg_0, align 8
+  store ptr @fn_35, ptr %arg_0, align 8
   %arg_0.repack1 = getelementptr inbounds { ptr, { i32, i32 } }, ptr %arg_0, i64 0, i32 1
   store i32 %var_0, ptr %arg_0.repack1, align 8
   %arg_0.repack1.repack3 = getelementptr inbounds { ptr, { i32, i32 } }, ptr %arg_0, i64 0, i32 1, i32 1
@@ -2241,7 +2141,7 @@ entry_0:
   ret void
 }
 
-define void @fn_33(ptr nocapture writeonly sret(i32) %arg_0, { i32, i32 } %arg_1, { ptr, {} } %arg_2) {
+define void @fn_35(ptr nocapture writeonly sret(i32) %arg_0, { i32, i32 } %arg_1, { ptr, {} } %arg_2) {
 entry_0:
   %var_0 = extractvalue { i32, i32 } %arg_1, 0
   %var_1 = extractvalue { i32, i32 } %arg_1, 1
@@ -2260,16 +2160,16 @@ entry_0:
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_34(ptr nocapture writeonly sret({ ptr, { i32 } }) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_36(ptr nocapture writeonly sret({ ptr, { i32 } }) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   %var_2 = insertvalue { i32 } undef, i32 %arg_2, 0
-  %var_6 = insertvalue { ptr, { i32 } } { ptr @fn_35, { i32 } undef }, { i32 } %var_2, 1
+  %var_6 = insertvalue { ptr, { i32 } } { ptr @fn_37, { i32 } undef }, { i32 } %var_2, 1
   store { ptr, { i32 } } %var_6, ptr %arg_0, align 8
   ret void
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_35(ptr nocapture writeonly sret(i32) %arg_0, { i32 } %arg_1, i32 %arg_2) #1 {
+define void @fn_37(ptr nocapture writeonly sret(i32) %arg_0, { i32 } %arg_1, i32 %arg_2) #1 {
 entry_0:
   %var_0 = extractvalue { i32 } %arg_1, 0
   store i32 %var_0, ptr %arg_0, align 4
@@ -2310,7 +2210,7 @@ define i32 @main() {
     store {  } %var_7, ptr %var_6
     %var_8 = alloca { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } }
     %var_9 = load { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } }, ptr %var_8
-    %var_10 = insertvalue { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_9, void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })* @fn_24, 0
+    %var_10 = insertvalue { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_9, void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })* @fn_26, 0
     %var_11 = insertvalue { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_10, {  } %var_7, 1
     store { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_11, ptr %var_8
     %var_12 = load i32, ptr @const_1
@@ -2320,7 +2220,7 @@ define i32 @main() {
     store {  } %var_15, ptr %var_14
     %var_16 = alloca { void (i32*, {  }, i32)*, {  } }
     %var_17 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_16
-    %var_18 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_17, void (i32*, {  }, i32)* @fn_25, 0
+    %var_18 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_17, void (i32*, {  }, i32)* @fn_27, 0
     %var_19 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_18, {  } %var_15, 1
     store { void (i32*, {  }, i32)*, {  } } %var_19, ptr %var_16
     %var_20 = extractvalue { void (i32*, {  }, i32, i32, { void (i32*, {  }, i32, i32)*, {  } })*, {  } } %var_11, 0
@@ -2342,7 +2242,7 @@ define void @"generated_print_i32"(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2
     ret void
 }
 declare i32 @printf(i8*, ...)
-define void @fn_24(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2, i32 %arg_3, { void (i32*, {  }, i32, i32)*, {  } } %arg_4) {
+define void @fn_26(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2, i32 %arg_3, { void (i32*, {  }, i32, i32)*, {  } } %arg_4) {
   entry_0: 
     %var_0 = extractvalue { void (i32*, {  }, i32, i32)*, {  } } %arg_4, 0
     %var_1 = extractvalue { void (i32*, {  }, i32, i32)*, {  } } %arg_4, 1
@@ -2352,7 +2252,7 @@ define void @fn_24(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2, i32 %arg_3, { 
     store i32 %var_3, ptr %arg_0
     ret void
 }
-define void @fn_25(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_27(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     store i32 %arg_2, ptr %arg_0
     ret void
@@ -2388,7 +2288,7 @@ entry_0:
 ; Function Attrs: nofree nounwind
 declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
 
-define void @fn_24(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2, i32 %arg_3, { ptr, {} } %arg_4) local_unnamed_addr {
+define void @fn_26(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2, i32 %arg_3, { ptr, {} } %arg_4) local_unnamed_addr {
 entry_0:
   %var_0 = extractvalue { ptr, {} } %arg_4, 0
   %var_2 = alloca i32, align 4
@@ -2399,7 +2299,7 @@ entry_0:
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_25(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_27(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   store i32 %arg_2, ptr %arg_0, align 4
   ret void
@@ -2438,7 +2338,7 @@ define i32 @main() {
     store {  } %var_7, ptr %var_6
     %var_8 = alloca { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } }
     %var_9 = load { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_8
-    %var_10 = insertvalue { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_9, void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)* @fn_29, 0
+    %var_10 = insertvalue { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_9, void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)* @fn_31, 0
     %var_11 = insertvalue { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_10, {  } %var_7, 1
     store { void ({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }*, {  }, i32)*, {  } } %var_11, ptr %var_8
     %var_12 = load i32, ptr @const_1
@@ -2452,7 +2352,7 @@ define i32 @main() {
     store {  } %var_18, ptr %var_17
     %var_19 = alloca { void (i32*, {  }, i32)*, {  } }
     %var_20 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_19
-    %var_21 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_20, void (i32*, {  }, i32)* @fn_32, 0
+    %var_21 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_20, void (i32*, {  }, i32)* @fn_34, 0
     %var_22 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_21, {  } %var_18, 1
     store { void (i32*, {  }, i32)*, {  } } %var_22, ptr %var_19
     %var_23 = extractvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_16, 0
@@ -2465,7 +2365,7 @@ define i32 @main() {
     store {  } %var_28, ptr %var_27
     %var_29 = alloca { void (i32*, {  }, i32)*, {  } }
     %var_30 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_29
-    %var_31 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_30, void (i32*, {  }, i32)* @fn_33, 0
+    %var_31 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_30, void (i32*, {  }, i32)* @fn_35, 0
     %var_32 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_31, {  } %var_28, 1
     store { void (i32*, {  }, i32)*, {  } } %var_32, ptr %var_29
     %var_33 = extractvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_26, 0
@@ -2487,7 +2387,7 @@ define void @"generated_print_i32"(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2
     ret void
 }
 declare i32 @printf(i8*, ...)
-define void @fn_29(ptr sret({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_31(ptr sret({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = alloca { i32 }
     %var_1 = load { i32 }, ptr %var_0
@@ -2495,13 +2395,13 @@ define void @fn_29(ptr sret({ void ({ void (i32*, { { void (i32*, {  }, i32)*, {
     store { i32 } %var_2, ptr %var_0
     %var_3 = alloca { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }
     %var_4 = load { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } }, ptr %var_3
-    %var_5 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_4, void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })* @fn_30, 0
+    %var_5 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_4, void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })* @fn_32, 0
     %var_6 = insertvalue { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_5, { i32 } %var_2, 1
     store { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_6, ptr %var_3
     store { void ({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }*, { i32 }, { void (i32*, {  }, i32)*, {  } })*, { i32 } } %var_6, ptr %arg_0
     ret void
 }
-define void @fn_30(ptr sret({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }) %arg_0, { i32 } %arg_1, { void (i32*, {  }, i32)*, {  } } %arg_2) {
+define void @fn_32(ptr sret({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }) %arg_0, { i32 } %arg_1, { void (i32*, {  }, i32)*, {  } } %arg_2) {
   entry_0: 
     %var_0 = extractvalue { i32 } %arg_1, 0
     %var_1 = alloca { { void (i32*, {  }, i32)*, {  } }, i32 }
@@ -2511,13 +2411,13 @@ define void @fn_30(ptr sret({ void (i32*, { { void (i32*, {  }, i32)*, {  } }, i
     store { { void (i32*, {  }, i32)*, {  } }, i32 } %var_4, ptr %var_1
     %var_5 = alloca { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }
     %var_6 = load { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } }, ptr %var_5
-    %var_7 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_6, void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })* @fn_31, 0
+    %var_7 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_6, void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })* @fn_33, 0
     %var_8 = insertvalue { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_7, { { void (i32*, {  }, i32)*, {  } }, i32 } %var_4, 1
     store { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_8, ptr %var_5
     store { void (i32*, { { void (i32*, {  }, i32)*, {  } }, i32 }, { void (i32*, {  }, i32)*, {  } })*, { { void (i32*, {  }, i32)*, {  } }, i32 } } %var_8, ptr %arg_0
     ret void
 }
-define void @fn_31(ptr sret(i32) %arg_0, { { void (i32*, {  }, i32)*, {  } }, i32 } %arg_1, { void (i32*, {  }, i32)*, {  } } %arg_2) {
+define void @fn_33(ptr sret(i32) %arg_0, { { void (i32*, {  }, i32)*, {  } }, i32 } %arg_1, { void (i32*, {  }, i32)*, {  } } %arg_2) {
   entry_0: 
     %var_0 = extractvalue { { void (i32*, {  }, i32)*, {  } }, i32 } %arg_1, 0
     %var_1 = extractvalue { { void (i32*, {  }, i32)*, {  } }, i32 } %arg_1, 1
@@ -2529,12 +2429,12 @@ define void @fn_31(ptr sret(i32) %arg_0, { { void (i32*, {  }, i32)*, {  } }, i3
     store i32 %var_5, ptr %arg_0
     ret void
 }
-define void @fn_32(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_34(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     store i32 %arg_2, ptr %arg_0
     ret void
 }
-define void @fn_33(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_35(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     store i32 %arg_2, ptr %arg_0
     ret void
@@ -2570,27 +2470,27 @@ entry_0:
 declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_29(ptr nocapture writeonly sret({ ptr, { i32 } }) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_31(ptr nocapture writeonly sret({ ptr, { i32 } }) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   %var_2 = insertvalue { i32 } undef, i32 %arg_2, 0
-  %var_6 = insertvalue { ptr, { i32 } } { ptr @fn_30, { i32 } undef }, { i32 } %var_2, 1
+  %var_6 = insertvalue { ptr, { i32 } } { ptr @fn_32, { i32 } undef }, { i32 } %var_2, 1
   store { ptr, { i32 } } %var_6, ptr %arg_0, align 8
   ret void
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_30(ptr nocapture writeonly sret({ ptr, { { ptr, {} }, i32 } }) %arg_0, { i32 } %arg_1, { ptr, {} } %arg_2) #1 {
+define void @fn_32(ptr nocapture writeonly sret({ ptr, { { ptr, {} }, i32 } }) %arg_0, { i32 } %arg_1, { ptr, {} } %arg_2) #1 {
 entry_0:
   %var_0 = extractvalue { i32 } %arg_1, 0
   %var_3 = insertvalue { { ptr, {} }, i32 } { { ptr, {} } { ptr undef, {} poison }, i32 undef }, { ptr, {} } %arg_2, 0
   %var_4 = insertvalue { { ptr, {} }, i32 } %var_3, i32 %var_0, 1
-  store ptr @fn_31, ptr %arg_0, align 8
+  store ptr @fn_33, ptr %arg_0, align 8
   %arg_0.repack1 = getelementptr inbounds { ptr, { { ptr, {} }, i32 } }, ptr %arg_0, i64 0, i32 1
   store { { ptr, {} }, i32 } %var_4, ptr %arg_0.repack1, align 8
   ret void
 }
 
-define void @fn_31(ptr nocapture writeonly sret(i32) %arg_0, { { ptr, {} }, i32 } %arg_1, { ptr, {} } %arg_2) {
+define void @fn_33(ptr nocapture writeonly sret(i32) %arg_0, { { ptr, {} }, i32 } %arg_1, { ptr, {} } %arg_2) {
 entry_0:
   %var_0 = extractvalue { { ptr, {} }, i32 } %arg_1, 0
   %var_1 = extractvalue { { ptr, {} }, i32 } %arg_1, 1
@@ -2603,14 +2503,14 @@ entry_0:
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_32(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_34(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   store i32 %arg_2, ptr %arg_0, align 4
   ret void
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_33(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_35(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   store i32 %arg_2, ptr %arg_0, align 4
   ret void
@@ -2649,7 +2549,7 @@ define i32 @main() {
     store {  } %var_7, ptr %var_6
     %var_8 = alloca { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } }
     %var_9 = load { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } }, ptr %var_8
-    %var_10 = insertvalue { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_9, void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })* @fn_25, 0
+    %var_10 = insertvalue { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_9, void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })* @fn_27, 0
     %var_11 = insertvalue { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_10, {  } %var_7, 1
     store { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_11, ptr %var_8
     %var_12 = load i32, ptr @const_1
@@ -2658,7 +2558,7 @@ define i32 @main() {
     store {  } %var_14, ptr %var_13
     %var_15 = alloca { void (i32*, {  }, i32)*, {  } }
     %var_16 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_15
-    %var_17 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_16, void (i32*, {  }, i32)* @fn_26, 0
+    %var_17 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_16, void (i32*, {  }, i32)* @fn_28, 0
     %var_18 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_17, {  } %var_14, 1
     store { void (i32*, {  }, i32)*, {  } } %var_18, ptr %var_15
     %var_19 = alloca {  }
@@ -2666,7 +2566,7 @@ define i32 @main() {
     store {  } %var_20, ptr %var_19
     %var_21 = alloca { void (i32*, {  }, i32)*, {  } }
     %var_22 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_21
-    %var_23 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_22, void (i32*, {  }, i32)* @fn_27, 0
+    %var_23 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_22, void (i32*, {  }, i32)* @fn_29, 0
     %var_24 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_23, {  } %var_20, 1
     store { void (i32*, {  }, i32)*, {  } } %var_24, ptr %var_21
     %var_25 = extractvalue { void (i32*, {  }, i32, { void (i32*, {  }, i32)*, {  } }, { void (i32*, {  }, i32)*, {  } })*, {  } } %var_11, 0
@@ -2688,7 +2588,7 @@ define void @"generated_print_i32"(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2
     ret void
 }
 declare i32 @printf(i8*, ...)
-define void @fn_25(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2, { void (i32*, {  }, i32)*, {  } } %arg_3, { void (i32*, {  }, i32)*, {  } } %arg_4) {
+define void @fn_27(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2, { void (i32*, {  }, i32)*, {  } } %arg_3, { void (i32*, {  }, i32)*, {  } } %arg_4) {
   entry_0: 
     %var_0 = extractvalue { void (i32*, {  }, i32)*, {  } } %arg_3, 0
     %var_1 = extractvalue { void (i32*, {  }, i32)*, {  } } %arg_3, 1
@@ -2698,12 +2598,12 @@ define void @fn_25(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2, { void (i32*, 
     store i32 %var_3, ptr %arg_0
     ret void
 }
-define void @fn_26(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_28(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     store i32 %arg_2, ptr %arg_0
     ret void
 }
-define void @fn_27(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_29(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     store i32 %arg_2, ptr %arg_0
     ret void
@@ -2738,7 +2638,7 @@ entry_0:
 ; Function Attrs: nofree nounwind
 declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
 
-define void @fn_25(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2, { ptr, {} } %arg_3, { ptr, {} } %arg_4) local_unnamed_addr {
+define void @fn_27(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2, { ptr, {} } %arg_3, { ptr, {} } %arg_4) local_unnamed_addr {
 entry_0:
   %var_0 = extractvalue { ptr, {} } %arg_3, 0
   %var_2 = alloca i32, align 4
@@ -2749,14 +2649,14 @@ entry_0:
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_26(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_28(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   store i32 %arg_2, ptr %arg_0, align 4
   ret void
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_27(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_29(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   store i32 %arg_2, ptr %arg_0, align 4
   ret void
@@ -2795,7 +2695,7 @@ define i32 @main() {
     store {  } %var_7, ptr %var_6
     %var_8 = alloca { void (i32*, {  }, i32)*, {  } }
     %var_9 = load { void (i32*, {  }, i32)*, {  } }, ptr %var_8
-    %var_10 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_9, void (i32*, {  }, i32)* @fn_17, 0
+    %var_10 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_9, void (i32*, {  }, i32)* @fn_19, 0
     %var_11 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_10, {  } %var_7, 1
     store { void (i32*, {  }, i32)*, {  } } %var_11, ptr %var_8
     %var_12 = load i32, ptr @const_1
@@ -2818,7 +2718,7 @@ define void @"generated_print_i32"(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2
     ret void
 }
 declare i32 @printf(i8*, ...)
-define void @fn_17(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_19(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = add i32 %arg_2, %arg_2
     store i32 %var_0, ptr %arg_0
@@ -2855,7 +2755,7 @@ entry_0:
 declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_17(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_19(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   %var_0 = shl i32 %arg_2, 1
   store i32 %var_0, ptr %arg_0, align 4
@@ -2896,7 +2796,7 @@ define i32 @main() {
     store {  } %var_7, ptr %var_6
     %var_8 = alloca { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
     %var_9 = load { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_8
-    %var_10 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_9, void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_23, 0
+    %var_10 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_9, void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_25, 0
     %var_11 = insertvalue { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_10, {  } %var_7, 1
     store { void ({ void (i32*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_11, ptr %var_8
     %var_12 = load i32, ptr @const_2
@@ -2925,7 +2825,7 @@ define void @"generated_print_i32"(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2
     ret void
 }
 declare i32 @printf(i8*, ...)
-define void @fn_23(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_25(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = alloca { i32 }
     %var_1 = load { i32 }, ptr %var_0
@@ -2933,13 +2833,13 @@ define void @fn_23(ptr sret({ void (i32*, { i32 }, i32)*, { i32 } }) %arg_0, {  
     store { i32 } %var_2, ptr %var_0
     %var_3 = alloca { void (i32*, { i32 }, i32)*, { i32 } }
     %var_4 = load { void (i32*, { i32 }, i32)*, { i32 } }, ptr %var_3
-    %var_5 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_4, void (i32*, { i32 }, i32)* @fn_24, 0
+    %var_5 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_4, void (i32*, { i32 }, i32)* @fn_26, 0
     %var_6 = insertvalue { void (i32*, { i32 }, i32)*, { i32 } } %var_5, { i32 } %var_2, 1
     store { void (i32*, { i32 }, i32)*, { i32 } } %var_6, ptr %var_3
     store { void (i32*, { i32 }, i32)*, { i32 } } %var_6, ptr %arg_0
     ret void
 }
-define void @fn_24(ptr sret(i32) %arg_0, { i32 } %arg_1, i32 %arg_2) {
+define void @fn_26(ptr sret(i32) %arg_0, { i32 } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = extractvalue { i32 } %arg_1, 0
     %var_1 = load i32, ptr @const_1
@@ -2980,16 +2880,16 @@ entry_0:
 declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_23(ptr nocapture writeonly sret({ ptr, { i32 } }) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_25(ptr nocapture writeonly sret({ ptr, { i32 } }) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   %var_2 = insertvalue { i32 } undef, i32 %arg_2, 0
-  %var_6 = insertvalue { ptr, { i32 } } { ptr @fn_24, { i32 } undef }, { i32 } %var_2, 1
+  %var_6 = insertvalue { ptr, { i32 } } { ptr @fn_26, { i32 } undef }, { i32 } %var_2, 1
   store { ptr, { i32 } } %var_6, ptr %arg_0, align 8
   ret void
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_24(ptr nocapture writeonly sret(i32) %arg_0, { i32 } %arg_1, i32 %arg_2) #1 {
+define void @fn_26(ptr nocapture writeonly sret(i32) %arg_0, { i32 } %arg_1, i32 %arg_2) #1 {
 entry_0:
   %var_0 = extractvalue { i32 } %arg_1, 0
   %var_2 = shl i32 %var_0, 1
@@ -3033,7 +2933,7 @@ define i32 @main() {
     store {  } %var_7, ptr %var_6
     %var_8 = alloca { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }
     %var_9 = load { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } }, ptr %var_8
-    %var_10 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_9, void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_27, 0
+    %var_10 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_9, void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)* @fn_29, 0
     %var_11 = insertvalue { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_10, {  } %var_7, 1
     store { void ({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }*, {  }, i32)*, {  } } %var_11, ptr %var_8
     %var_12 = load i32, ptr @const_1
@@ -3068,7 +2968,7 @@ define void @"generated_print_i32"(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2
     ret void
 }
 declare i32 @printf(i8*, ...)
-define void @fn_27(ptr sret({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }) %arg_0, {  } %arg_1, i32 %arg_2) {
+define void @fn_29(ptr sret({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }) %arg_0, {  } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = alloca { i32 }
     %var_1 = load { i32 }, ptr %var_0
@@ -3076,13 +2976,13 @@ define void @fn_27(ptr sret({ void ({ void (i32*, { i32, i32 }, i32)*, { i32, i3
     store { i32 } %var_2, ptr %var_0
     %var_3 = alloca { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }
     %var_4 = load { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } }, ptr %var_3
-    %var_5 = insertvalue { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_4, void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)* @fn_28, 0
+    %var_5 = insertvalue { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_4, void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)* @fn_30, 0
     %var_6 = insertvalue { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_5, { i32 } %var_2, 1
     store { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_6, ptr %var_3
     store { void ({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }*, { i32 }, i32)*, { i32 } } %var_6, ptr %arg_0
     ret void
 }
-define void @fn_28(ptr sret({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }) %arg_0, { i32 } %arg_1, i32 %arg_2) {
+define void @fn_30(ptr sret({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }) %arg_0, { i32 } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = extractvalue { i32 } %arg_1, 0
     %var_1 = alloca { i32, i32 }
@@ -3092,13 +2992,13 @@ define void @fn_28(ptr sret({ void (i32*, { i32, i32 }, i32)*, { i32, i32 } }) %
     store { i32, i32 } %var_4, ptr %var_1
     %var_5 = alloca { void (i32*, { i32, i32 }, i32)*, { i32, i32 } }
     %var_6 = load { void (i32*, { i32, i32 }, i32)*, { i32, i32 } }, ptr %var_5
-    %var_7 = insertvalue { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_6, void (i32*, { i32, i32 }, i32)* @fn_29, 0
+    %var_7 = insertvalue { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_6, void (i32*, { i32, i32 }, i32)* @fn_31, 0
     %var_8 = insertvalue { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_7, { i32, i32 } %var_4, 1
     store { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_8, ptr %var_5
     store { void (i32*, { i32, i32 }, i32)*, { i32, i32 } } %var_8, ptr %arg_0
     ret void
 }
-define void @fn_29(ptr sret(i32) %arg_0, { i32, i32 } %arg_1, i32 %arg_2) {
+define void @fn_31(ptr sret(i32) %arg_0, { i32, i32 } %arg_1, i32 %arg_2) {
   entry_0: 
     %var_0 = extractvalue { i32, i32 } %arg_1, 0
     %var_1 = extractvalue { i32, i32 } %arg_1, 1
@@ -3140,19 +3040,19 @@ entry_0:
 declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_27(ptr nocapture writeonly sret({ ptr, { i32 } }) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
+define void @fn_29(ptr nocapture writeonly sret({ ptr, { i32 } }) %arg_0, {} %arg_1, i32 %arg_2) local_unnamed_addr #1 {
 entry_0:
   %var_2 = insertvalue { i32 } undef, i32 %arg_2, 0
-  %var_6 = insertvalue { ptr, { i32 } } { ptr @fn_28, { i32 } undef }, { i32 } %var_2, 1
+  %var_6 = insertvalue { ptr, { i32 } } { ptr @fn_30, { i32 } undef }, { i32 } %var_2, 1
   store { ptr, { i32 } } %var_6, ptr %arg_0, align 8
   ret void
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_28(ptr nocapture writeonly sret({ ptr, { i32, i32 } }) %arg_0, { i32 } %arg_1, i32 %arg_2) #1 {
+define void @fn_30(ptr nocapture writeonly sret({ ptr, { i32, i32 } }) %arg_0, { i32 } %arg_1, i32 %arg_2) #1 {
 entry_0:
   %var_0 = extractvalue { i32 } %arg_1, 0
-  store ptr @fn_29, ptr %arg_0, align 8
+  store ptr @fn_31, ptr %arg_0, align 8
   %arg_0.repack1 = getelementptr inbounds { ptr, { i32, i32 } }, ptr %arg_0, i64 0, i32 1
   store i32 %var_0, ptr %arg_0.repack1, align 8
   %arg_0.repack1.repack3 = getelementptr inbounds { ptr, { i32, i32 } }, ptr %arg_0, i64 0, i32 1, i32 1
@@ -3161,7 +3061,7 @@ entry_0:
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_29(ptr nocapture writeonly sret(i32) %arg_0, { i32, i32 } %arg_1, i32 %arg_2) #1 {
+define void @fn_31(ptr nocapture writeonly sret(i32) %arg_0, { i32, i32 } %arg_1, i32 %arg_2) #1 {
 entry_0:
   %var_0 = extractvalue { i32, i32 } %arg_1, 0
   %var_1 = extractvalue { i32, i32 } %arg_1, 1
@@ -3205,7 +3105,7 @@ define i32 @main() {
     store {  } %var_7, ptr %var_6
     %var_8 = alloca { void (i32*, {  }, i32, i32)*, {  } }
     %var_9 = load { void (i32*, {  }, i32, i32)*, {  } }, ptr %var_8
-    %var_10 = insertvalue { void (i32*, {  }, i32, i32)*, {  } } %var_9, void (i32*, {  }, i32, i32)* @fn_21, 0
+    %var_10 = insertvalue { void (i32*, {  }, i32, i32)*, {  } } %var_9, void (i32*, {  }, i32, i32)* @fn_23, 0
     %var_11 = insertvalue { void (i32*, {  }, i32, i32)*, {  } } %var_10, {  } %var_7, 1
     store { void (i32*, {  }, i32, i32)*, {  } } %var_11, ptr %var_8
     %var_12 = load i32, ptr @const_2
@@ -3229,7 +3129,7 @@ define void @"generated_print_i32"(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2
     ret void
 }
 declare i32 @printf(i8*, ...)
-define void @fn_21(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2, i32 %arg_3) {
+define void @fn_23(ptr sret(i32) %arg_0, {  } %arg_1, i32 %arg_2, i32 %arg_3) {
   entry_0: 
     %var_0 = load i32, ptr @const_1
     %var_1 = mul i32 %var_0, %arg_2
@@ -3269,7 +3169,7 @@ entry_0:
 declare noundef i32 @printf(ptr nocapture noundef readonly, ...) local_unnamed_addr #0
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind willreturn memory(argmem: write)
-define void @fn_21(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2, i32 %arg_3) local_unnamed_addr #1 {
+define void @fn_23(ptr nocapture writeonly sret(i32) %arg_0, {} %arg_1, i32 %arg_2, i32 %arg_3) local_unnamed_addr #1 {
 entry_0:
   %var_1 = shl i32 %arg_2, 1
   %var_2 = add i32 %var_1, %arg_3
@@ -3874,11 +3774,11 @@ define i32 @main() {
     %var_5 = insertvalue { void (i32*, {  }, i32)*, {  } } %var_4, {  } %var_1, 1
     store { void (i32*, {  }, i32)*, {  } } %var_5, ptr %var_2
     %var_6 = load i1, ptr @const_1
-    br i1 %var_6, label %then_1, label %if_rest15
+    br i1 %var_6, label %then_1, label %if_rest17
   then_1: 
     %var_7 = load i32, ptr @const_2
-    br label %if_rest15
-  if_rest15: 
+    br label %if_rest17
+  if_rest17: 
     %var_8 = phi i32 [%var_7, %then_1], [undef, %main]
     %var_9 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_5, 0
     %var_10 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_5, 1
@@ -3958,11 +3858,11 @@ define i32 @main() {
     br i1 %var_6, label %then_1, label %else_2
   then_1: 
     %var_7 = load i32, ptr @const_2
-    br label %if_rest18
+    br label %if_rest20
   else_2: 
     %var_8 = load i32, ptr @const_3
-    br label %if_rest18
-  if_rest18: 
+    br label %if_rest20
+  if_rest20: 
     %var_9 = phi i32 [%var_7, %then_1], [%var_8, %else_2]
     %var_10 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_5, 0
     %var_11 = extractvalue { void (i32*, {  }, i32)*, {  } } %var_5, 1
