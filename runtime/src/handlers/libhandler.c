@@ -1120,6 +1120,7 @@ static __noinline lh_value capture_resume_yield(hstack* hs, effecthandler* h, co
 #endif
   // and set our jump point
   if (_lh_setjmp(r->entry) != 0) {
+    puts("capture_resume_yield 1");
     // longjmp back here when the resumption is called
     assert(hs == &__hstack);
     lh_value res = r->arg;
@@ -1132,6 +1133,8 @@ static __noinline lh_value capture_resume_yield(hstack* hs, effecthandler* h, co
     // return the result of the resume call
     return res;
   } else {
+    puts("capture_resume_yield 2");
+
     // we set our jump point; now capture the stack upto the handler
     void* top = get_stack_top();
     capture_cstack(&r->cstack, h->stackbase, top);
@@ -1300,9 +1303,11 @@ static lh_value yieldop(lh_optag optag, lh_value arg) {
   count skipped;
   const lh_operation* op;
   effecthandler* h = hstack_find(hs, optag, &op, &skipped);
+  puts("yieldop");
 
   // No resume (i.e. like `throw`)
   if (op->opkind <= LH_OP_NORESUME) {
+    puts("yieldop 1");
     yield_to_handler(hs, h, NULL, op, arg, op_is_release(op));
   }
 
@@ -1335,6 +1340,7 @@ static lh_value yieldop(lh_optag optag, lh_value arg) {
       res = op->opfun(&r.lhresume, h->local, arg);
     }
 
+    puts("yieldop 2");
     // if we returned from a `lh_tail_resume` we just return its result
     if (r.resumed) {
       h->local = r.local;
@@ -1348,6 +1354,8 @@ static lh_value yieldop(lh_optag optag, lh_value arg) {
 
   // In general, capture a resumption and yield to the handler
   else {
+    puts("yieldop 3");
+    // free(optag);
     return capture_resume_yield(hs, h, op, arg);
   }
 
@@ -1361,6 +1369,9 @@ lh_value lh_yield(lh_optag optag, lh_value arg) {
 #ifdef _DEBUG_STATS
   stats.operations++;
 #endif
+  // lh_value res = yieldop(optag, arg);
+  // free(optag);
+  // return res;
   return yieldop(optag, arg);
 }
 
