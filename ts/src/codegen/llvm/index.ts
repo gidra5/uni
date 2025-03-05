@@ -110,10 +110,10 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
 
       const closureValues = freeVars.map((name) => {
         assert(name !== undefined);
-        const x = context.variables.get(name);
+        const variable = context.variables.get(name);
         // console.log(name, x, context.variables);
-
-        return x!();
+        assert(variable);
+        return variable();
       });
       assert(closureValues.every((value) => typeof value !== "function"));
 

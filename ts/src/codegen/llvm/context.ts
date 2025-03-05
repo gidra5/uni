@@ -215,12 +215,12 @@ class Builder {
       if (this.symbols.has(name)) {
         return this.symbols.get(name)!.value;
       }
-  
+
       const id = this.symbols.size;
       const value = this.getOrCreateConstant(String(id), "i64");
-  
+
       this.symbols.set(name, { name, id, value });
-  
+
       return value;
     })();
 
@@ -355,9 +355,13 @@ class Builder {
     return this.createInstruction("alloca", [typeValue], { pointer: type });
   }
 
-  createIntToPtr(value: LLVMValue): LLVMValue {
+  createIntToPtr(value: LLVMValue, _type: LLVMType): LLVMValue {
     const type = this.getType(value);
-    return this.createInstruction("inttoptr", [`${this.getTypeString(type)} ${value}`], "ptr");
+    return this.createInstruction(
+      "inttoptr",
+      [`${this.getTypeString(type)} ${value}`],
+      _type ? { pointer: _type } : "ptr"
+    );
   }
 
   createPtrToInt(value: LLVMValue): LLVMValue {
@@ -641,10 +645,10 @@ class Builder {
     );
   }
 
-  createGetElementPtr(pointer: LLVMValue, index: LLVMValue) {
+  createGetElementPtr(pointer: LLVMValue, ...indicies: LLVMValue[]) {
     return this.createInstruction(
       "getelementptr",
-      [stringifyLLVMType(this.getType(pointer)), stringifyLLVMType(this.getType(index))],
+      [this.getTypeString(this.getType(pointer)), ...indicies.map((index) => this.getTypeString(this.getType(index)))],
       { pointer: this.getType(pointer) }
     );
   }
@@ -781,7 +785,7 @@ export class Context {
       return this.builder.createClosure(name, [llvmType], [], llvmType, (_closure, arg) => {
         switch (true) {
           case type === "symbol": {
-            const fnPtr = this.builder.declareFunction('print_symbol', ["i64"], "void");
+            const fnPtr = this.builder.declareFunction("print_symbol", ["i64"], "void");
             this.builder.createCallVoid(fnPtr, [arg], ["i64"]);
             break;
           }
