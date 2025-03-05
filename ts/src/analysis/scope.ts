@@ -52,6 +52,15 @@ export const resolve = (ast: Tree, names: Binding[] = []): number[] => {
     case NodeType.BLOCK: {
       return resolve(ast.children[0], [...names]);
     }
+    case NodeType.SEQUENCE: {
+      const freeVars: number[] = [];
+      for (const node of ast.children) {
+        const _freeVars = resolve(node, names);
+        freeVars.push(..._freeVars);
+      }
+      const boundVariables = names.map(([, id]) => id);
+      return unique(exclude(freeVars, boundVariables));
+    }
     default:
       return unique(ast.children.flatMap((child) => resolve(child, names)));
   }

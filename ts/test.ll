@@ -84,7 +84,7 @@ entry_0:
   ret void
 }
 
-define void @handleable_72(ptr nocapture writeonly sret({ i64, i64 }) %arg_0) {
+define void @handleable_72(ptr %arg_0) {
 entry_0:
   %var_8 = tail call dereferenceable_or_null(40) ptr @malloc(i64 40)
   %v = load ptr, ptr @const_6

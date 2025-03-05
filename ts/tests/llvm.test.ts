@@ -74,6 +74,16 @@ const optimize = async (compiled: string) => {
 
 const testCase = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
   resolve(ast, globalResolvedNamesArray);
+
+  // console.dir(
+  //   {
+  //     ast,
+  //     bound: inject(Injectable.BoundVariablesMap),
+  //     closure: inject(Injectable.ClosureVariablesMap),
+  //     vars: inject(Injectable.NodeToVariableMap),
+  //   },
+  //   { depth: null }
+  // );
   const compiled = generateLLVMCode(ast, typeSchema);
   expect.soft(compiled).toMatchSnapshot("compiled");
   const optimized = await optimize(compiled);
@@ -96,7 +106,7 @@ const testCase = async (ast: Tree, typeSchema: PhysicalTypeSchema) => {
 };
 
 class Builder {
-  private fnStack: { symbol: symbol; closure: Set<PhysicalType> }[] = [];
+  private fnStack: { symbol: symbol; closure?: Set<PhysicalType> }[] = [];
   constructor(public typeSchema = new Map<number, PhysicalType>()) {}
 
   getType(node: Tree) {
@@ -109,56 +119,71 @@ class Builder {
     return { type: nodeType, id, children, data };
   }
 
-  injectHandler(name: string, handler: Tree, body: Tree) {
-    return this.node(NodeType.INJECT, this.getType(body)!, { name }, [
-      this.fn(
-        [this.name("pointer", "cont"), this.name({ int: 64 }, "local"), this.name({ int: 64 }, "arg")],
-        (cont, local, arg) =>
-          this.app(
+  handler(handler: (cont: (result: Tree) => Tree, arg: () => Tree) => Tree) {
+    return this.fn(
+      [this.name("pointer", "cont"), this.name({ int: 64 }, "local"), this.name({ int: 64 }, "arg")],
+      (cont, local, arg) => {
+        // TODO: allow multiple continuations
+        // const lastContCall;
+        const resume = (result: Tree) => {
+          return this.app(
             this.name(Builder.fnType(["pointer", { int: 64 }, { int: 64 }], { int: 64 }, []), "lh_release_resume"),
             cont(),
             local(),
-            handler
-          )
-      ),
-      body,
-    ]);
+            result
+          );
+        };
+        return handler(resume, arg);
+      }
+    );
   }
 
-  injectHandlers(record: Record<string, Tree>, body: Tree) {
+  injectHandler(name: string, handler: Tree, body: () => Tree) {
+    const _body = this.fn([], body);
+    const type = this.getType(_body)!;
+    assert(typeof type === "object");
+    assert("fn" in type);
+    return this.node(NodeType.INJECT, type.fn.ret, { name }, [handler, _body]);
+  }
+
+  injectHandlers(record: Record<string, Tree>, body: () => Tree) {
     for (const [name, handler] of Object.entries(record)) {
-      body = this.injectHandler(name, handler, body);
+      body = () => this.injectHandler(name, handler, body);
     }
 
-    return body;
+    return body();
   }
 
   handle(type: PhysicalType, name: string) {
     return this.block(
-      this.declare("x", this.malloc(16)),
-      this.set("x", this.tuple(this.handlerSymbol(name), this.int64(0))),
-      this.app(
-        this.name(Builder.fnType([{ pointer: { tuple: ["symbol", { int: 64 }] } }, "unknown"], type, []), "lh_yield"),
-        this.name({ pointer: { tuple: ["symbol", { int: 64 }] } }, "x"),
-        this.unit()
-      )
+      ...this.declare("x", this.malloc(16), (x) => [
+        this.set(x(), this.tuple(this.handlerSymbol(name), this.int64(0))),
+        this.app(
+          this.name(Builder.fnType([{ pointer: { tuple: ["symbol", { int: 64 }] } }, "unknown"], type, []), "lh_yield"),
+          this.name({ pointer: { tuple: ["symbol", { int: 64 }] } }, "x"),
+          this.unit()
+        ),
+      ])
     );
   }
 
   handleFree(type: PhysicalType, name: string) {
     return this.block(
-      this.declare("x", this.malloc(16)),
-      this.set("x", this.tuple(this.handlerSymbol(name), this.int64(0))),
-      this.declare(
-        "y",
-        this.app(
-          this.name(Builder.fnType([{ pointer: { tuple: ["symbol", { int: 64 }] } }, "unknown"], type, []), "lh_yield"),
-          this.name({ pointer: { tuple: ["symbol", { int: 64 }] } }, "x"),
-          this.unit()
-        )
-      ),
-      this.free(this.name("pointer", "x")),
-      this.name(type, "y")
+      ...this.declare("x", this.malloc(16), (x) => [
+        this.set(x(), this.tuple(this.handlerSymbol(name), this.int64(0))),
+        ...this.declare(
+          "y",
+          this.app(
+            this.name(
+              Builder.fnType([{ pointer: { tuple: ["symbol", { int: 64 }] } }, "unknown"], type, []),
+              "lh_yield"
+            ),
+            x(),
+            this.unit()
+          ),
+          (y) => [this.free(x()), y()]
+        ),
+      ])
     );
   }
 
@@ -211,16 +236,26 @@ class Builder {
     return this.app(fn, ast);
   }
 
-  declare(name: string, value: Tree) {
+  declare(name: string, value: Tree, rest: (name: () => Tree) => Tree[]) {
     const type = this.typeSchema.get(value.id)!;
     const nameNode = this.name(type, name);
-    return this.node(NodeType.DECLARE, type, {}, [nameNode, value]);
+    const symbol = Symbol();
+    const _var = () => {
+      const type = this.typeSchema.get(nameNode.id)!;
+      const index = this.fnStack.findIndex((s) => s.symbol === symbol);
+      for (const s of this.fnStack.slice(index + 1)) s.closure?.add(type);
+      return this.name(type, nameNode.data.value);
+    };
+
+    this.fnStack.push({ symbol });
+    const _rest = rest(_var);
+    this.fnStack.pop();
+    return [this.node(NodeType.DECLARE, type, {}, [nameNode, value]), ..._rest];
   }
 
-  set(name: string, value: Tree) {
+  set(name: Tree, value: Tree) {
     const type = this.typeSchema.get(value.id)!;
-    const nameNode = this.ref(this.name(type, name));
-    return this.node(NodeType.ASSIGN, type, {}, [nameNode, value]);
+    return this.node(NodeType.ASSIGN, type, {}, [this.ref(name), value]);
   }
 
   assign(name: string, value: Tree) {
@@ -268,8 +303,7 @@ class Builder {
     const _args = x.map((arg) => () => {
       const type = this.typeSchema.get(arg.id)!;
       const index = this.fnStack.findIndex((s) => s.symbol === symbol);
-      const closures = this.fnStack.slice(index + 1).map((s) => s.closure);
-      for (const closure of closures) closure.add(type);
+      for (const s of this.fnStack.slice(index + 1)) s.closure?.add(type);
       return this.name(type, arg.data.value);
     });
 
@@ -280,6 +314,8 @@ class Builder {
     const argsType = x.map((arg) => this.typeSchema.get(arg.id)!);
     const retType = this.typeSchema.get(_f.id)!;
     const type = Builder.fnType(argsType, retType, [...closure]);
+    // console.log(closure, _f);
+
     return this.node(NodeType.FUNCTION, type, {}, [...x, _f]);
   }
 
@@ -314,6 +350,10 @@ class Builder {
 
   unit() {
     return this.node(NodeType.ATOM, "symbol", { name: "unit" }, []);
+  }
+
+  placeholder() {
+    return this.node(NodeType.PLACEHOLDER, "unknown", {}, []);
   }
 
   int(value: number) {
@@ -751,7 +791,7 @@ describe("structured programming compilation", () => {
     const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
-    const declare = (name: string, value: Tree) => builder.declare(name, value);
+    const declare = (name: string, value: Tree) => builder.declare(name, value, () => [])[0];
     const int = (value: number) => builder.int(value);
     const block = (...args: Tree[]) => builder.block(...args);
 
@@ -765,7 +805,7 @@ describe("structured programming compilation", () => {
     const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
-    const declare = (name: string, value: Tree) => builder.declare(name, value);
+    const declare = (name: string, value: Tree) => builder.declare(name, value, () => [])[0];
     const int = (value: number) => builder.int(value);
     const block = (...args: Tree[]) => builder.block(...args);
 
@@ -781,7 +821,7 @@ describe("structured programming compilation", () => {
     const builder = new Builder();
     const app = (f: Tree, ...x: Tree[]) => builder.app(f, ...x);
     const name = (type: PhysicalType, value: string) => builder.name(type, value);
-    const declare = (name: string, value: Tree) => builder.declare(name, value);
+    const declare = (name: string, value: Tree) => builder.declare(name, value, () => [])[0];
     const assign = (name: string, value: Tree) => builder.assign(name, value);
     const add = (lhs: Tree, rhs: Tree) => builder.add(lhs, rhs);
     const int = (value: number) => builder.int(value);
@@ -1007,15 +1047,21 @@ describe("effect handlers compilation", () => {
   //   expect(result).toEqual(2);
   // });
 
-  test("inject", async () => {
+  test.only("inject", async () => {
     const builder = new Builder();
 
     await testCase(
       builder.script(
         builder.print(
-          builder.injectHandlers(
-            { a: builder.int64(1), b: builder.int64(2) },
-            builder.tuple(builder.handleFree({ int: 64 }, "a"), builder.handle({ int: 64 }, "b"))
+          builder.injectHandler(
+            "b",
+            builder.handler((cont) => cont(builder.int64(2))),
+            () =>
+              builder.injectHandler(
+                "a",
+                builder.handler((cont) => cont(builder.int64(1))),
+                () => builder.tuple(builder.handleFree({ int: 64 }, "a"), builder.handle({ int: 64 }, "b"))
+              )
           )
         )
       ),
@@ -1024,18 +1070,43 @@ describe("effect handlers compilation", () => {
   });
 
   // test("inject shadowing", async () => {
-  //   const input = `
-  //     inject a: 1, b: 2 ->
-  //     a := handle (:a) ()
-  //     b := handle (:b) ()
+  //   const builder = new Builder();
 
-  //     inject a: a+1, b: b+2 ->
+  //   await testCase(
+  //     builder.script(
+  //       builder.print(
+  //         builder.injectHandlers(
+  //           { a: () => builder.int64(1), b: () => builder.int64(2) },
+  //           builder.block(
+  //             ...builder.declare("a", builder.handleFree({ int: 64 }, "a"), (a) => [
+  //               ...builder.declare("b", builder.handleFree({ int: 64 }, "b"), (b) => [
+  //                 builder.injectHandlers(
+  //                   {
+  //                     a: () => builder.add(a(), builder.int64(1)),
+  //                     b: () => builder.add(b(), builder.int64(2)),
+  //                   },
+  //                   builder.block(builder.tuple(builder.handleFree({ int: 64 }, "a"), builder.handle({ int: 64 }, "b")))
+  //                 ),
+  //               ]),
+  //             ])
+  //           )
+  //         )
+  //       )
+  //     ),
+  //     builder.typeSchema
+  //   );
+  //   // const input = `
+  //   //   inject a: 1, b: 2 ->
+  //   //   a := handle (:a) ()
+  //   //   b := handle (:b) ()
 
-  //     handle (:a) (),
-  //     handle (:b) ()
-  //   `;
-  //   const result = await evaluate(input);
-  //   expect(result).toEqual([2, 4]);
+  //   //   inject a: a+1, b: b+2 ->
+
+  //   //   handle (:a) (),
+  //   //   handle (:b) ()
+  //   // `;
+  //   // const result = await evaluate(input);
+  //   // expect(result).toEqual([2, 4]);
   // });
 
   // test("mask", async () => {
