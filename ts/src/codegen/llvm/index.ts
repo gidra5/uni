@@ -198,7 +198,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       const action = context.builder.createConstantRecord(handlerSymbol, context.builder.createConstantInt(0, 64));
       const actionPtr = context.builder.getOrCreateConstant(action, context.builder.getType(action));
       const handlerFn = context.builder.createFunction(
-        `handler_${ast.data.name}`,
+        `handler_${ast.data.name}_${ast.id}`,
         ["ptr", "i64", "i64"],
         "i64",
         (cont, local, arg) => {
