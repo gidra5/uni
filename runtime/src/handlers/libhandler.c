@@ -1138,7 +1138,7 @@ static __noinline lh_value capture_resume_yield(hstack* hs, effecthandler* h, lh
 
 // Start a handler
 static __noinline lh_value handle_with(
-    hstack* hs, effecthandler* h, lh_value (*action)(lh_value), lh_value arg) {
+    hstack* hs, effecthandler* h, lh_actionfun* action, lh_value arg) {
 // set the handler entry point
 #if !defined(NDEBUG)
   const count id = h->id;
@@ -1188,7 +1188,8 @@ static __noinline lh_value handle_with(
     lh_value res;
     lh_resultfun* resfun = NULL;
 
-    res = action(arg);
+    void (*action_fn)(void*, uint8_t*, lh_value) = action->function_ptr;
+    action_fn(&res, &action->closure, arg);
     assert(hs == &__hstack);
     h = (effecthandler*)hstack_top(hs);  // re-load our handler since the handler stack could have been reallocated
 #ifndef NDEBUG
@@ -1208,7 +1209,7 @@ static __noinline lh_value handle_with(
 
 // `handle_upto` installs a handler on the stack with a given stack `base`.
 static __noinline lh_value handle_upto(hstack* hs, void* base, const lh_handlerdef* def,
-                                       lh_value (*action)(lh_value), lh_value arg) {
+                                       lh_actionfun* action, lh_value arg) {
   // allocate handler frame on the stack so it will be part of a captured continuation
   effecthandler* h = hstack_push_effect(hs, def, base);
   fragment* fragment;

@@ -123,7 +123,16 @@ lh_value lh_value_from_fun_ptr(lh_voidfun* fun);
 lh_voidfun* lh_fun_ptr_value(lh_value v);
 
 /// A generic action working on generic #lh_value s.
-typedef lh_value(lh_actionfun)(lh_value);
+// typedef lh_value(lh_actionfun)(lh_value);
+typedef struct {
+  void (*function_ptr)(void*, uint8_t*, lh_value);
+  uint8_t closure[0];
+} lh_actionfun;
+
+// typedef struct {
+//   lh_value (*function_ptr)(lh_value, uint8_t*);
+//   uint8_t closure[0];
+// } lh_resultfun;
 
 /// A `lh_resultfun` is called when a handled action is done.
 typedef lh_value(lh_resultfun)(lh_value arg);
