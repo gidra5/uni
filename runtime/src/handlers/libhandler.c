@@ -1337,13 +1337,10 @@ static lh_value yieldop(lh_effect optag, lh_value arg) {
 
 // Yield to the first enclosing handler that can handle
 // operation `optag` and pass it the argument `arg`.
-lh_value lh_yield(lh_optag optag, lh_value arg) {
+lh_value lh_yield(lh_effect optag, lh_value arg) {
 #ifdef _DEBUG_STATS
   stats.operations++;
 #endif
-  // lh_value res = yieldop(optag, arg);
-  // free(optag);
-  // return res;
   return yieldop(optag, arg);
 }
 
