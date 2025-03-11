@@ -176,7 +176,12 @@ typedef const struct lh_optag_ {
 }* lh_optag;
 
 /// Operation functions are called when that operation is `yield`ed to.
-typedef lh_value(lh_opfun)(lh_resume r, lh_value arg);
+// typedef lh_value(lh_opfun)(lh_resume r, lh_value arg);
+
+typedef struct {
+  void (*function_ptr)(void*, uint8_t*, lh_resume r, lh_value arg);
+  uint8_t closure[0];
+} lh_opfun;
 
 /// Operation kinds.
 /// When defining the operations that a handler can handle,

@@ -1173,13 +1173,15 @@ static __noinline lh_value handle_with(
         hstack_push_scoped(hs, resume);
 
         assert((void*)&resume->lhresume == (void*)resume);
-        res = op->opfun(&resume->lhresume, res);
+        void (*op_fn)(void*, uint8_t*, lh_resume, lh_value) = op->opfun->function_ptr;
+        op_fn(&res, &op->opfun->closure, &resume->lhresume, res);
         assert(hs == &__hstack);
 
         hstack_pop(hs, op->opkind == LH_OP_SCOPED);
       } else {
         // and call the operation handler
-        res = op->opfun(&resume->lhresume, res);
+        void (*op_fn)(void*, uint8_t*, lh_resume, lh_value) = op->opfun->function_ptr;
+        op_fn(&res, &op->opfun->closure, &resume->lhresume, res);
       }
     }
     return res;
@@ -1304,7 +1306,8 @@ static lh_value yieldop(lh_effect optag, lh_value arg) {
       count hidx = hstack_indexof(hs, to_handler(h));
 
       // call the operation handler directly for a tail resumption
-      res = op->opfun(&r.lhresume, arg);
+      void (*op_fn)(void*, uint8_t*, lh_resume, lh_value) = op->opfun->function_ptr;
+      op_fn(&res, &op->opfun->closure, &r.lhresume, arg);
       h = (effecthandler*)hstack_at(hs, hidx);
       assert(is_effecthandler(to_handler(h)));
 
@@ -1315,7 +1318,8 @@ static lh_value yieldop(lh_effect optag, lh_value arg) {
     // OP_TAIL_NOOP: will not call operations so no need for a skip frame
     // call the operation function and return directly (as it promised to tail resume)
     else {
-      res = op->opfun(&r.lhresume, arg);
+      void (*op_fn)(void*, uint8_t*, lh_resume, lh_value) = op->opfun->function_ptr;
+      op_fn(&res, &op->opfun->closure, &r.lhresume, arg);
     }
 
     // if we returned from a `lh_tail_resume` we just return its result
