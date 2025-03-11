@@ -246,7 +246,7 @@ lh_value lh_check_value_ptr(const void* p) {
   Effect and optag names
 -----------------------------------------------------------------*/
 
-static bool op_is_release(const lh_operation* op) {
+static bool op_is_release(lh_handlerdef* op) {
   assert(op != NULL);
   return (op->opkind != LH_OP_NORESUMEX);
 }
@@ -750,7 +750,7 @@ static handler* hstack_append_copyfrom(ref hstack* hs, ref hstack* tocopy, handl
 }
 
 // Find an operation that handles `optag` in the handler stack.
-static effecthandler* hstack_find(ref hstack* hs, lh_optag optag, out const lh_operation** op, out count* skipped) {
+static effecthandler* hstack_find(ref hstack* hs, lh_optag optag, out lh_handlerdef** op, out count* skipped) {
   if (!hstack_empty(hs)) {
     handler* h = hstack_top(hs);
     do {
@@ -758,15 +758,11 @@ static effecthandler* hstack_find(ref hstack* hs, lh_optag optag, out const lh_o
       if (h->effect == optag->effect) {
         effecthandler* eh = (effecthandler*)h;
         assert(eh->hdef != NULL);
-        const lh_operation* oper = &eh->hdef->operations[optag->opidx];
-        // assert(oper->optag == optag);  // can fail if operations are defined in a different order than declared
-        assert(oper->opfun != NULL || oper->opkind == LH_OP_FORWARD);
-        if (oper->opfun != NULL) {  // NULL functions are assume tail-resumptive identity functions, skip it
-          *skipped = hstack_indexof(hs, h);
-          assert(*skipped > 0);
-          *op = oper;
-          return eh;
-        }
+        lh_handlerdef* hdef = &eh->hdef;
+        *skipped = hstack_indexof(hs, h);
+        assert(*skipped > 0);
+        *op = hdef;
+        return eh;
       } else if (is_skiphandler(h)) {
         h = hstack_prev_skip(hs, (skiphandler*)h);
       }
@@ -1045,7 +1041,7 @@ static void capture_hstack(hstack* hs, hstack* to, effecthandler* h, bool copy) 
 
 // Return to a handler by unwinding the handler stack.
 static void __noinline __noreturn yield_to_handler(hstack* hs, effecthandler* h,
-                                                   resume* resume, const lh_operation* op, lh_value oparg, bool do_release) {
+                                                   resume* resume, lh_handlerdef* op, lh_value oparg, bool do_release) {
   cstack cs;
   cstack_init(&cs);
   hstack_pop_upto(hs, to_handler(h), do_release, &cs);
@@ -1099,7 +1095,7 @@ static __noinline lh_value capture_resume_call(hstack* hs, resume* r, lh_value r
 }
 
 // Capture a first-class resumption and yield to the handler.
-static __noinline lh_value capture_resume_yield(hstack* hs, effecthandler* h, const lh_operation* op, lh_value oparg) {
+static __noinline lh_value capture_resume_yield(hstack* hs, effecthandler* h, lh_handlerdef* op, lh_value oparg) {
   // initialize continuation
   resume* r = (resume*)checked_malloc(sizeof(resume));
   r->lhresume.rkind = (op->opkind <= LH_OP_SCOPED ? ScopedResume : GeneralResume);
@@ -1171,8 +1167,8 @@ static __noinline lh_value handle_with(
     lh_value res = h->arg;
     lh_value local = h->local;
     resume* resume = h->arg_resume;
-    const lh_operation* op = h->arg_op;
-    assert(op == NULL || op->optag->effect == h->handler.effect);
+    const lh_handlerdef* op = h->arg_op;
+    assert(op == NULL || op->effect == h->handler.effect);
     hstack_pop(hs, (op == NULL) /*|| !op_is_release(op)*/);  // no release if moved into resumption
     if (op != NULL && op->opfun != NULL) {
       // push a scoped frame if necessary
@@ -1289,7 +1285,7 @@ static lh_value yieldop(lh_optag optag, lh_value arg) {
   // find the operation handler along the handler stack
   hstack* hs = &__hstack;
   count skipped;
-  const lh_operation* op;
+  const lh_handlerdef* op;
   effecthandler* h = hstack_find(hs, optag, &op, &skipped);
 
   // No resume (i.e. like `throw`)
@@ -1371,7 +1367,7 @@ lh_value lh_yield_local(lh_optag optag) {
   // find the operation handler along the handler stack
   hstack* hs = &__hstack;
   count skipped;
-  const lh_operation* op;
+  lh_handlerdef* op;
   effecthandler* h = hstack_find(hs, optag, &op, &skipped);
   // and return the local state
   return h->local;

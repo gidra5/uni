@@ -128,7 +128,7 @@ typedef struct _effecthandler {
   count id;                    // uniquely identifies the handler (cannot always use pointer due to reallocation)
   const lh_handlerdef* hdef;   // operation definitions
   volatile lh_value arg;       // the yield argument is passed here
-  const lh_operation* arg_op;  // the yielded operation is passed here
+  const lh_handlerdef* arg_op;  // the yielded operation is passed here
   resume* arg_resume;          // the resumption function for the yielded operation
   void* stackbase;             // pointer to the c-stack just below the handler
   lh_value local;
