@@ -1201,7 +1201,8 @@ static __noinline lh_value handle_with(
     resfun = h->hdef->resultfun;
     hstack_pop(hs, true);
     if (resfun != NULL) {
-      res = resfun(res);
+      void (*ret_fn)(void*, uint8_t*, lh_value) = resfun->function_ptr;
+      ret_fn(&res, &resfun->closure, res);
     }
     return res;
   }

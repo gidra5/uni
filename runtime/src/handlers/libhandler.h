@@ -129,13 +129,13 @@ typedef struct {
   uint8_t closure[0];
 } lh_actionfun;
 
-// typedef struct {
-//   lh_value (*function_ptr)(lh_value, uint8_t*);
-//   uint8_t closure[0];
-// } lh_resultfun;
+typedef struct {
+  void (*function_ptr)(void*, uint8_t*, lh_value);
+  uint8_t closure[0];
+} lh_resultfun;
 
 /// A `lh_resultfun` is called when a handled action is done.
-typedef lh_value(lh_resultfun)(lh_value arg);
+// typedef lh_value(lh_resultfun)(lh_value arg);
 
 /// An acquire function copies the local state in a handler when required.
 typedef lh_value lh_acquirefun(lh_value local);
