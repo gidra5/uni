@@ -543,12 +543,7 @@ static void handler_release(handler* h) {
     /* nothing */
   } else {
     assert(is_effecthandler(h));
-    effecthandler* eh = (effecthandler*)h;
-    lh_releasefun* f = eh->hdef->local_release;
-    if (f != NULL) {
-      f(eh->local);
-    }
-    eh->local = lh_value_null;
+    /* nothing */
   }
 }
 
@@ -562,11 +557,7 @@ static handler* handler_acquire(handler* h) {
     /* nothing */
   } else {
     assert(is_effecthandler(h));
-    effecthandler* eh = (effecthandler*)h;
-    lh_acquirefun* f = eh->hdef->local_acquire;
-    if (f != NULL) {
-      eh->local = f(eh->local);
-    }
+    /* nothing */
   }
   return h;
 }

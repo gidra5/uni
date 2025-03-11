@@ -196,8 +196,6 @@ typedef struct _lh_operation {
 /// Handler definition.
 typedef struct _lh_handlerdef {
   lh_effect effect;                ///< The Effect being handled.
-  lh_acquirefun* local_acquire;    ///< Called when the local state needs to be acquired. Can be NULL.
-  lh_releasefun* local_release;    ///< Called when the local state is released. Can be NULL.
   lh_resultfun* resultfun;         ///< Invoked when the handled action is done; can be NULL in which case the action result is passed unchanged.
   const lh_operation* operations;  ///< Definitions of all handled operations ending with an operation with `lh_opkind` `LH_OP_NULL`. Can be NULL to handle no operations;
                                    ///< Note: all operations must be in the same order here as in the effect definition! (since each operation has a fixed index).
