@@ -750,12 +750,12 @@ static handler* hstack_append_copyfrom(ref hstack* hs, ref hstack* tocopy, handl
 }
 
 // Find an operation that handles `optag` in the handler stack.
-static effecthandler* hstack_find(ref hstack* hs, lh_optag optag, out lh_handlerdef** op, out count* skipped) {
+static effecthandler* hstack_find(ref hstack* hs, lh_effect optag, out lh_handlerdef** op, out count* skipped) {
   if (!hstack_empty(hs)) {
     handler* h = hstack_top(hs);
     do {
       assert(valid_handler(hs, h));
-      if (h->effect == optag->effect) {
+      if (h->effect == optag) {
         effecthandler* eh = (effecthandler*)h;
         assert(eh->hdef != NULL);
         lh_handlerdef* hdef = &eh->hdef;
@@ -1281,7 +1281,7 @@ lh_value _lh_implicit_get(lh_resume r, lh_value local, lh_value arg) {
 
 // `yieldop` yields to the first enclosing handler that can handle
 //   operation `optag` and passes it the argument `arg`.
-static lh_value yieldop(lh_optag optag, lh_value arg) {
+static lh_value yieldop(lh_effect optag, lh_value arg) {
   // find the operation handler along the handler stack
   hstack* hs = &__hstack;
   count skipped;
@@ -1363,7 +1363,7 @@ lh_value lh_yield(lh_optag optag, lh_value arg) {
 // with care as it violates the encapsulation principle but works
 // well for implicit parameters and to reduce the number of explicit
 // operations for many effects.
-lh_value lh_yield_local(lh_optag optag) {
+lh_value lh_yield_local(lh_effect optag) {
   // find the operation handler along the handler stack
   hstack* hs = &__hstack;
   count skipped;
@@ -1394,7 +1394,7 @@ void* lh_cstack_ptr(lh_resume r, void* p) {
 }
 
 // Yield N arguments to an operation
-lh_value lh_yieldN(lh_optag optag, int argcount, ...) {
+lh_value lh_yieldN(lh_effect optag, int argcount, ...) {
   assert(argcount >= 0);
   va_list ap;
   va_start(ap, argcount);

@@ -212,7 +212,7 @@ typedef struct _lh_handlerdef {
 lh_value lh_handle(const lh_handlerdef* def, lh_value local, lh_actionfun* body, lh_value arg);
 
 /// Yield an operation to the nearest enclosing handler.
-lh_value lh_yield(lh_optag optag, lh_value arg);
+lh_value lh_yield(lh_effect optag, lh_value arg);
 
 /// `lh_yield_local` yields to the first enclosing handler for operation `optag` and returns its local state.
 /// This should be used
@@ -221,7 +221,7 @@ lh_value lh_yield(lh_optag optag, lh_value arg);
 /// operations for many effects.
 /// Note, still forwards through effect handlers that use an `lh_opfun` of `NULL`, and, more precisely,
 /// returns the state for the innermost enclosing handler that does not have a `NULL` operation.
-lh_value lh_yield_local(lh_optag optag);
+lh_value lh_yield_local(lh_effect optag);
 
 /*-----------------------------------------------------------------
   Scoped resume
@@ -283,7 +283,7 @@ typedef struct _yieldargs {
 /// The operation function gets a `yieldargs*` as its
 /// argument containing `argcount` arguments.  The `yieldarg*` pointer is valid during
 /// the scope of the operation function and freed automatically afterwards.
-lh_value lh_yieldN(lh_optag optag, int argcount, ...);
+lh_value lh_yieldN(lh_effect optag, int argcount, ...);
 
 /*-----------------------------------------------------------------
   Operation tags
