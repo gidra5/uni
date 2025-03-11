@@ -44,6 +44,9 @@ export const physicalTypeAlignment = (type: PhysicalType): number => {
 export const physicalTypeSize = (type: PhysicalType, packed = false): number => {
   if (type === "void") return 0;
   if (type === "unknown") return 0;
+  if (type === "pointer") return 8;
+  if (type === "symbol") return 8;
+
   assert(typeof type === "object");
   switch (true) {
     case "int" in type: {
@@ -57,6 +60,7 @@ export const physicalTypeSize = (type: PhysicalType, packed = false): number => 
     }
     case "tuple" in type: {
       if (packed) return Iterator.iter(type.tuple).sum(physicalTypeSize);
+      if (type.tuple.length === 0) return 0;
       const fieldAlignment = Iterator.iter(type.tuple).max(physicalTypeAlignment);
       return fieldAlignment * type.tuple.length;
     }

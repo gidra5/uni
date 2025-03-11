@@ -474,13 +474,15 @@ class Builder {
   createClosureCall(func: LLVMValue, args: LLVMValue[]) {
     const fnPtr = this.createExtractValue(func, 0);
     const closure = this.createExtractValue(func, 1);
+    const closurePtr = this.createAlloca(this.getType(closure));
+    this.createStore(closure, closurePtr);
 
     const fnPtrType = this.getType(fnPtr);
     assert(typeof fnPtrType === "object" && "pointer" in fnPtrType);
     const funcType = fnPtrType.pointer;
     assert(typeof funcType === "object" && "args" in funcType);
 
-    return this.createCall(fnPtr, [closure, ...args], funcType.returnType, funcType.args);
+    return this.createCall(fnPtr, [closurePtr, ...args], funcType.returnType, funcType.args);
   }
 
   createReturn(value: LLVMValue): LLVMValue {
@@ -548,10 +550,16 @@ class Builder {
   ): LLVMValue {
     const closureValue = this.createRecord(closure);
     const closureType = this.getType(closureValue);
-    const func = this.createFunctionSRet(name, [closureType, ...argsType], retType, (closureValue, ...args) => {
-      const _closure = closure.map((_, i) => this.createExtractValue(closureValue, i));
-      return body(_closure, ...args);
-    });
+    const func = this.createFunctionSRet(
+      name,
+      [{ pointer: closureType }, ...argsType],
+      retType,
+      (closurePtr, ...args) => {
+        const closureValue = this.createLoad(closurePtr);
+        const _closure = closure.map((_, i) => this.createExtractValue(closureValue, i));
+        return body(_closure, ...args);
+      }
+    );
 
     return this.createRecord([func, closureValue]);
   }
@@ -646,9 +654,16 @@ class Builder {
   }
 
   createGetElementPtr(pointer: LLVMValue, ...indicies: LLVMValue[]) {
+    const x = this.getType(pointer);
+    assert(typeof x === "object");
+    assert("pointer" in x);
     return this.createInstruction(
       "getelementptr",
-      [this.getTypeString(this.getType(pointer)), ...indicies.map((index) => this.getTypeString(this.getType(index)))],
+      [
+        this.getTypeString(x.pointer),
+        `ptr ${pointer}`,
+        ...indicies.map((index) => `${this.getTypeString(this.getType(index))} ${index}`),
+      ],
       { pointer: this.getType(pointer) }
     );
   }

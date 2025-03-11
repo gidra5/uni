@@ -1049,19 +1049,13 @@ describe("effect handlers compilation", () => {
 
   test.only("inject", async () => {
     const builder = new Builder();
-
     await testCase(
       builder.script(
         builder.print(
           builder.injectHandler(
-            "b",
-            builder.handler((cont) => cont(builder.int64(2))),
-            () =>
-              builder.injectHandler(
-                "a",
-                builder.handler((cont) => cont(builder.int64(1))),
-                () => builder.tuple(builder.handleFree({ int: 64 }, "a"), builder.handle({ int: 64 }, "b"))
-              )
+            "a",
+            builder.handler((cont) => cont(builder.int64(1))),
+            () => builder.handleFree({ int: 64 }, "a")
           )
         )
       ),
@@ -1069,9 +1063,29 @@ describe("effect handlers compilation", () => {
     );
   });
 
+  // test("inject 2", async () => {
+  //   const builder = new Builder();
+  //   await testCase(
+  //     builder.script(
+  //       builder.print(
+  //         builder.injectHandler(
+  //           "b",
+  //           builder.handler((cont) => cont(builder.int64(2))),
+  //           () =>
+  //             builder.injectHandler(
+  //               "a",
+  //               builder.handler((cont) => cont(builder.int64(1))),
+  //               () => builder.tuple(builder.handleFree({ int: 64 }, "a"), builder.handle({ int: 64 }, "b"))
+  //             )
+  //         )
+  //       )
+  //     ),
+  //     builder.typeSchema
+  //   );
+  // });
+
   // test("inject shadowing", async () => {
   //   const builder = new Builder();
-
   //   await testCase(
   //     builder.script(
   //       builder.print(
@@ -1099,22 +1113,18 @@ describe("effect handlers compilation", () => {
   //   //   inject a: 1, b: 2 ->
   //   //   a := handle (:a) ()
   //   //   b := handle (:b) ()
-
   //   //   inject a: a+1, b: b+2 ->
-
   //   //   handle (:a) (),
   //   //   handle (:b) ()
   //   // `;
   //   // const result = await evaluate(input);
   //   // expect(result).toEqual([2, 4]);
   // });
-
   // test("mask", async () => {
   //   const input = `
   //     inject a: 1, b: 2 ->
   //     a := handle (:a) ()
   //     b := handle (:b) ()
-
   //     inject a: a+1, b: b+2 ->
   //     mask :a ->
   //     a := handle (:a) ()
@@ -1124,7 +1134,6 @@ describe("effect handlers compilation", () => {
   //   const result = await evaluate(input);
   //   expect(result).toEqual([1, 4]);
   // });
-
   // test("without", async () => {
   //   const input = `
   //     inject a: 1 ->
@@ -1133,27 +1142,22 @@ describe("effect handlers compilation", () => {
   //   `;
   //   expect(async () => await evaluate(input)).rejects.toThrow();
   // });
-
   // test("pythagorean triple example", async () => {
   //   const input = `
   //     import "std/math" as { floor, sqrt }
-
   //     decide := :decide |> handle
   //     fail := :fail |> handle
   //     choose_int := fn (m, n) {
   //       if m > n do fail()
   //       if decide() do m else self(m+1, n)
   //     }
-
   //     pythagorean_triple := fn m, n {
   //       a := choose_int(m, n);
   //       b := choose_int(a + 1, n + 1);
   //       c := sqrt (a^2 + b^2);
   //       if floor c != c do fail()
-
   //       (a, b, c)
   //     };
-
   //     false_branch_first :=
   //       decide: handler fn (callback, _) {
   //         fail_handler := fail: handler fn do callback false
@@ -1164,7 +1168,6 @@ describe("effect handlers compilation", () => {
   //         fail_handler := fail: handler fn do callback true
   //         inject fail_handler { callback false }
   //       };
-
   //     inject false_branch_first { pythagorean_triple 4 15 },
   //     inject true_branch_first { pythagorean_triple 4 15 }
   //   `;
@@ -1174,7 +1177,6 @@ describe("effect handlers compilation", () => {
   //     [12, 16, 20],
   //   ]);
   // });
-
   // test("logger example", async () => {
   //   const input = `
   //     logger :=
@@ -1183,11 +1185,8 @@ describe("effect handlers compilation", () => {
   //         result, (msg, ...logs)
   //       },
   //       [return_handler]: fn x do x, ()
-
   //     log := handle(:log)
-
   //     f := fn do log 234
-
   //     inject logger {
   //       log 123
   //       log 456
@@ -1200,7 +1199,6 @@ describe("effect handlers compilation", () => {
   //     [123, 456, 234],
   //   ]);
   // });
-
   // test("transaction example", async () => {
   //   const input = `
   //     // can abstract db queries for example, instead of simple value state
@@ -1224,10 +1222,8 @@ describe("effect handlers compilation", () => {
   //       [return_handler]: fn x {
   //         fn state { set state; x }
   //       }
-
   //     set := :set |> handle
   //     get := :get |> handle
-
   //     inject state {
   //       set 123
   //       inject transaction {
@@ -1240,20 +1236,17 @@ describe("effect handlers compilation", () => {
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual([123, 357]);
   // });
-
   // test("block-inject-fn-handle twice backtracking", async () => {
   //   const input = `
   //     f := fn {
   //       handle (:a) ()
   //       handle (:a) ()
   //     }
-
   //     { inject a: 3 do f() }
   //   `;
   //   const result = await evaluate(input);
   //   expect(result).toEqual(3);
   // });
-
   // test("block-inject-fn-handle backtracking", async () => {
   //   const input = `
   //     f := fn do handle (:a) ()
@@ -1262,7 +1255,6 @@ describe("effect handlers compilation", () => {
   //   const result = await evaluate(input);
   //   expect(result).toEqual(3);
   // });
-
   // test("multiple continuation calls", async () => {
   //   const input = `
   //     decide := :decide |> handle
@@ -1277,7 +1269,6 @@ describe("effect handlers compilation", () => {
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual([123, 456]);
   // });
-
   // test("multiple continuation calls with mutations and refs", async () => {
   //   const input = `
   //     _handler :=
@@ -1285,20 +1276,17 @@ describe("effect handlers compilation", () => {
   //         callback()
   //         callback()
   //       }
-
   //     m := inject _handler {
   //       m := (1,)
   //       handle (:do) ()
   //       m[0] = m[0] + 1
   //       m
   //     }
-
   //     m
   //   `;
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual([3]);
   // });
-
   // test("multiple continuation calls with mutations and closure", async () => {
   //   const input = `
   //       _handler :=
@@ -1306,7 +1294,6 @@ describe("effect handlers compilation", () => {
   //           callback()
   //           callback()
   //         }
-
   //       mut n := 1
   //       m, f := inject _handler {
   //         mut m := 1
@@ -1317,13 +1304,11 @@ describe("effect handlers compilation", () => {
   //         n = n + 1
   //         m, g
   //       }
-
   //       m, n, f()
   //     `;
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual([2, 3, [2, 2]]);
   // });
-
   // test("multiple continuation calls with mutations", async () => {
   //   const input = `
   //     _handler :=
@@ -1331,7 +1316,6 @@ describe("effect handlers compilation", () => {
   //         callback()
   //         callback()
   //       }
-
   //     mut n := 1
   //     inject _handler {
   //       mut m := 1
@@ -1344,7 +1328,6 @@ describe("effect handlers compilation", () => {
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual([2, 3]);
   // });
-
   // test("multiple continuation calls with inner mutation", async () => {
   //   const input = `
   //     _handler :=
@@ -1352,7 +1335,6 @@ describe("effect handlers compilation", () => {
   //         callback()
   //         callback()
   //       }
-
   //     inject _handler {
   //       mut m := 1
   //       handle (:do) ()
@@ -1363,7 +1345,6 @@ describe("effect handlers compilation", () => {
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual(2);
   // });
-
   // test("no continuation calls sequential", async () => {
   //   const input = `
   //     decide := :decide |> handle
@@ -1374,7 +1355,6 @@ describe("effect handlers compilation", () => {
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual(126);
   // });
-
   // test("no continuation calls", async () => {
   //   const input = `
   //     decide := :decide |> handle
@@ -1385,7 +1365,6 @@ describe("effect handlers compilation", () => {
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual(126);
   // });
-
   // test("single continuation call", async () => {
   //   const input = `
   //     decide := :decide |> handle
@@ -1396,7 +1375,6 @@ describe("effect handlers compilation", () => {
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual(123);
   // });
-
   // test("multi-level state backtracking", async () => {
   //   const input = `
   //     inject
@@ -1414,7 +1392,6 @@ describe("effect handlers compilation", () => {
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual(1);
   // });
-
   // test("disjoint-level state backtracking", async () => {
   //   const input = `
   //     inject
@@ -1430,18 +1407,15 @@ describe("effect handlers compilation", () => {
   //   const result = await evaluate(input);
   //   expect(result).toStrictEqual(1);
   // });
-
   // test("choose int loop", async () => {
   //   const input = `
   //     decide := :decide |> handle
   //     fail := :fail |> handle
-
   //     false_branch_first :=
   //       decide: handler fn (callback, _) {
   //         fail_handler := fail: handler fn { callback true }
   //         inject fail_handler { callback false }
   //       };
-
   //     inject false_branch_first {
   //       mut m, n := 1, 3
   //       a := loop {

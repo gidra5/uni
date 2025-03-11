@@ -77,15 +77,7 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
     case NodeType.APPLICATION: {
       const func = codegen(ast.children[0], context);
       const args = ast.children.slice(1).map((arg) => codegen(arg, context));
-      const fnPtr = context.builder.createExtractValue(func, 0);
-      const closure = context.builder.createExtractValue(func, 1);
-
-      const fnPtrType = context.builder.getType(fnPtr);
-      assert(typeof fnPtrType === "object" && "pointer" in fnPtrType);
-      const funcType = fnPtrType.pointer;
-      assert(typeof funcType === "object" && "args" in funcType);
-
-      return context.builder.createCall(fnPtr, [closure, ...args], funcType.returnType, funcType.args);
+      return context.builder.createClosureCall(func, args);
     }
     case NodeType.FUNCTION: {
       const body = ast.children[ast.children.length - 1];
@@ -182,94 +174,53 @@ const codegen = (ast: Tree, context: Context): LLVMValue => {
       return context.builder.createSymbol(ast.data.name);
     }
     case NodeType.INJECT: {
-      const type = context.typeMap.get(ast.id)!;
-      // TODO: call through intermediate function, that accepts a single argument
-      // containing the closure and the output pointer (created by malloc)
+      const handlerFn = codegen(ast.children[0], context);
       const bodyFn = codegen(ast.children[1], context);
-
-      const llvmType = context.builder.toLLVMType(type);
-      const bodyFnPtr = context.builder.createExtractValue(bodyFn, 0);
-      const bodyClosure = context.builder.createExtractValue(bodyFn, 1);
-      const bodyFnType = context.typeMap.get(ast.children[1].id)!;
-      assert(typeof bodyFnType === "object");
-      assert("fn" in bodyFnType);
-      const handleableFn = context.builder.createFunction(
-        "handleable_" + ast.id,
-        [{ record: ["ptr", context.builder.getType(bodyClosure)] }],
-        llvmType,
-        (argAndClosure) => {
-          const arg = context.builder.createGetElementPtr(
-            argAndClosure,
-            context.builder.createConstantInt(0, 32),
-            context.builder.createConstantInt(0, 32)
-          );
-          const closurePtr = context.builder.createGetElementPtr(
-            argAndClosure,
-            context.builder.createConstantInt(1, 32),
-            context.builder.createConstantInt(0, 32)
-          );
-          const closure = context.builder.createLoad(closurePtr);
-          return context.builder.createCall(bodyFnPtr, [arg, closure], context.builder.toLLVMType(bodyFnType.fn.ret), [
-            "ptr",
-            context.builder.getType(bodyClosure),
-          ]);
-        }
-      );
-      const retHandler = context.builder.createFunction(
-        "identity_ret_handler",
-        ["i64", "i64"],
-        "i64",
-        (local, arg) => arg
-      );
-
       const handlerSymbol = context.builder.createConstantSymbol("handler_" + ast.data.name);
-      const action = context.builder.createConstantRecord(handlerSymbol, context.builder.createConstantInt(0, 64));
-      const actionPtr = context.builder.getOrCreateConstant(action, context.builder.getType(action));
-      // const closure = codegen(ast.children[0], context);
-      // const closurePtr = context.builder.createMalloc(context.typeMap.get(ast.children[0].id)!);
-      // context.builder.createStore(closure, closurePtr);
-      const handlerFn = context.builder.createFunction(
-        `handler_${ast.data.name}_${ast.id}`,
-        ["ptr", "i64", "i64"],
-        "i64",
-        (cont, local, arg) => {
-          // const _closurePtr = context.builder.createIntToPtr(local, context.builder.getType(closure));
-          // const _closure = context.builder.createLoad(_closurePtr);
-          // return context.builder.createClosureCall(_closure, [cont, local, arg]);
 
-          const closure = codegen(ast.children[0], context);
-          return context.builder.createClosureCall(closure, [cont, local, arg]);
-        }
-      );
-      const handlerActions = context.builder.createConstantArray(
-        context.builder.createConstantRecord(context.builder.createConstantInt(7, 32), actionPtr, handlerFn),
-        "zeroinitializer"
-      );
-      const handlerDef = context.builder.createRecord([handlerSymbol, "null", "null", retHandler, handlerActions]);
-      const handlerDefRef = context.builder.createMalloc({
-        tuple: ["pointer", "pointer", "pointer", "pointer", "pointer"],
-      });
-      context.builder.createStore(handlerDef, handlerDefRef);
-      const out = context.builder.createMalloc(type);
-      assert(typeof bodyFnType === "object");
-      assert("fn" in bodyFnType);
-      const argData = context.builder.createMalloc({ tuple: ["pointer", { tuple: bodyFnType.fn.closure }] });
-      const xClosure = context.builder.createGetElementPtr(
-        argData,
-        context.builder.createConstantInt(0, 32),
-        context.builder.createConstantInt(1, 32)
-      );
-      context.builder.createStore(out, argData);
-      context.builder.createStore(bodyClosure, xClosure);
-      const arg = context.builder.createPtrToInt(argData);
-      const local = context.builder.createConstantInt(0, 64);
-      const _handle = context.builder.declareFunction("lh_handle", ["ptr", "i64", "ptr", "i64"], "i64");
-      context.builder.createCallVoid(_handle, [handlerDefRef, local, handleableFn, arg], ["ptr", "i64", "ptr", "i64"]);
-      const res = context.builder.createLoad(out);
-      context.builder.createFree(out);
-      context.builder.createFree(handlerDefRef);
-      context.builder.createFree(argData);
-      return res;
+      // 1. handler definition pointer
+      // 1.1 type (i64 7)
+      // 1.2 handler symbol
+      // 1.3 return handler (null)
+      // 1.4 handler closure ptr (ptr, ptr -> i64)
+      // 2. body closure ptr to handle (i64 -> i64)
+      // 3. argument to the function (i64) - ptr to out arg
+
+      // const returnHandler = context.builder.createFunction(
+      //   "identity_ret_handler",
+      //   ["i64", "i64"],
+      //   "i64",
+      //   (local, arg) => arg
+      // );
+      const returnHandler = "null";
+
+      const handlerType = context.typeMap.get(ast.children[0].id)!;
+      const handlerPtr = context.builder.createMalloc(handlerType);
+      context.builder.createStore(handlerFn, handlerPtr);
+      const handlerDef = context.builder.createRecord([
+        context.builder.createConstantInt(7, 64),
+        handlerSymbol,
+        returnHandler,
+        handlerPtr,
+      ]);
+      const handlerDefPtr = context.builder.createMalloc({ tuple: [{ int: 64 }, { int: 64 }, "pointer", "pointer"] });
+      context.builder.createStore(handlerDef, handlerDefPtr);
+
+      const bodyType = context.typeMap.get(ast.children[1].id)!;
+      const bodyPtr = context.builder.createMalloc(bodyType);
+      context.builder.createStore(bodyFn, bodyPtr);
+
+      const resultType = context.typeMap.get(ast.id)!;
+      const arg = context.builder.createMalloc(resultType);
+
+      const _handle = context.builder.declareFunction("lh_handle", ["ptr", "ptr", "ptr"], "void");
+      context.builder.createCallVoid(_handle, [handlerDefPtr, bodyPtr, arg], ["ptr", "ptr", "ptr"]);
+      const result = context.builder.createLoad(arg);
+      context.builder.createFree(arg);
+      context.builder.createFree(bodyPtr);
+      context.builder.createFree(handlerPtr);
+      context.builder.createFree(handlerDefPtr);
+      return result;
     }
     case NodeType.SCRIPT: {
       ast.children.forEach((child) => codegen(child, context));
