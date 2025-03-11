@@ -96,7 +96,6 @@ typedef struct _resume {
 // An optimized resumption that can only used for tail-call resumptions (`lh_tail_resume`).
 typedef struct _tailresume {
   struct _lh_resume lhresume;  // the kind: always `TailResume` (must be first field, used for casts)
-  volatile lh_value local;     // the new local value for the handler
   volatile bool resumed;       // set to `true` if `lh_tail_resume` was called
 } tailresume;
 

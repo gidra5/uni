@@ -687,13 +687,12 @@ static handler* _hstack_push(ref hstack* hs, lh_effect effect, count size) {
 }
 
 // Push an effect handler
-static effecthandler* hstack_push_effect(ref hstack* hs, const lh_handlerdef* hdef, void* stackbase, lh_value local) {
+static effecthandler* hstack_push_effect(ref hstack* hs, const lh_handlerdef* hdef, void* stackbase) {
   static count id = 1000;
   effecthandler* h = (effecthandler*)_hstack_push(hs, hdef->effect, sizeof(effecthandler));
   h->id = id++;
   h->hdef = hdef;
   h->stackbase = stackbase;
-  h->local = local;
   h->arg = lh_value_null;
   h->arg_op = NULL;
   h->arg_resume = NULL;
@@ -982,7 +981,7 @@ static __noinline __noreturn void jumpto_fragment(fragment* f, lh_value res) {
 }
 
 // jump to a resumption
-static __noinline __noreturn void jumpto_resume(resume* r, lh_value local, lh_value arg) {
+static __noinline __noreturn void jumpto_resume(resume* r, lh_value arg) {
   // first restore the hstack and set the new local
   handler* h = hstack_bottom(&r->hstack);
   assert(is_effecthandler(h));
@@ -993,7 +992,6 @@ static __noinline __noreturn void jumpto_resume(resume* r, lh_value local, lh_va
     h = hstack_append_copyfrom(&__hstack, &r->hstack, hstack_bottom(&r->hstack));  // does not acquire h
   }
   assert(is_effecthandler(h));
-  ((effecthandler*)h)->local = local;  // write new local directly into the hstack
   if (r->refcount == 1) {
     handler_acquire(h);  // acquire now that the new local is in there (as it may alias the original)
   }
@@ -1057,7 +1055,7 @@ static void __noinline __noreturn yield_to_handler(hstack* hs, effecthandler* h,
 
 // Call a `resume* r`. First capture a jump point and c-stack into a `fragment`
 // and push it in a fragment handler so the resume will return here later on.
-static __noinline lh_value capture_resume_call(hstack* hs, resume* r, lh_value resumelocal, lh_value resumearg) {
+static __noinline lh_value capture_resume_call(hstack* hs, resume* r, lh_value resumearg) {
   // initialize continuation
   fragment* f = (fragment*)checked_malloc(sizeof(fragment));
   f->refcount = 1;
@@ -1090,7 +1088,7 @@ static __noinline lh_value capture_resume_call(hstack* hs, resume* r, lh_value r
     // push a special "fragment" frame to remember to restore the stack when yielding to a handler across non-scoped resumes
     hstack_push_fragment(hs, f);
     // and now jump to the entry with resume arg
-    jumpto_resume(r, resumelocal, resumearg);
+    jumpto_resume(r, resumearg);
   }
 }
 
@@ -1165,7 +1163,6 @@ static __noinline lh_value handle_with(
     assert(base == h->stackbase);
 #endif
     lh_value res = h->arg;
-    lh_value local = h->local;
     resume* resume = h->arg_resume;
     const lh_handlerdef* op = h->arg_op;
     assert(op == NULL || op->effect == h->handler.effect);
@@ -1176,13 +1173,13 @@ static __noinline lh_value handle_with(
         hstack_push_scoped(hs, resume);
 
         assert((void*)&resume->lhresume == (void*)resume);
-        res = op->opfun(&resume->lhresume, local, res);
+        res = op->opfun(&resume->lhresume, res);
         assert(hs == &__hstack);
 
         hstack_pop(hs, op->opkind == LH_OP_SCOPED);
       } else {
         // and call the operation handler
-        res = op->opfun(&resume->lhresume, local, res);
+        res = op->opfun(&resume->lhresume, res);
       }
     }
     return res;
@@ -1190,7 +1187,6 @@ static __noinline lh_value handle_with(
     // we set up the handler, now call the action
     lh_value res;
     lh_resultfun* resfun = NULL;
-    lh_value local = lh_value_null;
 
     res = action(arg);
     assert(hs == &__hstack);
@@ -1202,10 +1198,9 @@ static __noinline lh_value handle_with(
 #endif
     // pop our handler
     resfun = h->hdef->resultfun;
-    local = h->local;
     hstack_pop(hs, true);
     if (resfun != NULL) {
-      res = resfun(local, res);
+      res = resfun(res);
     }
     return res;
   }
@@ -1213,9 +1208,9 @@ static __noinline lh_value handle_with(
 
 // `handle_upto` installs a handler on the stack with a given stack `base`.
 static __noinline lh_value handle_upto(hstack* hs, void* base, const lh_handlerdef* def,
-                                       lh_value local, lh_value (*action)(lh_value), lh_value arg) {
+                                       lh_value (*action)(lh_value), lh_value arg) {
   // allocate handler frame on the stack so it will be part of a captured continuation
-  effecthandler* h = hstack_push_effect(hs, def, base, local);
+  effecthandler* h = hstack_push_effect(hs, def, base);
   fragment* fragment;
   lh_value res;
 
@@ -1230,12 +1225,12 @@ static __noinline lh_value handle_upto(hstack* hs, void* base, const lh_handlerd
 }
 
 // `handle` installs a new handler on the stack and calls the given `action` with argument `arg`.
-__noinline lh_value lh_handle(const lh_handlerdef* def, lh_value local, lh_actionfun* action, lh_value arg) {
+__noinline lh_value lh_handle(const lh_handlerdef* def, lh_actionfun* action, lh_value arg) {
   void* base = NULL;  // get_stack_top();
   hstack* hs = &__hstack;
   lh_value res;
   LH_INIT(hs)
-  res = handle_upto(hs, &base, def, local, action, arg);
+  res = handle_upto(hs, &base, def, action, arg);
   LH_DONE(hs)
   return res;
 }
@@ -1247,11 +1242,11 @@ __noinline lh_value lh_handle(const lh_handlerdef* def, lh_value local, lh_actio
   macros.
 -----------------------------------------------------------------*/
 
-ptrdiff_t _lh_linear_handler_init(const lh_handlerdef* hdef, lh_value local, bool* init) {
+ptrdiff_t _lh_linear_handler_init(const lh_handlerdef* hdef,  bool* init) {
   hstack* hs = &__hstack;
   bool _init = lh_init(hs);
   if (init != NULL) *init = _init;
-  effecthandler* h = hstack_push_effect(hs, hdef, NULL /*no base*/, local);
+  effecthandler* h = hstack_push_effect(hs, hdef, NULL /*no base*/);
   return h->id;
 }
 
@@ -1271,8 +1266,8 @@ LH_DEFINE_EFFECT0(defer)
 
 // Default operation declaration for implicit parameters (define in libhandler.h)
 // Just a default definition, as the actual implementation uses `lh_yield_local`.
-lh_value _lh_implicit_get(lh_resume r, lh_value local, lh_value arg) {
-  return lh_tail_resume(r, local, local);
+lh_value _lh_implicit_get(lh_resume r, lh_value arg) {
+  return lh_tail_resume(r, arg);
 }
 
 /*-----------------------------------------------------------------
@@ -1298,7 +1293,6 @@ static lh_value yieldop(lh_effect optag, lh_value arg) {
     // setup up a stack allocated tail resumption
     tailresume r;
     r.lhresume.rkind = TailResume;
-    r.local = h->local;
     r.resumed = false;
     assert((void*)(&r.lhresume) == (void*)&r);
     lh_value res;
@@ -1308,7 +1302,7 @@ static lh_value yieldop(lh_effect optag, lh_value arg) {
       count hidx = hstack_indexof(hs, to_handler(h));
 
       // call the operation handler directly for a tail resumption
-      res = op->opfun(&r.lhresume, h->local, arg);
+      res = op->opfun(&r.lhresume, arg);
       h = (effecthandler*)hstack_at(hs, hidx);
       assert(is_effecthandler(to_handler(h)));
 
@@ -1319,12 +1313,11 @@ static lh_value yieldop(lh_effect optag, lh_value arg) {
     // OP_TAIL_NOOP: will not call operations so no need for a skip frame
     // call the operation function and return directly (as it promised to tail resume)
     else {
-      res = op->opfun(&r.lhresume, h->local, arg);
+      res = op->opfun(&r.lhresume, arg);
     }
 
     // if we returned from a `lh_tail_resume` we just return its result
     if (r.resumed) {
-      h->local = r.local;
       return res;
     }
     // otherwise no resume was called; yield back to the handler with the result.
@@ -1370,7 +1363,7 @@ lh_value lh_yield_local(lh_effect optag) {
   lh_handlerdef* op;
   effecthandler* h = hstack_find(hs, optag, &op, &skipped);
   // and return the local state
-  return h->local;
+  return 0;
 }
 
 /*-----------------------------------------------------------------
@@ -1422,41 +1415,40 @@ static resume* to_resume(lh_resume r) {
   return (resume*)r;
 }
 
-static __noinline lh_value lh_release_resume_(resume* r, lh_value local, lh_value resarg) {
+static __noinline lh_value lh_release_resume_(resume* r, lh_value resarg) {
   hstack* hs = &__hstack;
   lh_value res;
   LH_INIT(hs)
-  res = capture_resume_call(&__hstack, r, local, resarg);
+  res = capture_resume_call(&__hstack, r, resarg);
   LH_DONE(hs)
   return res;
 }
 
-lh_value __noinline lh_call_resume(lh_resume r, lh_value local, lh_value res) {
-  return lh_release_resume_(resume_acquire(to_resume(r)), local, res);
+lh_value __noinline lh_call_resume(lh_resume r, lh_value res) {
+  return lh_release_resume_(resume_acquire(to_resume(r)), res);
 }
 
-lh_value lh_scoped_resume(lh_resume r, lh_value local, lh_value res) {
-  return lh_call_resume(r, local, res);
+lh_value lh_scoped_resume(lh_resume r, lh_value res) {
+  return lh_call_resume(r, res);
 }
 
-__noinline lh_value lh_release_resume(lh_resume r, lh_value local, lh_value res) {
+__noinline lh_value lh_release_resume(lh_resume r, lh_value res) {
   if (r->rkind == ScopedResume) {
-    return lh_scoped_resume(r, local, res);
+    return lh_scoped_resume(r, res);
   } else {
-    return lh_release_resume_(to_resume(r), local, res);
+    return lh_release_resume_(to_resume(r), res);
   }
 }
 
-lh_value lh_tail_resume(lh_resume r, lh_value local, lh_value res) {
+lh_value lh_tail_resume(lh_resume r, lh_value res) {
   if (r->rkind == TailResume) {
     tailresume* tr = (tailresume*)(r);
     tr->resumed = true;
-    tr->local = local;
     return res;
   } else if (r->rkind == ScopedResume) {
-    return lh_scoped_resume(r, local, res);
+    return lh_scoped_resume(r,  res);
   } else {
-    return lh_release_resume(r, local, res);
+    return lh_release_resume(r,  res);
   }
 }
 

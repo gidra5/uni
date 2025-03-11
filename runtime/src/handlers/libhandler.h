@@ -126,7 +126,7 @@ lh_voidfun* lh_fun_ptr_value(lh_value v);
 typedef lh_value(lh_actionfun)(lh_value);
 
 /// A `lh_resultfun` is called when a handled action is done.
-typedef lh_value(lh_resultfun)(lh_value local, lh_value arg);
+typedef lh_value(lh_resultfun)(lh_value arg);
 
 /// An acquire function copies the local state in a handler when required.
 typedef lh_value lh_acquirefun(lh_value local);
@@ -167,7 +167,7 @@ typedef const struct lh_optag_ {
 }* lh_optag;
 
 /// Operation functions are called when that operation is `yield`ed to.
-typedef lh_value(lh_opfun)(lh_resume r, lh_value local, lh_value arg);
+typedef lh_value(lh_opfun)(lh_resume r, lh_value arg);
 
 /// Operation kinds.
 /// When defining the operations that a handler can handle,
@@ -209,7 +209,7 @@ typedef struct _lh_handlerdef {
 
 /// Handle a particalur effect.
 /// Handles operations yielded in `body(arg)` with the given handler definition `def`.
-lh_value lh_handle(const lh_handlerdef* def, lh_value local, lh_actionfun* body, lh_value arg);
+lh_value lh_handle(const lh_handlerdef* def, lh_actionfun* body, lh_value arg);
 
 /// Yield an operation to the nearest enclosing handler.
 lh_value lh_yield(lh_effect optag, lh_value arg);
@@ -229,12 +229,12 @@ lh_value lh_yield_local(lh_effect optag);
 
 /// Resume a continuation.
 /// Use this when not resuming in a tail position.
-lh_value lh_scoped_resume(lh_resume r, lh_value local, lh_value res);
+lh_value lh_scoped_resume(lh_resume r, lh_value res);
 
 /// Final resumption of a scoped continuation.
 /// Only call `lh_tail_resume` as the last action of an operation function,
 /// i.e. it must occur in tail position of an operation function.
-lh_value lh_tail_resume(lh_resume r, lh_value local, lh_value res);
+lh_value lh_tail_resume(lh_resume r, lh_value res);
 
 /*-----------------------------------------------------------------
   Resuming first-class continuations
@@ -243,11 +243,11 @@ lh_value lh_tail_resume(lh_resume r, lh_value local, lh_value res);
 void lh_release(lh_resume r);
 
 /// Resume a first-class contiunation with a specified result.
-lh_value lh_call_resume(lh_resume r, lh_value local, lh_value res);
+lh_value lh_call_resume(lh_resume r, lh_value res);
 
 /// Resume a first-class contiunation with a specified result.
 /// Also releases the continuation and it cannot be resumed again!
-lh_value lh_release_resume(lh_resume r, lh_value local, lh_value res);
+lh_value lh_release_resume(lh_resume r, lh_value res);
 
 /*-----------------------------------------------------------------
   Convenience functions for yield
@@ -564,7 +564,7 @@ LH_DECLARE_EFFECT0(defer)
   {using_implicit(name,value){ ... }}
 -----------------------------------------------------------------*/
 
-lh_value _lh_implicit_get(lh_resume r, lh_value local, lh_value arg);
+lh_value _lh_implicit_get(lh_resume r, lh_value arg);
 
 #ifdef __GNUC__
 // turn off warnings that (release_fun!=NULL) is always true; TODO: is there a better way to do this?
