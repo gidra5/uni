@@ -369,3 +369,5 @@ https://www.typescriptlang.org/play/?#code/C4TwDgpgBAMghgLxAHgCoD4oF4oAoCU2mqA3A
 
 https://www.reddit.com/r/ProgrammingLanguages/s/Ygx3YlGa37
 https://www.reddit.com/r/ProgrammingLanguages/s/N0EcYV8N5U
+
+https://gregfjohnson.com/pred/
