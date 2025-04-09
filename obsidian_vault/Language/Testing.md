@@ -4,4 +4,5 @@ A pretty useful feature for a language. allows preventing regressions,  guarante
 2. assertions and comparison
 3. mocking functions
 4. snapshots
-5. progressive benchmarks
+5. mutation testing
+6. progressive benchmarks

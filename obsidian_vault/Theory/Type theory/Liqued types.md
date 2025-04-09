@@ -1,0 +1,1 @@
+https://goto.ucsd.edu/~rjhala/liquid/liquid_types.pdf

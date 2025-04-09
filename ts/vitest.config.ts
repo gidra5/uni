@@ -6,6 +6,7 @@ const reportFolder = `test-results/report-${date}`;
 
 export default defineConfig({
   test: {
+    includeSource: ["src/**/*.{js,ts}"],
     api: {
       port: 3000,
     },

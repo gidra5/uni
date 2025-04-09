@@ -45,9 +45,16 @@ Includes tools for:
   6. dual
   7. derivatives
   8. integrals
-  9. fft
-  10. statistics and probability sampling
-  11. [reference frames and geometry](https://www.cs.cornell.edu/~asampson/blog/gator.html)
+  9. differential equations
+  10. interpolation and extrapolation
+  11. fft
+  12. statistics and probability sampling
+  13. [reference frames and geometry](https://www.cs.cornell.edu/~asampson/blog/gator.html)
+  14. rng 
+    * [quasirandom number generators](https://extremelearning.com.au/unreasonable-effectiveness-of-quasirandom-sequences/)
+    * fast prng
+    * most statistically uniform prng
+    * hardware rng
 14. styling
 15. cli parsing
 16. reflection 
@@ -63,9 +70,9 @@ Includes tools for:
 26. measures (kg, meters, etc)
 27. regexp
 28. functional stuff
-  1. monads
-  2. functors
-  3. [lenses](https://github.com/akheron/optics-ts)
+  29. monads
+  30. functors
+  31. [lenses](https://github.com/akheron/optics-ts)
 29. crypto
 30. compression
 31. encoding (json, yaml, base64, etc)

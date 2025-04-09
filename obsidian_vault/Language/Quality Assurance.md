@@ -34,6 +34,7 @@ Common ways to do that:
   * Re-compile the compiler using the compiler "A". Call the result "B".
   * Re-compile the compiler using the compiler "B". Call the result "C".
   * "B" and "C" should, if your compiler is deterministic, be bit-for-bit identical. You should test this before any release.
+9. Mutation testing - verify that the tests detect random unwanted changes. It additionaly fixates the code behavior. The more "mutants" die, the larger logical coverage is for the test suite.
 
 Tests should be platform independent - any machine that runs them will see identical results.
 
@@ -43,3 +44,5 @@ https://github.com/smarr/are-we-fast-yet
 https://github.com/sampsyo/flatcalc/blob/c5bbe7bd79f98a3b857f0432d4739a3f4f6241bd/src/main.rs#L118-L136
 
 https://tigerbeetle.com/blog/2023-03-28-random-fuzzy-thoughts
+
+https://pitest.org/
