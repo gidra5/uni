@@ -1,0 +1,29 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`single closing parens > ast 1`] = `
+{
+  "children": [],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`single closing parens > errors 1`] = `[]`;
+
+exports[`single closing parens > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 1,
+        "kind": "primary",
+        "message": "unexpected closing token",
+        "start": 0,
+      },
+    ],
+    "message": "Unexpected closing token ")"",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;

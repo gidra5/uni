@@ -1,4 +1,4 @@
-import { Diagnostic, LabelInfo, primaryDiagnosticLabel, secondaryDiagnosticLabel } from "codespan-napi";
+import { Diagnostic, FileMap, LabelInfo, primaryDiagnosticLabel, secondaryDiagnosticLabel } from "codespan-napi";
 import { assert } from "./utils/index.js";
 import { Position } from "./utils/position.js";
 import { inject, Injectable } from "./utils/injector.js";
@@ -32,6 +32,7 @@ export enum ErrorType {
   MISPLACED_OPERATOR,
   MISSING_OPERAND,
   UNCLOSED_BLOCK_COMMENT,
+  INVALID_USE_OF_RECORD_SYNTAX,
 }
 
 type Options = {
@@ -48,27 +49,42 @@ type ErrorLabel = LabelInfo & {
 };
 
 export class SystemError extends Error {
-  data: Record<string, any>;
   fileId?: number;
   readonly type: ErrorType;
   private labels: ErrorLabel[];
   private notes: string[];
   private constructor(type: ErrorType, msg: string, options: Options = {}) {
     super(msg, { cause: options.cause });
-    this.data = options.data ?? {};
     this.fileId = options.fileId;
     this.type = type;
     this.notes = options.notes ?? [];
     this.labels = options.labels ?? [];
   }
 
-  toObject(): any {
-    return { ...this, type: ErrorType[this.type], message: this.message };
+  toObject() {
+    const x: any = {
+      type: ErrorType[this.type],
+      message: this.message,
+      labels: this.labels,
+      notes: this.notes,
+      // fileId: this.fileId,
+      // cause: this.cause,
+    };
+    if (this.cause instanceof SystemError) x.cause = this.cause.toObject();
+    else if (this.cause) x.cause = this.cause;
+
+    if (this.fileId !== undefined) x.fileId = this.fileId;
+
+    return x;
   }
 
   withFileId(fileId: number): SystemError {
-    this.fileId = fileId;
-    return this;
+    return new SystemError(this.type, this.message, {
+      fileId,
+      labels: this.labels,
+      notes: this.notes,
+      cause: this.cause,
+    });
   }
 
   withCause(cause: unknown): SystemError {
@@ -108,8 +124,7 @@ export class SystemError extends Error {
     return this;
   }
 
-  print(): SystemError {
-    const fileMap = inject(Injectable.FileMap);
+  print(fileMap = inject(Injectable.FileMap)): SystemError {
     const diag = this.diagnostic();
     diag.emitStd(fileMap);
     return this;
@@ -129,6 +144,13 @@ export class SystemError extends Error {
     diag.withNotes(this.notes);
 
     return diag;
+  }
+
+  static invalidUseOfRecordKeyword(pos: Position): SystemError {
+    return new SystemError(ErrorType.INVALID_USE_OF_RECORD_SYNTAX, 'Invalid use of "record" syntax').withPrimaryLabel(
+      '"record" keyword must be immediately followed by a block with a list of fields',
+      pos
+    );
   }
 
   static unknown(): SystemError {

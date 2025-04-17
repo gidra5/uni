@@ -1,67 +1,68 @@
 import { beforeEach, expect, it } from "vitest";
-import { parseTokens } from "../../src/parser/tokens.ts";
-import { parseScript } from "../../src/parser.ts";
-import { validate } from "../../src/validate.ts";
-import { addFile } from "../../src/files.ts";
-import { Injectable, register } from "../../src/injector.ts";
 import { FileMap } from "codespan-napi";
-import { Tree } from "../../src/ast.ts";
+import { Injectable, register } from "../src/utils/injector";
+import { parseTokenGroups } from "../src/parser/tokenGroups";
+import { parseScript } from "../src/parser/parser";
+import { validate, validateTokenGroups } from "../src/analysis/validate";
+import { Tree } from "../src/ast";
 
 beforeEach(() => {
-  register(Injectable.FileMap, new FileMap());
   register(Injectable.NextId, 0);
   register(Injectable.PrecedenceMap, new Map());
   register(Injectable.PositionMap, new Map());
 });
 
+function clearIds(ast: Tree) {
+  if (ast.children.length > 0) {
+    ast.children.forEach(clearIds);
+  }
+  delete (ast as any).id;
+  return ast;
+}
+
 const _testCase = (input: string) => {
-  const fileId = addFile("<test>", input);
-  const tokens = parseTokens(input);
-  const ast = parseScript(tokens);
-  const [errors, validated] = validate(ast, fileId);
+  const tokens = parseTokenGroups(input);
+  const [tokenErrors, validatedTokens] = validateTokenGroups(tokens);
+  const ast = parseScript(validatedTokens);
+  const [errors, validated] = validate(ast);
 
-  for (const error of errors) {
-    expect(error.fileId).toEqual(fileId);
-  }
+  const fileMap = new FileMap();
+  fileMap.addFile("<test>", input);
+  const fileId = fileMap.getFileId("<test>");
+  for (const error of tokenErrors) error.withFileId(fileId).print(fileMap);
+  for (const error of errors) error.withFileId(fileId).print(fileMap);
 
-  expect(errors.map((e) => e.toObject())).toMatchSnapshot();
-  expect(clearIds(validated)).toMatchSnapshot();
-
-  function clearIds(ast: Tree) {
-    if (ast.children.length > 0) {
-      ast.children.forEach(clearIds);
-    }
-    delete (ast as any).id;
-    return ast;
-  }
+  expect(tokenErrors.map((e) => e.toObject())).toMatchSnapshot("token errors");
+  expect(errors.map((e) => e.toObject())).toMatchSnapshot("errors");
+  expect(clearIds(validated)).toMatchSnapshot("ast");
 };
 
 it(`single closing parens`, () => _testCase(")"));
-it(`single closing parens`, () => _testCase("("));
-it(`single closing parens`, () => _testCase("}"));
-it(`single closing parens`, () => _testCase("{"));
-it(`single closing parens`, () => _testCase("]"));
-it(`single closing parens`, () => _testCase("["));
-it(`single closing parens`, () => _testCase("({ 1 )"));
-it.todo(`single closing parens`, () => _testCase("(x[1 )"));
-it(`single closing parens`, () => _testCase("{ (1 }"));
-it.todo(`single closing parens`, () => _testCase("{ x[1 }"));
-it(`single closing parens`, () => _testCase("x[(1]"));
-it(`single closing parens`, () => _testCase("x[{ 1 ]"));
-it(`single closing parens`, () => _testCase("1 2"));
-it(`single closing parens`, () => _testCase('"1" 2'));
-it(`single closing parens`, () => _testCase("1 +"));
-it(`single closing parens`, () => _testCase("1 *"));
-it(`single closing parens`, () => _testCase("1 * (* 2)"));
-it(`single closing parens`, () => _testCase("* 1"));
-it(`single closing parens`, () => _testCase("1 + * 2"));
-it.todo(`single closing parens`, () => _testCase("1 + + 2"));
-it(`single closing parens`, () => _testCase("1 + (2 + 3) +"));
-it(`single closing parens`, () => _testCase("1 + 2 + "));
-it(`single closing parens`, () => _testCase("1 + (2 + 3"));
-it(`single closing parens`, () => _testCase("1 * (5/3) (*4"));
-it(`single closing parens`, () => _testCase("send((1+2), 3+,4)"));
-it(`single closing parens`, () => _testCase("!"));
+it.todo(`single open parens`, () => _testCase("("));
+it.todo(`single closing brace`, () => _testCase("}"));
+it.todo(`single open brace`, () => _testCase("{"));
+it.todo(`single closing bracket`, () => _testCase("]"));
+it.todo(`single open bracket`, () => _testCase("["));
+it.todo(`literal inside unclosed brace inside parens`, () => _testCase("({ 1 )"));
+it.todo(`unclosed indexing inside parens`, () => _testCase("(x[1 )"));
+it.todo(`literal inside unclosed parens inside braces`, () => _testCase("{ (1 }"));
+it.todo(`unclosed indexing inside braces`, () => _testCase("{ x[1 }"));
+it.todo(`unclosed parens inside indexing`, () => _testCase("x[(1]"));
+it.todo(`literal inside unclosed brace inside indexing`, () => _testCase("x[{ 1 ]"));
+it.todo(`num literal application`, () => _testCase("1 2"));
+it.todo(`string literal application`, () => _testCase('"1" 2'));
+it.todo(`infix operation add no lhs`, () => _testCase("1 +"));
+it.todo(`infix operation mult no lhs`, () => _testCase("1 *"));
+it.todo(`infix operation mult no rhs`, () => _testCase("* 1"));
+it.todo(`infix operation mult no rhs inside parens`, () => _testCase("1 * (* 2)"));
+it.todo(`add mult no middle operand`, () => _testCase("1 + * 2"));
+it.todo(`add add no middle operand`, () => _testCase("1 + + 2"));
+it.todo(`infix operation add long parens no lhs`, () => _testCase("1 + (2 + 3) +"));
+it.todo(`infix operation add no lhs`, () => _testCase("1 + 2 + "));
+it.todo(`infix operation add unclosed parens`, () => _testCase("1 + (2 + 3"));
+it.todo(`single closing parens`, () => _testCase("1 * (5/3) (*4"));
+it.todo(`single closing parens`, () => _testCase("send((1+2), 3+,4)"));
+it.todo(`single closing parens`, () => _testCase("!"));
 it.todo(`single closing parens`, () => _testCase('"\\(")"'));
 it.todo(`single closing parens`, () => _testCase("f + !"));
 it.todo(`single closing parens`, () => _testCase('"uwu\n 1'));

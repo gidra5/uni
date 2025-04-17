@@ -25,6 +25,10 @@ export function intervalPosition(start: number, length: number): Position {
   return position(start, start + length);
 }
 
+export function endIntervalPosition(end: number, length: number): Position {
+  return position(end - length, end);
+}
+
 export function indexPosition(pos: number): Position {
   return position(pos, pos);
 }

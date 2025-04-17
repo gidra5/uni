@@ -2236,7 +2236,7 @@ describe("expressions", () => {
       expect(result).toEqual([3, 5, 9]);
     });
 
-    it("block-inject-fn-handle twice backtracking", async () => {
+    it("block-inject-fn-handle twice", async () => {
       const input = `
         f := fn {
           handle (:a) ()
@@ -2249,7 +2249,7 @@ describe("expressions", () => {
       expect(result).toEqual(3);
     });
 
-    it("block-inject-fn-handle backtracking", async () => {
+    it("block-inject-fn-handle", async () => {
       const input = `
         f := fn do handle (:a) ()
         { inject a: 3 do f() }

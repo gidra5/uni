@@ -1,5 +1,5 @@
 import { SystemError } from "../error.js";
-import { indexPosition, intervalPosition, type Position } from "../utils/position.js";
+import { endIntervalPosition, indexPosition, intervalPosition, type Position } from "../utils/position.js";
 import { assert, getPos, nextId, setPos } from "../utils/index.js";
 import {
   parseMultilineStringToken,
@@ -37,12 +37,21 @@ export type TokenGroup = (
   | { type: "string"; value: string }
   | { type: "group"; kind: TokenGroupKind; tokens: TokenGroup[] }
   | { type: "group"; tokens: TokenGroup[] }
-  | { type: "error"; cause: SystemError; token: TokenGroup }
+  | { type: "error"; cause: SystemError; token?: TokenGroup }
+) & { id: number };
+export type ValidatedTokenGroup = (
+  | { type: "placeholder" }
+  | { type: "newline" }
+  | { type: "identifier"; name: string }
+  | { type: "number"; value: number }
+  | { type: "string"; value: string }
+  | { type: "group"; kind: TokenGroupKind; tokens: ValidatedTokenGroup[] }
+  | { type: "group"; tokens: ValidatedTokenGroup[] }
 ) & { id: number };
 
 type ParserContext = { followSet: string[] } & BaseContext;
 
-const error = (cause: SystemError, token: TokenGroup): TokenGroup => ({ id: nextId(), type: "error", cause, token });
+const error = (cause: SystemError, token?: TokenGroup): TokenGroup => ({ id: nextId(), type: "error", cause, token });
 const group = function* (tokens: TokenGroup[], kind?: TokenGroupKind, start?: number) {
   const g = group3(tokens);
   if (kind === undefined) return g;
@@ -65,7 +74,7 @@ const unbalancedOpenToken = function* (start: number, startStr: string, endStr: 
   return SystemError.unbalancedOpenToken([startStr, endStr], openPos, closePos);
 };
 const unbalancedCloseToken = function* (startStr: string, endStr: string) {
-  const closePos: Position = indexPosition(yield Parser.index());
+  const closePos: Position = endIntervalPosition(yield Parser.index(), endStr.length);
   return SystemError.unbalancedCloseToken([startStr, endStr], closePos);
 };
 
@@ -124,13 +133,13 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
   if (token.type === "identifier") {
     if (!(yield Parser.checkFollowSetPrev())) {
       if (token.name === ")") {
-        return error(yield* unbalancedCloseToken("(", ")"), token);
+        return error(yield* unbalancedCloseToken("(", ")"));
       }
       if (token.name === "]") {
-        return error(yield* unbalancedCloseToken("[", "]"), token);
+        return error(yield* unbalancedCloseToken("[", "]"));
       }
       if (token.name === "}") {
-        return error(yield* unbalancedCloseToken("{", "}"), token);
+        return error(yield* unbalancedCloseToken("{", "}"));
       }
     }
 
@@ -260,7 +269,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
         return yield* group(g.tokens, TokenGroupKind.Record, start);
       }
       yield Parser.resetIndex();
-      return error(SystemError.unknown(), token);
+      return error(SystemError.invalidUseOfRecordKeyword(getPos(token.id)!), token);
     }
   }
 
