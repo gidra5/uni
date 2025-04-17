@@ -1,5 +1,61 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`single closing brace > ast 1`] = `
+{
+  "children": [],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`single closing brace > errors 1`] = `[]`;
+
+exports[`single closing brace > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 1,
+        "kind": "primary",
+        "message": "unexpected closing token",
+        "start": 0,
+      },
+    ],
+    "message": "Unexpected closing token "}"",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;
+
+exports[`single closing bracket > ast 1`] = `
+{
+  "children": [],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`single closing bracket > errors 1`] = `[]`;
+
+exports[`single closing bracket > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 1,
+        "kind": "primary",
+        "message": "unexpected closing token",
+        "start": 0,
+      },
+    ],
+    "message": "Unexpected closing token "]"",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;
+
 exports[`single closing parens > ast 1`] = `
 {
   "children": [],

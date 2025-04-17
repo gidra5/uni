@@ -39,9 +39,9 @@ const _testCase = (input: string) => {
 
 it(`single closing parens`, () => _testCase(")"));
 it.todo(`single open parens`, () => _testCase("("));
-it.todo(`single closing brace`, () => _testCase("}"));
+it(`single closing brace`, () => _testCase("}"));
 it.todo(`single open brace`, () => _testCase("{"));
-it.todo(`single closing bracket`, () => _testCase("]"));
+it(`single closing bracket`, () => _testCase("]"));
 it.todo(`single open bracket`, () => _testCase("["));
 it.todo(`literal inside unclosed brace inside parens`, () => _testCase("({ 1 )"));
 it.todo(`unclosed indexing inside parens`, () => _testCase("(x[1 )"));
