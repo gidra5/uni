@@ -621,3 +621,120 @@ exports[`unclosed parens inside indexing > token errors 1`] = `
   },
 ]
 `;
+
+exports[`unclosed string newline > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [],
+      "data": {
+        "value": "uwu",
+      },
+      "type": "string",
+    },
+    {
+      "children": [],
+      "data": {
+        "value": 1,
+      },
+      "type": "number",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`unclosed string newline > errors 1`] = `[]`;
+
+exports[`unclosed string newline > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 4,
+        "kind": "primary",
+        "message": "expected closing double quote",
+        "start": 4,
+      },
+    ],
+    "message": "Unterminated string literal",
+    "notes": [
+      "Strings must be enclosed in double quotes (")",
+      "Use \\ to escape special characters",
+    ],
+    "type": "UNTERMINATED_STRING",
+  },
+]
+`;
+
+exports[`unclosed string template > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "uwu",
+          },
+          "type": "string",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": 1,
+          },
+          "type": "number",
+        },
+      ],
+      "data": {},
+      "type": "template",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`unclosed string template > errors 1`] = `[]`;
+
+exports[`unclosed string template > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 9,
+        "kind": "primary",
+        "message": "must be closed with ")" by that point",
+        "start": 9,
+      },
+      {
+        "end": 6,
+        "kind": "primary",
+        "message": "opening token "\\(" here",
+        "start": 4,
+      },
+    ],
+    "message": "Missing closing token",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+  {
+    "labels": [
+      {
+        "end": 9,
+        "kind": "primary",
+        "message": "expected closing double quote",
+        "start": 9,
+      },
+    ],
+    "message": "Unterminated string literal",
+    "notes": [
+      "Strings must be enclosed in double quotes (")",
+      "Use \\ to escape special characters",
+    ],
+    "type": "UNTERMINATED_STRING",
+  },
+]
+`;

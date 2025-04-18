@@ -88,7 +88,7 @@ describe("string token", () => {
     const expectedIndex = literal.length;
     const expectedToken = {
       type: "error",
-      cause: SystemError.unterminatedString(position(startIndex, expectedIndex)),
+      cause: SystemError.unterminatedString(position(expectedIndex, expectedIndex)),
     };
 
     const [{ index }, { value: _, ...token }] = parseStringToken.parse(src, { index: startIndex });
@@ -114,7 +114,7 @@ describe("string token", () => {
     const expectedIndex = literal.length + 1;
     const expectedToken = {
       type: "error",
-      cause: SystemError.unterminatedString(position(startIndex, expectedIndex)),
+      cause: SystemError.unterminatedString(position(expectedIndex, expectedIndex)),
     };
 
     const [{ index }, { value: _, ...token }] = parseStringToken.parse(src, { index: startIndex });
@@ -147,7 +147,7 @@ describe("string token", () => {
     const src = `${literal}\n`;
     const startIndex = 0;
     const expectedIndex = literal.length;
-    const pos = position(startIndex, expectedIndex);
+    const pos = position(expectedIndex, expectedIndex);
     const expectedToken = {
       type: "error",
       value: literal,

@@ -116,7 +116,8 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
 
       if (segment.type === "error") {
         const { cause, ...token } = segment;
-        tokens.push({ id: nextId(), type: "error", cause, token: { ...token, type: "string" } });
+        if (token.value) tokens.push({ id: nextId(), type: "error", cause, token: { ...token, type: "string" } });
+        else tokens.push({ id: nextId(), type: "error", cause });
         break;
       }
 

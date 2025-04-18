@@ -1,5 +1,5 @@
 import { SystemError } from "../error.js";
-import { type Position } from "../utils/position.js";
+import { indexPosition, type Position } from "../utils/position.js";
 import { nextId, setPos } from "../utils/index.js";
 import { Parser } from "./utils.js";
 
@@ -109,7 +109,7 @@ const endOfSourceError = function* () {
 
 const stringLiteralError = function* (value: string) {
   const id = nextId();
-  const pos: Position = yield Parser.span();
+  const pos: Position = indexPosition(yield Parser.index());
   setPos(id, pos);
   const cause = SystemError.unterminatedString(pos);
   return { id, type: "error", cause, value } satisfies StringToken;
