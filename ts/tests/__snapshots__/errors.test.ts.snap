@@ -1,5 +1,174 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`literal inside unclosed brace inside indexing > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": 1,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": "block",
+        },
+      ],
+      "data": {},
+      "type": "index",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`literal inside unclosed brace inside indexing > errors 1`] = `[]`;
+
+exports[`literal inside unclosed brace inside indexing > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 6,
+        "kind": "primary",
+        "message": "must be closed with "}" by that point",
+        "start": 6,
+      },
+      {
+        "end": 3,
+        "kind": "primary",
+        "message": "opening token "{" here",
+        "start": 2,
+      },
+    ],
+    "message": "Missing closing token",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;
+
+exports[`literal inside unclosed brace inside parens > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": 1,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": "block",
+        },
+      ],
+      "data": {},
+      "type": "parens",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`literal inside unclosed brace inside parens > errors 1`] = `[]`;
+
+exports[`literal inside unclosed brace inside parens > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 5,
+        "kind": "primary",
+        "message": "must be closed with "}" by that point",
+        "start": 5,
+      },
+      {
+        "end": 2,
+        "kind": "primary",
+        "message": "opening token "{" here",
+        "start": 1,
+      },
+    ],
+    "message": "Missing closing token",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;
+
+exports[`literal inside unclosed parens inside braces > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": 1,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": "parens",
+        },
+      ],
+      "data": {},
+      "type": "block",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`literal inside unclosed parens inside braces > errors 1`] = `[]`;
+
+exports[`literal inside unclosed parens inside braces > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 5,
+        "kind": "primary",
+        "message": "must be closed with ")" by that point",
+        "start": 5,
+      },
+      {
+        "end": 3,
+        "kind": "primary",
+        "message": "opening token "(" here",
+        "start": 2,
+      },
+    ],
+    "message": "Missing closing token",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;
+
 exports[`single closing brace > ast 1`] = `
 {
   "children": [],
@@ -261,6 +430,189 @@ exports[`single open parens with number > token errors 1`] = `
         "kind": "primary",
         "message": "opening token "(" here",
         "start": 0,
+      },
+    ],
+    "message": "Missing closing token",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;
+
+exports[`unclosed indexing inside braces > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 1,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": "index",
+        },
+      ],
+      "data": {},
+      "type": "block",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`unclosed indexing inside braces > errors 1`] = `[]`;
+
+exports[`unclosed indexing inside braces > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 6,
+        "kind": "primary",
+        "message": "must be closed with "]" by that point",
+        "start": 6,
+      },
+      {
+        "end": 4,
+        "kind": "primary",
+        "message": "opening token "[" here",
+        "start": 3,
+      },
+    ],
+    "message": "Missing closing token",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;
+
+exports[`unclosed indexing inside parens > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+            {
+              "children": [],
+              "data": {
+                "value": 1,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": "index",
+        },
+      ],
+      "data": {},
+      "type": "parens",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`unclosed indexing inside parens > errors 1`] = `[]`;
+
+exports[`unclosed indexing inside parens > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 5,
+        "kind": "primary",
+        "message": "must be closed with "]" by that point",
+        "start": 5,
+      },
+      {
+        "end": 3,
+        "kind": "primary",
+        "message": "opening token "[" here",
+        "start": 2,
+      },
+    ],
+    "message": "Missing closing token",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;
+
+exports[`unclosed parens inside indexing > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": 1,
+              },
+              "type": "number",
+            },
+          ],
+          "data": {},
+          "type": "parens",
+        },
+      ],
+      "data": {},
+      "type": "index",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`unclosed parens inside indexing > errors 1`] = `[]`;
+
+exports[`unclosed parens inside indexing > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 4,
+        "kind": "primary",
+        "message": "must be closed with ")" by that point",
+        "start": 4,
+      },
+      {
+        "end": 3,
+        "kind": "primary",
+        "message": "opening token "(" here",
+        "start": 2,
       },
     ],
     "message": "Missing closing token",

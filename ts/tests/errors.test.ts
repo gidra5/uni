@@ -22,9 +22,13 @@ function clearIds(ast: Tree) {
 
 const _testCase = (input: string) => {
   const tokens = parseTokenGroups(input);
+  // console.dir(tokens, { depth: null });
   const [tokenErrors, validatedTokens] = validateTokenGroups(tokens);
+  // console.dir(validatedTokens, { depth: null });
   const ast = parseScript(validatedTokens);
+  // console.dir(ast, { depth: null });
   const [errors, validated] = validate(ast);
+  // console.dir(validated, { depth: null });
 
   const fileMap = new FileMap();
   fileMap.addFile("<test>", input);
@@ -44,12 +48,12 @@ it(`single closing brace`, () => _testCase("}"));
 it(`single open brace`, () => _testCase("{"));
 it(`single closing bracket`, () => _testCase("]"));
 it(`single open bracket`, () => _testCase("["));
-it.todo(`literal inside unclosed brace inside parens`, () => _testCase("({ 1 )"));
-it.todo(`unclosed indexing inside parens`, () => _testCase("(x[1 )"));
-it.todo(`literal inside unclosed parens inside braces`, () => _testCase("{ (1 }"));
-it.todo(`unclosed indexing inside braces`, () => _testCase("{ x[1 }"));
-it.todo(`unclosed parens inside indexing`, () => _testCase("x[(1]"));
-it.todo(`literal inside unclosed brace inside indexing`, () => _testCase("x[{ 1 ]"));
+it(`literal inside unclosed brace inside parens`, () => _testCase("({ 1 )"));
+it(`unclosed indexing inside parens`, () => _testCase("(x[1 )"));
+it(`literal inside unclosed parens inside braces`, () => _testCase("{ (1 }"));
+it(`unclosed indexing inside braces`, () => _testCase("{ x[1 }"));
+it(`unclosed parens inside indexing`, () => _testCase("x[(1]"));
+it(`literal inside unclosed brace inside indexing`, () => _testCase("x[{ 1 ]"));
 it.todo(`num literal application`, () => _testCase("1 2"));
 it.todo(`string literal application`, () => _testCase('"1" 2'));
 it.todo(`infix operation add no lhs`, () => _testCase("1 +"));
@@ -66,7 +70,7 @@ it.todo(`single closing parens`, () => _testCase("send((1+2), 3+,4)"));
 it.todo(`single closing parens`, () => _testCase("!"));
 it.todo(`single closing parens`, () => _testCase('"\\(")"'));
 it.todo(`single closing parens`, () => _testCase("f + !"));
-it.todo(`single closing parens`, () => _testCase('"uwu\n 1'));
+it.only(`single closing parens`, () => _testCase('"uwu\n 1'));
 it.todo(`single closing parens`, () => _testCase("1 + (2 + 3))"));
 it.todo(`single closing parens`, () => _testCase("1 + (2 + 3)) +"));
 it.todo(`single closing parens`, () => _testCase("q + )/"));
