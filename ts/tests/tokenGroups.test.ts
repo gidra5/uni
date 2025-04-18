@@ -163,7 +163,7 @@ it.prop([anyStringArb])("parseTokenGroups positions are correctly nested", (src)
         return;
       }
       if (tg.type === "error") {
-        checkToken(tg.token);
+        if (tg.token) checkToken(tg.token);
         return;
       }
 

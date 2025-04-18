@@ -83,3 +83,189 @@ exports[`single closing parens > token errors 1`] = `
   },
 ]
 `;
+
+exports[`single open brace > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "type": "implicit_placeholder",
+        },
+      ],
+      "data": {},
+      "type": "block",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`single open brace > errors 1`] = `[]`;
+
+exports[`single open brace > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 1,
+        "kind": "primary",
+        "message": "must be closed with "}" by that point",
+        "start": 1,
+      },
+      {
+        "end": 1,
+        "kind": "primary",
+        "message": "opening token "{" here",
+        "start": 0,
+      },
+    ],
+    "message": "Missing closing token",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;
+
+exports[`single open bracket > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "type": "implicit_placeholder",
+        },
+      ],
+      "data": {},
+      "type": "square_brackets",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`single open bracket > errors 1`] = `[]`;
+
+exports[`single open bracket > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 1,
+        "kind": "primary",
+        "message": "must be closed with "]" by that point",
+        "start": 1,
+      },
+      {
+        "end": 1,
+        "kind": "primary",
+        "message": "opening token "[" here",
+        "start": 0,
+      },
+    ],
+    "message": "Missing closing token",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;
+
+exports[`single open parens > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {},
+          "type": "implicit_placeholder",
+        },
+      ],
+      "data": {},
+      "type": "parens",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`single open parens > errors 1`] = `[]`;
+
+exports[`single open parens > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 1,
+        "kind": "primary",
+        "message": "must be closed with ")" by that point",
+        "start": 1,
+      },
+      {
+        "end": 1,
+        "kind": "primary",
+        "message": "opening token "(" here",
+        "start": 0,
+      },
+    ],
+    "message": "Missing closing token",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;
+
+exports[`single open parens with number > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": 1,
+          },
+          "type": "number",
+        },
+      ],
+      "data": {},
+      "type": "parens",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`single open parens with number > errors 1`] = `[]`;
+
+exports[`single open parens with number > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 2,
+        "kind": "primary",
+        "message": "must be closed with ")" by that point",
+        "start": 2,
+      },
+      {
+        "end": 1,
+        "kind": "primary",
+        "message": "opening token "(" here",
+        "start": 0,
+      },
+    ],
+    "message": "Missing closing token",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+]
+`;

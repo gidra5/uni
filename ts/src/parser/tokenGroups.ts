@@ -291,6 +291,7 @@ export const parseTokenGroup = (...untilArray: string[]): Parser<string, TokenGr
     while (!(yield Parser.checkFollowSet()) && (yield Parser.isNotEnd())) {
       const token: TokenGroup = yield _parseToken;
       tokens.push(token);
+      if (yield Parser.isEnd()) break;
       const ws = yield parseWhitespace as any;
       if (ws && !(yield Parser.checkFollowSet())) tokens.push(ws);
     }
