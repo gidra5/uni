@@ -26,7 +26,7 @@ const _testCase = (input: string) => {
   const [tokenErrors, validatedTokens] = validateTokenGroups(tokens);
   // console.dir(validatedTokens, { depth: null });
   const ast = parseScript(validatedTokens);
-  // console.dir(ast, { depth: null });
+  console.dir(ast, { depth: null });
   const [errors, validated] = validate(ast);
   // console.dir(validated, { depth: null });
 
@@ -72,6 +72,7 @@ it.todo(`single closing parens`, () => _testCase('"\\(")"'));
 it.todo(`single closing parens`, () => _testCase("f + !"));
 it(`unclosed string newline`, () => _testCase('"uwu\n 1'));
 it(`unclosed string template`, () => _testCase('"uwu\\(\n 1'));
+it(`string template missing quote`, () => _testCase('"uwu\\()\n 1'));
 it.todo(`single closing parens`, () => _testCase("1 + (2 + 3))"));
 it.todo(`single closing parens`, () => _testCase("1 + (2 + 3)) +"));
 it.todo(`single closing parens`, () => _testCase("q + )/"));

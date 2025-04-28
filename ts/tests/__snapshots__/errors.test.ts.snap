@@ -439,6 +439,81 @@ exports[`single open parens with number > token errors 1`] = `
 ]
 `;
 
+exports[`string template missing quote > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "uwu",
+          },
+          "type": "string",
+        },
+        {
+          "children": [],
+          "data": {
+            "cause": [Error: empty interpolation expression],
+          },
+          "type": "error",
+        },
+      ],
+      "data": {},
+      "type": "template",
+    },
+    {
+      "children": [],
+      "data": {
+        "value": 1,
+      },
+      "type": "number",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`string template missing quote > errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 7,
+        "kind": "primary",
+        "message": "remove this interpolation expression or provide a value",
+        "start": 0,
+      },
+    ],
+    "message": "empty interpolation expression",
+    "notes": [],
+    "type": "EMPTY_INTERPOLATION_EXPRESSION",
+  },
+]
+`;
+
+exports[`string template missing quote > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 7,
+        "kind": "primary",
+        "message": "expected closing double quote",
+        "start": 7,
+      },
+    ],
+    "message": "Unterminated string literal",
+    "notes": [
+      "Strings must be enclosed in double quotes (")",
+      "Use \\ to escape special characters",
+    ],
+    "type": "UNTERMINATED_STRING",
+  },
+]
+`;
+
 exports[`unclosed indexing inside braces > ast 1`] = `
 {
   "children": [

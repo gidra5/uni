@@ -257,6 +257,10 @@ const parseValue = Parser.do<ValidatedTokenGroup[], Tree>(function* () {
         assert(__token.type === "group");
         assert("kind" in __token);
         assert(__token.kind === TokenGroupKind.Parentheses);
+        if (__token.tokens.length === 0) {
+          children.push(error(SystemError.emptyInterpolationExpression(yield* nodePosition()), yield* nodePosition()));
+          continue;
+        }
         const [exprParseCtx, expr] = parseExpr.parse(__token.tokens, { index: 0 });
         assert(exprParseCtx.index === __token.tokens.length);
         children.push(expr);

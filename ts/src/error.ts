@@ -33,6 +33,7 @@ export enum ErrorType {
   MISSING_OPERAND,
   UNCLOSED_BLOCK_COMMENT,
   INVALID_USE_OF_RECORD_SYNTAX,
+  EMPTY_INTERPOLATION_EXPRESSION,
 }
 
 type Options = {
@@ -395,6 +396,13 @@ export class SystemError extends Error {
 
   static missingOperand(pos: Position): SystemError {
     return new SystemError(ErrorType.MISSING_OPERAND, "missing operand").withPrimaryLabel("here", pos);
+  }
+
+  static emptyInterpolationExpression(pos: Position): SystemError {
+    return new SystemError(ErrorType.EMPTY_INTERPOLATION_EXPRESSION, "empty interpolation expression").withPrimaryLabel(
+      "remove this interpolation expression or provide a value",
+      pos
+    );
   }
 
   static testError(type: ErrorType): SystemError {
