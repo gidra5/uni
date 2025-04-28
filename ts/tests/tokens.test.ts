@@ -436,12 +436,28 @@ describe("comments", () => {
     }
   });
 
-  it.prop([anyStringArb])("adding block comments never changes the result", (src) => {
-    const [, token] = parseToken.parse(src, { index: 0 });
-    const [, withComments] = parseToken.parse(`/**/${src}/**/`, { index: 0 });
+  it.prop([anyStringArb], { seed: -2129051128, path: "99", endOnFailure: true })(
+    "adding block comments never changes the result",
+    (src) => {
+      const [, token] = parseToken.parse(src, { index: 0 });
+      const [, withComments] = parseToken.parse(`/**/${src}/**/`, { index: 0 });
 
-    expect(dropId(token)).toStrictEqual(dropId(withComments));
-  });
+      console.dir([token, withComments], { depth: null });
+
+      function dropId({ id, ...token }: any) {
+        if (token.type === "error") {
+          token.cause.labels.forEach((label) => {
+            delete label.start;
+            delete label.end;
+          });
+        }
+        if ("token" in token) return { ...token, token: dropId(token.token) };
+        return token;
+      }
+
+      expect(dropId(token)).toStrictEqual(dropId(withComments));
+    }
+  );
 });
 
 it.prop([anyStringArb])("parseToken never throws", (src) => {

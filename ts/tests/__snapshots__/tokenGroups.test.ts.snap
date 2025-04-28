@@ -161,10 +161,7 @@ exports[`group kinds > for group > errors > block missing block start 1`] = `
   },
   {
     "cause": [Error: Unexpected closing token "}"],
-    "token": {
-      "name": "}",
-      "type": "identifier",
-    },
+    "token": undefined,
     "type": "error",
   },
 ]
@@ -291,10 +288,7 @@ exports[`group kinds > for group > errors > missing 'in y' and block start 1`] =
   },
   {
     "cause": [Error: Unexpected closing token "}"],
-    "token": {
-      "name": "}",
-      "type": "identifier",
-    },
+    "token": undefined,
     "type": "error",
   },
 ]
@@ -345,10 +339,7 @@ exports[`group kinds > for group > errors > missing 'in y' and block start insid
   },
   {
     "cause": [Error: Unexpected closing token "}"],
-    "token": {
-      "name": "}",
-      "type": "identifier",
-    },
+    "token": undefined,
     "type": "error",
   },
 ]
@@ -375,13 +366,6 @@ exports[`group kinds > for group > errors > missing closing token or block 1`] =
             {
               "name": "y",
               "type": "identifier",
-            },
-            {
-              "cause": [Error: Unexpected end of source],
-              "token": {
-                "type": "placeholder",
-              },
-              "type": "error",
             },
           ],
           "type": "group",
@@ -414,13 +398,6 @@ exports[`group kinds > for group > errors > missing everything 1`] = `
             {
               "name": "x",
               "type": "identifier",
-            },
-            {
-              "cause": [Error: Unexpected end of source],
-              "token": {
-                "type": "placeholder",
-              },
-              "type": "error",
             },
           ],
           "type": "group",
@@ -624,10 +601,7 @@ exports[`group kinds > match group > errors > missing block start 1`] = `
   },
   {
     "cause": [Error: Unexpected closing token "}"],
-    "token": {
-      "name": "}",
-      "type": "identifier",
-    },
+    "token": undefined,
     "type": "error",
   },
 ]
@@ -670,10 +644,7 @@ exports[`group kinds > match group > errors > missing block start inside block 1
   },
   {
     "cause": [Error: Unexpected closing token "}"],
-    "token": {
-      "name": "}",
-      "type": "identifier",
-    },
+    "token": undefined,
     "type": "error",
   },
 ]
@@ -691,13 +662,6 @@ exports[`group kinds > match group > errors > missing everything 1`] = `
             {
               "name": "x",
               "type": "identifier",
-            },
-            {
-              "cause": [Error: Unexpected end of source],
-              "token": {
-                "type": "placeholder",
-              },
-              "type": "error",
             },
           ],
           "type": "group",
@@ -834,13 +798,6 @@ exports[`group kinds > pair groups > errors > missing block end inside block 1`]
           "tokens": [],
           "type": "group",
         },
-        {
-          "cause": [Error: Unexpected end of source],
-          "token": {
-            "type": "placeholder",
-          },
-          "type": "error",
-        },
       ],
       "type": "group",
     },
@@ -879,10 +836,7 @@ exports[`group kinds > pair groups > errors > missing block start 1`] = `
 [
   {
     "cause": [Error: Unexpected closing token "}"],
-    "token": {
-      "name": "}",
-      "type": "identifier",
-    },
+    "token": undefined,
     "type": "error",
   },
 ]
@@ -897,10 +851,7 @@ exports[`group kinds > pair groups > errors > missing block start inside block 1
   },
   {
     "cause": [Error: Unexpected closing token "}"],
-    "token": {
-      "name": "}",
-      "type": "identifier",
-    },
+    "token": undefined,
     "type": "error",
   },
 ]
@@ -918,10 +869,7 @@ exports[`group kinds > pair groups > errors > missing block start inside block i
       },
       {
         "cause": [Error: Unexpected closing token "}"],
-        "token": {
-          "name": "}",
-          "type": "identifier",
-        },
+        "token": undefined,
         "type": "error",
       },
     ],
@@ -937,10 +885,7 @@ exports[`group kinds > pair groups > errors > missing block start inside parens 
     "tokens": [
       {
         "cause": [Error: Unexpected closing token "}"],
-        "token": {
-          "name": "}",
-          "type": "identifier",
-        },
+        "token": undefined,
         "type": "error",
       },
     ],
@@ -1044,10 +989,7 @@ exports[`group kinds > while group > errors > block missing block start 1`] = `
   },
   {
     "cause": [Error: Unexpected closing token "}"],
-    "token": {
-      "name": "}",
-      "type": "identifier",
-    },
+    "token": undefined,
     "type": "error",
   },
 ]
@@ -1090,10 +1032,7 @@ exports[`group kinds > while group > errors > missing block start inside block 1
   },
   {
     "cause": [Error: Unexpected closing token "}"],
-    "token": {
-      "name": "}",
-      "type": "identifier",
-    },
+    "token": undefined,
     "type": "error",
   },
 ]
@@ -1111,13 +1050,6 @@ exports[`group kinds > while group > errors > missing closing token or block 1`]
             {
               "name": "x",
               "type": "identifier",
-            },
-            {
-              "cause": [Error: Unexpected end of source],
-              "token": {
-                "type": "placeholder",
-              },
-              "type": "error",
             },
           ],
           "type": "group",

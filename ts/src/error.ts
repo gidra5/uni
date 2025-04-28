@@ -38,7 +38,6 @@ export enum ErrorType {
 type Options = {
   cause?: unknown;
   fileId?: number;
-  data?: Record<string, any>;
   notes?: string[];
   labels?: ErrorLabel[];
 };

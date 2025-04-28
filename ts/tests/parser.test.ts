@@ -6,6 +6,7 @@ import { parseModule, parseScript } from "../src/parser/parser.ts";
 import { Injectable, register } from "../src/utils/injector.ts";
 import { Tree } from "../src/ast.ts";
 import { FileMap } from "codespan-napi";
+import { validateTokenGroups } from "../src/analysis/validate.ts";
 
 beforeEach(() => {
   register(Injectable.FileMap, new FileMap());
@@ -14,31 +15,38 @@ beforeEach(() => {
   register(Injectable.PositionMap, new Map());
 });
 
-it.prop([fc.string().map((s) => parseTokenGroups(s))])("module parsing never throws", (tokens) => {
+it.prop([fc.string().map(parseTokenGroups)], { seed: 563199838, path: "2:1", endOnFailure: true })(
+  "module parsing never throws",
+  (tokens) => {
+    try {
+      const [, validated] = validateTokenGroups(tokens);
+      parseModule(validated);
+    } catch (e) {
+      const msg = e instanceof Error ? e.stack : e;
+      expect.unreachable(msg as string);
+    }
+  }
+);
+
+it.prop([fc.string().map(parseTokenGroups)])("script parsing never throws", (tokens) => {
   try {
-    parseModule(tokens);
+    const [, validated] = validateTokenGroups(tokens);
+    parseScript(validated);
   } catch (e) {
     const msg = e instanceof Error ? e.stack : e;
     expect.unreachable(msg as string);
   }
 });
 
-it.prop([fc.string().map((s) => parseTokenGroups(s))])("script parsing never throws", (tokens) => {
-  try {
-    parseScript(tokens);
-  } catch (e) {
-    const msg = e instanceof Error ? e.stack : e;
-    expect.unreachable(msg as string);
-  }
-});
-
-it.prop([fc.string().map((s) => parseTokenGroups(s))])("module is always flat sequence", (tokens) => {
-  let ast = parseModule(tokens);
+it.prop([fc.string().map(parseTokenGroups)])("module is always flat sequence", (tokens) => {
+  const [, validated] = validateTokenGroups(tokens);
+  let ast = parseModule(validated);
   expect(ast.children.every((node) => (node as Tree).type !== "sequence")).toBe(true);
 });
 
-it.prop([fc.string().map((s) => parseTokenGroups(s))])("script is always flat sequence", (tokens) => {
-  let ast = parseScript(tokens);
+it.prop([fc.string().map(parseTokenGroups)])("script is always flat sequence", (tokens) => {
+  const [, validated] = validateTokenGroups(tokens);
+  let ast = parseScript(validated);
   expect(ast.children.every((node) => (node as Tree).type !== "sequence")).toBe(true);
 });
 

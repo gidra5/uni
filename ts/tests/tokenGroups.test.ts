@@ -26,7 +26,7 @@ const arrayLenArb = <T>(arb: Arbitrary<T>, len: number) => fc.array(arb, { minLe
 
 function clearIds({ id, ...token }: any) {
   if (token.type === "group") return { ...token, tokens: token.tokens.map(clearIds) };
-  if (token.type === "error") return { ...token, token: clearIds(token.token) };
+  if (token.type === "error" && token.token) return { ...token, token: clearIds(token.token) };
   return token;
 }
 
