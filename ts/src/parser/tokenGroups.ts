@@ -100,6 +100,8 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
   yield Parser.rememberIndex();
   const token: Token = yield parseToken as any;
 
+  // console.dir(token, { depth: null });
+
   if (token.type === "string" || token.type === "multilineString") {
     const parser = token.type === "string" ? parseStringToken : parseMultilineStringToken(token.intend);
     const start: number = yield Parser.rememberedIndex();
@@ -107,6 +109,8 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
 
     while (true) {
       const segment: StringToken = yield parser;
+
+      // console.dir(segment, { depth: null });
 
       if (segment.type === "lastSegment") {
         assert(yield Parser.string(token.type === "string" ? '"' : '"""'));

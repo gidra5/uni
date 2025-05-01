@@ -514,6 +514,83 @@ exports[`string template missing quote > token errors 1`] = `
 ]
 `;
 
+exports[`string template nested string > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "",
+          },
+          "type": "string",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": ")",
+          },
+          "type": "string",
+        },
+      ],
+      "data": {},
+      "type": "template",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`string template nested string > errors 1`] = `[]`;
+
+exports[`string template nested string > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 6,
+        "kind": "primary",
+        "message": "must be closed with ")" by that point",
+        "start": 6,
+      },
+      {
+        "end": 3,
+        "kind": "primary",
+        "message": "opening token "\\(" here",
+        "start": 1,
+      },
+    ],
+    "message": "Missing closing token",
+    "notes": [],
+    "type": "MISSING_TOKEN",
+  },
+  {
+    "labels": [
+      {
+        "end": 6,
+        "kind": "primary",
+        "message": "expected closing double quote",
+        "start": 6,
+      },
+      {
+        "end": 1,
+        "kind": "primary",
+        "message": "opening quote here",
+        "start": 0,
+      },
+    ],
+    "message": "Unterminated string literal",
+    "notes": [
+      "Strings must be enclosed in double quotes (")",
+      "Use \\ to escape special characters",
+    ],
+    "type": "UNTERMINATED_STRING",
+  },
+]
+`;
+
 exports[`unclosed indexing inside braces > ast 1`] = `
 {
   "children": [

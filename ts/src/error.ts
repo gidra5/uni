@@ -161,9 +161,10 @@ export class SystemError extends Error {
     return new SystemError(ErrorType.END_OF_SOURCE, "Unexpected end of source").withPrimaryLabel("here", pos);
   }
 
-  static unterminatedString(pos: Position): SystemError {
+  static unterminatedString(pos: Position, openPos: Position): SystemError {
     return new SystemError(ErrorType.UNTERMINATED_STRING, "Unterminated string literal")
       .withPrimaryLabel("expected closing double quote", pos)
+      .withPrimaryLabel("opening quote here", openPos)
       .withNote('Strings must be enclosed in double quotes (")')
       .withNote("Use \\ to escape special characters");
   }

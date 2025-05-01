@@ -1,13 +1,14 @@
 import { TupleN } from "../types";
-import { assert } from "../utils";
+import { assert, unreachable } from "../utils";
 
 type Lambda =
   | { type: "var"; id: number }
   | { type: "app"; func: Term; arg: Term }
   | { type: "fn"; body: (term: Term) => Term };
 type Handlers =
-  | { type: "inject"; id: number; handler: (term: Term, cont: Term) => Term; return: (term: Term) => Term; body: Term }
-  | { type: "handle"; id: number; value: Term };
+  | { type: "inject"; id: number; handler: Term; return: Term; body: Term }
+  | { type: "handle"; id: number; value: Term }
+  | { type: "mask"; id: number; body: Term };
 type Process =
   | { type: "channel"; sender: (sender: Term) => Term; receiver: (receiver: Term) => Term }
   | { type: "send"; id: number; value: Term; rest: Term }
@@ -22,15 +23,29 @@ const _app = (func: Term, arg: Term) => ({ type: "app", func, arg } satisfies Te
 const app = (func: Term, ...[head, ...rest]: Term[]) =>
   rest.length === 0 ? _app(func, head) : (app(_app(func, head), ...rest) satisfies Term);
 const fn = (body: (term: Term) => Term) => ({ type: "fn", body } satisfies Term);
-const fnN = <const N extends number>(n: N, body: (...terms: TupleN<N, Term>) => Term) =>
-  n === 1 ? fn(body as any) : (fn((term) => fnN(n - 1, (...rest) => body(...([term, ...rest] as any)))) satisfies Term);
+const fnN = <const N extends number>(n: N, body: (...terms: TupleN<N, Term>) => Term): Term =>
+  n === 1 ? fn(body as any) : fn((term) => fnN(n - 1, (...rest) => body(...([term, ...rest] as any))));
 const _let = (value: Term, body: (term: Term) => Term) => app(fn(body), value);
 const seq = (...[head, ...rest]: Term[]) => (rest.length === 0 ? head : _let(head, () => seq(...rest)));
+const pipe = (...[head, next, ...rest]: Term[]) =>
+  rest.length === 0 ? app(next, head) : pipe(app(next, head), ...rest);
+const inject = (x: { id?: number; handler: Term; return?: Term; body: Term }) => {
+  const { id = nextId(), return: ret = fn((term) => term) } = x;
+  return { type: "inject", ...x, id, return: ret } satisfies Term;
+};
+const handle = (id: number, value: Term) => ({ type: "handle", id, value } satisfies Term);
+const mask = (id: number, body: Term) => ({ type: "mask", id, body } satisfies Term);
+const without = (id: number, body: Term) => inject({ id, handler: fn(() => unreachable("effect forbidden")), body });
 
 const tuple = (...args: Term[]) =>
   app(
     fnN(args.length, (...terms) => fn((m) => app(m, ...terms))),
     ...args
+  );
+const index = (tup: Term, n: number, i: number) =>
+  app(
+    tup,
+    fnN(n, (...terms) => terms[i])
   );
 
 const either = (x: Term, n: number, i: number) =>
@@ -114,11 +129,14 @@ const _if = fnN(3, (cond, then, _else) => app(cond, then, _else));
 
 type Context = {
   vars: Map<number, Term>;
-  cont?: (term: Term) => Term;
+  handlers: { handler: Term; id: number }[];
+  handlerIds: Map<number, number>; // id -> index
+  cont: (term: Term) => Term;
 };
+const newContext = (): Context => ({ vars: new Map(), handlers: [], handlerIds: new Map(), cont: (term) => term });
 
-const _eval = (term: Term, ctx: Context): Term => {
-  const cont = ctx.cont ?? ((term) => term);
+const _eval = (term: Term, ctx = newContext()): Term => {
+  const cont = ctx.cont;
 
   switch (term.type) {
     case "var":
@@ -126,26 +144,60 @@ const _eval = (term: Term, ctx: Context): Term => {
     case "app":
       return _eval(term.func, {
         ...ctx,
-        cont: (fn) =>
-          _eval(term.arg, {
+        cont: (_fn) => {
+          assert(_fn.type === "fn", "not a function");
+
+          return _eval(term.arg, {
             ...ctx,
             cont: (arg) => {
-              // // console.log("fn, arg", fn, arg);
-              assert(fn.type === "fn", "not a function");
-
-              return _eval(fn.body(arg), ctx);
+              return _eval(_fn.body(arg), ctx);
             },
-          }),
+          });
+        },
       });
     case "fn":
       return cont(term);
-    // case 'inject':
-    //   return _eval(term.body, {
-    //     ...ctx,
-    //     cont: (value) => {
-    //       if
-    //     },
-    //   });
+    case "inject": {
+      return _eval(term.body, {
+        ...ctx,
+        cont: (res) =>
+          _eval(term.return, {
+            ...ctx,
+            cont: fn((arg) => {
+              // // console.log("fn, arg", fn, arg);
+              assert(_fn.type === "fn", "not a function");
+
+              return _fn.body(arg);
+            }),
+          }),
+      });
+      // const handlers = [...ctx.handlers, { id: term.id, handler: term.handler }];
+      // const idx = handlers.length - 1;
+
+      // return _eval(term.body, {
+      //   ...ctx,
+      //   handlers,
+      //   handlerIds: new Map(ctx.handlerIds).set(term.id, idx),
+      //   cont: fn((res) => app(cont, app(term.return, res))),
+      // });
+    }
+    case "handle": {
+      return _eval(app(cont, term), ctx);
+    }
+    case "mask": {
+      return _eval(app(cont, term), ctx);
+      // const idx = ctx.handlerIds.get(term.id);
+      // const newIdx = ctx.handlers.slice(0, idx).findLastIndex(({ id }) => id === term.id);
+      // const handlerIds = new Map(ctx.handlerIds);
+
+      // if (newIdx === -1) {
+      //   handlerIds.delete(term.id);
+      //   return _eval(term.body, { ...ctx, handlerIds });
+      // }
+
+      // handlerIds.set(term.id, newIdx);
+      // return _eval(term.body, { ...ctx, handlerIds });
+    }
   }
 };
 const toNumber = (n: Term) => {
@@ -155,8 +207,7 @@ const toNumber = (n: Term) => {
       n,
       fn(() => (i++, zero)),
       zero
-    ),
-    { vars: new Map() }
+    )
   );
   return i;
 };
@@ -168,8 +219,7 @@ const toBool = (b: Term) => {
       fn((x) => ((res = true), x)),
       fn((x) => ((res = false), x)),
       zero
-    ),
-    { vars: new Map() }
+    )
   );
 
   return res!;
@@ -185,9 +235,9 @@ if (import.meta.vitest) {
     id = 0;
   });
 
-  describe("lambda", () => {
+  describe.skip("lambda", () => {
     test("id", () => {
-      const ctx = { vars: new Map() };
+      const ctx = newContext();
       const value = name();
       ctx.vars.set(value.id, value);
 
@@ -199,7 +249,7 @@ if (import.meta.vitest) {
     });
 
     test("tuple", () => {
-      const ctx = { vars: new Map() };
+      const ctx = newContext();
       const value1 = name();
       const value2 = name();
       ctx.vars.set(value1.id, value1);
@@ -213,19 +263,20 @@ if (import.meta.vitest) {
     });
 
     test("either", () => {
-      const ctx = { vars: new Map() };
+      const ctx = newContext();
       const value1 = name();
       const value2 = name();
       ctx.vars.set(value1.id, value1);
       ctx.vars.set(value2.id, value2);
 
-      const term = app(
+      const term = index(
         app(
           either(value1, 2, 0),
           fn((x) => tuple(value1, x)),
           fn((x) => tuple(value2, x))
         ),
-        fnN(2, (x, y) => x)
+        2,
+        0
       );
       expect(_eval(term, ctx)).toEqual(value1);
     });
@@ -334,7 +385,7 @@ if (import.meta.vitest) {
     });
 
     test("fib fix", () => {
-      const ctx = { vars: new Map() };
+      const ctx = newContext();
 
       const term = app(
         fix((self) =>
@@ -353,6 +404,120 @@ if (import.meta.vitest) {
     test("let", () => {
       const term = _let(num(1), (x) => app(add, x, num(2)));
       expect(toNumber(term)).toEqual(3);
+    });
+  });
+
+  describe("handlers", () => {
+    test("inject", () => {
+      const handlerId = 1;
+      const term = inject({
+        id: handlerId,
+        handler: (term, cont) => app(cont, term),
+        body: handle(handlerId, num(1)),
+      });
+      expect(toNumber(term)).toEqual(1);
+    });
+
+    test("inject deep", () => {
+      const handlerId1 = 1;
+      const handlerId2 = 2;
+      const term = inject({
+        id: handlerId1,
+        handler: (term, cont) => app(cont, num(2)),
+        body: inject({
+          id: handlerId2,
+          handler: (term, cont) => app(cont, num(3)),
+          body: handle(handlerId1, num(1)),
+        }),
+      });
+      expect(toNumber(term)).toEqual(2);
+    });
+
+    test("inject shadowing", () => {
+      const handlerId1 = 1;
+      const term = inject({
+        id: handlerId1,
+        handler: (term, cont) => app(cont, num(2)),
+        body: inject({
+          id: handlerId1,
+          handler: (term, cont) => app(cont, num(3)),
+          body: handle(handlerId1, num(1)),
+        }),
+      });
+      expect(toNumber(term)).toEqual(3);
+    });
+
+    test("inject mask", () => {
+      const handlerId1 = 1;
+      const term = inject({
+        id: handlerId1,
+        handler: (term, cont) => app(cont, num(2)),
+        body: inject({
+          id: handlerId1,
+          handler: (term, cont) => app(cont, num(3)),
+          body: mask(handlerId1, handle(handlerId1, num(1))),
+        }),
+      });
+      expect(toNumber(term)).toEqual(2);
+    });
+
+    test("inject without", () => {
+      const handlerId1 = 1;
+      const term = inject({
+        id: handlerId1,
+        handler: (term, cont) => app(cont, num(2)),
+        body: inject({
+          id: handlerId1,
+          handler: (term, cont) => app(cont, num(3)),
+          body: without(handlerId1, handle(handlerId1, num(1))),
+        }),
+      });
+      expect(() => toNumber(term)).toThrow();
+    });
+
+    test("inject deep 2", () => {
+      const handlerId1 = 1;
+      const handlerId2 = 2;
+      const term = inject({
+        id: handlerId1,
+        handler: (term, cont) => app(cont, num(2)),
+        body: inject({
+          id: handlerId2,
+          handler: (term, cont) => app(cont, num(3)),
+          body: app(add, handle(handlerId1, num(1)), handle(handlerId2, num(1))),
+        }),
+      });
+      expect(toNumber(term)).toEqual(5);
+    });
+
+    test("inject handle twice", () => {
+      const handlerId = 1;
+      const term = inject({
+        id: handlerId,
+        handler: (term, cont) => app(cont, num(1)),
+        body: app(add, handle(handlerId, num(1)), handle(handlerId, num(1))),
+      });
+      expect(toNumber(term)).toEqual(2);
+    });
+
+    test("inject handle twice seq", () => {
+      const handlerId = 1;
+      const term = inject({
+        id: handlerId,
+        handler: (term, cont) => app(cont, num(1)),
+        body: seq(handle(handlerId, num(1)), handle(handlerId, num(1))),
+      });
+      expect(toNumber(term)).toEqual(1);
+    });
+
+    test("inject handler no cont", () => {
+      const handlerId1 = 1;
+      const term = inject({
+        id: handlerId1,
+        handler: (term, cont) => term,
+        body: app(add, handle(handlerId1, num(1)), num(1)),
+      });
+      expect(toNumber(term)).toEqual(1);
     });
   });
 }

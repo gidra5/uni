@@ -107,11 +107,12 @@ const endOfSourceError = function* () {
   return { id: nextId(), type: "error", cause, token } satisfies Token;
 };
 
-const stringLiteralError = function* (value: string) {
+const stringLiteralError = function* (value: string, startIndex: number) {
   const id = nextId();
   const pos: Position = indexPosition(yield Parser.index());
+  const openPos: Position = indexPosition(startIndex);
   setPos(id, pos);
-  const cause = SystemError.unterminatedString(pos);
+  const cause = SystemError.unterminatedString(pos, openPos);
   return { id, type: "error", cause, value } satisfies StringToken;
 };
 
@@ -188,13 +189,14 @@ const parseBlockComment = function* self() {
 
 export const parseStringToken = Parser.do<string, StringToken>(function* () {
   yield Parser.rememberIndex();
+  const startIndex = yield Parser.index();
   let value = "";
 
   while (true) {
     if (yield Parser.checkString('"')) return yield* stringLastSegment(value);
     if (yield Parser.checkString("\\(")) return yield* stringSegment(value);
-    if (yield Parser.isEnd()) return yield* stringLiteralError(value);
-    if (yield Parser.checkString("\n")) return yield* stringLiteralError(value);
+    if (yield Parser.isEnd()) return yield* stringLiteralError(value, startIndex);
+    if (yield Parser.checkString("\n")) return yield* stringLiteralError(value, startIndex);
 
     if (yield Parser.string("\\")) {
       if (yield Parser.isEnd()) continue;

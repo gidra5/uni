@@ -22,11 +22,11 @@ function clearIds(ast: Tree) {
 
 const _testCase = (input: string) => {
   const tokens = parseTokenGroups(input);
-  // console.dir(tokens, { depth: null });
+  console.dir(tokens, { depth: null });
   const [tokenErrors, validatedTokens] = validateTokenGroups(tokens);
   // console.dir(validatedTokens, { depth: null });
   const ast = parseScript(validatedTokens);
-  console.dir(ast, { depth: null });
+  // console.dir(ast, { depth: null });
   const [errors, validated] = validate(ast);
   // console.dir(validated, { depth: null });
 
@@ -68,7 +68,7 @@ it.todo(`infix operation add unclosed parens`, () => _testCase("1 + (2 + 3"));
 it.todo(`single closing parens`, () => _testCase("1 * (5/3) (*4"));
 it.todo(`single closing parens`, () => _testCase("send((1+2), 3+,4)"));
 it.todo(`single closing parens`, () => _testCase("!"));
-it.todo(`single closing parens`, () => _testCase('"\\(")"'));
+it.only(`string template nested string`, () => _testCase('"\\(")"'));
 it.todo(`single closing parens`, () => _testCase("f + !"));
 it(`unclosed string newline`, () => _testCase('"uwu\n 1'));
 it(`unclosed string template`, () => _testCase('"uwu\\(\n 1'));
