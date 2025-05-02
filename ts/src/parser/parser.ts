@@ -18,7 +18,7 @@ import {
 import { inject, Injectable } from "../utils/injector.js";
 import { TokenGroupKind, ValidatedTokenGroup } from "./tokenGroups.js";
 import { Parser, type ParserGenerator } from "./utils.js";
-import { assert } from "../utils/index.js";
+import { assert, getPos } from "../utils/index.js";
 
 export const getExprPrecedence = (node: Tree): Precedence =>
   inject(Injectable.PrecedenceMap).get(node.id) ?? _getExprPrecedence(node.type);
@@ -258,7 +258,7 @@ const parseValue = Parser.do<ValidatedTokenGroup[], Tree>(function* () {
         assert("kind" in __token);
         assert(__token.kind === TokenGroupKind.Parentheses);
         if (__token.tokens.length === 0) {
-          children.push(error(SystemError.emptyInterpolationExpression(yield* nodePosition()), yield* nodePosition()));
+          children.push(error(SystemError.emptyInterpolationExpression(getPos(__token.id)!), getPos(__token.id)!));
           continue;
         }
         const [exprParseCtx, expr] = parseExpr.parse(__token.tokens, { index: 0 });
