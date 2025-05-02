@@ -1,4 +1,4 @@
-import { SystemError } from "../error.js";
+import { ErrorType, SystemError } from "../error.js";
 import { endIntervalPosition, indexPosition, intervalPosition, type Position } from "../utils/position.js";
 import { assert, getPos, nextId, setPos } from "../utils/index.js";
 import {
@@ -104,7 +104,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
 
   if (token.type === "string" || token.type === "multilineString") {
     const parser = token.type === "string" ? parseStringToken : parseMultilineStringToken(token.intend);
-    const start: number = yield Parser.rememberedIndex();
+    const _start: number = yield Parser.rememberedIndex();
     const tokens: TokenGroup[] = [];
 
     while (true) {
@@ -113,13 +113,15 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       // console.dir(segment, { depth: null });
 
       if (segment.type === "lastSegment") {
-        assert(yield Parser.string(token.type === "string" ? '"' : '"""'));
         tokens.push({ ...segment, type: "string" });
         break;
       }
 
       if (segment.type === "error") {
         const { cause, ...token } = segment;
+        if (cause.type === ErrorType.UNTERMINATED_STRING) {
+          cause.withPrimaryLabel("opening quote here", indexPosition(_start));
+        }
         if (token.value) tokens.push({ id: nextId(), type: "error", cause, token: { ...token, type: "string" } });
         else tokens.push({ id: nextId(), type: "error", cause });
         break;
@@ -132,7 +134,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       tokens.push(yield* parsePair(start, "\\(", ")", TokenGroupKind.Parentheses));
     }
 
-    return yield* group(tokens, TokenGroupKind.StringTemplate, start);
+    return yield* group(tokens, TokenGroupKind.StringTemplate, _start);
   }
 
   if (token.type === "identifier") {

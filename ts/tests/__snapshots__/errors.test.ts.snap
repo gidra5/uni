@@ -575,7 +575,7 @@ exports[`string template nested string > token errors 1`] = `
         "start": 6,
       },
       {
-        "end": 1,
+        "end": 0,
         "kind": "primary",
         "message": "opening quote here",
         "start": 0,

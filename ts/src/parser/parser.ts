@@ -246,7 +246,7 @@ const parseValue = Parser.do<ValidatedTokenGroup[], Tree>(function* () {
 
   if (_token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.StringTemplate) {
     yield Parser.advance();
-    if (_token.tokens.length === 1) {
+    if (_token.tokens.length === 1 && _token.tokens[0].type === "string") {
       return token(_token.tokens[0], yield* nodePosition());
     }
     const children: Tree[] = [];
