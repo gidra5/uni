@@ -163,8 +163,9 @@ export class SystemError extends Error {
 
   static unterminatedString(pos: Position): SystemError {
     return new SystemError(ErrorType.UNTERMINATED_STRING, "Unterminated string literal")
-      .withPrimaryLabel("expected closing double quote", pos)
+      .withPrimaryLabel("expected closing quote", pos)
       .withNote('Strings must be enclosed in double quotes (")')
+      .withNote('Multiline strings must be enclosed in triple quotes (""")')
       .withNote("Use \\ to escape special characters");
   }
 

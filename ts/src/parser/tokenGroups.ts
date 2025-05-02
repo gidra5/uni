@@ -104,7 +104,8 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
 
   if (token.type === "string" || token.type === "multilineString") {
     const parser = token.type === "string" ? parseStringToken : parseMultilineStringToken(token.intend);
-    const _start: number = yield Parser.rememberedIndex();
+    const start: number = yield Parser.rememberedIndex();
+    const openPos: Position = token.type === "string" ? indexPosition(start) : intervalPosition(start, 3);
     const tokens: TokenGroup[] = [];
 
     while (true) {
@@ -120,7 +121,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       if (segment.type === "error") {
         const { cause, ...token } = segment;
         if (cause.type === ErrorType.UNTERMINATED_STRING) {
-          cause.withPrimaryLabel("opening quote here", indexPosition(_start));
+          cause.withPrimaryLabel("opening quote here", openPos);
         }
         if (token.value) tokens.push({ id: nextId(), type: "error", cause, token: { ...token, type: "string" } });
         else tokens.push({ id: nextId(), type: "error", cause });
@@ -134,7 +135,7 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       tokens.push(yield* parsePair(start, "\\(", ")", TokenGroupKind.Parentheses));
     }
 
-    return yield* group(tokens, TokenGroupKind.StringTemplate, _start);
+    return yield* group(tokens, TokenGroupKind.StringTemplate, start);
   }
 
   if (token.type === "identifier") {

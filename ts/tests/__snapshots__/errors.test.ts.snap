@@ -169,6 +169,89 @@ exports[`literal inside unclosed parens inside braces > token errors 1`] = `
 ]
 `;
 
+exports[`multiline string template missing quote > ast 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "uwu",
+          },
+          "type": "string",
+        },
+        {
+          "children": [],
+          "data": {
+            "cause": [Error: empty interpolation expression],
+          },
+          "type": "error",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": "
+ 1",
+          },
+          "type": "string",
+        },
+      ],
+      "data": {},
+      "type": "template",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`multiline string template missing quote > errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 10,
+        "kind": "primary",
+        "message": "remove this interpolation expression or provide a value",
+        "start": 7,
+      },
+    ],
+    "message": "empty interpolation expression",
+    "notes": [],
+    "type": "EMPTY_INTERPOLATION_EXPRESSION",
+  },
+]
+`;
+
+exports[`multiline string template missing quote > token errors 1`] = `
+[
+  {
+    "labels": [
+      {
+        "end": 13,
+        "kind": "primary",
+        "message": "expected closing quote",
+        "start": 13,
+      },
+      {
+        "end": 3,
+        "kind": "primary",
+        "message": "opening quote here",
+        "start": 0,
+      },
+    ],
+    "message": "Unterminated string literal",
+    "notes": [
+      "Strings must be enclosed in double quotes (")",
+      "Multiline strings must be enclosed in triple quotes (""")",
+      "Use \\ to escape special characters",
+    ],
+    "type": "UNTERMINATED_STRING",
+  },
+]
+`;
+
 exports[`single closing brace > ast 1`] = `
 {
   "children": [],
@@ -500,7 +583,7 @@ exports[`string template missing quote > token errors 1`] = `
       {
         "end": 7,
         "kind": "primary",
-        "message": "expected closing double quote",
+        "message": "expected closing quote",
         "start": 7,
       },
       {
@@ -513,6 +596,7 @@ exports[`string template missing quote > token errors 1`] = `
     "message": "Unterminated string literal",
     "notes": [
       "Strings must be enclosed in double quotes (")",
+      "Multiline strings must be enclosed in triple quotes (""")",
       "Use \\ to escape special characters",
     ],
     "type": "UNTERMINATED_STRING",
@@ -577,7 +661,7 @@ exports[`string template nested string > token errors 1`] = `
       {
         "end": 6,
         "kind": "primary",
-        "message": "expected closing double quote",
+        "message": "expected closing quote",
         "start": 6,
       },
       {
@@ -590,6 +674,7 @@ exports[`string template nested string > token errors 1`] = `
     "message": "Unterminated string literal",
     "notes": [
       "Strings must be enclosed in double quotes (")",
+      "Multiline strings must be enclosed in triple quotes (""")",
       "Use \\ to escape special characters",
     ],
     "type": "UNTERMINATED_STRING",
@@ -812,7 +897,7 @@ exports[`unclosed string newline > token errors 1`] = `
       {
         "end": 4,
         "kind": "primary",
-        "message": "expected closing double quote",
+        "message": "expected closing quote",
         "start": 4,
       },
       {
@@ -825,6 +910,7 @@ exports[`unclosed string newline > token errors 1`] = `
     "message": "Unterminated string literal",
     "notes": [
       "Strings must be enclosed in double quotes (")",
+      "Multiline strings must be enclosed in triple quotes (""")",
       "Use \\ to escape special characters",
     ],
     "type": "UNTERMINATED_STRING",
@@ -889,7 +975,7 @@ exports[`unclosed string template > token errors 1`] = `
       {
         "end": 9,
         "kind": "primary",
-        "message": "expected closing double quote",
+        "message": "expected closing quote",
         "start": 9,
       },
       {
@@ -902,6 +988,7 @@ exports[`unclosed string template > token errors 1`] = `
     "message": "Unterminated string literal",
     "notes": [
       "Strings must be enclosed in double quotes (")",
+      "Multiline strings must be enclosed in triple quotes (""")",
       "Use \\ to escape special characters",
     ],
     "type": "UNTERMINATED_STRING",
