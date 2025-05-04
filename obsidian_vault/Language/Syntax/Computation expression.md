@@ -28,6 +28,7 @@ utilities:
 
 ## structured expressions
 
+https://www.reddit.com/r/ProgrammingLanguages/comments/1kafxfb/programming_languages_should_have_a_tree/
 ```
 structured = 
   | ("while" | "for" pattern "in" | "loop") computation statement_form 

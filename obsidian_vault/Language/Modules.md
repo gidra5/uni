@@ -70,3 +70,7 @@ export fully exposes an item to any importer. protected export exposes item only
 
 [modules stuff](https://thunderseethe.dev/posts/whats-in-a-module/)
 https://www.iecc.com/linker/
+
+module vilibility:
+1. Module items can be private or public
+2. Modules in a folder can be private or public when named with postfix `.pub`
