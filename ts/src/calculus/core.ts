@@ -217,7 +217,8 @@ const pred = () =>
     )
   );
 const sub = () => fnN(2, (x, y) => app(y(), pred(), x()));
-const div = () => fnN(2, (x, y) => _if(app(isZero(), x()), zero(), app(succ(), app(div(), app(sub(), x(), y()), y()))));
+const div = () =>
+  fix((self) => fnN(2, (x, y) => _if(app(isZero(), x()), zero(), app(succ(), app(self(), app(sub(), x(), y()), y())))));
 const isZero = () =>
   fn((n) =>
     app(
@@ -434,30 +435,24 @@ if (import.meta.vitest) {
       expect(toNumber(term)).toEqual(n ** m);
     });
 
-    test.only.prop([fc.integer({ min: 1, max: 5 })], { seed: -1455889466, path: "0:1:0", endOnFailure: true })(
-      "pred",
-      (n) => {
-        const term = app(pred(), num(n));
-        expect(toNumber(term)).toEqual(n - 1);
+    test.prop([fc.integer({ min: 1, max: 96 })])("pred", (n) => {
+      const term = app(pred(), num(n));
+      expect(toNumber(term)).toEqual(n - 1);
+    });
+
+    test.prop([fc.integer({ min: 0, max: 48 }).chain((n) => fc.integer({ min: 0, max: n }).map((m) => [n, m]))])(
+      "sub",
+      ([n, m]) => {
+        const term = app(sub(), num(n), num(m));
+        expect(toNumber(term)).toEqual(n - m);
       }
     );
 
-    test.todo("pred", () => {
-      const term = app(pred(), num(5));
-      expect(toNumber(term)).toEqual(4);
-    });
-
-    test.todo("sub", () => {
-      const term1 = num(5);
-      const term2 = num(3);
-      const term = app(sub(), term1, term2);
-      expect(toNumber(term)).toEqual(2);
-    });
-    test.todo("div", () => {
-      const term1 = num(0);
-      const term2 = num(1);
-      const term = app(div(), term1, term2);
-      expect(toNumber(term)).toEqual(0);
+    test.only.prop([
+      fc.integer({ min: 1, max: 4 }).chain((n) => fc.integer({ min: 1, max: n }).map((m) => [n * m, m])),
+    ])("div", ([n, m]) => {
+      const term = app(div(), num(n), num(m));
+      expect(toNumber(term)).toEqual(n / m);
     });
 
     test("isZero", () => {
