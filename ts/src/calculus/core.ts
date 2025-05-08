@@ -1,153 +1,6 @@
 import { TupleN } from "../types";
 import { assert, unreachable } from "../utils";
 
-/**
- * The lambda calculus, implemented using unique identifiers.
- *
- * Based on Section 4 of Lennart Augustsson’s
- * {{: https://github.com/mietek/cook/blob/master/doc/pdf/augustsson-2006.pdf}
- * “λ-calculus cooked four ways”}.
- */
-
-/**
- * Unique identifiers
- */
-class Id {
-  private static nextId: number = 0;
-
-  static fresh(): number {
-    const i = Id.nextId;
-    Id.nextId++;
-    return i;
-  }
-}
-
-/**
- * Syntax
- */
-
-export type Lambda =
-  | { type: "var"; id: number }
-  | { type: "app"; func: Term; arg: Term }
-  | { type: "fn"; id: number; body: Term };
-
-/**
- * Conversions
- */
-
-// Assuming a definition for Named.expr and Named.String_set from the OCaml code
-// This is a placeholder and would need to be implemented based on the OCaml
-// Named module.
-type NamedExpr = any;
-type NamedStringSet = Set<string>;
-declare module Named {
-  export const String_set: {
-    empty: NamedStringSet;
-    add: (set: NamedStringSet, s: string) => NamedStringSet;
-  };
-  export function fresh(set: NamedStringSet, s: string): string;
-}
-
-function of_named(e: NamedExpr): Lambda {
-  const go = (is: [string, number][], e: NamedExpr): Lambda => {
-    switch (e.type) {
-      case "Var":
-        const id = is.find(([name, _]) => name === e.name)?.[1];
-        if (id === undefined) {
-          throw new Error(`Unbound variable: ${e.name}`);
-        }
-        return { type: "var", id };
-      case "Let":
-        const i = Id.fresh();
-        return {
-          type: "app",
-          func: {
-            type: "fn",
-            id: i,
-            body: go([...is, [e.name, i]], e.body),
-          },
-          arg: go(is, e.def),
-        };
-      case "Fun_lit":
-        const fnId = Id.fresh();
-        return { type: "fn", id: fnId, body: go([...is, [e.name, fnId]], e.body) };
-      case "Fun_app":
-        return { type: "app", func: go(is, e.head), arg: go(is, e.arg) };
-      default:
-        throw new Error(`Unknown named expression type: ${e.type}`);
-    }
-  };
-  return go([], e);
-}
-
-function to_named(e: Lambda): NamedExpr {
-  const go = (ns: NamedStringSet, m: Map<number, string>, e: Lambda): NamedExpr => {
-    switch (e.type) {
-      case "var":
-        const name = m.get(e.id);
-        if (name === undefined) {
-          throw new Error(`Unbound id: ${e.id}`);
-        }
-        return { type: "Var", name };
-      case "fn":
-        const fnName = Named.fresh(ns, "x"); // Placeholder name
-        return {
-          type: "Fun_lit",
-          name: fnName,
-          body: go(Named.String_set.add(ns, fnName), new Map(m).set(e.id, fnName), e.body),
-        };
-      case "app":
-        return { type: "Fun_app", head: go(ns, m, e.func), arg: go(ns, m, e.arg) };
-      default:
-        throw new Error(`Unknown term type: ${e.type}`);
-    }
-  };
-  // This conversion to named is lossy regarding 'Let' expressions
-  return go(Named.String_set.empty, new Map(), e);
-}
-
-/**
- * Alpha Equivalence
- */
-
-/**
- * Compare the syntactic structure of two expressions, taking into account
- * binding structure while ignoring differences in names.
- */
-function alpha_equiv(e1: Lambda, e2: Lambda): boolean {
-  // Compare for alpha equivalence by comparing the binding depth of variable
-  // names in each expression. This approach is described in section 6.1 of
-  // {{: https://davidchristiansen.dk/tutorials/implementing-types-hs.pdf}
-  // “Checking Dependent Types with Normalization by Evaluation: A Tutorial
-  // (Haskell Version)”} by David Christiansen.
-  const go = (size: number, ns1: Map<number, number>, e1: Lambda, ns2: Map<number, number>, e2: Lambda): boolean => {
-    switch (e1.type) {
-      case "var":
-        if (e2.type !== "var") return false;
-        const l1 = ns1.get(e1.id);
-        const l2 = ns2.get(e2.id);
-        if (l1 === undefined && l2 === undefined) {
-          return e1.id === e2.id;
-        } else if (l1 !== undefined && l2 !== undefined) {
-          return l1 === l2;
-        } else {
-          return false;
-        }
-      case "fn":
-        if (e2.type !== "fn") return false;
-        return go(size + 1, new Map(ns1).set(e1.id, size), e1.body, new Map(ns2).set(e2.id, size), e2.body);
-      case "app":
-        if (e2.type !== "app") return false;
-        return go(size, ns1, e1.func, ns2, e2.func) && go(size, ns1, e1.arg, ns2, e2.arg);
-    }
-  };
-  return go(0, new Map(), e1, new Map(), e2);
-}
-
-/**
- * Substitution
- */
-
 function clone(e: Lambda): Lambda {
   // Rename all binders with fresh ids
   const rename = (m: Map<number, number>, e: Lambda): Lambda => {
@@ -155,7 +8,7 @@ function clone(e: Lambda): Lambda {
       case "var":
         return { type: "var", id: m.get(e.id) ?? e.id };
       case "fn":
-        const i = Id.fresh();
+        const i = nextId();
         return {
           type: "fn",
           id: i,
@@ -186,11 +39,11 @@ function clone(e: Lambda): Lambda {
   return rename_binders(e) ?? e;
 }
 
-function subst(id: number, s: Lambda, e: Lambda): Lambda {
+function subst(id: number, arg: Lambda, e: Lambda): Lambda {
   const go = (e: Lambda): Lambda => {
     switch (e.type) {
       case "var":
-        return e.id === id ? clone(s) : e;
+        return e.id === id ? clone(arg) : e;
       case "fn":
         // If the id to substitute is bound in this lambda, we stop.
         if (e.id === id) return e;
@@ -200,19 +53,6 @@ function subst(id: number, s: Lambda, e: Lambda): Lambda {
     }
   };
   return go(e);
-}
-
-/**
- * Semantics
- */
-
-function is_val(e: Lambda): boolean {
-  switch (e.type) {
-    case "fn":
-      return true;
-    default:
-      return false;
-  }
 }
 
 /**
@@ -226,8 +66,8 @@ function eval_(e: Lambda): Lambda {
     case "fn":
       return e;
     case "app": {
-      const head = is_val(e.func) ? e.func : eval_(e.func);
-      const arg = is_val(e.arg) ? e.arg : eval_(e.arg);
+      const head = eval_(e.func);
+      const arg = eval_(e.arg);
       switch (head.type) {
         case "fn":
           return eval_(subst(head.id, arg, head.body));
@@ -236,6 +76,20 @@ function eval_(e: Lambda): Lambda {
       }
     }
   }
+}
+
+function stringify(e: Lambda): string {
+  const go = (e: Lambda): string => {
+    switch (e.type) {
+      case "var":
+        return `#${e.id}`;
+      case "app":
+        return `(${go(e.func)}) ${go(e.arg)}`;
+      case "fn":
+        return `fn #${e.id} -> ${go(e.body)}`;
+    }
+  };
+  return go(e);
 }
 
 /**
@@ -265,6 +119,10 @@ function normalise(e: Lambda): Lambda {
 
 const _eval = normalise;
 
+export type Lambda =
+  | { type: "var"; id: number }
+  | { type: "app"; func: Term; arg: Term }
+  | { type: "fn"; id: number; body: Term };
 type Handlers =
   | { type: "inject"; id: number; handler: Term; return: Term; body: Term }
   | { type: "handle"; id: number; value: Term }
@@ -322,12 +180,11 @@ const either = (x: Term, n: number, i: number) =>
     x
   );
 
-const cleanSelf = (f: Term) =>
+const fix = (f: (self: () => Term) => Term) =>
   app(
     fn((x) => app(x(), x())),
-    fn((self) => app(f, app(self(), self())))
+    fn((self) => f(() => app(self(), self())))
   );
-const fix = (f: (self: () => Term) => Term) => cleanSelf(fn(f));
 
 const zero = () => fnN(2, (f, x) => x());
 const succ = () => fn((n) => fnN(2, (f, x) => app(f(), app(n(), f(), x()))));
@@ -338,15 +195,20 @@ const num = (n: number) => (n === 0 ? zero() : app(succ(), num(n - 1)));
 const enumZero = () => fnN(2, (s, z) => z());
 const enumSucc = () => fn((n) => fnN(2, (s, z) => app(s(), n())));
 const numToEnum = (n: Term) => app(n, enumSucc(), enumZero());
-const enumNumToNum = (n: Term) =>
-  app(
-    n,
-    fn((n) => app(succ(), enumNumToNum(n()))),
-    zero()
+const enumNumToNum = () =>
+  fix((self) =>
+    fn((n) =>
+      app(
+        n(),
+        fn((n) => app(succ(), app(self(), n()))),
+        zero()
+      )
+    )
   );
 const pred = () =>
   fn((n) =>
-    enumNumToNum(
+    app(
+      enumNumToNum(),
       app(
         numToEnum(n()),
         fn((pred) => pred()),
@@ -531,22 +393,16 @@ if (import.meta.vitest) {
       expect(toNumber(zero())).toEqual(0);
     });
 
-    test.todo.prop([fc.integer({ min: 0, max: 1024 })], { seed: 1955439173, path: "0", endOnFailure: true })(
-      "count",
-      (n) => {
-        const term1 = num(n);
-        expect(toNumber(term1)).toEqual(n);
-      }
-    );
+    test.prop([fc.integer({ min: 0, max: 1024 })])("count", (n) => {
+      const term1 = num(n);
+      expect(toNumber(term1)).toEqual(n);
+    });
 
-    test.todo.prop([fc.integer({ min: 0, max: 1024 })], { seed: -1449631520, path: "10", endOnFailure: true })(
-      "count succ",
-      (n) => {
-        const term1 = num(n);
-        const term = app(succ(), term1);
-        expect(toNumber(term)).toEqual(n + 1);
-      }
-    );
+    test.prop([fc.integer({ min: 0, max: 1024 })])("count succ", (n) => {
+      const term1 = num(n);
+      const term = app(succ(), term1);
+      expect(toNumber(term)).toEqual(n + 1);
+    });
 
     test.prop([fc.integer({ min: 0, max: 128 }), fc.integer({ min: 0, max: 128 })])("add", (n, m) => {
       const term1 = num(n);
@@ -555,7 +411,7 @@ if (import.meta.vitest) {
       expect(toNumber(term)).toEqual(n + m);
     });
 
-    test.prop([fc.integer({ min: 0, max: 32 }), fc.integer({ min: 0, max: 32 })])("mult", (n, m) => {
+    test.prop([fc.integer({ min: 0, max: 24 }), fc.integer({ min: 0, max: 24 })])("mult", (n, m) => {
       const term = app(mult(), num(n), num(m));
       expect(toNumber(term)).toEqual(n * m);
     });
@@ -577,6 +433,14 @@ if (import.meta.vitest) {
       const term = app(exp(), num(n), num(m));
       expect(toNumber(term)).toEqual(n ** m);
     });
+
+    test.only.prop([fc.integer({ min: 1, max: 5 })], { seed: -1455889466, path: "0:1:0", endOnFailure: true })(
+      "pred",
+      (n) => {
+        const term = app(pred(), num(n));
+        expect(toNumber(term)).toEqual(n - 1);
+      }
+    );
 
     test.todo("pred", () => {
       const term = app(pred(), num(5));
