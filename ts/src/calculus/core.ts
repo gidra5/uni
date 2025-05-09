@@ -228,38 +228,42 @@ const isZero = () =>
     )
   );
 const isEq = () =>
+  fix((self) =>
   fnN(2, (x, y) =>
     app(
       numToEnum(x()),
       fn((predX) =>
         app(
           numToEnum(y()),
-          fn((predY) => app(isEq(), predX(), predY())),
+            fn((predY) => app(self(), predX(), predY())),
           bool(false)
         )
       ),
       app(isZero(), y())
+      )
     )
   );
 const isLess = () =>
+  fix((self) =>
   fnN(2, (x, y) =>
     app(
       numToEnum(x()),
       fn((predX) =>
         app(
           numToEnum(y()),
-          fn((predY) => app(isLess(), predX(), predY())),
+            fn((predY) => app(self(), predX(), predY())),
           bool(false)
         )
       ),
       app(not(), app(isZero(), y()))
+      )
     )
   );
 
 const bool = (b: boolean) => (b ? fnN(2, (x, y) => x()) : fnN(2, (x, y) => y()));
 const not = () => fn((x) => app(x(), bool(false), bool(true)));
-const and = (x: Term, y: Term) => app(x, y, bool(false));
-const or = (x: Term, y: Term) => app(x, bool(true), y);
+const and = () => fnN(2, (x, y) => app(x(), y(), bool(false)));
+const or = () => fnN(2, (x, y) => app(x(), bool(true), y()));
 const _if = (cond: Term, then: Term, _else: Term) => app(cond, then, _else);
 
 const _toNumber = (n: Term) => {
@@ -360,18 +364,7 @@ if (import.meta.vitest) {
       expect(_eval(term)).toEqual(value1);
     });
 
-    test.todo("either2", () => {
-      // const ctx = newContext();
-      const value1 = name();
-      const term = app(
-        fn((x) => fnN(2, (a) => app(a(), x()))),
-        value1
-      );
-      // expect(_eval(term, ctx)).toEqual(fnN(2, (a) => app(a(), value1)));
-      expect(_eval(term)).toEqual(fnN(2, (a) => app(a(), value1)));
-    });
-
-    test("either3", () => {
+    test("either 2", () => {
       // const ctx = newContext();
       const value1 = name();
       const value2 = name();
@@ -455,68 +448,44 @@ if (import.meta.vitest) {
       expect(toNumber(term)).toEqual(n / m);
     });
 
-    test("isZero", () => {
-      const term = app(isZero(), num(0));
-      expect(toBool(term)).toEqual(true);
-    });
-    test("isZero 2", () => {
-      const term = app(isZero(), num(1));
-      expect(toBool(term)).toEqual(false);
+    test.prop([fc.integer({ min: 0, max: 96 })])("isZero", (n) => {
+      const term = app(isZero(), num(n));
+      expect(toBool(term)).toEqual(n === 0);
     });
 
-    test.todo("isEq", () => {
-      const term1 = num(5);
-      const term2 = num(5);
-      const term = app(isEq(), term1, term2);
-      expect(toBool(term)).toEqual(true);
-    });
-    test.todo("isEq 2", () => {
-      const term1 = num(5);
-      const term2 = num(6);
-      const term = app(isEq(), term1, term2);
-      expect(toBool(term)).toEqual(false);
-    });
-    test.todo("isLess", () => {
-      const term1 = num(5);
-      const term2 = num(5);
-      const term = app(isLess(), term1, term2);
-      expect(toBool(term)).toEqual(false);
-    });
-    test.todo("isLess 2", () => {
-      const term1 = num(5);
-      const term2 = num(6);
-      const term = app(isLess(), term1, term2);
-      expect(toBool(term)).toEqual(true);
+    test.prop([fc.integer({ min: 0, max: 48 }), fc.integer({ min: 0, max: 48 })])("isEq", (n, m) => {
+      const term = app(isEq(), num(n), num(m));
+      expect(toBool(term)).toEqual(n === m);
     });
 
-    test("bool", () => {
-      const term = bool(true);
-      expect(toBool(term)).toEqual(true);
+    test.prop([fc.integer({ min: 0, max: 48 }), fc.integer({ min: 0, max: 48 })])("isLess", (n, m) => {
+      const term = app(isLess(), num(n), num(m));
+      expect(toBool(term)).toEqual(n < m);
     });
 
-    test("not", () => {
-      const term = app(not(), bool(true));
-      expect(toBool(term)).toEqual(false);
+    test.prop([fc.boolean()])("bool", (b) => {
+      const term = bool(b);
+      expect(toBool(term)).toEqual(b);
     });
 
-    test("not 2", () => {
-      const term = app(not(), bool(false));
-      expect(toBool(term)).toEqual(true);
+    test.prop([fc.boolean()])("not", (b) => {
+      const term = app(not(), bool(b));
+      expect(toBool(term)).toEqual(!b);
     });
 
-    test("not 3", () => {
-      const term = app(not(), app(not(), bool(false)));
-      expect(toBool(term)).toEqual(false);
+    test.prop([fc.boolean()])("double not", (b) => {
+      const term = app(not(), app(not(), bool(b)));
+      expect(toBool(term)).toEqual(b);
     });
 
-    test("and", () => {
-      const term = and(bool(true), bool(false));
-      expect(toBool(term)).toEqual(false);
+    test.prop([fc.boolean(), fc.boolean()])("and", (b1, b2) => {
+      const term = app(and(), bool(b1), bool(b2));
+      expect(toBool(term)).toEqual(b1 && b2);
     });
 
-    test("or", () => {
-      const term = or(bool(false), bool(true));
-      expect(toBool(term)).toEqual(true);
+    test.prop([fc.boolean(), fc.boolean()])("or", (b1, b2) => {
+      const term = app(or(), bool(b1), bool(b2));
+      expect(toBool(term)).toEqual(b1 || b2);
     });
 
     test.todo("fib fix", () => {
@@ -535,10 +504,12 @@ if (import.meta.vitest) {
       );
       expect(toNumber(term)).toEqual(5);
     });
+
     test("sequence", () => {
       const term = seq(num(1), num(2), num(3));
       expect(toNumber(term)).toEqual(3);
     });
+
     test("let", () => {
       const term = _let(num(1), (x) => app(add(), x(), num(2)));
       expect(toNumber(term)).toEqual(3);
