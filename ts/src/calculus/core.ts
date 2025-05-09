@@ -119,7 +119,7 @@ function normalise(e: Lambda): Lambda {
 
 const _eval = normalise;
 
-export type Lambda =
+type Lambda =
   | { type: "var"; id: number }
   | { type: "app"; func: Term; arg: Term }
   | { type: "fn"; id: number; body: Term };
@@ -143,11 +143,6 @@ const app = (func: Term, ...[head, ...rest]: Term[]) =>
 const fn = (body: (term: () => Term) => Term) => {
   const id = nextId();
   return { type: "fn", id, body: body(() => name(id)) } satisfies Term;
-  // const lvl = fnLvl++;
-  // const _body = body(() => name(fnLvl - lvl - 1));
-  // const x = { type: "fn", body: _body } satisfies Term;
-  // fnLvl--;
-  // return x;
 };
 const fnN = <const N extends number>(n: N, body: (...terms: TupleN<N, () => Term>) => Term): Term =>
   n === 1 ? fn(body as any) : fn((term) => fnN(n - 1, (...rest) => body(...([term, ...rest] as any))));
@@ -229,33 +224,33 @@ const isZero = () =>
   );
 const isEq = () =>
   fix((self) =>
-  fnN(2, (x, y) =>
-    app(
-      numToEnum(x()),
-      fn((predX) =>
-        app(
-          numToEnum(y()),
+    fnN(2, (x, y) =>
+      app(
+        numToEnum(x()),
+        fn((predX) =>
+          app(
+            numToEnum(y()),
             fn((predY) => app(self(), predX(), predY())),
-          bool(false)
-        )
-      ),
-      app(isZero(), y())
+            bool(false)
+          )
+        ),
+        app(isZero(), y())
       )
     )
   );
 const isLess = () =>
   fix((self) =>
-  fnN(2, (x, y) =>
-    app(
-      numToEnum(x()),
-      fn((predX) =>
-        app(
-          numToEnum(y()),
+    fnN(2, (x, y) =>
+      app(
+        numToEnum(x()),
+        fn((predX) =>
+          app(
+            numToEnum(y()),
             fn((predY) => app(self(), predX(), predY())),
-          bool(false)
-        )
-      ),
-      app(not(), app(isZero(), y()))
+            bool(false)
+          )
+        ),
+        app(not(), app(isZero(), y()))
       )
     )
   );
@@ -264,7 +259,13 @@ const bool = (b: boolean) => (b ? fnN(2, (x, y) => x()) : fnN(2, (x, y) => y()))
 const not = () => fn((x) => app(x(), bool(false), bool(true)));
 const and = () => fnN(2, (x, y) => app(x(), y(), bool(false)));
 const or = () => fnN(2, (x, y) => app(x(), bool(true), y()));
-const _if = (cond: Term, then: Term, _else: Term) => app(cond, then, _else);
+const _if = (cond: Term, then: Term, _else: Term) =>
+  app(
+    cond,
+    fn(() => then),
+    fn(() => _else),
+    bool(true)
+  );
 
 const _toNumber = (n: Term) => {
   // console.dir({ n }, { depth: null });
@@ -441,12 +442,13 @@ if (import.meta.vitest) {
       }
     );
 
-    test.only.prop([
-      fc.integer({ min: 1, max: 4 }).chain((n) => fc.integer({ min: 1, max: n }).map((m) => [n * m, m])),
-    ])("div", ([n, m]) => {
-      const term = app(div(), num(n), num(m));
-      expect(toNumber(term)).toEqual(n / m);
-    });
+    test.prop([fc.integer({ min: 1, max: 4 }).chain((n) => fc.integer({ min: 1, max: n }).map((m) => [n * m, m]))])(
+      "div",
+      ([n, m]) => {
+        const term = app(div(), num(n), num(m));
+        expect(toNumber(term)).toEqual(n / m);
+      }
+    );
 
     test.prop([fc.integer({ min: 0, max: 96 })])("isZero", (n) => {
       const term = app(isZero(), num(n));
@@ -488,21 +490,20 @@ if (import.meta.vitest) {
       expect(toBool(term)).toEqual(b1 || b2);
     });
 
-    test.todo("fib fix", () => {
-      // const ctx = newContext();
+    test("fib fix", () => {
       const term = app(
         fix((self) =>
           fn((n) =>
             _if(
               app(isZero(), n()),
-              zero(),
+              num(1),
               app(add(), app(self(), app(pred(), n())), app(self(), app(sub(), n(), num(2))))
             )
           )
         ),
         num(6)
       );
-      expect(toNumber(term)).toEqual(5);
+      expect(toNumber(term)).toEqual(21);
     });
 
     test("sequence", () => {
