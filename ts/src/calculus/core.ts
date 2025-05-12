@@ -1,9 +1,9 @@
 import { TupleN } from "../types";
 import { assert, unreachable } from "../utils";
 
-function clone(e: Lambda): Lambda {
+function clone(e: Term): Term {
   // Rename all binders with fresh ids
-  const rename = (m: Map<number, number>, e: Lambda): Lambda => {
+  const rename = (m: Map<number, number>, e: Term): Term => {
     switch (e.type) {
       case "var":
         return { type: "var", id: m.get(e.id) ?? e.id };
@@ -20,7 +20,7 @@ function clone(e: Lambda): Lambda {
   };
 
   // Rename only terms that include binders
-  const rename_binders = (e: Lambda): Lambda | undefined => {
+  const rename_binders = (e: Term): Term | undefined => {
     switch (e.type) {
       case "var":
         return undefined;
@@ -39,8 +39,8 @@ function clone(e: Lambda): Lambda {
   return rename_binders(e) ?? e;
 }
 
-function subst(id: number, arg: Lambda, e: Lambda): Lambda {
-  const go = (e: Lambda): Lambda => {
+function subst(id: number, arg: Term, e: Term): Term {
+  const go = (e: Term): Term => {
     switch (e.type) {
       case "var":
         return e.id === id ? clone(arg) : e;
@@ -59,7 +59,7 @@ function subst(id: number, arg: Lambda, e: Lambda): Lambda {
  * Evaluation
  */
 
-function eval_(e: Lambda): Lambda {
+function eval_(e: Term): Term {
   switch (e.type) {
     case "var":
       return e;
@@ -78,8 +78,43 @@ function eval_(e: Lambda): Lambda {
   }
 }
 
-function stringify(e: Lambda): string {
-  const go = (e: Lambda): string => {
+// const propagateHandle = (e: Term): Term => {
+//   switch (e.type) {
+//     case "var":
+//       return e;
+//     case "fn":
+//       return { type: "fn", id: e.id, body: propagateHandle(e.body) };
+//     case "app": {
+//       const func = propagateHandle(e.func);
+//       const arg = propagateHandle(e.arg);
+//       if (func.type === "handle") {
+//         const cont = func.cont;
+//         assert(cont.type === "fn");
+//         return { ...func, cont: fn((result) => app(cont, app(result(), arg))) };
+//       }
+//       if (arg.type === "handle") {
+//         const cont = arg.cont;
+//         assert(cont.type === "fn");
+//         return { ...arg, cont: fn((result) => app(cont, app(func, result()))) };
+//       }
+//       return { type: "app", func, arg };
+//     }
+//     case "inject": {
+//       const handler = propagateHandle(e.handler);
+//       const body = propagateHandle(e.body);
+//       const _return = propagateHandle(e.return);
+
+//       if (handler.type === "handle") {
+//         const cont = handler.cont;
+//         assert(cont.type === "fn");
+//         return { ...handler, cont: fn((result) => app(cont, app(result(), body))) };
+//       }
+//     }
+//   }
+// };
+
+function stringify(e: Term): string {
+  const go = (e: Term): string => {
     switch (e.type) {
       case "var":
         return `#${e.id}`;
@@ -99,7 +134,7 @@ function stringify(e: Lambda): string {
 /**
  * Fully normalise an expression, including under binders.
  */
-function normalise(e: Lambda): Lambda {
+function normalise(e: Term): Term {
   switch (e.type) {
     case "var":
       return e;
@@ -125,13 +160,15 @@ type Lambda =
   | { type: "fn"; id: number; body: Term };
 type Handlers =
   | { type: "inject"; id: number; handler: Term; return: Term; body: Term }
-  | { type: "handle"; id: number; value: Term }
-  | { type: "mask"; id: number; body: Term };
+  | { type: "handle"; id: number; value: Term; cont: Term };
+// | { type: "mask"; id: number; body: Term };
 type Process =
   | { type: "channel"; sender: Term; receiver: Term }
   | { type: "send"; id: number; value: Term; rest: Term }
   | { type: "receive"; ids: number[] };
-type Term = Lambda | Handlers | Process;
+// type Term = Lambda | Handlers | Process;
+// type Term = Lambda | Handlers;
+type Term = Lambda;
 
 let id = 0;
 const nextId = () => id++;
@@ -154,7 +191,8 @@ const pipe = (...[head, next, ...rest]: Term[]) =>
 //   const { id = nextId(), return: ret = fn((term) => term()) } = x;
 //   return { type: "inject", ...x, id, return: ret } satisfies Term;
 // };
-// const handle = (id: number, value: Term) => ({ type: "handle", id, value } satisfies Term);
+// const handle = (id: number, value: Term, cont = fn((term) => term())) =>
+//   ({ type: "handle", id, value, cont } satisfies Term);
 // const mask = (id: number, body: Term) => ({ type: "mask", id, body } satisfies Term);
 // const without = (id: number, body: Term) => inject({ id, handler: fn(() => unreachable("effect forbidden")), body });
 
