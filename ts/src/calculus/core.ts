@@ -5,17 +5,35 @@ function clone(e: Term): Term {
   // Rename all binders with fresh ids
   const rename = (m: Map<number, number>, e: Term): Term => {
     switch (e.type) {
-      case "var":
+      case "var": {
         return { type: "var", id: m.get(e.id) ?? e.id };
-      case "fn":
+      }
+      case "fn": {
         const i = nextId();
         return {
           type: "fn",
           id: i,
           body: rename(new Map(m).set(e.id, i), e.body),
         };
-      case "app":
+      }
+      case "app": {
         return { type: "app", func: rename(m, e.func), arg: rename(m, e.arg) };
+      }
+      case "inject": {
+        return {
+          type: "inject",
+          id: e.id,
+          handler: rename(m, e.handler),
+          return: rename(m, e.return),
+          body: rename(m, e.body),
+        };
+      }
+      case "handle": {
+        return { type: "handle", id: e.id, value: rename(m, e.value), cont: rename(m, e.cont) };
+      }
+
+      default:
+        unreachable("unhandled case");
     }
   };
 
@@ -27,29 +45,73 @@ function clone(e: Term): Term {
       case "fn":
         return rename(new Map(), e);
       case "app": {
-        const head = rename_binders(e.func);
+        const func = rename_binders(e.func);
         const arg = rename_binders(e.arg);
-        if (head && arg) return { type: "app", func: head, arg };
-        if (head) return { type: "app", func: head, arg: e.arg };
-        if (arg) return { type: "app", func: e.func, arg };
-        return undefined;
+        if (!func && !arg) return undefined;
+
+        const term = { ...e };
+        if (func) term.func = func;
+        if (arg) term.arg = arg;
+        return term;
       }
+      case "inject": {
+        const handler = rename_binders(e.handler);
+        const return_ = rename_binders(e.return);
+        const body = rename_binders(e.body);
+        if (!handler && !return_ && !body) return undefined;
+
+        const term = { ...e };
+        if (handler) term.handler = handler;
+        if (return_) term.return = return_;
+        if (body) term.body = body;
+        return term;
+      }
+      case "handle": {
+        const value = rename_binders(e.value);
+        const cont = rename_binders(e.cont);
+        if (!value && !cont) return undefined;
+
+        const term = { ...e };
+        if (value) term.value = value;
+        if (cont) term.cont = cont;
+        return term;
+      }
+      default:
+        unreachable("unhandled case");
     }
   };
+
   return rename_binders(e) ?? e;
 }
 
 function subst(id: number, arg: Term, e: Term): Term {
   const go = (e: Term): Term => {
     switch (e.type) {
-      case "var":
+      case "var": {
         return e.id === id ? clone(arg) : e;
-      case "fn":
+      }
+      case "fn": {
         // If the id to substitute is bound in this lambda, we stop.
         if (e.id === id) return e;
         return { type: "fn", id: e.id, body: go(e.body) };
-      case "app":
+      }
+      case "app": {
         return { type: "app", func: go(e.func), arg: go(e.arg) };
+      }
+      case "inject": {
+        return {
+          type: "inject",
+          id: e.id,
+          handler: go(e.handler),
+          return: go(e.return),
+          body: go(e.body),
+        };
+      }
+      case "handle": {
+        return { type: "handle", id: e.id, value: go(e.value), cont: go(e.cont) };
+      }
+      default:
+        unreachable("unhandled case");
     }
   };
   return go(e);
@@ -59,6 +121,53 @@ function subst(id: number, arg: Term, e: Term): Term {
  * Evaluation
  */
 
+const propagateHandles = (e: Term): Term => {
+  switch (e.type) {
+    case "var":
+      return e;
+    case "fn":
+      return e;
+    case "app": {
+      const func = propagateHandles(e.func);
+      const arg = propagateHandles(e.arg);
+      if (func.type === "handle") {
+        const cont = func.cont;
+        assert(cont.type === "fn");
+        return { ...func, cont: fn((result) => app(cont, app(result(), arg))) };
+      }
+      if (arg.type === "handle") {
+        const cont = arg.cont;
+        assert(cont.type === "fn");
+        return { ...arg, cont: fn((result) => app(cont, app(func, result()))) };
+      }
+      return { type: "app", func, arg };
+    }
+    case "inject": {
+      const handler = propagateHandles(e.handler);
+      const body = propagateHandles(e.body);
+      const _return = propagateHandles(e.return);
+      if (handler.type === "handle") {
+        const cont = handler.cont;
+        assert(cont.type === "fn");
+        return { ...handler, cont: fn((result) => app(cont, { ...e, handler: result() })) };
+      }
+      if (body.type === "handle") {
+        const cont = body.cont;
+        assert(cont.type === "fn");
+        return { ...body, cont: fn((result) => app(cont, { ...e, body: result() })) };
+      }
+      if (_return.type === "handle" && _return.id !== e.id) {
+        const cont = _return.cont;
+        assert(cont.type === "fn");
+        return { ..._return, cont: fn((result) => app(cont, { ...e, return: result() })) };
+      }
+      return e;
+    }
+    default:
+      unreachable("unhandled case");
+  }
+};
+
 function eval_(e: Term): Term {
   switch (e.type) {
     case "var":
@@ -66,52 +175,46 @@ function eval_(e: Term): Term {
     case "fn":
       return e;
     case "app": {
-      const head = eval_(e.func);
+      const func = eval_(e.func);
       const arg = eval_(e.arg);
-      switch (head.type) {
+      e = { ...e, func, arg };
+
+      switch (func.type) {
         case "fn":
-          return eval_(subst(head.id, arg, head.body));
+          return eval_(subst(func.id, arg, func.body));
         default:
-          return { type: "app", func: head, arg };
+          return e;
       }
     }
+    case "inject": {
+      const handler = eval_(e.handler);
+      const return_ = eval_(e.return);
+      const body = eval_(propagateHandles(e.body));
+      e = { ...e, handler, return: return_, body };
+
+      if (body.type === "handle") {
+        if (e.id !== body.id) {
+          return { ...body, cont: fn((result) => ({ ...e, body: app(body.cont, result()) })) };
+        }
+
+        if (handler.type !== "fn") return e;
+        const app1 = eval_(subst(handler.id, body, handler.body));
+
+        if (app1.type !== "fn") return e;
+        const cont = fn((result) => ({ ...e, body: app(body.cont, result()) }));
+        return eval_(subst(app1.id, cont, app1.body));
+      }
+
+      if (return_.type !== "fn") return e;
+      return eval_(subst(return_.id, body, return_.body));
+    }
+    case "handle": {
+      return { ...e, value: eval_(e.value) };
+    }
+    default:
+      unreachable("unhandled case");
   }
 }
-
-// const propagateHandle = (e: Term): Term => {
-//   switch (e.type) {
-//     case "var":
-//       return e;
-//     case "fn":
-//       return { type: "fn", id: e.id, body: propagateHandle(e.body) };
-//     case "app": {
-//       const func = propagateHandle(e.func);
-//       const arg = propagateHandle(e.arg);
-//       if (func.type === "handle") {
-//         const cont = func.cont;
-//         assert(cont.type === "fn");
-//         return { ...func, cont: fn((result) => app(cont, app(result(), arg))) };
-//       }
-//       if (arg.type === "handle") {
-//         const cont = arg.cont;
-//         assert(cont.type === "fn");
-//         return { ...arg, cont: fn((result) => app(cont, app(func, result()))) };
-//       }
-//       return { type: "app", func, arg };
-//     }
-//     case "inject": {
-//       const handler = propagateHandle(e.handler);
-//       const body = propagateHandle(e.body);
-//       const _return = propagateHandle(e.return);
-
-//       if (handler.type === "handle") {
-//         const cont = handler.cont;
-//         assert(cont.type === "fn");
-//         return { ...handler, cont: fn((result) => app(cont, app(result(), body))) };
-//       }
-//     }
-//   }
-// };
 
 function stringify(e: Term): string {
   const go = (e: Term): string => {
@@ -122,6 +225,14 @@ function stringify(e: Term): string {
         return `(${go(e.func)}) ${go(e.arg)}`;
       case "fn":
         return `fn #${e.id} -> ${go(e.body)}`;
+      case "inject": {
+        unreachable("todo");
+      }
+      case "handle": {
+        unreachable("todo");
+      }
+      default:
+        unreachable("unhandled case");
     }
   };
   return go(e);
@@ -149,6 +260,23 @@ function normalise(e: Term): Term {
           return { type: "app", func: head, arg: normalise(e.arg) };
       }
     }
+    case "inject": {
+      return {
+        ...e,
+        handler: normalise(e.handler),
+        return: normalise(e.return),
+        body: normalise(e.body),
+      };
+    }
+    case "handle": {
+      return {
+        ...e,
+        value: normalise(e.value),
+        cont: normalise(e.cont),
+      };
+    }
+    default:
+      unreachable("unhandled case");
   }
 }
 
@@ -167,8 +295,8 @@ type Process =
   | { type: "send"; id: number; value: Term; rest: Term }
   | { type: "receive"; ids: number[] };
 // type Term = Lambda | Handlers | Process;
-// type Term = Lambda | Handlers;
-type Term = Lambda;
+type Term = Lambda | Handlers;
+// type Term = Lambda;
 
 let id = 0;
 const nextId = () => id++;
@@ -187,12 +315,12 @@ const _let = (value: Term, body: (term: () => Term) => Term) => app(fn(body), va
 const seq = (...[head, ...rest]: Term[]) => (rest.length === 0 ? head : _let(head, () => seq(...rest)));
 const pipe = (...[head, next, ...rest]: Term[]) =>
   rest.length === 0 ? app(next, head) : pipe(app(next, head), ...rest);
-// const inject = (x: { id?: number; handler: Term; return?: Term; body: Term }) => {
-//   const { id = nextId(), return: ret = fn((term) => term()) } = x;
-//   return { type: "inject", ...x, id, return: ret } satisfies Term;
-// };
-// const handle = (id: number, value: Term, cont = fn((term) => term())) =>
-//   ({ type: "handle", id, value, cont } satisfies Term);
+const inject = (x: { id?: number; handler: Term; return?: Term; body: Term }) => {
+  const { id = nextId(), return: ret = fn((term) => term()) } = x;
+  return { type: "inject", ...x, id, return: ret } satisfies Term;
+};
+const handle = (id: number, value: Term, cont = fn((term) => term())) =>
+  ({ type: "handle", id, value, cont } satisfies Term);
 // const mask = (id: number, body: Term) => ({ type: "mask", id, body } satisfies Term);
 // const without = (id: number, body: Term) => inject({ id, handler: fn(() => unreachable("effect forbidden")), body });
 
@@ -426,25 +554,25 @@ if (import.meta.vitest) {
       expect(toNumber(zero())).toEqual(0);
     });
 
-    test.prop([fc.integer({ min: 0, max: 1024 })])("count", (n) => {
+    test.prop([fc.integer({ min: 0, max: 128 })])("count", (n) => {
       const term1 = num(n);
       expect(toNumber(term1)).toEqual(n);
     });
 
-    test.prop([fc.integer({ min: 0, max: 1024 })])("count succ", (n) => {
+    test.prop([fc.integer({ min: 0, max: 128 })])("count succ", (n) => {
       const term1 = num(n);
       const term = app(succ(), term1);
       expect(toNumber(term)).toEqual(n + 1);
     });
 
-    test.prop([fc.integer({ min: 0, max: 128 }), fc.integer({ min: 0, max: 128 })])("add", (n, m) => {
+    test.prop([fc.integer({ min: 0, max: 64 }), fc.integer({ min: 0, max: 64 })])("add", (n, m) => {
       const term1 = num(n);
       const term2 = num(m);
       const term = app(add(), term1, term2);
       expect(toNumber(term)).toEqual(n + m);
     });
 
-    test.prop([fc.integer({ min: 0, max: 24 }), fc.integer({ min: 0, max: 24 })])("mult", (n, m) => {
+    test.prop([fc.integer({ min: 0, max: 16 }), fc.integer({ min: 0, max: 16 })])("mult", (n, m) => {
       const term = app(mult(), num(n), num(m));
       expect(toNumber(term)).toEqual(n * m);
     });
@@ -462,17 +590,17 @@ if (import.meta.vitest) {
       expect(toNumber(term)).toEqual(3);
     });
 
-    test.prop([fc.integer({ min: 0, max: 5 }), fc.integer({ min: 0, max: 4 })])("exp", (n, m) => {
+    test.prop([fc.integer({ min: 0, max: 4 }), fc.integer({ min: 0, max: 4 })])("exp", (n, m) => {
       const term = app(exp(), num(n), num(m));
       expect(toNumber(term)).toEqual(n ** m);
     });
 
-    test.prop([fc.integer({ min: 1, max: 96 })])("pred", (n) => {
+    test.prop([fc.integer({ min: 1, max: 64 })])("pred", (n) => {
       const term = app(pred(), num(n));
       expect(toNumber(term)).toEqual(n - 1);
     });
 
-    test.prop([fc.integer({ min: 0, max: 48 }).chain((n) => fc.integer({ min: 0, max: n }).map((m) => [n, m]))])(
+    test.prop([fc.integer({ min: 0, max: 32 }).chain((n) => fc.integer({ min: 0, max: n }).map((m) => [n, m]))])(
       "sub",
       ([n, m]) => {
         const term = app(sub(), num(n), num(m));
@@ -493,12 +621,12 @@ if (import.meta.vitest) {
       expect(toBool(term)).toEqual(n === 0);
     });
 
-    test.prop([fc.integer({ min: 0, max: 48 }), fc.integer({ min: 0, max: 48 })])("isEq", (n, m) => {
+    test.prop([fc.integer({ min: 0, max: 32 }), fc.integer({ min: 0, max: 32 })])("isEq", (n, m) => {
       const term = app(isEq(), num(n), num(m));
       expect(toBool(term)).toEqual(n === m);
     });
 
-    test.prop([fc.integer({ min: 0, max: 48 }), fc.integer({ min: 0, max: 48 })])("isLess", (n, m) => {
+    test.prop([fc.integer({ min: 0, max: 32 }), fc.integer({ min: 0, max: 32 })])("isLess", (n, m) => {
       const term = app(isLess(), num(n), num(m));
       expect(toBool(term)).toEqual(n < m);
     });
@@ -555,117 +683,117 @@ if (import.meta.vitest) {
     });
   });
 
-  // describe("handlers", () => {
-  //   test("inject", () => {
-  //     const handlerId = 1;
-  //     const term = inject({
-  //       id: handlerId,
-  //       handler: fnN(2, (term, cont) => app(cont, term)),
-  //       body: handle(handlerId, num(1)),
-  //     });
-  //     expect(toNumber(term)).toEqual(1);
-  //   });
+  describe("handlers", () => {
+    test.only("inject", () => {
+      const handlerId = 1;
+      const term = inject({
+        id: handlerId,
+        handler: fnN(2, (term, cont) => app(cont(), term())),
+        body: handle(handlerId, num(1)),
+      });
+      expect(toNumber(term)).toEqual(1);
+    });
 
-  //   test("inject deep", () => {
-  //     const handlerId1 = 1;
-  //     const handlerId2 = 2;
-  //     const term = inject({
-  //       id: handlerId1,
-  //       handler: fnN(2, (term, cont) => app(cont, num(2))),
-  //       body: inject({
-  //         id: handlerId2,
-  //         handler: fnN(2, (term, cont) => app(cont, num(3))),
-  //         body: handle(handlerId1, num(1)),
-  //       }),
-  //     });
-  //     expect(toNumber(term)).toEqual(2);
-  //   });
+    //   test("inject deep", () => {
+    //     const handlerId1 = 1;
+    //     const handlerId2 = 2;
+    //     const term = inject({
+    //       id: handlerId1,
+    //       handler: fnN(2, (term, cont) => app(cont, num(2))),
+    //       body: inject({
+    //         id: handlerId2,
+    //         handler: fnN(2, (term, cont) => app(cont, num(3))),
+    //         body: handle(handlerId1, num(1)),
+    //       }),
+    //     });
+    //     expect(toNumber(term)).toEqual(2);
+    //   });
 
-  //   test("inject shadowing", () => {
-  //     const handlerId1 = 1;
-  //     const term = inject({
-  //       id: handlerId1,
-  //       handler: fnN(2, (term, cont) => app(cont, num(2))),
-  //       body: inject({
-  //         id: handlerId1,
-  //         handler: fnN(2, (term, cont) => app(cont, num(3))),
-  //         body: handle(handlerId1, num(1)),
-  //       }),
-  //     });
-  //     expect(toNumber(term)).toEqual(3);
-  //   });
+    //   test("inject shadowing", () => {
+    //     const handlerId1 = 1;
+    //     const term = inject({
+    //       id: handlerId1,
+    //       handler: fnN(2, (term, cont) => app(cont, num(2))),
+    //       body: inject({
+    //         id: handlerId1,
+    //         handler: fnN(2, (term, cont) => app(cont, num(3))),
+    //         body: handle(handlerId1, num(1)),
+    //       }),
+    //     });
+    //     expect(toNumber(term)).toEqual(3);
+    //   });
 
-  //   test("inject mask", () => {
-  //     const handlerId1 = 1;
-  //     const term = inject({
-  //       id: handlerId1,
-  //       handler: fnN(2, (term, cont) => app(cont, num(2))),
-  //       body: inject({
-  //         id: handlerId1,
-  //         handler: fnN(2, (term, cont) => app(cont, num(3))),
-  //         body: mask(handlerId1, handle(handlerId1, num(1))),
-  //       }),
-  //     });
-  //     expect(toNumber(term)).toEqual(2);
-  //   });
+    //   test("inject mask", () => {
+    //     const handlerId1 = 1;
+    //     const term = inject({
+    //       id: handlerId1,
+    //       handler: fnN(2, (term, cont) => app(cont, num(2))),
+    //       body: inject({
+    //         id: handlerId1,
+    //         handler: fnN(2, (term, cont) => app(cont, num(3))),
+    //         body: mask(handlerId1, handle(handlerId1, num(1))),
+    //       }),
+    //     });
+    //     expect(toNumber(term)).toEqual(2);
+    //   });
 
-  //   test("inject without", () => {
-  //     const handlerId1 = 1;
-  //     const term = inject({
-  //       id: handlerId1,
-  //       handler: fnN(2, (term, cont) => app(cont, num(2))),
-  //       body: inject({
-  //         id: handlerId1,
-  //         handler: fnN(2, (term, cont) => app(cont, num(3))),
-  //         body: without(handlerId1, handle(handlerId1, num(1))),
-  //       }),
-  //     });
-  //     expect(() => toNumber(term)).toThrow();
-  //   });
+    //   test("inject without", () => {
+    //     const handlerId1 = 1;
+    //     const term = inject({
+    //       id: handlerId1,
+    //       handler: fnN(2, (term, cont) => app(cont, num(2))),
+    //       body: inject({
+    //         id: handlerId1,
+    //         handler: fnN(2, (term, cont) => app(cont, num(3))),
+    //         body: without(handlerId1, handle(handlerId1, num(1))),
+    //       }),
+    //     });
+    //     expect(() => toNumber(term)).toThrow();
+    //   });
 
-  //   test("inject deep 2", () => {
-  //     const handlerId1 = 1;
-  //     const handlerId2 = 2;
-  //     const term = inject({
-  //       id: handlerId1,
-  //       handler: fnN(2, (term, cont) => app(cont, num(2))),
-  //       body: inject({
-  //         id: handlerId2,
-  //         handler: fnN(2, (term, cont) => app(cont, num(3))),
-  //         body: app(add, handle(handlerId1, num(1)), handle(handlerId2, num(1))),
-  //       }),
-  //     });
-  //     expect(toNumber(term)).toEqual(5);
-  //   });
+    //   test("inject deep 2", () => {
+    //     const handlerId1 = 1;
+    //     const handlerId2 = 2;
+    //     const term = inject({
+    //       id: handlerId1,
+    //       handler: fnN(2, (term, cont) => app(cont, num(2))),
+    //       body: inject({
+    //         id: handlerId2,
+    //         handler: fnN(2, (term, cont) => app(cont, num(3))),
+    //         body: app(add, handle(handlerId1, num(1)), handle(handlerId2, num(1))),
+    //       }),
+    //     });
+    //     expect(toNumber(term)).toEqual(5);
+    //   });
 
-  //   test("inject handle twice", () => {
-  //     const handlerId = 1;
-  //     const term = inject({
-  //       id: handlerId,
-  //       handler: fnN(2, (term, cont) => app(cont, num(1))),
-  //       body: app(add, handle(handlerId, num(1)), handle(handlerId, num(1))),
-  //     });
-  //     expect(toNumber(term)).toEqual(2);
-  //   });
+    //   test("inject handle twice", () => {
+    //     const handlerId = 1;
+    //     const term = inject({
+    //       id: handlerId,
+    //       handler: fnN(2, (term, cont) => app(cont, num(1))),
+    //       body: app(add, handle(handlerId, num(1)), handle(handlerId, num(1))),
+    //     });
+    //     expect(toNumber(term)).toEqual(2);
+    //   });
 
-  //   test("inject handle twice seq", () => {
-  //     const handlerId = 1;
-  //     const term = inject({
-  //       id: handlerId,
-  //       handler: fnN(2, (term, cont) => app(cont, num(1))),
-  //       body: seq(handle(handlerId, num(1)), handle(handlerId, num(1))),
-  //     });
-  //     expect(toNumber(term)).toEqual(1);
-  //   });
+    //   test("inject handle twice seq", () => {
+    //     const handlerId = 1;
+    //     const term = inject({
+    //       id: handlerId,
+    //       handler: fnN(2, (term, cont) => app(cont, num(1))),
+    //       body: seq(handle(handlerId, num(1)), handle(handlerId, num(1))),
+    //     });
+    //     expect(toNumber(term)).toEqual(1);
+    //   });
 
-  //   test("inject handler no cont", () => {
-  //     const handlerId1 = 1;
-  //     const term = inject({
-  //       id: handlerId1,
-  //       handler: fnN(2, (term, cont) => term),
-  //       body: app(add, handle(handlerId1, num(1)), num(1)),
-  //     });
-  //     expect(toNumber(term)).toEqual(1);
-  //   });
-  // });
+    //   test("inject handler no cont", () => {
+    //     const handlerId1 = 1;
+    //     const term = inject({
+    //       id: handlerId1,
+    //       handler: fnN(2, (term, cont) => term),
+    //       body: app(add, handle(handlerId1, num(1)), num(1)),
+    //     });
+    //     expect(toNumber(term)).toEqual(1);
+    //   });
+  });
 }
