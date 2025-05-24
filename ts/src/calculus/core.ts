@@ -352,6 +352,7 @@ type Handlers =
   | { type: "inject"; id: number; handler: Term; return: Term; body: Term }
   | { type: "handle"; id: number; value: Term; cont: Term };
 // | { type: "mask"; id: number; body: Term };
+// | { type: "without"; id: number; body: Term };
 type Process =
   | { type: "channel"; sender: Term; receiver: Term }
   | { type: "send"; id: number; value: Term; rest: Term }
@@ -384,7 +385,7 @@ const inject = (x: { id?: number; handler: Term; return?: Term; body: Term }) =>
 const handle = (id: number, value: Term, cont = fn((term) => term())) =>
   ({ type: "handle", id, value, cont } satisfies Term);
 // const mask = (id: number, body: Term) => ({ type: "mask", id, body } satisfies Term);
-// const without = (id: number, body: Term) => inject({ id, handler: fn(() => unreachable("effect forbidden")), body });
+// const without = (id: number, body: Term) => ({ type: "without", id, body } satisfies Term);
 
 const tuple = (...args: Term[]) =>
   app(
