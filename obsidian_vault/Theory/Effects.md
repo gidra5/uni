@@ -74,6 +74,7 @@ TL;DR математики изобрели dependency injection в фп.
 [modal effect types](https://arxiv.org/abs/2407.11816)
 [effect systems](https://vhyrro.github.io/posts/effect-systems/)
 [koka](https://koka-lang.github.io/koka/doc/book.html#why)
+[examples](https://www.reddit.com/r/ProgrammingLanguages/s/Gn6Phys9eh)
 
 ```
 logger :=
