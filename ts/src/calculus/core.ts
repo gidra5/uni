@@ -259,28 +259,34 @@ function stringify(e: Term): string {
  * Fully normalise an expression, including under binders.
  */
 function normalise(e: Term): Term {
+  // console.dir({ e }, { depth: null });
   e = propagateHandles(e);
+  // console.dir({ e2: e }, { depth: null });
   switch (e.type) {
     case "var":
       return e;
     case "fn":
       return { type: "fn", id: e.id, body: normalise(e.body) };
     case "app": {
-      const head = eval_(e.func);
       const arg = normalise(e.arg);
-      switch (head.type) {
+      const func = eval_(e.func);
+      e = propagateHandles({ ...e, func, arg });
+
+      if (e.type === "handle") return normalise(e);
+      switch (func.type) {
         case "fn":
-          return normalise(subst(head.id, arg, head.body));
+          return normalise(subst(func.id, arg, func.body));
         default:
-          return { type: "app", func: head, arg: arg };
+          return { type: "app", func: func, arg: arg };
       }
     }
     case "inject": {
+      const body = normalise(e.body);
       const return_ = normalise(e.return);
       const handler = normalise(e.handler);
-      const body = normalise(e.body);
-      e = { ...e, handler, return: return_, body };
+      e = propagateHandles({ ...e, handler, return: return_, body });
 
+      if (e.type === "handle") return normalise(e);
       if (return_.type !== "fn") {
         return e;
       }
@@ -485,6 +491,9 @@ const _if = (cond: Term, then: Term, _else: Term) =>
     bool(true)
   );
 
+const listCons = () => fnN(2, (xs, x) => fnN(2, (cons, nil) => app(cons(), x(), xs())));
+const listNil = () => fnN(2, (cons, nil) => nil());
+
 const _toNumber = (n: Term) => {
   // console.dir({ n }, { depth: null });
   assert(n.type === "fn");
@@ -530,6 +539,48 @@ const _toBool = (b: Term) => {
 };
 const toBool = (b: Term) => {
   return _toBool(_eval(b));
+};
+const _toTuple = (t: Term) => {
+  // console.dir({ t2: t }, { depth: null });
+
+  const tuple: Term[] = [];
+  assert(t.type === "fn");
+  let body = t.body;
+  const fnId = t.id;
+
+  while (true) {
+    if (body.type === "var" && body.id === fnId) {
+      return tuple;
+    }
+    assert(body.type === "app");
+    tuple.unshift(body.arg);
+    body = body.func;
+  }
+};
+const toTuple = (t: Term) => {
+  return _toTuple(_eval(t));
+};
+
+const toList = (t: Term) => {
+  // console.dir({ t1: t }, { depth: null });
+
+  let _t = _eval(t);
+  const list: Term[] = [];
+  while (true) {
+    const term = app(
+      _t,
+      fnN(2, (x, rest) => tuple(bool(true), x(), rest())),
+      tuple(bool(false), listNil(), listNil())
+    );
+    const [result, value, rest] = toTuple(term);
+    // console.dir({ result, value, rest, resultBool: toBool(result) }, { depth: null });
+    if (toBool(result)) {
+      list.push(value);
+      _t = rest;
+    } else {
+      return list;
+    }
+  }
 };
 
 export {};
@@ -882,5 +933,205 @@ if (import.meta.vitest) {
       });
       expect(toTuple(term).map(toNumber)).toEqual([2, 3]);
     });
+
+    // it("pythagorean triple example", async () => {
+    //   const input = `
+    //     import "std/math" as { floor, sqrt }
+
+    //     decide := :decide |> handle
+    //     fail := :fail |> handle
+    //     choose_int := fn (m, n) {
+    //       if m > n do fail()
+    //       if decide() do m else self(m+1, n)
+    //     }
+
+    //     pythagorean_triple := fn m, n {
+    //       a := choose_int(m, n);
+    //       b := choose_int(a + 1, n + 1);
+    //       c := sqrt (a^2 + b^2);
+    //       if floor c != c do fail()
+
+    //       (a, b, c)
+    //     };
+
+    //     false_branch_first :=
+    //       decide: handler fn (callback, _) {
+    //         fail_handler := fail: handler fn do callback false
+    //         inject fail_handler { callback true }
+    //       };
+    //     true_branch_first :=
+    //       decide: handler fn (callback, _) {
+    //         fail_handler := fail: handler fn do callback true
+    //         inject fail_handler { callback false }
+    //       };
+
+    //     inject false_branch_first { pythagorean_triple 4 15 },
+    //     inject true_branch_first { pythagorean_triple 4 15 }
+    //   `;
+    //   const result = await evaluate(input);
+    //   expect(result).toStrictEqual([
+    //     [5, 12, 13],
+    //     [12, 16, 20],
+    //   ]);
+    // });
+
+    test("logger example 2", async () => {
+      const handlerId = 1;
+      const term = inject({
+        id: handlerId,
+        handler: fnN(2, (term, cont) =>
+          _let(app(cont(), term()), (res) =>
+            app(
+              res(),
+              fnN(2, (result, logs) => tuple(result(), app(listCons(), logs(), term())))
+            )
+          )
+        ),
+        return: fn((x) => tuple(x(), listNil())),
+        body: tuple(
+          _eval(num(1)),
+          app(
+            fn((x) => handle(handlerId, x())),
+            _eval(num(1))
+          )
+        ),
+      });
+
+      const x = toTuple(term);
+      const [result, logs] = x;
+
+      const [log3] = toList(logs);
+
+      expect(toNumber(log3)).toEqual(1);
+
+      const result1 = toTuple(result);
+      const [a, b] = result1;
+      const a1 = toNumber(a);
+      const b1 = toNumber(b);
+      expect(a1).toEqual(1);
+      expect(b1).toEqual(1);
+    });
+
+    test("logger example", async () => {
+      const handlerId = 1;
+      const term = inject({
+        id: handlerId,
+        handler: fnN(2, (term, cont) =>
+          _let(app(cont(), term()), (res) =>
+            app(
+              res(),
+              fnN(2, (result, logs) => tuple(result(), app(listCons(), logs(), term())))
+            )
+          )
+        ),
+        return: fn((x) => tuple(x(), listNil())),
+        body: seq(
+          handle(handlerId, _eval(num(1))),
+          handle(handlerId, _eval(num(2))),
+          tuple(
+            _eval(num(3)),
+            app(
+              fn((x) => handle(handlerId, _eval(tuple(num(4), x())))),
+              _eval(num(5))
+            )
+          )
+        ),
+      });
+      const x = toTuple(term);
+      const [result, logs] = x;
+
+      const [log1, log2, log3] = toList(logs);
+
+      expect(toNumber(log1)).toEqual(1);
+      expect(toNumber(log2)).toEqual(2);
+      expect(toTuple(log3).map(toNumber)).toEqual([4, 5]);
+
+      const result1 = toTuple(result);
+      const [a, b] = result1;
+      const a1 = toNumber(a);
+      const b1 = toTuple(b);
+      expect(a1).toEqual(3);
+      expect(b1.map(toNumber)).toEqual([4, 5]);
+    });
+
+    // test("state example", async () => {
+    //   const input = `
+    //     // can abstract db queries for example, instead of simple value state
+    //     state :=
+    //       get: handler fn (callback, _) {
+    //         fn state do (callback state) state
+    //       },
+    //       set: handler fn (callback, state) {
+    //         fn do (callback state) state
+    //       },
+    //       [return_handler]: fn x {
+    //         fn state do state, x
+    //       }
+    //     transaction :=
+    //       get: handler fn (callback, _) {
+    //         fn state do (callback state) state
+    //       },
+    //       set: handler fn (callback, state) {
+    //         fn do (callback state) state
+    //       },
+    //       [return_handler]: fn x {
+    //         fn state { set state; x }
+    //       }
+
+    //     set := :set |> handle
+    //     get := :get |> handle
+
+    //     inject state {
+    //       set 123
+    //       inject transaction {
+    //         set(get() + 1)
+    //         get()
+    //       }
+    //       get() + 234
+    //     } 1
+    //   `;
+    //   const result = await evaluate(input);
+    //   expect(result).toStrictEqual([123, 357]);
+    // });
+
+    // it("transaction example", async () => {
+    //   const input = `
+    //     // can abstract db queries for example, instead of simple value state
+    //     state :=
+    //       get: handler fn (callback, _) {
+    //         fn state do (callback state) state
+    //       },
+    //       set: handler fn (callback, state) {
+    //         fn do (callback state) state
+    //       },
+    //       [return_handler]: fn x {
+    //         fn state do state, x
+    //       }
+    //     transaction :=
+    //       get: handler fn (callback, _) {
+    //         fn state do (callback state) state
+    //       },
+    //       set: handler fn (callback, state) {
+    //         fn do (callback state) state
+    //       },
+    //       [return_handler]: fn x {
+    //         fn state { set state; x }
+    //       }
+
+    //     set := :set |> handle
+    //     get := :get |> handle
+
+    //     inject state {
+    //       set 123
+    //       inject transaction {
+    //         set(get() + 1)
+    //         get()
+    //       }
+    //       get() + 234
+    //     } 1
+    //   `;
+    //   const result = await evaluate(input);
+    //   expect(result).toStrictEqual([123, 357]);
+    // });
   });
 }
