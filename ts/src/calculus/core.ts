@@ -126,7 +126,7 @@ const propagateHandles = (e: Term): Term => {
     case "var":
       return e;
     case "fn":
-      return e;
+      return { type: "fn", id: e.id, body: propagateHandles(e.body) };
     case "app": {
       const func = propagateHandles(e.func);
       const arg = propagateHandles(e.arg);
@@ -235,14 +235,14 @@ function stringify(e: Term): string {
       case "var":
         return `#${e.id}`;
       case "app":
-        return `(${go(e.func)}) ${go(e.arg)}`;
+        return `(${go(e.func)}) (${go(e.arg)})`;
       case "fn":
         return `fn #${e.id} -> ${go(e.body)}`;
       case "inject": {
-        unreachable("todo");
+        return `inject #${e.id} (${go(e.handler)}) ([return]: ${go(e.return)}) (${go(e.body)})`;
       }
       case "handle": {
-        unreachable("todo");
+        return `handle #${e.id} (${go(e.value)})`;
       }
       default:
         unreachable("unhandled case");
@@ -1054,44 +1054,102 @@ if (import.meta.vitest) {
       expect(b1.map(toNumber)).toEqual([4, 5]);
     });
 
-    // test("state example", async () => {
-    //   const input = `
-    //     // can abstract db queries for example, instead of simple value state
-    //     state :=
-    //       get: handler fn (callback, _) {
-    //         fn state do (callback state) state
-    //       },
-    //       set: handler fn (callback, state) {
-    //         fn do (callback state) state
-    //       },
-    //       [return_handler]: fn x {
-    //         fn state do state, x
-    //       }
-    //     transaction :=
-    //       get: handler fn (callback, _) {
-    //         fn state do (callback state) state
-    //       },
-    //       set: handler fn (callback, state) {
-    //         fn do (callback state) state
-    //       },
-    //       [return_handler]: fn x {
-    //         fn state { set state; x }
-    //       }
+    test("state example 2", async () => {
+      const handlerStateId = 1;
+      const term = app(
+        inject({
+          id: handlerStateId,
+          handler: _eval(
+            fnN(2, (term, cont) =>
+              app(
+                term(),
+                fnN(2, (action, term) =>
+                  _if(
+                    app(isZero(), action()),
+                    fn((state) => app(app(cont(), state()), state())),
+                    fn(() => app(app(cont(), term()), term()))
+                  )
+                )
+              )
+            )
+          ),
+          return: fn((x) => fn((state) => _eval(tuple(state(), x())))),
+          body: seq(
+            handle(handlerStateId, _eval(tuple(_eval(num(1)), num(2)))),
+            handle(handlerStateId, _eval(tuple(_eval(num(1)), num(3)))),
+            _eval(num(0))
+          ),
+        }),
+        _eval(num(1))
+      );
 
-    //     set := :set |> handle
-    //     get := :get |> handle
+      expect(toTuple(term).map(toNumber)).toEqual([3, 0]);
+    });
 
-    //     inject state {
-    //       set 123
-    //       inject transaction {
-    //         set(get() + 1)
-    //         get()
-    //       }
-    //       get() + 234
-    //     } 1
-    //   `;
-    //   const result = await evaluate(input);
-    //   expect(result).toStrictEqual([123, 357]);
+    test.todo("state example 3", async () => {
+      const handlerStateId = 1;
+      const term = app(
+        inject({
+          id: handlerStateId,
+          handler: _eval(
+            fnN(2, (term, cont) =>
+              app(
+                term(),
+                fnN(2, (action, term) =>
+                  _if(
+                    app(isZero(), action()),
+                    fn((state) => app(app(cont(), state()), state())),
+                    fn(() => app(app(cont(), term()), term()))
+                  )
+                )
+              )
+            )
+          ),
+          return: fn((x) => fn((state) => _eval(tuple(state(), x())))),
+          body: seq(
+            _eval(
+              handle(handlerStateId, tuple(_eval(num(1)), app(succ(), handle(handlerStateId, tuple(num(0), num(0))))))
+            ),
+            _eval(num(0))
+          ),
+        }),
+        _eval(num(0))
+      );
+      console.log(stringify(term));
+
+      console.dir(term, { depth: null });
+
+      expect(toTuple(term).map(toNumber)).toEqual([1, 0]);
+    });
+
+    // test.only("state example", async () => {
+    //   const handlerStateId = 1;
+    //   const term = inject({
+    //     id: handlerStateId,
+    //     handler: _eval(
+    //       fnN(2, (term, cont) =>
+    //         app(
+    //           term(),
+    //           fnN(2, (action, term) =>
+    //             _if(
+    //               app(isZero(), action()),
+    //               fn((state) => app(app(cont(), state()), state())),
+    //               fn(() => app(app(cont(), term()), term()))
+    //             )
+    //           )
+    //         )
+    //       )
+    //     ),
+    //     return: fn((x) => fn((state) => _eval(tuple(state(), x())))),
+    //     body: _let(handle(handlerStateId, _eval(tuple(num(0), num(0)))), (state) =>
+    //       seq(handle(handlerStateId, _eval(tuple(_eval(num(1)), app(succ(), state())))), _eval(num(0)))
+    //     ),
+    //   });
+    //   console.log(stringify(term));
+
+    //   console.dir(term, { depth: null });
+
+    //   expect(toTuple(term).map(toNumber)).toEqual([1, 0]);
     // });
 
     // it("transaction example", async () => {
