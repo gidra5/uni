@@ -201,13 +201,11 @@ function eval_(e: Term): Term {
     }
     case "inject": {
       const handler = eval_(e.handler);
-      if (handler.type !== "fn") return e;
-
       const return_ = eval_(e.return);
-      if (return_.type !== "fn") return e;
-
       const body = eval_(propagateHandles(e.body));
       e = { ...e, handler, return: return_, body };
+      if (handler.type !== "fn") return e;
+      if (return_.type !== "fn") return e;
 
       if (body.type === "handle") {
         if (e.id !== body.id) {
@@ -269,36 +267,27 @@ function normalise(e: Term): Term {
       return { type: "fn", id: e.id, body: normalise(e.body) };
     case "app": {
       const head = eval_(e.func);
+      const arg = normalise(e.arg);
       switch (head.type) {
         case "fn":
-          return normalise(subst(head.id, normalise(e.arg), head.body));
+          return normalise(subst(head.id, arg, head.body));
         default:
-          return { type: "app", func: head, arg: normalise(e.arg) };
+          return { type: "app", func: head, arg: arg };
       }
     }
     case "inject": {
       const return_ = normalise(e.return);
-      if (return_.type !== "fn") {
-        return {
-          ...e,
-          handler: normalise(e.handler),
-          return: return_,
-          body: normalise(e.body),
-        };
-      }
-
       const handler = normalise(e.handler);
-      if (handler.type !== "fn") {
-        return {
-          ...e,
-          handler: handler,
-          return: return_,
-          body: normalise(e.body),
-        };
-      }
-
       const body = normalise(e.body);
       e = { ...e, handler, return: return_, body };
+
+      if (return_.type !== "fn") {
+        return e;
+      }
+
+      if (handler.type !== "fn") {
+        return e;
+      }
 
       // console.dir([1, e], { depth: null });
 
@@ -882,6 +871,16 @@ if (import.meta.vitest) {
         ),
       });
       expect(toNumber(term)).toEqual(1);
+    });
+
+    test("multiple continuation calls", async () => {
+      const handlerId1 = 1;
+      const term = inject({
+        id: handlerId1,
+        handler: fnN(2, (term, cont) => _let(app(cont(), bool(true)), (x) => tuple(x(), app(cont(), bool(false))))),
+        body: _if(handle(handlerId1, _eval(num(1))), num(2), num(3)),
+      });
+      expect(toTuple(term).map(toNumber)).toEqual([2, 3]);
     });
   });
 }
