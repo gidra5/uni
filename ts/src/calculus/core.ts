@@ -1,6 +1,11 @@
 import { TupleN } from "../types";
 import { assert, unreachable } from "../utils";
 
+const envSet = (env: Env, id: number, value: Value): Env => new Map(env).set(id, value);
+const envGet = (env: Env, id: number): Value | undefined => env.get(id);
+const envHas = (env: Env, id: number): boolean => env.has(id);
+const newEnv = (): Env => new Map();
+
 // Rename all binders with fresh ids
 const renameValue = (m: Map<number, number>, e: Value): Value => {
   switch (e.type) {
@@ -88,7 +93,8 @@ function subst2(env: Env, e: Term): Term {
   const go = (e: Term): Term => {
     switch (e.type) {
       case "var": {
-        return e.id in env ? cloneValue(env[e.id]) : e;
+        return envHas(env, e.id) ? cloneValue(envGet(env, e.id)!) : e;
+        // return e.id in env ? cloneValue(env[e.id]) : e;
         // return e.id === id ? clone(arg) : e;
       }
       case "fn": {
@@ -187,7 +193,7 @@ function eval_(e: Term, env: Env): Value {
   switch (e.type) {
     case "var":
       // return e;
-      return e.id in env ? cloneValue(env[e.id]) : e;
+      return envHas(env, e.id) ? cloneValue(envGet(env, e.id)!) : e;
     case "fn":
       // return e;
       return { ...e, closure: env };
@@ -198,7 +204,7 @@ function eval_(e: Term, env: Env): Value {
 
       switch (func.type) {
         case "fn":
-          const env = { ...func.closure, [func.id]: arg };
+          const env = envSet(func.closure, func.id, arg);
           // return eval_(func.body, env);
           return eval_(subst2(env, func.body), env);
         // return eval_(subst(func.id, arg, func.body), env);
@@ -273,7 +279,8 @@ function normalise(e: Term, env: Env): Term {
   switch (e.type) {
     case "var":
       // return e;
-      return e.id in env ? normalise(cloneValue(env[e.id]), env) : e;
+      // return e.id in env ? normalise(cloneValue(env[e.id]), env) : e;
+      return envHas(env, e.id) ? normalise(cloneValue(envGet(env, e.id)!), env) : e;
     case "fn":
       return { type: "fn", id: e.id, body: normalise(e.body, env) };
     case "app": {
@@ -286,7 +293,8 @@ function normalise(e: Term, env: Env): Term {
       // if (e.type === "handle") return normalise(e);
       switch (func.type) {
         case "fn":
-          const _env: Env = { ...func.closure, [func.id]: arg.type === "fn" ? { ...arg, closure: env } : arg };
+          // const _env: Env = envSet(func.closure, func.id, arg.type === "fn" ? { ...arg, closure: env } : arg);
+          const _env: Env = envSet(func.closure, func.id, arg);
           return normalise(subst2(_env, func.body), _env);
         // return normalise(subst(func.id, arg, func.body), env);
         // return normalise(func.body, { ...func.closure, [func.id]: arg });
@@ -351,9 +359,9 @@ function normalise(e: Term, env: Env): Term {
   }
 }
 
-const _eval = (e: Term) => normalise(e, []);
+const _eval = (e: Term) => normalise(e, newEnv());
 
-type Env = Value[];
+type Env = Map<number, Value>;
 type Value =
   | { type: "var"; id: number }
   | { type: "fn"; id: number; body: Term; closure: Env }
