@@ -273,6 +273,8 @@ function stringify(e: Term): string {
  * Fully normalise an expression, including under binders.
  */
 function normalise(e: Term, env: Env): Term {
+  // const v = eval_(e, env);
+  // switch (v.type) {
   // console.dir({ normalise: 1, e, env }, { depth: null });
   // e = propagateHandles(e);
   // console.dir({ e2: e }, { depth: null });
@@ -362,10 +364,13 @@ function normalise(e: Term, env: Env): Term {
 const _eval = (e: Term) => normalise(e, newEnv());
 
 type Env = Map<number, Value>;
-type Value =
-  | { type: "var"; id: number }
-  | { type: "fn"; id: number; body: Term; closure: Env }
-  | { type: "app"; func: Value; arg: Value };
+type Value = { type: "var"; id: number } | { type: "thunk"; env: Env; computation: Computation };
+// | { type: "fn"; id: number; body: Term; closure: Env }
+// | { type: "app"; func: Value; arg: Value };
+type Computation =
+  | { type: "return"; id: Value }
+  | { type: "fn"; id: number; body: Computation }
+  | { type: "app"; func: Computation; arg: Value };
 
 type Lambda =
   | { type: "var"; id: number }
@@ -631,6 +636,33 @@ if (import.meta.vitest) {
       );
       // expect(_eval(term, ctx)).toEqual(value);
       expect(_eval(term)).toEqual(value);
+    });
+
+    test("free vars 1", () => {
+      // const ctx = newContext();
+      const value = name();
+      const term = fn((x) => app(x(), value));
+      // expect(_eval(term, ctx)).toEqual(value);
+      expect(_eval(term)).toEqual(term);
+    });
+
+    test("free vars 2", () => {
+      // const ctx = newContext();
+      const term = app(name(), name());
+      // expect(_eval(term, ctx)).toEqual(value);
+      expect(_eval(term)).toEqual(term);
+    });
+
+    test("free vars 3", () => {
+      // const ctx = newContext();
+      const value = name();
+      const value2 = name();
+      const term = app(
+        fn((x) => app(x(), value)),
+        value2
+      );
+      // expect(_eval(term, ctx)).toEqual(value);
+      expect(_eval(term)).toEqual(app(value2, value));
     });
 
     test("tuple", () => {
