@@ -46,3 +46,5 @@ https://github.com/sampsyo/flatcalc/blob/c5bbe7bd79f98a3b857f0432d4739a3f4f6241b
 https://tigerbeetle.com/blog/2023-03-28-random-fuzzy-thoughts
 
 https://pitest.org/
+
+https://www.reddit.com/r/Compilers/s/FPqvGxLIyU

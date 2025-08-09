@@ -94,3 +94,5 @@ Includes tools for:
 
 Signals (signal, derived, effect), generators (gen and yield), iterators and events through channels
 https://julesjacobs.com/2023/09/21/generalizing-itertools.html
+https://www.reddit.com/r/ProgrammingLanguages/s/f9EDIwWfFx
+https://rolph-recto.github.io/blog/introduction-to-tarjans-path-expressions-algorithm.html

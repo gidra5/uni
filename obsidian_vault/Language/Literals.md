@@ -83,3 +83,5 @@ Sequence of characters spanning multiple lines
 [multiline string syntax](https://www.reddit.com/r/ProgrammingLanguages/comments/w8zjc2/an_idea_for_multiline_strings/)
 [c# multiline strings](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/strings/#raw-string-literals)
 https://www.reddit.com/r/ProgrammingLanguages/comments/932372/how_to_implement_string_interpolation/
+
+https://www.reddit.com/r/ProgrammingLanguages/s/9cv8qVIIxQ

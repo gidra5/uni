@@ -19,3 +19,5 @@ Given a value we want to know:
 3. Where can it be used (using subtyping for example)
 4. How can it be used (with linear or modal types)
 5. How it changes when we interact with it (via session types for example)
+
+https://ehatti.github.io/blog/nbe.html

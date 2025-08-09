@@ -173,3 +173,7 @@ def helloWorld() = {
 https://player.vimeo.com/video/833791219#t=3h42m48s
 https://ryanbrewer.dev/posts/safe-mmm-with-coeffects
 https://mikeinnes.io/posts/transducers/
+
+https://uwaterloo.ca/computer-science/sites/default/files/uploads/documents/cs-2024-04.pdf
+https://dl.acm.org/doi/10.1145/3689800
+https://www.microsoft.com/en-us/research/wp-content/uploads/2017/06/algeff-in-c-tr-v2.pdf
