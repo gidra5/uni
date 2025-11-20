@@ -60,14 +60,16 @@ function clearIds(ast: Tree) {
 
 const testCase = (input: string) => {
   const tokens = parseTokenGroups(input);
-  const ast = parseScript(tokens);
+  const [, validatedTokens] = validateTokenGroups(tokens);
+  const ast = parseScript(validatedTokens);
 
   expect(clearIds(ast)).toMatchSnapshot();
 };
 
 const testCaseModule = (input: string) => {
   const tokens = parseTokenGroups(input);
-  const ast = parseModule(tokens);
+  const [, validatedTokens] = validateTokenGroups(tokens);
+  const ast = parseModule(validatedTokens);
 
   expect(clearIds(ast)).toMatchSnapshot();
 };

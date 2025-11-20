@@ -7,6 +7,7 @@ import { inject, Injectable, register } from "../src/utils/injector";
 import { FileMap } from "codespan-napi";
 import { Context, infer, substituteConstraints } from "../src/analysis/types/infer";
 import { desugar } from "../src/analysis/desugar";
+import { validateTokenGroups } from "../src/analysis/validate";
 
 beforeEach(() => {
   register(Injectable.FileMap, new FileMap());
@@ -26,7 +27,8 @@ function clearIds(ast: Tree) {
 
 const testCase = async (input: string) => {
   const tokens = parseTokenGroups(input);
-  const ast = parseScript(tokens);
+  const [, validatedTokens] = validateTokenGroups(tokens);
+  const ast = parseScript(validatedTokens);
   const desugared = desugar(ast);
   expect(desugared).toMatchSnapshot();
 
