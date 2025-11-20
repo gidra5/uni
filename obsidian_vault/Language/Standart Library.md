@@ -91,6 +91,7 @@ Includes tools for:
   * effectful computation
 42. event systems
 43. reactive streams
+44. [conflict free data types](https://github.com/HowProgrammingWorks/CRDT)
 
 Signals (signal, derived, effect), generators (gen and yield), iterators and events through channels
 https://julesjacobs.com/2023/09/21/generalizing-itertools.html
