@@ -1,29 +1,29 @@
 export enum InstructionCode {
-  Add,
-  Sub,
-  Mul,
-  Div,
-  Mod,
-  Pow,
+  Add = "Add",
+  Sub = "Sub",
+  Mul = "Mul",
+  Div = "Div",
+  Mod = "Mod",
+  Pow = "Pow",
 
-  And,
-  Or,
-  Not,
-  Eq,
-  Gt,
+  And = "And",
+  Or = "Or",
+  Not = "Not",
+  Eq = "Eq",
+  Gt = "Gt",
 
-  Const,
-  Alloc,
-  Free,
+  Const = "Const",
+  Alloc = "Alloc",
+  Free = "Free",
 
-  Call,
-  Return,
+  Call = "Call",
+  Return = "Return",
 
   // SetHandle,
   // EmitEffect,
 
-  Jump,
-  Native,
+  Jump = "Jump",
+  Native = "Native",
 }
 
 export type Closure = {

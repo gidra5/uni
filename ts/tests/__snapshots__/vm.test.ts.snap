@@ -1,0 +1,27 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`vm2 integration > adds two numbers and prints the sum 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": "print",
+      "arg2": 1,
+      "code": "Native",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
