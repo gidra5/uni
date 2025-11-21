@@ -2,7 +2,7 @@ import { generateVm2Bytecode } from "../codegen/vm/index.js";
 import { handlers } from "./handlers.js";
 import { mergeNatives } from "./natives.js";
 import { Instruction, InstructionCode, Program, Value } from "./instructions.js";
-import { assert } from "../utils/index.js";
+import { assert, nextId } from "../utils/index.js";
 
 export type NativeHandler = (vm: VM, args: Value[]) => Value | void;
 
@@ -39,23 +39,12 @@ export class Thread {
   }
 
   pop(): Value {
-    const value = this.stack.pop();
-    assert(value !== undefined, "vm2 stack underflow");
-    return value;
+    assert(this.stack.length > 0, "vm2 stack underflow");
+    return this.stack.pop() as Value;
   }
 
   jump(address: number) {
     this.ip = address;
-  }
-
-  alloc(name: string) {
-    const value = this.pop();
-    this.vm.heap[name] = value;
-    this.push({ ref: name });
-  }
-
-  free(name: string) {
-    delete this.vm.heap[name];
   }
 
   callFunction(functionName: string, argCount: number, caller?: CallStackEntry) {
@@ -119,6 +108,7 @@ export class Thread {
 export class VM {
   heap: Record<string, HeapEntry> = {};
   threads = new Map<string, Thread>();
+  atoms = new Map<string, Value>();
 
   mainThreadId: string = "main";
   code: Program;
@@ -129,6 +119,27 @@ export class VM {
     const entryFunction = options.entry ?? "main";
     this.natives = mergeNatives(options.natives);
     this.spawnThread(entryFunction, this.mainThreadId);
+  }
+
+  alloc(value: Value) {
+    const name = String(nextId());
+    this.heap[name] = value;
+    return { ref: name };
+  }
+
+  free(name: string) {
+    delete this.heap[name];
+  }
+
+  createSymbol(name?: string, isAtom = false): Value {
+    if (isAtom) {
+      const key = name ?? "";
+      if (!this.atoms.has(key)) this.atoms.set(key, { symbol: `atom:${key}`, name });
+      return this.atoms.get(key)!;
+    }
+
+    const id = nextId();
+    return { symbol: id, name };
   }
 
   spawnThread(functionName: string, id: string): Thread {

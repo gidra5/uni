@@ -204,6 +204,7 @@ const exprPrecedenceList: [NodeType, Fixity][] = [
   [NodeType.IS, Fixity.POSTFIX],
   [NodeType.IN, Fixity.INFIX],
   [NodeType.NOT, Fixity.PREFIX],
+  [NodeType.DEREF, Fixity.PREFIX],
 
   [NodeType.ADD, Fixity.INFIX],
   [NodeType.SUB, Fixity.INFIX],

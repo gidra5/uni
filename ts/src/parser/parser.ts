@@ -97,6 +97,7 @@ const idToPrefixExprOp = {
   "++": NodeType.INCREMENT,
   "--": NodeType.DECREMENT,
   "...": NodeType.SPREAD,
+  "*": NodeType.DEREF,
   "<-": NodeType.RECEIVE,
   "<-?": NodeType.RECEIVE_STATUS,
   not: NodeType.NOT,

@@ -24,13 +24,32 @@ export enum InstructionCode {
 
   Jump = "Jump",
   Native = "Native",
+  Load = "Load",
+  Store = "Store",
+  Tuple = "Tuple",
+  Record = "Record",
+  In = "In",
+  Lt = "Lt",
+  DeepEq = "DeepEq",
+  Concat = "Concat",
 }
 
 export type Closure = {
   functionName: string;
   env: Record<string, Value>;
 };
-export type Value = number | string | boolean | null | undefined | Closure | { ref: string };
+export type SymbolValue = { symbol: string | number; name?: string };
+export type Value =
+  | number
+  | string
+  | boolean
+  | null
+  | undefined
+  | Closure
+  | { ref: string }
+  | SymbolValue
+  | { tuple: Value[] }
+  | { record: Record<string, Value> };
 
 export type Instruction =
   | { code: InstructionCode.Add }
@@ -44,13 +63,21 @@ export type Instruction =
   | { code: InstructionCode.Not }
   | { code: InstructionCode.Eq }
   | { code: InstructionCode.Gt }
+  | { code: InstructionCode.Lt }
   | { code: InstructionCode.Const; arg1: Value }
-  | { code: InstructionCode.Alloc; arg1: string }
-  | { code: InstructionCode.Free; arg1: string }
+  | { code: InstructionCode.Alloc }
+  | { code: InstructionCode.Free }
+  | { code: InstructionCode.Load }
+  | { code: InstructionCode.Store }
+  | { code: InstructionCode.Tuple; arg1: number }
+  | { code: InstructionCode.Record; arg1: number }
+  | { code: InstructionCode.In }
+  | { code: InstructionCode.DeepEq }
   | { code: InstructionCode.Call; arg1: string; arg2?: number }
   | { code: InstructionCode.Return }
   | { code: InstructionCode.Jump; arg1: number }
-  | { code: InstructionCode.Native; arg1: string; arg2?: number };
+  | { code: InstructionCode.Native; arg1: string; arg2?: number }
+  | { code: InstructionCode.Concat };
 
 export type FunctionCode = Instruction[];
 export type Program = Record<string, FunctionCode>;

@@ -1,5 +1,720 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`expressions > arithmetics > handles chained math with precedence 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "arg1": -1,
+      "code": "Const",
+    },
+    {
+      "code": "Mul",
+    },
+    {
+      "code": "Pow",
+    },
+    {
+      "arg1": 4,
+      "code": "Const",
+    },
+    {
+      "code": "Mul",
+    },
+    {
+      "arg1": 5,
+      "code": "Const",
+    },
+    {
+      "arg1": 6,
+      "code": "Const",
+    },
+    {
+      "arg1": 7,
+      "code": "Const",
+    },
+    {
+      "code": "Mod",
+    },
+    {
+      "code": "Div",
+    },
+    {
+      "code": "Sub",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > and 1`] = `
+{
+  "main": [
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "arg1": false,
+      "code": "Const",
+    },
+    {
+      "code": "And",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > and short-circuit 1`] = `
+{
+  "main": [
+    {
+      "arg1": false,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "whatever",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "And",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > compare 1`] = `
+{
+  "main": [
+    {
+      "arg1": 123,
+      "code": "Const",
+    },
+    {
+      "arg1": 456,
+      "code": "Const",
+    },
+    {
+      "code": "Lt",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > deep eq 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "DeepEq",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > eq 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > eq ref 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > eq ref 2 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > in 1`] = `
+{
+  "main": [
+    {
+      "arg1": {
+        "name": "key",
+        "symbol": "atom:key",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "name": "key",
+        "symbol": "atom:key",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "name": "key2",
+        "symbol": "atom:key2",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "code": "In",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > not on boolean 1`] = `
+{
+  "main": [
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "code": "Not",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > not on not boolean 1`] = `
+{
+  "main": [
+    {
+      "arg1": 123,
+      "code": "Const",
+    },
+    {
+      "code": "Not",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > or 1`] = `
+{
+  "main": [
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "arg1": false,
+      "code": "Const",
+    },
+    {
+      "code": "Or",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > or short-circuit 1`] = `
+{
+  "main": [
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "whatever",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Or",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > memory ops > alloc stores value and returns it via load 1`] = `
+{
+  "main": [
+    {
+      "arg1": 42,
+      "code": "Const",
+    },
+    {
+      "arg1": "alloc",
+      "arg2": 1,
+      "code": "Native",
+    },
+    {
+      "arg1": {
+        "ref": "r",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "r",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > memory ops > alloc stores value and returns it via load 2`] = `
+{
+  "26": 42,
+  "r": {
+    "ref": "26",
+  },
+}
+`;
+
+exports[`expressions > memory ops > free removes stored value 1`] = `
+{
+  "main": [
+    {
+      "arg1": 7,
+      "code": "Const",
+    },
+    {
+      "arg1": "alloc",
+      "arg2": 1,
+      "code": "Native",
+    },
+    {
+      "arg1": {
+        "ref": "r",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "r",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": "free",
+      "arg2": 1,
+      "code": "Native",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > symbols > creates a named symbol 1`] = `
+{
+  "main": [
+    {
+      "arg1": "foo",
+      "code": "Const",
+    },
+    {
+      "arg1": "symbol",
+      "arg2": 1,
+      "code": "Native",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > symbols > symbol equality is by identity, atoms are by name 1`] = `
+{
+  "main": [
+    {
+      "arg1": "a",
+      "code": "Const",
+    },
+    {
+      "arg1": "symbol",
+      "arg2": 1,
+      "code": "Native",
+    },
+    {
+      "arg1": {
+        "ref": "s",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "a",
+      "code": "Const",
+    },
+    {
+      "arg1": "symbol",
+      "arg2": 1,
+      "code": "Native",
+    },
+    {
+      "arg1": {
+        "ref": "t",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "s",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "t",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > values > atom 1`] = `
+{
+  "main": [
+    {
+      "arg1": {
+        "name": "atom",
+        "symbol": "atom:atom",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > values > false 1`] = `
+{
+  "main": [
+    {
+      "arg1": false,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > values > float 1`] = `
+{
+  "main": [
+    {
+      "arg1": 123.456,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > values > integer 1`] = `
+{
+  "main": [
+    {
+      "arg1": 123,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > values > string 1`] = `
+{
+  "main": [
+    {
+      "arg1": "string",
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > values > string template 1`] = `
+{
+  "main": [
+    {
+      "arg1": "hello ",
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Concat",
+    },
+    {
+      "arg1": " world",
+      "code": "Const",
+    },
+    {
+      "code": "Concat",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > values > true 1`] = `
+{
+  "main": [
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`vm2 integration > adds two numbers and prints the sum 1`] = `
 {
   "main": [
