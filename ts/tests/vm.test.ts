@@ -3,7 +3,7 @@ import { parseTokenGroups } from "../src/parser/tokenGroups";
 import { parseScript } from "../src/parser/parser";
 import { Injectable, register } from "../src/utils/injector";
 import { FileMap } from "codespan-napi";
-import { generateVm2Bytecode, InstructionCode, VM } from "../src/vm2/index";
+import { generateVm2Bytecode, InstructionCode, VM } from "../src/vm/index";
 import { validateTokenGroups } from "../src/analysis/validate";
 
 beforeEach(() => {

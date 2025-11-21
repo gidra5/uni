@@ -1,6 +1,6 @@
 import { NodeType, Tree } from "../../ast.js";
 import { assert } from "../../utils/index.js";
-import { Instruction, InstructionCode, Program } from "../../vm2/instructions.js";
+import { Instruction, InstructionCode, Program } from "../../vm/instructions.js";
 
 export const generateVm2Bytecode = (ast: Tree): Program => {
   const generator = new Vm2Generator();

@@ -1,162 +1,166 @@
-import EventEmitter from "events";
-import { Device, MemoryMappedRegisters, displayDevice, keyboardDevice } from "./devices.js";
-import { OpCode, opCodeHandlers } from "./handlers.js";
-import {
-  MEMORY_SIZE,
-  R_COUNT,
-  Register,
-  Address,
-  UInt16,
-  Flag,
-  INITIAL_ADDR,
-  PROCESSOR_STATUS_BIT,
-  signFlag,
-  SUSPENDED_BIT,
-  OS_LOADED_BIT,
-} from "./utils.js";
+import { generateVm2Bytecode } from "../codegen/vm/index.js";
+import { handlers } from "./handlers.js";
+import { mergeNatives } from "./natives.js";
+import { Instruction, InstructionCode, Program, Value } from "./instructions.js";
+import { assert } from "../utils/index.js";
 
-class SuspendedError extends Error {
-  constructor() {
-    super("Suspended");
+export type NativeHandler = (vm: VM, args: Value[]) => Value | void;
+
+type HeapEntry = Value;
+type StackEntry = Value;
+type CallStackEntry = {
+  ip: number;
+  functionName: string;
+  stack: StackEntry[];
+};
+
+type VMOptions = {
+  code: Program;
+  natives?: Record<string, NativeHandler>;
+  entry?: string;
+};
+
+export class Thread {
+  id: string;
+  stack: StackEntry[] = [];
+  callStack: CallStackEntry[] = [];
+  handlersStack: { ip: number; functionName: string }[] = [];
+
+  ip = 0;
+  functionName: string;
+
+  constructor(private vm: VM, id: string, entryFunction: string) {
+    this.id = id;
+    this.functionName = entryFunction;
+  }
+
+  push(value: Value) {
+    this.stack.push(value);
+  }
+
+  pop(): Value {
+    const value = this.stack.pop();
+    assert(value !== undefined, "vm2 stack underflow");
+    return value;
+  }
+
+  jump(address: number) {
+    this.ip = address;
+  }
+
+  alloc(name: string) {
+    const value = this.pop();
+    this.vm.heap[name] = value;
+    this.push({ ref: name });
+  }
+
+  free(name: string) {
+    delete this.vm.heap[name];
+  }
+
+  callFunction(functionName: string, argCount: number, caller?: CallStackEntry) {
+    const args = this.stack.splice(this.stack.length - argCount, argCount);
+    const returnFrame =
+      caller ??
+      ({
+        ip: this.ip + 1,
+        functionName: this.functionName,
+        stack: this.stack,
+      } satisfies CallStackEntry);
+    this.callStack.push(returnFrame);
+    this.stack = args;
+    this.functionName = functionName;
+    this.ip = 0;
+  }
+
+  callNative(name: string, argCount: number) {
+    const native = this.vm.natives[name];
+    assert(native, `Unknown native function: ${name}`);
+
+    const args: Value[] = [];
+    for (let i = 0; i < argCount; i++) args.unshift(this.pop());
+
+    const result = native(this.vm, args);
+    const valueToPush = result === undefined ? args[args.length - 1] : result;
+    if (valueToPush !== undefined) this.push(valueToPush);
+  }
+
+  returnFromFunction() {
+    if (this.callStack.length === 0) return;
+
+    const returnValue = this.stack.length > 0 ? this.pop() : undefined;
+    const frame = this.callStack.pop()!;
+
+    this.stack = frame.stack ?? [];
+    if (returnValue !== undefined) this.push(returnValue);
+
+    this.functionName = frame.functionName;
+    this.ip = frame.ip;
+  }
+
+  step() {
+    const instructions = this.vm.getFunction(this.functionName);
+
+    if (this.ip < 0 || this.ip >= instructions.length) {
+      this.callStack = [];
+      this.stack = [];
+      return;
+    }
+
+    const instr = instructions[this.ip];
+    const handler = handlers[instr.code];
+    assert(handler, `vm2: missing handler for instruction ${InstructionCode[instr.code]}`);
+
+    const shouldAdvance = handler(this.vm, this, instr) ?? true;
+    if (this.callStack.length > 0 && shouldAdvance) this.ip++;
   }
 }
 
-export class VM extends EventEmitter {
-  id = 0;
-  memory = new Uint16Array(MEMORY_SIZE);
-  registers = new Uint16Array(R_COUNT);
-  keyboard: Device;
-  display: Device;
+export class VM {
+  heap: Record<string, HeapEntry> = {};
+  threads = new Map<string, Thread>();
 
-  constructor(osImage?: Buffer) {
-    super();
+  mainThreadId: string = "main";
+  code: Program;
+  natives: Record<string, NativeHandler>;
 
-    const keyboardData = [] as number[];
-
-    this.on("input", (char) => {
-      keyboardData.push(char.charCodeAt(0));
-    });
-    const getChar = () => {
-      if (keyboardData.length !== 0) return keyboardData.shift()!;
-      this.awaitInput();
-      return 0;
-    };
-    const checkChar = () => {
-      if (keyboardData.length !== 0) return true;
-      this.awaitInput();
-      return false;
-    };
-
-    this.keyboard = keyboardDevice(getChar, checkChar);
-    this.display = displayDevice;
-
-    this.cond = Flag.ZERO;
-    this.pc = INITIAL_ADDR;
-
-    if (osImage) {
-      this.loadImage(osImage);
-      this.memory[MemoryMappedRegisters.MACHINE_STATUS] |= OS_LOADED_BIT;
-    }
+  constructor(options: VMOptions) {
+    this.code = options.code;
+    const entryFunction = options.entry ?? "main";
+    this.natives = mergeNatives(options.natives);
+    this.spawnThread(entryFunction, this.mainThreadId);
   }
 
-  get pc() {
-    return this.registers[Register.R_PC];
-  }
-
-  set pc(val: UInt16) {
-    this.registers[Register.R_PC] = val;
-  }
-
-  set cond(val: Flag) {
-    this.registers[Register.R_COND] = val;
-  }
-
-  get cond() {
-    return this.registers[Register.R_COND];
-  }
-
-  get running() {
-    return !!(this.memory[MemoryMappedRegisters.MACHINE_STATUS] & (PROCESSOR_STATUS_BIT >> this.id));
-  }
-
-  get suspended() {
-    return !!(this.memory[MemoryMappedRegisters.MACHINE_STATUS] & (SUSPENDED_BIT >> this.id));
+  spawnThread(functionName: string, id: string): Thread {
+    const thread = new Thread(this, id, functionName);
+    this.threads.set(thread.id, thread);
+    thread.callFunction(functionName, 0, { ip: -1, functionName, stack: [] });
+    return thread;
   }
 
   run() {
-    this.memory[MemoryMappedRegisters.MACHINE_STATUS] = PROCESSOR_STATUS_BIT >> this.id;
-
-    try {
-      while (this.running && !this.suspended) {
-        const instr = this.read(this.pc++);
-        const op: OpCode = instr >> 12;
-
-        const handler = opCodeHandlers[op];
-
-        if (!handler) {
-          console.log(OpCode[op], "not implemented");
-          return;
-        }
-
-        handler(this, instr);
+    let active = this.activeThreads();
+    while (active.length > 0) {
+      for (const thread of active) {
+        thread.step();
       }
-      this.emit("halt");
-    } catch (e) {
-      if (!(e instanceof SuspendedError)) throw e;
-    }
-  }
-
-  updateFlags(register: Register) {
-    const val = this.registers[register];
-    this.cond = signFlag(val);
-  }
-
-  write(address: Address, val: UInt16) {
-    if (this.keyboard.write(address, val)) return;
-    if (this.display.write(address, val)) return;
-    this.memory[address] = val;
-  }
-
-  read(address: Address): UInt16 {
-    let value = this.keyboard.read(address);
-    if (value !== null) return value;
-
-    value = this.display.read(address);
-    if (value !== null) return value;
-
-    return this.memory[address];
-  }
-
-  suspend() {
-    this.memory[MemoryMappedRegisters.MACHINE_STATUS] |= SUSPENDED_BIT;
-    throw new SuspendedError();
-  }
-
-  resume() {
-    this.memory[MemoryMappedRegisters.MACHINE_STATUS] &= ~SUSPENDED_BIT;
-    this.run();
-  }
-
-  awaitInput() {
-    this.once("input", () => {
-      this.resume();
-    });
-    this.suspend();
-  }
-
-  loadImage(buffer: Buffer) {
-    // https://stackoverflow.com/questions/59996221/convert-nodejs-buffer-to-uint16array
-    buffer.swap16();
-
-    let image = new Uint16Array(buffer.buffer, buffer.byteOffset, buffer.byteLength / 2);
-    let origin: Address = image[0];
-    this.pc = origin;
-    image = image.subarray(1);
-
-    if (origin + image.length >= MEMORY_SIZE) {
-      throw new Error("Image too big to fit in memory");
+      active = this.activeThreads();
     }
 
-    this.memory.set(image, origin);
+    const mainThread = this.threads.get(this.mainThreadId);
+    return mainThread?.stack[mainThread.stack.length - 1];
+  }
+
+  private activeThreads() {
+    return [...this.threads.values()].filter((thread) => thread.callStack.length > 0);
+  }
+
+  getFunction(functionName: string): Instruction[] {
+    const instructions = this.code[functionName];
+    assert(instructions, `vm2: missing function "${functionName}"`);
+    return instructions;
   }
 }
+
+export { InstructionCode, generateVm2Bytecode };
+export type { Instruction, Program, Value };
