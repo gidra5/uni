@@ -43,16 +43,19 @@ const inject = <const T extends Injectable>(name: T): InjectableType[T] => {
   return registry.get(name);
 };
 
-// Register default injectables
-register(Injectable.RootDir, process.cwd());
-register(Injectable.FileMap, new FileMap());
-register(Injectable.NextId, 0);
-register(Injectable.PrecedenceMap, new Map());
-register(Injectable.PositionMap, new Map());
-register(Injectable.TypeMap, new Map());
-register(Injectable.PhysicalTypeMap, new Map());
-register(Injectable.ClosureVariablesMap, new Map());
-register(Injectable.BoundVariablesMap, new Map());
-register(Injectable.NodeToVariableMap, new Map());
+const reset = () => {
+  register(Injectable.RootDir, process.cwd());
+  register(Injectable.FileMap, new FileMap());
+  register(Injectable.NextId, 0);
+  register(Injectable.PrecedenceMap, new Map());
+  register(Injectable.PositionMap, new Map());
+  register(Injectable.TypeMap, new Map());
+  register(Injectable.PhysicalTypeMap, new Map());
+  register(Injectable.ClosureVariablesMap, new Map());
+  register(Injectable.BoundVariablesMap, new Map());
+  register(Injectable.NodeToVariableMap, new Map());
+};
 
-export { register, inject, Injectable };
+reset();
+
+export { reset, register, inject, Injectable };
