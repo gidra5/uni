@@ -1,7 +1,7 @@
 import { generateVm2Bytecode } from "../codegen/vm/index.js";
 import { handlers } from "./handlers.js";
 import { mergeNatives } from "./natives.js";
-import { Instruction, InstructionCode, Program, Value } from "./instructions.js";
+import { FunctionCode, Instruction, InstructionCode, Program, Value } from "./instructions.js";
 import { assert, nextId } from "../utils/index.js";
 
 export type NativeHandler = (vm: VM, args: Value[]) => Value | void;
@@ -15,7 +15,6 @@ type CallStackEntry = {
 };
 
 type VMOptions = {
-  code: Program;
   natives?: Record<string, NativeHandler>;
   entry?: string;
 };
@@ -48,6 +47,7 @@ export class Thread {
   }
 
   callFunction(functionName: string, argCount: number, caller?: CallStackEntry) {
+    assert(this.vm.code[functionName], `vm2: missing function "${functionName}"`);
     const args = this.stack.splice(this.stack.length - argCount, argCount);
     const returnFrame =
       caller ??
@@ -110,15 +110,21 @@ export class VM {
   threads = new Map<string, Thread>();
   atoms = new Map<string, Value>();
 
-  mainThreadId: string = "main";
-  code: Program;
+  code: Program = {};
   natives: Record<string, NativeHandler>;
 
-  constructor(options: VMOptions) {
-    this.code = options.code;
-    const entryFunction = options.entry ?? "main";
-    this.natives = mergeNatives(options.natives);
-    this.spawnThread(entryFunction, this.mainThreadId);
+  constructor(options?: VMOptions) {
+    this.natives = mergeNatives(options?.natives);
+  }
+
+  addProgram(name: string, program: Program) {
+    for (const [codeName, code] of Object.entries(program)) {
+      this.addCode(`${name}:${codeName}`, code);
+    }
+  }
+
+  addCode(name: string, code: FunctionCode) {
+    this.code[name] = code;
   }
 
   alloc(value: Value) {
@@ -149,7 +155,9 @@ export class VM {
     return thread;
   }
 
-  run() {
+  run(name = "main") {
+    const mainThread = this.spawnThread(name, "main");
+
     let active = this.activeThreads();
     while (active.length > 0) {
       for (const thread of active) {
@@ -158,7 +166,6 @@ export class VM {
       active = this.activeThreads();
     }
 
-    const mainThread = this.threads.get(this.mainThreadId);
     return mainThread?.stack[mainThread.stack.length - 1];
   }
 

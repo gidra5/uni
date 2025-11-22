@@ -8,6 +8,7 @@ import { SystemError } from "./error.js";
 import { parseScript } from "./parser/parser.js";
 import { parseTokenGroups } from "./parser/tokenGroups.js";
 import { generateVm2Bytecode, VM } from "./vm/index.js";
+import type { Value } from "./vm/index.js";
 import { inject, Injectable } from "./utils/injector.js";
 
 const reportErrors = (errors: SystemError[], fileId: number, fileMap: FileMap) => {
@@ -16,6 +17,39 @@ const reportErrors = (errors: SystemError[], fileId: number, fileMap: FileMap) =
   errors.forEach((error) => error.withFileId(fileId).print(fileMap));
   process.exitCode = 1;
   return true;
+};
+
+type VmRuntimeState = {
+  heap: Record<string, Value>;
+  atoms: Map<string, Value>;
+};
+
+const runInVm = (source: string, fileName: string, vm: VM) => {
+  const fileMap = inject(Injectable.FileMap);
+  fileMap.addFile(fileName, source);
+  const fileId = fileMap.getFileId(fileName);
+
+  try {
+    const tokens = parseTokenGroups(source);
+    const [tokenErrors, validatedTokens] = validateTokenGroups(tokens);
+    if (reportErrors(tokenErrors, fileId, fileMap)) return;
+
+    const [astErrors, ast] = validate(parseScript(validatedTokens));
+    if (reportErrors(astErrors, fileId, fileMap)) return;
+
+    const bytecode = generateVm2Bytecode(ast);
+    vm.addProgram(fileName, bytecode);
+
+    const functionName = `${fileName}:main`;
+    return vm.run(functionName);
+  } catch (error) {
+    if (error instanceof SystemError) {
+      error.withFileId(fileId).print(fileMap);
+      return;
+    }
+
+    console.error(error);
+  }
 };
 
 program
@@ -30,31 +64,9 @@ program
       return;
     }
 
-    const fileMap = inject(Injectable.FileMap);
-    fileMap.addFile(file, source);
-    const fileId = fileMap.getFileId(file);
-
-    try {
-      const tokens = parseTokenGroups(source);
-      const [tokenErrors, validatedTokens] = validateTokenGroups(tokens);
-      if (reportErrors(tokenErrors, fileId, fileMap)) return;
-
-      const [astErrors, ast] = validate(parseScript(validatedTokens));
-      if (reportErrors(astErrors, fileId, fileMap)) return;
-
-      const bytecode = generateVm2Bytecode(ast);
-      const vm = new VM({ code: bytecode });
-      const result = vm.run();
-
-      if (result !== undefined) console.dir(result, { depth: null });
-    } catch (error) {
-      if (error instanceof SystemError) {
-        error.withFileId(fileId).print(fileMap);
-        return;
-      }
-
-      console.error(error);
-    }
+    const vm = new VM();
+    const result = runInVm(source, file, vm);
+    if (result !== undefined) console.dir(result, { depth: null });
   });
 
 program
@@ -62,21 +74,29 @@ program
   .argument("[file]", "initial script/module")
   .description("Run REPL in interpreter")
   .action((file) => {
-    // const taskQueue = new TaskQueue();
-    // const context = initialContext(taskQueue);
     console.log("Starting REPL...");
-    // const callback: Continuation = (v) => console.dir(v, { depth: null });
-    // if (file) {
-    //   console.log("Reading initial script...");
-    //   const code = fs.readFileSync(file, "utf-8");
-    //   console.log("Running initial script...");
-    //   evaluate(taskQueue, parseScriptString(code), context, callback);
-    //   taskQueue.run();
-    // }
+    const vm = new VM();
+
+    const runSnippet = (source: string, label: string) => {
+      const result = runInVm(source, label, vm);
+      if (result !== undefined) console.dir(result, { depth: null });
+    };
+
+    if (file) {
+      try {
+        const code = fs.readFileSync(file, "utf-8");
+        runSnippet(code, file);
+      } catch (error) {
+        console.error(`Failed to read "${file}":`, error);
+        return;
+      }
+    }
+
     console.log("Waiting for next input...");
     const rl = readline.createInterface({ input, output, prompt: ">> " });
     rl.prompt();
 
+    let replLine = 0;
     rl.on("line", (_line) => {
       const line = _line.trim();
       switch (line) {
@@ -84,12 +104,11 @@ program
           rl.close();
           break;
         default: {
-          // try {
-          //   evaluate(taskQueue, parseScriptString(line), context, callback);
-          //   taskQueue.run();
-          // } catch (e) {
-          //   console.error(e);
-          // }
+          try {
+            runSnippet(line, `<repl:${++replLine}>`);
+          } catch (e) {
+            console.error(e);
+          }
           break;
         }
       }
