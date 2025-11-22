@@ -23,7 +23,8 @@ const parseProgram = (program: string) => {
 
 const runProgram = (program: string | Program, options: Partial<ConstructorParameters<typeof VM>[0]> = {}) => {
   const bytecode = typeof program === "string" ? parseProgram(program) : program;
-  const vm = new VM({ code: bytecode, ...options });
+  const vm = new VM(options);
+  for (const [name, code] of Object.entries(bytecode)) vm.addCode(name, code);
   const result = vm.run();
   return { bytecode, result, vm };
 };
@@ -131,6 +132,32 @@ describe("expressions", () => {
     });
   });
 
+  describe("function expressions", () => {
+    it("immediately invoked function expression (iife)", () => {
+      const { bytecode, result } = runProgram("(fn x -> x) 1");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(1);
+    });
+
+    it("return from function", () => {
+      const { bytecode, result } = runProgram("(fn x -> { return (x + 1); x }) 1");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(2);
+    });
+
+    it("function call multiple args", () => {
+      const { bytecode, result } = runProgram("(fn x, y -> x + y) 1 2");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(3);
+    });
+
+    it("pipe", () => {
+      const { bytecode, result } = runProgram("1 |> fn x { x + 1 } |> fn y { y * 2 }");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(4);
+    });
+  });
+
   describe("symbols", () => {
     it("creates a named symbol", () => {
       const { bytecode, result } = runProgram('symbol "foo"');
@@ -175,7 +202,8 @@ describe("vm2 integration", () => {
     expect(bytecode).toMatchSnapshot();
 
     const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-    const vm = new VM({ code: bytecode, natives: { print: (_vm, [value]) => console.log(value) } });
+    const vm = new VM({ natives: { print: (_vm, [value]) => console.log(value) } });
+    for (const [name, code] of Object.entries(bytecode)) vm.addCode(name, code);
     const result = vm.run();
 
     expect(result).toBe(3);

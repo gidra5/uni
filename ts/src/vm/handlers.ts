@@ -159,10 +159,10 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
     _vm.heap[ref] = value;
     thread.push({ ref });
   },
-  [InstructionCode.Free]: (_vm, thread, instr) => {
+  [InstructionCode.Free]: (vm, thread, instr) => {
     assert(instr.code === InstructionCode.Free);
     const ref = getRef(thread.pop());
-    thread.free(ref);
+    vm.free(ref);
   },
   [InstructionCode.Load]: (vm, thread, instr) => {
     assert(instr.code === InstructionCode.Load);
@@ -174,7 +174,6 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
     const ref = getRef(thread.pop());
     const value = thread.pop();
     vm.heap[ref] = value;
-    thread.push(value);
   },
   [InstructionCode.Tuple]: (_vm, thread, instr) => {
     assert(instr.code === InstructionCode.Tuple);

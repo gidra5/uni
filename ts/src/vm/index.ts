@@ -16,7 +16,6 @@ type CallStackEntry = {
 
 type VMOptions = {
   natives?: Record<string, NativeHandler>;
-  entry?: string;
 };
 
 export class Thread {

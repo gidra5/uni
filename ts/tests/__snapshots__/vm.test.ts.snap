@@ -224,12 +224,30 @@ exports[`expressions > boolean expressions > eq ref 1`] = `
     },
     {
       "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
         "ref": "y",
       },
       "code": "Const",
     },
     {
       "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "arg1": {
@@ -423,6 +441,260 @@ exports[`expressions > boolean expressions > or short-circuit 1`] = `
 }
 `;
 
+exports[`expressions > function expressions > function call multiple args 1`] = `
+{
+  "fn_34": [
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_34",
+      "arg2": 2,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > function expressions > immediately invoked function expression (iife) 1`] = `
+{
+  "fn_17": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_17",
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > function expressions > pipe 1`] = `
+{
+  "fn_30": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_40": [
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Mul",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_30",
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": "fn_40",
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > function expressions > return from function 1`] = `
+{
+  "fn_62": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_62",
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > memory ops > alloc stores value and returns it via load 1`] = `
 {
   "main": [
@@ -443,6 +715,15 @@ exports[`expressions > memory ops > alloc stores value and returns it via load 1
     },
     {
       "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "r",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "arg1": {
@@ -492,6 +773,15 @@ exports[`expressions > memory ops > free removes stored value 1`] = `
     },
     {
       "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "r",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "arg1": {
@@ -555,6 +845,15 @@ exports[`expressions > symbols > symbol equality is by identity, atoms are by na
       "code": "Store",
     },
     {
+      "arg1": {
+        "ref": "s",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
       "arg1": "a",
       "code": "Const",
     },
@@ -571,6 +870,15 @@ exports[`expressions > symbols > symbol equality is by identity, atoms are by na
     },
     {
       "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "t",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "arg1": {
