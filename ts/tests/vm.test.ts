@@ -202,8 +202,7 @@ describe("expressions", () => {
     });
 
     it("fixed point combinator (Z) builds recursion", () => {
-      const program =
-        "(fn f -> (fn x -> f (fn v -> x x v)) (fn x -> f (fn v -> x x v))) (fn self -> fn x -> x) 42";
+      const program = "(fn f -> (fn x -> f (fn v -> x x v)) (fn x -> f (fn v -> x x v))) (fn self -> fn x -> x) 42";
       const { bytecode, result } = runProgram(program);
       expect(bytecode).toMatchSnapshot();
       expect(result).toBe(42);
@@ -229,6 +228,27 @@ describe("expressions", () => {
       const { bytecode, result } = runProgram(program);
       expect(bytecode).toMatchSnapshot();
       expect(result).toBe(8);
+    });
+
+    it("mutual recursion (even/odd) with fixed point combinator", () => {
+      const program = `
+        Y := (fn f -> (fn x -> f (fn v -> x x v)) (fn x -> f (fn v -> x x v)));
+
+        var_even := fn matchEven -> fn matchOdd -> matchEven;
+        var_odd  := fn matchEven -> fn matchOdd -> matchOdd;
+        even_or_odd := Y (fn self -> fn variant ->
+          variant
+            (fn n -> if n == 0: true else self var_odd (n - 1))
+            (fn n -> if n == 0: false else self var_even (n - 1))
+        );
+        even := even_or_odd var_even;
+        odd := even_or_odd var_odd;
+
+        (even 1, odd 1, even 2, odd 2)
+      `;
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual({ tuple: [false, true, true, false] });
     });
   });
 
