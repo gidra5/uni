@@ -214,6 +214,43 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
     const a = thread.pop();
     thread.push(stringify(a) + stringify(b));
   },
+  [InstructionCode.Length]: (_vm, thread, instr) => {
+    assert(instr.code === InstructionCode.Length);
+    const value = thread.pop();
+    if (isTuple(value)) {
+      thread.push(value.tuple.length);
+      return;
+    }
+    if (typeof value === "string") {
+      thread.push(value.length);
+      return;
+    }
+    throw new Error("vm2: Length expects tuple or string");
+  },
+  [InstructionCode.Index]: (_vm, thread, instr) => {
+    assert(instr.code === InstructionCode.Index);
+    const index = popNumber(thread);
+    const collection = thread.pop() as Value;
+    if (isTuple(collection)) {
+      thread.push(collection.tuple[index]);
+      return;
+    }
+    if (typeof collection === "string") {
+      thread.push(collection[index]);
+      return;
+    }
+    throw new Error("vm2: Index expects tuple or string");
+  },
+  [InstructionCode.Append]: (_vm, thread, instr) => {
+    assert(instr.code === InstructionCode.Append);
+    const collection = thread.pop() as Value;
+    const value = thread.pop() as Value;
+    if (isTuple(collection)) {
+      thread.push({ tuple: [...collection.tuple, value] });
+      return;
+    }
+    throw new Error("vm2: Append expects tuple");
+  },
   [InstructionCode.Call]: (_vm, thread, instr) => {
     assert(instr.code === InstructionCode.Call);
     const argCount = instr.arg2 ?? 0;

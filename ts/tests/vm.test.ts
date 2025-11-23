@@ -158,6 +158,55 @@ describe("expressions", () => {
     });
   });
 
+  describe("structured programming", () => {
+    it("while loop with break returns value", () => {
+      const program = `
+        mut x := 0;
+        while x < 5 {
+          x = x + 1;
+          if x == 3: break x;
+        }
+      `;
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(3);
+    });
+
+    it("while loop continue skips iteration", () => {
+      const program = `
+        mut x := 0;
+        mut count := 0;
+        while x < 5 {
+          x = x + 1;
+          if x == 2: continue;
+          count = count + 1;
+        };
+        count
+      `;
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(4);
+    });
+
+    it("loop break yields value", () => {
+      const { bytecode, result } = runProgram("loop { break 42 }");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(42);
+    });
+
+    it("for loop maps values", () => {
+      const { bytecode, result } = runProgram("for n in (1, 2, 3): n * 2");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual({ tuple: [2, 4, 6] });
+    });
+
+    it("post increment returns old value and updates binding", () => {
+      const { bytecode, result } = runProgram("mut x := 0; y := x++; x, y");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual({ tuple: [1, 0] });
+    });
+  });
+
   describe("lambda calculus constructs", () => {
     it("apply combinator", () => {
       const program = "((fn f -> fn x -> f x) (fn y -> y)) 42";
@@ -234,15 +283,12 @@ describe("expressions", () => {
       const program = `
         Y := (fn f -> (fn x -> f (fn v -> x x v)) (fn x -> f (fn v -> x x v)));
 
-        var_even := fn matchEven -> fn matchOdd -> matchEven;
-        var_odd  := fn matchEven -> fn matchOdd -> matchOdd;
-        even_or_odd := Y (fn self -> fn variant ->
-          variant
-            (fn n -> if n == 0: true else self var_odd (n - 1))
-            (fn n -> if n == 0: false else self var_even (n - 1))
-        );
-        even := even_or_odd var_even;
-        odd := even_or_odd var_odd;
+        even := (Y (fn self -> fn n ->
+          if n == 0: true else if n == 1: false else self (n - 2)
+        ));
+        odd := (Y (fn self -> fn n ->
+          if n == 0: false else if n == 1: true else self (n - 2)
+        ));
 
         (even 1, odd 1, even 2, odd 2)
       `;

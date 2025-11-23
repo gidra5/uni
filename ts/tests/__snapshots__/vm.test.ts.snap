@@ -3376,157 +3376,7 @@ exports[`expressions > lambda calculus constructs > fixed point combinator (Z) b
 
 exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) with fixed point combinator 1`] = `
 {
-  "fn_1001": [
-    {
-      "arg1": {
-        "ref": "self",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "pair",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1183",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_961",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1183",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1186",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_999",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1186",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1004": [
-    {
-      "arg1": {
-        "ref": "fix",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_874",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1173",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "fix",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1182",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_1001",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1182",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1173",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1066": [
+  "fn_253": [
     {
       "arg1": {
         "ref": "v",
@@ -3547,7 +3397,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1191",
+        "ref": "_calltmp_503",
       },
       "code": "Const",
     },
@@ -3565,7 +3415,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1191",
+        "ref": "_calltmp_503",
       },
       "code": "Const",
     },
@@ -3578,7 +3428,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1192",
+        "ref": "_calltmp_504",
       },
       "code": "Const",
     },
@@ -3596,7 +3446,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1192",
+        "ref": "_calltmp_504",
       },
       "code": "Const",
     },
@@ -3611,7 +3461,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Return",
     },
   ],
-  "fn_1068": [
+  "fn_255": [
     {
       "arg1": {
         "ref": "x",
@@ -3632,7 +3482,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1190",
+        "ref": "_calltmp_502",
       },
       "code": "Const",
     },
@@ -3640,12 +3490,12 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Store",
     },
     {
-      "arg1": "fn_1066",
+      "arg1": "fn_253",
       "code": "Closure",
     },
     {
       "arg1": {
-        "ref": "_calltmp_1190",
+        "ref": "_calltmp_502",
       },
       "code": "Const",
     },
@@ -3660,7 +3510,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Return",
     },
   ],
-  "fn_1096": [
+  "fn_283": [
     {
       "arg1": {
         "ref": "v",
@@ -3681,7 +3531,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1194",
+        "ref": "_calltmp_506",
       },
       "code": "Const",
     },
@@ -3699,7 +3549,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1194",
+        "ref": "_calltmp_506",
       },
       "code": "Const",
     },
@@ -3712,7 +3562,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1195",
+        "ref": "_calltmp_507",
       },
       "code": "Const",
     },
@@ -3730,7 +3580,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1195",
+        "ref": "_calltmp_507",
       },
       "code": "Const",
     },
@@ -3745,7 +3595,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Return",
     },
   ],
-  "fn_1098": [
+  "fn_285": [
     {
       "arg1": {
         "ref": "x",
@@ -3766,7 +3616,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1193",
+        "ref": "_calltmp_505",
       },
       "code": "Const",
     },
@@ -3774,12 +3624,12 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Store",
     },
     {
-      "arg1": "fn_1096",
+      "arg1": "fn_283",
       "code": "Closure",
     },
     {
       "arg1": {
-        "ref": "_calltmp_1193",
+        "ref": "_calltmp_505",
       },
       "code": "Const",
     },
@@ -3794,7 +3644,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Return",
     },
   ],
-  "fn_1100": [
+  "fn_287": [
     {
       "arg1": {
         "ref": "f",
@@ -3805,12 +3655,12 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Store",
     },
     {
-      "arg1": "fn_1068",
+      "arg1": "fn_255",
       "code": "Closure",
     },
     {
       "arg1": {
-        "ref": "_calltmp_1189",
+        "ref": "_calltmp_501",
       },
       "code": "Const",
     },
@@ -3818,12 +3668,12 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Store",
     },
     {
-      "arg1": "fn_1098",
+      "arg1": "fn_285",
       "code": "Closure",
     },
     {
       "arg1": {
-        "ref": "_calltmp_1189",
+        "ref": "_calltmp_501",
       },
       "code": "Const",
     },
@@ -3838,740 +3688,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Return",
     },
   ],
-  "fn_1102": [
-    {
-      "arg1": {
-        "ref": "snd",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_1004",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1172",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_1100",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1172",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1120": [
-    {
-      "arg1": {
-        "ref": "b",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "b",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1121": [
-    {
-      "arg1": "fn_1120",
-      "code": "Closure",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1123": [
-    {
-      "arg1": {
-        "ref": "p",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "p",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1196",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_1121",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1196",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1125": [
-    {
-      "arg1": {
-        "ref": "fst",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_1102",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1171",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_1123",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1171",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1143": [
-    {
-      "arg1": {
-        "ref": "a",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1144": [
-    {
-      "arg1": {
-        "ref": "a",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_1143",
-      "code": "Closure",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1146": [
-    {
-      "arg1": {
-        "ref": "p",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "p",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1197",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_1144",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1197",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1148": [
-    {
-      "arg1": {
-        "ref": "pair",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_1125",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1170",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_1146",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1170",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1164": [
-    {
-      "arg1": {
-        "ref": "m",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "m",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1198",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "x",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1198",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1199",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "y",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1199",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1165": [
-    {
-      "arg1": {
-        "ref": "y",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_1164",
-      "code": "Closure",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_1166": [
-    {
-      "arg1": {
-        "ref": "x",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_1165",
-      "code": "Closure",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_857": [
-    {
-      "arg1": {
-        "ref": "odd",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "even",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1175",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": 6,
-      "code": "Const",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1175",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "arg1": {
-        "ref": "even",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1176",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": 7,
-      "code": "Const",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1176",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "arg1": {
-        "ref": "odd",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1177",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": 6,
-      "code": "Const",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1177",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "arg1": {
-        "ref": "odd",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1178",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": 7,
-      "code": "Const",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1178",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "arg1": 4,
-      "code": "Tuple",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_858": [
-    {
-      "arg1": {
-        "ref": "even",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_857",
-      "code": "Closure",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_874": [
-    {
-      "arg1": {
-        "ref": "even_odd",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": "fn_858",
-      "code": "Closure",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1174",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "fst",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1179",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "even_odd",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1179",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1174",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1180",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "snd",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1181",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "even_odd",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1181",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1180",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-  "fn_961": [
+  "fn_354": [
     {
       "arg1": {
         "ref": "n",
@@ -4611,7 +3728,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "snd",
+        "ref": "n",
       },
       "code": "Const",
     },
@@ -4619,13 +3736,23 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg1": {
-        "ref": "_calltmp_1184",
-      },
+      "arg1": 1,
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "Eq",
+    },
+    {
+      "arg1": 16,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": false,
+      "code": "Const",
+    },
+    {
+      "arg1": 27,
+      "code": "Jump",
     },
     {
       "arg1": {
@@ -4638,20 +3765,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1184",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1185",
+        "ref": "_calltmp_509",
       },
       "code": "Const",
     },
@@ -4668,7 +3782,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg1": 1,
+      "arg1": 2,
       "code": "Const",
     },
     {
@@ -4676,7 +3790,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1185",
+        "ref": "_calltmp_509",
       },
       "code": "Const",
     },
@@ -4691,7 +3805,25 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Return",
     },
   ],
-  "fn_999": [
+  "fn_355": [
+    {
+      "arg1": {
+        "ref": "self",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_354",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_424": [
     {
       "arg1": {
         "ref": "n",
@@ -4731,7 +3863,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "fst",
+        "ref": "n",
       },
       "code": "Const",
     },
@@ -4739,13 +3871,23 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg1": {
-        "ref": "_calltmp_1187",
-      },
+      "arg1": 1,
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "Eq",
+    },
+    {
+      "arg1": 16,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "arg1": 27,
+      "code": "Jump",
     },
     {
       "arg1": {
@@ -4758,20 +3900,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1187",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg2": 1,
-      "code": "Call",
-    },
-    {
-      "arg1": {
-        "ref": "_calltmp_1188",
+        "ref": "_calltmp_511",
       },
       "code": "Const",
     },
@@ -4788,7 +3917,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg1": 1,
+      "arg1": 2,
       "code": "Const",
     },
     {
@@ -4796,7 +3925,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     },
     {
       "arg1": {
-        "ref": "_calltmp_1188",
+        "ref": "_calltmp_511",
       },
       "code": "Const",
     },
@@ -4811,14 +3940,10 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Return",
     },
   ],
-  "main": [
-    {
-      "arg1": "fn_1148",
-      "code": "Closure",
-    },
+  "fn_425": [
     {
       "arg1": {
-        "ref": "_calltmp_1169",
+        "ref": "self",
       },
       "code": "Const",
     },
@@ -4826,12 +3951,61 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Store",
     },
     {
-      "arg1": "fn_1166",
+      "arg1": "fn_424",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": "fn_287",
       "code": "Closure",
     },
     {
       "arg1": {
-        "ref": "_calltmp_1169",
+        "ref": "Y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "Y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "Y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_508",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_355",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_508",
       },
       "code": "Const",
     },
@@ -4841,6 +4015,221 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
     {
       "arg2": 1,
       "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "even",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "even",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "Y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_510",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_425",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_510",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "odd",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "odd",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "even",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_512",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_512",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "odd",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_513",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_513",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "even",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_514",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_514",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "odd",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_515",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_515",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": 4,
+      "code": "Tuple",
     },
     {
       "code": "Return",
@@ -5093,6 +4482,734 @@ exports[`expressions > memory ops > free removes stored value 1`] = `
       "arg1": "free",
       "arg2": 1,
       "code": "Native",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > for loop maps values 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "arg1": 3,
+      "code": "Tuple",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_49",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "tuple": [],
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_50",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_51",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_51",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_49",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Length",
+    },
+    {
+      "code": "Lt",
+    },
+    {
+      "arg1": 42,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_49",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_51",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Index",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Mul",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_50",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Append",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_50",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_51",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_51",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 12,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_50",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > loop break yields value 1`] = `
+{
+  "main": [
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_20",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 42,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_20",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 8,
+      "code": "Jump",
+    },
+    {
+      "arg1": 3,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_20",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > post increment returns old value and updates binding 1`] = `
+{
+  "main": [
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_41",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_41",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_41",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > while loop continue skips iteration 1`] = `
+{
+  "main": [
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "count",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "count",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_143",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 5,
+      "code": "Const",
+    },
+    {
+      "code": "Lt",
+    },
+    {
+      "arg1": 41,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "arg1": 32,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": 13,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "count",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "count",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "count",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 13,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_143",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "count",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > while loop with break returns value 1`] = `
+{
+  "main": [
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_94",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 5,
+      "code": "Const",
+    },
+    {
+      "code": "Lt",
+    },
+    {
+      "arg1": 32,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "arg1": 31,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_94",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 32,
+      "code": "Jump",
+    },
+    {
+      "arg1": 8,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_94",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "code": "Return",

@@ -13,6 +13,7 @@ class Vm2Generator {
   private functionNames = new Map<number, string>();
   private functionParamCounts = new Map<number, number>();
   private nativeNames = new Set(["print", "symbol", "alloc", "free"]);
+  private loopStack: { breakJumps: number[]; continueTarget: number; resultRef: string }[] = [];
 
   generate(ast: Tree): Program {
     this.emitNode(ast);
@@ -41,6 +42,11 @@ class Vm2Generator {
       }
       case NodeType.NAME: {
         const value = node.data.value;
+        if (["break", "continue"].includes(value) && this.loopStack.length > 0) {
+          if (value === "break") this.emitBreak([]);
+          else this.emitContinue();
+          break;
+        }
         if (value === "true") {
           this.current.push({ code: InstructionCode.Const, arg1: true });
         } else if (value === "false") {
@@ -128,12 +134,27 @@ class Vm2Generator {
         this.emitNode(node.children[0]);
         this.current.push({ code: InstructionCode.Not });
         break;
+      case NodeType.INCREMENT:
+        this.emitIncrement(node, { postfix: false });
+        break;
+      case NodeType.POST_INCREMENT:
+        this.emitIncrement(node, { postfix: true });
+        break;
       case NodeType.PIPE:
         this.emitPipe(node);
         break;
       case NodeType.IF:
       case NodeType.IF_ELSE:
         this.emitIf(node);
+        break;
+      case NodeType.WHILE:
+        this.emitWhile(node);
+        break;
+      case NodeType.LOOP:
+        this.emitLoop(node);
+        break;
+      case NodeType.FOR:
+        this.emitFor(node);
         break;
       case NodeType.TUPLE:
         this.emitTuple(node);
@@ -149,6 +170,9 @@ class Vm2Generator {
       case NodeType.DELIMITED_APPLICATION:
         this.emitApplication(node);
         break;
+      case NodeType.PLACEHOLDER:
+        this.current.push({ code: InstructionCode.Const, arg1: null });
+        break;
       default:
         throw new Error(`vm2 codegen: unsupported node type "${node.type}"`);
     }
@@ -157,6 +181,12 @@ class Vm2Generator {
   private emitApplication(node: Tree) {
     const { callee: unwrapped, args } = this.flattenApplication(node);
     const callee = this.unwrapParens(unwrapped);
+
+    if (callee.type === NodeType.NAME && ["break", "continue"].includes(callee.data.value)) {
+      if (callee.data.value === "break") this.emitBreak(args);
+      else this.emitContinue();
+      return;
+    }
 
     if (callee.type === NodeType.NAME && callee.data.value === "return") {
       args.forEach((arg) => this.emitNode(arg));
@@ -363,6 +393,12 @@ class Vm2Generator {
     assert(pattern, "assignment missing pattern");
     assert(value, "assignment missing value");
 
+    if (pattern.type === NodeType.MUTABLE) {
+      assert(pattern.children[0], "mutable pattern missing name");
+      this.emitAssignment({ ...node, children: [pattern.children[0], value] });
+      return;
+    }
+
     if (pattern.type === NodeType.NAME) {
       this.emitNode(value);
       this.current.push({ code: InstructionCode.Const, arg1: { ref: pattern.data.value } });
@@ -397,11 +433,11 @@ class Vm2Generator {
     if (elseBranch) {
       const jumpOverElseIndex = this.current.length;
       this.current.push({ code: InstructionCode.Jump, arg1: -1 });
-      this.current[jumpIfFalseIndex].arg1 = this.current.length;
+      this.setJumpTarget(jumpIfFalseIndex, this.current.length);
       this.emitNode(elseBranch);
-      this.current[jumpOverElseIndex].arg1 = this.current.length;
+      this.setJumpTarget(jumpOverElseIndex, this.current.length);
     } else {
-      this.current[jumpIfFalseIndex].arg1 = this.current.length;
+      this.setJumpTarget(jumpIfFalseIndex, this.current.length);
     }
   }
 
@@ -416,6 +452,203 @@ class Vm2Generator {
 
   private loadTemp(ref: string) {
     this.current.push({ code: InstructionCode.Const, arg1: { ref } });
+    this.current.push({ code: InstructionCode.Load });
+  }
+
+  private setJumpTarget(index: number, target: number) {
+    const instr = this.current[index];
+    assert(
+      instr.code === InstructionCode.Jump || instr.code === InstructionCode.JumpIfFalse,
+      "vm2 codegen: expected jump instruction"
+    );
+    (instr as Extract<Instruction, { arg1: number }>).arg1 = target;
+  }
+
+  private emitIncrement(node: Tree, { postfix }: { postfix: boolean }) {
+    const target = node.children[0];
+    assert(target && target.type === NodeType.NAME, "increment expects name");
+    const name = target.data.value;
+    const temp = this.tempRef();
+
+    // store old value in temp
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: name } });
+    this.current.push({ code: InstructionCode.Load });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: temp } });
+    this.current.push({ code: InstructionCode.Store });
+
+    // compute new value
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: temp } });
+    this.current.push({ code: InstructionCode.Load });
+    this.current.push({ code: InstructionCode.Const, arg1: 1 });
+    this.current.push({ code: InstructionCode.Add });
+
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: name } });
+    this.current.push({ code: InstructionCode.Store });
+
+    // push result: postfix returns old, prefix returns new
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: postfix ? temp : name } });
+    this.current.push({ code: InstructionCode.Load });
+  }
+
+  private currentLoop() {
+    return this.loopStack[this.loopStack.length - 1];
+  }
+
+  private emitBreak(args: Tree[]) {
+    const loop = this.currentLoop();
+    assert(loop, "vm2 codegen: 'break' used outside of loop");
+    if (args.length > 0) {
+      this.emitNode(args[0]);
+    } else {
+      this.current.push({ code: InstructionCode.Const, arg1: null });
+    }
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: loop.resultRef } });
+    this.current.push({ code: InstructionCode.Store });
+    const jumpIndex = this.current.length;
+    this.current.push({ code: InstructionCode.Jump, arg1: -1 });
+    loop.breakJumps.push(jumpIndex);
+  }
+
+  private emitContinue() {
+    const loop = this.currentLoop();
+    assert(loop, "vm2 codegen: 'continue' used outside of loop");
+    this.current.push({ code: InstructionCode.Jump, arg1: loop.continueTarget });
+  }
+
+  private emitWhile(node: Tree) {
+    const [condition, body] = node.children;
+    assert(condition && body, "while requires condition and body");
+
+    const resultRef = this.tempRef();
+    // initialize loop result to null
+    this.current.push({ code: InstructionCode.Const, arg1: null });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: resultRef } });
+    this.current.push({ code: InstructionCode.Store });
+
+    const loopStart = this.current.length;
+    this.loopStack.push({ breakJumps: [], continueTarget: loopStart, resultRef });
+
+    this.emitNode(condition);
+    const jumpIfFalseIndex = this.current.length;
+    this.current.push({ code: InstructionCode.JumpIfFalse, arg1: -1 });
+
+    this.emitNode(body);
+    this.current.push({ code: InstructionCode.Jump, arg1: loopStart });
+
+    const endIndex = this.current.length;
+    this.setJumpTarget(jumpIfFalseIndex, endIndex);
+    const loopCtx = this.loopStack.pop()!;
+    loopCtx.breakJumps.forEach((index) => {
+      this.setJumpTarget(index, endIndex);
+    });
+
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: resultRef } });
+    this.current.push({ code: InstructionCode.Load });
+  }
+
+  private emitLoop(node: Tree) {
+    const [body] = node.children;
+    assert(body, "loop requires body");
+
+    const resultRef = this.tempRef();
+    this.current.push({ code: InstructionCode.Const, arg1: null });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: resultRef } });
+    this.current.push({ code: InstructionCode.Store });
+
+    const loopStart = this.current.length;
+    const ctx = { continueTarget: loopStart, resultRef };
+    this.loopStack.push({ breakJumps: [], ...ctx });
+
+    this.emitNode(body);
+    this.current.push({ code: InstructionCode.Jump, arg1: loopStart });
+
+    const endIndex = this.current.length;
+    const loopCtx = this.loopStack.pop()!;
+    loopCtx.breakJumps.forEach((index) => {
+      this.setJumpTarget(index, endIndex);
+    });
+
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: resultRef } });
+    this.current.push({ code: InstructionCode.Load });
+  }
+
+  private emitFor(node: Tree) {
+    const [pattern, iterable, body] = node.children;
+    assert(pattern && iterable && body, "for requires pattern, iterable, body");
+    if (pattern.type !== NodeType.NAME) throw new Error(`vm2 codegen: unsupported for-loop pattern "${pattern.type}"`);
+
+    const iterRef = this.tempRef();
+    const accRef = this.tempRef();
+    const indexRef = this.tempRef();
+    const resultRef = accRef;
+
+    // iterable
+    this.emitNode(iterable);
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: iterRef } });
+    this.current.push({ code: InstructionCode.Store });
+
+    // accumulator = ()
+    this.current.push({ code: InstructionCode.Const, arg1: { tuple: [] } });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: accRef } });
+    this.current.push({ code: InstructionCode.Store });
+
+    // index = 0
+    this.current.push({ code: InstructionCode.Const, arg1: 0 });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: indexRef } });
+    this.current.push({ code: InstructionCode.Store });
+
+    const loopStart = this.current.length;
+    this.loopStack.push({ breakJumps: [], continueTarget: loopStart, resultRef });
+
+    // condition: index < iter.length
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: indexRef } });
+    this.current.push({ code: InstructionCode.Load });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: iterRef } });
+    this.current.push({ code: InstructionCode.Load });
+    this.current.push({ code: InstructionCode.Length });
+    this.current.push({ code: InstructionCode.Lt });
+    const jumpIfFalseIndex = this.current.length;
+    this.current.push({ code: InstructionCode.JumpIfFalse, arg1: -1 });
+
+    // load current element
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: iterRef } });
+    this.current.push({ code: InstructionCode.Load });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: indexRef } });
+    this.current.push({ code: InstructionCode.Load });
+    this.current.push({ code: InstructionCode.Index });
+
+    // bind to pattern
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: pattern.data.value } });
+    this.current.push({ code: InstructionCode.Store });
+
+    // body result
+    this.emitNode(body);
+
+    // append to accumulator
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: accRef } });
+    this.current.push({ code: InstructionCode.Load });
+    this.current.push({ code: InstructionCode.Append });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: accRef } });
+    this.current.push({ code: InstructionCode.Store });
+
+    // index = index + 1
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: indexRef } });
+    this.current.push({ code: InstructionCode.Load });
+    this.current.push({ code: InstructionCode.Const, arg1: 1 });
+    this.current.push({ code: InstructionCode.Add });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: indexRef } });
+    this.current.push({ code: InstructionCode.Store });
+
+    this.current.push({ code: InstructionCode.Jump, arg1: loopStart });
+
+    const endIndex = this.current.length;
+    this.setJumpTarget(jumpIfFalseIndex, endIndex);
+    const loopCtx = this.loopStack.pop()!;
+    loopCtx.breakJumps.forEach((index) => {
+      this.setJumpTarget(index, endIndex);
+    });
+
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: resultRef } });
     this.current.push({ code: InstructionCode.Load });
   }
 }

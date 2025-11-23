@@ -34,6 +34,9 @@ export enum InstructionCode {
   Lt = "Lt",
   DeepEq = "DeepEq",
   Concat = "Concat",
+  Length = "Length",
+  Index = "Index",
+  Append = "Append",
 }
 
 export type ClosureEnv = {
@@ -79,6 +82,9 @@ export type Instruction =
   | { code: InstructionCode.Record; arg1: number }
   | { code: InstructionCode.In }
   | { code: InstructionCode.DeepEq }
+  | { code: InstructionCode.Length }
+  | { code: InstructionCode.Index }
+  | { code: InstructionCode.Append }
   | { code: InstructionCode.Call; arg1?: string; arg2?: number }
   | { code: InstructionCode.Return }
   | { code: InstructionCode.Jump; arg1: number }
