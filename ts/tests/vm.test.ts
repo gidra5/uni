@@ -159,6 +159,44 @@ describe("expressions", () => {
   });
 
   describe("structured programming", () => {
+    it("block returns last expression", () => {
+      const { bytecode, result } = runProgram("{ 123 }");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(123);
+    });
+
+    it("empty block returns null", () => {
+      const { bytecode, result } = runProgram("{}");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBeNull();
+    });
+
+    it("label break returns value", () => {
+      const program = `
+        label::{
+          label.break 1;
+          2
+        }
+      `;
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(1);
+    });
+
+    it("label continue loops until break", () => {
+      const program = `
+        mut x := 0;
+        loop_label::{
+          x = x + 1;
+          if x < 3: loop_label.continue();
+          loop_label.break x;
+        }
+      `;
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(3);
+    });
+
     it("if matches pattern and binds", () => {
       const { bytecode, result } = runProgram("if 1 is a: a + 1");
       expect(bytecode).toMatchSnapshot();

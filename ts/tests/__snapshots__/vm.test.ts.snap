@@ -4490,6 +4490,20 @@ exports[`expressions > memory ops > free removes stored value 1`] = `
 }
 `;
 
+exports[`expressions > structured programming > block returns last expression 1`] = `
+{
+  "main": [
+    {
+      "arg1": 123,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > structured programming > else if chain 1`] = `
 {
   "main": [
@@ -4527,6 +4541,20 @@ exports[`expressions > structured programming > else if chain 1`] = `
     },
     {
       "arg1": 456,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > empty block returns null 1`] = `
+{
+  "main": [
+    {
+      "arg1": null,
       "code": "Const",
     },
     {
@@ -4917,6 +4945,211 @@ exports[`expressions > structured programming > if with negated match falls back
     },
     {
       "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > label break returns value 1`] = `
+{
+  "main": [
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_50",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_50",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 10,
+      "code": "Jump",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_50",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_50",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > label continue loops until break 1`] = `
+{
+  "main": [
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_171",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "code": "Lt",
+    },
+    {
+      "arg1": 22,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": 8,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_171",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 29,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_171",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_171",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "code": "Return",

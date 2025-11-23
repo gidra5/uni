@@ -14,6 +14,7 @@ class Vm2Generator {
   private functionParamCounts = new Map<number, number>();
   private nativeNames = new Set(["print", "symbol", "alloc", "free"]);
   private loopStack: { breakJumps: number[]; continueTarget: number; resultRef: string }[] = [];
+  private labelStack: { name: string; breakJumps: number[]; continueTarget: number; resultRef: string }[] = [];
 
   generate(ast: Tree): Program {
     this.emitNode(ast);
@@ -156,6 +157,9 @@ class Vm2Generator {
       case NodeType.LOOP:
         this.emitLoop(node);
         break;
+      case NodeType.CODE_LABEL:
+        this.emitLabel(node);
+        break;
       case NodeType.FOR:
         this.emitFor(node);
         break;
@@ -173,6 +177,7 @@ class Vm2Generator {
       case NodeType.DELIMITED_APPLICATION:
         this.emitApplication(node);
         break;
+      case NodeType.IMPLICIT_PLACEHOLDER:
       case NodeType.PLACEHOLDER:
         this.current.push({ code: InstructionCode.Const, arg1: null });
         break;
@@ -194,6 +199,16 @@ class Vm2Generator {
     if (callee.type === NodeType.NAME && callee.data.value === "return") {
       args.forEach((arg) => this.emitNode(arg));
       this.current.push({ code: InstructionCode.Return });
+      return;
+    }
+
+    const labelControl = this.getLabelControl(callee);
+    if (labelControl) {
+      if (labelControl.kind === "break") {
+        this.emitLabelBreak(labelControl.name, args);
+      } else {
+        this.emitLabelContinue(labelControl.name);
+      }
       return;
     }
 
@@ -245,6 +260,44 @@ class Vm2Generator {
     args.forEach((arg) => this.emitNode(arg));
     this.loadTemp(tempRef);
     this.current.push({ code: InstructionCode.Call, arg2: args.length });
+  }
+
+  private getLabelControl(callee: Tree): { kind: "break" | "continue"; name: string } | null {
+    if (callee.type !== NodeType.INDEX) return null;
+    const [target, key] = callee.children;
+    if (!target || !key || target.type !== NodeType.NAME || key.type !== NodeType.ATOM) return null;
+    if (!["break", "continue"].includes(key.data.name)) return null;
+    const labelCtx = this.findLabelContext(target.data.value);
+    if (!labelCtx) return null;
+    return { kind: key.data.name as "break" | "continue", name: target.data.value };
+  }
+
+  private findLabelContext(name: string) {
+    for (let i = this.labelStack.length - 1; i >= 0; i--) {
+      if (this.labelStack[i].name === name) return this.labelStack[i];
+    }
+    return null;
+  }
+
+  private emitLabelBreak(name: string, args: Tree[]) {
+    const ctx = this.findLabelContext(name);
+    assert(ctx, `vm2 codegen: 'break' used outside of label "${name}"`);
+    if (args.length > 0) {
+      this.emitNode(args[0]);
+    } else {
+      this.current.push({ code: InstructionCode.Const, arg1: null });
+    }
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: ctx.resultRef } });
+    this.current.push({ code: InstructionCode.Store });
+    const jumpIndex = this.current.length;
+    this.current.push({ code: InstructionCode.Jump, arg1: -1 });
+    ctx.breakJumps.push(jumpIndex);
+  }
+
+  private emitLabelContinue(name: string) {
+    const ctx = this.findLabelContext(name);
+    assert(ctx, `vm2 codegen: 'continue' used outside of label "${name}"`);
+    this.current.push({ code: InstructionCode.Jump, arg1: ctx.continueTarget });
   }
 
   private emitNativeCall(name: string, args: Tree[]) {
@@ -442,6 +495,31 @@ class Vm2Generator {
     } else {
       this.setJumpTarget(jumpIfFalseIndex, this.current.length);
     }
+  }
+
+  private emitLabel(node: Tree) {
+    const body = node.children[0];
+    assert(body, "label requires body");
+
+    const resultRef = this.tempRef();
+    this.current.push({ code: InstructionCode.Const, arg1: null });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: resultRef } });
+    this.current.push({ code: InstructionCode.Store });
+
+    const start = this.current.length;
+    const ctx = { name: node.data.name as string, breakJumps: [], continueTarget: start, resultRef };
+    this.labelStack.push(ctx);
+
+    this.emitNode(body);
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: resultRef } });
+    this.current.push({ code: InstructionCode.Store });
+
+    const endIndex = this.current.length;
+    this.labelStack.pop();
+    ctx.breakJumps.forEach((index) => this.setJumpTarget(index, endIndex));
+
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: resultRef } });
+    this.current.push({ code: InstructionCode.Load });
   }
 
   private emitIs(node: Tree) {
