@@ -1,12 +1,12 @@
 import { Iterator } from "iterator-js";
 
-type ScopeInnerEntry<T> = { name?: symbol; value: T };
+type ScopeInnerEntry<T> = { name?: string | symbol; value: T };
 export type ScopeEntry<T> = { name?: string | symbol; relativeIndex: number; index: number; value: T };
 export type ScopeEntryIdentifier = { name: string | symbol } | { relativeIndex: number } | { index: number };
 
 export class Environment<T = any> {
   private scope: ScopeInnerEntry<T>[];
-  private names: Record<symbol, number>;
+  private names: Record<string | symbol, number>;
 
   private constructor(recordScope: Record<string, T> = {}) {
     const iter = Iterator.iterEntries(recordScope)

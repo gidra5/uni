@@ -273,7 +273,8 @@ export const _parseToken: Parser<string, TokenGroup, ParserContext> = Parser.do(
       const token2: Token = yield parseToken as any;
 
       if (token2.type === "identifier" && token2.name === "{") {
-        const g: TokenGroup & { type: "group" } = yield* parseBraces();
+        const g: TokenGroup = yield* parseBraces();
+        if (g.type !== "group") return g;
         return yield* group(g.tokens, TokenGroupKind.Record, start);
       }
       yield Parser.resetIndex();

@@ -147,7 +147,7 @@ const tokenIncludes = (token: ValidatedTokenGroup | undefined, tokens: string[])
 };
 
 type Context3 = {
-  groupParser: Parser<ValidatedTokenGroup[], Tree, { lhs: boolean }>;
+  groupParser: Parser<ValidatedTokenGroup[], Tree, any /* { lhs: boolean } */>;
   getPrecedence: (node: Tree) => Precedence;
   precedence: number;
   followSet: string[];
@@ -284,7 +284,7 @@ const parseValue = Parser.do<ValidatedTokenGroup[], Tree>(function* () {
 });
 
 const parseStatementForm = (innerParser: Parser<ValidatedTokenGroup[], Tree, {}>) =>
-  Parser.do<ValidatedTokenGroup[], [inner: Tree, expr: Tree | null]>(function* () {
+  Parser.do<ValidatedTokenGroup[], [inner: Tree, expr: Tree | null], any>(function* () {
     const _token: ValidatedTokenGroup = yield Parser.next();
     assert(_token?.type === "group");
     const [innerGroup, formToken] = _token.tokens;
@@ -514,7 +514,7 @@ const parseExprGroup: Parser<ValidatedTokenGroup[], Tree, { lhs: boolean }> = Pa
       return error(SystemError.unknown(), _node(NodeType.IMPORT, { position: yield* nodePosition() }));
     }
     const name = nameToken.value;
-    const pattern: Tree | null = yield Parser.do(function* () {
+    const pattern: Tree | null = yield Parser.do<ValidatedTokenGroup[], Tree | null, any>(function* () {
       if (yield Parser.identifier("as")) {
         return yield parsePattern;
       }
@@ -568,7 +568,7 @@ const parseExprGroup: Parser<ValidatedTokenGroup[], Tree, { lhs: boolean }> = Pa
           _node(NodeType.LABEL, { position: yield* nodePosition(), children: [key] })
         );
 
-      const expr = yield Parser.scope({ followSet: [",", "\n"] }, function* () {
+      const expr = yield Parser.scope<ValidatedTokenGroup[], Tree, any, any>({ followSet: [",", "\n"] }, function* () {
         return yield parseExpr;
       });
       (yield Parser.identifier(",")) || (yield Parser.newline());
@@ -584,7 +584,7 @@ const parseExprGroup: Parser<ValidatedTokenGroup[], Tree, { lhs: boolean }> = Pa
   }
 
   if (!lhs && _token?.type === "group" && "kind" in _token && _token.kind === TokenGroupKind.Function) {
-    return yield Parser.do<ValidatedTokenGroup[], [inner: Tree, typeExpr: Tree | null, expr: Tree | null]>(
+    return yield Parser.do<ValidatedTokenGroup[], [inner: Tree, typeExpr: Tree | null, expr: Tree | null], any>(
       function* () {
         const _token: ValidatedTokenGroup = yield Parser.next();
         assert(_token?.type === "group");
@@ -786,7 +786,7 @@ const parseExprGroup: Parser<ValidatedTokenGroup[], Tree, { lhs: boolean }> = Pa
     const [valueParseCtx, value] = parseExpr.parse(valueGroup.tokens, { index: 0 });
     assert(valueParseCtx.index === valueGroup.tokens.length);
 
-    const [bodyParseCtx, cases] = Parser.scope<ValidatedTokenGroup[], Tree>({ followSet: [] }, function* () {
+    const [bodyParseCtx, cases] = Parser.scope<ValidatedTokenGroup[], Tree, any, any>({ followSet: [] }, function* () {
       yield Parser.newline();
       yield Parser.appendFollow("->");
       let pattern: Tree = yield parsePattern;
@@ -1166,7 +1166,7 @@ export const parseScript = (src: ValidatedTokenGroup[]) =>
     return script([expr]);
   }).parse(src, { index: 0 })[1];
 
-const parseDeclaration = Parser.scope({ followSet: [";", "\n"] }, function* () {
+const parseDeclaration = Parser.scope<ValidatedTokenGroup[], Tree, any, any>({ followSet: [";", "\n"] }, function* () {
   return yield parseExpr;
 });
 
