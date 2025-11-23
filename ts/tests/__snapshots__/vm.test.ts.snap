@@ -489,6 +489,10 @@ exports[`expressions > function expressions > function call multiple args 1`] = 
   ],
   "main": [
     {
+      "arg1": "fn_34",
+      "code": "Closure",
+    },
+    {
       "arg1": 1,
       "code": "Const",
     },
@@ -497,9 +501,8 @@ exports[`expressions > function expressions > function call multiple args 1`] = 
       "code": "Const",
     },
     {
-      "arg1": "fn_34",
-      "arg2": 2,
-      "code": "Call",
+      "arg1": 2,
+      "code": "CallValue",
     },
     {
       "code": "Return",
@@ -535,13 +538,16 @@ exports[`expressions > function expressions > immediately invoked function expre
   ],
   "main": [
     {
+      "arg1": "fn_17",
+      "code": "Closure",
+    },
+    {
       "arg1": 1,
       "code": "Const",
     },
     {
-      "arg1": "fn_17",
-      "arg2": 1,
-      "code": "Call",
+      "arg1": 1,
+      "code": "CallValue",
     },
     {
       "code": "Return",
@@ -614,18 +620,24 @@ exports[`expressions > function expressions > pipe 1`] = `
   ],
   "main": [
     {
+      "arg1": "fn_40",
+      "code": "Closure",
+    },
+    {
+      "arg1": "fn_30",
+      "code": "Closure",
+    },
+    {
       "arg1": 1,
       "code": "Const",
     },
     {
-      "arg1": "fn_30",
-      "arg2": 1,
-      "code": "Call",
+      "arg1": 1,
+      "code": "CallValue",
     },
     {
-      "arg1": "fn_40",
-      "arg2": 1,
-      "code": "Call",
+      "arg1": 1,
+      "code": "CallValue",
     },
     {
       "code": "Return",
@@ -680,13 +692,861 @@ exports[`expressions > function expressions > return from function 1`] = `
   ],
   "main": [
     {
+      "arg1": "fn_62",
+      "code": "Closure",
+    },
+    {
       "arg1": 1,
       "code": "Const",
     },
     {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > lambda calculus constructs > apply combinator 1`] = `
+{
+  "fn_61": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_62": [
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_61",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_67": [
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
       "arg1": "fn_62",
-      "arg2": 1,
-      "code": "Call",
+      "code": "Closure",
+    },
+    {
+      "arg1": "fn_67",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "arg1": 42,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > lambda calculus constructs > church pair returns first element 1`] = `
+{
+  "fn_100": [
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_101": [
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_100",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_83": [
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_84": [
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_83",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_85": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_84",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": "fn_85",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "arg1": "fn_101",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > lambda calculus constructs > church pair returns second element 1`] = `
+{
+  "fn_100": [
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_101": [
+    {
+      "arg1": "fn_100",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_83": [
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_84": [
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_83",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_85": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_84",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": "fn_85",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "arg1": "fn_101",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > lambda calculus constructs > deeply nested closures capture outer bindings 1`] = `
+{
+  "fn_55": [
+    {
+      "arg1": {
+        "ref": "z",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "z",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_56": [
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_55",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_57": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_56",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": "fn_57",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "arg1": {
+        "ref": "adder",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "adder",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "adder",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 5,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > lambda calculus constructs > either combinator applies first branch 1`] = `
+{
+  "fn_109": [
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_118": [
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Sub",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_94": [
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_95": [
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_94",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_96": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_95",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": "fn_96",
+      "code": "Closure",
+    },
+    {
+      "arg1": 7,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "arg1": "fn_109",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "arg1": "fn_118",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > lambda calculus constructs > partial application keeps captured value 1`] = `
+{
+  "fn_41": [
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "y",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_42": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_41",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": "fn_42",
+      "code": "Closure",
+    },
+    {
+      "arg1": 5,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 7,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "CallValue",
     },
     {
       "code": "Return",
@@ -747,9 +1607,6 @@ exports[`expressions > memory ops > alloc stores value and returns it via load 1
 exports[`expressions > memory ops > alloc stores value and returns it via load 2`] = `
 {
   "26": 42,
-  "r": {
-    "ref": "26",
-  },
 }
 `;
 

@@ -1,6 +1,6 @@
 import { assert } from "../utils/index.js";
 import type { Thread, VM } from "./index.js";
-import { Instruction, InstructionCode, type SymbolValue, type Value } from "./instructions.js";
+import { Closure, Instruction, InstructionCode, type SymbolValue, type Value } from "./instructions.js";
 import { nextId } from "../utils/index.js";
 
 const popNumber = (thread: Thread) => {
@@ -30,6 +30,9 @@ const isSymbol = (value: Value): value is SymbolValue =>
 
 const isAtom = (value: Value): value is SymbolValue =>
   isSymbol(value) && typeof value.symbol === "string" && value.symbol.startsWith("atom:");
+
+const isClosure = (value: Value): value is Closure =>
+  typeof value === "object" && value !== null && "functionName" in value && "env" in value;
 
 const stringify = (value: Value): string => {
   if (isAtom(value)) return `:${value.name ?? value.symbol}`;
@@ -167,13 +170,13 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
   [InstructionCode.Load]: (vm, thread, instr) => {
     assert(instr.code === InstructionCode.Load);
     const ref = getRef(thread.pop());
-    thread.push(vm.heap[ref]);
+    thread.push(thread.loadRef(ref));
   },
   [InstructionCode.Store]: (vm, thread, instr) => {
     assert(instr.code === InstructionCode.Store);
     const ref = getRef(thread.pop());
     const value = thread.pop();
-    vm.heap[ref] = value;
+    thread.storeRef(ref, value);
   },
   [InstructionCode.Tuple]: (_vm, thread, instr) => {
     assert(instr.code === InstructionCode.Tuple);
@@ -229,5 +232,19 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
   [InstructionCode.Native]: (_vm, thread, instr) => {
     assert(instr.code === InstructionCode.Native);
     thread.callNative(instr.arg1, instr.arg2 ?? 0);
+  },
+  [InstructionCode.Closure]: (_vm, thread, instr) => {
+    assert(instr.code === InstructionCode.Closure);
+    thread.push({ functionName: instr.arg1, env: thread.env });
+  },
+  [InstructionCode.CallValue]: (_vm, thread, instr) => {
+    assert(instr.code === InstructionCode.CallValue);
+    const args: Value[] = [];
+    for (let i = 0; i < instr.arg1; i++) args.unshift(thread.pop());
+    const callee = thread.pop();
+    assert(isClosure(callee), "vm2: expected callable value");
+    thread.stack.push(...args);
+    thread.callFunction(callee.functionName, args.length, undefined, callee.env);
+    return false;
   },
 };

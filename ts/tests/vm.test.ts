@@ -158,6 +158,50 @@ describe("expressions", () => {
     });
   });
 
+  describe("lambda calculus constructs", () => {
+    it("apply combinator", () => {
+      const program = "((fn f -> fn x -> f x) (fn y -> y)) 42";
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(42);
+    });
+
+    it("either combinator applies first branch", () => {
+      const program = "((fn x -> fn m -> fn n -> m x) 7) (fn v -> v + 1) (fn v -> v - 1)";
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(8);
+    });
+
+    it("church pair returns first element", () => {
+      const program = "((fn x -> fn y -> fn m -> m x y) 1 2) (fn a -> fn _ -> a)";
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(1);
+    });
+
+    it("church pair returns second element", () => {
+      const program = "((fn x -> fn y -> fn m -> m x y) 1 2) (fn _ -> fn b -> b)";
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(2);
+    });
+
+    it("partial application keeps captured value", () => {
+      const program = "f := (fn x -> fn y -> x + y) 5; f 7";
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(12);
+    });
+
+    it("deeply nested closures capture outer bindings", () => {
+      const program = "adder := (fn x -> fn y -> fn z -> x + y + z) 1 3; adder 5";
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(9);
+    });
+  });
+
   describe("symbols", () => {
     it("creates a named symbol", () => {
       const { bytecode, result } = runProgram('symbol "foo"');

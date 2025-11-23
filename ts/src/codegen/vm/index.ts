@@ -1,5 +1,5 @@
 import { NodeType, Tree } from "../../ast.js";
-import { assert } from "../../utils/index.js";
+import { assert, nextId } from "../../utils/index.js";
 import { Instruction, InstructionCode, Program } from "../../vm/instructions.js";
 
 export const generateVm2Bytecode = (ast: Tree): Program => {
@@ -12,6 +12,7 @@ class Vm2Generator {
   private current: Instruction[] = this.program.main;
   private functionNames = new Map<number, string>();
   private functionParamCounts = new Map<number, number>();
+  private nativeNames = new Set(["print", "symbol", "alloc", "free"]);
 
   generate(ast: Tree): Program {
     this.emitNode(ast);
@@ -35,7 +36,7 @@ class Vm2Generator {
         break;
       case NodeType.FUNCTION: {
         const fnName = this.registerFunction(node);
-        this.current.push({ code: InstructionCode.Const, arg1: { symbol: fnName, name: fnName } });
+        this.current.push({ code: InstructionCode.Closure, arg1: fnName });
         break;
       }
       case NodeType.NAME: {
@@ -159,14 +160,8 @@ class Vm2Generator {
       return;
     }
 
-    if (callee.type === NodeType.NAME) {
-      args.forEach((arg) => this.emitNode(arg));
-      // if user-defined function exists, prefer calling it over native
-      if (this.program[callee.data.value]) {
-        this.current.push({ code: InstructionCode.Call, arg1: callee.data.value, arg2: args.length });
-      } else {
-        this.current.push({ code: InstructionCode.Native, arg1: callee.data.value, arg2: args.length });
-      }
+    if (callee.type === NodeType.NAME && this.nativeNames.has(callee.data.value)) {
+      this.emitNativeCall(callee.data.value, args);
       return;
     }
 
@@ -176,54 +171,60 @@ class Vm2Generator {
       return;
     }
 
-    if (callee.type === NodeType.FUNCTION) {
-      const fnName = this.registerFunction(callee);
-      args.forEach((arg) => this.emitNode(arg));
-      this.current.push({ code: InstructionCode.Call, arg1: fnName, arg2: args.length });
+    const paramCount = this.getParamCount(callee);
+    const effectiveParamCount = paramCount ?? 1;
+    if (args.length > effectiveParamCount) {
+      const headArgs = args.slice(0, effectiveParamCount);
+      const tailArgs = args.slice(effectiveParamCount);
+      this.emitCall(callee, headArgs);
+      tailArgs.forEach((arg) => this.emitCallOnStack([arg]));
       return;
     }
 
-    throw new Error(`vm2 codegen: unsupported callee type "${callee.type}"`);
+    this.emitCall(callee, args);
+  }
+
+  private emitPipe(node: Tree) {
+    assert(node.children.length >= 2, "pipe requires at least two expressions");
+    let acc = node.children[0];
+    for (const stage of node.children.slice(1)) {
+      acc = { type: NodeType.APPLICATION, id: nextId(), data: {}, children: [stage, acc] };
+    }
+    this.emitNode(acc);
+  }
+
+  private emitCall(callee: Tree, args: Tree[]) {
+    this.emitNode(callee);
+    args.forEach((arg) => this.emitNode(arg));
+    this.current.push({ code: InstructionCode.CallValue, arg1: args.length });
+  }
+
+  private emitCallOnStack(args: Tree[]) {
+    args.forEach((arg) => this.emitNode(arg));
+    this.current.push({ code: InstructionCode.CallValue, arg1: args.length });
+  }
+
+  private emitNativeCall(name: string, args: Tree[]) {
+    args.forEach((arg) => this.emitNode(arg));
+    this.current.push({ code: InstructionCode.Native, arg1: name, arg2: args.length });
+  }
+
+  private getParamCount(callee: Tree): number | null {
+    if (callee.type === NodeType.FUNCTION) return this.extractParams(callee.children[0]).length;
+    return null;
   }
 
   private flattenApplication(node: Tree): { callee: Tree; args: Tree[] } {
     const [callee, ...args] = node.children;
     assert(callee, "application missing callee");
 
-    if (callee.type === NodeType.APPLICATION || callee.type === NodeType.DELIMITED_APPLICATION) {
-      const inner = this.flattenApplication(callee);
+    const unwrappedCallee = this.unwrapParens(callee);
+    if (unwrappedCallee.type === NodeType.APPLICATION || unwrappedCallee.type === NodeType.DELIMITED_APPLICATION) {
+      const inner = this.flattenApplication(unwrappedCallee);
       return { callee: inner.callee, args: [...inner.args, ...args] };
     }
 
-    return { callee, args };
-  }
-
-  private emitPipe(node: Tree) {
-    assert(node.children.length >= 2, "pipe requires at least two expressions");
-    // start with initial value
-    this.emitNode(node.children[0]);
-
-    for (const stage of node.children.slice(1)) {
-      const callee = this.unwrapParens(stage);
-      if (callee.type !== NodeType.FUNCTION && callee.type !== NodeType.HASH_NAME && callee.type !== NodeType.NAME) {
-        throw new Error(`vm2 codegen: unsupported pipe stage type "${callee.type}"`);
-      }
-
-      if (callee.type === NodeType.FUNCTION) {
-        const fnName = this.registerFunction(callee);
-        const paramCount = this.functionParamCounts.get(callee.id) ?? 1;
-        assert(paramCount === 1, "pipe expects unary function");
-        this.current.push({ code: InstructionCode.Call, arg1: fnName, arg2: 1 });
-        continue;
-      }
-
-      if (callee.type === NodeType.NAME) {
-        this.current.push({ code: InstructionCode.Native, arg1: callee.data.value, arg2: 1 });
-        continue;
-      }
-
-      this.current.push({ code: InstructionCode.Call, arg1: callee.data.value, arg2: 1 });
-    }
+    return { callee: unwrappedCallee, args };
   }
 
   private unwrapParens(node: Tree): Tree {

@@ -1,7 +1,7 @@
 import { generateVm2Bytecode } from "../codegen/vm/index.js";
 import { handlers } from "./handlers.js";
 import { mergeNatives } from "./natives.js";
-import { FunctionCode, Instruction, InstructionCode, Program, Value } from "./instructions.js";
+import { ClosureEnv, FunctionCode, Instruction, InstructionCode, Program, Value } from "./instructions.js";
 import { assert, nextId } from "../utils/index.js";
 
 export type NativeHandler = (vm: VM, args: Value[]) => Value | void;
@@ -12,17 +12,21 @@ type CallStackEntry = {
   ip: number;
   functionName: string;
   stack: StackEntry[];
+  env: ClosureEnv;
 };
 
 type VMOptions = {
   natives?: Record<string, NativeHandler>;
 };
 
+const isHeapRef = (ref: string) => ref.startsWith("_ref");
+
 export class Thread {
   id: string;
   stack: StackEntry[] = [];
   callStack: CallStackEntry[] = [];
   handlersStack: { ip: number; functionName: string }[] = [];
+  env: ClosureEnv = { values: {} };
 
   ip = 0;
   functionName: string;
@@ -41,12 +45,38 @@ export class Thread {
     return this.stack.pop() as Value;
   }
 
+  private findEnv(ref: string) {
+    let env: ClosureEnv | undefined = this.env;
+    while (env) {
+      if (ref in env.values) return env;
+      env = env.parent;
+    }
+    return undefined;
+  }
+
+  loadRef(ref: string) {
+    if (isHeapRef(ref)) return this.vm.heap[ref];
+    const env = this.findEnv(ref);
+    if (env) return env.values[ref];
+    return this.vm.heap[ref];
+  }
+
+  storeRef(ref: string, value: Value) {
+    if (isHeapRef(ref)) {
+      this.vm.heap[ref] = value;
+      return;
+    }
+    const env = this.findEnv(ref) ?? this.env;
+    env.values[ref] = value;
+  }
+
   jump(address: number) {
     this.ip = address;
   }
 
-  callFunction(functionName: string, argCount: number, caller?: CallStackEntry) {
+  callFunction(functionName: string, argCount: number, caller?: CallStackEntry, parentEnv?: ClosureEnv) {
     assert(this.vm.code[functionName], `vm2: missing function "${functionName}"`);
+    assert(this.stack.length >= argCount, `vm2: expected ${argCount} args, got ${this.stack.length}`);
     const args = this.stack.splice(this.stack.length - argCount, argCount);
     const returnFrame =
       caller ??
@@ -54,9 +84,11 @@ export class Thread {
         ip: this.ip + 1,
         functionName: this.functionName,
         stack: this.stack,
+        env: this.env,
       } satisfies CallStackEntry);
     this.callStack.push(returnFrame);
     this.stack = args;
+    this.env = { values: {}, parent: parentEnv ?? this.env };
     this.functionName = functionName;
     this.ip = 0;
   }
@@ -82,6 +114,7 @@ export class Thread {
     this.stack = frame.stack ?? [];
     if (returnValue !== undefined) this.push(returnValue);
 
+    this.env = frame.env;
     this.functionName = frame.functionName;
     this.ip = frame.ip;
   }
@@ -150,7 +183,7 @@ export class VM {
   spawnThread(functionName: string, id: string): Thread {
     const thread = new Thread(this, id, functionName);
     this.threads.set(thread.id, thread);
-    thread.callFunction(functionName, 0, { ip: -1, functionName, stack: [] });
+    thread.callFunction(functionName, 0, { ip: -1, functionName, stack: [], env: thread.env });
     return thread;
   }
 

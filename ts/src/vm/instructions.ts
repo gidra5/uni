@@ -24,6 +24,8 @@ export enum InstructionCode {
 
   Jump = "Jump",
   Native = "Native",
+  Closure = "Closure",
+  CallValue = "CallValue",
   Load = "Load",
   Store = "Store",
   Tuple = "Tuple",
@@ -34,9 +36,13 @@ export enum InstructionCode {
   Concat = "Concat",
 }
 
+export type ClosureEnv = {
+  values: Record<string, Value>;
+  parent?: ClosureEnv;
+};
 export type Closure = {
   functionName: string;
-  env: Record<string, Value>;
+  env: ClosureEnv;
 };
 export type SymbolValue = { symbol: string | number; name?: string };
 export type Value =
@@ -74,9 +80,11 @@ export type Instruction =
   | { code: InstructionCode.In }
   | { code: InstructionCode.DeepEq }
   | { code: InstructionCode.Call; arg1: string; arg2?: number }
+  | { code: InstructionCode.CallValue; arg1: number }
   | { code: InstructionCode.Return }
   | { code: InstructionCode.Jump; arg1: number }
   | { code: InstructionCode.Native; arg1: string; arg2?: number }
+  | { code: InstructionCode.Closure; arg1: string }
   | { code: InstructionCode.Concat };
 
 export type FunctionCode = Instruction[];
