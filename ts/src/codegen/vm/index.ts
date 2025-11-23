@@ -134,6 +134,9 @@ class Vm2Generator {
         this.emitNode(node.children[0]);
         this.current.push({ code: InstructionCode.Not });
         break;
+      case NodeType.IS:
+        this.emitIs(node);
+        break;
       case NodeType.INCREMENT:
         this.emitIncrement(node, { postfix: false });
         break;
@@ -438,6 +441,62 @@ class Vm2Generator {
       this.setJumpTarget(jumpOverElseIndex, this.current.length);
     } else {
       this.setJumpTarget(jumpIfFalseIndex, this.current.length);
+    }
+  }
+
+  private emitIs(node: Tree) {
+    const [valueNode, pattern] = node.children;
+    assert(valueNode && pattern, "is requires value and pattern");
+
+    const valueRef = this.tempRef();
+    this.emitNode(valueNode);
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: valueRef } });
+    this.current.push({ code: InstructionCode.Store });
+
+    this.emitPatternMatch(pattern, valueRef);
+  }
+
+  private emitPatternMatch(pattern: Tree, valueRef: string) {
+    switch (pattern.type) {
+      case NodeType.NAME: {
+        this.current.push({ code: InstructionCode.Const, arg1: { ref: valueRef } });
+        this.current.push({ code: InstructionCode.Load });
+        this.current.push({ code: InstructionCode.Const, arg1: { ref: pattern.data.value } });
+        this.current.push({ code: InstructionCode.Store });
+        this.current.push({ code: InstructionCode.Const, arg1: true });
+        break;
+      }
+      case NodeType.PLACEHOLDER:
+      case NodeType.IMPLICIT_PLACEHOLDER:
+        this.current.push({ code: InstructionCode.Const, arg1: true });
+        break;
+      case NodeType.NOT: {
+        const target = pattern.children[0];
+        assert(target, "not pattern missing operand");
+        this.emitPatternMatch(target, valueRef);
+        this.current.push({ code: InstructionCode.Not });
+        break;
+      }
+      case NodeType.NUMBER:
+      case NodeType.STRING: {
+        this.current.push({ code: InstructionCode.Const, arg1: { ref: valueRef } });
+        this.current.push({ code: InstructionCode.Load });
+        this.current.push({ code: InstructionCode.Const, arg1: pattern.data.value });
+        this.current.push({ code: InstructionCode.Eq });
+        break;
+      }
+      case NodeType.ATOM: {
+        this.current.push({ code: InstructionCode.Const, arg1: { ref: valueRef } });
+        this.current.push({ code: InstructionCode.Load });
+        this.current.push({
+          code: InstructionCode.Const,
+          arg1: { symbol: `atom:${pattern.data.name}`, name: pattern.data.name },
+        });
+        this.current.push({ code: InstructionCode.Eq });
+        break;
+      }
+      default:
+        throw new Error(`vm2 codegen: unsupported pattern "${pattern.type}" in "is" expression`);
     }
   }
 

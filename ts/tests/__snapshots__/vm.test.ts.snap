@@ -4490,6 +4490,52 @@ exports[`expressions > memory ops > free removes stored value 1`] = `
 }
 `;
 
+exports[`expressions > structured programming > else if chain 1`] = `
+{
+  "main": [
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "arg1": 4,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": 123,
+      "code": "Const",
+    },
+    {
+      "arg1": 9,
+      "code": "Jump",
+    },
+    {
+      "arg1": false,
+      "code": "Const",
+    },
+    {
+      "arg1": 8,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": 789,
+      "code": "Const",
+    },
+    {
+      "arg1": 9,
+      "code": "Jump",
+    },
+    {
+      "arg1": 456,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > structured programming > for loop maps values 1`] = `
 {
   "main": [
@@ -4678,6 +4724,199 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
     },
     {
       "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > if matches pattern and binds 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_29",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_29",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "arg1": 13,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > if then else expression 1`] = `
+{
+  "main": [
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "arg1": 4,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": 123,
+      "code": "Const",
+    },
+    {
+      "arg1": 5,
+      "code": "Jump",
+    },
+    {
+      "arg1": 456,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > if then expression 1`] = `
+{
+  "main": [
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "arg1": 3,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": 123,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > if with negated match falls back to else 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_29",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_29",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "code": "Not",
+    },
+    {
+      "arg1": 12,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": 16,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
     },
     {
       "code": "Return",

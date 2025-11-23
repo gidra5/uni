@@ -159,6 +159,36 @@ describe("expressions", () => {
   });
 
   describe("structured programming", () => {
+    it("if matches pattern and binds", () => {
+      const { bytecode, result } = runProgram("if 1 is a: a + 1");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(2);
+    });
+
+    it("if with negated match falls back to else", () => {
+      const { bytecode, result } = runProgram("if 1 is not a: 0 else a + 1");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(2);
+    });
+
+    it("if then expression", () => {
+      const { bytecode, result } = runProgram("if true: 123");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(123);
+    });
+
+    it("if then else expression", () => {
+      const { bytecode, result } = runProgram("if true: 123 else 456");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(123);
+    });
+
+    it("else if chain", () => {
+      const { bytecode, result } = runProgram("if true: 123 else if false: 789 else 456");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(123);
+    });
+
     it("while loop with break returns value", () => {
       const program = `
         mut x := 0;
