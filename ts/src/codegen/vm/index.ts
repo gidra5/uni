@@ -194,14 +194,20 @@ class Vm2Generator {
   }
 
   private emitCall(callee: Tree, args: Tree[]) {
+    const tempRef = this.tempRef();
     this.emitNode(callee);
+    this.storeTopInTemp(tempRef);
     args.forEach((arg) => this.emitNode(arg));
-    this.current.push({ code: InstructionCode.CallValue, arg1: args.length });
+    this.loadTemp(tempRef);
+    this.current.push({ code: InstructionCode.Call, arg2: args.length });
   }
 
   private emitCallOnStack(args: Tree[]) {
+    const tempRef = this.tempRef();
+    this.storeTopInTemp(tempRef);
     args.forEach((arg) => this.emitNode(arg));
-    this.current.push({ code: InstructionCode.CallValue, arg1: args.length });
+    this.loadTemp(tempRef);
+    this.current.push({ code: InstructionCode.Call, arg2: args.length });
   }
 
   private emitNativeCall(name: string, args: Tree[]) {
@@ -372,5 +378,19 @@ class Vm2Generator {
       this.emitNode(child);
       this.current.push({ code: InstructionCode.Concat });
     }
+  }
+
+  private tempRef() {
+    return `_calltmp_${nextId()}`;
+  }
+
+  private storeTopInTemp(ref: string) {
+    this.current.push({ code: InstructionCode.Const, arg1: { ref } });
+    this.current.push({ code: InstructionCode.Store });
+  }
+
+  private loadTemp(ref: string) {
+    this.current.push({ code: InstructionCode.Const, arg1: { ref } });
+    this.current.push({ code: InstructionCode.Load });
   }
 }

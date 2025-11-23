@@ -216,7 +216,15 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
   },
   [InstructionCode.Call]: (_vm, thread, instr) => {
     assert(instr.code === InstructionCode.Call);
-    thread.callFunction(instr.arg1, instr.arg2 ?? 0);
+    const argCount = instr.arg2 ?? 0;
+    if (instr.arg1) {
+      thread.callFunction(instr.arg1, argCount);
+      return false;
+    }
+
+    const callee = thread.pop();
+    assert(isClosure(callee), "vm2: expected callable value");
+    thread.callFunction(callee.functionName, argCount, undefined, callee.env);
     return false;
   },
   [InstructionCode.Return]: (_vm, thread, instr) => {
@@ -236,15 +244,5 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
   [InstructionCode.Closure]: (_vm, thread, instr) => {
     assert(instr.code === InstructionCode.Closure);
     thread.push({ functionName: instr.arg1, env: thread.env });
-  },
-  [InstructionCode.CallValue]: (_vm, thread, instr) => {
-    assert(instr.code === InstructionCode.CallValue);
-    const args: Value[] = [];
-    for (let i = 0; i < instr.arg1; i++) args.unshift(thread.pop());
-    const callee = thread.pop();
-    assert(isClosure(callee), "vm2: expected callable value");
-    thread.stack.push(...args);
-    thread.callFunction(callee.functionName, args.length, undefined, callee.env);
-    return false;
   },
 };

@@ -493,6 +493,15 @@ exports[`expressions > function expressions > function call multiple args 1`] = 
       "code": "Closure",
     },
     {
+      "arg1": {
+        "ref": "_calltmp_45",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": 1,
       "code": "Const",
     },
@@ -501,8 +510,17 @@ exports[`expressions > function expressions > function call multiple args 1`] = 
       "code": "Const",
     },
     {
-      "arg1": 2,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_45",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 2,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -542,12 +560,30 @@ exports[`expressions > function expressions > immediately invoked function expre
       "code": "Closure",
     },
     {
+      "arg1": {
+        "ref": "_calltmp_23",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": 1,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_23",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -624,20 +660,56 @@ exports[`expressions > function expressions > pipe 1`] = `
       "code": "Closure",
     },
     {
+      "arg1": {
+        "ref": "_calltmp_44",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": "fn_30",
       "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_45",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
     },
     {
       "arg1": 1,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_45",
+      },
+      "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_44",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -696,12 +768,30 @@ exports[`expressions > function expressions > return from function 1`] = `
       "code": "Closure",
     },
     {
+      "arg1": {
+        "ref": "_calltmp_68",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": 1,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_68",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -733,6 +823,15 @@ exports[`expressions > lambda calculus constructs > apply combinator 1`] = `
     },
     {
       "arg1": {
+        "ref": "_calltmp_75",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
         "ref": "x",
       },
       "code": "Const",
@@ -741,8 +840,17 @@ exports[`expressions > lambda calculus constructs > apply combinator 1`] = `
       "code": "Load",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_75",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -795,20 +903,56 @@ exports[`expressions > lambda calculus constructs > apply combinator 1`] = `
       "code": "Closure",
     },
     {
+      "arg1": {
+        "ref": "_calltmp_74",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": "fn_67",
       "code": "Closure",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_74",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_76",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
     },
     {
       "arg1": 42,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_76",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -872,6 +1016,15 @@ exports[`expressions > lambda calculus constructs > church pair returns first el
     },
     {
       "arg1": {
+        "ref": "_calltmp_105",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
         "ref": "x",
       },
       "code": "Const",
@@ -880,8 +1033,26 @@ exports[`expressions > lambda calculus constructs > church pair returns first el
       "code": "Load",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_105",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_106",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
     },
     {
       "arg1": {
@@ -893,8 +1064,17 @@ exports[`expressions > lambda calculus constructs > church pair returns first el
       "code": "Load",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_106",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -942,28 +1122,82 @@ exports[`expressions > lambda calculus constructs > church pair returns first el
       "code": "Closure",
     },
     {
+      "arg1": {
+        "ref": "_calltmp_104",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": 1,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_104",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_107",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
     },
     {
       "arg1": 2,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_107",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_108",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
     },
     {
       "arg1": "fn_101",
       "code": "Closure",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_108",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -1027,6 +1261,15 @@ exports[`expressions > lambda calculus constructs > church pair returns second e
     },
     {
       "arg1": {
+        "ref": "_calltmp_105",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
         "ref": "x",
       },
       "code": "Const",
@@ -1035,8 +1278,26 @@ exports[`expressions > lambda calculus constructs > church pair returns second e
       "code": "Load",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_105",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_106",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
     },
     {
       "arg1": {
@@ -1048,8 +1309,17 @@ exports[`expressions > lambda calculus constructs > church pair returns second e
       "code": "Load",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_106",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -1097,28 +1367,82 @@ exports[`expressions > lambda calculus constructs > church pair returns second e
       "code": "Closure",
     },
     {
+      "arg1": {
+        "ref": "_calltmp_104",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": 1,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_104",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_107",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
     },
     {
       "arg1": 2,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_107",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_108",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
     },
     {
       "arg1": "fn_101",
       "code": "Closure",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_108",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -1218,20 +1542,56 @@ exports[`expressions > lambda calculus constructs > deeply nested closures captu
       "code": "Closure",
     },
     {
+      "arg1": {
+        "ref": "_calltmp_78",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": 1,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_78",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_79",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
     },
     {
       "arg1": 3,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_79",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "arg1": {
@@ -1261,12 +1621,30 @@ exports[`expressions > lambda calculus constructs > deeply nested closures captu
       "code": "Load",
     },
     {
+      "arg1": {
+        "ref": "_calltmp_80",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": 5,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_80",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -1358,6 +1736,15 @@ exports[`expressions > lambda calculus constructs > either combinator applies fi
     },
     {
       "arg1": {
+        "ref": "_calltmp_122",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
         "ref": "x",
       },
       "code": "Const",
@@ -1366,8 +1753,17 @@ exports[`expressions > lambda calculus constructs > either combinator applies fi
       "code": "Load",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_122",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -1415,28 +1811,82 @@ exports[`expressions > lambda calculus constructs > either combinator applies fi
       "code": "Closure",
     },
     {
+      "arg1": {
+        "ref": "_calltmp_121",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": 7,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_121",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_123",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
     },
     {
       "arg1": "fn_109",
       "code": "Closure",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_123",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_124",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
     },
     {
       "arg1": "fn_118",
       "code": "Closure",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_124",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",
@@ -1506,12 +1956,30 @@ exports[`expressions > lambda calculus constructs > partial application keeps ca
       "code": "Closure",
     },
     {
+      "arg1": {
+        "ref": "_calltmp_58",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": 5,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_58",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "arg1": {
@@ -1541,12 +2009,30 @@ exports[`expressions > lambda calculus constructs > partial application keeps ca
       "code": "Load",
     },
     {
+      "arg1": {
+        "ref": "_calltmp_59",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": 7,
       "code": "Const",
     },
     {
-      "arg1": 1,
-      "code": "CallValue",
+      "arg1": {
+        "ref": "_calltmp_59",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
     },
     {
       "code": "Return",

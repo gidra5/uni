@@ -8,7 +8,6 @@ import { SystemError } from "./error.js";
 import { parseScript } from "./parser/parser.js";
 import { parseTokenGroups } from "./parser/tokenGroups.js";
 import { generateVm2Bytecode, VM } from "./vm/index.js";
-import type { Value } from "./vm/index.js";
 import { inject, Injectable } from "./utils/injector.js";
 
 const reportErrors = (errors: SystemError[], fileId: number, fileMap: FileMap) => {
@@ -17,11 +16,6 @@ const reportErrors = (errors: SystemError[], fileId: number, fileMap: FileMap) =
   errors.forEach((error) => error.withFileId(fileId).print(fileMap));
   process.exitCode = 1;
   return true;
-};
-
-type VmRuntimeState = {
-  heap: Record<string, Value>;
-  atoms: Map<string, Value>;
 };
 
 const runInVm = (source: string, fileName: string, vm: VM) => {

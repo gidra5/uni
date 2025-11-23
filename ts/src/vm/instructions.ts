@@ -25,7 +25,6 @@ export enum InstructionCode {
   Jump = "Jump",
   Native = "Native",
   Closure = "Closure",
-  CallValue = "CallValue",
   Load = "Load",
   Store = "Store",
   Tuple = "Tuple",
@@ -79,8 +78,7 @@ export type Instruction =
   | { code: InstructionCode.Record; arg1: number }
   | { code: InstructionCode.In }
   | { code: InstructionCode.DeepEq }
-  | { code: InstructionCode.Call; arg1: string; arg2?: number }
-  | { code: InstructionCode.CallValue; arg1: number }
+  | { code: InstructionCode.Call; arg1?: string; arg2?: number }
   | { code: InstructionCode.Return }
   | { code: InstructionCode.Jump; arg1: number }
   | { code: InstructionCode.Native; arg1: string; arg2?: number }
