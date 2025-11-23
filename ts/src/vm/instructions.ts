@@ -23,6 +23,7 @@ export enum InstructionCode {
   // EmitEffect,
 
   Jump = "Jump",
+  JumpIfFalse = "JumpIfFalse",
   Native = "Native",
   Closure = "Closure",
   Load = "Load",
@@ -81,6 +82,7 @@ export type Instruction =
   | { code: InstructionCode.Call; arg1?: string; arg2?: number }
   | { code: InstructionCode.Return }
   | { code: InstructionCode.Jump; arg1: number }
+  | { code: InstructionCode.JumpIfFalse; arg1: number }
   | { code: InstructionCode.Native; arg1: string; arg2?: number }
   | { code: InstructionCode.Closure; arg1: string }
   | { code: InstructionCode.Concat };

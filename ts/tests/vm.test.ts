@@ -54,7 +54,7 @@ describe("expressions", () => {
     it("handles chained math with precedence", () => {
       const { bytecode, result } = runProgram("1 + 2^-3 * 4 - 5 / 6 % 7");
       expect(bytecode).toMatchSnapshot();
-      expect(result).toBeCloseTo(0.6666666666666666);
+      expect(result).toBeCloseTo(2 / 3);
     });
   });
 
@@ -199,6 +199,36 @@ describe("expressions", () => {
       const { bytecode, result } = runProgram(program);
       expect(bytecode).toMatchSnapshot();
       expect(result).toBe(9);
+    });
+
+    it("fixed point combinator (Z) builds recursion", () => {
+      const program =
+        "(fn f -> (fn x -> f (fn v -> x x v)) (fn x -> f (fn v -> x x v))) (fn self -> fn x -> x) 42";
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(42);
+    });
+
+    it("Y combinator computes factorial", () => {
+      const program = [
+        "(fn f -> (fn x -> f (fn v -> x x v)) (fn x -> f (fn v -> x x v)))",
+        "(fn self -> fn n -> if n == 0: 1 else n * (self (n - 1)))",
+        "5",
+      ].join(" ");
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(120);
+    });
+
+    it("Y combinator computes fibonacci", () => {
+      const program = [
+        "(fn f -> (fn x -> f (fn v -> x x v)) (fn x -> f (fn v -> x x v)))",
+        "(fn self -> fn n -> if n == 0: 0 else if n == 1: 1 else self (n - 1) + self (n - 2))",
+        "6",
+      ].join(" ");
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(8);
     });
   });
 

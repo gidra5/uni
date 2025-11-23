@@ -237,6 +237,14 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
     thread.jump(instr.arg1);
     return false;
   },
+  [InstructionCode.JumpIfFalse]: (_vm, thread, instr) => {
+    assert(instr.code === InstructionCode.JumpIfFalse);
+    const cond = thread.pop();
+    if (!cond) {
+      thread.jump(instr.arg1);
+      return false;
+    }
+  },
   [InstructionCode.Native]: (_vm, thread, instr) => {
     assert(instr.code === InstructionCode.Native);
     thread.callNative(instr.arg1, instr.arg2 ?? 0);

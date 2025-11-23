@@ -131,6 +131,10 @@ class Vm2Generator {
       case NodeType.PIPE:
         this.emitPipe(node);
         break;
+      case NodeType.IF:
+      case NodeType.IF_ELSE:
+        this.emitIf(node);
+        break;
       case NodeType.TUPLE:
         this.emitTuple(node);
         break;
@@ -377,6 +381,27 @@ class Vm2Generator {
     for (const child of node.children.slice(1)) {
       this.emitNode(child);
       this.current.push({ code: InstructionCode.Concat });
+    }
+  }
+
+  private emitIf(node: Tree) {
+    const [condition, thenBranch, elseBranch] = node.children;
+    assert(condition && thenBranch, "if missing branches");
+
+    this.emitNode(condition);
+    const jumpIfFalseIndex = this.current.length;
+    this.current.push({ code: InstructionCode.JumpIfFalse, arg1: -1 });
+
+    this.emitNode(thenBranch);
+
+    if (elseBranch) {
+      const jumpOverElseIndex = this.current.length;
+      this.current.push({ code: InstructionCode.Jump, arg1: -1 });
+      this.current[jumpIfFalseIndex].arg1 = this.current.length;
+      this.emitNode(elseBranch);
+      this.current[jumpOverElseIndex].arg1 = this.current.length;
+    } else {
+      this.current[jumpIfFalseIndex].arg1 = this.current.length;
     }
   }
 

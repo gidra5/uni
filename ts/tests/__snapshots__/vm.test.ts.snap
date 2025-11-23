@@ -800,6 +800,1066 @@ exports[`expressions > function expressions > return from function 1`] = `
 }
 `;
 
+exports[`expressions > lambda calculus constructs > Y combinator computes factorial 1`] = `
+{
+  "fn_183": [
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_272",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_272",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_273",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_273",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_185": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_271",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_183",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_271",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_213": [
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_275",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_275",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_276",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_276",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_215": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_274",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_213",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_274",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_217": [
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_185",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_270",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_215",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_270",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_262": [
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "arg1": 9,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 23,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "self",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_277",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Sub",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_277",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Mul",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_263": [
+    {
+      "arg1": {
+        "ref": "self",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_262",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": "fn_217",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_269",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_263",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_269",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_278",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 5,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_278",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > lambda calculus constructs > Y combinator computes fibonacci 1`] = `
+{
+  "fn_195": [
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_298",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_298",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_299",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_299",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_197": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_297",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_195",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_297",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_225": [
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_301",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_301",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_302",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_302",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_227": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_300",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_225",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_300",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_229": [
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_197",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_296",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_227",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_296",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_288": [
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "arg1": 9,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": 39,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "arg1": 16,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 39,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "self",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_303",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Sub",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_303",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "self",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_304",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Sub",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_304",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_289": [
+    {
+      "arg1": {
+        "ref": "self",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_288",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": "fn_229",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_295",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_289",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_295",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_305",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 6,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_305",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > lambda calculus constructs > apply combinator 1`] = `
 {
   "fn_61": [
@@ -1878,6 +2938,425 @@ exports[`expressions > lambda calculus constructs > either combinator applies fi
     {
       "arg1": {
         "ref": "_calltmp_124",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > lambda calculus constructs > fixed point combinator (Z) builds recursion 1`] = `
+{
+  "fn_165": [
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_215",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_215",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_216",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_216",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_167": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_214",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_165",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_214",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_195": [
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_218",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_218",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_219",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_219",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_197": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_217",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_195",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_217",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_199": [
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_167",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_213",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_197",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_213",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_205": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_206": [
+    {
+      "arg1": {
+        "ref": "self",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_205",
+      "code": "Closure",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": "fn_199",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_212",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "fn_206",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_212",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_220",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 42,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_220",
       },
       "code": "Const",
     },
