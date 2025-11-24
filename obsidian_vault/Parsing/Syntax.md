@@ -16,5 +16,7 @@ These redundancies can be replaced by more abstract nodes that drop information 
 
 Thus resulting output from syntax analysis is an Abstract Syntax Tree.
 
+Space is mostly insignificant, except delimited application. Delimited application is used as a base case for function call syntax.
+
 https://craftinginterpreters.com/representing-code.html
 https://www.oilshell.org/blog/2016/10/20.html

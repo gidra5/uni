@@ -29,6 +29,41 @@ const runProgram = (program: string | Program, options: Partial<ConstructorParam
   return { bytecode, result, vm };
 };
 
+describe("scope", () => {
+  it.todo("and rhs creates scope", async () => {
+    const input = `
+        x := 2;
+        true and (x := 1);
+        x
+      `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toBe(2);
+  });
+
+  it.todo("or rhs creates scope", async () => {
+    const input = `
+        x := 2;
+        false or (x := 1);
+        x
+      `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toBe(2);
+  });
+
+  it.todo("is binds in local expression scope", async () => {
+    const input = `
+        x := 2;
+        1 is x;
+        x
+      `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toBe(2);
+  });
+});
+
 describe("expressions", () => {
   describe("values", () => {
     const cases = [
@@ -95,10 +130,28 @@ describe("expressions", () => {
       expect(result).toBe(true);
     });
 
-    it("in", () => {
+    it("in finds existing key", () => {
       const { bytecode, result } = runProgram("$key in (key: 1, key2: 2)");
       expect(bytecode).toMatchSnapshot();
       expect(result).toBe(true);
+    });
+
+    it.todo("in not finds not existing key", async () => {
+      const { bytecode, result } = runProgram("$key3 in (key: 1, key2: 2)");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(false);
+    });
+
+    it.todo("in finds index holds value in tuple", async () => {
+      const { bytecode, result } = runProgram("1 in (1, 2)");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(true);
+    });
+
+    it.todo("in finds index not holds value in tuple", async () => {
+      const { bytecode, result } = runProgram("5 in (1, 2)");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(false);
     });
 
     it("eq", () => {
@@ -130,6 +183,16 @@ describe("expressions", () => {
       expect(bytecode).toMatchSnapshot();
       expect(result).toBe(true);
     });
+
+    //     test.skip("range", () => {
+    //       const src = `1 < 2 < 3`;
+    //       evalTestCase(src);
+    //     });
+
+    //     test.skip("range fail", () => {
+    //       const src = `1 < 3 < 2`;
+    //       evalTestCase(src);
+    //     });
   });
 
   describe("function expressions", () => {

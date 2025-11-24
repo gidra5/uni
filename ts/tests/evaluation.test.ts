@@ -36,169 +36,7 @@
 // export const evalTestCaseArgs = (src, expectedValue?) =>
 //   [`produces correct value for '${src}'`, () => evalTestCase(src, expectedValue)] as const;
 
-// /* one test per example of a language construct  */
-
-// describe("comments", () => {
-//   it("comment", async () => {
-//     const input = `// comment\n123`;
-//     const result = await evaluate(input);
-//     expect(result).toBe(123);
-//   });
-
-//   it("comment block", async () => {
-//     const input = `/* comment block */123`;
-//     const result = await evaluate(input);
-//     expect(result).toBe(123);
-//   });
-// });
-
 // describe("expressions", () => {
-//   describe("values", () => {
-//     test("integer", () => {
-//       const src = `123`;
-//       evalTestCase(src);
-//     });
-
-//     test("float", () => {
-//       const src = `123.456`;
-//       evalTestCase(src);
-//     });
-
-//     test("string", () => {
-//       const src = `"string"`;
-//       evalTestCase(src);
-//     });
-
-//     test("true", () => {
-//       const src = `true`;
-//       evalTestCase(src);
-//     });
-
-//     test("false", () => {
-//       const src = `false`;
-//       evalTestCase(src);
-//     });
-//   });
-
-//   describe("arithmetics", () => {
-//     it(...evalTestCaseArgs("1 + 2^-3 * 4 - 5 / 6 % 7"));
-//   });
-
-//   describe("boolean expressions", () => {
-//     test("not on not boolean", () => {
-//       const src = `!123`;
-//       evalTestCase(src);
-//     });
-
-//     test("not on boolean", () => {
-//       const src = `!true`;
-//       evalTestCase(src);
-//     });
-
-//     test("and", () => {
-//       const src = `true and false`;
-//       evalTestCase(src);
-//     });
-
-//     test("and short-circuit", () => {
-//       const src = `false and whatever`;
-//       evalTestCase(src);
-//     });
-
-//     test("or", () => {
-//       const src = `true or false`;
-//       evalTestCase(src);
-//     });
-
-//     test("or short-circuit", () => {
-//       const src = `true or whatever`;
-//       evalTestCase(src);
-//     });
-
-//     test("in", () => {
-//       const src = `:key in (key: 1, key2: 2)`;
-//       evalTestCase(src);
-//     });
-
-//     test("eq", () => {
-//       const src = `1 == 1`;
-//       evalTestCase(src);
-//     });
-
-//     test("eq ref", () => {
-//       const src = `x := 1, 2; y := x; x == y`;
-//       evalTestCase(src);
-//     });
-
-//     test("eq ref 2", () => {
-//       const src = `(1, 2) == (1, 2)`;
-//       evalTestCase(src);
-//     });
-
-//     test("deep eq", () => {
-//       const src = `(1, 2) === (1, 2)`;
-//       evalTestCase(src);
-//     });
-
-//     test("compare", () => {
-//       const src = `123 < 456`;
-//       evalTestCase(src);
-//     });
-
-//     test.skip("range", () => {
-//       const src = `1 < 2 < 3`;
-//       evalTestCase(src);
-//     });
-
-//     test.skip("range fail", () => {
-//       const src = `1 < 3 < 2`;
-//       evalTestCase(src);
-//     });
-//   });
-
-//   describe("function expressions", () => {
-//     test("iife id", () => {
-//       const src = `(macro -> eval #0)()`;
-//       evalTestCase(src);
-//     });
-//     test("function with no arg", () => {
-//       const src = `fn -> #0`;
-//       evalTestCase(src);
-//     });
-
-//     test("immediately invoked function expression (iife)", () => {
-//       const src = `(fn x -> x) 1`;
-//       evalTestCase(src, 1);
-//     });
-
-//     test("return from function", () => {
-//       const src = `(fn x -> { return (x + 1); x }) 1`;
-//       evalTestCase(src, 2);
-//     });
-
-//     test.todo("function with shadowed name access", () => {
-//       const src = `fn a -> fn a -> #a`;
-//       evalTestCase(src);
-//     });
-
-//     test.todo("function with deep shadowed name access", () => {
-//       const src = `fn a -> fn a -> fn a -> ##a`;
-//       evalTestCase(src);
-//     });
-
-//     describe.todo("application", () => {
-//       test("function call", () => {
-//         const src = `f x`;
-//         evalTestCase(src);
-//       });
-
-//       test("function call multiple args", () => {
-//         const src = `f x y`;
-//         evalTestCase(src);
-//       });
-//     });
-//   });
-
 //   describe.todo("pattern matching", () => {
 //     test("match", () => {
 //       const src = `match x { 1 -> 2; 3 -> 4 }`;
@@ -1104,6 +942,26 @@ describe("scope", () => {
     const result = await evaluate(input);
     expect(result).toEqual(1);
   });
+
+  it("and lhs creates scope", async () => {
+    const input = `
+        x := 2;
+        true and (x := 1);
+        x
+      `;
+    const result = await evaluate(input);
+    expect(result).toBe(2);
+  });
+
+  it("or lhs creates scope", async () => {
+    const input = `
+        x := 2;
+        false or (x := 1);
+        x
+      `;
+    const result = await evaluate(input);
+    expect(result).toBe(2);
+  });
 });
 
 describe("expressions", () => {
@@ -1246,25 +1104,15 @@ describe("expressions", () => {
       expect(result).toBe(true);
     });
 
-    it("and lhs creates scope", async () => {
-      const input = `
-        x := 2;
-        true and (x := 1);
-        x
-      `;
-      const result = await evaluate(input);
-      expect(result).toBe(2);
-    });
+    //     test.skip("range", () => {
+    //       const src = `1 < 2 < 3`;
+    //       evalTestCase(src);
+    //     });
 
-    it("or lhs creates scope", async () => {
-      const input = `
-        x := 2;
-        false or (x := 1);
-        x
-      `;
-      const result = await evaluate(input);
-      expect(result).toBe(2);
-    });
+    //     test.skip("range fail", () => {
+    //       const src = `1 < 3 < 2`;
+    //       evalTestCase(src);
+    //     });
   });
 
   describe("function expressions", () => {
@@ -1301,6 +1149,30 @@ describe("expressions", () => {
       const input = `1 |> fn x { x + 1 } |> fn y { y * 2 }`;
       const result = await evaluate(input);
       expect(result).toBe(4);
+    });
+
+    it.todo("function with shadowed name access", async () => {
+      const input = `(fn a -> fn a -> #a) 1 2`;
+      const result = await evaluate(input);
+      expect(result).toBe(1);
+    });
+
+    it.todo("function with deep shadowed name access", async () => {
+      const input = `(fn a -> fn a -> fn a -> ##a) 1 2 3`;
+      const result = await evaluate(input);
+      expect(result).toBe(1);
+    });
+
+    it.todo("iife id", async () => {
+      const input = `(macro -> eval #0)()`;
+      const result = await evaluate(input);
+      expect(result).toBe(1);
+    });
+
+    it.todo("function with no arg", async () => {
+      const input = `(fn -> #0) 1`;
+      const result = await evaluate(input);
+      expect(result).toBe(1);
     });
   });
 

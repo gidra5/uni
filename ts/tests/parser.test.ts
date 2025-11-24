@@ -171,6 +171,7 @@ describe("expressions", () => {
     // it.todo("ranges 1", () => testCase(`123 < 456 < 789`));
   });
 
+  // TODO: make parens around incoming arguments required
   describe("function expressions", () => {
     it("function block body", () => testCase(`fn x, y { x + y }`));
     it("function multiple params", () => testCase(`fn x, y -> x + y`));
@@ -180,11 +181,18 @@ describe("expressions", () => {
     it("arrow function with parameter type", () => testCase(`x: number -> x`));
     it("fn increment", () => testCase(`fn -> line_handled_count++`));
     it("function with return type", () => testCase(`fn x, y -> number { x + y }`));
+    // TODO: dilemma types
+    // TODO: recursive functions shorthand for named functions
     it("function with parameter types", () => testCase(`fn (x: number, y: string) -> number { x + y }`));
+    it("named function", () => testCase(`fn sum(x: number, y: number) -> number { x + y }`));
     it("function with placeholder arg", () => testCase(`_ -> #0`));
     it("function with no arg", () => testCase(`fn -> #0`));
     it("function with shadowed name access", () => testCase(`fn a -> fn a -> #a`));
     it("function with deep shadowed name access", () => testCase(`fn a -> fn a -> fn a -> ##a`));
+    it("function with deep shadowed name access", () => testCase(`fn a -> fn a -> fn a -> ##a`));
+    it("function with named params from local scope expression", () => testCase(`%x + %y / %x`));
+    it.todo("function with unnamed params from local scope expression", () => testCase(`%1 + %2 / %1`));
+    it.todo("function with mixed params from local scope expression", () => testCase(`%1 + %x / %1`));
 
     describe("application", () => {
       it("function call", () => testCase(`f x`));
@@ -218,6 +226,25 @@ describe("expressions", () => {
       it("immediate form", () => testCase(`fn: x; y`));
       it("block form", () => testCase(`fn { x }`));
       it("rest form", () => testCase(`fn -> x; y`));
+    });
+  });
+
+  describe.todo("macro expressions", () => {
+    it("macro block body", () => testCase(`macro (x, y), env { eval x env + eval y env }`));
+    it("macro multiple params", () => testCase(`macro (x, y), env -> eval x env + eval y env`));
+    it("macro block body no env", () => testCase(`macro (x, y) { eval x + eval y }`));
+    it("macro multiple params no env", () => testCase(`macro (x, y) -> eval x + eval y`));
+    it("macro no parameters", () => testCase(`macro -> 123`));
+    it("macro no parameters block", () => testCase(`macro { 123 }`));
+    it("macro with return type", () => testCase(`macro (x, y), env -> number { x + y }`));
+    it("macro with parameter types", () =>
+      testCase(`macro (x: Expr<number>, y: Expr<string>), env: Env -> number { x + y }`));
+    it("macro with no arg", () => testCase(`macro -> #0`));
+
+    describe("function forms", () => {
+      it("immediate form", () => testCase(`macro: x; y`));
+      it("block form", () => testCase(`macro { x }`));
+      it("rest form", () => testCase(`macro -> x; y`));
     });
   });
 
@@ -349,12 +376,12 @@ describe("pattern matching", () => {
   test("with type", () => testCase(`x is (a: number, b)`));
   test("record pattern with type", () => testCase(`x is { a: number, b }`));
   test("value is of type", () => testCase(`x is type number`));
-  test("typeof value is type", () => testCase(`typeof x == number`));
 });
 
 describe("types", () => {
   it("declaration with type", () => testCase("x: number := 1"));
   it("typeof", () => testCase("typeof x"));
+  it("typeof value is type", () => testCase(`typeof x == number`));
   it("type cast", () => testCase("x as number"));
   it("type coalesce", () => testCase("x :> number"));
 

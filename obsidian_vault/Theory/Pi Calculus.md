@@ -329,3 +329,5 @@
 [join calculus](https://github.com/maandree/join-python/blob/master/join-python.pdf)
 
 https://github.com/faiface/par-lang
+
+Pi calculus inherently describes concurrency in homogeneous systems, where every process is computationally equivalent. But many systems are inhomogeneous and that requires special care.

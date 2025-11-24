@@ -7,3 +7,7 @@ Lifecycle
 5. deinitialization
 
 Allow paths in declaration by merging
+
+Local scope where it is true
+
+Duplicate variablse create constraints, which are unified

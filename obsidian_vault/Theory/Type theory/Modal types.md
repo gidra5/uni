@@ -7,6 +7,7 @@ https://blog.janestreet.com/oxidizing-ocaml-locality/
 https://richarde.dev/papers/2025/drfcaml/drfcaml.pdf
 https://antonlorenzen.de/mode-inference.pdf
 https://blog.bruce-hill.com/mutability-isnt-variability
+https://www.cs.cmu.edu/~fp/papers/tocl07.pdf
 
 can be used to represent a possibility of some value. For example if the value is not available right now, but there is a computation that will produce it. Thus it can be useful to represent type of expressions that are yet to be evaluated. Since the expression may contain infinite loop, it is only a possibility that such value will actually arrive.
 
