@@ -195,7 +195,146 @@ describe("expressions", () => {
     //     });
   });
 
+  // TODO: translate these tests into vm tests
+  // describe("function expressions", () => {
+  //   it("function block body", () => testCase(`fn x, y { x + y }`));
+  //   it("function multiple params", () => testCase(`fn x, y -> x + y`));
+  //   it("fn no parameters", () => testCase(`fn -> 123`));
+  //   it("fn no parameters block", () => testCase(`fn { 123 }`));
+  //   it("arrow function", () => testCase(`x -> x`));
+  //   it("arrow function with parameter type", () => testCase(`x: number -> x`));
+  //   it("fn increment", () => testCase(`fn -> line_handled_count++`));
+  //   it("function with return type", () => testCase(`fn x, y -> number { x + y }`));
+  //   it("function with parameter types", () => testCase(`fn (x: number, y: string) -> number { x + y }`));
+  //   it("named function", () => testCase(`fn sum(x: number, y: number) -> number { x + y }`));
+  //   it("function with placeholder arg", () => testCase(`_ -> #0`));
+  //   it("function with no arg", () => testCase(`fn -> #0`));
+  //   it("function with shadowed name access", () => testCase(`fn a -> fn a -> #a`));
+  //   it("function with deep shadowed name access", () => testCase(`fn a -> fn a -> fn a -> ##a`));
+  //   it("function with deep shadowed name access", () => testCase(`fn a -> fn a -> fn a -> ##a`));
+  //   it("function with named params from local scope expression", () => testCase(`%x + %y / %x`));
+  //   it.todo("function with unnamed params from local scope expression", () => testCase(`%1 + %2 / %1`));
+  //   it.todo("function with mixed params from local scope expression", () => testCase(`%1 + %x / %1`));
+
+  //   describe("application", () => {
+  //     it("function call", () => testCase(`f x`));
+  //     it("function call multiple args", () => testCase(`f x y`));
+  //     it("function call param with field", () => testCase(`f x.y`));
+  //     it("send((1+2), 3)", () => testCase(`send((1+2), 3)`));
+  //     it("send(2, 3)", () => testCase(`send(2, 3)`));
+  //     it("(send)(2, 3)", () => testCase(`(send)(2, 3)`));
+  //     it("(send 1)(2, 3)", () => testCase(`(send 1)(2, 3)`));
+  //     it("(send 1 2)(2, 3)", () => testCase(`(send 1 2)(2, 3)`));
+  //     it("send 1 + 2", () => testCase(`send 1 + 2`));
+  //     it("a + send (2, 3)", () => testCase(`a + send (2, 3)`));
+  //     it("send a (2, 3)", () => testCase(`send a (2, 3)`));
+  //     it("send 1 (2, 3)", () => testCase(`send 1 (2, 3)`));
+  //     it("a + send 1 + 2", () => testCase(`a + send 1 + 2`));
+  //     it("methods chaining", () => testCase(`math.floor(1).multiply(2)`));
+  //     it("function as last arg", () => testCase(`open "file" file -> write file "yolo"`));
+  //     it("block as last arg", () => testCase(`open "file" { write "yolo" }`));
+  //     it("pipe", () => testCase(`1 |> fn x { x + 1 } |> fn y { y * 2 }`));
+  //   });
+
+  //   describe("delimited application", () => {
+  //     it("delimited args", () => testCase(`f(x, y)`));
+  //     it("named args", () => testCase(`f(x: 1, 3, y: 2)`));
+  //     it("placeholder arg", () => testCase(`f(_, y)`));
+  //     it("placeholder args", () => testCase(`f(_, y, _)`));
+  //     it("spread args", () => testCase(`f(...x, y)`));
+  //   });
+
+  //   describe("function forms", () => {
+  //     it("immediate form", () => testCase(`fn: x; y`));
+  //     it("block form", () => testCase(`fn { x }`));
+  //     it("rest form", () => testCase(`fn -> x; y`));
+  //   });
+  // });
+  /* 
+  
+    describe("function expressions", () => {
+      it("fn increment", async () => {
+        const input = `
+          mut line_handled_count := 0
+          inc := fn do line_handled_count++
+          inc()
+          line_handled_count
+        `;
+        const result = await evaluate(input);
+        expect(result).toBe(1);
+      });
+  
+      it("immediately invoked function expression (iife)", async () => {
+        const input = `(fn x -> x) 1`;
+        const result = await evaluate(input);
+        expect(result).toBe(1);
+      });
+  
+      it("return from function", async () => {
+        const input = `(fn x -> { return (x + 1); x }) 1`;
+        const result = await evaluate(input);
+        expect(result).toBe(2);
+      });
+  
+      it("function call multiple args", async () => {
+        const input = `(fn x, y -> x + y) 1 2`;
+        const result = await evaluate(input);
+        expect(result).toBe(3);
+      });
+  
+      it("pipe", async () => {
+        const input = `1 |> fn x { x + 1 } |> fn y { y * 2 }`;
+        const result = await evaluate(input);
+        expect(result).toBe(4);
+      });
+  
+      it.todo("function with shadowed name access", async () => {
+        const input = `(fn a -> fn a -> #a) 1 2`;
+        const result = await evaluate(input);
+        expect(result).toBe(1);
+      });
+  
+      it.todo("function with deep shadowed name access", async () => {
+        const input = `(fn a -> fn a -> fn a -> ##a) 1 2 3`;
+        const result = await evaluate(input);
+        expect(result).toBe(1);
+      });
+  
+      it.todo("iife id", async() => {
+        const input = `(macro -> eval #0)()`;
+        const result = await evaluate(input);
+        expect(result).toBe(1);
+      });
+  
+      it.todo("function with no arg", async () => {
+        const input = `(fn -> #0) 1`;
+        const result = await evaluate(input);
+        expect(result).toBe(1);
+      });
+    });
+  */
+
   describe("function expressions", () => {
+    it.todo("fn no parameters", () => {
+      const { bytecode, result } = runProgram("(fn -> 123) 0");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(123);
+    });
+
+    it("fn increment", () => {
+      const program = `
+        line_handled_count := 0;
+        inc := fn x {
+          line_handled_count = line_handled_count + 1;
+        };
+        inc 0;
+        line_handled_count
+      `;
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(1);
+    });
+
     it("immediately invoked function expression (iife)", () => {
       const { bytecode, result } = runProgram("(fn x -> x) 1");
       expect(bytecode).toMatchSnapshot();

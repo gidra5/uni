@@ -314,7 +314,7 @@ exports[`expressions > boolean expressions > eq ref 2 1`] = `
 }
 `;
 
-exports[`expressions > boolean expressions > in 1`] = `
+exports[`expressions > boolean expressions > in finds existing key 1`] = `
 {
   "main": [
     {
@@ -433,6 +433,152 @@ exports[`expressions > boolean expressions > or short-circuit 1`] = `
     },
     {
       "code": "Or",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > function expressions > fn increment 1`] = `
+{
+  "fn_54": [
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "line_handled_count",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "line_handled_count",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "line_handled_count",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "line_handled_count",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "line_handled_count",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": "fn_54",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "inc",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "inc",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "inc",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_74",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_74",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "line_handled_count",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "code": "Return",
