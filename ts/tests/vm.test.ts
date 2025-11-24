@@ -29,35 +29,411 @@ const runProgram = (program: string | Program, options: Partial<ConstructorParam
   return { bytecode, result, vm };
 };
 
+describe("advent of code 2023 day 1 single", () => {
+  it.todo("variable", () => {
+    const input = `
+      document := "
+        1abc2
+        pqr3stu8vwx
+        a1b2c3d4e5f
+        treb7uchet
+      "
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual(`
+        1abc2
+        pqr3stu8vwx
+        a1b2c3d4e5f
+        treb7uchet
+    `);
+  });
+
+  it.todo("split lines", () => {
+    // const mutable = createSymbolMap({
+    //   document: `
+    //     1abc2
+    //     pqr3stu8vwx
+    //     a1b2c3d4e5f
+    //     treb7uchet
+    //   `,
+    //   map: fn(2, (cs, list, fn) => {
+    //     assert(Array.isArray(list));
+    //     assert(typeof fn === "function");
+    //     return Promise.all(
+    //       list.map(async (x) => {
+    //         const result = await fn(cs, x);
+    //         assert(result !== null);
+    //         return result;
+    //       })
+    //     );
+    //   }),
+    //   filter: fn(2, async (cs, list, fn) => {
+    //     assert(Array.isArray(list));
+    //     assert(typeof fn === "function");
+    //     const result: EvalValue[] = [];
+    //     for (const item of list) {
+    //       const keep = await fn(cs, item);
+    //       if (keep) result.push(item);
+    //     }
+    //     return result;
+    //   }),
+    // });
+    const input = `
+      mut lines := document.split("\\n")
+      lines = map lines fn line do line.replace "\\\\s+" ""
+      filter lines fn line -> line != ""
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual(["1abc2", "pqr3stu8vwx", "a1b2c3d4e5f", "treb7uchet"]);
+  });
+
+  it.todo("parse numbers", () => {
+    // const mutable = createSymbolMap({
+    //   lines: ["1abc2", "pqr3stu8vwx", "a1b2c3d4e5f", "treb7uchet"],
+    //   flat_map: fn(2, async (cs, list, fn) => {
+    //     assert(Array.isArray(list));
+    //     assert(typeof fn === "function");
+    //     const mapped = await Promise.all(
+    //       list.map(async (x) => {
+    //         const result = await fn(cs, x);
+    //         assert(result !== null);
+    //         return result;
+    //       })
+    //     );
+    //     return mapped.flat();
+    //   }),
+    // });
+    const input = `
+      numbers := flat_map lines fn mut line {
+        digits := ()
+        while line != "" {
+          if line.char_at(0).match("\\\\d") {
+            digit := number (line.char_at(0))
+            if !(0 in digits) do digits[0] = digit
+            digits[1] = digit
+          }
+          line = line.slice(1,)
+        }
+        digits[0] * 10, digits[1]
+      }
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual([10, 2, 30, 8, 10, 5, 70, 7]);
+  });
+
+  it.todo("flat map list impl", () => {
+    const input = `
+      flat_map := fn list, mapper {
+        reduce list (fn acc, item -> (...acc, ...mapper item)) (fn first, second -> (...first, ...second)) ()
+      }
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual(1);
+  });
+
+  it.todo("reduce list", () => {
+    const input = `
+      import "std/concurrency" as { all }
+      import "std/math" as { floor }
+
+      reduce := fn list, reducer, merge, initial {
+        if list.length == 0 do return initial
+
+        midpoint := floor(list.length / 2)
+        item := list[midpoint]
+        first, second := all(
+          | (self (list.slice(0, midpoint)) reducer merge initial)
+          | (self (list.slice(midpoint + 1,)) reducer merge initial)
+        )
+
+        merge (reducer first item) second
+      };
+
+      reduce (1, 2, 3, 4, 5) (fn acc, item -> acc + item) (fn first, second -> first + second) 0
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toBe(15);
+  });
+
+  it.todo("filter list impl", () => {
+    const input = `
+      predicate := true
+      first := ()
+      item := 1
+      acc := ()
+      if predicate do (...first, item) else acc
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toStrictEqual([1]);
+  });
+
+  describe("split list", () => {
+    it.todo("5", () => {
+      const input = `
+        fn (mut list, mut start = 0, mut end = (list.length)) {
+          {
+            start--
+            end--
+            _, ...list = list
+          }
+            
+          list, start, end
+        } ((6,5,4,3,2,1), 4, 6)`;
+      const { bytecode, result } = runProgram(input);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual([[5, 4, 3, 2, 1], 3, 5]);
+    });
+
+    it.todo("4", () => {
+      const input = `
+        fn (mut list, mut start = 0, mut end = (list.length)) {
+          {
+            start--
+            end--
+            _, ...list = list
+          }
+            
+          list, start, end
+        } ((6,5,4,3,2,1), 4)`;
+      const { bytecode, result } = runProgram(input);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual([[5, 4, 3, 2, 1], 3, 5]);
+    });
+
+    it.todo("3", () => {
+      const input = `
+        fn (mut list, mut start = 0, mut end = (list.length)) {
+          start--
+          end--
+          _, ...list = list
+            
+          list, start, end
+        } ((6,5,4,3,2,1), 4)`;
+      const { bytecode, result } = runProgram(input);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual([[5, 4, 3, 2, 1], 3, 5]);
+    });
+
+    it.todo("7", () => {
+      const input = `
+        fn (mut list, mut start = 0, mut end = (list.length)) {
+          start--
+          end--
+            
+          start, end
+        } ((6,5,4,3,2,1), 4)`;
+      const { bytecode, result } = runProgram(input);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual([3, 5]);
+    });
+
+    it.todo("0", () => {
+      const input = `
+        fn (mut list, mut start = 0, mut end = (list.length)) {
+          start--
+          end--
+          _, ...list = list
+            
+          list, start, end
+        } ((6,5,4,3,2,1), 4, 6)`;
+      const { bytecode, result } = runProgram(input);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual([[5, 4, 3, 2, 1], 3, 5]);
+    });
+
+    it.todo("2", () => {
+      const input = `
+        fn (mut list, mut start = 0, mut end = (list.length)) {
+          while start != 0 {
+            start--
+            end--
+            _, ...list = list
+            break()
+          }
+
+          while end != list.length {
+            ...list, _ = list
+            break()
+          }
+
+          list, start, end
+        } ((6,5,4,3,2,1), 4)`;
+      const { bytecode, result } = runProgram(input);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual([[5, 4, 3, 2, 1], 3, 5]);
+    });
+
+    it.todo("6", () => {
+      const input = `
+        fn (mut list, mut start = 0, mut end = (list.length)) {
+          while start != 0 {
+            start--
+            end--
+            _, ...list = list
+            break()
+          }
+
+          while end != list.length {
+            ...list, _ = list
+            break()
+          }
+
+          list, start, end
+        } ((6,5,4,3,2,1), 4, 6)`;
+      const { bytecode, result } = runProgram(input);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual([[5, 4, 3, 2, 1], 3, 5]);
+    });
+  });
+});
+
 describe("scope", () => {
-  it.todo("and rhs creates scope", async () => {
+  it.todo("block shadowing", () => {
     const input = `
+      x := 1;
+      { x := 2 };
+      x
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual(1);
+  });
+
+  it.todo("loop shadowing", () => {
+    const input = `
+      x := 1
+      loop { x := 2; break() }
+      x
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual(1);
+  });
+
+  it.todo("fn concurrent", () => {
+    const input = `
+      import "std/concurrency" as { all }
+      x := fn (a, b) do a + b
+      all(x(1, 2) | x(3, 4))
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual([3, 7]);
+  });
+
+  it.todo("while block shadowing", () => {
+    const input = `
+      number := 1
+
+      while true {
+        number := 5
+        break()
+      }
+
+      number
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual(1);
+  });
+
+  it.todo("for block shadowing", () => {
+    const input = `
+      number := 1;
+
+      for x in 1, 2, 3 {
+        number := 5;
+        break()
+      };
+
+      number
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual(1);
+  });
+
+  it.todo("block assign", async () => {
+    const input = `
+      mut n := 1;
+      { n = 5 };
+      n
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual(5);
+  });
+
+  it.todo("block increment", async () => {
+    const input = `
+      mut n := 1;
+      { n += 5 };
+      n
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual(6);
+  });
+
+  it.todo("effect handlers inject scoping", () => {
+    const input = `
+      x := 1;
+      inject a: 1, b: 2 {
         x := 2;
-        true and (x := 1);
-        x
-      `;
+      };
+      x
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual(1);
+  });
+
+  it.todo("declaration shadowing and closures", () => {
+    const input = `
+      x := 1
+      f := fn do x
+      x := 2
+      f()
+    `;
+    const { bytecode, result } = runProgram(input);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual(1);
+  });
+
+  it.todo("and rhs creates scope", () => {
+    const input = `
+      x := 2;
+      true and (x := 1);
+      x
+    `;
     const { bytecode, result } = runProgram(input);
     expect(bytecode).toMatchSnapshot();
     expect(result).toBe(2);
   });
 
-  it.todo("or rhs creates scope", async () => {
+  it.todo("or rhs creates scope", () => {
     const input = `
-        x := 2;
-        false or (x := 1);
-        x
-      `;
+      x := 2;
+      false or (x := 1);
+      x
+    `;
     const { bytecode, result } = runProgram(input);
     expect(bytecode).toMatchSnapshot();
     expect(result).toBe(2);
   });
 
-  it.todo("is binds in local expression scope", async () => {
+  it.todo("is binds in local expression scope", () => {
     const input = `
-        x := 2;
-        1 is x;
-        x
-      `;
+      x := 2;
+      1 is x;
+      x
+    `;
     const { bytecode, result } = runProgram(input);
     expect(bytecode).toMatchSnapshot();
     expect(result).toBe(2);
@@ -195,126 +571,35 @@ describe("expressions", () => {
     //     });
   });
 
-  // TODO: translate these tests into vm tests
-  // describe("function expressions", () => {
-  //   it("function block body", () => testCase(`fn x, y { x + y }`));
-  //   it("function multiple params", () => testCase(`fn x, y -> x + y`));
-  //   it("fn no parameters", () => testCase(`fn -> 123`));
-  //   it("fn no parameters block", () => testCase(`fn { 123 }`));
-  //   it("arrow function", () => testCase(`x -> x`));
-  //   it("arrow function with parameter type", () => testCase(`x: number -> x`));
-  //   it("fn increment", () => testCase(`fn -> line_handled_count++`));
-  //   it("function with return type", () => testCase(`fn x, y -> number { x + y }`));
-  //   it("function with parameter types", () => testCase(`fn (x: number, y: string) -> number { x + y }`));
-  //   it("named function", () => testCase(`fn sum(x: number, y: number) -> number { x + y }`));
-  //   it("function with placeholder arg", () => testCase(`_ -> #0`));
-  //   it("function with no arg", () => testCase(`fn -> #0`));
-  //   it("function with shadowed name access", () => testCase(`fn a -> fn a -> #a`));
-  //   it("function with deep shadowed name access", () => testCase(`fn a -> fn a -> fn a -> ##a`));
-  //   it("function with deep shadowed name access", () => testCase(`fn a -> fn a -> fn a -> ##a`));
-  //   it("function with named params from local scope expression", () => testCase(`%x + %y / %x`));
-  //   it.todo("function with unnamed params from local scope expression", () => testCase(`%1 + %2 / %1`));
-  //   it.todo("function with mixed params from local scope expression", () => testCase(`%1 + %x / %1`));
-
-  //   describe("application", () => {
-  //     it("function call", () => testCase(`f x`));
-  //     it("function call multiple args", () => testCase(`f x y`));
-  //     it("function call param with field", () => testCase(`f x.y`));
-  //     it("send((1+2), 3)", () => testCase(`send((1+2), 3)`));
-  //     it("send(2, 3)", () => testCase(`send(2, 3)`));
-  //     it("(send)(2, 3)", () => testCase(`(send)(2, 3)`));
-  //     it("(send 1)(2, 3)", () => testCase(`(send 1)(2, 3)`));
-  //     it("(send 1 2)(2, 3)", () => testCase(`(send 1 2)(2, 3)`));
-  //     it("send 1 + 2", () => testCase(`send 1 + 2`));
-  //     it("a + send (2, 3)", () => testCase(`a + send (2, 3)`));
-  //     it("send a (2, 3)", () => testCase(`send a (2, 3)`));
-  //     it("send 1 (2, 3)", () => testCase(`send 1 (2, 3)`));
-  //     it("a + send 1 + 2", () => testCase(`a + send 1 + 2`));
-  //     it("methods chaining", () => testCase(`math.floor(1).multiply(2)`));
-  //     it("function as last arg", () => testCase(`open "file" file -> write file "yolo"`));
-  //     it("block as last arg", () => testCase(`open "file" { write "yolo" }`));
-  //     it("pipe", () => testCase(`1 |> fn x { x + 1 } |> fn y { y * 2 }`));
-  //   });
-
-  //   describe("delimited application", () => {
-  //     it("delimited args", () => testCase(`f(x, y)`));
-  //     it("named args", () => testCase(`f(x: 1, 3, y: 2)`));
-  //     it("placeholder arg", () => testCase(`f(_, y)`));
-  //     it("placeholder args", () => testCase(`f(_, y, _)`));
-  //     it("spread args", () => testCase(`f(...x, y)`));
-  //   });
-
-  //   describe("function forms", () => {
-  //     it("immediate form", () => testCase(`fn: x; y`));
-  //     it("block form", () => testCase(`fn { x }`));
-  //     it("rest form", () => testCase(`fn -> x; y`));
-  //   });
-  // });
-  /* 
-  
-    describe("function expressions", () => {
-      it("fn increment", async () => {
-        const input = `
-          mut line_handled_count := 0
-          inc := fn do line_handled_count++
-          inc()
-          line_handled_count
-        `;
-        const result = await evaluate(input);
-        expect(result).toBe(1);
-      });
-  
-      it("immediately invoked function expression (iife)", async () => {
-        const input = `(fn x -> x) 1`;
-        const result = await evaluate(input);
-        expect(result).toBe(1);
-      });
-  
-      it("return from function", async () => {
-        const input = `(fn x -> { return (x + 1); x }) 1`;
-        const result = await evaluate(input);
-        expect(result).toBe(2);
-      });
-  
-      it("function call multiple args", async () => {
-        const input = `(fn x, y -> x + y) 1 2`;
-        const result = await evaluate(input);
-        expect(result).toBe(3);
-      });
-  
-      it("pipe", async () => {
-        const input = `1 |> fn x { x + 1 } |> fn y { y * 2 }`;
-        const result = await evaluate(input);
-        expect(result).toBe(4);
-      });
-  
-      it.todo("function with shadowed name access", async () => {
-        const input = `(fn a -> fn a -> #a) 1 2`;
-        const result = await evaluate(input);
-        expect(result).toBe(1);
-      });
-  
-      it.todo("function with deep shadowed name access", async () => {
-        const input = `(fn a -> fn a -> fn a -> ##a) 1 2 3`;
-        const result = await evaluate(input);
-        expect(result).toBe(1);
-      });
-  
-      it.todo("iife id", async() => {
-        const input = `(macro -> eval #0)()`;
-        const result = await evaluate(input);
-        expect(result).toBe(1);
-      });
-  
-      it.todo("function with no arg", async () => {
-        const input = `(fn -> #0) 1`;
-        const result = await evaluate(input);
-        expect(result).toBe(1);
-      });
-    });
-  */
-
   describe("function expressions", () => {
+    it.todo("function with shadowed name access", () => {
+      const input = `(fn a -> fn a -> #a) 1 2`;
+      const { bytecode, result } = runProgram(input);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(1);
+    });
+
+    it.todo("function with deep shadowed name access", () => {
+      const input = `(fn a -> fn a -> fn a -> ##a) 1 2 3`;
+      const { bytecode, result } = runProgram(input);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(1);
+    });
+
+    it.todo("iife id", () => {
+      const input = `(macro -> eval #0)()`;
+      const { bytecode, result } = runProgram(input);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(1);
+    });
+
+    it.todo("function with no arg", () => {
+      const input = `(fn -> #0) 1`;
+      const { bytecode, result } = runProgram(input);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(1);
+    });
+
     it.todo("fn no parameters", () => {
       const { bytecode, result } = runProgram("(fn -> 123) 0");
       expect(bytecode).toMatchSnapshot();
@@ -331,6 +616,18 @@ describe("expressions", () => {
         line_handled_count
       `;
       const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(1);
+    });
+
+    it.todo("fn increment 2", () => {
+      const input = `
+        mut line_handled_count := 0
+        inc := fn: line_handled_count++
+        inc()
+        line_handled_count
+      `;
+      const { bytecode, result } = runProgram(input);
       expect(bytecode).toMatchSnapshot();
       expect(result).toBe(1);
     });
@@ -357,6 +654,55 @@ describe("expressions", () => {
       const { bytecode, result } = runProgram("1 |> fn x { x + 1 } |> fn y { y * 2 }");
       expect(bytecode).toMatchSnapshot();
       expect(result).toBe(4);
+    });
+
+    // TODO: translate into vm tests
+    //   it("function with named params from local scope expression", () => testCase(`%x + %y / %x`));
+    //   it.todo("function with unnamed params from local scope expression", () => testCase(`%1 + %2 / %1`));
+    //   it.todo("function with mixed params from local scope expression", () => testCase(`%1 + %x / %1`));
+
+    //   describe("application", () => {
+    //     it("methods chaining", () => testCase(`math.floor(1).multiply(2)`));
+    //     it("function as last arg", () => testCase(`open "file" file -> write file "yolo"`));
+    //     it("block as last arg", () => testCase(`open "file" { write "yolo" }`));
+    //   });
+
+    describe.todo("delimited application", () => {
+      it("delimited args", () => {
+        const { bytecode, result } = runProgram(`f:=fn x, y { x + y }; f(1, 2)`);
+        expect(bytecode).toMatchSnapshot();
+        expect(result).toBe(4);
+      });
+
+      it("named args", () => {
+        const { bytecode, result } = runProgram(`f:=fn x, y, z { x + y + z }; f(x: 1, 3, y: 2)`);
+        expect(bytecode).toMatchSnapshot();
+        expect(result).toBe(4);
+      });
+
+      it("placeholder arg", () => {
+        const { bytecode, result } = runProgram(`f:=fn x, y { x + y }; f(_, 1) 2`);
+        expect(bytecode).toMatchSnapshot();
+        expect(result).toBe(4);
+      });
+
+      it("placeholder args", () => {
+        const { bytecode, result } = runProgram(`f:=fn x, y, z { x + y + z }; f(_, 1, _) 2 3`);
+        expect(bytecode).toMatchSnapshot();
+        expect(result).toBe(4);
+      });
+
+      it("spread args", () => {
+        const { bytecode, result } = runProgram(`f:=fn x, y, z { x + y + z }; x:=1,2; f(3, ...x)`);
+        expect(bytecode).toMatchSnapshot();
+        expect(result).toBe(4);
+      });
+
+      it("spread args 2", () => {
+        const { bytecode, result } = runProgram(`f:=fn x, y, z { x + y + z }; x:=1,2; f(...x, 3)`);
+        expect(bytecode).toMatchSnapshot();
+        expect(result).toBe(4);
+      });
     });
   });
 
