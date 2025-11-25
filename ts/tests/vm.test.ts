@@ -1181,3 +1181,90 @@ describe("effect handlers", () => {
     expect(result).toEqual({ tuple: [123, 456] });
   });
 });
+
+describe("modules", () => {
+  describe("import", () => {
+    it.todo("import declaration");
+    it.todo("import project absolute");
+    it.todo("import project relative");
+    it.todo("import project root");
+    it.todo("import project file");
+    it.todo("import with external");
+    it.todo("import script");
+    it.todo("import interop with other language");
+    it.todo("dynamic import");
+    it.todo("modules import as singletons");
+  });
+
+  describe("declarations", () => {
+    it.todo("private declaration");
+    it.todo("export declaration");
+    it.todo("export default");
+    it.todo("external declaration");
+  });
+
+  describe("traits", () => {
+    it.todo("declaration");
+    it.todo("declaration with selector");
+    it.todo("implementation");
+    it.todo("implementation with default");
+  });
+
+  describe("annotations", () => {
+    it.todo("declaration");
+    it.todo("implementation");
+    it.todo("implementation with default");
+  });
+
+  describe("types", () => {
+    it.todo("declaration");
+    it.todo("usage");
+  });
+
+  describe("functions", () => {
+    it.todo("declaration");
+    it.todo("usage");
+    it.todo("indirect recursion");
+  });
+
+  describe("variables", () => {
+    it.todo("variable declaration");
+    it.todo("constant declaration");
+  });
+
+  describe("compile-time", () => {
+    it.todo("compile-time expression");
+  });
+
+  describe("reflection", () => {
+    it.todo("reflection");
+  });
+
+  describe("classes", () => {
+    it.todo("class declaration");
+    it.todo("class usage");
+    it.todo("class method");
+    it.todo("class field");
+    it.todo("class static field");
+    it.todo("class static method");
+    it.todo("class constructor");
+  });
+
+  describe("actors", () => {
+    it.todo("actor declaration");
+    it.todo("actor usage");
+    it.todo("actor method");
+    it.todo("actor field");
+    it.todo("actor static field");
+    it.todo("actor static method");
+    it.todo("actor constructor");
+  });
+
+  describe("operator declarations", () => {
+    it.todo("operator declaration");
+  });
+});
+
+describe("reactivity", () => {
+  it.todo("reactive declaration");
+});
