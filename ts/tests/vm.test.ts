@@ -775,6 +775,19 @@ describe("expressions", () => {
       expect(result).toBe(123);
     });
 
+    it.todo("while loop increments until condition", () => {
+      const program = `
+        mut x := 0;
+        while x < 3 {
+          x = x + 1;
+        };
+        x
+      `;
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(3);
+    });
+
     it("while loop with break returns value", () => {
       const program = `
         mut x := 0;
@@ -820,6 +833,23 @@ describe("expressions", () => {
       const { bytecode, result } = runProgram("mut x := 0; y := x++; x, y");
       expect(bytecode).toMatchSnapshot();
       expect(result).toEqual({ tuple: [1, 0] });
+    });
+  // TODO: make tests actually run the program and check errors
+  describe("null semantics", () => {
+    it.todo("prints warning on evaluating to null anything", () => {
+      const program = `x := {}`;
+    });
+
+    it.todo("no warning on evaluating to null when explicit", () => {
+      const program = `void 1`;
+    });
+
+    it.todo("no warning on evaluating to null when explicit 2", () => {
+      const program = `void {}`;
+    });
+
+    it.todo('error on evaluating to null when given "strict" vm flag', () => {
+      const program = `void {}`;
     });
   });
 
