@@ -6100,6 +6100,33 @@ exports[`expressions > structured programming > while loop with break returns va
 }
 `;
 
+exports[`expressions > symbols > atoms equality is by name 1`] = `
+{
+  "main": [
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > symbols > creates a named symbol 1`] = `
 {
   "main": [
@@ -6119,7 +6146,7 @@ exports[`expressions > symbols > creates a named symbol 1`] = `
 }
 `;
 
-exports[`expressions > symbols > symbol equality is by identity, atoms are by name 1`] = `
+exports[`expressions > symbols > symbol equality is by identity 1`] = `
 {
   "main": [
     {
