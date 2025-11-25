@@ -29,6 +29,12 @@ const runProgram = (program: string | Program, options: Partial<ConstructorParam
   return { bytecode, result, vm };
 };
 
+const testCase = (input: string, expected: unknown) => {
+  const { bytecode, result } = runProgram(input);
+  expect(bytecode).toMatchSnapshot();
+  expect(result).toBe(expected);
+};
+
 describe("advent of code 2023 day 1 single", () => {
   it.todo("variable", () => {
     const input = `
@@ -397,7 +403,7 @@ describe("scope", () => {
   it.todo("declaration shadowing and closures", () => {
     const input = `
       x := 1
-      f := fn do x
+      f := fn: x
       x := 2
       f()
     `;
@@ -571,6 +577,62 @@ describe("expressions", () => {
     //     });
   });
 
+  describe("pattern matching", () => {
+    it.todo("matches record pattern", () => {
+      const { bytecode, result } = runProgram("record { a: 1, b: 2 } is { a, b }");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(true);
+    });
+
+    it.todo("matches record pattern with rename", () => {
+      const { bytecode, result } = runProgram("record { a: 1, b: 2} is { a: c, b }");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(true);
+    });
+
+    it.todo("matches tuple pattern", () => {
+      const { bytecode, result } = runProgram("(1, 2) is (a, b)");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(true);
+    });
+
+    it.todo("matches rest pattern", () => {
+      const { bytecode, result } = runProgram("(1, 2, 3) is (a, ...b)");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(true);
+    });
+
+    it.todo("matches defaulted pattern", () => {
+      const { bytecode, result } = runProgram("(2,) is (a, b = 4)");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(true);
+    });
+
+    it("with 'is' operator", () => {
+      const { bytecode, result } = runProgram("1 is x");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(true);
+    });
+
+    it("with placeholder", () => {
+      const { bytecode, result } = runProgram("1 is _");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(true);
+    });
+
+    it("with constant value matches", () => {
+      const { bytecode, result } = runProgram("1 is 1");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(true);
+    });
+
+    it("with constant value does not match", () => {
+      const { bytecode, result } = runProgram("1 is 2");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(false);
+    });
+  });
+
   describe("function expressions", () => {
     it.todo("function with shadowed name access", () => {
       const input = `(fn a -> fn a -> #a) 1 2`;
@@ -657,15 +719,10 @@ describe("expressions", () => {
     });
 
     // TODO: translate into vm tests
-    //   it("function with named params from local scope expression", () => testCase(`%x + %y / %x`));
-    //   it.todo("function with unnamed params from local scope expression", () => testCase(`%1 + %2 / %1`));
-    //   it.todo("function with mixed params from local scope expression", () => testCase(`%1 + %x / %1`));
-
-    //   describe("application", () => {
-    //     it("methods chaining", () => testCase(`math.floor(1).multiply(2)`));
-    //     it("function as last arg", () => testCase(`open "file" file -> write file "yolo"`));
-    //     it("block as last arg", () => testCase(`open "file" { write "yolo" }`));
-    //   });
+    // it("function with named params from local scope expression", () => testCase(`%x + %y / %x`));
+    // it.todo("function with unnamed params from local scope expression", () => testCase(`%1 + %2 / %1`));
+    // it.todo("function with mixed params from local scope expression", () => testCase(`%1 + %x / %1`));
+    // it.todo("methods chaining", () => testCase(`math.floor(1).pow(2)`));
 
     describe.todo("delimited application", () => {
       it("delimited args", () => {
@@ -834,6 +891,59 @@ describe("expressions", () => {
       expect(bytecode).toMatchSnapshot();
       expect(result).toEqual({ tuple: [1, 0] });
     });
+
+    it("sequencing returns last expression", () => {
+      const { bytecode, result } = runProgram("123; 234; 345; 456");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(456);
+    });
+  });
+
+  describe("data structures", () => {
+    it.todo("set literal", () => {
+      const { bytecode, result } = runProgram("set(1, 2, 2).values()");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual({ tuple: [1, 2] });
+    });
+
+    it.todo("field access", () => {
+      const { bytecode, result } = runProgram("r := record { a: 1, b: 2 }; r.a");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(1);
+    });
+
+    it.todo("field assignment", () => {
+      const program = `
+        mut x := record { a: 1, b: 2 };
+        x.a = 3;
+        x
+      `;
+      const { bytecode, result } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual({ record: { "atom:a": 3, "atom:b": 2 } });
+    });
+
+    it.todo("unit literal");
+
+    it("tuple literal", () => {
+      const { bytecode, result } = runProgram("(1, 2)");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual({ tuple: [1, 2] });
+    });
+
+    it("record literal", () => {
+      const { bytecode, result } = runProgram("a: 1, b: 2");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual({ record: { "atom:a": 1, "atom:b": 2 } });
+    });
+
+    it("record with computed keys", () => {
+      const { bytecode, result } = runProgram("[1]: 2, [3]: 4");
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toEqual({ record: { "1": 2, "3": 4 } });
+    });
+  });
+
   // TODO: make tests actually run the program and check errors
   describe("null semantics", () => {
     it.todo("prints warning on evaluating to null anything", () => {
@@ -995,5 +1105,79 @@ describe("vm2 integration", () => {
     expect(result).toBe(3);
     expect(logSpy).toHaveBeenCalledWith(3);
     logSpy.mockRestore();
+  });
+});
+
+describe("concurrent programming", () => {
+  it.todo("parallel all", () => {
+    const program = `
+      import "std/concurrency" as { all };
+      all(1 | 2)
+    `;
+    const { bytecode, result } = runProgram(program);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual({ tuple: [1, 2] });
+  });
+
+  it.todo("channel send receive", () => {
+    const { bytecode, result } = runProgram('c := channel "test"; async c <- 123; <- c');
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toBe(123);
+  });
+
+  it.todo("await async", () => {
+    const { bytecode, result } = runProgram("f := fn x do x + 1; await async f 1");
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toBe(2);
+  });
+
+  it.todo("select channels", () => {
+    const { bytecode, result } = runProgram(
+      'c1 := channel "c1"; c2 := channel "c2"; async c1 <- 123; async c2 <- 456; <- c2 + c1'
+    );
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toBe(123);
+  });
+});
+
+describe("effect handlers", () => {
+  it.todo("inject basic handler", () => {
+    const program = `
+      inject record { a: 1, b: 2 } ->
+      handle (:a) (), handle (:b) ()
+    `;
+    const { bytecode, result } = runProgram(program);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual({ tuple: [1, 2] });
+  });
+
+  it.todo("mask handler", () => {
+    const program = `
+      inject record { a: 1, b: 2 } ->
+      mask :a ->
+      handle (:a) (), handle (:b) ()
+    `;
+    const { bytecode, result } = runProgram(program);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual({ tuple: [1, 2] });
+  });
+
+  it.todo("handler with continuation", () => {
+    const program = `
+      decide := :decide |> handle
+      _handler := record {
+        decide: handler fn (callback, value) {
+          x1 := callback true
+          x2 := callback false
+          x1, x2
+        }
+      }
+
+      inject _handler ->
+      if decide() do 123 else 456
+    `;
+    const { bytecode, result } = runProgram(program);
+    expect(bytecode).toMatchSnapshot();
+    expect(result).toEqual({ tuple: [123, 456] });
   });
 });

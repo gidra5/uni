@@ -441,6 +441,94 @@ exports[`expressions > boolean expressions > or short-circuit 1`] = `
 }
 `;
 
+exports[`expressions > data structures > record literal 1`] = `
+{
+  "main": [
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > data structures > record with computed keys 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "arg1": 4,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > data structures > tuple literal 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > function expressions > fn increment 1`] = `
 {
   "fn_54": [
@@ -4636,6 +4724,156 @@ exports[`expressions > memory ops > free removes stored value 1`] = `
 }
 `;
 
+exports[`expressions > pattern matching > with 'is' operator 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_9",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_9",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > pattern matching > with constant value does not match 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_9",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_9",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > pattern matching > with constant value matches 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_9",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_9",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > pattern matching > with placeholder 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_9",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > structured programming > block returns last expression 1`] = `
 {
   "main": [
@@ -5473,6 +5711,32 @@ exports[`expressions > structured programming > post increment returns old value
     {
       "arg1": 2,
       "code": "Tuple",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > sequencing returns last expression 1`] = `
+{
+  "main": [
+    {
+      "arg1": 123,
+      "code": "Const",
+    },
+    {
+      "arg1": 234,
+      "code": "Const",
+    },
+    {
+      "arg1": 345,
+      "code": "Const",
+    },
+    {
+      "arg1": 456,
+      "code": "Const",
     },
     {
       "code": "Return",
