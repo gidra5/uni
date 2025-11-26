@@ -5228,6 +5228,105 @@ exports[`expressions > function expressions > function with deep shadowed name a
 }
 `;
 
+exports[`expressions > function expressions > function with named params from local scope expression 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "data": {},
+                  "type": "implicit_placeholder",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "x",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "type": "%",
+            },
+          ],
+          "data": {
+            "cause": [Error: infix/postfix operator in prefix position],
+          },
+          "type": "error",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "type": "implicit_placeholder",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "y",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {},
+                  "type": "%",
+                },
+              ],
+              "data": {
+                "cause": [Error: infix/postfix operator in prefix position],
+              },
+              "type": "error",
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {},
+                      "type": "implicit_placeholder",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "x",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {},
+                  "type": "%",
+                },
+              ],
+              "data": {
+                "cause": [Error: infix/postfix operator in prefix position],
+              },
+              "type": "error",
+            },
+          ],
+          "data": {},
+          "type": "/",
+        },
+      ],
+      "data": {},
+      "type": "add",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`expressions > function expressions > function with no arg 1`] = `
 {
   "children": [
@@ -7965,41 +8064,6 @@ exports[`pattern matching > set-theoretic patterns > pattern union 1`] = `
 }
 `;
 
-exports[`pattern matching > typeof value is type 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [
-            {
-              "children": [],
-              "data": {
-                "value": "x",
-              },
-              "type": "name",
-            },
-          ],
-          "data": {},
-          "type": "typeof",
-        },
-        {
-          "children": [],
-          "data": {
-            "value": "number",
-          },
-          "type": "name",
-        },
-      ],
-      "data": {},
-      "type": "==",
-    },
-  ],
-  "data": {},
-  "type": "script",
-}
-`;
-
 exports[`pattern matching > value is of type 1`] = `
 {
   "children": [
@@ -10136,6 +10200,41 @@ exports[`types > typeof 1`] = `
       ],
       "data": {},
       "type": "typeof",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
+exports[`types > typeof value is type 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {
+                "value": "x",
+              },
+              "type": "name",
+            },
+          ],
+          "data": {},
+          "type": "typeof",
+        },
+        {
+          "children": [],
+          "data": {
+            "value": "number",
+          },
+          "type": "name",
+        },
+      ],
+      "data": {},
+      "type": "==",
     },
   ],
   "data": {},
