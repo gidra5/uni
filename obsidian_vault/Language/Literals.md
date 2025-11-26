@@ -85,3 +85,4 @@ Sequence of characters spanning multiple lines
 https://www.reddit.com/r/ProgrammingLanguages/comments/932372/how_to_implement_string_interpolation/
 
 https://www.reddit.com/r/ProgrammingLanguages/s/9cv8qVIIxQ
+https://chatgpt.com/c/69249a31-03ec-832e-8df6-12f13ecf47e6

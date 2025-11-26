@@ -335,3 +335,5 @@ export const loop = (body: Tree, position?: Position) => node(NodeType.LOOP, { c
 export const ifElse = (condition: Tree, ifTrue: Tree, ifFalse: Tree, position?: Position) =>
   node(NodeType.IF_ELSE, { children: [condition, ifTrue, ifFalse], position });
 export const application = (fn: Tree, arg: Tree) => node(NodeType.APPLICATION, { children: [fn, arg] });
+
+// TODO: add ast node arbitrary

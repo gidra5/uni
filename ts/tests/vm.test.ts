@@ -307,27 +307,8 @@ describe("advent of code 2023 day 1 single", () => {
 });
 
 describe("scope", () => {
-  it.todo("block shadowing", () =>
-    testCase(
-      `
-        x := 1;
-        { x := 2 };
-        x
-      `,
-      1
-    )
-  );
-
-  it.todo("loop shadowing", () =>
-    testCase(
-      `
-        x := 1
-        loop { x := 2; break() }
-        x
-      `,
-      1
-    )
-  );
+  it.todo("block shadowing", () => testCase(`x := 1; { x := 2 }; x`, 1));
+  it.todo("loop shadowing", () => testCase(`x := 1; loop { x := 2; break() }; x`, 1));
 
   it.todo("fn concurrent", () =>
     testCase(
@@ -372,27 +353,9 @@ describe("scope", () => {
     )
   );
 
-  it.todo("block assign", () =>
-    testCase(
-      `
-        mut n := 1;
-        { n = 5 };
-        n
-      `,
-      5
-    )
-  );
+  it.todo("block assign", () => testCase(`mut n := 1; { n = 5 }; n`, 5));
 
-  it.todo("block increment", () =>
-    testCase(
-      `
-        mut n := 1;
-        { n += 5 };
-        n
-      `,
-      6
-    )
-  );
+  it.todo("block increment", () => testCase(`mut n := 1; { n += 5 }; n`, 6));
 
   it.todo("effect handlers inject scoping", () =>
     testCase(
@@ -407,50 +370,13 @@ describe("scope", () => {
     )
   );
 
-  it.todo("declaration shadowing and closures", () =>
-    testCase(
-      `
-        x := 1
-        f := fn: x
-        x := 2
-        f()
-      `,
-      1
-    )
-  );
+  it.todo("declaration shadowing and closures", () => testCase(`x := 1; f := fn: x; x := 2; f()`, 1));
 
-  it.todo("and rhs creates scope", () =>
-    testCase(
-      `
-        x := 2;
-        true and (x := 1);
-        x
-      `,
-      2
-    )
-  );
+  it.todo("and rhs creates scope", () => testCase(`x := 2; true and (x := 1); x`, 2));
 
-  it.todo("or rhs creates scope", () =>
-    testCase(
-      `
-        x := 2;
-        false or (x := 1);
-        x
-      `,
-      2
-    )
-  );
+  it.todo("or rhs creates scope", () => testCase(`x := 2; false or (x := 1); x`, 2));
 
-  it.todo("is binds in local expression scope", () =>
-    testCase(
-      `
-        x := 2;
-        1 is x;
-        x
-      `,
-      2
-    )
-  );
+  it.todo("is binds in local expression scope", () => testCase(`x := 2; 1 is x; x`, 2));
 });
 
 describe("expressions", () => {
@@ -606,16 +532,26 @@ describe("expressions", () => {
 
     it("empty block returns null", () => testCase("{}", null));
 
-    it("label break returns value", () =>
+    it("label break returns value", () => testCase(`label::{ label.break 1; 2 }`, 1));
+
+    it.todo("label loop if-then", () =>
       testCase(
         `
-          label::{
-            label.break 1;
-            2
+          mut x := 4 
+          mut res := () 
+          block::{
+            if x <= 0 { res = ...res, x; block.break res }
+            else {
+              y := x--
+              if y == 2 { res = ...res, 69; block.continue() }
+              res = ...res, y
+            }
+            block.continue()
           }
         `,
-        1
-      ));
+        { tuple: [4, 3, 69, 1, 0] }
+      )
+    );
 
     it("label continue loops until break", () =>
       testCase(
@@ -653,6 +589,28 @@ describe("expressions", () => {
       )
     );
 
+    it.todo("while loop continue", () =>
+      testCase(
+        `
+          mut x := 0;
+          mut y := ();
+          while x < 3 {
+            x++;
+            if x == 1: continue();
+            y = ...y, x
+          };
+          x, y
+        `,
+        { tuple: [3, { tuple: [2, 3] }] }
+      )
+    );
+
+    // TODO: does it make sense?
+    // it.todo("while loop break", () => testCase(`while true: break _`, null));
+
+    it.todo("while loop break value", () => testCase(`while true do break 1`, 1));
+    it.todo("while loop", () => testCase(`mut x := 0; while x < 10 do x++; x`, 10));
+
     it("while loop with break returns value", () =>
       testCase(
         `
@@ -682,12 +640,17 @@ describe("expressions", () => {
 
     it("loop break yields value", () => testCase("loop { break 42 }", 42));
 
+    it("for loop", () => testCase("for n in (1, 2, 3): n", { tuple: [1, 2, 3] }));
     it("for loop maps values", () => testCase("for n in (1, 2, 3): n * 2", { tuple: [2, 4, 6] }));
+    it("for loop filter", () => testCase("for x in (1, 2, 3): if x > 1: x+1", { tuple: [3, 4] }));
 
     it("post increment returns old value and updates binding", () =>
       testCase("mut x := 0; y := x++; x, y", { tuple: [1, 0] }));
 
     it("sequencing returns last expression", () => testCase("123; 234; 345; 456", 456));
+
+    it.todo("non-strict variable declaration with null", () => testCase(`{ like x := {} }`, null));
+    it.todo("block variable declaration", () => testCase(`{ x := 123; x }`, null));
   });
 
   describe("data structures", () => {

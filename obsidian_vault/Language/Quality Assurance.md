@@ -12,7 +12,7 @@ Given a test program, and a potentially buggy compiler, there are essentially fo
 Common ways to do that:
 1. Snapshot testing with example programs, based on some translated code from other languages, or a solution to some coding task, like Advent of Code days or Project Euler.
 2. Sanity checks that you expect to always be true or false:
-  1. Compiler stages newer throw
+  1. Compiler stages never throw
   2. Data structure invariants are respected
 3. Smaller examples that target specific features like:
   1. scoping
@@ -34,7 +34,8 @@ Common ways to do that:
   * Re-compile the compiler using the compiler "A". Call the result "B".
   * Re-compile the compiler using the compiler "B". Call the result "C".
   * "B" and "C" should, if your compiler is deterministic, be bit-for-bit identical. You should test this before any release.
-9. Mutation testing - verify that the tests detect random unwanted changes. It additionaly fixates the code behavior. The more "mutants" die, the larger logical coverage is for the test suite.
+9. Mutation testing - verify that the tests detect random unwanted changes. It additionaly fixates the code behavior. The more "mutants" die, the better test suite narrows down the implementation. https://chatgpt.com/c/692607b0-a14c-832c-8e35-b7b06c6260d9 https://pitest.org/
+10. Use test coverage tools to look for untested input programs.
 
 Tests should be platform independent - any machine that runs them will see identical results.
 
@@ -44,7 +45,5 @@ https://github.com/smarr/are-we-fast-yet
 https://github.com/sampsyo/flatcalc/blob/c5bbe7bd79f98a3b857f0432d4739a3f4f6241bd/src/main.rs#L118-L136
 
 https://tigerbeetle.com/blog/2023-03-28-random-fuzzy-thoughts
-
-https://pitest.org/
 
 https://www.reddit.com/r/Compilers/s/FPqvGxLIyU
