@@ -276,6 +276,7 @@ describe("expressions", () => {
     it("semicolon at the end", () => testCase(`1;`));
     it("increment", () => testCase(`++x`));
     it("post increment", () => testCase(`x++`));
+    it.todo("try operator", () => testCase(`try f()`));
 
     describe("statement forms", () => {
       it("immediate form", () => testCase(`if true: 123; 456`));

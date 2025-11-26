@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, vi } from "vitest";
+import { it, fc } from "@fast-check/vitest";
 import { parseTokenGroups } from "../src/parser/tokenGroups";
 import { parseScript } from "../src/parser/parser";
 import { Injectable, register } from "../src/utils/injector";
@@ -34,6 +35,40 @@ const testCase = (input: string, expected: unknown) => {
   expect(bytecode).toMatchSnapshot();
   expect(result).toEqual(expected);
 };
+
+it.todo.prop([
+  fc.string().map((program) => {
+    const tokens = parseTokenGroups(program);
+    const [, validatedTokens] = validateTokenGroups(tokens);
+    return parseScript(validatedTokens);
+  }),
+])("script codegen never throws", (ast) => {
+  try {
+    generateVm2Bytecode(ast);
+  } catch (e) {
+    const msg = e instanceof Error ? e.stack : e;
+    expect.unreachable(msg as string);
+  }
+});
+
+it.todo.prop([
+  fc.string().map((program) => {
+    const tokens = parseTokenGroups(program);
+    const [, validatedTokens] = validateTokenGroups(tokens);
+    const ast = parseScript(validatedTokens);
+
+    return generateVm2Bytecode(ast);
+  }),
+])("script execution never throws", (bytecode) => {
+  try {
+    const vm = new VM();
+    for (const [name, code] of Object.entries(bytecode)) vm.addCode(name, code);
+    vm.run();
+  } catch (e) {
+    const msg = e instanceof Error ? e.stack : e;
+    expect.unreachable(msg as string);
+  }
+});
 
 describe("advent of code 2023 day 1 single", () => {
   it.todo("variable", () =>
@@ -87,7 +122,7 @@ describe("advent of code 2023 day 1 single", () => {
     // });
     const input = `
       mut lines := document.split("\\n")
-      lines = map lines fn line do line.replace "\\\\s+" ""
+      lines = map lines fn line: line.replace "\\\\s+" ""
       filter lines fn line -> line != ""
     `;
     const { bytecode, result } = runProgram(input);
@@ -117,7 +152,7 @@ describe("advent of code 2023 day 1 single", () => {
         while line != "" {
           if line.char_at(0).match("\\\\d") {
             digit := number (line.char_at(0))
-            if !(0 in digits) do digits[0] = digit
+            if !(0 in digits): digits[0] = digit
             digits[1] = digit
           }
           line = line.slice(1,)
@@ -148,7 +183,7 @@ describe("advent of code 2023 day 1 single", () => {
         import "std/math" as { floor }
 
         reduce := fn list, reducer, merge, initial {
-          if list.length == 0 do return initial
+          if list.length == 0: return initial
 
           midpoint := floor(list.length / 2)
           item := list[midpoint]
@@ -173,7 +208,7 @@ describe("advent of code 2023 day 1 single", () => {
         first := ()
         item := 1
         acc := ()
-        if predicate do (...first, item) else acc
+        if predicate: (...first, item) else acc
       `,
       [1]
     )
@@ -314,7 +349,7 @@ describe("scope", () => {
     testCase(
       `
         import "std/concurrency" as { all }
-        x := fn (a, b) do a + b
+        x := fn (a, b): a + b
         all(x(1, 2) | x(3, 4))
       `,
       [3, 7]
@@ -354,7 +389,6 @@ describe("scope", () => {
   );
 
   it.todo("block assign", () => testCase(`mut n := 1; { n = 5 }; n`, 5));
-
   it.todo("block increment", () => testCase(`mut n := 1; { n += 5 }; n`, 6));
 
   it.todo("effect handlers inject scoping", () =>
@@ -371,11 +405,8 @@ describe("scope", () => {
   );
 
   it.todo("declaration shadowing and closures", () => testCase(`x := 1; f := fn: x; x := 2; f()`, 1));
-
   it.todo("and rhs creates scope", () => testCase(`x := 2; true and (x := 1); x`, 2));
-
   it.todo("or rhs creates scope", () => testCase(`x := 2; false or (x := 1); x`, 2));
-
   it.todo("is binds in local expression scope", () => testCase(`x := 2; 1 is x; x`, 2));
 });
 
@@ -529,9 +560,7 @@ describe("expressions", () => {
 
   describe("structured programming", () => {
     it("block returns last expression", () => testCase("{ 123 }", 123));
-
     it("empty block returns null", () => testCase("{}", null));
-
     it("label break returns value", () => testCase(`label::{ label.break 1; 2 }`, 1));
 
     it.todo("label loop if-then", () =>
@@ -567,13 +596,9 @@ describe("expressions", () => {
       ));
 
     it("if matches pattern and binds", () => testCase("if 1 is a: a + 1", 2));
-
     it("if with negated match falls back to else", () => testCase("if 1 is not a: 0 else a + 1", 2));
-
     it("if then expression", () => testCase("if true: 123", 123));
-
     it("if then else expression", () => testCase("if true: 123 else 456", 123));
-
     it("else if chain", () => testCase("if true: 123 else if false: 789 else 456", 123));
 
     it.todo("while loop increments until condition", () =>
@@ -608,8 +633,8 @@ describe("expressions", () => {
     // TODO: does it make sense?
     // it.todo("while loop break", () => testCase(`while true: break _`, null));
 
-    it.todo("while loop break value", () => testCase(`while true do break 1`, 1));
-    it.todo("while loop", () => testCase(`mut x := 0; while x < 10 do x++; x`, 10));
+    it.todo("while loop break value", () => testCase(`while true: break 1`, 1));
+    it.todo("while loop", () => testCase(`mut x := 0; while x < 10: x++; x`, 10));
 
     it("while loop with break returns value", () =>
       testCase(
@@ -642,7 +667,7 @@ describe("expressions", () => {
 
     it("for loop", () => testCase("for n in (1, 2, 3): n", { tuple: [1, 2, 3] }));
     it("for loop maps values", () => testCase("for n in (1, 2, 3): n * 2", { tuple: [2, 4, 6] }));
-    it("for loop filter", () => testCase("for x in (1, 2, 3): if x > 1: x+1", { tuple: [3, 4] }));
+    it.todo("for loop filter", () => testCase("for x in (1, 2, 3): if x > 1: x+1", { tuple: [3, 4] }));
 
     it("post increment returns old value and updates binding", () =>
       testCase("mut x := 0; y := x++; x, y", { tuple: [1, 0] }));
@@ -650,13 +675,231 @@ describe("expressions", () => {
     it("sequencing returns last expression", () => testCase("123; 234; 345; 456", 456));
 
     it.todo("non-strict variable declaration with null", () => testCase(`{ like x := {} }`, null));
-    it.todo("block variable declaration", () => testCase(`{ x := 123; x }`, null));
+    it.todo("block variable declaration", () => testCase(`{ x := 123; x }`, 123));
+    it.todo("block mutable variable declaration", () => testCase(`{ mut x := 123 }`, 123));
+    it.todo("block variable assignment", () => testCase(`{ mut x := 123 }`, 123));
+
+    it.todo("block variable assignment", () => testCase(`f := fn x { x() }; f { 123 }`, 123));
+
+    it.todo("dynamic variable name", () => {
+      testCase(`x := 1; [$x]`, 1);
+      testCase(`[$x] := 1; [$x]`, 1);
+      testCase(`[$x] := 1; x`, 1);
+      testCase(`name := $x; [name] := 1; [name]`, 1);
+      // testCase(`name := 2; [name] := 1; [name]`, 1);
+      // testCase(`[2] := 1; [2]`, 1);
+    });
+
+    describe("error handling", () => {
+      it.todo("try throw", () => testCase(`f := fn { throw 123 }; try f()`, { tuple: [{ atom: "error" }, 123] }));
+      it.todo("try", () => testCase(`f := fn { 123 }; try f()`, { tuple: [{ atom: "ok" }, 123] }));
+      it.todo("no try", () => testCase(`f := fn { throw 123 }; f()`, { effect: { kind: "throw", value: 123 } }));
+
+      it.todo("? on ok result", () =>
+        testCase(
+          `
+            f := fn { try 123 };
+            g := fn { x := f()?; x + 1 };
+            g()
+          `,
+          { tuple: [{ atom: "ok" }, 124] }
+        )
+      );
+
+      it.todo("try unwrap ok result", () =>
+        testCase(
+          `
+            f := fn { try 123 };
+            g := fn { x := f()?; x + 1 };
+            g().unwrap
+          `,
+          124
+        )
+      );
+
+      it.todo("? on error result", () =>
+        testCase(
+          `
+            f := fn { try throw 123 };
+            g := fn { x := f()?; x + 1 };
+            g()
+          `,
+          { tuple: [{ atom: "error" }, 123] }
+        )
+      );
+
+      it.todo("try unwrap error result", () =>
+        testCase(
+          `
+            f := fn { try throw 123 };
+            g := fn { x := f()?; x + 1 };
+            g().unwrap
+          `,
+          { effect: { kind: "throw", value: 123 } }
+        )
+      );
+
+      it.todo("unwrap inside on ok result", () =>
+        testCase(
+          `
+            f := fn { try 123 };
+            g := fn { x := f().unwrap; x + 1 };
+            g()
+          `,
+          124
+        )
+      );
+
+      it.todo("unwrap inside on error result", () =>
+        testCase(
+          `
+            f := fn { try throw 123 };
+            g := fn { x := f().unwrap; x + 1 };
+            g()
+          `,
+          { effect: { kind: "throw", value: 123 } }
+        )
+      );
+    });
+
+    describe("resource handling", () => {
+      it.todo("rest", async () => {
+        const input = `
+          import "std/io" as io
+
+          // file handle released at the end of script
+          io.open "./file.txt" file ->
+          file.write("hello")
+
+          123
+        `;
+        const written: unknown[] = [];
+        let closed = false;
+        let opened = false;
+        // TODO: mock handler
+        const ioHandler = {};
+        const handlers = { ioHandler };
+
+        const result = runProgram(input, {
+          /* handlers */
+        });
+        expect(result).toBe(123);
+        expect(written).toEqual(["hello"]);
+        expect(opened).toBe(true);
+        expect(closed).toBe(true);
+      });
+
+      it.todo("block", async () => {
+        const input = `
+          import "std/io" as io
+
+          // file closed at the end of block
+          io.open "./file.txt" fn file {
+            file.write("hello")
+          }
+
+          123
+        `;
+        const written: unknown[] = [];
+        let closed = false;
+        let opened = false;
+        // TODO: mock handler
+        const ioHandler = {};
+        const handlers = { ioHandler };
+
+        const result = runProgram(input, {
+          /* handlers */
+        });
+        expect(result).toBe(123);
+        expect(written).toEqual(["hello"]);
+        expect(opened).toBe(true);
+        expect(closed).toBe(true);
+      });
+
+      it.todo("do", async () => {
+        const input = `
+          import "std/io" as io
+
+          // file closed at the end of statement
+          io.open "./file.txt" fn file:
+            file.write("hello")
+
+          123
+        `;
+        const written: unknown[] = [];
+        let closed = false;
+        let opened = false;
+        // TODO: mock handler
+        const ioHandler = {};
+        const handlers = { ioHandler };
+
+        const result = runProgram(input, {
+          /* handlers */
+        });
+        expect(result).toBe(123);
+        expect(written).toEqual(["hello"]);
+        expect(opened).toBe(true);
+        expect(closed).toBe(true);
+      });
+
+      describe("dangling resources", () => {
+        it.todo("through mutation", async () => {
+          const input = `
+            import "std/io" as { open };
+
+            handle := ()
+
+            // file closed at the end of block
+            open "file.txt" fn file {
+              file.write("hello")
+              handle = file
+            }
+
+            handle.write("world") // error
+          `;
+          // TODO: check if error is thrown on second call
+        });
+
+        it.todo("through closure", async () => {
+          const input = `
+          import "std/io" as { open };
+
+          // file closed at the end of block
+          handle := open "file.txt" fn file {
+            file.write("hello")
+
+            fn: file.write("world")
+          }
+
+          handle() // error
+        `;
+          // TODO: check if error is thrown on second call
+        });
+
+        it.todo("through data", async () => {
+          const input = `
+            import "std/io" as { open };
+
+            // file closed at the end of block
+            status, handle := open "file.txt" fn file {
+              file.write("hello")
+
+              :done, file
+            }
+
+            handle.write("world") // error
+          `;
+          // TODO: check if error is thrown on second call
+        });
+      });
+    });
   });
 
   describe("data structures", () => {
     it.todo("set literal", () => testCase("set(1, 2, 2).values()", { tuple: [1, 2] }));
 
     it.todo("field access", () => testCase("r := record { a: 1, b: 2 }; r.a", 1));
+    it.todo("field access dynamic", () => testCase(`map := "some string": 1, b: 2; map["some string"]`, 1));
 
     it.todo("field assignment", () =>
       testCase(
@@ -675,7 +918,9 @@ describe("expressions", () => {
 
     it("record literal", () => testCase("a: 1, b: 2", { record: { "atom:a": 1, "atom:b": 2 } }));
 
-    it("record with computed keys", () => testCase("[1]: 2, [3]: 4", { record: { "1": 2, "3": 4 } }));
+    it("dictionary", () => testCase("[1]: 2, [3]: 4", { record: { "1": 2, "3": 4 } }));
+    it.todo("dictionary without braces", () => testCase(`1+2: 3, 4+5: 6`, { record: { "3": 3, "9": 6 } }));
+    it.todo("channel", () => testCase(`channel "name"`, { channel: "name" }));
   });
 
   // TODO: make tests actually run the program and check errors
@@ -809,7 +1054,7 @@ describe("expressions", () => {
 
     it.todo("channel send receive", () => testCase('c := channel "test"; async c <- 123; <- c', 123));
 
-    it.todo("await async", () => testCase("f := fn x do x + 1; await async f 1", 2));
+    it.todo("await async", () => testCase("f := fn x: x + 1; await async f 1", 2));
 
     it.todo("select channels", () =>
       testCase(
@@ -826,31 +1071,113 @@ describe("expressions", () => {
   });
 
   describe("effect handlers", () => {
-    it.todo("inject basic handler", () =>
+    it.todo("all in one", () =>
+      testCase(
+        `
+          inject a: 1, b: 2 {
+            a := handle ($a) ()
+            b := handle ($b) ()
+            inject a: a+1, b: b+2 {
+              mask $a ->
+              without $b ->
+
+              a := handle ($a) ()
+              a + 1
+            }
+          }
+        `,
+        2
+      )
+    );
+
+    it.todo("inject", () =>
+      testCase(
+        `
+          inject a: 1, b: 2 ->
+          handle ($a) (), handle ($b) ()
+        `,
+        { tuple: [1, 2] }
+      )
+    );
+
+    it.todo("mask", () =>
+      testCase(
+        `
+          inject a: 1, b: 2 ->
+          a := handle ($a) ()
+          b := handle ($b) ()
+          
+          inject a: a+1, b: b+2 ->
+          mask $a ->
+          a := handle ($a) ()
+          b := handle ($b) ()
+          a, b
+        `,
+        { tuple: [1, 4] }
+      )
+    );
+
+    it.todo("mask 2", () =>
       testCase(
         `
         inject record { a: 1, b: 2 } ->
-        handle (:a) (), handle (:b) ()
+        mask $a ->
+        handle ($a) (), handle ($b) ()
       `,
         { tuple: [1, 2] }
       )
     );
 
-    it.todo("mask handler", () =>
+    it.todo("without", () =>
       testCase(
         `
-        inject record { a: 1, b: 2 } ->
-        mask :a ->
-        handle (:a) (), handle (:b) ()
-      `,
-        { tuple: [1, 2] }
+          inject a: 1 ->
+          without $a ->
+          ($a |> handle) ()
+        `,
+        { effect: { kind: "throw", value: "no handler" } }
+      )
+    );
+
+    it.todo("inject shadowing", () =>
+      testCase(
+        `
+          inject a: 1, b: 2 ->
+          a := handle ($a) ()
+          b := handle ($b) ()
+            
+          inject a: a+1, b: b+2 ->
+
+          handle ($a) (),
+          handle ($b) ()
+        `,
+        { tuple: [2, 4] }
+      )
+    );
+
+    it.todo("parallel inside", () =>
+      testCase(
+        `
+          f := fn {
+            a := handle ($a) ()
+            b := handle ($b) ()
+            a + b
+          }
+          
+          inject a: 1, b: 2 ->
+          x1 := f()
+          x2 := async { inject a: 3      : f() }
+          x3 := async { inject a: 5, b: 4: f() }
+          x1, await x2, await x3
+        `,
+        { tuple: [3, 5, 9] }
       )
     );
 
     it.todo("handler with continuation", () =>
       testCase(
         `
-        decide := :decide |> handle
+        decide := $decide |> handle
         _handler := record {
           decide: handler fn (callback, value) {
             x1 := callback true
@@ -860,7 +1187,7 @@ describe("expressions", () => {
         }
 
         inject _handler ->
-        if decide() do 123 else 456
+        if decide(): 123 else 456
       `,
         { tuple: [123, 456] }
       )

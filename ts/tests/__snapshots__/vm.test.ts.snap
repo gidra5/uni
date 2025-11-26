@@ -441,6 +441,36 @@ exports[`expressions > boolean expressions > or short-circuit 1`] = `
 }
 `;
 
+exports[`expressions > data structures > dictionary 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "arg1": 4,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > data structures > record literal 1`] = `
 {
   "main": [
@@ -464,36 +494,6 @@ exports[`expressions > data structures > record literal 1`] = `
     },
     {
       "arg1": 2,
-      "code": "Const",
-    },
-    {
-      "arg1": 2,
-      "code": "Record",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-}
-`;
-
-exports[`expressions > data structures > record with computed keys 1`] = `
-{
-  "main": [
-    {
-      "arg1": 1,
-      "code": "Const",
-    },
-    {
-      "arg1": 2,
-      "code": "Const",
-    },
-    {
-      "arg1": 3,
-      "code": "Const",
-    },
-    {
-      "arg1": 4,
       "code": "Const",
     },
     {
@@ -4948,6 +4948,195 @@ exports[`expressions > structured programming > empty block returns null 1`] = `
 }
 `;
 
+exports[`expressions > structured programming > for loop 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "arg1": 3,
+      "code": "Tuple",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_43",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "tuple": [],
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_44",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_45",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_45",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_43",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Length",
+    },
+    {
+      "code": "Lt",
+    },
+    {
+      "arg1": 40,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_43",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_45",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Index",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_44",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Append",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_44",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_45",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_45",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 12,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_44",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > structured programming > for loop maps values 1`] = `
 {
   "main": [
@@ -5346,7 +5535,7 @@ exports[`expressions > structured programming > label break returns value 1`] = 
     },
     {
       "arg1": {
-        "ref": "_calltmp_50",
+        "ref": "_calltmp_42",
       },
       "code": "Const",
     },
@@ -5359,7 +5548,7 @@ exports[`expressions > structured programming > label break returns value 1`] = 
     },
     {
       "arg1": {
-        "ref": "_calltmp_50",
+        "ref": "_calltmp_42",
       },
       "code": "Const",
     },
@@ -5376,7 +5565,7 @@ exports[`expressions > structured programming > label break returns value 1`] = 
     },
     {
       "arg1": {
-        "ref": "_calltmp_50",
+        "ref": "_calltmp_42",
       },
       "code": "Const",
     },
@@ -5385,7 +5574,7 @@ exports[`expressions > structured programming > label break returns value 1`] = 
     },
     {
       "arg1": {
-        "ref": "_calltmp_50",
+        "ref": "_calltmp_42",
       },
       "code": "Const",
     },
