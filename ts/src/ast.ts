@@ -1,3 +1,4 @@
+import fc, { type Arbitrary } from "fast-check";
 import { SystemError } from "./error.js";
 import { isPosition, Position } from "./utils/position.js";
 import { nextId, setPos } from "./utils/index.js";
@@ -336,4 +337,236 @@ export const ifElse = (condition: Tree, ifTrue: Tree, ifFalse: Tree, position?: 
   node(NodeType.IF_ELSE, { children: [condition, ifTrue, ifFalse], position });
 export const application = (fn: Tree, arg: Tree) => node(NodeType.APPLICATION, { children: [fn, arg] });
 
-// TODO: add ast node arbitrary
+// TODO: ai generated. review
+export type TreeArbitraryOptions = { maxDepth?: number; withPositions?: boolean };
+
+export const treeArbitrary = ({ maxDepth = 4, withPositions = false }: TreeArbitraryOptions = {}): Arbitrary<Tree> => {
+  const positionArb: Arbitrary<Position | undefined> = withPositions
+    ? fc
+        .tuple(fc.integer({ min: 0, max: 200 }), fc.integer({ min: 0, max: 200 }))
+        .map(([start, end]) => ({ start: Math.min(start, end), end: Math.max(start, end) }))
+    : fc.constant(undefined);
+  const applyPos = (position?: Position) => (withPositions ? position : undefined);
+
+  const identifierArb = fc
+    .string({ unit: "binary-ascii", minLength: 1, maxLength: 8 })
+    .filter((value) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(value));
+
+  const nameArb = fc
+    .tuple(identifierArb, positionArb)
+    .map(([value, position]) => node(NodeType.NAME, { data: { value }, position: applyPos(position) }));
+  const placeholderArb = positionArb.map((position) => node(NodeType.PLACEHOLDER, { position: applyPos(position) }));
+  const implicitPlaceholderArb = positionArb.map((position) =>
+    node(NodeType.IMPLICIT_PLACEHOLDER, { position: applyPos(position) })
+  );
+  const numberLiteralArb = fc
+    .tuple(fc.double({ noNaN: true, noDefaultInfinity: true }), positionArb)
+    .map(([value, position]) => node(NodeType.NUMBER, { data: { value }, position: applyPos(position) }));
+  const stringLiteralArb = fc
+    .tuple(fc.string({ unit: "binary-ascii", minLength: 1, maxLength: 24 }), positionArb)
+    .map(([value, position]) => node(NodeType.STRING, { data: { value }, position: applyPos(position) }));
+  const atomArb = fc
+    .tuple(identifierArb, positionArb)
+    .map(([name, position]) => node(NodeType.ATOM, { data: { name }, position: applyPos(position) }));
+
+  const leafArb = fc.oneof(
+    nameArb,
+    numberLiteralArb,
+    stringLiteralArb,
+    atomArb,
+    placeholderArb,
+    implicitPlaceholderArb
+  );
+
+  const binaryChainTypes = [
+    NodeType.ADD,
+    NodeType.SUB,
+    NodeType.MULT,
+    NodeType.DIV,
+    NodeType.MOD,
+    NodeType.LESS,
+    NodeType.POW,
+    NodeType.EQUAL,
+    NodeType.DEEP_EQUAL,
+    NodeType.GREATER,
+    NodeType.AND,
+    NodeType.OR,
+    NodeType.IN,
+  ] as const;
+
+  const unaryTypes = [NodeType.PARENS, NodeType.DEREF, NodeType.PLUS, NodeType.MINUS, NodeType.NOT] as const;
+
+  const { tree } = fc.letrec<{
+    tree: Tree;
+    pattern: Tree;
+    functionPattern: Tree;
+  }>((tie) => {
+    const patternBase = fc.oneof(
+      nameArb,
+      numberLiteralArb,
+      stringLiteralArb,
+      atomArb,
+      placeholderArb,
+      implicitPlaceholderArb
+    );
+    const pattern = fc.oneof(
+      { maxDepth, depthIdentifier: "pattern" },
+      patternBase,
+      fc
+        .tuple(positionArb, tie("pattern"))
+        .map(([position, child]) => node(NodeType.NOT, { children: [child], position: applyPos(position) }))
+    );
+
+    const functionPattern = fc.oneof(
+      { maxDepth, depthIdentifier: "functionPattern" },
+      fc.oneof(nameArb, placeholderArb, implicitPlaceholderArb),
+      fc
+        .tuple(positionArb, fc.array(tie("functionPattern"), { maxLength: 3 }))
+        .map(([position, children]) => node(NodeType.TUPLE, { children, position: applyPos(position) }))
+    );
+
+    const squareBracketsArb = fc
+      .tuple(positionArb, tie("tree"))
+      .map(([position, child]) => node(NodeType.SQUARE_BRACKETS, { children: [child], position: applyPos(position) }));
+
+    const labelKeyArb = fc.oneof(nameArb, atomArb, squareBracketsArb);
+
+    const labelEntryArb = fc
+      .tuple(positionArb, labelKeyArb, tie("tree"))
+      .map(([position, key, value]) => node(NodeType.LABEL, { children: [key, value], position: applyPos(position) }));
+
+    const tupleArb = fc
+      .tuple(positionArb, fc.array(fc.oneof(tie("tree"), labelEntryArb), { maxLength: 3 }))
+      .map(([position, children]) => node(NodeType.TUPLE, { children, position: applyPos(position) }));
+
+    const recordArb = fc
+      .tuple(positionArb, fc.array(labelEntryArb, { maxLength: 3 }))
+      .map(([position, children]) => node(NodeType.RECORD, { children, position: applyPos(position) }));
+
+    const templateArb = fc
+      .tuple(positionArb, fc.array(fc.oneof(stringLiteralArb, tie("tree")), { minLength: 1, maxLength: 3 }))
+      .map(([position, children]) => node(NodeType.TEMPLATE, { children, position: applyPos(position) }));
+
+    const binaryChainArb = fc
+      .tuple(fc.constantFrom(...binaryChainTypes), positionArb, fc.array(tie("tree"), { minLength: 2, maxLength: 4 }))
+      .map(([type, position, children]) => node(type, { children, position: applyPos(position) }));
+
+    const unaryArb = fc
+      .tuple(fc.constantFrom(...unaryTypes), positionArb, tie("tree"))
+      .map(([type, position, child]) => node(type, { children: [child], position: applyPos(position) }));
+
+    const incrementArb = fc
+      .tuple(fc.constantFrom(NodeType.INCREMENT, NodeType.POST_INCREMENT), positionArb, nameArb)
+      .map(([type, position, target]) => node(type, { children: [target], position: applyPos(position) }));
+
+    const applicationArb = fc
+      .tuple(
+        fc.constantFrom(NodeType.APPLICATION, NodeType.DELIMITED_APPLICATION),
+        positionArb,
+        fc.array(tie("tree"), { minLength: 2, maxLength: 3 })
+      )
+      .map(([type, position, children]) => node(type, { children, position: applyPos(position) }));
+
+    const pipeArb = fc
+      .tuple(positionArb, fc.array(tie("tree"), { minLength: 2, maxLength: 4 }))
+      .map(([position, children]) => node(NodeType.PIPE, { children, position: applyPos(position) }));
+
+    const blockArb = fc
+      .tuple(positionArb, tie("tree"))
+      .map(([position, child]) => node(NodeType.BLOCK, { children: [child], position: applyPos(position) }));
+
+    const sequenceArb = fc
+      .tuple(positionArb, fc.array(tie("tree"), { minLength: 1, maxLength: 4 }))
+      .map(([position, children]) => node(NodeType.SEQUENCE, { children, position: applyPos(position) }));
+
+    const scriptArb = fc
+      .tuple(positionArb, fc.array(tie("tree"), { maxLength: 4 }))
+      .map(([position, children]) => node(NodeType.SCRIPT, { children, position: applyPos(position) }));
+
+    const ifArb = fc
+      .tuple(positionArb, tie("tree"), tie("tree"))
+      .map(([position, condition, thenBranch]) =>
+        node(NodeType.IF, { children: [condition, thenBranch], position: applyPos(position) })
+      );
+
+    const ifElseArb = fc
+      .tuple(positionArb, tie("tree"), tie("tree"), tie("tree"))
+      .map(([position, condition, thenBranch, elseBranch]) =>
+        node(NodeType.IF_ELSE, { children: [condition, thenBranch, elseBranch], position: applyPos(position) })
+      );
+
+    const whileArb = fc
+      .tuple(positionArb, tie("tree"), tie("tree"))
+      .map(([position, condition, body]) =>
+        node(NodeType.WHILE, { children: [condition, body], position: applyPos(position) })
+      );
+
+    const loopArb = fc
+      .tuple(positionArb, tie("tree"))
+      .map(([position, body]) => node(NodeType.LOOP, { children: [body], position: applyPos(position) }));
+
+    const codeLabelArb = fc
+      .tuple(positionArb, identifierArb, tie("tree"))
+      .map(([position, name, body]) =>
+        node(NodeType.CODE_LABEL, { data: { name }, children: [body], position: applyPos(position) })
+      );
+
+    const isArb = fc
+      .tuple(positionArb, tie("tree"), tie("pattern"))
+      .map(([position, valueNode, matchPattern]) =>
+        node(NodeType.IS, { children: [valueNode, matchPattern], position: applyPos(position) })
+      );
+
+    const functionArb = fc
+      .tuple(positionArb, tie("functionPattern"), tie("tree"))
+      .map(([position, patternNode, body]) => fn(patternNode, body, { position, isTopFunction: true }));
+
+    const assignmentArb = fc
+      .tuple(positionArb, nameArb, tie("tree"))
+      .map(([position, patternNode, value]) =>
+        node(NodeType.ASSIGN, { children: [patternNode, value], position: applyPos(position) })
+      );
+
+    const declareArb = fc
+      .tuple(positionArb, nameArb, tie("tree"))
+      .map(([position, patternNode, value]) =>
+        node(NodeType.DECLARE, { children: [patternNode, value], position: applyPos(position) })
+      );
+
+    const forArb = fc
+      .tuple(positionArb, nameArb, tie("tree"), tie("tree"))
+      .map(([position, patternNode, iterable, body]) =>
+        node(NodeType.FOR, { children: [patternNode, iterable, body], position: applyPos(position) })
+      );
+
+    const tree = fc.oneof(
+      { maxDepth, depthIdentifier: "tree" },
+      leafArb,
+      unaryArb,
+      binaryChainArb,
+      incrementArb,
+      pipeArb,
+      applicationArb,
+      tupleArb,
+      recordArb,
+      blockArb,
+      sequenceArb,
+      scriptArb,
+      templateArb,
+      ifArb,
+      ifElseArb,
+      whileArb,
+      loopArb,
+      codeLabelArb,
+      isArb,
+      functionArb,
+      assignmentArb,
+      declareArb,
+      forArb
+    );
+
+    return { tree, pattern, functionPattern };
+  });
+
+  return tree;
+};
