@@ -832,6 +832,77 @@ describe("expressions", () => {
       expect(Object.keys(vm.heap).filter((k) => k.startsWith("_ref"))).toHaveLength(0);
     });
   });
+
+  describe("concurrent programming", () => {
+    it.todo("parallel all", () =>
+      testCase(
+        `
+        import "std/concurrency" as { all };
+        all(1 | 2)
+      `,
+        { tuple: [1, 2] }
+      )
+    );
+
+    it.todo("channel send receive", () => testCase('c := channel "test"; async c <- 123; <- c', 123));
+
+    it.todo("await async", () => testCase("f := fn x do x + 1; await async f 1", 2));
+
+    it.todo("select channels", () =>
+      testCase(
+        `
+        c1 := channel "c1"; 
+        c2 := channel "c2"; 
+        async c1 <- 123; 
+        async c2 <- 456; 
+        <- c2 + c1
+      `,
+        123
+      )
+    );
+  });
+
+  describe("effect handlers", () => {
+    it.todo("inject basic handler", () =>
+      testCase(
+        `
+        inject record { a: 1, b: 2 } ->
+        handle (:a) (), handle (:b) ()
+      `,
+        { tuple: [1, 2] }
+      )
+    );
+
+    it.todo("mask handler", () =>
+      testCase(
+        `
+        inject record { a: 1, b: 2 } ->
+        mask :a ->
+        handle (:a) (), handle (:b) ()
+      `,
+        { tuple: [1, 2] }
+      )
+    );
+
+    it.todo("handler with continuation", () =>
+      testCase(
+        `
+        decide := :decide |> handle
+        _handler := record {
+          decide: handler fn (callback, value) {
+            x1 := callback true
+            x2 := callback false
+            x1, x2
+          }
+        }
+
+        inject _handler ->
+        if decide() do 123 else 456
+      `,
+        { tuple: [123, 456] }
+      )
+    );
+  });
 });
 
 describe("vm2 integration", () => {
@@ -850,77 +921,6 @@ describe("vm2 integration", () => {
     expect(logSpy).toHaveBeenCalledWith(3);
     logSpy.mockRestore();
   });
-});
-
-describe("concurrent programming", () => {
-  it.todo("parallel all", () =>
-    testCase(
-      `
-        import "std/concurrency" as { all };
-        all(1 | 2)
-      `,
-      { tuple: [1, 2] }
-    )
-  );
-
-  it.todo("channel send receive", () => testCase('c := channel "test"; async c <- 123; <- c', 123));
-
-  it.todo("await async", () => testCase("f := fn x do x + 1; await async f 1", 2));
-
-  it.todo("select channels", () =>
-    testCase(
-      `
-        c1 := channel "c1"; 
-        c2 := channel "c2"; 
-        async c1 <- 123; 
-        async c2 <- 456; 
-        <- c2 + c1
-      `,
-      123
-    )
-  );
-});
-
-describe("effect handlers", () => {
-  it.todo("inject basic handler", () =>
-    testCase(
-      `
-        inject record { a: 1, b: 2 } ->
-        handle (:a) (), handle (:b) ()
-      `,
-      { tuple: [1, 2] }
-    )
-  );
-
-  it.todo("mask handler", () =>
-    testCase(
-      `
-        inject record { a: 1, b: 2 } ->
-        mask :a ->
-        handle (:a) (), handle (:b) ()
-      `,
-      { tuple: [1, 2] }
-    )
-  );
-
-  it.todo("handler with continuation", () =>
-    testCase(
-      `
-        decide := :decide |> handle
-        _handler := record {
-          decide: handler fn (callback, value) {
-            x1 := callback true
-            x2 := callback false
-            x1, x2
-          }
-        }
-
-        inject _handler ->
-        if decide() do 123 else 456
-      `,
-      { tuple: [123, 456] }
-    )
-  );
 });
 
 describe("modules", () => {
