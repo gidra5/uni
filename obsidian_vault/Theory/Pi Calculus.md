@@ -36,6 +36,7 @@ effect systems as ambients for mobile processes.
 modality as generalization of linearity
 
 a semantics, where effect handlers are separate processes, accessed through a channel implicitly passed down the call stack. does this semantics simplify implementation by essentially avoiding non trivial escaping of stack fragments?
+I think yes. We can avoid this complexity by making the continuation basically a mobile process. If it is replicable, it even can be multishot. Since this process is a snapshot of the thread's state, every call will instantiate it from that point, together with handlers, stack variables, etc. 
 
 https://decomposition.al/blog/2025/11/20/where-simulation-came-from/
 
