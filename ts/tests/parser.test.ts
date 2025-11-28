@@ -300,6 +300,9 @@ describe("expressions", () => {
     it("async index", () => testCase(`async f.a`));
     it("await async", () => testCase(`await async f x`));
     it("await", () => testCase(`await x + 1`));
+    it.todo("channel", () => testCase(`channel c -> c <- 123; 234`));
+    it.todo("channel", () => testCase(`channel c: c <- 123; 234`));
+    it.todo("channel", () => testCase(`channel c { c <- 123; 234 }`));
   });
 
   describe("data structures", () => {
