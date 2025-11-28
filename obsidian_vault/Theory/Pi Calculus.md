@@ -15,7 +15,7 @@ https://www.cs.cmu.edu/afs/cs.cmu.edu/user/fp/www/papers/mscs13.pdf
 https://dl.acm.org/doi/pdf/10.1145/3678232.3678234
 http://www.cs.cmu.edu/~fp/papers/esop13a.pdf
 https://drops.dagstuhl.de/storage/00lipics/lipics-vol042-concur2015/LIPIcs.CONCUR.2015.412/LIPIcs.CONCUR.2015.412.pdf
-
+coherence as generalization of duality.
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
