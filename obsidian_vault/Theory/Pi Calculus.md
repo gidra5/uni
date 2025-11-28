@@ -335,3 +335,12 @@ https://www.cs.cmu.edu/afs/cs.cmu.edu/user/fp/www/papers/mscs13.pdf
 https://github.com/faiface/par-lang
 
 Pi calculus inherently describes concurrency in homogeneous systems, where every process is computationally equivalent. But many systems are inhomogeneous and that requires special care.
+
+examples:
+1. vending machine - buy, sell, shop, query between machine and user
+2. web app - potentially unbounded communication between client and server
+3. gpu-cpu communication - data transfer and function dispatch
+4. slot machine - player chooses to play or stop, machine tells win or lose. Player plays until wins
+5. e-commerce - buyer add, removes or pays for items. Once it pays the shop is closed
+6. oauth - auth of a client on a server through a third party.
+7. stream - on-demand item generation/pull
