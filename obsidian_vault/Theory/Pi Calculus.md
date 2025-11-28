@@ -11,6 +11,7 @@
 
 https://www.pure.ed.ac.uk/ws/portalfiles/portal/18383989/Wadler_2012_Propositions_as_Sessions.pdf
 https://arxiv.org/pdf/1802.02917
+https://www.cs.cmu.edu/afs/cs.cmu.edu/user/fp/www/papers/mscs13.pdf
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
