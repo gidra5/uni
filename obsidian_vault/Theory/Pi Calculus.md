@@ -30,8 +30,13 @@ https://web.archive.org/web/20250304101804/https://nicolaspouillard.fr/publis/pt
 
 https://cris.unibo.it/bitstream/11585/957052/1/main.pdf
 
+https://www.doc.ic.ac.uk/~dorchard/publ/popl16-orchard-yoshida.pdf?utm_source=chatgpt.com
 effect systems as ambients for mobile processes.
 modality as generalization of linearity
+
+a semantics, where effect handlers are separate processes, accessed through a channel implicitly passed down the call stack. does this semantics simplify implementation by essentially avoiding non trivial escaping of stack fragments?
+
+
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность

@@ -179,3 +179,5 @@ https://dl.acm.org/doi/10.1145/3689800
 https://www.microsoft.com/en-us/research/wp-content/uploads/2017/06/algeff-in-c-tr-v2.pdf
 
 https://typesanitizer.com/blog/effects-convo.html
+
+https://chatgpt.com/c/6929e5e0-9770-832e-89e3-c90b6fc2069e
