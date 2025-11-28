@@ -17,6 +17,9 @@ http://www.cs.cmu.edu/~fp/papers/esop13a.pdf
 https://drops.dagstuhl.de/storage/00lipics/lipics-vol042-concur2015/LIPIcs.CONCUR.2015.412/LIPIcs.CONCUR.2015.412.pdf
 coherence as generalization of duality.
 
+https://arxiv.org/pdf/2205.15203
+Sub-Term Property
+
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
 * `(x | y) | z === x | (y | z)` - асоциативность
@@ -345,9 +348,10 @@ examples:
 1. vending machine - buy, sell, shop, query between machine and user
 2. web app - potentially unbounded communication between client and server
 3. gpu-cpu communication - data transfer and function dispatch
-4. slot machine - player chooses to play or stop, machine tells win or lose. Player plays until wins. For non-deterministic machine it may not terminate in general. To cover such models we mas demand fair termination instead.
+4. slot machine - player chooses to play or stop, machine tells win or lose. Player plays until wins. For non-deterministic machine it may not terminate in general. To cover such models we may demand fair termination instead.
 5. e-commerce - buyer add, removes or pays for items. Once it pays the shop is closed
 6. oauth - auth of a client on a server through a third party.
 7. stream - on-demand item generation/pull
 8. consensus - two servers communicate with arbiter to agree on a value. Each of them continuously sending their version and arbiter sending if the agree or not.
 9. cell - synchronized value reference.
+10. two buyers and a seller - 3-way communication. https://drops.dagstuhl.de/storage/00lipics/lipics-vol042-concur2015/LIPIcs.CONCUR.2015.412/LIPIcs.CONCUR.2015.412.pdf
