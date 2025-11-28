@@ -97,3 +97,6 @@ https://medium.com/@jayphelps/backpressure-explained-the-flow-of-data-through-so
 https://dl.acm.org/doi/pdf/10.1145/3674651
 
 Applicative functors can be parallelized somehow.
+
+https://chatgpt.com/c/6924c549-b22c-8327-b331-dc83bf1b43a9
+https://chatgpt.com/c/692243a8-8dcc-8328-ab47-18d7f967e7a5

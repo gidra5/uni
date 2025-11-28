@@ -55,3 +55,5 @@ apply<[]> (macro x -> x 1) a ->
 x<x: a> 1<x: a> ->
 a 1 ->
 ```
+
+https://chatgpt.com/c/69245657-6040-832c-9693-39a89aeb7e9c

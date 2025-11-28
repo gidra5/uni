@@ -29,4 +29,6 @@ For parallel composition some of them become dual:
 4. ordering = weaker. We can guarantee only the weaker of the two orderings.
 5. protocol = synchronization or interleaving
 
-In case of parallel composition the exact type of the resulting channel depends on the mediator that would receive..
+In case of parallel composition the exact type of the resulting channel depends on the mediator that would receive.
+
+https://chatgpt.com/c/692462a2-ae88-832c-b45e-6fdea43f7d70
