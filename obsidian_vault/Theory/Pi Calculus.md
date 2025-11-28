@@ -22,6 +22,7 @@ coherence as generalization of duality.
 https://arxiv.org/pdf/2102.04731
 coherence through arbiters
 
+https://web.archive.org/web/20240426090831/https://dmg.tuwien.ac.at/aschieri/popl-clinear.pdf
 https://arxiv.org/pdf/2205.15203
 Sub-Term Property
 
