@@ -13,6 +13,9 @@ https://www.pure.ed.ac.uk/ws/portalfiles/portal/18383989/Wadler_2012_Proposition
 https://arxiv.org/pdf/1802.02917
 https://www.cs.cmu.edu/afs/cs.cmu.edu/user/fp/www/papers/mscs13.pdf
 https://dl.acm.org/doi/pdf/10.1145/3678232.3678234
+http://www.cs.cmu.edu/~fp/papers/esop13a.pdf
+https://drops.dagstuhl.de/storage/00lipics/lipics-vol042-concur2015/LIPIcs.CONCUR.2015.412/LIPIcs.CONCUR.2015.412.pdf
+
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
@@ -64,6 +67,7 @@ https://dl.acm.org/doi/pdf/10.1145/3678232.3678234
 13. `(A + B) C => A C + B C`
 14. `A void => void`
 15. `void A => void`
+https://en.wikipedia.org/wiki/Flynn%27s_taxonomy
 
 Можно заметить, что каналы и функции дуальны - если фокусироваться на получателях и отправителях в вычислениях, то будем иметь функции, передача данных в которые есть атомарным действием. Если же фокусироваться на передаче данных как на атоме, то будем иметь каналы, в которых получатели и отправитель в некотором вычислении разделены и независимы теперь, и лишь само действие передачи данных атомарно.
 
@@ -346,3 +350,4 @@ examples:
 6. oauth - auth of a client on a server through a third party.
 7. stream - on-demand item generation/pull
 8. consensus - two servers communicate with arbiter to agree on a value. Each of them continuously sending their version and arbiter sending if the agree or not.
+9. cell - synchronized value reference.
