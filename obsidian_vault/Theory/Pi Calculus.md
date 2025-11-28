@@ -36,7 +36,7 @@ modality as generalization of linearity
 
 a semantics, where effect handlers are separate processes, accessed through a channel implicitly passed down the call stack. does this semantics simplify implementation by essentially avoiding non trivial escaping of stack fragments?
 
-
+https://decomposition.al/blog/2025/11/20/where-simulation-came-from/
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
