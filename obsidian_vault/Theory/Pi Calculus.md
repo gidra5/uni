@@ -375,3 +375,4 @@ examples:
 8. consensus - two servers communicate with arbiter to agree on a value. Each of them continuously sending their version and arbiter sending if the agree or not.
 9. cell - synchronized value reference.
 10. two buyers and a seller - 3-way communication. https://drops.dagstuhl.de/storage/00lipics/lipics-vol042-concur2015/LIPIcs.CONCUR.2015.412/LIPIcs.CONCUR.2015.412.pdf
+11. Compare-and-Set (CAS) synchronization primitive https://research-information.bris.ac.uk/ws/files/286405141/icfp21main_p4_p_590b69bc2d_52744_final.pdf
