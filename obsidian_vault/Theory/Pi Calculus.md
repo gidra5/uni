@@ -12,6 +12,7 @@
 https://www.pure.ed.ac.uk/ws/portalfiles/portal/18383989/Wadler_2012_Propositions_as_Sessions.pdf
 https://arxiv.org/pdf/1802.02917
 https://www.cs.cmu.edu/afs/cs.cmu.edu/user/fp/www/papers/mscs13.pdf
+https://dl.acm.org/doi/pdf/10.1145/3678232.3678234
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
@@ -340,7 +341,8 @@ examples:
 1. vending machine - buy, sell, shop, query between machine and user
 2. web app - potentially unbounded communication between client and server
 3. gpu-cpu communication - data transfer and function dispatch
-4. slot machine - player chooses to play or stop, machine tells win or lose. Player plays until wins
+4. slot machine - player chooses to play or stop, machine tells win or lose. Player plays until wins. For non-deterministic machine it may not terminate in general. To cover such models we mas demand fair termination instead.
 5. e-commerce - buyer add, removes or pays for items. Once it pays the shop is closed
 6. oauth - auth of a client on a server through a third party.
 7. stream - on-demand item generation/pull
+8. consensus - two servers communicate with arbiter to agree on a value. Each of them continuously sending their version and arbiter sending if the agree or not.
