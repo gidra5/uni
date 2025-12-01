@@ -47,6 +47,10 @@ CP does not count for race conditions. They are inherently 3-party communication
 We can see these two scenarios as cases for cooperative and preemptive synchronization. `select`/`Promise.race`-like operation requires preemptive sync, while mutex needs cooperative sync.
 liveness
 
+https://homepages.inf.ed.ac.uk/slindley/papers/zap.pdf
+https://homepages.inf.ed.ac.uk/slindley/papers/sss.pdf
+https://arxiv.org/pdf/1904.01290
+https://lmcs.episciences.org/4973/pdf
 https://lmcs.episciences.org/6979/pdf
 
 Так же из семантики вытекают следующие тождества:
