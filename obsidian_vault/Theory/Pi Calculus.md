@@ -40,10 +40,14 @@ I think yes. We can avoid this complexity by making the continuation basically a
 
 https://decomposition.al/blog/2025/11/20/where-simulation-came-from/
 
-http://ctp.di.fct.unl.pt/CLASS/CLASS-NOV22.pdf
+https://link.springer.com/content/pdf/10.1007/978-3-031-30044-8_16.pdf
+https://arxiv.org/pdf/2505.20848
 
 CP does not count for race conditions. They are inherently 3-party communication - two contesting sender processes and one receiver process, which directly corresponds to something like `Promise.race`. Dually, there can be two receiver processes and one sender process, contesting for a single resource, which in turn is resolved by mutex-like constructs.
 We can see these two scenarios as cases for cooperative and preemptive synchronization. `select`/`Promise.race`-like operation requires preemptive sync, while mutex needs cooperative sync.
+liveness
+
+https://lmcs.episciences.org/6979/pdf
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
