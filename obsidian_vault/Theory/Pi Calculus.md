@@ -43,6 +43,7 @@ https://decomposition.al/blog/2025/11/20/where-simulation-came-from/
 http://ctp.di.fct.unl.pt/CLASS/CLASS-NOV22.pdf
 
 CP does not count for race conditions. They are inherently 3-party communication - two contesting sender processes and one receiver process, which directly corresponds to something like `Promise.race`. Dually, there can be two receiver processes and one sender process, contesting for a single resource, which in turn is resolved by mutex-like constructs.
+We can see these two scenarios as cases for cooperative and preemptive synchronization. `select`/`Promise.race`-like operation requires preemptive sync, while mutex needs cooperative sync.
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
