@@ -59,6 +59,8 @@ This should preserve every useful property of whatever type system we will have,
 
 shared sessions can be handled with acquire-release semantics. Once we create a shared channel, we can freely duplicate it, but to be used for communication two processes must have exclusive access to it by declaring acquire on it. When matched with accept on the other side, the channel becomes linear for those two processes, and they can communicate as usual. Once they release-detach it, then other processes will be able to acquire it for communication.
 
+https://books.google.com.ua/books?id=QkBL_7VtiPgC&printsec=copyright&redir_esc=y#v=onepage&q&f=false
+
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
 * `(x | y) | z === x | (y | z)` - асоциативность
