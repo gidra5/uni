@@ -57,6 +57,8 @@ https://chatgpt.com/c/6930ae86-d88c-832c-973f-5d79edaaa106
 sum of channels can be added as operation. It will encode racing for receiving/sending through one of these channels. Since there are two cases how it may advance sessions, we need two continuations - in one the first channel is advanced, and the second is unconsumed, and the second is the reverse.
 This should preserve every useful property of whatever type system we will have, while unlocking safe race conditions.
 
+shared sessions can be handled with acquire-release semantics. Once we create a shared channel, we can freely duplicate it, but to be used for communication two processes must have exclusive access to it by declaring acquire on it. When matched with accept on the other side, the channel becomes linear for those two processes, and they can communicate as usual. Once they release-detach it, then other processes will be able to acquire it for communication.
+
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
 * `(x | y) | z === x | (y | z)` - асоциативность
