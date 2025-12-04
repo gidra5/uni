@@ -26,6 +26,7 @@ https://plasmalang.org/about.html
 https://effekt-lang.org/quickstart.html
 
 
+https://cs.lmu.edu/~ray/notes/languagedesignnotes/
 
 1. computation abstraction
 2. macro abstraction

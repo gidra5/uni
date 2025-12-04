@@ -8,6 +8,32 @@
 5. "Одновременное выполнение" - `x | y`. Выполняет `х` и `у` "одновременно".
 6. "Нулевой процесс" - `0`. Процесс который уже закончился.
 7. "Сумма процессов" - `x + y`. Процесс, который выбирает один из процессов `x` или `y` для продолжения вычисления.
+8. "Репликация" - `!x`. Процесс, который позволяет создавать неограниченное количество копий внутреннего процесса.
+
+Это исчисление является тьюринг полным и не менее мощным чем любые другие исчисления. На это указывает много работ https://pdf.sciencedirectassets.com/272990/1-s2.0-S1571066100X02514/1-s2.0-S1571066105804748/main.pdf?X-Amz-Security-Token=IQoJb3JpZ2luX2VjEH0aCXVzLWVhc3QtMSJGMEQCICmkJeNMeUwrvCb2e1pnFAIpPSzXcvi4%2BaV4ONcka861AiADdcu%2FEpUsWOhttkh0BlwiIkbo349SqtxWuCSmNLB43yqyBQhGEAUaDDA1OTAwMzU0Njg2NSIMtfV9F3TBKVHBF%2FTbKo8FSvbix9TrJroW182MlfNn3VOijwc90lumdOhFotVb1XoK9041%2FqtV4YFQ5ZlgUh8rsvH6JoFMYsB2CDP1zOPcwkGF%2F7CzDkWbXaz%2FdRgCb%2B%2FdhugL4wDBx4I%2BB%2F5fpwn6LJv%2FxzwSJGA04nyWhYmOpkXvdspYNJKL7r01IJhz%2F9OSYzmHRUqwwBFxMwb42cEpa2OkRnFWbFfzriKUNfBiunqobFwsvWz42vLf6puHcgP%2FtmdhXq2ooPn%2FusvJnsSIbTeGNk3wRhfpDmrZ8lRtxsz30kXCsmq%2FZGyHGvWuAcIukvfUYgzNgHbKlSKF7IrzzR5Va7wPW0PIxgCBAJGIRtOYXRE1RuYoTk%2FgJRU%2BAjIGUVNLqsapAUYaxCJZqVY7V04%2B06YK%2BgD3mkXS8IyE4nXGMLeiw0JHRguggwmnDOq5NXG8uBS943T8%2BbYF6AD%2BNbs4bxd2XePKDg0onnamPet%2Bh685mref6KZCkdl1%2FUUCzlfjMN3rumny5gSGyiJbfBveE6UAUmkxbfPV0tLKqlkLnpvLMaXEfBobAJtCIBMSAYsosn76cjwzUEQJVUBUQXWH%2FscK8My%2BPuzLRmuqTzxr4L6%2BCo0%2BcNmxcocuSOh3RFNGCs%2B%2BHj%2BK0Cy4LtW%2BPXJNTs6ztErGVahT7Ogqu8qUQeBxzmuPj4gF97oAcmeOZ4bc%2FwxmCtGWwg8fYehG5yjmVAOAN7I73bC2CJ%2Beo6dPWC%2BFLgn3reJttiNZWbz92%2F2cdXFD%2FepAplKwrtPcI5TPf1WmtduYZjWJqQMtIaKVJQ6eHczM4qvyeBPQGm57L9OeyqT5QvaFNmwOrJ4f0CBT5NucwoYyDhiywj0D1pQOYkTr%2Fo5RJkA80PjKgjDRhMbJBjqyAcdtZUJc80MXD1VfRcBRODep2SNIzQBnqdvMQPi23HDV7l3yp0QcNaQtMLf6ej5DqRr8hGD0MpJ1oV2FEGAAhUp6HF3xss5Vh6pX%2FzBJsbO24B0yohEDh3BkcEx7KPKZN5oGOoE%2B9KJXbS34NKmBU%2BmgRv4iKSkG7s4k9vv2carpomKZOZtWm1Zy%2BKpBnKcaTwGRzKcctTaiEzJeyj6paQZV6CAL64xAabfbYwrFz4CuWr0%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20251204T133341Z&X-Amz-SignedHeaders=host&X-Amz-Expires=299&X-Amz-Credential=ASIAQ3PHCVTY2K7NQVNF%2F20251204%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=e55b887de5b73e31ca34bcd0129f847e9d9d37838427868d22d3994527ccbd34&hash=17aee9701bcc208c7cc0f3c36e6836f95e0e755dfe5d33d738f4e11d2f5ad295&host=68042c943591013ac2b2430a89b270f6af2c76d8dfd086a07176afe7c76c2c61&pii=S1571066105804748&tid=spdf-aa522525-7cb0-447f-9606-ad07a34fe062&sid=f27f35c44bc44147ef184aa8fb4f75addfd8gxrqb&type=client&tsoh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&rh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&ua=0f075f055a010102505c&rr=9a8bad49de6824c1&cc=ua
+file:///D:/Downloads/3-540-59293-8_194.pdf
+https://arxiv.org/pdf/2203.11519
+
+https://www.pure.ed.ac.uk/ws/files/24444920/conflate.pdf
+http://ctp.di.fct.unl.pt/~lcaires/papers/nondet16.pdf
+
+https://homepages.inf.ed.ac.uk/slindley/papers/sss.pdf
+
+https://arxiv.org/pdf/1904.01290
+
+https://research-information.bris.ac.uk/ws/files/286405141/icfp21main_p4_p_590b69bc2d_52744_final.pdf
+
+towards races https://lmcs.episciences.org/6979/pdf?utm_source=chatgpt.com
+https://entics.episciences.org/14735/pdf?utm_source=chatgpt.com
+https://ora.ox.ac.uk/objects/uuid%3A5901fe65-d8c0-451f-9a0e-421d33daf8a4/files/s9w032441d?utm_source=chatgpt.com
+https://arxiv.org/pdf/2010.13926
+https://arxiv.org/pdf/2203.12876
+https://arxiv.org/pdf/2212.05457
+https://www.semanticscholar.org/paper/Manifest-Deadlock-Freedom-for-Shared-Session-Types-Balzer-Toninho/ab9b997b7fbee74ebf02f6b0cf526259b8c3155f
+
+https://eprints.illc.uva.nl/id/eprint/943/1/MoL-2015-02.text.pdf
+https://web.archive.org/web/20240426090831/https://dmg.tuwien.ac.at/aschieri/popl-clinear.pdf
+https://www.di.fc.ul.pt/~vv/papers/thiemann.vasconcelos_context-free-session-types.pdf
 
 https://www.pure.ed.ac.uk/ws/portalfiles/portal/18383989/Wadler_2012_Propositions_as_Sessions.pdf
 https://arxiv.org/pdf/1802.02917
