@@ -2,7 +2,7 @@
 
 В пи исчислении существуют следующие конструкции:
 1. Переменная `x`, `y` и тд. 
-2.  "Канал" - `ch x -> body`. Определяет канал связи между двумя паралельными процессами, где один процесс есть получателем данных, а второй отправителем.
+2.  "Канал" - `ch x -> body`. Определяет канал связи между двумя паралельными процессами.
 3. "Получение данных" - `x[y] -> body`. Ожидает данных из канала `x`, которые отправит продюсер и выполняет `body` с данными которые пришли.
 4. "Отправка данных" - `x(y) rest`. Ждет пока получатель примет данные через канал `x`, и потом выполнить `rest`.
 5. "Одновременное выполнение" - `x | y`. Выполняет `х` и `у` "одновременно".
@@ -52,6 +52,10 @@ https://homepages.inf.ed.ac.uk/slindley/papers/sss.pdf
 https://arxiv.org/pdf/1904.01290
 https://lmcs.episciences.org/4973/pdf
 https://lmcs.episciences.org/6979/pdf
+
+https://chatgpt.com/c/6930ae86-d88c-832c-973f-5d79edaaa106
+sum of channels can be added as operation. It will encode racing for receiving/sending through one of these channels. Since there are two cases how it may advance sessions, we need two continuations - in one the first channel is advanced, and the second is unconsumed, and the second is the reverse.
+This should preserve every useful property of whatever type system we will have, while unlocking safe race conditions.
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
