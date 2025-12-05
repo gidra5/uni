@@ -291,7 +291,7 @@ describe("expressions", () => {
     it("channel try send", () => testCase(`c <-? 123`));
     it("channel try receive", () => testCase(`<-? c`));
     it("try receive with assignment", () => testCase(`status := <-?numbers`));
-    it("superposition value", () => testCase(`123 & 456`));
+    it("superposition (multiset) value", () => testCase(`123 & 456`));
     it("parallel value", () => testCase(`123 | 456`));
     it("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
     it("parallel with channels", () => testCase(`c <- 123 | <- c`));

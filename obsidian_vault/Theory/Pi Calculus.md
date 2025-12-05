@@ -108,22 +108,27 @@ sum(p_i.P_i) -(j)-> p_j.P_j
 
 Can you show if the following system is equivalent to it?
 Terms:
+```
 P = 0 | ch x.P|Q | p.P
 p = a | x[y] | x(y) | x.choice(l => P1, r => P2) | x.select l | x[] | x() | !x | ?x | (x+y)(z, P, Q) | (x+y)[z1.P, z2.Q]
+```
 
 Reductions:
-x[y].P|x(z).Q -> P[y/z]|Q
+```x[y].P|x(z).Q -> P[y/z]|Q
 !x.P = !x.P|x[y].P[x/y]
 ?x.P = ?x.P|ch y.x(y).P[x/y]
 x.choice(l => P, r => P2)|x.select l.Q-> P|Q
 x[].P|x().Q -> P|Q
 (x+y)(z, P, P2)|x[z1].Q -> P|Q[z1/z]
 (x+y)[z1.P, z2.P2]|x(z).Q -> P[z1/z]|Q
+```
 
+```
 P = 0 | ch x.P|Q | p.P | x(z1).P+y(z2).Q | x[z1].P+y[z2].Q | x(z1).P+y[z2].Q
 p = a | x[y] | x(y) | x.choice(l => P1, r => P2) | x.select l | x[] | x() | !x | ?x
+```
 
-x[y].P|x(z).Q -> P[y/z]|Q
+```x[y].P|x(z).Q -> P[y/z]|Q
 !x.P = !x.P|x[y].P[x/y]
 ?x.P = ?x.P|ch y.x(y).P[x/y]
 x.choice(l => P, r => P2)|x.select l.Q-> P|Q
@@ -132,7 +137,10 @@ x(z).P+y(z2).P2|x[z1].Q -> P|Q[z1/z]
 x[z1].P+y[z2].P2|x(z).Q -> P[z1/z]|Q
 x(z).P+y[z2].P2|x[z1].Q -> P|Q[z1/z]
 x(z2).P2+y[z1].P|y(z).Q -> P[z1/z]|Q
+```
 
+https://www.reddit.com/r/ProgrammingLanguages/comments/1gabhe8/epsilon_a_programming_langauge_about/
+https://www.reddit.com/r/ProgrammingLanguages/comments/1gs95zm/truly_optimal_evaluation_with_unordered/
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
 * `(x | y) | z === x | (y | z)` - асоциативность
