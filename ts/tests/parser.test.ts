@@ -296,14 +296,17 @@ describe("expressions", () => {
     it("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
     it("parallel with channels", () => testCase(`c <- 123 | <- c`));
     it("sum of channels", () => testCase(`c1 + c2`));
-    it.todo("channel", () => testCase(`channel c -> c <- 123; 234`));
-    it.todo("channel", () => testCase(`channel c: c <- 123; 234`));
-    it.todo("channel", () => testCase(`channel c { c <- 123; 234 }`));
+    it.todo("channel form 1", () => testCase(`channel c -> c <- 123; 234`));
+    it.todo("channel form 2", () => testCase(`channel c: c <- 123; 234`));
+    it.todo("channel form 3", () => testCase(`channel c { c <- 123; 234 }`));
     it.todo("shared channel", () => testCase(`channel c {\n  | c <- 123; 234\n  | <- c; 345 }`));
     it.todo("select", () => testCase(`select { c <- 123: x; <- c as y: z }`));
     it.todo("channel replication receive", () => testCase(`x := <-! c`));
     it.todo("channel replication send", () => testCase(`c <-! 123`));
-    it.todo("channel choice", () => testCase(`choice c { x -> 123, y -> 234 }`));
+    it.todo("channel choice", () => testCase(`choice c { 1 -> 123, 2 -> 234 }`));
+    it.todo("dispatch", () =>
+      testCase(`dispatch 256, 16, 16 with id { data[id.x][id.y][id.z] = data[id.x][id.y][id.z] + 1 }`)
+    );
 
     it("async", () => testCase(`async f x`));
     it("async index", () => testCase(`async f.a`));

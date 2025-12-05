@@ -96,6 +96,43 @@ https://chatgpt.com/c/69328830-4a4c-8327-a807-0486c009604b
 
 Superposition as a multiset with parallel semantics. Parallel composition as a way to simply fork a process(es) and express parallel execution itself operationally.
 
+https://chatgpt.com/c/6931de33-7a78-832a-a5e7-6c489d1dd83e
+Lets say we have a synchronous pi calculus as follows: 
+P = 0 | p.P | ch x.P | P1|P2 | sum(p_i.P_i) | !P
+p = a | x[y] | x(y)
+
+With main reductions and relations being:
+x[y].P|x(z).Q -> P[y/z]|Q
+sum(p_i.P_i) -(j)-> p_j.P_j
+!P=P|!P
+
+Can you show if the following system is equivalent to it?
+Terms:
+P = 0 | ch x.P|Q | p.P
+p = a | x[y] | x(y) | x.choice(l => P1, r => P2) | x.select l | x[] | x() | !x | ?x | (x+y)(z, P, Q) | (x+y)[z1.P, z2.Q]
+
+Reductions:
+x[y].P|x(z).Q -> P[y/z]|Q
+!x.P = !x.P|x[y].P[x/y]
+?x.P = ?x.P|ch y.x(y).P[x/y]
+x.choice(l => P, r => P2)|x.select l.Q-> P|Q
+x[].P|x().Q -> P|Q
+(x+y)(z, P, P2)|x[z1].Q -> P|Q[z1/z]
+(x+y)[z1.P, z2.P2]|x(z).Q -> P[z1/z]|Q
+
+P = 0 | ch x.P|Q | p.P | x(z1).P+y(z2).Q | x[z1].P+y[z2].Q | x(z1).P+y[z2].Q
+p = a | x[y] | x(y) | x.choice(l => P1, r => P2) | x.select l | x[] | x() | !x | ?x
+
+x[y].P|x(z).Q -> P[y/z]|Q
+!x.P = !x.P|x[y].P[x/y]
+?x.P = ?x.P|ch y.x(y).P[x/y]
+x.choice(l => P, r => P2)|x.select l.Q-> P|Q
+x[].P|x().Q -> P|Q
+x(z).P+y(z2).P2|x[z1].Q -> P|Q[z1/z]
+x[z1].P+y[z2].P2|x(z).Q -> P[z1/z]|Q
+x(z).P+y[z2].P2|x[z1].Q -> P|Q[z1/z]
+x(z2).P2+y[z1].P|y(z).Q -> P[z1/z]|Q
+
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
 * `(x | y) | z === x | (y | z)` - асоциативность
