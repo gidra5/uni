@@ -7,7 +7,7 @@
 4. "Отправка данных" - `x(y) rest`. Ждет пока получатель примет данные через канал `x`, и потом выполнить `rest`.
 5. "Одновременное выполнение" - `x | y`. Выполняет `х` и `у` "одновременно".
 6. "Нулевой процесс" - `0`. Процесс который уже закончился.
-7. "Сумма процессов" - `x + y`. Процесс, который выбирает один из процессов `x` или `y` для продолжения вычисления.
+7. "Сумма процессов" - `x + y`. Процесс, который выбирает один из процессов `x` или `y` для продолжения вычисления. Елементы суммы должны начинатся с коммуникации, и первый кто будет разблокирован, будет выбран.
 8. "Репликация" - `!x`. Процесс, который позволяет создавать неограниченное количество копий внутреннего процесса.
 
 Это исчисление является тьюринг полным и не менее мощным чем любые другие исчисления. На это указывает много работ https://pdf.sciencedirectassets.com/272990/1-s2.0-S1571066100X02514/1-s2.0-S1571066105804748/main.pdf?X-Amz-Security-Token=IQoJb3JpZ2luX2VjEH0aCXVzLWVhc3QtMSJGMEQCICmkJeNMeUwrvCb2e1pnFAIpPSzXcvi4%2BaV4ONcka861AiADdcu%2FEpUsWOhttkh0BlwiIkbo349SqtxWuCSmNLB43yqyBQhGEAUaDDA1OTAwMzU0Njg2NSIMtfV9F3TBKVHBF%2FTbKo8FSvbix9TrJroW182MlfNn3VOijwc90lumdOhFotVb1XoK9041%2FqtV4YFQ5ZlgUh8rsvH6JoFMYsB2CDP1zOPcwkGF%2F7CzDkWbXaz%2FdRgCb%2B%2FdhugL4wDBx4I%2BB%2F5fpwn6LJv%2FxzwSJGA04nyWhYmOpkXvdspYNJKL7r01IJhz%2F9OSYzmHRUqwwBFxMwb42cEpa2OkRnFWbFfzriKUNfBiunqobFwsvWz42vLf6puHcgP%2FtmdhXq2ooPn%2FusvJnsSIbTeGNk3wRhfpDmrZ8lRtxsz30kXCsmq%2FZGyHGvWuAcIukvfUYgzNgHbKlSKF7IrzzR5Va7wPW0PIxgCBAJGIRtOYXRE1RuYoTk%2FgJRU%2BAjIGUVNLqsapAUYaxCJZqVY7V04%2B06YK%2BgD3mkXS8IyE4nXGMLeiw0JHRguggwmnDOq5NXG8uBS943T8%2BbYF6AD%2BNbs4bxd2XePKDg0onnamPet%2Bh685mref6KZCkdl1%2FUUCzlfjMN3rumny5gSGyiJbfBveE6UAUmkxbfPV0tLKqlkLnpvLMaXEfBobAJtCIBMSAYsosn76cjwzUEQJVUBUQXWH%2FscK8My%2BPuzLRmuqTzxr4L6%2BCo0%2BcNmxcocuSOh3RFNGCs%2B%2BHj%2BK0Cy4LtW%2BPXJNTs6ztErGVahT7Ogqu8qUQeBxzmuPj4gF97oAcmeOZ4bc%2FwxmCtGWwg8fYehG5yjmVAOAN7I73bC2CJ%2Beo6dPWC%2BFLgn3reJttiNZWbz92%2F2cdXFD%2FepAplKwrtPcI5TPf1WmtduYZjWJqQMtIaKVJQ6eHczM4qvyeBPQGm57L9OeyqT5QvaFNmwOrJ4f0CBT5NucwoYyDhiywj0D1pQOYkTr%2Fo5RJkA80PjKgjDRhMbJBjqyAcdtZUJc80MXD1VfRcBRODep2SNIzQBnqdvMQPi23HDV7l3yp0QcNaQtMLf6ej5DqRr8hGD0MpJ1oV2FEGAAhUp6HF3xss5Vh6pX%2FzBJsbO24B0yohEDh3BkcEx7KPKZN5oGOoE%2B9KJXbS34NKmBU%2BmgRv4iKSkG7s4k9vv2carpomKZOZtWm1Zy%2BKpBnKcaTwGRzKcctTaiEzJeyj6paQZV6CAL64xAabfbYwrFz4CuWr0%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20251204T133341Z&X-Amz-SignedHeaders=host&X-Amz-Expires=299&X-Amz-Credential=ASIAQ3PHCVTY2K7NQVNF%2F20251204%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=e55b887de5b73e31ca34bcd0129f847e9d9d37838427868d22d3994527ccbd34&hash=17aee9701bcc208c7cc0f3c36e6836f95e0e755dfe5d33d738f4e11d2f5ad295&host=68042c943591013ac2b2430a89b270f6af2c76d8dfd086a07176afe7c76c2c61&pii=S1571066105804748&tid=spdf-aa522525-7cb0-447f-9606-ad07a34fe062&sid=f27f35c44bc44147ef184aa8fb4f75addfd8gxrqb&type=client&tsoh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&rh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&ua=0f075f055a010102505c&rr=9a8bad49de6824c1&cc=ua
@@ -90,6 +90,11 @@ http://ctp.di.fct.unl.pt/~lcaires/papers/nondet16.pdf
 https://link.springer.com/chapter/10.1007/3-540-59293-8_194
 https://arxiv.org/pdf/2504.18227
 https://www.semanticscholar.org/author/D.-Sangiorgi/1757738?sort=influence
+
+multiparty session types. These are a session type that describe communication between multiple processes in a single entity, that is projected for every participant as a local binary session. These are strictly more expressive than binary ones, because it can describe interdependency of binary sessions uniformly.
+https://chatgpt.com/c/69328830-4a4c-8327-a807-0486c009604b
+
+Superposition as a multiset with parallel semantics. Parallel composition as a way to simply fork a process(es) and express parallel execution itself operationally.
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
