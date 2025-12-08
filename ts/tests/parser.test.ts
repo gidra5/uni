@@ -296,17 +296,50 @@ describe("expressions", () => {
     it("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
     it("parallel with channels", () => testCase(`c <- 123 | <- c`));
     it("sum of channels", () => testCase(`c1 + c2`));
+    it.todo("channel swap", () => testCase(`c <-> 123`));
     it.todo("channel form 1", () => testCase(`channel c -> c <- 123; 234`));
     it.todo("channel form 2", () => testCase(`channel c: c <- 123; 234`));
     it.todo("channel form 3", () => testCase(`channel c { c <- 123; 234 }`));
-    it.todo("shared channel", () => testCase(`channel c {\n  | c <- 123; 234\n  | <- c; 345 }`));
-    it.todo("select", () => testCase(`select { c <- 123: x; <- c as y: z }`));
-    it.todo("channel replication receive", () => testCase(`x := <-! c`));
-    it.todo("channel replication send", () => testCase(`c <-! 123`));
-    it.todo("channel choice", () => testCase(`choice c { 1 -> 123, 2 -> 234 }`));
-    it.todo("dispatch", () =>
-      testCase(`dispatch 256, 16, 16 with id { data[id.x][id.y][id.z] = data[id.x][id.y][id.z] + 1 }`)
+    it.todo("shared channel", () =>
+      testCase(`
+        channel c {
+          | {
+            c <- 123; 
+            234
+          }
+          | {
+            <- c; 
+            345
+          }
+        }`)
     );
+    it.todo("select", () =>
+      testCase(`
+        select { 
+          c <- 123: x, 
+          <- c as y: z 
+        }`)
+    );
+    it.todo("channel choice", () => testCase(`match <- c { 1 -> 123, 2 -> 234 }`));
+
+    it.todo("channel replicated receive", () => testCase(`x := <-! c`));
+    it.todo("channel replicated send", () => testCase(`c <-! 123`));
+
+    it.todo("dispatch", () =>
+      testCase(`dispatch 256, 16, 16 with id { data[id[0]][id[1]][id[2]] = data[id[0]][id[1]][id[2]] + 1 }`)
+    );
+    // handle each n-dimensional element x in list in parallel
+    it.todo("dispatch list", () => testCase(`dispatch n for x in list { x + 1 }`));
+    it.todo("dispatch swap", () =>
+      testCase(`dispatch 256, 16, 16 with id { 
+        data[id[0]][id[1]][id[2]] = swap (1, 0) id[0]
+      }`)
+    );
+
+    // traverse tree, reducing all children into single value
+    it.todo("parallel tree reduce", () => testCase(`reduce 1, 2, 3 with reducer, merge, initial`));
+    // construct tree from single list of values, creating each branch in parallel
+    it.todo("parallel tree construct", () => testCase(`reduce 1, 2, 3 with reducer, merge, initial`));
 
     it("async", () => testCase(`async f x`));
     it("async index", () => testCase(`async f.a`));
