@@ -155,7 +155,13 @@ https://www.sciencedirect.com/science/article/pii/S0167642306002115
 Angelic nondeterminism occurs when the choice is made by an ‘angel’: it is assumed that the angel will choose the best possible outcome. Demonic nondeterminism occurs when the choice is made by a ‘demon’: no assumption can be made about the choice made by the demon, so one must be prepared for the worst possible outcome.
 On interpretation for "comparing" outcomes is termination - from what we have, we always choose those that terminate, or those that do not terminate at all.
 
+We can define these over multirelations. Multirelation is a set of pairs `x,X`, where x is in `A`, a set of inputs, and X is a subset of `B`, a set of outputs.
+With that, angelic choice is union of such sets, while demonic is intersection.
+multirelations can be composed. 
+
 One may "resolve" nondeterminism interactively, by "handling" it through a kind of cli.
+
+We may also resolve it to a single value
 
 full abstraction
 
