@@ -27,3 +27,16 @@ https://scholarworks.iu.edu/iuswrrest/api/core/bitstreams/27f1ebb8-5114-4fa5-b59
 https://minikanren.org/workshop/2021/minikanren-2021-final8.pdf
 
 `last l = (free xs, e: (...xs, e) == l).e`
+`link (free xs, e: (...xs, e) == l).xs (free l, e: (e,) == l).l` ->
+`free xs, e, l, e2: (...xs, e) == l && (e2,) == xs`
+`eliminate (free xs, e: (...xs, e) == l).e 1` ->
+`free xs: (...xs, 1) == l`
+`eliminate (free xs, e: (...xs, e) == l).xs (free l, e: (e,) == l).l` ->
+`free xs, e, l, e2: (...xs, e) == l && (e2,) == xs`
+`constraint xs, e, l, e2: (...xs, e) == l && (e2,) == xs`
+`interface xs, e, l, e2: (...xs, e) == l && (e2,) == xs`
+
+https://dl.acm.org/doi/pdf/10.1145/3677999.3678279
+https://publishup.uni-potsdam.de/opus4-ubp/frontdoor/deliver/index/docId/3957/file/wlp09_S1_15.pdf
+https://www.cambridge.org/core/services/aop-cambridge-core/content/view/AB57FF99CEA76C1C31A336B560D6FD3C/S0956796809007321a.pdf/algebras-for-combinatorial-search.pdf
+https://web.archive.org/web/20240411205931/https://www.informatik.uni-kiel.de/~mh/papers/PPDP22.pdf
