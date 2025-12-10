@@ -36,9 +36,11 @@ https://minikanren.org/workshop/2021/minikanren-2021-final8.pdf
 `constraint xs, e, l, e2: (...xs, e) = l && (e2,) = xs`
 `interface xs, e, l, e2: (...xs, e) = l && (e2,) = xs`
 
+https://chatgpt.com/c/69374253-db90-832e-95e9-8f597d31f51a
 constraints are boolean functions
 
-constraint unification is symmetric, so it can't be encoded purely by patterns?
+if we consider is operator at pattern level, we can use constraints declaration, and even make the patterns first-class values. function calls under patterns become symbolic constraints.
+importantly if gives interpretation for expressions under patterns and patterns under expressions, which makes the whole system complete. Pattern values are naturally describing existentials over free variables. These also can be considered duals to functions - functions compute outputs from inputs, while patterns do the opposite and find inputs matching the output.
 
 https://dl.acm.org/doi/pdf/10.1145/3677999.3678279
 https://publishup.uni-potsdam.de/opus4-ubp/frontdoor/deliver/index/docId/3957/file/wlp09_S1_15.pdf
