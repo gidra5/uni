@@ -172,7 +172,8 @@ we can also introduce pure unguarded choice, which will choose an outcome probab
 
 lambda-pi calc and continuation passing style
 https://dl.acm.org/doi/pdf/10.1145/263699.263726
-
+https://link.springer.com/chapter/10.1007/978-3-642-37036-6_20
+https://ir.cwi.nl/pub/30714/30714.pdf
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
