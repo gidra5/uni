@@ -143,7 +143,8 @@ https://www.reddit.com/r/ProgrammingLanguages/comments/1gabhe8/epsilon_a_program
 https://www.reddit.com/r/ProgrammingLanguages/comments/1gs95zm/truly_optimal_evaluation_with_unordered/
 
 https://link.springer.com/chapter/10.1007/3-540-57182-5_32
-parallel+nondet lambda calc - extends lambda with `+` and `|`, with them being distributive over application and eachother. These can be seen as disjunction and conjunction over lambda terms
+https://epubs.siam.org/doi/epdf/10.1137/S0097539794275860
+parallel+nondet (concurrent) lambda calc - extends lambda with `+` and `|`, with them being distributive over application and eachother. These can be seen as disjunction and conjunction over lambda terms
 
 
 
