@@ -14,8 +14,10 @@ Main language design principles:
 12. Formatting independent semantics
 13. Preference for unambiguous code with exceptions to cases when it doesn't impact maintainability. Special-cases are sometimes a form of ambiguity, thus also need to be avoided
 14. Must satisfy Principle of Equal Power.
+15. Must be complete. There must be semantic closure over all the operations available.
 
 https://ceronman.com/2012/09/17/coffeescript-less-typing-bad-readability/
 https://cln.co/
 https://youtu.be/RNZeAmp1EaA?si=PtCQ2Bn2N3391b84
 https://journal.stuffwithstuff.com/2013/08/26/what-is-open-recursion/
+https://cs.lmu.edu/~ray/notes/languagedesignnotes/
