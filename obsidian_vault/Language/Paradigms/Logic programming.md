@@ -36,6 +36,10 @@ https://minikanren.org/workshop/2021/minikanren-2021-final8.pdf
 `constraint xs, e, l, e2: (...xs, e) = l && (e2,) = xs`
 `interface xs, e, l, e2: (...xs, e) = l && (e2,) = xs`
 
+constraints are boolean functions
+
+constraint unification is symmetric, so it can't be encoded purely by patterns?
+
 https://dl.acm.org/doi/pdf/10.1145/3677999.3678279
 https://publishup.uni-potsdam.de/opus4-ubp/frontdoor/deliver/index/docId/3957/file/wlp09_S1_15.pdf
 https://www.cambridge.org/core/services/aop-cambridge-core/content/view/AB57FF99CEA76C1C31A336B560D6FD3C/S0956796809007321a.pdf/algebras-for-combinatorial-search.pdf
