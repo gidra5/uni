@@ -146,6 +146,7 @@ https://link.springer.com/chapter/10.1007/3-540-57182-5_32
 https://epubs.siam.org/doi/epdf/10.1137/S0097539794275860
 parallel+nondet (concurrent) lambda calc - extends lambda with `+` and `|`, with them being distributive over application and eachother. These can be seen as disjunction and conjunction over lambda terms
 
+full abstraction
 
 
 Так же из семантики вытекают следующие тождества:
