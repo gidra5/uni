@@ -151,6 +151,7 @@ Demonic and angelic nondeterminism are nondet choice and parallel composition.
 
 angelic programming may allow faster development of programs by accepting possibly incomplete programs and giving out a set of outputs it may generate. The incompleteness is encoded as parallel composition of values to consider. By running such programs and examining what values each choice produced (or diverged), we can choose a single suitable value for our final program. Thus programmer can test implementation hypotheses
 
+https://www.irif.fr/~gmanzone/papers/lfcs09.pdf
 https://www.sciencedirect.com/science/article/pii/S0167642306002115
 Angelic nondeterminism occurs when the choice is made by an ‘angel’: it is assumed that the angel will choose the best possible outcome. Demonic nondeterminism occurs when the choice is made by a ‘demon’: no assumption can be made about the choice made by the demon, so one must be prepared for the worst possible outcome.
 On interpretation for "comparing" outcomes is termination - from what we have, we always choose those that terminate, or those that do not terminate at all.
@@ -161,7 +162,8 @@ multirelations can be composed.
 
 One may "resolve" nondeterminism interactively, by "handling" it through a kind of cli.
 
-We may also resolve it to a single value
+
+We may also resolve it to a single value, depending of which kind of nondet was chosen. If "angelic" is chosen, then we resolve it into the first result we get. For "demonic", we resolve it into a multiset of all the results. We may introduce two operators `race` and `collect` to convert between the two kinds, and another `await` that would collapse them using the corresponding semantics. 
 
 full abstraction
 
