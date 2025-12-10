@@ -35,6 +35,7 @@ https://minikanren.org/workshop/2021/minikanren-2021-final8.pdf
 `free xs, e, l, e2: (...xs, e) = l && (e2,) = xs`
 `constraint xs, e, l, e2: (...xs, e) = l && (e2,) = xs`
 `interface xs, e, l, e2: (...xs, e) = l && (e2,) = xs`
+`pattern xs, e, l, e2: (...xs, e) = l && (e2,) = xs`
 
 https://chatgpt.com/c/69374253-db90-832e-95e9-8f597d31f51a
 constraints are boolean functions
@@ -43,6 +44,7 @@ if we consider is operator at pattern level, we can use constraints declaration,
 importantly if gives interpretation for expressions under patterns and patterns under expressions, which makes the whole system complete. Pattern values are naturally describing existentials over free variables. These also can be considered duals to functions - functions compute outputs from inputs, while patterns do the opposite and find inputs matching the output. The duality between two consumers of a single protocol looks awfully similar to this duality, and even visible in the way forall is introduced there, which is basically a polarity of information flow. But that only makes sense if we interpret lambda as a kind of channel. So now there is "output" side and "input" side, both trying to satisfy and equation defined by lambda while communicating through it.
 
 To me that sounds more like a separate kind of channel with associated constraint f(x)=t, not an actual function. So once someone sends x, receiver must respond with matching t, which can be done via application. if receiver send t, it sender must provide matching x which can be done via unification. It is a protocol of the form `!x.?t|?t.!x <-f-> ?x.!t|!t.?x`. You could think of sender as unification implementor, and receiver as function evaluator, but now they have a bidirectional interaction. A kind of relational session. The actual function values are a separate entity with unidirectional data flow, as well as the pattern. 
+You may also erase separation between who is who (unifier or evaluator) and allow both of the be either one in a pair of communication. Functions and patterns are one-way projections of a bidirectional relational protocol.
 
 https://dl.acm.org/doi/pdf/10.1145/3677999.3678279
 https://publishup.uni-potsdam.de/opus4-ubp/frontdoor/deliver/index/docId/3957/file/wlp09_S1_15.pdf
