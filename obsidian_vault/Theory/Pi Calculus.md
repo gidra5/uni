@@ -161,7 +161,8 @@ With that, angelic choice is union of such sets, while demonic is intersection.
 multirelations can be composed. 
 
 One may "resolve" nondeterminism interactively, by "handling" it through a kind of cli.
-
+https://lmcs.episciences.org/2665/pdf?utm_source=chatgpt.com
+https://www.researchgate.net/publication/222539946_Axioms_for_Probability_and_Nondeterminism
 
 We may also resolve it to a single value, depending of which kind of nondet was chosen. If "angelic" is chosen, then we resolve it into the first result we get. For "demonic", we resolve it into a multiset of all the results. We may introduce two operators `race` and `collect` to convert between the two kinds, and another `await` that would collapse them using the corresponding semantics. 
 
