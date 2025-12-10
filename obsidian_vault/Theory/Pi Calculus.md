@@ -146,6 +146,10 @@ https://link.springer.com/chapter/10.1007/3-540-57182-5_32
 https://epubs.siam.org/doi/epdf/10.1137/S0097539794275860
 parallel+nondet (concurrent) lambda calc - extends lambda with `+` and `|`, with them being distributive over application and eachother. These can be seen as disjunction and conjunction over lambda terms
 
+Demonic and angelic nondeterminism are nondet choice and parallel composition.
+
+angelic programming may allow faster development of programs by accepting possibly incomplete programs and giving out a set of outputs it may generate. The incompleteness is encoded as parallel composition of values to consider. By running such programs and examining what values each choice produced (or diverged), we can choose a single suitable value for our final program.
+
 full abstraction
 
 
