@@ -146,9 +146,16 @@ https://link.springer.com/chapter/10.1007/3-540-57182-5_32
 https://epubs.siam.org/doi/epdf/10.1137/S0097539794275860
 parallel+nondet (concurrent) lambda calc - extends lambda with `+` and `|`, with them being distributive over application and eachother. These can be seen as disjunction and conjunction over lambda terms
 
+https://parlab.eecs.berkeley.edu/sites/all/parlab/files/angelic-acm-dl.pdf
 Demonic and angelic nondeterminism are nondet choice and parallel composition.
 
-angelic programming may allow faster development of programs by accepting possibly incomplete programs and giving out a set of outputs it may generate. The incompleteness is encoded as parallel composition of values to consider. By running such programs and examining what values each choice produced (or diverged), we can choose a single suitable value for our final program.
+angelic programming may allow faster development of programs by accepting possibly incomplete programs and giving out a set of outputs it may generate. The incompleteness is encoded as parallel composition of values to consider. By running such programs and examining what values each choice produced (or diverged), we can choose a single suitable value for our final program. Thus programmer can test implementation hypotheses
+
+https://www.sciencedirect.com/science/article/pii/S0167642306002115
+Angelic nondeterminism occurs when the choice is made by an ‘angel’: it is assumed that the angel will choose the best possible outcome. Demonic nondeterminism occurs when the choice is made by a ‘demon’: no assumption can be made about the choice made by the demon, so one must be prepared for the worst possible outcome.
+On interpretation for "comparing" outcomes is termination - from what we have, we always choose those that terminate, or those that do not terminate at all.
+
+One may "resolve" nondeterminism interactively, by "handling" it through a kind of cli.
 
 full abstraction
 
