@@ -145,6 +145,7 @@ https://www.reddit.com/r/ProgrammingLanguages/comments/1gs95zm/truly_optimal_eva
 https://link.springer.com/chapter/10.1007/3-540-57182-5_32
 https://epubs.siam.org/doi/epdf/10.1137/S0097539794275860
 parallel+nondet (concurrent) lambda calc - extends lambda with `+` and `|`, with them being distributive over application and eachother. These can be seen as disjunction and conjunction over lambda terms
+&/| separation - first is an actual product (multiset) of values, second is a sum (nondet union) of values.
 
 https://parlab.eecs.berkeley.edu/sites/all/parlab/files/angelic-acm-dl.pdf
 Demonic and angelic nondeterminism are nondet choice and parallel composition.
@@ -164,6 +165,7 @@ One may "resolve" nondeterminism interactively, by "handling" it through a kind 
 https://lmcs.episciences.org/2665/pdf?utm_source=chatgpt.com
 https://www.researchgate.net/publication/222539946_Axioms_for_Probability_and_Nondeterminism
 
+Modalities multiset and await
 We may also resolve it to a single value, depending of which kind of nondet was chosen. If "angelic" is chosen, then we resolve it into the first result we get. For "demonic", we resolve it into a multiset of all the results. We may introduce two operators `race` and `collect` to convert between the two kinds, and another `await` that would collapse them using the corresponding semantics. 
 
 full abstraction
@@ -175,6 +177,8 @@ lambda-pi calc and continuation passing style
 https://dl.acm.org/doi/pdf/10.1145/263699.263726
 https://link.springer.com/chapter/10.1007/978-3-642-37036-6_20
 https://ir.cwi.nl/pub/30714/30714.pdf
+
+https://axe-docs.pages.dev/features/concurrency/
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
