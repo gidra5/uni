@@ -1232,6 +1232,7 @@ describe("modules", () => {
     it.todo("export declaration");
     it.todo("export default");
     it.todo("external declaration");
+    it.todo("namespace");
   });
 
   describe("traits", () => {

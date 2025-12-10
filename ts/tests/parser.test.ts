@@ -467,6 +467,7 @@ describe("programs", () => {
     // it.todo("operator", () => testCase(`operator _+_ := fn x, y -> x + y`));
     // it.todo("operator with precedence", () => testCase(`operator _+_ precedence 1 := fn x, y -> x + y`));
     // it.todo("operator with tuple precedence", () => testCase(`operator _+_ precedence 1, 2 := fn x, y -> x + y`));
+    // it.todo("namespace", () => testCase(`namespace a { x := 123 }`));
   });
 });
 
