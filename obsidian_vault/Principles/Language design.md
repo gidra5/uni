@@ -17,6 +17,8 @@ Main language design principles:
 15. Must be semantically complete. There must be semantic closure over all the operations available.
 16. There must a single optimal, idiomatic way to solve a problem. 
 17. Preserve duality in concepts.
+18. Do not enforce cluttering of syntax and semantics with what can be inferred.
+19. If there is a semantic design choice, you should delegate this choice to the user. Provide both options and allow user to choose whichever is more suitable.
 
 https://en.wikipedia.org/wiki/Zen_of_Python
 https://ceronman.com/2012/09/17/coffeescript-less-typing-bad-readabilityconcepr/
@@ -25,3 +27,4 @@ https://youtu.be/RNZeAmp1EaA?si=PtCQ2Bn2N3391b84
 https://journal.stuffwithstuff.com/2013/08/26/what-is-open-recursion/
 https://cs.lmu.edu/~ray/notes/languagedesignnotes/
 https://flix.dev/principles/
+https://blog.flix.dev/
