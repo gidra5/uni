@@ -167,6 +167,9 @@ We may also resolve it to a single value, depending of which kind of nondet was 
 
 full abstraction
 
+https://pdfs.semanticscholar.org/599f/29c706e273897d80621de1c789f3cc550dea.pdf
+we can also introduce pure unguarded choice, which will choose an outcome probabilistically with some probability `p`.
+
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
