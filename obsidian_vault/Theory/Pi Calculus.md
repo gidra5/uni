@@ -170,6 +170,9 @@ full abstraction
 https://pdfs.semanticscholar.org/599f/29c706e273897d80621de1c789f3cc550dea.pdf
 we can also introduce pure unguarded choice, which will choose an outcome probabilistically with some probability `p`.
 
+lambda-pi calc and continuation passing style
+https://dl.acm.org/doi/pdf/10.1145/263699.263726
+
 
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность

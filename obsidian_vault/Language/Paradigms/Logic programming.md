@@ -24,4 +24,6 @@ Logical variables by itself are not enough, we also need unification over these 
 https://foones.github.io/files/pub/2020-ICTAC-Semantics_of_a_Relational_Lambda_Calculus.pdf
 
 https://scholarworks.iu.edu/iuswrrest/api/core/bitstreams/27f1ebb8-5114-4fa5-b598-dcfaddfd6af5/content
-https://minikanren.org/workshop/2021/minikanren-2021-final8.pdf?
+https://minikanren.org/workshop/2021/minikanren-2021-final8.pdf
+
+`last l = (free xs, e: (...xs, e) == l).e`
