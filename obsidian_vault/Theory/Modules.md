@@ -12,7 +12,7 @@ Definitions can be:
 10. actors
 
 ## Dataflow
-
+https://en.wikipedia.org/wiki/Synchronous_programming_language
 We define dataflow as a graph that transforms incoming signals into outgoing ones.
 
 These are inherently passive - they only execute once some values are pushed through incoming signals. This also means they are lazy - downstream computation may even not execute.
