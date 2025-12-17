@@ -78,12 +78,14 @@ With this we can express call-by-value application as follows:
 x y = capture a.<y|bind v.<x|v.a>>
 ```
 
-And following the reduction rule for functions:
+Overall we get this system:
 ```
-<fn x -> y|value.env> = <value|bind x.<y|env>> 
-					  = <capture e.<value|bind x.<y|e>>|env>
-					  = <bind x.<y|env>|value>
-					  
-capture a.<y|bind v.<x|v.a>> <-> bind a.<capture v.<x|v.a>|y>
+value = x | fn x -> expr
+expr = value | capture a.command
+env = a | [] | expr.env | bind v.command
+command = <expr|env>
 
+<value|bind v.command> -> command[v/value]
+<capture e.command|env> -> command[e/env]
+<fn x -> y|z.env> -> <y[x/z]|env>
 ```
