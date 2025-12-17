@@ -20,4 +20,6 @@ Transformations can be cached if the inputs are the same as previous.
 
 Graphs describe derived computations. We can connect them to the effects, which will re run every time inputs change.
 
-The whole thing can be nested in effects as well. They will persist until the parent effect reruns.
+The whole thing can be nested in effects as well. They will persist until the parent effect reruns. 
+
+Once triggered, it will run until some fixpoint is reached, meaning no further update steps will change the state. If it is acyclic, it will reach this state almost immediately, otherwise it will run emitting new outputs until it settles down.
