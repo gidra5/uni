@@ -82,7 +82,7 @@ Overall we get this system:
 ```
 value = x | fn x -> expr
 expr = value | capture a.command
-env = a | [] | expr.env | bind v.command
+env = a | [] | value.env | bind v.command
 command = <expr|env>
 
 <value|bind v.command> -> command[v/value]

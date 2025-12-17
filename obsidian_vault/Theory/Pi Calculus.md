@@ -183,6 +183,8 @@ https://axe-docs.pages.dev/features/concurrency/
 there is equivalent of eta conversion for pi calculus - message forwarding:
 `x(y)|x[z].f(z) = f(y)`
 
+https://www.doc.ic.ac.uk/research/technicalreports/2005/DTR05-6.pdf?utm_source=chatgpt.com
+
 Так же из семантики вытекают следующие тождества:
 * `x | y === y | x` - комутативность
 * `(x | y) | z === x | (y | z)` - асоциативность
