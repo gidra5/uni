@@ -86,6 +86,4 @@ And following the reduction rule for functions:
 					  
 capture a.<y|bind v.<x|v.a>> <-> bind a.<capture v.<x|v.a>|y>
 
-x y = capture a.<y|bind v.<x|bind e.<value(v.a)|e>>>
-
 ```
