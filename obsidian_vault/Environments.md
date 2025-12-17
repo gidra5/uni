@@ -35,4 +35,21 @@ With that in mind we can express `captured(env)` as well:
 captured(env) = fn x -> capture a.<x|env> (fn x -> capture a.<x|env.a>?)
 ```
 
+We can also elaborate application in terms of `capture a.cmd`:
+```
+x y = capture a.<x|y.a>
+```
+
+Together all of this gives us the following system:
+```
+expr = x | fn x -> expr | capture a.command
+env = a | expr.env (| []?)
+command = <expr|env>
+
+<capture e.command|env> -> command[e/env]
+<fn x -> y|z.env> -> <y[x/z]|env>
+```
+
+All of the above described call-by-name lambda calculus in a more explicit manner.
+We can derive similar calculus for call-by-value system.
 First class environments. Add quote/eval and we have macros
