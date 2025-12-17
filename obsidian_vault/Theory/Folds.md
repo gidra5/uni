@@ -33,3 +33,10 @@ unfold f x {
 	yield (f x+1, f x+2)
 }
 ```
+
+Associativity - organize tree shaped map-reduce.
+Commutativity - compute in parallel all the values, reduce linearly.
+Distributivity - duplication/grouping 
+Idempotence - short circuit computation once found identity value
+
+These all assume a particular grouping strategy. Is there a variant that allows explicitly defining arbitrary grouping strategy?
