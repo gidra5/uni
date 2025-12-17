@@ -10,3 +10,12 @@ Definitions can be:
 8. state machines
 9. dataflow circuits?
 10. actors
+
+## Dataflow
+
+We define dataflow as a graph that transforms incoming signals into outgoing ones.
+
+These are inherently passive - they only execute once some values are pushed through incoming signals. This also means they are lazy - downstream computation may even not execute.
+Transformations can be cached if the inputs are the same as previous.
+
+We can connect ef
