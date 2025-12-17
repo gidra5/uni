@@ -28,3 +28,31 @@ Modes for references and their content not always related, assuming otherwise ca
 Different invariants can be combined together to create a full description of restrictions on given value.
 
 https://blog.bruce-hill.com/mutability-isnt-variability
+
+
+Modalities can describe capabilities for acting on some resource. Resources are implicit and only accessable through capabilities. That kind of makes them existentials.
+For example a mutable reference is a location (resource) and an token to allow mutating it (capability).
+
+Effect handlers are implicit capabilities passed everywhere while the handler is active
+
+We can declare capabilities
+We can create tokens for that capability. We can link it to some value and require it to allow some operations on that value.
+We can verify that the value is linked to a token
+
+Distinguish values and resources. Values are copyable, but resources must remain unique. Uniqueness of every resource induces the following:
+1. Has an introduction point (allocation)
+2. Has distinct identity (each allocation is not equal to the other allocations)
+3. Has limited lifetime (will be eventually freed)
+4. It cannot be copied
+
+For example you cannot allocate at the same location. You cant get another identical file. You cant create another identical channel.
+
+All allocations have associated capabilities with some sane default set of capabilities.
+Functions change capabilities on the resources, as well as on the ambient.
+All capabilities are linear (basically a multiset)
+
+All capability transforms are nominal and only definable besides the resource itself.
+
+Capabilities can be typed: linear or not
+
+First class environments. Add quote/eval and we have macros
