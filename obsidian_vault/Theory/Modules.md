@@ -18,4 +18,6 @@ We define dataflow as a graph that transforms incoming signals into outgoing one
 These are inherently passive - they only execute once some values are pushed through incoming signals. This also means they are lazy - downstream computation may even not execute.
 Transformations can be cached if the inputs are the same as previous.
 
-We can connect ef
+Graphs describe derived computations. We can connect them to the effects, which will re run every time inputs change.
+
+The whole thing can be nested in effects as well. They will persist until the parent effect reruns.
