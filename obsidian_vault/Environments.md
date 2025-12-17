@@ -77,3 +77,9 @@ With this we can express call-by-value application as follows:
 ```
 x y = capture a.<y|bind v.<x|v.a>>
 ```
+
+And following the reduction rule for functions:
+```
+<fn x -> y|value.env> = <value|bind x.<y|env>> 
+					  = <capture e.<value|bind x.<y|env>>|value.env>
+```
