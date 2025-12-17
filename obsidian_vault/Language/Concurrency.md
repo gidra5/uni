@@ -93,7 +93,6 @@ https://edu.anarcho-copy.org/Programming%20Languages/Go/Concurrency%20in%20Go.pd
 https://github.com/tc39/proposal-explicit-resource-management/issues/97
 https://medium.com/@jayphelps/backpressure-explained-the-flow-of-data-through-software-2350b3e77ce7
 
-
 https://dl.acm.org/doi/pdf/10.1145/3674651
 
 Applicative functors can be parallelized somehow.
