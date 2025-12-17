@@ -16,5 +16,20 @@ Structured recursion - a recursive function induced by a recursive function. Bas
 `for x in y with acc { newacc }`
 Uses iteration protocol of the form `next() -> (v, children)`
 
-`traverse node in tree with acc { acc + recurse child }`
+`fold node in tree with acc { acc + recurse child }`
 A more generic for loop with arbitrary recursion. Uses traversion protocol of the form `traverse(child) -> node`
+
+We can derive duals to these constructs - generators and unfolds.
+Generators:
+```
+gen f x {
+	yield x
+	f x+1
+}
+```
+Unfolds:
+```
+unfold f x {
+	yield (f x+1, f x+2)
+}
+```
