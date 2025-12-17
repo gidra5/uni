@@ -81,5 +81,11 @@ x y = capture a.<y|bind v.<x|v.a>>
 And following the reduction rule for functions:
 ```
 <fn x -> y|value.env> = <value|bind x.<y|env>> 
-					  = <capture e.<value|bind x.<y|env>>|value.env>
+					  = <capture e.<value|bind x.<y|e>>|env>
+					  = <bind x.<y|env>|value>
+					  
+capture a.<y|bind v.<x|v.a>> <-> bind a.<capture v.<x|v.a>|y>
+
+x y = capture a.<y|bind v.<x|bind e.<value(v.a)|e>>>
+
 ```
