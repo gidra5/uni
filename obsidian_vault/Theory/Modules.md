@@ -23,3 +23,5 @@ Graphs describe derived computations. We can connect them to the effects, which 
 The whole thing can be nested in effects as well. They will persist until the parent effect reruns. 
 
 Once triggered, it will run until some fixpoint is reached, meaning no further update steps will change the state. If it is acyclic, it will reach this state almost immediately, otherwise it will run emitting new outputs until it settles down.
+
+The whole thing is probably turing complete. It can natively support loops (cyclic graphs), sequencing, history (access to the previous values of signals) and conditionals through inner implementation of nodes (only fires one of the outputs). Another way to put it, is that all electronics is based on this model of computation.
