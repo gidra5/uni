@@ -25,3 +25,22 @@ The whole thing can be nested in effects as well. They will persist until the pa
 Once triggered, it will run until some fixpoint is reached, meaning no further update steps will change the state. If it is acyclic, it will reach this state almost immediately, otherwise it will run emitting new outputs until it settles down.
 
 The whole thing is probably turing complete. It can natively support loops (cyclic graphs), sequencing, history (access to the previous values of signals) and conditionals through inner implementation of nodes (only fires one of the outputs). Another way to put it, is that all electronics is based on this model of computation.
+
+# Datalog
+https://en.wikipedia.org/wiki/Datalog
+Datalog is a system for "storing" facts and judgements on them. These can be reinterpreted as database table entries and materialized views
+
+We can define database/logic like scope, where we state initial facts and judgements.
+
+Following the logic interpretation, our judgements are derived from initial facts with logical operators and inductive variables:
+```
+edge(1, 2)
+edge(2, 3)
+
+reachable(x,y) = edge(x,y) or (edge(x,z) and reachable(z,y))
+```
+
+We can query this "database" with a query like this:
+```
+
+```

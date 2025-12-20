@@ -10,7 +10,7 @@ unification
 
 https://www.michaelhanus.de/papers/GanzingerFestschrift.pdf
 
-At its core, _pure_ logic programming (à la Prolog without cuts, I/O, etc.) consists of:
+At its core, _pure_ logic programming consists of:
 1. **Nondeterministic search**
 2. **Logical variables**
 3. **Unification (constraint solving)**
@@ -60,3 +60,6 @@ https://pdf.sciencedirectassets.com/271538/1-s2.0-S0304397500X05312/1-s2.0-S0304
 
 https://scispace.com/pdf/a-pi-calculus-specification-of-prolog-3qf2pf04ud.pdf?utm_source=chatgpt.com
 https://dtai.cs.kuleuven.be/projects/ALP/newsletter/may06/nav/articles/ueda/article.pdf?utm_source=chatgpt.com
+
+https://chatgpt.com/c/694424ee-e758-8333-8a8d-5d3204a46c62
+
