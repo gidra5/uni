@@ -28,7 +28,7 @@ The whole thing is probably turing complete. It can natively support loops (cycl
 
 # Datalog
 https://en.wikipedia.org/wiki/Datalog
-Datalog is a system for "storing" facts and judgements on them. These can be reinterpreted as database table entries and materialized views
+Datalog is a system for "storing" facts and judgements on them. These can be reinterpreted as database table rows and materialized views
 
 We can define database/logic like scope, where we state initial facts and judgements.
 
@@ -42,5 +42,31 @@ reachable(x,y) = edge(x,y) or (edge(x,z) and reachable(z,y))
 
 We can query this "database" with a query like this:
 ```
-
+select (x, y) from reachable(x,y) where x = 1
 ```
+
+Following database interpretation, we can allow rows to be general datatypes, allowed in the language. Making materialized views also have rows that are general datatypes:
+```
+edge(1, "hey", fn x -> x + 1)
+edge(2, "yea", fn x -> x - 1)
+
+reachable record { x, y } = ???
+```
+
+Usual prolog or datalog is equivalent to first-order logic, but we can extend it to higher order:
+```
+for x. for y. edge(x, y)
+exists y. node(y)
+```
+
+We could constraint "for":
+```
+for x. for y. edge(x, y) where x > y
+```
+
+Going further, we can have general boolean expressions as facts:
+```
+1 + 2 < f
+$huh in g
+```
+These expressions, and all expressions equivalent to them, are assumed to be true.
