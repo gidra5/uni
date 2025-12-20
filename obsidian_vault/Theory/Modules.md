@@ -78,9 +78,18 @@ nat(s(x)) :- nat(x).
 
 unnat(x) :- not nat(x)
 ```
+We could query facts directly:
+```
+query reachable(1,2)
+```
+Or query sets of values if there are unbound identifiers, possibly with constraints:
+```
+query reachable(1, x) where x!=2
+```
 
-We can also inspire extension by other kinds of logic, like modal (temporal, dynamic, hybrid) logic, linear (substructural) logic, separation logic, graded variants, least and greatest fixed point. probabilistic logic?
+We can also inspire extension by other kinds of logic, like modal (temporal, dynamic, hybrid) logic, linear (substructural) logic, separation logic, graded variants, probabilistic logic, least and greatest fixed point.
 
 We may add/remove/update facts as we continue the program.
 
-Following database interpretation, we can enrich querying syntax. Aggregation, grouping, distinct, nulls?, foreign keys, transactions
+https://www.postgresql.org/docs/current/index.html
+Following database interpretation, we can enrich querying syntax. Aggregation, grouping, distinct, nulls?, foreign keys, transactions, primary keys/uniqueness, joins, window functions, order, limit, offset
