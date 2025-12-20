@@ -19,7 +19,7 @@ Main language design principles:
 17. Preserve duality in concepts.
 18. Do not enforce cluttering of syntax and semantics with what can be inferred.
 19. If there is a semantic design choice, you should delegate this choice to the user. Provide both options and allow user to choose whichever is more suitable.
-20. The programs and algorithms should be expressed in domain specific languages. Most general DSL are the models of computation, all providing equal power, yet able to express things differently and optimally in their domain. Thus it is essential to allow expressing the computation in a different model naturally, without reimplementing it, providing a common, unifying ground for the maintainability and readability of code. Additional benefit of having multiple models in one language, is exposure to different paradigms, that can ultimately give 
+20. The programs and algorithms should be expressed in domain specific languages. Most general DSL are the models of computation, all providing equal power, yet able to express things differently and optimally in their domain. Thus it is essential to allow expressing the computation in a different model naturally, without reimplementing it, providing a common, unifying ground for the maintainability and readability of code. Additional benefit of having multiple models in one language, is exposure to different paradigms, that can ultimately give. Note that new paradigms can arise, so it must be extensible.
 
 https://en.wikipedia.org/wiki/Zen_of_Python
 https://ceronman.com/2012/09/17/coffeescript-less-typing-bad-readabilityconcepr/
@@ -29,3 +29,5 @@ https://journal.stuffwithstuff.com/2013/08/26/what-is-open-recursion/
 https://cs.lmu.edu/~ray/notes/languagedesignnotes/
 https://flix.dev/principles/
 https://blog.flix.dev/
+https://chatgpt.com/c/6946aa7a-43c4-8331-acac-34f7f5602862
+https://www.youtube.com/watch?v=1iPWt1gvT_w
