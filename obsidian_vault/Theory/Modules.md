@@ -10,7 +10,7 @@ Definitions can be:
 8. state machines
 9. dataflow circuits?
 10. actors
-
+11. databases?
 ## Dataflow
 https://en.wikipedia.org/wiki/Synchronous_programming_language
 We define dataflow as a graph that transforms incoming signals into outgoing ones.
@@ -93,3 +93,5 @@ We may add/remove/update facts as we continue the program.
 
 https://www.postgresql.org/docs/current/index.html
 Following database interpretation, we can enrich querying syntax. Aggregation, grouping, distinct, nulls?, foreign keys, transactions, primary keys/uniqueness, joins, window functions, order, limit, offset
+
+Once we follow replicate at least prolog semantics, we already gain turing completeness.
