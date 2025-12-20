@@ -70,3 +70,13 @@ Going further, we can have general boolean expressions as facts:
 $huh in g
 ```
 These expressions, and all expressions equivalent to them, are assumed to be true.
+
+We can define inductive and coinductive (?) judgements
+```
+nat(0).
+nat(s(x)) :- nat(x).
+
+unnat(x) :- not nat(x)
+```
+
+We can also inspire extension by other kinds of logic, like modal (temporal) logic, linear (substructural) logic.
