@@ -79,4 +79,8 @@ nat(s(x)) :- nat(x).
 unnat(x) :- not nat(x)
 ```
 
-We can also inspire extension by other kinds of logic, like modal (temporal) logic, linear (substructural) logic.
+We can also inspire extension by other kinds of logic, like modal (temporal, dynamic, hybrid) logic, linear (substructural) logic, separation logic, graded variants, least and greatest fixed point. probabilistic logic?
+
+We may add/remove/update facts as we continue the program.
+
+Following database interpretation, we can enrich querying syntax. Aggregation, grouping, distinct, nulls?, foreign keys, transactions
