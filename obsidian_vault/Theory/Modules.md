@@ -11,6 +11,9 @@ Definitions can be:
 9. dataflow circuits?
 10. actors
 11. databases?
+12. selectors?
+
+program migration and versioning
 ## Dataflow
 https://en.wikipedia.org/wiki/Synchronous_programming_language
 We define dataflow as a graph that transforms incoming signals into outgoing ones.
@@ -26,7 +29,7 @@ Once triggered, it will run until some fixpoint is reached, meaning no further u
 
 The whole thing is probably turing complete. It can natively support loops (cyclic graphs), sequencing, history (access to the previous values of signals) and conditionals through inner implementation of nodes (only fires one of the outputs). Another way to put it, is that all electronics is based on this model of computation.
 
-# Datalog
+## Datalog
 https://en.wikipedia.org/wiki/Datalog
 Datalog is a system for "storing" facts and judgements on them. These can be reinterpreted as database table rows and materialized views
 

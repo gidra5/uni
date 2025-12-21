@@ -3,6 +3,15 @@ A general-purpose multi-paradigm language, that aims to provide scripting-like s
 
 While there are many great programming languages out in the wild, all of them feel like there is something missing, but otherwise best in class. Maybe its type system, pattern matching, or first class functions, etc., that are out of place or just unavailable. The goal of this project is to combine ideas from popular languages and ideas from papers on programming, that are either implemented exclusively by maths people for maths people, or just not supported by most mainstream languages
 
+why:
+1. mainstream languages are not good at distributed code sharing. Even if project is written in a single language, service/machine/role specific code is unaware of each other. This creates friction and unsoundness in the system.
+2. existance of design patterns suggests that the language has inadequate support for a problem. While from purely technical point of view, turing completeness is enough to solve any problem, from a user perspective, it is often not enough to also allow maintainable, performant and readable code at the same time. So any good language must have a ready-to-use tool for every problem. If there isnt one, it should be easy to add one, or implement support for it in the language natively. Note that it is in tension with simplicity of the whole language, which is crucial for smoothing of learning curve.
+3. most of the mainstream languages are incomplete semantically, or have a lot of "sharp edges". At some point features become not composable, or too restrictive, and start causing frustration. Like inability to write blocks in place of expressions, use type as values, etc.
+4. solid theoretical foundation in a user-friendly, familiar to most programmers, language syntax, idioms and patterns. Applying decades of research to a mainstream-by-design language.
+5. more robust and powerful analysis and optimization of code. Unsafe scopes must be unnecessary for expressiveness, optimization and interoperability.
+6. Many decisions made in the language design are subjective or usecase dependant. Forcing them on the user only creates more friction, without any benefits. Like restricting the language to be only module based or script based, but not both. Or forcing to give everything a name or declare in some way before use. Note that at the same time, we must steer user to the "best practices" through syntax simplicity, which *is* a subjective decision made by the designer. So we say that variables are constant by default, or private by default, or that functions are pure by default, etc.
+7. Compilers are often opaque in terms of how they generate objectively better executables. What is now common practice in SQL with explain/analyze, must be adopted by compilers as well.
+
 ## Main principles
 * Everything is an expression.
 * First class types (dependent types) - a type is a value
@@ -14,6 +23,7 @@ While there are many great programming languages out in the wild, all of them fe
 * Concise, yet granular, APIs
 * "Revealing complexity" language design - does not overload with syntax, if it is not needed for the problem at hand
 * Concurrency without stupid restrictions
+* Allow writing, dissallow using. User can write any syntactically valid code and expect it be semantically valid and executable. But once typed or analyzed, it may no longer be valid.
 
 ## Quick Start
 To install and run do the following:

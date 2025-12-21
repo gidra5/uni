@@ -247,6 +247,143 @@ describe("expressions", () => {
     });
   });
 
+  // TODO: semantics of decorators - how do they apply to expressions? To what part of them?
+  describe("decorators", () => {});
+
+  describe("database expressions", () => {
+    it.todo("empty database", () => testCase(`database {  }`));
+    it.todo("transaction", () => testCase(`transaction {  }`));
+    describe("query", () => {
+      it.todo("query scope", () => testCase(`query db { x = select x from x }`));
+
+      describe("select", () => {
+        it.todo("basic", () => testCase(`query db select x from x`));
+        it.todo("fields", () => testCase(`query db select x.a, x.b from x`));
+        it.todo("expression", () => testCase(`query db select record { f: x.a + 1, g: x.b - 1 } from x`));
+        it.todo("with where", () => testCase(`query db select x from x: Table where x.a = 1`));
+        it.todo("with limit", () => testCase(`query db select x from x: Table limit 1`));
+        it.todo("with order by", () => testCase(`query db select x from x: Table order by x.a`));
+        it.todo("with order by with", () => testCase(`query db select * from x: Table order by x.a with f`));
+        it.todo("with order by desc", () => testCase(`query db select * from x: Table order by x.a desc`));
+        it.todo("with join", () => testCase(`query db select x from x: Table join y: Table`));
+        it.todo("with join on", () => testCase(`query db select x from x: Table join y: Table on x.a = y.b`));
+
+        // https://www.postgresql.org/docs/18/sql-expressions.html#SYNTAX-AGGREGATES
+        describe("aggregate", () => {
+          it.todo("basic", () => testCase(`query db select aggregate count(x) from x: Table`));
+          it.todo("where", () => testCase(`query db select aggregate array(x) where x < 10 from x: Table`));
+          it.todo("distinct", () => testCase(`query db select aggregate array(distinct x) from x: Table`));
+          it.todo("order by", () => testCase(`query db select aggregate array(x) order by x.a from x: Table`));
+          it.todo("full", () =>
+            testCase(`
+            query db
+              select
+                aggregate array(distinct x)
+                order by x.a
+                where x.b = 1
+              from x: Table
+          `)
+          );
+        });
+
+        it.todo("with group by", () => testCase(`query db select x from x: Table group by x.a`));
+        it.todo("with distinct", () => testCase(`query db select distinct x.a from x: Table`));
+        it.todo("with distinct with", () => testCase(`query db select distinct x.a with f from x: Table`));
+
+        // https://www.postgresql.org/docs/18/sql-expressions.html#SYNTAX-WINDOW-FUNCTIONS
+        describe("windowing", () => {
+          it.todo("partition", () => testCase(`query db select count(x.a) over (partition by x.b) from x: Table`));
+          it.todo("order by", () => testCase(`query db select count(x.a) over (order by x.c) from x: Table`));
+          describe("frame", () => {
+            it.todo("range", () => testCase(`query db select count(x.a) over (frame range current) from x: Table`));
+            it.todo("rows", () => testCase(`query db select count(x.a) over (frame rows current) from x: Table`));
+            it.todo("groups", () => testCase(`query db select count(x.a) over (frame groups current) from x: Table`));
+            it.todo("range preceding", () =>
+              testCase(`query db select count(x.a) over (frame range 1 preceding) from x: Table`)
+            );
+            it.todo("range following", () =>
+              testCase(`query db select count(x.a) over (frame range 1 following) from x: Table`)
+            );
+            it.todo("range following unbounded", () =>
+              testCase(`query db select count(x.a) over (frame range all following) from x: Table`)
+            );
+            it.todo("range between", () =>
+              testCase(`query db select count(x.a) over (frame range between (1, 2)) from x: Table`)
+            );
+            it.todo("range exclude current", () =>
+              testCase(`query db select count(x.a) over (frame range between (1, 2) exclude current) from x: Table`)
+            );
+            it.todo("range exclude group", () =>
+              testCase(`query db select count(x.a) over (frame range between (1, 2) exclude group) from x: Table`)
+            );
+            it.todo("range exclude ties", () =>
+              testCase(`query db select count(x.a) over (frame range between (1, 2) exclude ties) from x: Table`)
+            );
+          });
+          it.todo("full", () =>
+            testCase(`
+            query db
+              select
+                count(x.a) over (
+                  partition by x.b
+                  order by x.c
+                  frame range
+                    between (1, 2)
+                    exclude ties
+                  )
+              from x: Table
+          `)
+          );
+        });
+      });
+
+      describe("insert", () => {});
+
+      describe("delete", () => {});
+
+      describe("update", () => {});
+
+      describe("tables", () => {
+        // https://www.postgresql.org/docs/current/ddl.html
+        it.todo("create", () => testCase(`query db create type x { a: number, b: string }`));
+        it.todo("drop", () => testCase(`query db drop type x`));
+
+        it.todo("defaults", () => testCase(`query db create type x { a: number = 1, b: string }`));
+        it.todo("defaults id", () => testCase(`query db create type x { id: number = next("id"), b: string }`));
+        it.todo("primary field", () =>
+          testCase(`query db create type x { primary id: number = next("id"), b: string }`)
+        );
+        // ...
+      });
+
+      describe("permissions", () => {});
+
+      describe("constraints", () => {});
+
+      describe("views", () => {});
+    });
+  });
+
+  describe("logic programming", () => {});
+
+  describe("dataflow expressions", () => {});
+
+  describe("reactive programming", () => {});
+
+  describe("folds", () => {
+    it.todo("map", () => testCase(`for x in y { x + 1 }`));
+    it.todo("filter", () => testCase(`for x in y { if x > 0: x + 1 }`));
+    it.todo("reduce", () => testCase(`for x in y with acc { acc + x }`));
+
+    it.todo("fold premap", () => testCase(`fold node in tree { v := node + 1; recurse node.child; v }`));
+    it.todo("fold postmap", () => testCase(`fold node in tree { recurse node.child; node + 1 }`));
+    it.todo("fold filter", () => testCase(`fold node in tree { if node > 0: node + 1 }`));
+    it.todo("fold reduce", () => testCase(`fold node in tree with acc { acc + recurse node.child }`));
+
+    it.todo("generator", () => testCase(`gen f x { yield x;	f x+1 }`));
+    it.todo("unfold", () => testCase(`unfold f x { yield (f x+1, f x+2) }`));
+  });
+
   describe("structured programming", () => {
     it("complex 1", () =>
       testCase(`
@@ -291,8 +428,10 @@ describe("expressions", () => {
     it("channel try send", () => testCase(`c <-? 123`));
     it("channel try receive", () => testCase(`<-? c`));
     it("try receive with assignment", () => testCase(`status := <-?numbers`));
-    it("superposition (multiset) value", () => testCase(`123 & 456`));
-    it("parallel value", () => testCase(`123 | 456`));
+    it("superposition (multiset product) value", () => testCase(`123 & 456`));
+    it("parallel (multiset union) value", () => testCase(`123 | 456`));
+    it.todo("race superposition value", () => testCase(`race 123 | 456`));
+    it.todo("collect parallel value", () => testCase(`collect 123 | 456`));
     it("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
     it("parallel with channels", () => testCase(`c <- 123 | <- c`));
     it("sum of channels", () => testCase(`c1 + c2`));
@@ -335,11 +474,6 @@ describe("expressions", () => {
         data[id[0]][id[1]][id[2]] = swap (1, 0) id[0]
       }`)
     );
-
-    // traverse tree, reducing all children into single value
-    it.todo("parallel tree reduce", () => testCase(`reduce 1, 2, 3 with reducer, merge, initial`));
-    // construct tree from single list of values, creating each branch in parallel
-    it.todo("parallel tree construct", () => testCase(`reduce 1, 2, 3 with reducer, merge, initial`));
 
     it("async", () => testCase(`async f x`));
     it("async index", () => testCase(`async f.a`));
@@ -421,6 +555,19 @@ describe("pattern matching", () => {
   test("with type", () => testCase(`x is (a: number, b)`));
   test("record pattern with type", () => testCase(`x is { a: number, b }`));
   test("value is of type", () => testCase(`x is type number`));
+
+  describe("first-class patterns", () => {
+    it.todo("pattern value", () => testCase(`pattern x, xs, v: (x, ...xs) = v`));
+    it.todo("pattern value binding access", () => testCase(`(pattern x, xs, v: (x, ...xs) = v),x`));
+    it.todo("pattern elimination", () => testCase(`eliminate (pattern x, xs, v: (x, ...xs) = v).v (1, 2, 3)`));
+    it.todo("pattern link", () =>
+      testCase(`link (pattern x, xs, v: (x, ...xs) = v).v (pattern x, xs, v: (x, ...xs) = v).xs`)
+    );
+    it.todo("pattern link", () =>
+      testCase(`link (pattern x, xs, v: (x, ...xs) = v).v (pattern x, xs, v: (x, ...xs) = v).xs`)
+    );
+    it.todo("pattern in function", () => testCase(`fn %pattern.v -> x + y`));
+  });
 });
 
 describe("types", () => {
@@ -430,12 +577,12 @@ describe("types", () => {
   it("type cast", () => testCase("x as number"));
   it("type coalesce", () => testCase("x :> number"));
 
-  // describe("functions", () => {
-  //   it.todo("function type", () => testCase('x: (number -> string) := fn: "1"'));
-  //   it.todo("function type with multiple args", () => testCase('x: fn number, string -> string := fn: "1"'));
-  //   it.todo("function type with named args", () => testCase('x: fn (x: number, y: string) -> string := fn: "1"'));
-  //   it.todo("parametric function type", () => testCase('x: fn (x: infer y) -> y or number := fn: "1"'));
-  // });
+  describe("functions", () => {
+    it.todo("function type", () => testCase('x: (number -> string) := fn: "1"'));
+    it.todo("function type with multiple args", () => testCase('x: fn number, string -> string := fn: "1"'));
+    it.todo("function type with named args", () => testCase('x: fn (x: number, y: string) -> string := fn: "1"'));
+    it.todo("parametric function type", () => testCase('x: fn (x: infer y) -> y or number := fn: "1"'));
+  });
 });
 
 describe("programs", () => {
