@@ -1300,3 +1300,6 @@ describe("modules", () => {
 describe("reactivity", () => {
   it.todo("reactive declaration");
 });
+
+// TODO: semantically equivalent code compiles to the same bytecode
+// TODO: direct equivalent of bytecode compiles optimally (objectively best possible performance)

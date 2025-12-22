@@ -228,27 +228,35 @@ describe("expressions", () => {
     });
   });
 
-  describe.todo("macro expressions", () => {
-    it("macro block body", () => testCase(`macro (x, y), env { eval x env + eval y env }`));
-    it("macro multiple params", () => testCase(`macro (x, y), env -> eval x env + eval y env`));
-    it("macro block body no env", () => testCase(`macro (x, y) { eval x + eval y }`));
-    it("macro multiple params no env", () => testCase(`macro (x, y) -> eval x + eval y`));
-    it("macro no parameters", () => testCase(`macro -> 123`));
-    it("macro no parameters block", () => testCase(`macro { 123 }`));
-    it("macro with return type", () => testCase(`macro (x, y), env -> number { x + y }`));
-    it("macro with parameter types", () =>
-      testCase(`macro (x: Expr<number>, y: Expr<string>), env: Env -> number { x + y }`));
-    it("macro with no arg", () => testCase(`macro -> #0`));
+  describe("macro expressions", () => {
+    it.todo("macro block body", () => testCase(`macro (x, y), env { eval x env + eval y env }`));
+    it.todo("macro multiple params", () => testCase(`macro (x, y), env -> eval x env + eval y env`));
+    it.todo("macro block body no env", () => testCase(`macro (x, y) { eval x + eval y }`));
+    it.todo("macro multiple params no env", () => testCase(`macro (x, y) -> eval x + eval y`));
+    it.todo("macro no parameters", () => testCase(`macro -> 123`));
+    it.todo("macro no parameters block", () => testCase(`macro { 123 }`));
+    it.todo("macro with return type", () => testCase(`macro (x, y), env -> number { x + y }`));
+    it.todo("macro with parameter types", () =>
+      testCase(`macro (x: Expr<number>, y: Expr<string>), env: Env -> number { x + y }`)
+    );
+    it.todo("macro with no arg", () => testCase(`macro -> #0`));
 
     describe("function forms", () => {
-      it("immediate form", () => testCase(`macro: x; y`));
-      it("block form", () => testCase(`macro { x }`));
-      it("rest form", () => testCase(`macro -> x; y`));
+      it.todo("immediate form", () => testCase(`macro: x; y`));
+      it.todo("block form", () => testCase(`macro { x }`));
+      it.todo("rest form", () => testCase(`macro -> x; y`));
     });
+
+    // ast is transparent to parentheses
   });
 
-  // TODO: semantics of decorators - how do they apply to expressions? To what part of them?
-  describe("decorators", () => {});
+  describe("annotations", () => {
+    it.todo("annotate declaration", () => testCase(`x := macro (expr): eval expr`));
+    it.todo("annotate expression", () => testCase(`@x 123`));
+    it.todo("annotate expression with delimited args", () => testCase(`@x(1, 2) 123`));
+    it.todo("annotate in composite expression", () => testCase(`@x(1, 2) 123 + 456`));
+    it.todo("annotate whole composite expression", () => testCase(`@x(1, 2) (123 + 456)`));
+  });
 
   describe("database expressions", () => {
     it.todo("empty database", () => testCase(`database {  }`));
@@ -364,11 +372,112 @@ describe("expressions", () => {
     });
   });
 
-  describe("logic programming", () => {});
+  describe("logic programming", () => {
+    describe("first order logic", () => {});
+    describe("higher order logic", () => {});
+    describe("modal logic", () => {});
+    describe("substructural logic", () => {});
+    describe("bayesian logic", () => {});
+    describe("least fixed point", () => {});
+    describe("greatest fixed point", () => {});
+    describe("graded logic", () => {});
+    describe("separation logic", () => {});
+  });
 
-  describe("dataflow expressions", () => {});
+  describe("dataflow expressions", () => {
+    it.todo("empty dataflow", () => testCase(`dataflow {  }`));
+    it.todo("dataflow input", () => testCase(`dataflow { in x; f := x + 1 }`));
+    it.todo("dataflow output", () => testCase(`dataflow { in x; out f := x + 1 }`));
+    it.todo("dataflow signal", () => testCase(`dataflow { x := 1 }`));
+    it.todo("dataflow derived", () => testCase(`dataflow { in x; f := x + 1 }`));
+    it.todo("dataflow fan-out", () =>
+      testCase(`dataflow { 
+        in x
+        out f := x + 1
+        out g := x + 2
+      }`)
+    );
+    it.todo("dataflow fan-in", () =>
+      testCase(`dataflow { 
+        in x, y
+        out f := (x, y)
+      }`)
+    );
+    it.todo("dataflow cyclic signals", () =>
+      testCase(`dataflow { 
+        x := !x
+      }`)
+    );
+    it.todo("dataflow indirect cyclic signals", () =>
+      testCase(`dataflow { 
+        x := !y
+        y := x
+      }`)
+    );
+    it.todo("dataflow effect", () =>
+      testCase(`dataflow { 
+        out x := false
+        { log x }
+      }`)
+    );
+    it.todo("dataflow guarded cyclic effect", () =>
+      testCase(`dataflow { 
+        out x := false
+        { if !x: x = true }
+      }`)
+    );
+    it.todo("dataflow unguarded cyclic effect", () =>
+      testCase(`dataflow { 
+        out x := 0
+        { x = x + 1; }
+      }`)
+    );
+    it.todo("nested dataflow effect", () =>
+      testCase(`dataflow { 
+        out x := false
+        { 
+          nested := dataflow { 
+            in x
+            { if !x: x = true }
+          }
+          nested.x <- x
+        }
+      }`)
+    );
+    it.todo("nested dataflow effect cleanup", () =>
+      testCase(`dataflow { 
+        out x := false
+        { 
+          a := alloc 4;
+          
+          nested := dataflow { 
+            in y
+            { if !y: x = true }
+          }
+          nested.y <- x
 
-  describe("reactive programming", () => {});
+          () -> free a
+        }
+      }`)
+    );
+
+    it.todo("dataflow pipe", () =>
+      testCase(`
+        dataflow { 
+          in out x
+          in out y
+
+          x = 2 * y
+        }
+      `)
+    );
+  });
+
+  describe("reactive programming", () => {
+    it.todo("signal", () => testCase(`x := signal 1`));
+    it.todo("derived", () => testCase(`x := derived { x + 1 }`));
+    it.todo("watch", () => testCase(`watch { log x + 1 }`));
+  });
 
   describe("folds", () => {
     it.todo("map", () => testCase(`for x in y { x + 1 }`));
@@ -430,7 +539,7 @@ describe("expressions", () => {
     it("try receive with assignment", () => testCase(`status := <-?numbers`));
     it("superposition (multiset product) value", () => testCase(`123 & 456`));
     it("parallel (multiset union) value", () => testCase(`123 | 456`));
-    it.todo("race superposition value", () => testCase(`race 123 | 456`));
+    it.todo("race superposition value", () => testCase(`race 123 & 456`));
     it.todo("collect parallel value", () => testCase(`collect 123 | 456`));
     it("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
     it("parallel with channels", () => testCase(`c <- 123 | <- c`));
@@ -454,7 +563,7 @@ describe("expressions", () => {
     );
     it.todo("select", () =>
       testCase(`
-        select { 
+        choose { 
           c <- 123: x, 
           <- c as y: z 
         }`)
@@ -492,6 +601,8 @@ describe("expressions", () => {
     it("index", () => testCase(`x[0]`));
     it("field assignment", () => testCase(`x.y = 123`));
     it("field assignment dynamic", () => testCase(`x[y] = 123`));
+
+    describe("optics", () => {});
   });
 
   describe("effect handlers", () => {
