@@ -261,8 +261,20 @@ describe("expressions", () => {
   describe("database expressions", () => {
     it.todo("empty database", () => testCase(`database {  }`));
     it.todo("transaction", () => testCase(`transaction {  }`));
+    it.todo("query scope", () => testCase(`query db { x := select x from x }`));
+
+    describe("tables", () => {
+      // https://www.postgresql.org/docs/current/ddl.html
+      it.todo("declare type", () => testCase(`database { x := type { a: number, b: string } }`));
+      it.todo("declare type with defaults", () => testCase(`database { x := type { a: number = 1, b: string } }`));
+      it.todo("primary field", () => testCase(`database { x := type { primary id: number, b: string } }`));
+      it.todo("generated field", () => testCase(`database { x := type { a: number, b = a + 1 } }`));
+      // id is pointer value
+      // ...
+    });
+
     describe("query", () => {
-      it.todo("query scope", () => testCase(`query db { x = select x from x }`));
+      // https://www.postgresql.org/docs/current/sql-merge.html
 
       describe("select", () => {
         it.todo("basic", () => testCase(`query db select x from x`));
@@ -284,13 +296,13 @@ describe("expressions", () => {
           it.todo("order by", () => testCase(`query db select aggregate array(x) order by x.a from x: Table`));
           it.todo("full", () =>
             testCase(`
-            query db
-              select
-                aggregate array(distinct x)
-                order by x.a
-                where x.b = 1
-              from x: Table
-          `)
+              query db
+                select
+                  aggregate array(distinct x)
+                  order by x.a
+                  where x.b = 1
+                from x: Table
+            `)
           );
         });
 
@@ -330,45 +342,134 @@ describe("expressions", () => {
           });
           it.todo("full", () =>
             testCase(`
-            query db
-              select
-                count(x.a) over (
-                  partition by x.b
-                  order by x.c
-                  frame range
-                    between (1, 2)
-                    exclude ties
-                  )
-              from x: Table
-          `)
+              query db
+                select
+                  count(x.a) over (
+                    partition by x.b
+                    order by x.c
+                    frame range
+                      between (1, 2)
+                      exclude ties
+                    )
+                from x: Table
+            `)
           );
         });
       });
 
-      describe("insert", () => {});
-
-      describe("delete", () => {});
-
-      describe("update", () => {});
-
-      describe("tables", () => {
-        // https://www.postgresql.org/docs/current/ddl.html
-        it.todo("create", () => testCase(`query db create type x { a: number, b: string }`));
-        it.todo("drop", () => testCase(`query db drop type x`));
-
-        it.todo("defaults", () => testCase(`query db create type x { a: number = 1, b: string }`));
-        it.todo("defaults id", () => testCase(`query db create type x { id: number = next("id"), b: string }`));
-        it.todo("primary field", () =>
-          testCase(`query db create type x { primary id: number = next("id"), b: string }`)
-        );
-        // ...
+      describe("insert", () => {
+        // insert generated field - derive source field through unification?
+        it.todo("basic", () => testCase(`query db insert (a, b) into Table`));
+        it.todo("insert multiple", () => testCase(`query db insert (a,b), (c,d) into Table`));
+        it.todo("insert select", () => testCase(`query db insert select (a,b) from y: Table2 into Table`));
+        it.todo("returning", () => testCase(`query db insert (a, b) into x: Table returning x`));
       });
 
-      describe("permissions", () => {});
+      describe("delete", () => {
+        it.todo("basic", () => testCase(`query db delete x: Table where x.a = 1`));
+        it.todo("returning", () => testCase(`query db delete x: Table where x.a = 1 returning x`));
+      });
 
-      describe("constraints", () => {});
+      describe("update", () => {
+        it.todo("basic", () => testCase(`query db update (x[0], x[1]+1) in x: Table where x[0] = 1`));
+        it.todo("returning", () => testCase(`query db update (x[0], x[1]+1) in x: Table where x[0] = 1 returning x`));
+        it.todo("returning old and new", () =>
+          testCase(`query db update (x[0], x[1]+1) as new in x: Table returning (new, x)`)
+        );
+      });
 
-      describe("views", () => {});
+      describe("permissions", () => {
+        // select, insert, update, delete
+        // can be used instead of db in queries
+        it.todo("grant select", () => testCase(`grant select from Table in db`));
+        it.todo("grant insert", () => testCase(`grant insert into Table in db`));
+        it.todo("grant update", () => testCase(`grant update on Table in db`));
+        it.todo("grant delete", () => testCase(`grant delete from Table in db`));
+        it.todo("grant where", () => testCase(`grant select from x: Table where x.a = 1 in db`));
+        it.todo("grant generic", () => testCase(`grant select in db`));
+        it.todo("revoke", () => testCase(`revoke permission`));
+        it.todo("and", () => testCase(`grant select from Table in db and grant insert into Table in db`));
+        it.todo("or", () => testCase(`grant select from Table in db or grant insert into Table in db`));
+        it.todo("not", () => testCase(`not grant insert into Table in db`));
+      });
+
+      describe("constraints", () => {
+        // https://www.postgresql.org/docs/current/ddl-constraints.html
+        it.todo("uniqueness", () =>
+          testCase(`
+            database { 
+              Table := type { a: number, b: string }
+              
+              for x: Table1 not exists y: Table2 where x.a = y.a
+            }
+          `)
+        );
+        it.todo("foreign key", () =>
+          testCase(`
+            database { 
+              Table1 := type { a: number, b: string }
+              Table2 := type { a: number, b: string }
+              
+              for x: Table1 constrain exists y: Table2 where x.a = y.a
+            }
+          `)
+        );
+
+        // ?
+        it.todo("foreign key on delete", () =>
+          testCase(`
+            database { 
+              Table1 := type { a: number, b: string }
+              Table2 := type { a: number, b: string }
+              
+              for x: Table1 constrain exists y: Table2 where x.a = y.a
+              on delete cascade // restrict, no action, set default / on update
+            }
+          `)
+        );
+
+        it.todo("check", () =>
+          testCase(`
+            database { 
+              Table := type { a: number, b: string }
+              
+              for x: Table constrain x.a > 0
+            }
+          `)
+        );
+        it.todo("check deferrable", () =>
+          testCase(`
+            database { 
+              Table := type { a: number, b: string }
+              
+              deferrable for x: Table constrain x.a > 0
+            }
+          `)
+        );
+        it.todo("check two fields", () =>
+          testCase(`
+            database { 
+              Table := type { a: number, b: string }
+              
+              for x: Table constrain x.a > x.b
+            }
+          `)
+        );
+      });
+
+      describe("views", () => {
+        // https://www.postgresql.org/docs/current/rules-views.html
+        it.todo("basic", () =>
+          testCase(`
+            database { 
+              Table := type { a: number, b: string }
+              View := type { a: number, b: string }
+              
+              View { a, b } := select a, b from x: Table
+            }
+          `)
+        );
+      });
     });
   });
 
@@ -489,8 +590,10 @@ describe("expressions", () => {
     it.todo("fold filter", () => testCase(`fold node in tree { if node > 0: node + 1 }`));
     it.todo("fold reduce", () => testCase(`fold node in tree with acc { acc + recurse node.child }`));
 
-    it.todo("generator", () => testCase(`gen f x { yield x;	f x+1 }`));
-    it.todo("unfold", () => testCase(`unfold f x { yield (f x+1, f x+2) }`));
+    // fn f(x) -> channel c { c <- x; c <<- f x+1 }
+    it.todo("generator", () => testCase(`gen f(x) { yield x; yield* f x+1 }`));
+    // fn f(x) -> channel c { c <- (f x+1, f x+2) }
+    it.todo("unfold generator", () => testCase(`gen f(x) { yield (f x+1, f x+2) }`));
   });
 
   describe("structured programming", () => {
@@ -536,6 +639,11 @@ describe("expressions", () => {
     it("channel receive", () => testCase(`<- c`));
     it("channel try send", () => testCase(`c <-? 123`));
     it("channel try receive", () => testCase(`<-? c`));
+    // channel c { c <<- c2 } === c2
+    // c <-<-! c2 === c <<- c2
+    it.todo("channel forward", () => testCase(`c1 <<- c2`));
+    // c <-> c2 === c <<- c2; c2 <<- c
+    it.todo("channel link", () => testCase(`c1 <-> c2`));
     it("try receive with assignment", () => testCase(`status := <-?numbers`));
     it("superposition (multiset product) value", () => testCase(`123 & 456`));
     it("parallel (multiset union) value", () => testCase(`123 | 456`));
@@ -551,14 +659,8 @@ describe("expressions", () => {
     it.todo("shared channel", () =>
       testCase(`
         channel c {
-          | {
-            c <- 123; 
-            234
-          }
-          | {
-            <- c; 
-            345
-          }
+          | { c <- 123; 234 }
+          | { <- c; 345 }
         }`)
     );
     it.todo("select", () =>
@@ -622,6 +724,23 @@ describe("expressions", () => {
         a + 1
       `));
   });
+
+  describe("first-class patterns", () => {
+    it.todo("pattern value", () => testCase(`pattern x, xs, v: (x, ...xs) = v`));
+    it.todo("pattern value binding access", () => testCase(`(pattern x, xs, v: (x, ...xs) = v),x`));
+    it.todo("pattern elimination", () => testCase(`eliminate (pattern x, xs, v: (x, ...xs) = v).v (1, 2, 3)`));
+    it.todo("pattern link", () =>
+      testCase(`link (pattern x, xs, v: (x, ...xs) = v).v (pattern x, xs, v: (x, ...xs) = v).xs`)
+    );
+    it.todo("pattern link", () =>
+      testCase(`link (pattern x, xs, v: (x, ...xs) = v).v (pattern x, xs, v: (x, ...xs) = v).xs`)
+    );
+    it.todo("pattern in function", () => testCase(`fn %pattern.v -> x + y`));
+  });
+
+  describe("first-class types", () => {
+    it.todo("type value", () => testCase(`type number`));
+  });
 });
 
 describe("pattern matching", () => {
@@ -653,6 +772,7 @@ describe("pattern matching", () => {
   it("with dynamically nested value", () => testCase(`x is a[b] and a[b] == x`));
   it("with dynamic name", () => testCase(`x is [$a] and [$a] == x`));
   it("with matcher", () => testCase(`x is some(a)`));
+  it.todo("with matcher 2", () => testCase(`x is some a and a == 1`));
   it("with parens matcher", () => testCase(`x is (some a)`));
 
   it("binding visible in scope where it is true", () => testCase(`x is (a, b) and a == b + 1`));
@@ -663,22 +783,10 @@ describe("pattern matching", () => {
     test("pattern negation", () => testCase(`(not { x, y }) -> x + y + z`));
   });
 
-  test("with type", () => testCase(`x is (a: number, b)`));
+  test.todo("with type", () => testCase(`x is a: number`));
+  test("tuple pattern with type", () => testCase(`x is (a: number, b)`));
   test("record pattern with type", () => testCase(`x is { a: number, b }`));
   test("value is of type", () => testCase(`x is type number`));
-
-  describe("first-class patterns", () => {
-    it.todo("pattern value", () => testCase(`pattern x, xs, v: (x, ...xs) = v`));
-    it.todo("pattern value binding access", () => testCase(`(pattern x, xs, v: (x, ...xs) = v),x`));
-    it.todo("pattern elimination", () => testCase(`eliminate (pattern x, xs, v: (x, ...xs) = v).v (1, 2, 3)`));
-    it.todo("pattern link", () =>
-      testCase(`link (pattern x, xs, v: (x, ...xs) = v).v (pattern x, xs, v: (x, ...xs) = v).xs`)
-    );
-    it.todo("pattern link", () =>
-      testCase(`link (pattern x, xs, v: (x, ...xs) = v).v (pattern x, xs, v: (x, ...xs) = v).xs`)
-    );
-    it.todo("pattern in function", () => testCase(`fn %pattern.v -> x + y`));
-  });
 });
 
 describe("types", () => {
@@ -697,26 +805,28 @@ describe("types", () => {
 });
 
 describe("programs", () => {
-  // it.todo("export declaration as", () => testCase(`export x as y := 123`));
-  // it.todo("export expr as", () => testCase(`export x as y`));
-  // it.todo("external variable", () => testCase(`external y`));
+  it.todo("export declaration as", () => testCase(`export x as y := 123`));
+  it.todo("export expr as", () => testCase(`export x+1 as y`));
+  it.todo("external variable", () => testCase(`external y`));
 
   describe("import descriptor", () => {
-    it("import dependency", () => testCase(`import "depName"`));
-    it("import project absolute", () => testCase(`import "/path/to/folder"`));
-    it("import project relative", () => testCase(`import "./relative/path/to/folder"`));
-    it("import project root", () => testCase(`import "/"`));
-    it("import project file", () => testCase(`import "/path/to/file.extension"`));
-    it("import project relative complex", () => testCase(`import "../relative/.././path/to/folder"`));
+    it.todo("import dependency", () => testCase(`import depName`));
+    it.todo("import project absolute", () => testCase(`import /path/to/folder`));
+    it.todo("import project relative", () => testCase(`import ./relative/path/to/folder`));
+    it.todo("import project root", () => testCase(`import /`));
+    it.todo("import project file", () => testCase(`import /path/to/file.extension`));
+    it.todo("import project relative complex", () => testCase(`import ../relative/.././path/to/folder`));
+    it.todo("import quotes", () => testCase(`import "../relative/.././path/to/folder"`));
+    it.todo("import segment quotes", () => testCase(`import ../relative/.././"path"/to/folder`));
   });
 
   it("import", () => testCase(`import "a" as b`));
-  // it.todo("import with", () => testCase(`import a as b with x`));
+  it.todo("import with", () => testCase(`import a as b with x`));
 
   describe("script", () => {
-    it("dynamic import", () => testCase(`b := import "a"`));
-    it("dynamic async import", () => testCase(`b := async import "a"`));
-    // it.todo("dynamic import with", () => testCase(`b := import "a" with x`));
+    it("dynamic import", () => testCase(`b := import a`));
+    it("dynamic async import", () => testCase(`b := async import a`));
+    it.todo("dynamic import with", () => testCase(`b := import a with x`));
   });
 
   describe("module", () => {
@@ -753,6 +863,6 @@ describe("newline handling", () => {
   it("newline at the end", () => testCase(`1\n`));
   it("semicolon-newline at the end", () => testCase(`1;\n`));
   it("empty switch with newline", () => testCase(`match a { \n }`));
-  // it.todo("application-newline-increment", () => testCase(`f a\n ++b`));
+  it.todo("application-newline-increment", () => testCase(`f a\n ++b`));
   it("pipe", () => testCase(`1 \n|> fn x { x + 1 } \n|> fn y { y * 2 }`));
 });
