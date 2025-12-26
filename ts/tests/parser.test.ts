@@ -260,8 +260,13 @@ describe("expressions", () => {
 
   describe("database expressions", () => {
     it.todo("empty database", () => testCase(`database {  }`));
-    it.todo("transaction", () => testCase(`transaction {  }`));
     it.todo("query scope", () => testCase(`query db { x := select x from x }`));
+
+    describe("transaction", () => {
+      it.todo("basic", () => testCase(`transaction {  }`));
+      it.todo("with abort", () => testCase(`transaction { throw 123 }`));
+      it.todo("with commit", () => testCase(`transaction { return 123 }`));
+    });
 
     describe("tables", () => {
       // https://www.postgresql.org/docs/current/ddl.html
@@ -377,35 +382,37 @@ describe("expressions", () => {
           testCase(`query db update (x[0], x[1]+1) as new in x: Table returning (new, x)`)
         );
       });
+    });
 
-      describe("permissions", () => {
-        // select, insert, update, delete
-        // can be used instead of db in queries
-        it.todo("grant select", () => testCase(`grant select from Table in db`));
-        it.todo("grant insert", () => testCase(`grant insert into Table in db`));
-        it.todo("grant update", () => testCase(`grant update on Table in db`));
-        it.todo("grant delete", () => testCase(`grant delete from Table in db`));
-        it.todo("grant where", () => testCase(`grant select from x: Table where x.a = 1 in db`));
-        it.todo("grant generic", () => testCase(`grant select in db`));
-        it.todo("revoke", () => testCase(`revoke permission`));
-        it.todo("and", () => testCase(`grant select from Table in db and grant insert into Table in db`));
-        it.todo("or", () => testCase(`grant select from Table in db or grant insert into Table in db`));
-        it.todo("not", () => testCase(`not grant insert into Table in db`));
-      });
+    describe("permissions", () => {
+      // select, insert, update, delete
+      // can be used instead of db in queries
+      it.todo("grant select", () => testCase(`grant db for select from Table`));
+      it.todo("grant insert", () => testCase(`grant db for insert into Table`));
+      it.todo("grant update", () => testCase(`grant db for update on Table`));
+      it.todo("grant delete", () => testCase(`grant db for delete from Table`));
+      it.todo("grant where", () => testCase(`grant db for select from x: Table where x.a = 1`));
+      it.todo("grant columns", () => testCase(`grant db for select from Table.a, Table.b`));
+      it.todo("grant generic", () => testCase(`grant db for select`));
+      it.todo("revoke", () => testCase(`revoke permission`));
+      it.todo("and", () => testCase(`grant db for select from Table and grant db for insert into Table`));
+      it.todo("or", () => testCase(`grant db for select from Table or grant db for insert into Table`));
+      it.todo("not", () => testCase(`not grant db for insert into Table`));
+    });
 
-      describe("constraints", () => {
-        // https://www.postgresql.org/docs/current/ddl-constraints.html
-        it.todo("uniqueness", () =>
-          testCase(`
+    describe("constraints", () => {
+      // https://www.postgresql.org/docs/current/ddl-constraints.html
+      it.todo("uniqueness", () =>
+        testCase(`
             database { 
               Table := type { a: number, b: string }
               
-              for x: Table1 not exists y: Table2 where x.a = y.a
+              for x: Table not exists y: Table where x.a = y.a
             }
           `)
-        );
-        it.todo("foreign key", () =>
-          testCase(`
+      );
+      it.todo("foreign key", () =>
+        testCase(`
             database { 
               Table1 := type { a: number, b: string }
               Table2 := type { a: number, b: string }
@@ -413,11 +420,11 @@ describe("expressions", () => {
               for x: Table1 constrain exists y: Table2 where x.a = y.a
             }
           `)
-        );
+      );
 
-        // ?
-        it.todo("foreign key on delete", () =>
-          testCase(`
+      // ?
+      it.todo("foreign key on delete", () =>
+        testCase(`
             database { 
               Table1 := type { a: number, b: string }
               Table2 := type { a: number, b: string }
@@ -426,41 +433,41 @@ describe("expressions", () => {
               on delete cascade // restrict, no action, set default / on update
             }
           `)
-        );
+      );
 
-        it.todo("check", () =>
-          testCase(`
+      it.todo("check", () =>
+        testCase(`
             database { 
               Table := type { a: number, b: string }
               
               for x: Table constrain x.a > 0
             }
           `)
-        );
-        it.todo("check deferrable", () =>
-          testCase(`
+      );
+      it.todo("check immediate", () =>
+        testCase(`
             database { 
               Table := type { a: number, b: string }
               
-              deferrable for x: Table constrain x.a > 0
+              immediate for x: Table constrain x.a > 0
             }
           `)
-        );
-        it.todo("check two fields", () =>
-          testCase(`
+      );
+      it.todo("check two fields", () =>
+        testCase(`
             database { 
               Table := type { a: number, b: string }
               
               for x: Table constrain x.a > x.b
             }
           `)
-        );
-      });
+      );
+    });
 
-      describe("views", () => {
-        // https://www.postgresql.org/docs/current/rules-views.html
-        it.todo("basic", () =>
-          testCase(`
+    describe("views", () => {
+      // https://www.postgresql.org/docs/current/rules-views.html
+      it.todo("basic", () =>
+        testCase(`
             database { 
               Table := type { a: number, b: string }
               View := type { a: number, b: string }
@@ -468,21 +475,127 @@ describe("expressions", () => {
               View { a, b } := select a, b from x: Table
             }
           `)
-        );
-      });
+      );
     });
   });
 
   describe("logic programming", () => {
-    describe("first order logic", () => {});
-    describe("higher order logic", () => {});
-    describe("modal logic", () => {});
+    describe("propositional logic", () => {
+      // if we can express any boolean function, it is a propositional logic
+      it.todo("and", () => testCase(`database { P := boolean; Q := boolean; p and q }`));
+      it.todo("not", () => testCase(`database { P := boolean; Q := boolean; p and not q }`));
+      it.todo("or", () => testCase(`database { P := boolean; Q := boolean; p or q }`));
+      it.todo("implication", () => testCase(`database { P := boolean; Q := boolean; if p then q }`));
+      it.todo("equivalence", () => testCase(`database { P := boolean; Q := boolean; p iff q }`));
+    });
+
+    describe("first order logic", () => {
+      it.todo("predicate instance", () => testCase(`database { P := nominal number; P 1 }`));
+      it.todo("existential over predicate instances", () =>
+        testCase(`database { P := nominal number; exists x where P x = 1 }`)
+      );
+      it.todo("universal over predicate instances", () =>
+        testCase(`database { P := nominal number; for x constrain P x }`)
+      );
+      it.todo("universal over predicate instances with implication", () =>
+        testCase(`database { P := nominal number; Q := nominal number; for x constrain if P x then Q x }`)
+      );
+      it.todo("nested quantification", () =>
+        testCase(`database { P := nominal number, number; for x constrain exists y where P(x, y) }`)
+      );
+      it.todo("quantified variable reuse", () =>
+        testCase(`database { P := nominal number, number; for x constrain exists y where P(x, y) and P(y, x) }`)
+      );
+    });
+    describe("higher order logic", () => {
+      it.todo("higher order quantification", () => testCase(`database { exists P where for x constrain P x }`));
+      it.todo("higher order types", () => testCase(`database { P := { a: number, b: Type }; }`));
+      it.todo("universal over predicates", () => testCase(`database { for P constrain P 1 }`));
+      it.todo("transitive relations", () =>
+        testCase(`database { 
+          for Edge if Transitive(Edge) then for x, y, z constrain
+            if Edge(x, y) and Edge(y, z) then Edge(x, z)
+        }`)
+      );
+      it.todo("transitive closure", () =>
+        testCase(`database { 
+            Reachable(x, y) := for P constrain
+              for u, v constrain if Edge(u, v) then P(u, v)
+              and if for u, v, w constrain P(u, v) and if P(v, w) then P(u, w) 
+                then P(x, y)
+          }`)
+      );
+    });
+
+    describe("modal logic", () => {
+      describe("least fixed point", () => {});
+      describe("greatest fixed point", () => {});
+      describe("Kripke modal logic", () => {});
+      describe("temporal logic", () => {});
+      describe("dynamic logic", () => {});
+      describe("hybrid logic", () => {});
+    });
     describe("substructural logic", () => {});
     describe("bayesian logic", () => {});
-    describe("least fixed point", () => {});
-    describe("greatest fixed point", () => {});
     describe("graded logic", () => {});
     describe("separation logic", () => {});
+  });
+
+  describe("state machine expressions", () => {
+    it.todo("state machine", () => testCase(`state {}`));
+    it.todo("state declaration", () => testCase(`state { a := nominal () }`));
+    it.todo("parametric state declaration", () => testCase(`state { a := nominal number }`));
+    it.todo("state transition", () =>
+      testCase(`state {
+        a := nominal ()
+        b := nominal ()
+        a -> b
+      }`)
+    );
+    it.todo("nondet state transition", () =>
+      testCase(`state {
+        a := nominal ()
+        b := nominal ()
+        c := nominal ()
+        a -> b
+        a -> c
+      }`)
+    );
+    it.todo("parametric state transition", () =>
+      testCase(`state {
+        a := nominal number
+        b := nominal number
+        a(x) -> b(x+1)
+        a(1) -> b(0)
+      }`)
+    );
+    it.todo("input state transition", () =>
+      testCase(`state {
+        a := nominal ()
+        b := nominal number
+        a with x -> b(x+1)
+      }`)
+    );
+
+    // when transitioning into a nested state machine, it replaces the current state machine
+    // until the linked state is reached
+    // once it is reached, the nested instance is discarded and
+    // the current state machine is resumed in the linked state
+    it.todo("nested state machine", () =>
+      testCase(`state {
+        a := nominal ()
+        b := nominal ()
+        machine.a -> b
+        a -> machine.b
+      }`)
+    );
+
+    it.todo("initial state selection", () => testCase(`machine.a`));
+    it.todo("state transition", () => testCase(`transition instance`));
+    it.todo("state transition input", () => testCase(`transition instance with x`));
+
+    it.todo("state inspection", () => testCase(`instance.current`));
+    it.todo("state next transition", () => testCase(`<- instance.transition`));
   });
 
   describe("dataflow expressions", () => {
@@ -672,8 +785,12 @@ describe("expressions", () => {
     );
     it.todo("channel choice", () => testCase(`match <- c { 1 -> 123, 2 -> 234 }`));
 
-    it.todo("channel replicated receive", () => testCase(`x := <-! c`));
-    it.todo("channel replicated send", () => testCase(`c <-! 123`));
+    // subscribe to any communication on the channel and fork new process/cc
+    it.todo("channel replicated receive (subscribe)", () => testCase(`x := <-! c`));
+    // send values continuously to the channel.
+    // Forks new process/cc on each successful send, matching the subscriber's process
+    // c now becomes private copy of the original channel?
+    it.todo("channel replicated send (source events)", () => testCase(`c <-! 123`));
 
     it.todo("dispatch", () =>
       testCase(`dispatch 256, 16, 16 with id { data[id[0]][id[1]][id[2]] = data[id[0]][id[1]][id[2]] + 1 }`)
