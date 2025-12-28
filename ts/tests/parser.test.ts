@@ -758,10 +758,18 @@ describe("expressions", () => {
     // c <-> c2 === c <<- c2; c2 <<- c
     it.todo("channel link", () => testCase(`c1 <-> c2`));
     it("try receive with assignment", () => testCase(`status := <-?numbers`));
+    // all have semantics like
+    // (f | g) h = f h | g h
+    // f (g | h) = f g | f h
+    // but different for binary
+    // (f | g) (h | i) = (f h) | (g i)
+    // (f & g) (h & i) = (f h) & (f i) & (g h) & (g i)
     it("superposition (multiset product) value", () => testCase(`123 & 456`));
-    it("parallel (multiset union) value", () => testCase(`123 | 456`));
-    it.todo("race superposition value", () => testCase(`race 123 & 456`));
-    it.todo("collect parallel value", () => testCase(`collect 123 | 456`));
+    it("parallel (SIMD vector) value", () => testCase(`123 | 456`));
+    it("nondet race (multiset union) value", () => testCase(`123 ? 456`));
+    it.todo("vectorize multiset value", () => testCase(`vector 123 & 456`));
+    it.todo("race vector value", () => testCase(`race 123 | 456`));
+    it.todo("collect parallel value", () => testCase(`collect 123 ? 456`));
     it("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
     it("parallel with channels", () => testCase(`c <- 123 | <- c`));
     it("sum of channels", () => testCase(`c1 + c2`));
