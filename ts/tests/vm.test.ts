@@ -429,6 +429,13 @@ describe("expressions", () => {
 
   describe("arithmetics", () => {
     it("handles chained math with precedence", () => testCase("1 + 2^-3 * 4 - 5 / 6 % 7", 2 / 3));
+    it("sum", () => testCase("1 + 2", 3));
+    it("subtract", () => testCase("1 - 2", -1));
+    it("multiply", () => testCase("2 * 3", 6));
+    it("divide", () => testCase("6 / 2", 3));
+    it("modulo", () => testCase("6 % 5", 1));
+    it("power", () => testCase("2 ^ 3", 8));
+    it("negate", () => testCase("-1", -1));
   });
 
   describe("boolean expressions", () => {
@@ -923,6 +930,7 @@ describe("expressions", () => {
     it.todo("channel", () => testCase(`channel "name"`, { channel: "name" }));
   });
 
+  // TODO: null must not be observable. Program behavior must not depend on what is the actual value for it
   // TODO: make tests actually run the program and check errors
   describe("null semantics", () => {
     it.todo("prints warning on evaluating to null anything", () => {
@@ -998,6 +1006,17 @@ describe("expressions", () => {
         `,
         { tuple: [false, true, true, false] }
       ));
+
+    describe.todo("church numerals", () => {
+      it("zero", () => testCase("", 0));
+    });
+
+    describe.todo("church booleans", () => {
+      it("true", () => testCase("true", true));
+      it("false", () => testCase("false", false));
+    });
+
+    describe.todo("scott numerals", () => {});
   });
 
   describe("symbols", () => {
@@ -1042,6 +1061,266 @@ describe("expressions", () => {
   });
 
   describe("concurrent programming", () => {
+    describe("pi calculus", () => {
+      it.todo("channel send receive", () =>
+        testCase(
+          `
+            c := channel "test"
+            async c <- 123
+            <- c
+          `,
+          123
+        )
+      );
+      it.todo("channel structured", () => testCase(`c := channel c { c <- 123 }; <- c`, 123));
+
+      it.todo("parallel composition async", () =>
+        testCase(
+          `
+            async { 1 + 2 }
+            async { 3 + 4 }
+          `,
+          123 // or 456
+        )
+      );
+
+      it.todo("nondet process sum", () =>
+        testCase(
+          `
+            ? { 1 + 2 }
+            ? { 3 + 4 }
+          `,
+          3 // or 7
+        )
+      );
+
+      it.todo("replication", () => testCase(`fn f(c) { async { c <- 1 }; f(c) }`, null));
+
+      it.todo("null process", () =>
+        testCase(
+          `async 1; async {}`, // === async 1
+          3 // or 7
+        )
+      );
+    });
+
+    it.todo("parallel composition multiset", () =>
+      testCase(
+        `
+            & { 1 + 2 }
+            & { 3 + 4 }
+          `,
+        { tuple: [3, 7] } // or { tuple: [7, 3] }
+      )
+    );
+
+    describe("simt calculus (gpu kernel like)", () => {
+      it.todo("parallel composition vector", () =>
+        testCase(
+          `
+            | { 1 + 2 }
+            | { 3 + 4 }
+          `,
+          { tuple: [3, 7] }
+        )
+      );
+      it.todo("simd semantics", () =>
+        testCase(
+          `
+            x := 1 | 2
+            x * 2
+            await x
+          `,
+          { tuple: [2, 4] }
+        )
+      );
+      it.todo("divergence", () =>
+        testCase(
+          `
+            x := 1 | 2
+            if x == 1: x * 2
+            await x
+          `,
+          { tuple: [2, 2] }
+        )
+      );
+
+      // are x values consumed?
+      // if we await y, does it also implicitly "await" x?
+      // or if we reuse x further down it will still be a vector value?
+      it.todo("vector of functions", () =>
+        testCase(
+          `
+            x := fn(x) { x + 1 } | fn(x) { x + 2 }
+            y := x 2
+            await y
+          `,
+          { tuple: [3, 4] }
+        )
+      );
+
+      describe("vector permutations", () => {
+        it.todo("swap", () =>
+          testCase(
+            `
+              x := 1 | 2 | 3
+              neighbor := swap x
+              await neighbor
+            `,
+            { tuple: [2, 1, null, 3] }
+          )
+        );
+
+        it.todo("swap even", () =>
+          testCase(
+            `
+              x := 1 | 2 | 3 | 4
+              neighbor := swap x
+              await neighbor
+            `,
+            { tuple: [2, 1, 4, 3] }
+          )
+        );
+
+        describe("vector tiling", () => {
+          // TODO: is grouping even useful?
+          it.todo("multidimensional vector swap", () =>
+            testCase(
+              `
+                x := vector(1 | 2) | vector(3 | 4)
+                x * 2
+                await x
+              `,
+              { tuple: [{ tuple: [2, 4] }, { tuple: [6, 8] }] }
+            )
+          );
+
+          // TODO: tiling is kind of implicit in vectors and relevant only for swap operations
+          // should make it more explicit how ith 1d element maps to a 2d element
+          // follows a Morton space filling curve https://en.wikipedia.org/wiki/Z-order_curve
+          // make definition of that "curve" injectable?
+          it.todo("vector tiling", () =>
+            testCase(
+              `
+                x :=
+                  | (0,0) | (1, 0) | (0,1) | (1,1)
+                  | (2,0) | (3, 0) | (2,1) | (3,1)
+                  | (0,2) | (1, 2) | (0,3) | (1,3)
+                  | (2,2) | (3, 2) | (2,3) | (3,3)
+                await x
+              `,
+              { tuple: [2, 4] }
+            )
+          );
+
+          it.todo("multidimensional vector swap diag", () =>
+            testCase(
+              `
+                x := 1 | 2 | 3 | 4
+                y := swap (1,1) x
+                await y
+              `,
+              { tuple: [4, 3, 2, 1] }
+            )
+          );
+          it.todo("multidimensional vector swap x", () =>
+            testCase(
+              `
+                x := 1 | 2 | 3 | 4
+                y := swap (1,0) x
+                await y
+              `,
+              { tuple: [2, 1, 4, 3] }
+            )
+          );
+          it.todo("multidimensional vector swap y", () =>
+            testCase(
+              `
+                x := 1 | 2 | 3 | 4
+                y := swap (0,1) x
+                await y
+              `,
+              { tuple: [3, 4, 1, 2] }
+            )
+          );
+        });
+
+        it.todo("pair derivative", () =>
+          testCase(
+            `
+              x := 1 | 2 | 3 | 4
+              neighbor := swap x
+              derivative := (neighbor - x) * if x % 2 == 1: -1 else 1  
+              await derivative
+            `,
+            { tuple: [1, 1, 1, 1] }
+          )
+        );
+
+        it.todo("quad derivative", () =>
+          testCase(
+            `
+              x := 1 | 2 | 3 | 4
+              neighborX := swap (1,0) x
+              neighborY := swap (0,1) x
+              derivativeX := (neighborX - x) * if x % 2 == 1: -1 else 1
+              derivativeY := (neighborY - x) * if x % 2 == 1: -1 else 1
+              await (derivativeX, derivativeY)
+            `,
+            { tuple: [{ tuple: [1, 2] }, { tuple: [1, 2] }, { tuple: [1, 2] }, { tuple: [1, 2] }] }
+          )
+        );
+
+        it.todo("rotate", () =>
+          testCase(
+            `
+              x := 1 | 2 | 3
+              neighbor := rotate x
+              await neighbor
+            `,
+            { tuple: [2, 3, 1] }
+          )
+        );
+
+        it.todo("unrotate", () =>
+          testCase(
+            `
+              x := 1 | 2 | 3
+              neighbor := unrotate x
+              await neighbor
+            `,
+            { tuple: [3, 1, 2] }
+          )
+        );
+
+        it.todo("shapes", () =>
+          testCase(
+            `
+              x := 1 | 2 | 3 | 4 | 5 | 6
+              q := shape (6,1) x // [1,2,3,4,5,6]
+              z := shape (3,2) x // [1,2,3] [4,5,6]
+              y := shape (2,3) x // [1,2] [3,4] [5,6]
+              p := shape (1,6) x // [1] [2] [3] [4] [5] [6]
+              await y
+            `,
+            { tuple: [2, 4] }
+          )
+        );
+
+        it.todo("layout", () =>
+          testCase(
+            `
+              x := 1 | 2 | 3 | 4 | 5 | 6
+              y := shape (3,2) x // [1,2,3] [4,5,6]
+              x := layout col_major y // [1,4] [2,5] [3,6]
+              await y
+            `,
+            { tuple: [2, 4] }
+          )
+        );
+      });
+    });
+
     it.todo("parallel all", () =>
       testCase(
         `
@@ -1051,8 +1330,6 @@ describe("expressions", () => {
         { tuple: [1, 2] }
       )
     );
-
-    it.todo("channel send receive", () => testCase('c := channel "test"; async c <- 123; <- c', 123));
 
     it.todo("await async", () => testCase("f := fn x: x + 1; await async f 1", 2));
 
@@ -1065,7 +1342,7 @@ describe("expressions", () => {
         async c2 <- 456; 
         <- c2 + c1
       `,
-        123
+        123 // or 456
       )
     );
   });
@@ -1295,10 +1572,6 @@ describe("modules", () => {
   describe("operator declarations", () => {
     it.todo("operator declaration");
   });
-});
-
-describe("reactivity", () => {
-  it.todo("reactive declaration");
 });
 
 // TODO: semantically equivalent code compiles to the same bytecode

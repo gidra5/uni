@@ -690,7 +690,7 @@ describe("expressions", () => {
   describe("reactive programming", () => {
     it.todo("signal", () => testCase(`x := signal 1`));
     it.todo("derived", () => testCase(`x := derived { x + 1 }`));
-    it.todo("watch", () => testCase(`watch { log x + 1 }`));
+    it.todo("watch", () => testCase(`derived { log x + 1 }`));
   });
 
   describe("folds", () => {
@@ -773,7 +773,7 @@ describe("expressions", () => {
     it("prefix parallel with code after", () => testCase(`| { };numbers := channel()`));
     it("parallel with channels", () => testCase(`c <- 123 | <- c`));
     it("sum of channels", () => testCase(`c1 + c2`));
-    it.todo("channel swap", () => testCase(`c <-> 123`));
+    it.todo("channel swap", () => testCase(`c <-> x`));
     it.todo("channel form 1", () => testCase(`channel c -> c <- 123; 234`));
     it.todo("channel form 2", () => testCase(`channel c: c <- 123; 234`));
     it.todo("channel form 3", () => testCase(`channel c { c <- 123; 234 }`));

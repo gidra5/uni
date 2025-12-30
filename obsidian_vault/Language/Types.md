@@ -9,6 +9,9 @@ We can intuitively think of `null` as a value of ill-typed expressions. By defin
 
 We can intuitively think of `void` type as a type of non-observable expressions. we don't want to observe ill-typed expressions, so they must have `void` type. But that also means, that non terminating expressions, like infinite loops or recursion, are also of `void` type, since we can't observe their result.
 
+`null` can also be interpreted as "undefined" value, a result of evaluating "undefined behavior".
+It must be provable that any valid program does not depend on the value of `null` expressions. We can fuzzy test it by using random values each time and checking if the program changes its behavior. (bisimulation, operational equivalence, behavioral equivalence)
+
 Basic algebraic types:
 1. Tagged union type with `union` applied to record or tuple
 2. Untagged union with `or`
