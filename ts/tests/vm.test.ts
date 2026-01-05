@@ -1042,8 +1042,8 @@ describe("expressions", () => {
     });
   });
 
-  describe("memory ops", () => {
-    it("alloc stores value and returns it via load", () => {
+  describe("heap memory", () => {
+    it("alloc stores value and returns pointer", () => {
       const program = "r := alloc 42; *r";
       const { bytecode, result, vm } = runProgram(program);
       expect(bytecode).toMatchSnapshot();
@@ -1320,16 +1320,6 @@ describe("expressions", () => {
         );
       });
     });
-
-    it.todo("parallel all", () =>
-      testCase(
-        `
-        import "std/concurrency" as { all };
-        all(1 | 2)
-      `,
-        { tuple: [1, 2] }
-      )
-    );
 
     it.todo("await async", () => testCase("f := fn x: x + 1; await async f 1", 2));
 
