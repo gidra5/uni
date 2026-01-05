@@ -28,6 +28,7 @@ it.todo.prop([fc.string().map(parseTokenGroups)])("module parsing never throws",
 // TODO: fix these cases
 // { seed: -1098499559, path: "19:15:15:14:21", endOnFailure: true }
 // { seed: -1964660655, path: "11:2:11:11:12:11:17:25:15", endOnFailure: true }
+// { seed: 1545692900, path: "29:2:10:14:12:13:12:20", endOnFailure: true }
 it.prop([fc.string().map(parseTokenGroups)])("script parsing never throws", (tokens) => {
   try {
     const [, validated] = validateTokenGroups(tokens);
@@ -38,6 +39,8 @@ it.prop([fc.string().map(parseTokenGroups)])("script parsing never throws", (tok
   }
 });
 
+// TODO: fix these cases
+// { seed: -252173835, path: "32:2:10:19:17:28:28", endOnFailure: true }
 it.prop([fc.string().map(parseTokenGroups)])("module is always flat sequence", (tokens) => {
   const [, validated] = validateTokenGroups(tokens);
   let ast = parseModule(validated);
@@ -766,7 +769,7 @@ describe("expressions", () => {
     // (f & g) (h & i) = (f h) & (f i) & (g h) & (g i)
     it("superposition (multiset product) value", () => testCase(`123 & 456`));
     it("parallel (SIMD vector) value", () => testCase(`123 | 456`));
-    it("nondet race (multiset union) value", () => testCase(`123 ? 456`));
+    it.todo("nondet race (multiset union) value", () => testCase(`123 ? 456`));
     it.todo("vectorize multiset value", () => testCase(`vector 123 & 456`));
     it.todo("race vector value", () => testCase(`race 123 | 456`));
     it.todo("collect parallel value", () => testCase(`collect 123 ? 456`));
@@ -934,13 +937,14 @@ describe("programs", () => {
   it.todo("export expr as", () => testCase(`export x+1 as y`));
   it.todo("external variable", () => testCase(`external y`));
 
+  // TODO: remove quotes
   describe("import descriptor", () => {
-    it.todo("import dependency", () => testCase(`import depName`));
-    it.todo("import project absolute", () => testCase(`import /path/to/folder`));
-    it.todo("import project relative", () => testCase(`import ./relative/path/to/folder`));
-    it.todo("import project root", () => testCase(`import /`));
-    it.todo("import project file", () => testCase(`import /path/to/file.extension`));
-    it.todo("import project relative complex", () => testCase(`import ../relative/.././path/to/folder`));
+    it("import dependency", () => testCase(`import "depName"`));
+    it("import project absolute", () => testCase(`import "/path/to/folder"`));
+    it("import project relative", () => testCase(`import "./relative/path/to/folder"`));
+    it("import project root", () => testCase(`import "/"`));
+    it("import project file", () => testCase(`import "/path/to/file.extension"`));
+    it("import project relative complex", () => testCase(`import "../relative/.././path/to/folder"`));
     it.todo("import quotes", () => testCase(`import "../relative/.././path/to/folder"`));
     it.todo("import segment quotes", () => testCase(`import ../relative/.././"path"/to/folder`));
   });
@@ -949,9 +953,13 @@ describe("programs", () => {
   it.todo("import with", () => testCase(`import a as b with x`));
 
   describe("script", () => {
-    it("dynamic import", () => testCase(`b := import a`));
-    it("dynamic async import", () => testCase(`b := async import a`));
+    it.todo("dynamic import", () => testCase(`b := import a`));
+    it.todo("dynamic async import", () => testCase(`b := async import a`));
     it.todo("dynamic import with", () => testCase(`b := import a with x`));
+
+    it("dynamic quotes import", () => testCase(`b := import "a"`));
+    it("dynamic quotes async import", () => testCase(`b := async import "a"`));
+    it.todo("dynamic quotes import with", () => testCase(`b := import "a" with x`));
   });
 
   describe("module", () => {

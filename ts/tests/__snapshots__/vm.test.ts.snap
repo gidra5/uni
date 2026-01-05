@@ -1,5 +1,26 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`expressions > arithmetics > divide 1`] = `
+{
+  "main": [
+    {
+      "arg1": 6,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Div",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > arithmetics > handles chained math with precedence 1`] = `
 {
   "main": [
@@ -52,6 +73,132 @@ exports[`expressions > arithmetics > handles chained math with precedence 1`] = 
     },
     {
       "code": "Sub",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > arithmetics > modulo 1`] = `
+{
+  "main": [
+    {
+      "arg1": 6,
+      "code": "Const",
+    },
+    {
+      "arg1": 5,
+      "code": "Const",
+    },
+    {
+      "code": "Mod",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > arithmetics > multiply 1`] = `
+{
+  "main": [
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "code": "Mul",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > arithmetics > negate 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": -1,
+      "code": "Const",
+    },
+    {
+      "code": "Mul",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > arithmetics > power 1`] = `
+{
+  "main": [
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "code": "Pow",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > arithmetics > subtract 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Sub",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > arithmetics > sum 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
     },
     {
       "code": "Add",
@@ -1026,6 +1173,112 @@ exports[`expressions > function expressions > return from function 1`] = `
     {
       "arg2": 1,
       "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > heap memory > alloc stores value and returns pointer 1`] = `
+{
+  "main": [
+    {
+      "arg1": 42,
+      "code": "Const",
+    },
+    {
+      "arg1": "alloc",
+      "arg2": 1,
+      "code": "Native",
+    },
+    {
+      "arg1": {
+        "ref": "r",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "r",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "r",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > heap memory > alloc stores value and returns pointer 2`] = `
+{
+  "26": 42,
+}
+`;
+
+exports[`expressions > heap memory > free removes stored value 1`] = `
+{
+  "main": [
+    {
+      "arg1": 7,
+      "code": "Const",
+    },
+    {
+      "arg1": "alloc",
+      "arg2": 1,
+      "code": "Native",
+    },
+    {
+      "arg1": {
+        "ref": "r",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "r",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "r",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": "free",
+      "arg2": 1,
+      "code": "Native",
     },
     {
       "code": "Return",

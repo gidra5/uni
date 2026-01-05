@@ -2502,7 +2502,7 @@ exports[`expressions > concurrent programming > channel try send 1`] = `
 }
 `;
 
-exports[`expressions > concurrent programming > parallel value 1`] = `
+exports[`expressions > concurrent programming > parallel (SIMD vector) value 1`] = `
 {
   "children": [
     {
@@ -2630,7 +2630,7 @@ exports[`expressions > concurrent programming > prefix parallel with code after 
 }
 `;
 
-exports[`expressions > concurrent programming > select channels 1`] = `
+exports[`expressions > concurrent programming > sum of channels 1`] = `
 {
   "children": [
     {
@@ -2659,7 +2659,7 @@ exports[`expressions > concurrent programming > select channels 1`] = `
 }
 `;
 
-exports[`expressions > concurrent programming > superposition value 1`] = `
+exports[`expressions > concurrent programming > superposition (multiset product) value 1`] = `
 {
   "children": [
     {
@@ -8064,6 +8064,67 @@ exports[`pattern matching > set-theoretic patterns > pattern union 1`] = `
 }
 `;
 
+exports[`pattern matching > tuple pattern with type 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "data": {
+            "value": "x",
+          },
+          "type": "name",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "a",
+                      },
+                      "type": "name",
+                    },
+                    {
+                      "children": [],
+                      "data": {
+                        "value": "number",
+                      },
+                      "type": "name",
+                    },
+                  ],
+                  "data": {},
+                  "type": ":",
+                },
+                {
+                  "children": [],
+                  "data": {
+                    "value": "b",
+                  },
+                  "type": "name",
+                },
+              ],
+              "data": {},
+              "type": ",",
+            },
+          ],
+          "data": {},
+          "type": "parens",
+        },
+      ],
+      "data": {},
+      "type": "is",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`pattern matching > value is of type 1`] = `
 {
   "children": [
@@ -9678,67 +9739,6 @@ exports[`pattern matching > with strict pattern 1`] = `
 }
 `;
 
-exports[`pattern matching > with type 1`] = `
-{
-  "children": [
-    {
-      "children": [
-        {
-          "children": [],
-          "data": {
-            "value": "x",
-          },
-          "type": "name",
-        },
-        {
-          "children": [
-            {
-              "children": [
-                {
-                  "children": [
-                    {
-                      "children": [],
-                      "data": {
-                        "value": "a",
-                      },
-                      "type": "name",
-                    },
-                    {
-                      "children": [],
-                      "data": {
-                        "value": "number",
-                      },
-                      "type": "name",
-                    },
-                  ],
-                  "data": {},
-                  "type": ":",
-                },
-                {
-                  "children": [],
-                  "data": {
-                    "value": "b",
-                  },
-                  "type": "name",
-                },
-              ],
-              "data": {},
-              "type": ",",
-            },
-          ],
-          "data": {},
-          "type": "parens",
-        },
-      ],
-      "data": {},
-      "type": "is",
-    },
-  ],
-  "data": {},
-  "type": "script",
-}
-`;
-
 exports[`programs > import 1`] = `
 {
   "children": [
@@ -10013,7 +10013,7 @@ exports[`programs > module > export default 1`] = `
 }
 `;
 
-exports[`programs > script > dynamic async import 1`] = `
+exports[`programs > script > dynamic quotes async import 1`] = `
 {
   "children": [
     {
@@ -10052,7 +10052,7 @@ exports[`programs > script > dynamic async import 1`] = `
 }
 `;
 
-exports[`programs > script > dynamic import 1`] = `
+exports[`programs > script > dynamic quotes import 1`] = `
 {
   "children": [
     {
