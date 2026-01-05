@@ -902,6 +902,8 @@ describe("pattern matching", () => {
   it("with matcher", () => testCase(`x is some(a)`));
   it.todo("with matcher 2", () => testCase(`x is some a and a == 1`));
   it("with parens matcher", () => testCase(`x is (some a)`));
+  it.todo("with pointer", () => testCase(`x is *a`));
+  it.todo("with ref", () => testCase(`x is &a`));
 
   it("binding visible in scope where it is true", () => testCase(`x is (a, b) and a == b + 1`));
 

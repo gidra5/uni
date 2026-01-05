@@ -1044,7 +1044,7 @@ describe("expressions", () => {
 
   describe("heap memory", () => {
     it.todo("alloc stores value and returns pointer", () => {
-      const program = "r := alloc 42; *r";
+      const program = "r := alloc 42; r";
       const { bytecode, result, vm } = runProgram(program);
       expect(bytecode).toMatchSnapshot();
       expect(result).toBe(42);
@@ -1057,6 +1057,38 @@ describe("expressions", () => {
       expect(bytecode).toMatchSnapshot();
       expect(result).toBeNull();
       expect(Object.keys(vm.heap).filter((k) => k.startsWith("_ref"))).toHaveLength(0);
+    });
+
+    it.todo("pointer read", () => {
+      const program = "r := alloc 42; *r";
+      const { bytecode, result, vm } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(42);
+      expect(vm.heap).toMatchSnapshot();
+    });
+
+    it.todo("pointer write", () => {
+      const program = "r := alloc 7; *r = 123";
+      const { bytecode, result, vm } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(123);
+      expect(Object.keys(vm.heap).filter((k) => k.startsWith("_ref"))).toHaveLength(0); // TODO: r should have value 123
+    });
+
+    it.todo("ref value", () => {
+      const program = "r := 42; &r";
+      const { bytecode, result, vm } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(42); // TODO: should be a pointer
+      expect(vm.heap).toMatchSnapshot(); // TODO: should have a value for r
+    });
+
+    it.todo("ref write", () => {
+      const program = "r := alloc 7; v := 2; &v = r; v";
+      const { bytecode, result, vm } = runProgram(program);
+      expect(bytecode).toMatchSnapshot();
+      expect(result).toBe(7);
+      expect(vm.heap).toMatchSnapshot(); // TODO: should have a value for r
     });
   });
 
