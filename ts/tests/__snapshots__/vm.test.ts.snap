@@ -1181,112 +1181,6 @@ exports[`expressions > function expressions > return from function 1`] = `
 }
 `;
 
-exports[`expressions > heap memory > alloc stores value and returns pointer 1`] = `
-{
-  "main": [
-    {
-      "arg1": 42,
-      "code": "Const",
-    },
-    {
-      "arg1": "alloc",
-      "arg2": 1,
-      "code": "Native",
-    },
-    {
-      "arg1": {
-        "ref": "r",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "r",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "r",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-}
-`;
-
-exports[`expressions > heap memory > alloc stores value and returns pointer 2`] = `
-{
-  "26": 42,
-}
-`;
-
-exports[`expressions > heap memory > free removes stored value 1`] = `
-{
-  "main": [
-    {
-      "arg1": 7,
-      "code": "Const",
-    },
-    {
-      "arg1": "alloc",
-      "arg2": 1,
-      "code": "Native",
-    },
-    {
-      "arg1": {
-        "ref": "r",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "r",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "r",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": "free",
-      "arg2": 1,
-      "code": "Native",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-}
-`;
-
 exports[`expressions > lambda calculus constructs > Y combinator computes factorial 1`] = `
 {
   "fn_183": [
@@ -4871,112 +4765,6 @@ exports[`expressions > lambda calculus constructs > partial application keeps ca
 }
 `;
 
-exports[`expressions > memory ops > alloc stores value and returns it via load 1`] = `
-{
-  "main": [
-    {
-      "arg1": 42,
-      "code": "Const",
-    },
-    {
-      "arg1": "alloc",
-      "arg2": 1,
-      "code": "Native",
-    },
-    {
-      "arg1": {
-        "ref": "r",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "r",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "r",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-}
-`;
-
-exports[`expressions > memory ops > alloc stores value and returns it via load 2`] = `
-{
-  "26": 42,
-}
-`;
-
-exports[`expressions > memory ops > free removes stored value 1`] = `
-{
-  "main": [
-    {
-      "arg1": 7,
-      "code": "Const",
-    },
-    {
-      "arg1": "alloc",
-      "arg2": 1,
-      "code": "Native",
-    },
-    {
-      "arg1": {
-        "ref": "r",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Store",
-    },
-    {
-      "arg1": {
-        "ref": "r",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": {
-        "ref": "r",
-      },
-      "code": "Const",
-    },
-    {
-      "code": "Load",
-    },
-    {
-      "arg1": "free",
-      "arg2": 1,
-      "code": "Native",
-    },
-    {
-      "code": "Return",
-    },
-  ],
-}
-`;
-
 exports[`expressions > pattern matching > with 'is' operator 1`] = `
 {
   "main": [
@@ -5222,12 +5010,21 @@ exports[`expressions > structured programming > for loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_43",
+        "ref": "_for_iter_39",
       },
       "code": "Const",
     },
     {
       "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_for_iter_39",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "arg1": {
@@ -5237,12 +5034,21 @@ exports[`expressions > structured programming > for loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_44",
+        "ref": "_for_acc_39",
       },
       "code": "Const",
     },
     {
       "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_for_acc_39",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "arg1": 0,
@@ -5250,7 +5056,7 @@ exports[`expressions > structured programming > for loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_45",
+        "ref": "_for_idx_39",
       },
       "code": "Const",
     },
@@ -5259,7 +5065,29 @@ exports[`expressions > structured programming > for loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_45",
+        "ref": "_for_idx_39",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_78",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_for_idx_39",
       },
       "code": "Const",
     },
@@ -5268,7 +5096,7 @@ exports[`expressions > structured programming > for loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_43",
+        "ref": "_for_iter_39",
       },
       "code": "Const",
     },
@@ -5282,12 +5110,12 @@ exports[`expressions > structured programming > for loop 1`] = `
       "code": "Lt",
     },
     {
-      "arg1": 40,
+      "arg1": 59,
       "code": "JumpIfFalse",
     },
     {
       "arg1": {
-        "ref": "_calltmp_43",
+        "ref": "_for_iter_39",
       },
       "code": "Const",
     },
@@ -5296,7 +5124,7 @@ exports[`expressions > structured programming > for loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_45",
+        "ref": "_for_idx_39",
       },
       "code": "Const",
     },
@@ -5326,7 +5154,34 @@ exports[`expressions > structured programming > for loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_44",
+        "ref": "_for_acc_39",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_79",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_79",
       },
       "code": "Const",
     },
@@ -5338,7 +5193,7 @@ exports[`expressions > structured programming > for loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_44",
+        "ref": "_for_acc_39",
       },
       "code": "Const",
     },
@@ -5347,7 +5202,16 @@ exports[`expressions > structured programming > for loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_45",
+        "ref": "_for_acc_39",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_for_idx_39",
       },
       "code": "Const",
     },
@@ -5363,7 +5227,7 @@ exports[`expressions > structured programming > for loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_45",
+        "ref": "_for_idx_39",
       },
       "code": "Const",
     },
@@ -5371,12 +5235,47 @@ exports[`expressions > structured programming > for loop 1`] = `
       "code": "Store",
     },
     {
-      "arg1": 12,
+      "arg1": {
+        "ref": "_for_idx_39",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 64,
       "code": "Jump",
     },
     {
       "arg1": {
-        "ref": "_calltmp_44",
+        "ref": "_for_acc_39",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_78",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 65,
+      "code": "Jump",
+    },
+    {
+      "arg1": 21,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_78",
       },
       "code": "Const",
     },
@@ -5411,12 +5310,21 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_49",
+        "ref": "_for_iter_41",
       },
       "code": "Const",
     },
     {
       "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_for_iter_41",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "arg1": {
@@ -5426,12 +5334,21 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_50",
+        "ref": "_for_acc_41",
       },
       "code": "Const",
     },
     {
       "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_for_acc_41",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "arg1": 0,
@@ -5439,7 +5356,7 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_51",
+        "ref": "_for_idx_41",
       },
       "code": "Const",
     },
@@ -5448,7 +5365,29 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_51",
+        "ref": "_for_idx_41",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_84",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_for_idx_41",
       },
       "code": "Const",
     },
@@ -5457,7 +5396,7 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_49",
+        "ref": "_for_iter_41",
       },
       "code": "Const",
     },
@@ -5471,12 +5410,12 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
       "code": "Lt",
     },
     {
-      "arg1": 42,
+      "arg1": 61,
       "code": "JumpIfFalse",
     },
     {
       "arg1": {
-        "ref": "_calltmp_49",
+        "ref": "_for_iter_41",
       },
       "code": "Const",
     },
@@ -5485,7 +5424,7 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_51",
+        "ref": "_for_idx_41",
       },
       "code": "Const",
     },
@@ -5514,6 +5453,33 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
       "code": "Load",
     },
     {
+      "arg1": {
+        "ref": "_for_acc_41",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_85",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
       "arg1": 2,
       "code": "Const",
     },
@@ -5522,7 +5488,7 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_50",
+        "ref": "_calltmp_85",
       },
       "code": "Const",
     },
@@ -5534,7 +5500,7 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_50",
+        "ref": "_for_acc_41",
       },
       "code": "Const",
     },
@@ -5543,7 +5509,16 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_51",
+        "ref": "_for_acc_41",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_for_idx_41",
       },
       "code": "Const",
     },
@@ -5559,7 +5534,7 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_51",
+        "ref": "_for_idx_41",
       },
       "code": "Const",
     },
@@ -5567,12 +5542,47 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
       "code": "Store",
     },
     {
-      "arg1": 12,
+      "arg1": {
+        "ref": "_for_idx_41",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 66,
       "code": "Jump",
     },
     {
       "arg1": {
-        "ref": "_calltmp_50",
+        "ref": "_for_acc_41",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_84",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 67,
+      "code": "Jump",
+    },
+    {
+      "arg1": 21,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_84",
       },
       "code": "Const",
     },
@@ -6240,7 +6250,7 @@ exports[`expressions > structured programming > while loop continue skips iterat
     },
     {
       "arg1": {
-        "ref": "_calltmp_143",
+        "ref": "_calltmp_146",
       },
       "code": "Const",
     },
@@ -6360,12 +6370,33 @@ exports[`expressions > structured programming > while loop continue skips iterat
       "code": "Load",
     },
     {
+      "arg1": 45,
+      "code": "Jump",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_146",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 46,
+      "code": "Jump",
+    },
+    {
       "arg1": 13,
       "code": "Jump",
     },
     {
       "arg1": {
-        "ref": "_calltmp_143",
+        "ref": "_calltmp_146",
       },
       "code": "Const",
     },
@@ -6419,7 +6450,7 @@ exports[`expressions > structured programming > while loop with break returns va
     },
     {
       "arg1": {
-        "ref": "_calltmp_94",
+        "ref": "_calltmp_97",
       },
       "code": "Const",
     },
@@ -6511,7 +6542,7 @@ exports[`expressions > structured programming > while loop with break returns va
     },
     {
       "arg1": {
-        "ref": "_calltmp_94",
+        "ref": "_calltmp_97",
       },
       "code": "Const",
     },
@@ -6519,7 +6550,28 @@ exports[`expressions > structured programming > while loop with break returns va
       "code": "Store",
     },
     {
-      "arg1": 32,
+      "arg1": 37,
+      "code": "Jump",
+    },
+    {
+      "arg1": 36,
+      "code": "Jump",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_97",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 37,
       "code": "Jump",
     },
     {
@@ -6528,7 +6580,7 @@ exports[`expressions > structured programming > while loop with break returns va
     },
     {
       "arg1": {
-        "ref": "_calltmp_94",
+        "ref": "_calltmp_97",
       },
       "code": "Const",
     },
