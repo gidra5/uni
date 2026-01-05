@@ -11,6 +11,11 @@ export const defaultNatives: Record<string, NativeHandler> = {
     return vm.createSymbol(description, false);
   },
 
+  channel: (vm, [name]) => {
+    const description = name === undefined ? undefined : String(name);
+    return vm.createChannel(description);
+  },
+
   alloc: (vm, [value]) => {
     return vm.alloc(value);
   },

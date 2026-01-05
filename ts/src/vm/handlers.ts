@@ -15,6 +15,9 @@ const normalizeKey = (value: Value) => {
     const sym = value;
     return typeof sym.symbol === "string" ? sym.symbol : `symbol:${sym.symbol}`;
   }
+  if (isChannel(value)) {
+    return `channel:${value.channel}`;
+  }
   if (value && typeof value === "object" && "thread" in value) return `thread:${value.thread}`;
   if (value && typeof value === "object" && "ref" in value) return String(value.ref);
   return String(value);
@@ -35,12 +38,16 @@ const isAtom = (value: Value): value is SymbolValue =>
 const isClosure = (value: Value): value is Closure =>
   typeof value === "object" && value !== null && "functionName" in value && "env" in value;
 
+const isChannel = (value: Value): value is { channel: string; name?: string } =>
+  typeof value === "object" && value !== null && "channel" in value;
+
 const isThreadHandle = (value: Value): value is { thread: string } =>
   typeof value === "object" && value !== null && "thread" in value;
 
 const stringify = (value: Value): string => {
   if (isAtom(value)) return `:${value.name ?? value.symbol}`;
   if (isSymbol(value)) return `symbol(${value.name ?? value.symbol})`;
+  if (isChannel(value)) return `channel(${value.name ?? value.channel})`;
   if (isThreadHandle(value)) return `thread(${value.thread})`;
   if (isTuple(value)) return `(${value.tuple.map(stringify).join(",")})`;
   if (isRecord(value)) return "[object Record]";
@@ -59,6 +66,9 @@ const deepEqual = (a: Value, b: Value): boolean => {
   if (isSymbol(a) && isSymbol(b)) {
     return a.symbol === b.symbol;
   }
+  if (isChannel(a) && isChannel(b)) {
+    return a.channel === b.channel;
+  }
 
   if (isTuple(a) && isTuple(b)) {
     return a.tuple.length === b.tuple.length && a.tuple.every((item, index) => deepEqual(item, b.tuple[index]));
@@ -72,6 +82,13 @@ const deepEqual = (a: Value, b: Value): boolean => {
   }
 
   return false;
+};
+
+const resumeBlockedThread = (thread: Thread, channelId: string, value: Value) => {
+  assert(thread.blockedChannel === channelId, "vm2: thread not blocked on expected channel");
+  thread.blockedChannel = undefined;
+  if (value) thread.push(value);
+  thread.ip++;
 };
 
 export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: Instruction) => boolean | void> = {
@@ -294,6 +311,69 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
   [InstructionCode.Closure]: (_vm, thread, instr) => {
     assert(instr.code === InstructionCode.Closure);
     thread.push({ functionName: instr.arg1, env: thread.env });
+  },
+  [InstructionCode.Send]: (vm, thread, instr) => {
+    assert(instr.code === InstructionCode.Send);
+    const value = thread.pop();
+    const channelValue = thread.pop();
+    assert(isChannel(channelValue), "vm2: expected channel for send");
+    const channel = vm.getChannel(channelValue);
+
+    const receiver = channel.receivers.shift();
+    if (receiver) {
+      resumeBlockedThread(receiver.thread, channel.id, value);
+      return;
+    }
+
+    channel.senders.push({ thread, value });
+    thread.blockedChannel = channel.id;
+    return false;
+  },
+  [InstructionCode.Receive]: (vm, thread, instr) => {
+    assert(instr.code === InstructionCode.Receive);
+    const channelValue = thread.pop();
+    assert(isChannel(channelValue), "vm2: expected channel for receive");
+    const channel = vm.getChannel(channelValue);
+
+    const sender = channel.senders.shift();
+    if (sender) {
+      resumeBlockedThread(sender.thread, channel.id, sender.value);
+      return;
+    }
+
+    channel.receivers.push({ thread });
+    thread.blockedChannel = channel.id;
+    return false;
+  },
+  [InstructionCode.TrySend]: (vm, thread, instr) => {
+    assert(instr.code === InstructionCode.TrySend);
+    const value = thread.pop();
+    const channelValue = thread.pop();
+    assert(isChannel(channelValue), "vm2: expected channel for try send");
+    const channel = vm.getChannel(channelValue);
+
+    const receiver = channel.receivers.shift();
+    if (receiver) {
+      resumeBlockedThread(receiver.thread, channel.id, value);
+      thread.push(true);
+      return;
+    }
+
+    thread.push(false);
+  },
+  [InstructionCode.TryReceive]: (vm, thread, instr) => {
+    assert(instr.code === InstructionCode.TryReceive);
+    const channelValue = thread.pop();
+    assert(isChannel(channelValue), "vm2: expected channel for try receive");
+    const channel = vm.getChannel(channelValue);
+
+    const sender = channel.senders.shift();
+    if (sender) {
+      resumeBlockedThread(sender.thread, channel.id, { tuple: [true, sender.value] });
+      return;
+    }
+
+    thread.push({ tuple: [false, null] });
   },
   [InstructionCode.Fork]: (vm, thread, instr) => {
     assert(instr.code === InstructionCode.Fork);

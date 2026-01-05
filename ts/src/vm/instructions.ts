@@ -32,8 +32,11 @@ export enum InstructionCode {
   Fork = "Fork",
   Join = "Join",
   // ForkDetached="ForkDetached",
-  // Park="Park",
-  // Unpark="Unpark",
+
+  Send = "Send",
+  Receive = "Receive",
+  TrySend = "TrySend",
+  TryReceive = "TryReceive",
 
   Load = "Load",
   Store = "Store",
@@ -73,6 +76,7 @@ export type Value =
   | Closure
   | { ref: string }
   | { thread: string }
+  | { channel: string; name?: string }
   | SymbolValue
   | { tuple: Value[] }
   | { record: Record<string, Value> };
@@ -110,6 +114,10 @@ export type Instruction =
   | { code: InstructionCode.Closure; arg1: string }
   | { code: InstructionCode.Fork }
   | { code: InstructionCode.Join }
+  | { code: InstructionCode.Send }
+  | { code: InstructionCode.Receive }
+  | { code: InstructionCode.TrySend }
+  | { code: InstructionCode.TryReceive }
   | { code: InstructionCode.Concat };
 
 export type FunctionCode = Instruction[];

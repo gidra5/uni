@@ -14,7 +14,7 @@ class Vm2Generator {
   private functionNames = new Map<number, string>();
   private functionParamCounts = new Map<number, number>();
   private asyncFunctionNames = new Map<number, string>();
-  private nativeNames = new Set(["print", "symbol", "alloc", "free"]);
+  private nativeNames = new Set(["print", "symbol", "alloc", "free", "channel"]);
   private loopStack: { breakJumps: number[]; continueTarget: number; resultRef: string }[] = [];
   private labelStack: { name: string; breakJumps: number[]; continueTarget: number; resultRef: string }[] = [];
 
@@ -150,6 +150,18 @@ class Vm2Generator {
         break;
       case NodeType.IN:
         this.emitBinaryChain(node.children, InstructionCode.In);
+        break;
+      case NodeType.SEND:
+        this.emitSend(node);
+        break;
+      case NodeType.RECEIVE:
+        this.emitReceive(node);
+        break;
+      case NodeType.SEND_STATUS:
+        this.emitTrySend(node);
+        break;
+      case NodeType.RECEIVE_STATUS:
+        this.emitTryReceive(node);
         break;
       case NodeType.NOT:
         assert(node.children[0] !== undefined, "negation missing operand");
@@ -474,6 +486,36 @@ class Vm2Generator {
     }
     entries.forEach((entry) => this.emitRecordEntry(entry));
     this.current.push({ code: InstructionCode.Record, arg1: entries.length });
+  }
+
+  private emitSend(node: Tree) {
+    const [channelExpr, valueExpr] = node.children;
+    assert(channelExpr && valueExpr, "send requires channel and value");
+    this.emitNode(channelExpr);
+    this.emitNode(valueExpr);
+    this.current.push({ code: InstructionCode.Send });
+  }
+
+  private emitTrySend(node: Tree) {
+    const [channelExpr, valueExpr] = node.children;
+    assert(channelExpr && valueExpr, "try send requires channel and value");
+    this.emitNode(channelExpr);
+    this.emitNode(valueExpr);
+    this.current.push({ code: InstructionCode.TrySend });
+  }
+
+  private emitReceive(node: Tree) {
+    const [channelExpr] = node.children;
+    assert(channelExpr, "receive requires channel");
+    this.emitNode(channelExpr);
+    this.current.push({ code: InstructionCode.Receive });
+  }
+
+  private emitTryReceive(node: Tree) {
+    const [channelExpr] = node.children;
+    assert(channelExpr, "try receive requires channel");
+    this.emitNode(channelExpr);
+    this.current.push({ code: InstructionCode.TryReceive });
   }
 
   private emitRecordEntry(entry: Tree) {

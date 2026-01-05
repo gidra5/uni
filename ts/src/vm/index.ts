@@ -21,12 +21,17 @@ type VMOptions = {
 
 const isHeapRef = (ref: string) => ref.startsWith("_ref");
 
+type ChannelSender = { thread: Thread; value: Value };
+type ChannelReceiver = { thread: Thread };
+type ChannelState = { id: string; name?: string; senders: ChannelSender[]; receivers: ChannelReceiver[] };
+
 export class Thread {
   id: string;
   stack: StackEntry[] = [];
   callStack: CallStackEntry[] = [];
   handlersStack: { ip: number; functionName: string }[] = [];
   env: ClosureEnv = { values: {} };
+  blockedChannel?: string;
 
   ip = 0;
   functionName: string;
@@ -120,6 +125,8 @@ export class Thread {
   }
 
   step() {
+    if (this.blockedChannel) return;
+
     const instructions = this.vm.getFunction(this.functionName);
 
     if (this.ip < 0 || this.ip >= instructions.length) {
@@ -141,6 +148,7 @@ export class VM {
   heap: Record<string, HeapEntry> = {};
   threads = new Map<string, Thread>();
   atoms = new Map<string, Value>();
+  channels = new Map<string, ChannelState>();
 
   code: Program = {};
   natives: Record<string, NativeHandler>;
@@ -178,6 +186,22 @@ export class VM {
 
     const id = nextId();
     return { symbol: id, name };
+  }
+
+  createChannel(name?: string): Value {
+    const id = `_chan${nextId()}`;
+    const state: ChannelState = { id, name, senders: [], receivers: [] };
+    this.channels.set(id, state);
+    return { channel: id, name };
+  }
+
+  getChannel(value: { channel: string; name?: string }): ChannelState {
+    const state = this.channels.get(value.channel);
+    if (state) return state;
+
+    const created: ChannelState = { id: value.channel, name: value.name, senders: [], receivers: [] };
+    this.channels.set(value.channel, created);
+    return created;
   }
 
   spawnThread(functionName: string, id: string, parentEnv?: ClosureEnv): Thread {
