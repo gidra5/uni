@@ -12,7 +12,7 @@ class Vm2Generator {
   private current: Instruction[] = this.program.main;
   private functionNames = new Map<number, string>();
   private functionParamCounts = new Map<number, number>();
-  private nativeNames = new Set(["print", "symbol", "alloc", "free"]);
+  private asyncFunctionNames = new Map<number, string>();
   private loopStack: { breakJumps: number[]; continueTarget: number; resultRef: string }[] = [];
   private labelStack: { name: string; breakJumps: number[]; continueTarget: number; resultRef: string }[] = [];
 
@@ -39,6 +39,21 @@ class Vm2Generator {
       case NodeType.FUNCTION: {
         const fnName = this.registerFunction(node);
         this.current.push({ code: InstructionCode.Closure, arg1: fnName });
+        break;
+      }
+      case NodeType.ASYNC: {
+        const target = node.children[0];
+        assert(target, "async requires a target expression");
+        const fnName = this.registerAsyncFunction(target);
+        this.current.push({ code: InstructionCode.Closure, arg1: fnName });
+        this.current.push({ code: InstructionCode.Fork });
+        break;
+      }
+      case NodeType.AWAIT: {
+        const target = node.children[0];
+        assert(target, "await requires a target expression");
+        this.emitNode(target);
+        this.current.push({ code: InstructionCode.Join });
         break;
       }
       case NodeType.NAME: {
@@ -69,7 +84,10 @@ class Vm2Generator {
         this.current.push({ code: InstructionCode.Const, arg1: node.data.value });
         break;
       case NodeType.ATOM:
-        this.current.push({ code: InstructionCode.Const, arg1: { symbol: `atom:${node.data.name}`, name: node.data.name } });
+        this.current.push({
+          code: InstructionCode.Const,
+          arg1: { symbol: `atom:${node.data.name}`, name: node.data.name },
+        });
         break;
       case NodeType.DEREF: {
         const target = node.children[0];
@@ -346,6 +364,25 @@ class Vm2Generator {
 
     this.emitParamBindings(params);
     if (body) this.emitNode(body);
+    this.ensureReturn();
+
+    this.current = prev;
+
+    return fnName;
+  }
+
+  private registerAsyncFunction(body: Tree): string {
+    if (this.asyncFunctionNames.has(body.id)) return this.asyncFunctionNames.get(body.id)!;
+
+    const fnName = `async_${body.id}`;
+    this.asyncFunctionNames.set(body.id, fnName);
+
+    const prev = this.current;
+    const fnBody: Instruction[] = [];
+    this.program[fnName] = fnBody;
+    this.current = fnBody;
+
+    this.emitNode(body);
     this.ensureReturn();
 
     this.current = prev;

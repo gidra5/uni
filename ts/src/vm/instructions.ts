@@ -29,10 +29,9 @@ export enum InstructionCode {
   // SetHandle="SetHandle",
   // EmitEffect="EmitEffect",
 
-  // Fork="Fork",
+  Fork = "Fork",
+  Join = "Join",
   // ForkDetached="ForkDetached",
-  // Join="Join",
-  // Halt="Halt",
   // Park="Park",
   // Unpark="Unpark",
 
@@ -73,6 +72,7 @@ export type Value =
   | undefined
   | Closure
   | { ref: string }
+  | { thread: string }
   | SymbolValue
   | { tuple: Value[] }
   | { record: Record<string, Value> };
@@ -108,6 +108,8 @@ export type Instruction =
   | { code: InstructionCode.JumpIfFalse; arg1: number }
   | { code: InstructionCode.Native; arg1: string; arg2?: number }
   | { code: InstructionCode.Closure; arg1: string }
+  | { code: InstructionCode.Fork }
+  | { code: InstructionCode.Join }
   | { code: InstructionCode.Concat };
 
 export type FunctionCode = Instruction[];

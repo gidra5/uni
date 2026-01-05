@@ -9,13 +9,14 @@ const popNumber = (thread: Thread) => {
   return value;
 };
 
-const normalizeKey = (value: unknown) => {
+const normalizeKey = (value: Value) => {
   if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value);
-  if (isSymbol(value as Value)) {
-    const sym = value as SymbolValue;
+  if (isSymbol(value)) {
+    const sym = value;
     return typeof sym.symbol === "string" ? sym.symbol : `symbol:${sym.symbol}`;
   }
-  if (value && typeof value === "object" && "ref" in (value as any)) return String((value as { ref: string }).ref);
+  if (value && typeof value === "object" && "thread" in value) return `thread:${value.thread}`;
+  if (value && typeof value === "object" && "ref" in value) return String(value.ref);
   return String(value);
 };
 
@@ -34,9 +35,13 @@ const isAtom = (value: Value): value is SymbolValue =>
 const isClosure = (value: Value): value is Closure =>
   typeof value === "object" && value !== null && "functionName" in value && "env" in value;
 
+const isThreadHandle = (value: Value): value is { thread: string } =>
+  typeof value === "object" && value !== null && "thread" in value;
+
 const stringify = (value: Value): string => {
   if (isAtom(value)) return `:${value.name ?? value.symbol}`;
   if (isSymbol(value)) return `symbol(${value.name ?? value.symbol})`;
+  if (isThreadHandle(value)) return `thread(${value.thread})`;
   if (isTuple(value)) return `(${value.tuple.map(stringify).join(",")})`;
   if (isRecord(value)) return "[object Record]";
   return String(value);
@@ -289,5 +294,33 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
   [InstructionCode.Closure]: (_vm, thread, instr) => {
     assert(instr.code === InstructionCode.Closure);
     thread.push({ functionName: instr.arg1, env: thread.env });
+  },
+  [InstructionCode.Fork]: (vm, thread, instr) => {
+    assert(instr.code === InstructionCode.Fork);
+    const closure = thread.pop();
+    assert(isClosure(closure), "vm2: expected callable value for async");
+
+    const id = `thread_${nextId()}`;
+    vm.spawnThread(closure.functionName, id, closure.env);
+    thread.push({ thread: id });
+  },
+  [InstructionCode.Join]: (vm, thread, instr) => {
+    assert(instr.code === InstructionCode.Join);
+    const handle = thread.pop();
+    if (!isThreadHandle(handle)) {
+      thread.push(handle);
+      return;
+    }
+
+    const target = vm.threads.get(handle.thread);
+    assert(target, `vm2: missing thread "${handle.thread}"`);
+
+    if (target.callStack.length > 0) {
+      thread.push(handle);
+      return false;
+    }
+
+    const result = target.stack[target.stack.length - 1];
+    thread.push(result);
   },
 };

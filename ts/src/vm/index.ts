@@ -180,10 +180,10 @@ export class VM {
     return { symbol: id, name };
   }
 
-  spawnThread(functionName: string, id: string): Thread {
+  spawnThread(functionName: string, id: string, parentEnv?: ClosureEnv): Thread {
     const thread = new Thread(this, id, functionName);
     this.threads.set(thread.id, thread);
-    thread.callFunction(functionName, 0, { ip: -1, functionName, stack: [], env: thread.env });
+    thread.callFunction(functionName, 0, { ip: -1, functionName, stack: [], env: thread.env }, parentEnv);
     return thread;
   }
 
