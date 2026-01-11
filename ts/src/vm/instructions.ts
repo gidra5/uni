@@ -29,9 +29,9 @@ export enum InstructionCode {
   // SetHandle="SetHandle",
   // EmitEffect="EmitEffect",
 
-  Fork = "Fork",
+  Spawn = "Spawn",
   Join = "Join",
-  // ForkDetached="ForkDetached",
+  Fork = "Fork",
 
   Send = "Send",
   Receive = "Receive",
@@ -112,8 +112,9 @@ export type Instruction =
   | { code: InstructionCode.JumpIfFalse; arg1: number }
   | { code: InstructionCode.Native; arg1: string; arg2?: number }
   | { code: InstructionCode.Closure; arg1: string }
-  | { code: InstructionCode.Fork }
+  | { code: InstructionCode.Spawn }
   | { code: InstructionCode.Join }
+  | { code: InstructionCode.Fork }
   | { code: InstructionCode.Send }
   | { code: InstructionCode.Receive }
   | { code: InstructionCode.TrySend }

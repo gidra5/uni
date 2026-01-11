@@ -49,7 +49,7 @@ class Vm2Generator {
         assert(target, "async requires a target expression");
         const fnName = this.registerAsyncFunction(target);
         this.current.push({ code: InstructionCode.Closure, arg1: fnName });
-        this.current.push({ code: InstructionCode.Fork });
+        this.current.push({ code: InstructionCode.Spawn });
         break;
       }
       case NodeType.AWAIT: {

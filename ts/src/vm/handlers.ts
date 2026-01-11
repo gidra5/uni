@@ -375,13 +375,23 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
 
     thread.push({ tuple: [false, null] });
   },
+  [InstructionCode.Spawn]: (vm, thread, instr) => {
+    assert(instr.code === InstructionCode.Spawn);
+    const closure = thread.pop();
+    assert(isClosure(closure), "vm2: expected callable value for async");
+
+    const id = `thread_${nextId()}`;
+    vm.spawnThread(closure.functionName, id, closure.env);
+    thread.push({ thread: id });
+  },
   [InstructionCode.Fork]: (vm, thread, instr) => {
     assert(instr.code === InstructionCode.Fork);
     const closure = thread.pop();
     assert(isClosure(closure), "vm2: expected callable value for async");
 
     const id = `thread_${nextId()}`;
-    vm.spawnThread(closure.functionName, id, closure.env);
+    const forked = vm.spawnThread(closure.functionName, id, closure.env);
+    forked.handlersStack = thread.handlersStack.map((frame) => ({ ...frame }));
     thread.push({ thread: id });
   },
   [InstructionCode.Join]: (vm, thread, instr) => {
