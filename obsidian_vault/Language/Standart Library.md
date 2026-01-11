@@ -38,6 +38,7 @@ Includes tools for:
 12. animation interpolation
 	1. must allow reifying animation principles https://youtu.be/uDqjIdI4bF4?si=1WEmqHQnBs59iEdW
 	2. https://www.youtube.com/watch?v=gFTYNp0HWTg
+	3. https://www.youtube.com/watch?v=p8scn9zyvJA
 13. math
   14. linear algebra
   15. [tensors and tensor graphs](https://dl.acm.org/doi/10.1145/3704865)
