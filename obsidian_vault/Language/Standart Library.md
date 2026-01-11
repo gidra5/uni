@@ -66,7 +66,10 @@ Includes tools for:
 22. time and timezones
 23. physics
 24. console
-25. structured logging
+25. structured logging 
+	1. https://loggingsucks.com/ 
+	2. allow only enabling a subset of log hierarchy
+	3. allow log levels
 26. measures (kg, meters, etc)
 27. regexp
 28. functional stuff

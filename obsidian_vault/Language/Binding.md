@@ -10,4 +10,7 @@ Allow paths in declaration by merging
 
 Local scope where it is true
 
-Duplicate variablse create constraints, which are unified
+Duplicate variables create constraints, which are unified
+
+https://www.microsoft.com/en-us/research/wp-content/uploads/2025/11/implicits-tr-v2.pdf
+https://www.reddit.com/r/ProgrammingLanguages/comments/1q4b2o7/syntactic_implicit_parameters_with_static/?share_id=uefcxwxwHqN_kG-GKXZWA&utm_medium=android_app&utm_name=androidcss&utm_source=share&utm_term=14

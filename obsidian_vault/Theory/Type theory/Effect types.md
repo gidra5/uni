@@ -24,3 +24,5 @@ Coeffects sometimes can be modeled by modalities.
 
 https://vhyrro.github.io/posts/effect-systems/
 https://dl.acm.org/doi/pdf/10.1145/3607846
+
+effect subtyping? lets say we have separate effects for each type of errors that may occur, they it would be convenient to define a single generic effect handler for error that would be able to handle all of the "derived" error effects

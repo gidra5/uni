@@ -11,3 +11,5 @@ That usually covers errors that immediate user of the component could handle.
 The second case is handle with `try-catch` constructs and usually not useful for "expected" errors, thus only used for unexpected errors such as failing assertions, which usually means immediate user won't be able to recover from such errors.
 
 panics cannot be avoided, and will eventually become "catchable", so it is better to implement it right away properly.
+
+https://www.reddit.com/r/ProgrammingLanguages/s/ICKPEWJdjN
