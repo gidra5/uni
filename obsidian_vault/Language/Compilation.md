@@ -25,3 +25,4 @@ https://neilmitchell.blogspot.com/2020/04/writing-fast-interpreter.html
 https://www.pathsensitive.com/2019/07/the-best-refactoring-youve-never-heard.html
 https://mapping-high-level-constructs-to-llvm-ir.readthedocs.io/en/latest/exception-handling/setjmp+longjmp-exception-handling.html
 https://monkeywritescode.blogspot.com/p/c-exceptions-under-hood.html?m=1
+https://www.reddit.com/r/Compilers/s/pcji5zcOt7

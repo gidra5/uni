@@ -98,3 +98,21 @@ https://www.postgresql.org/docs/current/index.html
 Following database interpretation, we can enrich querying syntax. Aggregation, grouping, distinct, nulls?, foreign keys, transactions, primary keys/uniqueness, joins, window functions, order, limit, offset
 
 Once we follow replicate at least prolog semantics, we already gain turing completeness.
+
+Roman Храновський, [1/7/2026 11:27 PM]
+HoLogic programming - unifying types and values in db scope. 
+Db - explicit rdbms concepts. 
+Least fixed point as push updates, greatest as pull based (iterator like).
+Dataflow as graph representation of a single function - has a set of arguments and a single output, that are passed and read simultaneously. 
+Reactive is a push based graph.
+Logic is pull based?
+
+Roman Храновський, [1/7/2026 11:28 PM]
+Caching as materializing views/relations/types
+
+Roman Храновський, [1/7/2026 11:29 PM]
+Separate storage of facts from rules?
+
+Roman Храновський, [1/7/2026 11:29 PM]
+Or rows from tables
+https://www.reddit.com/r/Compilers/s/pcji5zcOt7
