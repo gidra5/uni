@@ -19,3 +19,5 @@ You could say that by choosing high-level language we follow Principle of Least 
 One way to look at it is that *the language* must have equal power, but *the environment* that executes it must have the least power. That allows to have best allowed experience possible in given environment.
 
 One more way to look at it is that higher abstraction levels must have at least the power of the lover level abstractions it uses.
+
+https://youtu.be/AmrBpxAtPrI?si=lWBAGmO24HqYJ_3b

@@ -36,59 +36,61 @@ Includes tools for:
 10. arbitraries
 11. streams
 12. animation interpolation
+	1. must allow reifying animation principles https://youtu.be/uDqjIdI4bF4?si=1WEmqHQnBs59iEdW
+	2. https://www.youtube.com/watch?v=gFTYNp0HWTg
 13. math
-  1. linear algebra
-  2. [tensors and tensor graphs](https://dl.acm.org/doi/10.1145/3704865)
-  3. number theory
-  4. complex
-  5. quaternions
-  6. dual
-  7. derivatives
-  8. integrals
-  9. differential equations
-  10. interpolation and extrapolation
-  11. fft
-  12. statistics and probability sampling
-  13. [reference frames and geometry](https://www.cs.cornell.edu/~asampson/blog/gator.html)
-  14. rng 
+  14. linear algebra
+  15. [tensors and tensor graphs](https://dl.acm.org/doi/10.1145/3704865)
+  16. number theory
+  17. complex
+  18. quaternions
+  19. dual
+  20. derivatives
+  21. integrals
+  22. differential equations
+  23. interpolation and extrapolation
+  24. fft
+  25. statistics and probability sampling
+  26. [reference frames and geometry](https://www.cs.cornell.edu/~asampson/blog/gator.html)
+  27. rng 
     * [quasirandom number generators](https://extremelearning.com.au/unreasonable-effectiveness-of-quasirandom-sequences/)
     * fast prng
     * most statistically uniform prng
     * hardware rng
-14. styling
-15. cli parsing
-16. reflection 
-17. process env
-18. ffi
-19. asm
-20. localization and internationalization 
-21. file system and io
-22. time and timezones
-23. physics
-24. console
-25. structured logging 
+28. styling
+29. cli parsing
+30. reflection 
+31. process env
+32. ffi
+33. asm
+34. localization and internationalization 
+35. file system and io
+36. time and timezones
+37. physics
+38. console
+39. structured logging 
 	1. https://loggingsucks.com/ 
 	2. allow only enabling a subset of log hierarchy
 	3. allow log levels
-26. measures (kg, meters, etc)
-27. regexp
-28. functional stuff
-  29. monads
-  30. functors
-  31. [lenses](https://github.com/akheron/optics-ts)
-29. crypto
-30. compression
-31. encoding (json, yaml, base64, etc)
-32. hashing
-33. data structures
-34. algorithms
-35. caching
-36. concurrency
-37. primitive utilities
-38. plotting
-39. error correction codes
-40. generic device interface
-41. signals
+40. measures (kg, meters, etc)
+41. regexp
+42. functional stuff
+  43. monads
+  44. functors
+  45. [lenses](https://github.com/akheron/optics-ts)
+46. crypto
+47. compression
+48. encoding (json, yaml, base64, etc)
+49. hashing
+50. data structures
+51. algorithms
+52. caching
+53. concurrency
+54. primitive utilities
+55. plotting
+56. error correction codes
+57. generic device interface
+58. signals
   * value wrapper
   * derived computation
   * effectful computation

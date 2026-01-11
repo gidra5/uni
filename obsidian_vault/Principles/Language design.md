@@ -31,3 +31,4 @@ https://flix.dev/principles/
 https://blog.flix.dev/
 https://chatgpt.com/c/6946aa7a-43c4-8331-acac-34f7f5602862
 https://www.youtube.com/watch?v=1iPWt1gvT_w
+https://youtu.be/qYEmJ8MYrs4?si=elNeB9SVwl2V-mFM
