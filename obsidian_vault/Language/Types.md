@@ -36,3 +36,5 @@ Primitives:
 
 Subtyping `<:`:
 1. 
+
+https://www.reddit.com/r/ProgrammingLanguages/comments/1q895ag/list_of_type_operators/

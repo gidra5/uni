@@ -26,8 +26,9 @@ export enum InstructionCode {
   // Duplicate = "Duplicate",
   // Swap = "Swap",
 
-  // SetHandle="SetHandle",
-  // EmitEffect="EmitEffect",
+  SetHandle = "SetHandle",
+  EmitEffect = "EmitEffect",
+  ReturnHandler = "ReturnHandler",
 
   Spawn = "Spawn",
   Join = "Join",
@@ -108,6 +109,9 @@ export type Instruction =
   | { code: InstructionCode.Append }
   | { code: InstructionCode.Call; arg1?: string; arg2?: number }
   | { code: InstructionCode.Return }
+  | { code: InstructionCode.SetHandle }
+  | { code: InstructionCode.EmitEffect }
+  | { code: InstructionCode.ReturnHandler }
   | { code: InstructionCode.Jump; arg1: number }
   | { code: InstructionCode.JumpIfFalse; arg1: number }
   | { code: InstructionCode.Native; arg1: string; arg2?: number }
