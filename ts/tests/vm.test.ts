@@ -412,8 +412,7 @@ describe("scope", () => {
         x
       `,
       1
-    )
-  );
+    ));
 
   it.todo("declaration shadowing and closures", () => testCase(`x := 1; f := fn: x; x := 2; f()`, 1));
   it.todo("and rhs creates scope", () => testCase(`x := 2; true and (x := 1); x`, 2));
@@ -915,6 +914,7 @@ describe("expressions", () => {
 
   describe("data structures", () => {
     it.todo("set literal", () => testCase("set(1, 2, 2).values()", { tuple: [1, 2] }));
+    it.todo("multiset literal", () => testCase("multiset(1, 2, 2).values()", { tuple: [1, 2, 2] }));
 
     it.todo("field access", () => testCase("r := record { a: 1, b: 2 }; r.a", 1));
     it.todo("field access dynamic", () => testCase(`map := "some string": 1, b: 2; map["some string"]`, 1));
@@ -1398,8 +1398,7 @@ describe("expressions", () => {
           }
         `,
         2
-      )
-    );
+      ));
 
     it("inject", () =>
       testCase(
@@ -1408,8 +1407,7 @@ describe("expressions", () => {
           handle ($a) (), handle ($b) ()
         `,
         { tuple: [1, 2] }
-      )
-    );
+      ));
 
     it("mask", () =>
       testCase(
@@ -1425,8 +1423,7 @@ describe("expressions", () => {
           a, b
         `,
         { tuple: [1, 4] }
-      )
-    );
+      ));
 
     it("mask 2", () =>
       testCase(
@@ -1438,8 +1435,7 @@ describe("expressions", () => {
         handle ($a) (), handle ($b) ()
       `,
         { tuple: [1, 20] }
-      )
-    );
+      ));
 
     it("without", () => {
       const input = `
@@ -1468,8 +1464,7 @@ describe("expressions", () => {
           handle ($b) ()
         `,
         { tuple: [2, 4] }
-      )
-    );
+      ));
 
     it("parallel inside", () =>
       testCase(
@@ -1487,8 +1482,7 @@ describe("expressions", () => {
           x1, await x2, await x3
         `,
         { tuple: [3, 5, 9] }
-      )
-    );
+      ));
 
     it("handler with continuation", () =>
       testCase(
@@ -1504,8 +1498,7 @@ describe("expressions", () => {
         if decide(): 123 else 456
       `,
         { tuple: [123, 456] }
-      )
-    );
+      ));
 
     it("block-inject-fn-handle twice", () =>
       testCase(
@@ -1518,8 +1511,7 @@ describe("expressions", () => {
           { inject record { a: 3 } { f() } }
         `,
         3
-      )
-    );
+      ));
 
     it("block-inject-fn-handle", () =>
       testCase(
@@ -1528,8 +1520,7 @@ describe("expressions", () => {
           { inject record { a: 3 } { f() } }
         `,
         3
-      )
-    );
+      ));
 
     it("no continuation calls sequential", () =>
       testCase(
@@ -1540,8 +1531,7 @@ describe("expressions", () => {
           decide(); 123
         `,
         126
-      )
-    );
+      ));
 
     it("no continuation calls", () =>
       testCase(
@@ -1552,8 +1542,7 @@ describe("expressions", () => {
           if decide(): 123 else 456
         `,
         126
-      )
-    );
+      ));
 
     it("single continuation call", () =>
       testCase(
@@ -1564,8 +1553,7 @@ describe("expressions", () => {
           if decide(): 123 else 456
         `,
         123
-      )
-    );
+      ));
 
     it("multiple continuation calls", () =>
       testCase(
@@ -1580,8 +1568,7 @@ describe("expressions", () => {
           if decide(): 123 else 456
         `,
         { tuple: [123, 456] }
-      )
-    );
+      ));
 
     it("multiple continuation calls with mutations and refs", () =>
       testCase(
@@ -1603,8 +1590,7 @@ describe("expressions", () => {
           m
         `,
         { tuple: [3] }
-      )
-    );
+      ));
 
     it("multiple continuation calls with mutations and closure", () =>
       testCase(
@@ -1632,8 +1618,7 @@ describe("expressions", () => {
           m, n, f()
         `,
         { tuple: [2, 3, { tuple: [2, 2] }] }
-      )
-    );
+      ));
 
     it("multiple continuation calls with mutations", () =>
       testCase(
@@ -1655,8 +1640,7 @@ describe("expressions", () => {
           }
         `,
         { tuple: [2, 3] }
-      )
-    );
+      ));
 
     it("multiple continuation calls with inner mutation", () =>
       testCase(
@@ -1676,8 +1660,7 @@ describe("expressions", () => {
           }
         `,
         2
-      )
-    );
+      ));
 
     it("multi-level state backtracking", () =>
       testCase(
@@ -1694,8 +1677,7 @@ describe("expressions", () => {
           }
         `,
         1
-      )
-    );
+      ));
 
     it("disjoint-level state backtracking", () =>
       testCase(
@@ -1711,8 +1693,7 @@ describe("expressions", () => {
           }
         `,
         1
-      )
-    );
+      ));
 
     it("choose int loop", () =>
       testCase(
@@ -1738,8 +1719,7 @@ describe("expressions", () => {
           }
         `,
         2
-      )
-    );
+      ));
 
     it("unhandled fail", () => {
       const input = `
@@ -1785,8 +1765,7 @@ describe("expressions", () => {
           }
         `,
         2
-      )
-    );
+      ));
 
     it("pythagorean triple example", () =>
       testCase(
@@ -1824,8 +1803,7 @@ describe("expressions", () => {
           inject true_branch_first { pythagorean_triple 3 15 }
         `,
         { tuple: [{ tuple: [5, 12, 13] }, { tuple: [12, 16, 20] }] }
-      )
-    );
+      ));
 
     it("logger example", () =>
       testCase(
@@ -1851,8 +1829,7 @@ describe("expressions", () => {
           }
         `,
         { tuple: [{ tuple: [123, 234] }, { tuple: [234, 456, 123] }] }
-      )
-    );
+      ));
 
     it("transaction example", () =>
       testCase(
@@ -1891,8 +1868,7 @@ describe("expressions", () => {
           } 1
         `,
         { tuple: [123, 357] }
-      )
-    );
+      ));
   });
 });
 
