@@ -1,22 +1,35 @@
 import { generateVm2Bytecode } from "../codegen/vm/index.js";
-import { handlers } from "./handlers.js";
+import { handlers, resumeContinuation } from "./handlers.js";
 import { mergeNatives } from "./natives.js";
-import { ClosureEnv, FunctionCode, Instruction, InstructionCode, Program, Value } from "./instructions.js";
+import {
+  Closure,
+  ClosureEnv,
+  ContinuationFrame,
+  ContinuationState,
+  FunctionCode,
+  HandlerEntry,
+  Instruction,
+  InstructionCode,
+  Program,
+  Value,
+} from "./instructions.js";
 import { assert, nextId } from "../utils/index.js";
 
 export type NativeHandler = (vm: VM, args: Value[]) => Value | void;
+export type EffectHandle = {
+  threadId: string;
+  effect: Value;
+  arg: Value;
+  continuation: ContinuationState;
+};
 
 type HeapEntry = Value;
 type StackEntry = Value;
-type CallStackEntry = {
-  ip: number;
-  functionName: string;
-  stack: StackEntry[];
-  env: ClosureEnv;
-};
+type CallStackEntry = ContinuationFrame;
 
 type VMOptions = {
   natives?: Record<string, NativeHandler>;
+  ambientHandlers?: Record<string, Closure>;
 };
 
 const isHeapRef = (ref: string) => ref.startsWith("_ref");
@@ -29,9 +42,10 @@ export class Thread {
   id: string;
   stack: StackEntry[] = [];
   callStack: CallStackEntry[] = [];
-  handlersStack: { ip: number; functionName: string }[] = [];
+  handlersStack: HandlerEntry[] = [];
   env: ClosureEnv = { values: {} };
   blockedChannel?: string;
+  blockedEffect?: EffectHandle;
 
   ip = 0;
   functionName: string;
@@ -119,13 +133,21 @@ export class Thread {
     this.stack = frame.stack ?? [];
     if (returnValue !== undefined) this.push(returnValue);
 
+    if (frame.handlersStack) this.handlersStack = frame.handlersStack;
+    if (frame.handlerRestore) {
+      const { entry, index } = frame.handlerRestore;
+      const insertIndex = Math.max(0, Math.min(index, this.handlersStack.length));
+      this.handlersStack.splice(insertIndex, 0, entry);
+    }
+
     this.env = frame.env;
     this.functionName = frame.functionName;
     this.ip = frame.ip;
+    if (frame.callStack) this.callStack = frame.callStack;
   }
 
   step() {
-    if (this.blockedChannel) return;
+    if (this.blockedChannel || this.blockedEffect) return;
 
     const instructions = this.vm.getFunction(this.functionName);
 
@@ -149,12 +171,14 @@ export class VM {
   threads = new Map<string, Thread>();
   atoms = new Map<string, Value>();
   channels = new Map<string, ChannelState>();
+  ambientHandlers: Record<string, Closure> = {};
 
   code: Program = {};
   natives: Record<string, NativeHandler>;
 
   constructor(options?: VMOptions) {
     this.natives = mergeNatives(options?.natives);
+    if (options?.ambientHandlers) this.ambientHandlers = options.ambientHandlers;
   }
 
   addProgram(name: string, program: Program) {
@@ -214,19 +238,49 @@ export class VM {
   run(name = "main") {
     const mainThread = this.spawnThread(name, "main");
 
+    return this.runUntilBlocked(mainThread);
+  }
+
+  private activeThreads() {
+    return [...this.threads.values()].filter(
+      (thread) => thread.callStack.length > 0 && !thread.blockedEffect && !thread.blockedChannel
+    );
+  }
+
+  private findBlockedEffect() {
+    const mainThread = this.threads.get("main");
+    if (mainThread?.blockedEffect) return mainThread.blockedEffect;
+    for (const thread of this.threads.values()) {
+      if (thread.blockedEffect) return thread.blockedEffect;
+    }
+    return undefined;
+  }
+
+  private runUntilBlocked(mainThread?: Thread) {
     let active = this.activeThreads();
     while (active.length > 0) {
       for (const thread of active) {
         thread.step();
+        const blocked = this.findBlockedEffect();
+        if (blocked) return blocked;
       }
       active = this.activeThreads();
     }
 
-    return mainThread?.stack[mainThread.stack.length - 1];
+    const blocked = this.findBlockedEffect();
+    if (blocked) return blocked;
+
+    const thread = mainThread ?? this.threads.get("main");
+    return thread?.stack[thread.stack.length - 1];
   }
 
-  private activeThreads() {
-    return [...this.threads.values()].filter((thread) => thread.callStack.length > 0);
+  handleEffect(handle: EffectHandle, value: Value) {
+    const thread = this.threads.get(handle.threadId);
+    assert(thread, `vm2: missing thread "${handle.threadId}"`);
+    assert(thread.blockedEffect === handle, "vm2: effect handle not pending");
+    thread.blockedEffect = undefined;
+    resumeContinuation(thread, handle.continuation, value);
+    return this.runUntilBlocked();
   }
 
   getFunction(functionName: string): Instruction[] {
@@ -237,4 +291,4 @@ export class VM {
 }
 
 export { InstructionCode, generateVm2Bytecode };
-export type { Instruction, Program, Value };
+export type { EffectHandle, Instruction, Program, Value };

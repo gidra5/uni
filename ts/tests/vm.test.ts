@@ -4,7 +4,7 @@ import { parseTokenGroups } from "../src/parser/tokenGroups";
 import { parseScript } from "../src/parser/parser";
 import { Injectable, register } from "../src/utils/injector";
 import { FileMap } from "codespan-napi";
-import { generateVm2Bytecode, VM, type Program } from "../src/vm/index";
+import { generateVm2Bytecode, VM, type EffectHandle, type Program } from "../src/vm/index";
 import { validateTokenGroups } from "../src/analysis/validate";
 
 beforeEach(() => {
@@ -34,6 +34,17 @@ const testCase = (input: string, expected: unknown) => {
   const { bytecode, result } = runProgram(input);
   expect(bytecode).toMatchSnapshot();
   expect(result).toEqual(expected);
+};
+
+const expectEffectHandle = (value: unknown) => {
+  expect(value).toBeTruthy();
+  expect(typeof value).toBe("object");
+  const handle = value as EffectHandle;
+  expect(handle).toHaveProperty("continuation");
+  expect(handle).toHaveProperty("effect");
+  expect(handle).toHaveProperty("arg");
+  expect(handle).toHaveProperty("threadId");
+  return handle;
 };
 
 it.todo.prop([
@@ -391,11 +402,11 @@ describe("scope", () => {
   it.todo("block assign", () => testCase(`mut n := 1; { n = 5 }; n`, 5));
   it.todo("block increment", () => testCase(`mut n := 1; { n += 5 }; n`, 6));
 
-  it.todo("effect handlers inject scoping", () =>
+  it("effect handlers inject scoping", () =>
     testCase(
       `
         x := 1;
-        inject a: 1, b: 2 {
+        inject record { a: 1, b: 2 } {
           x := 2;
         };
         x
@@ -1370,18 +1381,19 @@ describe("expressions", () => {
   });
 
   describe("effect handlers", () => {
-    it.todo("all in one", () =>
+    it("all in one", () =>
       testCase(
         `
-          inject a: 1, b: 2 {
+          inject record { a: 1, b: 2 } {
             a := handle ($a) ()
             b := handle ($b) ()
-            inject a: a+1, b: b+2 {
-              mask $a ->
-              without $b ->
-
-              a := handle ($a) ()
-              a + 1
+            inject record { a: a+1, b: b+2 } {
+              mask $a {
+                without $b {
+                  a := handle ($a) ()
+                  a + 1
+                }
+              }
             }
           }
         `,
@@ -1389,24 +1401,24 @@ describe("expressions", () => {
       )
     );
 
-    it.todo("inject", () =>
+    it("inject", () =>
       testCase(
         `
-          inject a: 1, b: 2 ->
+          inject record { a: 1, b: 2 } ->
           handle ($a) (), handle ($b) ()
         `,
         { tuple: [1, 2] }
       )
     );
 
-    it.todo("mask", () =>
+    it("mask", () =>
       testCase(
         `
-          inject a: 1, b: 2 ->
+          inject record { a: 1, b: 2 } ->
           a := handle ($a) ()
           b := handle ($b) ()
           
-          inject a: a+1, b: b+2 ->
+          inject record { a: a+1, b: b+2 } ->
           mask $a ->
           a := handle ($a) ()
           b := handle ($b) ()
@@ -1416,36 +1428,41 @@ describe("expressions", () => {
       )
     );
 
-    it.todo("mask 2", () =>
+    it("mask 2", () =>
       testCase(
         `
+        handlers := a: handler fn (callback, _value) { callback 10 }, b: handler fn (callback, _value) { callback 20 }
         inject record { a: 1, b: 2 } ->
+        inject handlers ->
         mask $a ->
         handle ($a) (), handle ($b) ()
       `,
-        { tuple: [1, 2] }
+        { tuple: [1, 20] }
       )
     );
 
-    it.todo("without", () =>
-      testCase(
-        `
-          inject a: 1 ->
-          without $a ->
-          ($a |> handle) ()
-        `,
-        { effect: { kind: "throw", value: "no handler" } }
-      )
-    );
+    it("without", () => {
+      const input = `
+        inject record { a: 1 } ->
+        without $a ->
+        ($a |> handle) ()
+      `;
+      const { result, vm } = runProgram(input);
+      const handle = expectEffectHandle(result);
+      expect(handle.effect).toEqual({ symbol: "atom:a", name: "a" });
+      expect(handle.arg).toBe(null);
+      const resumed = vm.handleEffect(handle, 7);
+      expect(resumed).toBe(7);
+    });
 
-    it.todo("inject shadowing", () =>
+    it("inject shadowing", () =>
       testCase(
         `
-          inject a: 1, b: 2 ->
+          inject record { a: 1, b: 2 } ->
           a := handle ($a) ()
           b := handle ($b) ()
             
-          inject a: a+1, b: b+2 ->
+          inject record { a: a+1, b: b+2 } ->
 
           handle ($a) (),
           handle ($b) ()
@@ -1454,7 +1471,7 @@ describe("expressions", () => {
       )
     );
 
-    it.todo("parallel inside", () =>
+    it("parallel inside", () =>
       testCase(
         `
           f := fn {
@@ -1463,32 +1480,417 @@ describe("expressions", () => {
             a + b
           }
           
-          inject a: 1, b: 2 ->
+          inject record { a: 1, b: 2 } ->
           x1 := f()
-          x2 := async { inject a: 3      : f() }
-          x3 := async { inject a: 5, b: 4: f() }
+          x2 := async { inject record { a: 3 } { f() } }
+          x3 := async { inject record { a: 5, b: 4 } { f() } }
           x1, await x2, await x3
         `,
         { tuple: [3, 5, 9] }
       )
     );
 
-    it.todo("handler with continuation", () =>
+    it("handler with continuation", () =>
       testCase(
         `
         decide := $decide |> handle
-        _handler := record {
-          decide: handler fn (callback, value) {
-            x1 := callback true
-            x2 := callback false
-            x1, x2
-          }
-        }
+        _handler := record { decide: handler fn (callback, value) {
+          x1 := callback true
+          x2 := callback false
+          x1, x2
+        } }
 
         inject _handler ->
         if decide(): 123 else 456
       `,
         { tuple: [123, 456] }
+      )
+    );
+
+    it("block-inject-fn-handle twice", () =>
+      testCase(
+        `
+          f := fn {
+            handle ($a) ()
+            handle ($a) ()
+          }
+          
+          { inject record { a: 3 } { f() } }
+        `,
+        3
+      )
+    );
+
+    it("block-inject-fn-handle", () =>
+      testCase(
+        `
+          f := fn { handle ($a) () }
+          { inject record { a: 3 } { f() } }
+        `,
+        3
+      )
+    );
+
+    it("no continuation calls sequential", () =>
+      testCase(
+        `
+          decide := $decide |> handle
+          _handler := record { decide: handler fn (callback, value) { 126 } }
+          inject _handler ->
+          decide(); 123
+        `,
+        126
+      )
+    );
+
+    it("no continuation calls", () =>
+      testCase(
+        `
+          decide := $decide |> handle
+          _handler := record { decide: handler fn (callback, value) { 126 } }
+          inject _handler ->
+          if decide(): 123 else 456
+        `,
+        126
+      )
+    );
+
+    it("single continuation call", () =>
+      testCase(
+        `
+          decide := $decide |> handle
+          _handler := record { decide: handler fn (callback, value) { callback true } }
+          inject _handler ->
+          if decide(): 123 else 456
+        `,
+        123
+      )
+    );
+
+    it("multiple continuation calls", () =>
+      testCase(
+        `
+          decide := $decide |> handle
+          _handler := record { decide: handler fn (callback, value) {
+              x1 := callback true
+              x2 := callback false
+              x1, x2
+            } }
+          inject _handler ->
+          if decide(): 123 else 456
+        `,
+        { tuple: [123, 456] }
+      )
+    );
+
+    it("multiple continuation calls with mutations and refs", () =>
+      testCase(
+        `
+          _handler := record {
+            do: handler fn (callback, _value) {
+              callback()
+              callback()
+            }
+          }
+          
+          m := inject _handler {
+            m := (1,)
+            handle ($do) ()
+            m[0] = m[0] + 1
+            m
+          }
+
+          m
+        `,
+        { tuple: [3] }
+      )
+    );
+
+    it("multiple continuation calls with mutations and closure", () =>
+      testCase(
+        `
+          _handler := record {
+            do: handler fn (callback, _value) {
+              callback()
+              callback()
+            }
+          }
+          
+          mut n := 1
+          pair := inject _handler {
+            mut m := 1
+            f := fn: m
+            handle ($do) ()
+            g := fn: m, f()
+            m = m + 1
+            n = n + 1
+            m, g
+          }
+
+          m := pair[0]
+          f := pair[1]
+          m, n, f()
+        `,
+        { tuple: [2, 3, { tuple: [2, 2] }] }
+      )
+    );
+
+    it("multiple continuation calls with mutations", () =>
+      testCase(
+        `
+          _handler := record {
+            do: handler fn (callback, _value) {
+              callback()
+              callback()
+            }
+          }
+          
+          mut n := 1
+          inject _handler {
+            mut m := 1
+            handle ($do) ()
+            m = m + 1
+            n = n + 1
+            m, n
+          }
+        `,
+        { tuple: [2, 3] }
+      )
+    );
+
+    it("multiple continuation calls with inner mutation", () =>
+      testCase(
+        `
+          _handler := record {
+            do: handler fn (callback, _value) {
+              callback()
+              callback()
+            }
+          }
+          
+          inject _handler {
+            mut m := 1
+            handle ($do) ()
+            m = m + 1
+            m
+          }
+        `,
+        2
+      )
+    );
+
+    it("multi-level state backtracking", () =>
+      testCase(
+        `
+          inject record {
+            do: handler fn (callback, _value) {
+              callback false
+              callback true
+            }
+          } {
+            mut m := 1
+            without () {}
+            if ($do |> handle)(): m else m++
+          }
+        `,
+        1
+      )
+    );
+
+    it("disjoint-level state backtracking", () =>
+      testCase(
+        `
+          inject record {
+            do: handler fn (callback, _value) {
+              break_handler := record { break: handler fn (_callback, v) { v } };
+              inject break_handler { callback() }
+            }
+          } {
+            ($do |> handle) ()
+            ($break |> handle) 1
+          }
+        `,
+        1
+      )
+    );
+
+    it("choose int loop", () =>
+      testCase(
+        `
+          decide := $decide |> handle
+          fail := $fail |> handle
+          
+          inject record {
+            decide: handler fn (callback, _value) {
+              fail_handler := record { fail: handler fn (callback, _value) { callback true } };
+              inject fail_handler { callback false }
+            }
+          } {
+            mut m := 1
+            mut n := 3
+            a := loop {
+              if m > n: fail()
+              if decide(): break m
+              m++
+            }
+            if not (a == 2): fail()
+            a
+          }
+        `,
+        2
+      )
+    );
+
+    it("unhandled fail", () => {
+      const input = `
+        inject record { do: handler fn (callback, _value) { callback true } } {
+          { if ($do |> handle)(): break 1 else 2 }
+          ($fail |> handle)()
+        }
+      `;
+      const { result, vm } = runProgram(input);
+      const handle = expectEffectHandle(result);
+      expect(handle.effect).toEqual({ symbol: "atom:fail", name: "fail" });
+      expect(handle.arg).toBe(null);
+      const resumed = vm.handleEffect(handle, 123);
+      expect(resumed).toBe(123);
+    });
+
+    it("choose int recursion", () =>
+      testCase(
+        `
+          decide := $decide |> handle
+          fail := $fail |> handle
+          choose_int := fn (m, n) {
+            if m > n: fail()
+            if decide(): m else self(m+1, n)
+          }
+          
+          false_branch_first :=
+            record {
+              decide: handler fn (callback, _value) {
+                fail_handler := record {
+                  fail: handler fn (callback, _value) {
+                    callback false
+                  }
+                };
+                inject fail_handler { callback true }
+              }
+            };
+            
+          inject false_branch_first {
+            a := choose_int(1, 3)
+            if not (a == 2): fail()
+            a
+          }
+        `,
+        2
+      )
+    );
+
+    it("pythagorean triple example", () =>
+      testCase(
+        `
+          decide := $decide |> handle
+          fail := $fail |> handle
+          choose_int := fn (m, n) {
+            if m > n: fail()
+            if decide(): m else self(m+1, n)
+          }
+          pythagorean_triple := fn m, n {
+            a := choose_int(m, n);
+            b := choose_int(a + 1, n);
+            c := choose_int(b + 1, n);
+            if not (a^2 + b^2 == c^2): fail()
+            (a, b, c)
+          };
+          
+          false_branch_first :=
+            record {
+              decide: handler fn (callback, _value) {
+                fail_handler := record { fail: handler fn (callback, _value) { callback false } };
+                inject fail_handler { callback true }
+              }
+            };
+          true_branch_first :=
+            record {
+              decide: handler fn (callback, _value) {
+                fail_handler := record { fail: handler fn (callback, _value) { callback true } };
+                inject fail_handler { callback false }
+              }
+            };
+
+          inject false_branch_first { pythagorean_triple 3 15 },
+          inject true_branch_first { pythagorean_triple 3 15 }
+        `,
+        { tuple: [{ tuple: [5, 12, 13] }, { tuple: [12, 16, 20] }] }
+      )
+    );
+
+    it("logger example", () =>
+      testCase(
+        `
+          logger :=
+            log: handler fn (callback, msg) {
+              pair := callback msg
+              result := pair[0]
+              logs := pair[1]
+              logs := if logs: append logs msg else (msg,)
+              result, logs
+            },
+            return_handler: fn x: x, null
+
+          log := handle($log)
+
+          f := fn: log 234
+
+          inject logger {
+            log 123
+            log 456
+            123, f()
+          }
+        `,
+        { tuple: [{ tuple: [123, 234] }, { tuple: [234, 456, 123] }] }
+      )
+    );
+
+    it("transaction example", () =>
+      testCase(
+        `
+          state :=
+            get: handler fn (callback, _value) {
+              fn state { callback state; state }
+            },
+            set: handler fn (callback, state) {
+              fn { callback state; state }
+            },
+            return_handler: fn x {
+              fn state: state, x
+            }
+          transaction :=
+            get: handler fn (callback, _value) {
+              fn state { callback state; state }
+            },
+            set: handler fn (callback, state) {
+              fn { callback state; state }
+            },
+            return_handler: fn x {
+              fn state { set state; x }
+            }
+
+          set := $set |> handle
+          get := $get |> handle
+
+          inject state {
+            set 123
+            inject transaction {
+              set(get() + 1)
+              get()
+            }
+            get() + 234
+          } 1
+        `,
+        { tuple: [123, 357] }
       )
     );
   });

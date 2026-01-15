@@ -17,6 +17,7 @@ class Vm2Generator {
   private nativeNames = new Set(["print", "symbol", "alloc", "free", "channel"]);
   private loopStack: { breakJumps: number[]; continueTarget: number; resultRef: string }[] = [];
   private labelStack: { name: string; breakJumps: number[]; continueTarget: number; resultRef: string }[] = [];
+  private identityReturnHandlerName?: string;
 
   generate(ast: Tree): Program {
     const desugared = desugar(ast);
@@ -205,6 +206,15 @@ class Vm2Generator {
       case NodeType.DELIMITED_APPLICATION:
         this.emitApplication(node);
         break;
+      case NodeType.INJECT:
+        this.emitInject(node);
+        break;
+      case NodeType.MASK:
+        this.emitMask(node);
+        break;
+      case NodeType.WITHOUT:
+        this.emitWithout(node);
+        break;
       case NodeType.IMPLICIT_PLACEHOLDER:
       case NodeType.PLACEHOLDER:
         this.current.push({ code: InstructionCode.Const, arg1: null });
@@ -230,6 +240,17 @@ class Vm2Generator {
       return;
     }
 
+    if (callee.type === NodeType.NAME && callee.data.value === "handler") {
+      assert(args.length === 1, "handler expects 1 argument");
+      this.emitNode(args[0]);
+      return;
+    }
+
+    if (callee.type === NodeType.NAME && callee.data.value === "handle") {
+      this.emitHandle(args);
+      return;
+    }
+
     const labelControl = this.getLabelControl(callee);
     if (labelControl) {
       if (labelControl.kind === "break") {
@@ -249,7 +270,7 @@ class Vm2Generator {
 
     if (callee.type === NodeType.HASH_NAME) {
       args.forEach((arg) => this.emitNode(arg));
-      this.current.push({ code: InstructionCode.Call, arg1: callee.data.value, arg2: args.length });
+      this.current.push({ code: InstructionCode.Call, fnName: callee.data.value, argCount: args.length });
       return;
     }
 
@@ -266,6 +287,62 @@ class Vm2Generator {
     this.emitCall(callee, args);
   }
 
+  private emitHandle(args: Tree[]) {
+    assert(args.length === 1 || args.length === 2, "handle expects 1 or 2 arguments");
+    if (args.length === 2) {
+      this.emitNode(args[0]);
+      this.emitNode(args[1]);
+      this.current.push({ code: InstructionCode.EmitEffect });
+      return;
+    }
+
+    const effectRef = this.tempRef();
+    this.emitNode(args[0]);
+    this.storeTopInTemp(effectRef);
+
+    const fnName = this.registerEmitFunction(effectRef);
+    this.current.push({ code: InstructionCode.Closure, arg1: fnName });
+  }
+
+  private emitInject(node: Tree) {
+    const [handlersExpr, body] = node.children;
+    assert(handlersExpr, "inject requires handlers expression");
+    if (!body) {
+      this.emitNode(handlersExpr);
+      return;
+    }
+
+    if (handlersExpr.type === NodeType.RECORD) {
+      this.emitHandlerRecord(handlersExpr);
+    } else {
+      this.emitNode(handlersExpr);
+    }
+    this.emitIdentityReturnHandler();
+    this.current.push({ code: InstructionCode.SetHandle });
+    this.emitNode(body);
+    this.current.push({ code: InstructionCode.ReturnHandler });
+  }
+
+  private emitMask(node: Tree) {
+    this.emitHandlerControl(node, "mask");
+  }
+
+  private emitWithout(node: Tree) {
+    this.emitHandlerControl(node, "block");
+  }
+
+  private emitHandlerControl(node: Tree, control: "mask" | "block") {
+    const [expr, body] = node.children;
+    assert(expr && body, "effect scope requires expression and body");
+    this.emitHandlerKey(expr);
+    this.current.push({ code: InstructionCode.Const, arg1: { handlerControl: control } });
+    this.current.push({ code: InstructionCode.Record, arg1: 1 });
+    this.emitIdentityReturnHandler();
+    this.current.push({ code: InstructionCode.SetHandle });
+    this.emitNode(body);
+    this.current.push({ code: InstructionCode.ReturnHandler });
+  }
+
   private emitPipe(node: Tree) {
     assert(node.children.length >= 2, "pipe requires at least two expressions");
     let acc = node.children[0];
@@ -275,13 +352,151 @@ class Vm2Generator {
     this.emitNode(acc);
   }
 
+  private emitHandlerRecord(record: Tree) {
+    assert(record.type === NodeType.RECORD, "handlers expression must be a record");
+    let entryCount = 0;
+    for (const entry of record.children) {
+      assert(entry.type === NodeType.LABEL, `vm2 codegen: unsupported record entry "${entry.type}"`);
+      const [key, value] = entry.children;
+      assert(key && value, "record entry missing key or value");
+      this.emitRecordKey(key);
+      if (this.isReturnHandlerKey(key)) {
+        this.emitNode(value);
+      } else {
+        this.emitHandlerValue(value);
+      }
+      entryCount++;
+    }
+    this.current.push({ code: InstructionCode.Record, arg1: entryCount });
+  }
+
+  private emitHandlerValue(value: Tree) {
+    const handlerFn = this.unwrapHandlerFunction(value);
+    if (handlerFn) {
+      this.emitNode(handlerFn);
+      return;
+    }
+    if (value.type === NodeType.FUNCTION) {
+      this.emitNode(value);
+      return;
+    }
+    const fnName = this.registerInlineFunction(["_callback", "_value"], value);
+    this.current.push({ code: InstructionCode.Closure, arg1: fnName });
+  }
+
+  private unwrapHandlerFunction(value: Tree): Tree | null {
+    const candidate = this.unwrapParens(value);
+    if (candidate.type !== NodeType.APPLICATION && candidate.type !== NodeType.DELIMITED_APPLICATION) return null;
+    const { callee, args } = this.flattenApplication(candidate);
+    const unwrappedCallee = this.unwrapParens(callee);
+    if (unwrappedCallee.type !== NodeType.NAME || unwrappedCallee.data.value !== "handler") return null;
+    if (args.length !== 1) return null;
+    return args[0];
+  }
+
+  private emitHandlerKey(expr: Tree) {
+    if (expr.type === NodeType.NAME) {
+      this.current.push({
+        code: InstructionCode.Const,
+        arg1: { symbol: `atom:${expr.data.value}`, name: expr.data.value },
+      });
+      return;
+    }
+    if (expr.type === NodeType.ATOM) {
+      this.current.push({
+        code: InstructionCode.Const,
+        arg1: { symbol: `atom:${expr.data.name}`, name: expr.data.name },
+      });
+      return;
+    }
+    if (expr.type === NodeType.SQUARE_BRACKETS) {
+      assert(expr.children[0], "handler key missing computed expression");
+      this.emitNode(expr.children[0]);
+      return;
+    }
+    this.emitNode(expr);
+  }
+
+  private isReturnHandlerKey(key: Tree) {
+    if (key.type === NodeType.NAME && key.data.value === "return_handler") return true;
+    if (key.type === NodeType.ATOM && key.data.name === "return_handler") return true;
+    if (key.type === NodeType.SQUARE_BRACKETS) {
+      const expr = key.children[0];
+      if (!expr) return false;
+      return (
+        (expr.type === NodeType.NAME && expr.data.value === "return_handler") ||
+        (expr.type === NodeType.ATOM && expr.data.name === "return_handler")
+      );
+    }
+    return false;
+  }
+
+  private emitIdentityReturnHandler() {
+    const fnName = this.getIdentityReturnHandler();
+    this.current.push({ code: InstructionCode.Closure, arg1: fnName });
+  }
+
+  private getIdentityReturnHandler() {
+    if (this.identityReturnHandlerName) return this.identityReturnHandlerName;
+    const fnName = `return_identity_${nextId()}`;
+    const prev = this.current;
+    const fnBody: Instruction[] = [];
+    this.program[fnName] = fnBody;
+    this.current = fnBody;
+
+    const argName = "_value";
+    this.emitParamBindings([argName]);
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: argName } });
+    this.current.push({ code: InstructionCode.Load });
+    this.ensureReturn();
+
+    this.current = prev;
+    this.identityReturnHandlerName = fnName;
+    return fnName;
+  }
+
+  private registerEmitFunction(effectRef: string) {
+    const fnName = `emit_${nextId()}`;
+    const prev = this.current;
+    const fnBody: Instruction[] = [];
+    this.program[fnName] = fnBody;
+    this.current = fnBody;
+
+    const argName = "_value";
+    this.emitParamBindings([argName]);
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: effectRef } });
+    this.current.push({ code: InstructionCode.Load });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: argName } });
+    this.current.push({ code: InstructionCode.Load });
+    this.current.push({ code: InstructionCode.EmitEffect });
+    this.ensureReturn();
+
+    this.current = prev;
+    return fnName;
+  }
+
+  private registerInlineFunction(params: string[], body: Tree) {
+    const fnName = `inline_${nextId()}`;
+    const prev = this.current;
+    const fnBody: Instruction[] = [];
+    this.program[fnName] = fnBody;
+    this.current = fnBody;
+
+    this.emitParamBindings(params);
+    this.emitNode(body);
+    this.ensureReturn();
+
+    this.current = prev;
+    return fnName;
+  }
+
   private emitCall(callee: Tree, args: Tree[]) {
     const tempRef = this.tempRef();
     this.emitNode(callee);
     this.storeTopInTemp(tempRef);
     args.forEach((arg) => this.emitNode(arg));
     this.loadTemp(tempRef);
-    this.current.push({ code: InstructionCode.Call, arg2: args.length });
+    this.current.push({ code: InstructionCode.Call, argCount: args.length });
   }
 
   private emitCallOnStack(args: Tree[]) {
@@ -289,7 +504,7 @@ class Vm2Generator {
     this.storeTopInTemp(tempRef);
     args.forEach((arg) => this.emitNode(arg));
     this.loadTemp(tempRef);
-    this.current.push({ code: InstructionCode.Call, arg2: args.length });
+    this.current.push({ code: InstructionCode.Call, argCount: args.length });
   }
 
   private getLabelControl(callee: Tree): { kind: "break" | "continue"; name: string } | null {

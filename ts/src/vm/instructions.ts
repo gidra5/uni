@@ -68,6 +68,32 @@ export type Closure = {
   env: ClosureEnv;
 };
 export type SymbolValue = { symbol: string | number; name?: string };
+export type HandlerControl = { handlerControl: "mask" | "block" };
+export type HandlerValue = Closure | HandlerControl;
+export type HandlerEntry = {
+  handlers: Record<string, HandlerValue>;
+  returnHandler: Closure;
+};
+export type HandlerRestore = { entry: HandlerEntry; index: number };
+export type ContinuationFrame = {
+  ip: number;
+  functionName: string;
+  stack: Value[];
+  env: ClosureEnv;
+  handlerRestore?: HandlerRestore;
+  handlersStack?: HandlerEntry[];
+  callStack?: ContinuationFrame[];
+};
+export type ContinuationState = {
+  functionName: string;
+  ip: number;
+  stack: Value[];
+  callStack: ContinuationFrame[];
+  env: ClosureEnv;
+  handlersStack: HandlerEntry[];
+  handlerRestore?: HandlerRestore;
+  blockedChannel?: string;
+};
 export type Value =
   | number
   | string
@@ -80,7 +106,9 @@ export type Value =
   | { channel: string; name?: string }
   | SymbolValue
   | { tuple: Value[] }
-  | { record: Record<string, Value> };
+  | { record: Record<string, Value> }
+  | { continuation: ContinuationState }
+  | HandlerControl;
 
 export type Instruction =
   | { code: InstructionCode.Add }
@@ -107,7 +135,7 @@ export type Instruction =
   | { code: InstructionCode.Length }
   | { code: InstructionCode.Index }
   | { code: InstructionCode.Append }
-  | { code: InstructionCode.Call; arg1?: string; arg2?: number }
+  | { code: InstructionCode.Call; fnName?: string; argCount?: number }
   | { code: InstructionCode.Return }
   | { code: InstructionCode.SetHandle }
   | { code: InstructionCode.EmitEffect }

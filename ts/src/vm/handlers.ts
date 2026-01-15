@@ -1,6 +1,16 @@
 import { assert } from "../utils/index.js";
 import type { Thread, VM } from "./index.js";
-import { Closure, Instruction, InstructionCode, type SymbolValue, type Value } from "./instructions.js";
+import {
+  Closure,
+  ContinuationState,
+  HandlerControl,
+  HandlerEntry,
+  type ClosureEnv,
+  Instruction,
+  InstructionCode,
+  type SymbolValue,
+  type Value,
+} from "./instructions.js";
 import { nextId } from "../utils/index.js";
 
 const popNumber = (thread: Thread) => {
@@ -37,6 +47,12 @@ const isAtom = (value: Value): value is SymbolValue =>
 
 const isClosure = (value: Value): value is Closure =>
   typeof value === "object" && value !== null && "functionName" in value && "env" in value;
+
+const isHandlerControl = (value: Value): value is HandlerControl =>
+  typeof value === "object" && value !== null && "handlerControl" in value;
+
+const isContinuation = (value: Value): value is { continuation: ContinuationState } =>
+  typeof value === "object" && value !== null && "continuation" in value;
 
 const isChannel = (value: Value): value is { channel: string; name?: string } =>
   typeof value === "object" && value !== null && "channel" in value;
@@ -89,6 +105,112 @@ const resumeBlockedThread = (thread: Thread, channelId: string, value: Value) =>
   thread.blockedChannel = undefined;
   if (value) thread.push(value);
   thread.ip++;
+};
+
+const cloneEnv = (env: ClosureEnv, envMap: Map<ClosureEnv, ClosureEnv>): ClosureEnv => {
+  const existing = envMap.get(env);
+  if (existing) return existing;
+
+  const cloned: ClosureEnv = { values: {}, parent: undefined };
+  envMap.set(env, cloned);
+  cloned.parent = env.parent ? cloneEnv(env.parent, envMap) : undefined;
+  for (const [key, value] of Object.entries(env.values)) {
+    cloned.values[key] = cloneValue(value, envMap);
+  }
+  return cloned;
+};
+
+const cloneClosure = (closure: Closure, envMap: Map<ClosureEnv, ClosureEnv>): Closure => ({
+  functionName: closure.functionName,
+  env: cloneEnv(closure.env, envMap),
+});
+
+const cloneHandlerEntry = (entry: HandlerEntry, envMap: Map<ClosureEnv, ClosureEnv>): HandlerEntry => {
+  const handlers: Record<string, Value> = {};
+  for (const [key, value] of Object.entries(entry.handlers)) {
+    handlers[key] = isClosure(value) ? cloneClosure(value, envMap) : value;
+  }
+  return { handlers: handlers as HandlerEntry["handlers"], returnHandler: cloneClosure(entry.returnHandler, envMap) };
+};
+
+const cloneValue = (value: Value, envMap: Map<ClosureEnv, ClosureEnv>): Value => {
+  if (isClosure(value)) return cloneClosure(value, envMap);
+  if (isTuple(value)) return { tuple: value.tuple.map((item) => cloneValue(item, envMap)) };
+  if (isRecord(value)) {
+    const record: Record<string, Value> = {};
+    for (const [key, entry] of Object.entries(value.record)) {
+      record[key] = cloneValue(entry, envMap);
+    }
+    return { record };
+  }
+  return value;
+};
+
+const cloneContinuationState = (state: ContinuationState): ContinuationState => {
+  const envMap = new Map<ClosureEnv, ClosureEnv>();
+  const cloneFrame = (frame: ContinuationState["callStack"][number]): ContinuationState["callStack"][number] => ({
+    ip: frame.ip,
+    functionName: frame.functionName,
+    stack: frame.stack.map((value) => cloneValue(value, envMap)),
+    env: cloneEnv(frame.env, envMap),
+    handlerRestore: frame.handlerRestore
+      ? { entry: cloneHandlerEntry(frame.handlerRestore.entry, envMap), index: frame.handlerRestore.index }
+      : undefined,
+    handlersStack: frame.handlersStack
+      ? frame.handlersStack.map((entry) => cloneHandlerEntry(entry, envMap))
+      : undefined,
+    callStack: frame.callStack ? frame.callStack.map(cloneFrame) : undefined,
+  });
+  return {
+    functionName: state.functionName,
+    ip: state.ip,
+    stack: state.stack.map((value) => cloneValue(value, envMap)),
+    callStack: state.callStack.map(cloneFrame),
+    env: cloneEnv(state.env, envMap),
+    handlersStack: state.handlersStack.map((entry) => cloneHandlerEntry(entry, envMap)),
+    handlerRestore: state.handlerRestore
+      ? { entry: cloneHandlerEntry(state.handlerRestore.entry, envMap), index: state.handlerRestore.index }
+      : undefined,
+    blockedChannel: state.blockedChannel,
+  };
+};
+
+export const captureContinuationState = (thread: Thread, ip: number): ContinuationState => {
+  const envMap = new Map<ClosureEnv, ClosureEnv>();
+  const captureFrame = (frame: ContinuationState["callStack"][number]): ContinuationState["callStack"][number] => ({
+    ip: frame.ip,
+    functionName: frame.functionName,
+    stack: frame.stack.map((value) => cloneValue(value, envMap)),
+    env: cloneEnv(frame.env, envMap),
+    handlerRestore: frame.handlerRestore
+      ? { entry: cloneHandlerEntry(frame.handlerRestore.entry, envMap), index: frame.handlerRestore.index }
+      : undefined,
+    handlersStack: frame.handlersStack
+      ? frame.handlersStack.map((entry) => cloneHandlerEntry(entry, envMap))
+      : undefined,
+    callStack: frame.callStack ? frame.callStack.map(captureFrame) : undefined,
+  });
+  return {
+    functionName: thread.functionName,
+    ip,
+    stack: thread.stack.map((value) => cloneValue(value, envMap)),
+    callStack: thread.callStack.map(captureFrame),
+    env: cloneEnv(thread.env, envMap),
+    handlersStack: thread.handlersStack.map((entry) => cloneHandlerEntry(entry, envMap)),
+    blockedChannel: thread.blockedChannel,
+  };
+};
+
+export const resumeContinuation = (thread: Thread, continuation: ContinuationState, value: Value) => {
+  const state = cloneContinuationState(continuation);
+  thread.functionName = state.functionName;
+  thread.ip = state.ip;
+  thread.stack = state.stack;
+  thread.callStack = state.callStack;
+  thread.env = state.env;
+  thread.handlersStack = state.handlersStack;
+  thread.blockedChannel = state.blockedChannel;
+  thread.push(value);
 };
 
 export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: Instruction) => boolean | void> = {
@@ -273,15 +395,149 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
     }
     throw new Error("vm2: Append expects tuple");
   },
+  [InstructionCode.SetHandle]: (_vm, thread, instr) => {
+    assert(instr.code === InstructionCode.SetHandle);
+    const returnHandlerValue = thread.pop();
+    const handlersValue = thread.pop();
+    assert(isRecord(handlersValue), "vm2: expected handlers record");
+    assert(isClosure(returnHandlerValue), "vm2: expected return handler closure");
+
+    const returnHandlerKey = "atom:return_handler";
+    const fallbackReturnHandler = returnHandlerValue;
+    let resolvedReturnHandler: Closure | undefined = undefined;
+
+    const handlers: HandlerEntry["handlers"] = {};
+    for (const [key, value] of Object.entries(handlersValue.record)) {
+      if (key === returnHandlerKey || key === "return_handler") {
+        if (isClosure(value)) resolvedReturnHandler = value;
+        continue;
+      }
+      assert(isClosure(value) || isHandlerControl(value), "vm2: expected handler closure or control");
+      handlers[key] = value;
+    }
+
+    thread.handlersStack.push({
+      handlers,
+      returnHandler: resolvedReturnHandler ?? fallbackReturnHandler,
+    });
+  },
+  [InstructionCode.EmitEffect]: (vm, thread, instr) => {
+    assert(instr.code === InstructionCode.EmitEffect);
+    const arg = thread.pop();
+    const effect = thread.pop();
+    const key = normalizeKey(effect);
+
+    let matchedIndex = -1;
+    let matchedEntry: HandlerEntry | undefined;
+    let matchedHandler: Closure | undefined;
+    let skipCount = 0;
+    let blocked = false;
+
+    for (let i = thread.handlersStack.length - 1; i >= 0; i--) {
+      const entry = thread.handlersStack[i];
+      const handlerValue = entry.handlers[key];
+      if (!handlerValue) continue;
+      if (isHandlerControl(handlerValue)) {
+        if (handlerValue.handlerControl === "mask") {
+          skipCount++;
+          continue;
+        }
+        blocked = true;
+        break;
+      }
+      if (skipCount > 0) {
+        skipCount--;
+        continue;
+      }
+      matchedIndex = i;
+      matchedEntry = entry;
+      matchedHandler = handlerValue;
+      break;
+    }
+
+    if (blocked || !matchedEntry) {
+      if (!blocked) {
+        const ambient = vm.ambientHandlers[key];
+        if (ambient) {
+          const continuation = captureContinuationState(thread, thread.ip + 1);
+          thread.push({ continuation });
+          thread.push(arg);
+          thread.callFunction(ambient.functionName, 2, undefined, ambient.env);
+          return false;
+        }
+      }
+      const continuation = captureContinuationState(thread, thread.ip + 1);
+      thread.blockedEffect = { threadId: thread.id, effect, arg, continuation };
+      return false;
+    }
+
+    assert(matchedHandler, "vm2: expected handler closure");
+    const continuation = captureContinuationState(thread, thread.ip + 1);
+    continuation.handlerRestore = { entry: continuation.handlersStack[matchedIndex], index: matchedIndex };
+    thread.handlersStack.splice(matchedIndex, 1);
+
+    thread.push({ continuation });
+    thread.push(arg);
+    thread.callFunction(
+      matchedHandler.functionName,
+      2,
+      {
+        ip: thread.ip + 1,
+        functionName: thread.functionName,
+        stack: thread.stack,
+        env: thread.env,
+        handlerRestore: { entry: matchedEntry, index: matchedIndex },
+      },
+      matchedHandler.env
+    );
+    return false;
+  },
+  [InstructionCode.ReturnHandler]: (_vm, thread, instr) => {
+    assert(instr.code === InstructionCode.ReturnHandler);
+    const value = thread.pop();
+    const entry = thread.handlersStack.pop();
+    if (!entry) {
+      thread.push(value);
+      return;
+    }
+    thread.push(value);
+    thread.callFunction(entry.returnHandler.functionName, 1, undefined, entry.returnHandler.env);
+    return false;
+  },
   [InstructionCode.Call]: (_vm, thread, instr) => {
     assert(instr.code === InstructionCode.Call);
-    const argCount = instr.arg2 ?? 0;
-    if (instr.arg1) {
-      thread.callFunction(instr.arg1, argCount);
+    const argCount = instr.argCount ?? 0;
+    if (instr.fnName) {
+      thread.callFunction(instr.fnName, argCount);
       return false;
     }
 
     const callee = thread.pop();
+    if (isContinuation(callee)) {
+      assert(argCount === 1, "vm2: continuation expects a single argument");
+      const value = thread.pop();
+      const returnFrame = {
+        ip: thread.ip + 1,
+        functionName: thread.functionName,
+        stack: thread.stack,
+        env: thread.env,
+        handlersStack: thread.handlersStack,
+        callStack: thread.callStack,
+      };
+      const state = cloneContinuationState(callee.continuation);
+      const removedCount = state.handlerRestore ? 1 : 0;
+      const baseLength = Math.max(0, state.handlersStack.length - removedCount);
+      const extraHandlers = thread.handlersStack.slice(baseLength);
+      thread.functionName = state.functionName;
+      thread.ip = state.ip;
+      thread.stack = state.stack;
+      thread.callStack = [...state.callStack, returnFrame];
+      thread.env = state.env;
+      thread.handlersStack = [...state.handlersStack, ...extraHandlers];
+      thread.blockedChannel = state.blockedChannel;
+      thread.push(value);
+      return false;
+    }
     assert(isClosure(callee), "vm2: expected callable value");
     thread.callFunction(callee.functionName, argCount, undefined, callee.env);
     return false;

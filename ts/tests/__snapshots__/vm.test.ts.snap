@@ -676,6 +676,1109 @@ exports[`expressions > data structures > tuple literal 1`] = `
 }
 `;
 
+exports[`expressions > effect handlers > all in one 1`] = `
+{
+  "inline_219": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_220": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_222": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_223": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_219",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_220",
+      "code": "Closure",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_221",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_222",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_223",
+      "code": "Closure",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_221",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "handlerControl": "mask",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_221",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "handlerControl": "block",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_221",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_221": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > choose int loop 1`] = `
+{
+  "emit_406": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_405",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "emit_409": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_408",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_185": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_410",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_410",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_199": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "name": "fail",
+        "symbol": "atom:fail",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_185",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": {
+        "ref": "fail_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "fail_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "fail_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": "return_identity_411",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_412",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": false,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_412",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": {
+        "name": "decide",
+        "symbol": "atom:decide",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_405",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "emit_406",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "decide",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "decide",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "fail",
+        "symbol": "atom:fail",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_408",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "emit_409",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "fail",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "fail",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "decide",
+        "symbol": "atom:decide",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_199",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_411",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_413",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Gt",
+    },
+    {
+      "arg1": 48,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": {
+        "ref": "fail",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_414",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_414",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "decide",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_415",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_415",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": 62,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_413",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 75,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_416",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_416",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_416",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 34,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_413",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Eq",
+    },
+    {
+      "code": "Not",
+    },
+    {
+      "arg1": 95,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": {
+        "ref": "fail",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_417",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_417",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg2": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_411": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > function expressions > fn increment 1`] = `
 {
   "fn_54": [
