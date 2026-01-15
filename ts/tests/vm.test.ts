@@ -578,6 +578,7 @@ describe("expressions", () => {
   describe("structured programming", () => {
     it("block returns last expression", () => testCase("{ 123 }", 123));
     it("empty block returns null", () => testCase("{}", null));
+    it("block break returns value", () => testCase("{ break 1; 2 }", 1));
     it("label break returns value", () => testCase(`label::{ label.break 1; 2 }`, 1));
 
     it.todo("label loop if-then", () =>
@@ -1581,9 +1582,9 @@ describe("expressions", () => {
           }
           
           m := inject _handler {
-            m := (1,)
+            mut m := (1,)
             handle ($do) ()
-            m[0] = m[0] + 1
+            m = (m[0] + 1,)
             m
           }
 

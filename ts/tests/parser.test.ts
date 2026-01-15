@@ -839,6 +839,7 @@ describe("expressions", () => {
     it("inject", () => testCase(`inject record { a: 1, b: 2 } { 1 }`));
     it("mask", () => testCase(`mask $a, $b { 1 }`));
     it("without", () => testCase(`without $a, $b { 1 }`));
+    it("without empty parens", () => testCase(`without () {}`));
     it("complex", () =>
       testCase(`
         inject record { a: 1, b: 2 } ->

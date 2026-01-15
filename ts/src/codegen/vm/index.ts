@@ -17,6 +17,7 @@ class Vm2Generator {
   private nativeNames = new Set(["print", "symbol", "alloc", "free", "channel"]);
   private loopStack: { breakJumps: number[]; continueTarget: number; resultRef: string }[] = [];
   private labelStack: { name: string; breakJumps: number[]; continueTarget: number; resultRef: string }[] = [];
+  private blockStack: { breakJumps: number[]; resultRef: string }[] = [];
   private identityReturnHandlerName?: string;
 
   generate(ast: Tree): Program {
@@ -36,9 +37,11 @@ class Vm2Generator {
   private emitNode(node: Tree): void {
     switch (node.type) {
       case NodeType.SCRIPT:
-      case NodeType.BLOCK:
       case NodeType.SEQUENCE:
         node.children.forEach((child) => this.emitNode(child));
+        break;
+      case NodeType.BLOCK:
+        this.emitBlock(node);
         break;
       case NodeType.FUNCTION: {
         const fnName = this.registerFunction(node);
@@ -62,9 +65,12 @@ class Vm2Generator {
       }
       case NodeType.NAME: {
         const value = node.data.value;
-        if (["break", "continue"].includes(value) && this.loopStack.length > 0) {
-          if (value === "break") this.emitBreak([]);
-          else this.emitContinue();
+        if (value === "break" && (this.loopStack.length > 0 || this.blockStack.length > 0)) {
+          this.emitBreak([]);
+          break;
+        }
+        if (value === "continue" && this.loopStack.length > 0) {
+          this.emitContinue();
           break;
         }
         if (value === "true") {
@@ -215,6 +221,9 @@ class Vm2Generator {
       case NodeType.WITHOUT:
         this.emitWithout(node);
         break;
+      case NodeType.INDEX:
+        this.emitIndex(node);
+        break;
       case NodeType.IMPLICIT_PLACEHOLDER:
       case NodeType.PLACEHOLDER:
         this.current.push({ code: InstructionCode.Const, arg1: null });
@@ -324,23 +333,23 @@ class Vm2Generator {
   }
 
   private emitMask(node: Tree) {
-    this.emitHandlerControl(node, "mask");
-  }
-
-  private emitWithout(node: Tree) {
-    this.emitHandlerControl(node, "block");
-  }
-
-  private emitHandlerControl(node: Tree, control: "mask" | "block") {
     const [expr, body] = node.children;
     assert(expr && body, "effect scope requires expression and body");
     this.emitHandlerKey(expr);
-    this.current.push({ code: InstructionCode.Const, arg1: { handlerControl: control } });
-    this.current.push({ code: InstructionCode.Record, arg1: 1 });
-    this.emitIdentityReturnHandler();
-    this.current.push({ code: InstructionCode.SetHandle });
+    this.current.push({ code: InstructionCode.Mask });
     this.emitNode(body);
-    this.current.push({ code: InstructionCode.ReturnHandler });
+    this.current.push({ code: InstructionCode.MaskEnd });
+  }
+
+  private emitWithout(node: Tree) {
+    const [expr, body] = node.children;
+    assert(expr && body, "effect scope requires expression and body");
+    this.emitHandlerKey(expr);
+    this.current.push({ code: InstructionCode.Without });
+    if (body.type !== NodeType.ERROR) {
+      this.emitNode(body);
+    }
+    this.current.push({ code: InstructionCode.WithoutEnd });
   }
 
   private emitPipe(node: Tree) {
@@ -395,6 +404,10 @@ class Vm2Generator {
   }
 
   private emitHandlerKey(expr: Tree) {
+    if (expr.type === NodeType.IMPLICIT_PLACEHOLDER || expr.type === NodeType.ERROR) {
+      this.current.push({ code: InstructionCode.Const, arg1: null });
+      return;
+    }
     if (expr.type === NodeType.NAME) {
       this.current.push({
         code: InstructionCode.Const,
@@ -703,6 +716,14 @@ class Vm2Generator {
     this.current.push({ code: InstructionCode.Record, arg1: entries.length });
   }
 
+  private emitIndex(node: Tree) {
+    const [target, key] = node.children;
+    assert(target && key, "index requires target and key");
+    this.emitNode(target);
+    this.emitNode(key);
+    this.current.push({ code: InstructionCode.Index });
+  }
+
   private emitSend(node: Tree) {
     const [channelExpr, valueExpr] = node.children;
     assert(channelExpr && valueExpr, "send requires channel and value");
@@ -954,25 +975,97 @@ class Vm2Generator {
     return this.loopStack[this.loopStack.length - 1];
   }
 
+  private currentBlock() {
+    return this.blockStack[this.blockStack.length - 1];
+  }
+
   private emitBreak(args: Tree[]) {
     const loop = this.currentLoop();
-    assert(loop, "vm2 codegen: 'break' used outside of loop");
+    if (loop) {
+      if (args.length > 0) {
+        this.emitNode(args[0]);
+      } else {
+        this.current.push({ code: InstructionCode.Const, arg1: null });
+      }
+      this.current.push({ code: InstructionCode.Const, arg1: { ref: loop.resultRef } });
+      this.current.push({ code: InstructionCode.Store });
+      const jumpIndex = this.current.length;
+      this.current.push({ code: InstructionCode.Jump, arg1: -1 });
+      loop.breakJumps.push(jumpIndex);
+      return;
+    }
+
+    const block = this.currentBlock();
+    if (!block) {
+      if (args.length > 0) {
+        this.emitNode(args[0]);
+      } else {
+        this.current.push({ code: InstructionCode.Const, arg1: null });
+      }
+      return;
+    }
+
     if (args.length > 0) {
       this.emitNode(args[0]);
     } else {
       this.current.push({ code: InstructionCode.Const, arg1: null });
     }
-    this.current.push({ code: InstructionCode.Const, arg1: { ref: loop.resultRef } });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: block.resultRef } });
     this.current.push({ code: InstructionCode.Store });
     const jumpIndex = this.current.length;
     this.current.push({ code: InstructionCode.Jump, arg1: -1 });
-    loop.breakJumps.push(jumpIndex);
+    block.breakJumps.push(jumpIndex);
   }
 
   private emitContinue() {
     const loop = this.currentLoop();
     assert(loop, "vm2 codegen: 'continue' used outside of loop");
     this.current.push({ code: InstructionCode.Jump, arg1: loop.continueTarget });
+  }
+
+  private blockNeedsBreakTarget(node: Tree): boolean {
+    const visit = (value: Tree): boolean => {
+      switch (value.type) {
+        case NodeType.BLOCK:
+        case NodeType.LOOP:
+        case NodeType.WHILE:
+        case NodeType.FOR:
+        case NodeType.FUNCTION:
+        case NodeType.ASYNC:
+          return false;
+        case NodeType.NAME:
+          return value.data.value === "break";
+        case NodeType.APPLICATION:
+        case NodeType.DELIMITED_APPLICATION: {
+          const { callee, args } = this.flattenApplication(value);
+          const unwrapped = this.unwrapParens(callee);
+          if (unwrapped.type === NodeType.NAME && unwrapped.data.value === "break") return true;
+          return [callee, ...args].some((child) => visit(child));
+        }
+        case NodeType.RECORD:
+          return value.children.some((child) => {
+            if (!child) return false;
+            if (child.type === NodeType.LABEL) {
+              const recordValue = child.children[1];
+              return recordValue ? visit(recordValue) : false;
+            }
+            return visit(child);
+          });
+        case NodeType.IS: {
+          const [target] = value.children;
+          return target ? visit(target) : false;
+        }
+        case NodeType.DECLARE:
+        case NodeType.ASSIGN: {
+          const [, rhs] = value.children;
+          return rhs ? visit(rhs) : false;
+        }
+        default:
+          return value.children.some((child) => child && visit(child));
+      }
+    };
+
+    return visit(node);
   }
 
   private emitLoop(node: Tree) {
@@ -996,6 +1089,36 @@ class Vm2Generator {
     loopCtx.breakJumps.forEach((index) => {
       this.setJumpTarget(index, endIndex);
     });
+
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: resultRef } });
+    this.current.push({ code: InstructionCode.Load });
+  }
+
+  private emitBlock(node: Tree) {
+    const [body] = node.children;
+    assert(body, "block requires body");
+
+    if (!this.blockNeedsBreakTarget(body)) {
+      this.emitNode(body);
+      return;
+    }
+
+    const resultRef = this.tempRef();
+    this.current.push({ code: InstructionCode.Const, arg1: null });
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: resultRef } });
+    this.current.push({ code: InstructionCode.Store });
+
+    const ctx = { breakJumps: [], resultRef };
+    this.blockStack.push(ctx);
+
+    this.emitNode(body);
+
+    this.current.push({ code: InstructionCode.Const, arg1: { ref: resultRef } });
+    this.current.push({ code: InstructionCode.Store });
+
+    const endIndex = this.current.length;
+    const blockCtx = this.blockStack.pop()!;
+    blockCtx.breakJumps.forEach((index) => this.setJumpTarget(index, endIndex));
 
     this.current.push({ code: InstructionCode.Const, arg1: { ref: resultRef } });
     this.current.push({ code: InstructionCode.Load });

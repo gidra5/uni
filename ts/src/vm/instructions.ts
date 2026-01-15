@@ -29,6 +29,10 @@ export enum InstructionCode {
   SetHandle = "SetHandle",
   EmitEffect = "EmitEffect",
   ReturnHandler = "ReturnHandler",
+  Mask = "Mask",
+  MaskEnd = "MaskEnd",
+  Without = "Without",
+  WithoutEnd = "WithoutEnd",
 
   Spawn = "Spawn",
   Join = "Join",
@@ -68,12 +72,20 @@ export type Closure = {
   env: ClosureEnv;
 };
 export type SymbolValue = { symbol: string | number; name?: string };
-export type HandlerControl = { handlerControl: "mask" | "block" };
-export type HandlerValue = Closure | HandlerControl;
-export type HandlerEntry = {
-  handlers: Record<string, HandlerValue>;
-  returnHandler: Closure;
-};
+export type HandlerEntry =
+  | {
+      kind: "handlers";
+      handlers: Record<string, Closure>;
+      returnHandler: Closure;
+    }
+  | {
+      kind: "mask";
+      key: string;
+    }
+  | {
+      kind: "without";
+      key: string;
+    };
 export type HandlerRestore = { entry: HandlerEntry; index: number };
 export type ContinuationFrame = {
   ip: number;
@@ -107,8 +119,7 @@ export type Value =
   | SymbolValue
   | { tuple: Value[] }
   | { record: Record<string, Value> }
-  | { continuation: ContinuationState }
-  | HandlerControl;
+  | { continuation: ContinuationState };
 
 export type Instruction =
   | { code: InstructionCode.Add }
@@ -140,6 +151,10 @@ export type Instruction =
   | { code: InstructionCode.SetHandle }
   | { code: InstructionCode.EmitEffect }
   | { code: InstructionCode.ReturnHandler }
+  | { code: InstructionCode.Mask }
+  | { code: InstructionCode.MaskEnd }
+  | { code: InstructionCode.Without }
+  | { code: InstructionCode.WithoutEnd }
   | { code: InstructionCode.Jump; arg1: number }
   | { code: InstructionCode.JumpIfFalse; arg1: number }
   | { code: InstructionCode.Native; arg1: string; arg2?: number }

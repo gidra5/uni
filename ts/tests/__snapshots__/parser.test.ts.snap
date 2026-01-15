@@ -3574,6 +3574,43 @@ exports[`expressions > effect handlers > without 1`] = `
 }
 `;
 
+exports[`expressions > effect handlers > without empty parens 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "type": "implicit_placeholder",
+            },
+          ],
+          "data": {},
+          "type": "parens",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "data": {},
+              "type": "implicit_placeholder",
+            },
+          ],
+          "data": {},
+          "type": "block",
+        },
+      ],
+      "data": {},
+      "type": "without",
+    },
+  ],
+  "data": {},
+  "type": "script",
+}
+`;
+
 exports[`expressions > function expressions > application > (send 1 2)(2, 3) 1`] = `
 {
   "children": [

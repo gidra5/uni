@@ -1079,6 +1079,342 @@ exports[`expressions > effect handlers > all in one 1`] = `
 }
 `;
 
+exports[`expressions > effect handlers > block-inject-fn-handle 1`] = `
+{
+  "fn_56": [
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_79": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": "fn_56",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_79",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_80",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_81",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_81",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_80": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > block-inject-fn-handle twice 1`] = `
+{
+  "fn_89": [
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_112": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": "fn_89",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_112",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_113",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_114",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_114",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_113": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > effect handlers > choose int loop 1`] = `
 {
   "emit_406": [
@@ -1202,7 +1538,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -1309,7 +1645,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -1532,7 +1868,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -1567,7 +1903,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -1734,7 +2070,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -1754,6 +2090,3118 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
     },
   ],
   "return_identity_411": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > disjoint-level state backtracking 1`] = `
+{
+  "emit_164": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_163",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "emit_168": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_167",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_111": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "name": "break",
+        "symbol": "atom:break",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_96",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": {
+        "ref": "break_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "break_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "break_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": "return_identity_159",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_160",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_160",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_96": [
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "v",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": {
+        "name": "do",
+        "symbol": "atom:do",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_111",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_159",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "do",
+        "symbol": "atom:do",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_163",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "emit_164",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_161",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_161",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "name": "break",
+        "symbol": "atom:break",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_167",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "emit_168",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_165",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_165",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_159": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > inject 1`] = `
+{
+  "inline_105": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_106": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_105",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_106",
+      "code": "Closure",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_107",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_107": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > inject shadowing 1`] = `
+{
+  "inline_219": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_220": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_222": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_223": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_219",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_220",
+      "code": "Closure",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_221",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_222",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_223",
+      "code": "Closure",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_221",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_221": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > mask 1`] = `
+{
+  "inline_246": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_247": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_249": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_250": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_246",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_247",
+      "code": "Closure",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_248",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_249",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_250",
+      "code": "Closure",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_248",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Mask",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "MaskEnd",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_248": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > mask 2 1`] = `
+{
+  "fn_102": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_214",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 10,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_214",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_127": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_215",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 20,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_215",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_216": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_217": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_102",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_127",
+      "code": "Closure",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "arg1": {
+        "ref": "handlers",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "handlers",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_216",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_217",
+      "code": "Closure",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_218",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "ref": "handlers",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": "return_identity_218",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Mask",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "MaskEnd",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_218": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
+{
+  "emit_143": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_142",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_85": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_137",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": false,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_137",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_138",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": true,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_138",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": {
+        "name": "do",
+        "symbol": "atom:do",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_85",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_139",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "tuple": [],
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Without",
+    },
+    {
+      "code": "WithoutEnd",
+    },
+    {
+      "arg1": {
+        "name": "do",
+        "symbol": "atom:do",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_142",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": "emit_143",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_140",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_140",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": 27,
+      "code": "JumpIfFalse",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 39,
+      "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_144",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_144",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_144",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_139": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > multiple continuation calls with inner mutation 1`] = `
+{
+  "fn_88": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_149",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_149",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_150",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_150",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": {
+        "name": "do",
+        "symbol": "atom:do",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_88",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": {
+        "ref": "_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": "return_identity_151",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "do",
+        "symbol": "atom:do",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_151": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > multiple continuation calls with mutations 1`] = `
+{
+  "fn_101": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_192",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_192",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_193",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_193",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": {
+        "name": "do",
+        "symbol": "atom:do",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_101",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": {
+        "ref": "_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": "return_identity_194",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "do",
+        "symbol": "atom:do",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "m",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "n",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_194": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > parallel inside 1`] = `
+{
+  "async_220": [
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_291",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_289",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_292",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_292",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "async_251": [
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_293",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_294",
+      "code": "Closure",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_289",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_295",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_295",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "fn_172": [
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "a",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "b",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_287": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_288": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_291": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 3,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_293": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 5,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_294": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 4,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": "fn_172",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_287",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_288",
+      "code": "Closure",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_289",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "ref": "f",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_290",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_290",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": {
+        "ref": "x1",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x1",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": "async_220",
+      "code": "Closure",
+    },
+    {
+      "code": "Spawn",
+    },
+    {
+      "arg1": {
+        "ref": "x2",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x2",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": "async_251",
+      "code": "Closure",
+    },
+    {
+      "code": "Spawn",
+    },
+    {
+      "arg1": {
+        "ref": "x3",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x3",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x1",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x2",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Join",
+    },
+    {
+      "arg1": {
+        "ref": "x3",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Join",
+    },
+    {
+      "arg1": 3,
+      "code": "Tuple",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_289": [
     {
       "arg1": {
         "ref": "_value",
@@ -1906,7 +5354,7 @@ exports[`expressions > function expressions > fn increment 1`] = `
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2003,7 +5451,7 @@ exports[`expressions > function expressions > function call multiple args 1`] = 
       "code": "Load",
     },
     {
-      "arg2": 2,
+      "argCount": 2,
       "code": "Call",
     },
     {
@@ -2066,7 +5514,7 @@ exports[`expressions > function expressions > immediately invoked function expre
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2179,7 +5627,7 @@ exports[`expressions > function expressions > pipe 1`] = `
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2192,7 +5640,7 @@ exports[`expressions > function expressions > pipe 1`] = `
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2274,7 +5722,7 @@ exports[`expressions > function expressions > return from function 1`] = `
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2333,7 +5781,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes factor
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2364,7 +5812,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes factor
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2413,7 +5861,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes factor
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2467,7 +5915,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes factor
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2498,7 +5946,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes factor
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2547,7 +5995,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes factor
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2591,7 +6039,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes factor
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2689,7 +6137,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes factor
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2745,7 +6193,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes factor
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2771,7 +6219,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes factor
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2830,7 +6278,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes fibona
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2861,7 +6309,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes fibona
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2910,7 +6358,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes fibona
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2964,7 +6412,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes fibona
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -2995,7 +6443,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes fibona
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3044,7 +6492,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes fibona
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3088,7 +6536,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes fibona
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3205,7 +6653,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes fibona
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3252,7 +6700,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes fibona
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3308,7 +6756,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes fibona
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3334,7 +6782,7 @@ exports[`expressions > lambda calculus constructs > Y combinator computes fibona
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3393,7 +6841,7 @@ exports[`expressions > lambda calculus constructs > apply combinator 1`] = `
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3469,7 +6917,7 @@ exports[`expressions > lambda calculus constructs > apply combinator 1`] = `
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3495,7 +6943,7 @@ exports[`expressions > lambda calculus constructs > apply combinator 1`] = `
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3586,7 +7034,7 @@ exports[`expressions > lambda calculus constructs > church pair returns first el
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3617,7 +7065,7 @@ exports[`expressions > lambda calculus constructs > church pair returns first el
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3688,7 +7136,7 @@ exports[`expressions > lambda calculus constructs > church pair returns first el
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3714,7 +7162,7 @@ exports[`expressions > lambda calculus constructs > church pair returns first el
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3740,7 +7188,7 @@ exports[`expressions > lambda calculus constructs > church pair returns first el
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3831,7 +7279,7 @@ exports[`expressions > lambda calculus constructs > church pair returns second e
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3862,7 +7310,7 @@ exports[`expressions > lambda calculus constructs > church pair returns second e
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3933,7 +7381,7 @@ exports[`expressions > lambda calculus constructs > church pair returns second e
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3959,7 +7407,7 @@ exports[`expressions > lambda calculus constructs > church pair returns second e
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -3985,7 +7433,7 @@ exports[`expressions > lambda calculus constructs > church pair returns second e
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4108,7 +7556,7 @@ exports[`expressions > lambda calculus constructs > deeply nested closures captu
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4134,7 +7582,7 @@ exports[`expressions > lambda calculus constructs > deeply nested closures captu
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4187,7 +7635,7 @@ exports[`expressions > lambda calculus constructs > deeply nested closures captu
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4306,7 +7754,7 @@ exports[`expressions > lambda calculus constructs > either combinator applies fi
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4377,7 +7825,7 @@ exports[`expressions > lambda calculus constructs > either combinator applies fi
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4403,7 +7851,7 @@ exports[`expressions > lambda calculus constructs > either combinator applies fi
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4429,7 +7877,7 @@ exports[`expressions > lambda calculus constructs > either combinator applies fi
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4488,7 +7936,7 @@ exports[`expressions > lambda calculus constructs > fixed point combinator (Z) b
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4519,7 +7967,7 @@ exports[`expressions > lambda calculus constructs > fixed point combinator (Z) b
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4568,7 +8016,7 @@ exports[`expressions > lambda calculus constructs > fixed point combinator (Z) b
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4622,7 +8070,7 @@ exports[`expressions > lambda calculus constructs > fixed point combinator (Z) b
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4653,7 +8101,7 @@ exports[`expressions > lambda calculus constructs > fixed point combinator (Z) b
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4702,7 +8150,7 @@ exports[`expressions > lambda calculus constructs > fixed point combinator (Z) b
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4746,7 +8194,7 @@ exports[`expressions > lambda calculus constructs > fixed point combinator (Z) b
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4822,7 +8270,7 @@ exports[`expressions > lambda calculus constructs > fixed point combinator (Z) b
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4848,7 +8296,7 @@ exports[`expressions > lambda calculus constructs > fixed point combinator (Z) b
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4907,7 +8355,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4938,7 +8386,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -4987,7 +8435,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5041,7 +8489,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5072,7 +8520,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5121,7 +8569,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5165,7 +8613,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5282,7 +8730,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5417,7 +8865,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5497,7 +8945,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5550,7 +8998,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5603,7 +9051,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5638,7 +9086,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5673,7 +9121,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5708,7 +9156,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5805,7 +9253,7 @@ exports[`expressions > lambda calculus constructs > partial application keeps ca
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -5858,7 +9306,7 @@ exports[`expressions > lambda calculus constructs > partial application keeps ca
       "code": "Load",
     },
     {
-      "arg2": 1,
+      "argCount": 1,
       "code": "Call",
     },
     {
@@ -6010,6 +9458,68 @@ exports[`expressions > pattern matching > with placeholder 1`] = `
     {
       "arg1": true,
       "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > structured programming > block break returns value 1`] = `
+{
+  "main": [
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_29",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_29",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 10,
+      "code": "Jump",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_29",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_29",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "code": "Return",
@@ -7935,6 +11445,182 @@ exports[`expressions > values > true 1`] = `
     {
       "arg1": true,
       "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`scope > effect handlers inject scoping 1`] = `
+{
+  "inline_65": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "inline_66": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "name": "a",
+        "symbol": "atom:a",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_65",
+      "code": "Closure",
+    },
+    {
+      "arg1": {
+        "name": "b",
+        "symbol": "atom:b",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "inline_66",
+      "code": "Closure",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "arg1": "return_identity_67",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_67": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "code": "Return",

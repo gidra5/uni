@@ -291,4 +291,4 @@ export class VM {
 }
 
 export { InstructionCode, generateVm2Bytecode };
-export type { EffectHandle, Instruction, Program, Value };
+export type { Instruction, Program, Value };

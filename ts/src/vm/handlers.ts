@@ -3,7 +3,6 @@ import type { Thread, VM } from "./index.js";
 import {
   Closure,
   ContinuationState,
-  HandlerControl,
   HandlerEntry,
   type ClosureEnv,
   Instruction,
@@ -47,9 +46,6 @@ const isAtom = (value: Value): value is SymbolValue =>
 
 const isClosure = (value: Value): value is Closure =>
   typeof value === "object" && value !== null && "functionName" in value && "env" in value;
-
-const isHandlerControl = (value: Value): value is HandlerControl =>
-  typeof value === "object" && value !== null && "handlerControl" in value;
 
 const isContinuation = (value: Value): value is { continuation: ContinuationState } =>
   typeof value === "object" && value !== null && "continuation" in value;
@@ -126,11 +122,15 @@ const cloneClosure = (closure: Closure, envMap: Map<ClosureEnv, ClosureEnv>): Cl
 });
 
 const cloneHandlerEntry = (entry: HandlerEntry, envMap: Map<ClosureEnv, ClosureEnv>): HandlerEntry => {
-  const handlers: Record<string, Value> = {};
-  for (const [key, value] of Object.entries(entry.handlers)) {
-    handlers[key] = isClosure(value) ? cloneClosure(value, envMap) : value;
+  if (entry.kind === "mask" || entry.kind === "without") {
+    return { ...entry };
   }
-  return { handlers: handlers as HandlerEntry["handlers"], returnHandler: cloneClosure(entry.returnHandler, envMap) };
+  const handlers: Record<string, Closure> = {};
+  for (const [key, value] of Object.entries(entry.handlers)) {
+    assert(isClosure(value), "vm2: expected handler closure");
+    handlers[key] = cloneClosure(value, envMap);
+  }
+  return { kind: "handlers", handlers, returnHandler: cloneClosure(entry.returnHandler, envMap) };
 };
 
 const cloneValue = (value: Value, envMap: Map<ClosureEnv, ClosureEnv>): Value => {
@@ -406,20 +406,45 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
     const fallbackReturnHandler = returnHandlerValue;
     let resolvedReturnHandler: Closure | undefined = undefined;
 
-    const handlers: HandlerEntry["handlers"] = {};
+    const handlers: Record<string, Closure> = {};
     for (const [key, value] of Object.entries(handlersValue.record)) {
       if (key === returnHandlerKey || key === "return_handler") {
         if (isClosure(value)) resolvedReturnHandler = value;
         continue;
       }
-      assert(isClosure(value) || isHandlerControl(value), "vm2: expected handler closure or control");
+      assert(isClosure(value), "vm2: expected handler closure");
       handlers[key] = value;
     }
 
     thread.handlersStack.push({
+      kind: "handlers",
       handlers,
       returnHandler: resolvedReturnHandler ?? fallbackReturnHandler,
     });
+  },
+  [InstructionCode.Mask]: (_vm, thread, instr) => {
+    assert(instr.code === InstructionCode.Mask);
+    const effect = thread.pop();
+    const key = normalizeKey(effect);
+    thread.handlersStack.push({ kind: "mask", key });
+  },
+  [InstructionCode.MaskEnd]: (_vm, thread, instr) => {
+    assert(instr.code === InstructionCode.MaskEnd);
+    const entry = thread.handlersStack.pop();
+    if (!entry) return;
+    assert(entry.kind === "mask", "vm2: expected mask entry");
+  },
+  [InstructionCode.Without]: (_vm, thread, instr) => {
+    assert(instr.code === InstructionCode.Without);
+    const effect = thread.pop();
+    const key = normalizeKey(effect);
+    thread.handlersStack.push({ kind: "without", key });
+  },
+  [InstructionCode.WithoutEnd]: (_vm, thread, instr) => {
+    assert(instr.code === InstructionCode.WithoutEnd);
+    const entry = thread.handlersStack.pop();
+    if (!entry) return;
+    assert(entry.kind === "without", "vm2: expected without entry");
   },
   [InstructionCode.EmitEffect]: (vm, thread, instr) => {
     assert(instr.code === InstructionCode.EmitEffect);
@@ -435,16 +460,19 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
 
     for (let i = thread.handlersStack.length - 1; i >= 0; i--) {
       const entry = thread.handlersStack[i];
+      if (entry.kind === "mask") {
+        if (entry.key === key) skipCount++;
+        continue;
+      }
+      if (entry.kind === "without") {
+        if (entry.key === key) {
+          blocked = true;
+          break;
+        }
+        continue;
+      }
       const handlerValue = entry.handlers[key];
       if (!handlerValue) continue;
-      if (isHandlerControl(handlerValue)) {
-        if (handlerValue.handlerControl === "mask") {
-          skipCount++;
-          continue;
-        }
-        blocked = true;
-        break;
-      }
       if (skipCount > 0) {
         skipCount--;
         continue;
@@ -471,7 +499,8 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
       return false;
     }
 
-    assert(matchedHandler, "vm2: expected handler closure");
+    assert(matchedHandler && matchedEntry?.kind === "handlers", "vm2: expected handler closure");
+    const handlerEntry = matchedEntry;
     const continuation = captureContinuationState(thread, thread.ip + 1);
     continuation.handlerRestore = { entry: continuation.handlersStack[matchedIndex], index: matchedIndex };
     thread.handlersStack.splice(matchedIndex, 1);
@@ -486,7 +515,7 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
         functionName: thread.functionName,
         stack: thread.stack,
         env: thread.env,
-        handlerRestore: { entry: matchedEntry, index: matchedIndex },
+        handlerRestore: { entry: handlerEntry, index: matchedIndex },
       },
       matchedHandler.env
     );
@@ -496,7 +525,7 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
     assert(instr.code === InstructionCode.ReturnHandler);
     const value = thread.pop();
     const entry = thread.handlersStack.pop();
-    if (!entry) {
+    if (!entry || entry.kind !== "handlers") {
       thread.push(value);
       return;
     }

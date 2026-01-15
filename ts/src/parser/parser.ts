@@ -307,6 +307,10 @@ const parseStatementForm = (innerParser: Parser<ValidatedTokenGroup[], Tree, {}>
     return yield Parser.do(function* () {
       if (formToken.kind === TokenGroupKind.Colon) return [inner, null];
       if (formToken.kind === TokenGroupKind.Braces) {
+        if (formToken.tokens.length === 0) {
+          const pos = getTokenPosition(formToken);
+          return [inner, block(implicitPlaceholder(pos), pos)];
+        }
         const [exprParseCtx, expr] = parseExpr.parse(formToken.tokens, { index: 0 });
         assert(exprParseCtx.index === formToken.tokens.length);
         return [inner, expr];
