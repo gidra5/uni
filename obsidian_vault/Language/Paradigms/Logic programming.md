@@ -63,3 +63,4 @@ https://dtai.cs.kuleuven.be/projects/ALP/newsletter/may06/nav/articles/ueda/arti
 
 https://chatgpt.com/c/694424ee-e758-8333-8a8d-5d3204a46c62
 
+https://www.reddit.com/r/ProgrammingLanguages/s/t90qcKHrsI
