@@ -11,6 +11,8 @@ https://yangzhixuan.github.io/pdf/fantastic-morphisms.pdf?utm_source=chatgpt.com
 We can define a * op similar to &, that would construct "associative template" for the combination
 https://homepages.inf.ed.ac.uk/slindley/papers/talking-bananas.pdf?utm_source=chatgpt.com
 
+https://ravichugh.gitbooks.io/a-quarter-of-haskell/content/list-comprehensions/?utm_source=chatgpt.com
+
 Structured recursion - a recursive function induced by a recursive function. Basically encapsulates iteration over arbitrary recursive structures
 
 `for x in y with acc { newacc }`

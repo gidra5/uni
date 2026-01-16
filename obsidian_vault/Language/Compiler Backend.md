@@ -14,3 +14,5 @@ Operations such as:
 * mutating some slot inside stack
 * loading reference to cell in static data section
 will modify tracked registers state and generate corresponding instructions, using minimal read-write commands to memory.
+
+https://compilers.iecc.com/crenshaw/

@@ -40,3 +40,4 @@ https://www.tutorialspoint.com/compiler_design/compiler_design_error_recovery.ht
 https://www.geeksforgeeks.org/error-recovery-in-predictive-parsing/
 https://supunsetunga.medium.com/writing-a-parser-syntax-error-handling-b71b67a8ac66
 https://gtu-paper-solution.com/Paper-Solution/CompilerDesign-2170701/Winter-2018/Question-2-b
+https://www.reddit.com/r/ProgrammingLanguages/s/y4K2RaPALI

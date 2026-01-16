@@ -1148,16 +1148,6 @@ describe("expressions", () => {
       );
     });
 
-    it.todo("parallel composition multiset", () =>
-      testCase(
-        `
-            & { 1 + 2 }
-            & { 3 + 4 }
-          `,
-        { tuple: [3, 7] } // or { tuple: [7, 3] }
-      )
-    );
-
     describe("simt calculus (gpu kernel like)", () => {
       it.todo("parallel composition vector", () =>
         testCase(
@@ -1363,6 +1353,89 @@ describe("expressions", () => {
           )
         );
       });
+    });
+
+    it.todo("parallel composition multiset", () =>
+      testCase(
+        `
+            & { 1 + 2 }
+            & { 3 + 4 }
+          `,
+        { tuple: [3, 7] } // or { tuple: [7, 3] }
+      )
+    );
+
+    describe("multiset-vector-sum transforms", () => {
+      it.todo("collect parallel vector", () =>
+        testCase(
+          `collect(1 | 2)`, // === 1 & 2
+          { tuple: [1, 2] }
+        )
+      );
+
+      it.todo("collect nondet sum", () =>
+        testCase(
+          `collect(1 ? 2)`, // === 1 & 2
+          { tuple: [1, 2] }
+        )
+      );
+
+      it.todo("vectorize multiset", () =>
+        testCase(
+          `vector(1 & 2)`, // === 1 | 2 or 2 | 1
+          { tuple: [1, 2] }
+        )
+      );
+
+      it.todo("race vector", () =>
+        testCase(
+          `race(1 | 2)`, // === 1 ? 2
+          { tuple: [1, 2] }
+        )
+      );
+
+      it.todo("race multiset", () =>
+        testCase(
+          `race(1 & 2)`, // === 1 ? 2
+          { tuple: [1, 2] }
+        )
+      );
+    });
+
+    describe("multiset-vector-sum properties", () => {
+      // (f & g) h = f h & g h
+      // (f | g) h = f h | g h
+      // (f ? g) h = f h ? g h
+      // (f | g) (h | i) = (f h) | (g i)
+      // (f & g) (h & i) = (f h) & (f i) & (g h) & (g i)
+      // (f & g) ? (h & i) =
+      // (f & g) & (h & i) = (f & h) & (f & i) & (g & h) & (g & i) ???
+      // (f ? g) ? (h ? i) = f ? g ? h ? i
+
+      it.todo("fn multiset", () =>
+        testCase(
+          `await ((fn (x) { x + 1 } & fn (x) { x + 2 }) 1)`,
+          { tuple: [2, 3] } // or { tuple: [3, 2] }
+        )
+      );
+    });
+
+    describe("multiset-vector-sum await", () => {
+      it.todo("await multiset", () =>
+        testCase(
+          `await(1 & 2)`,
+          { tuple: [1, 2] } // or { tuple: [2, 1] }
+        )
+      );
+
+      it.todo("await vector", () => testCase(`await(1 | 2)`, { tuple: [1, 2] }));
+
+      it.todo("await nondet", () =>
+        testCase(
+          `await(1 ? 2)`,
+          1 // or 2
+        )
+      );
     });
 
     it.todo("await async", () => testCase("f := fn x: x + 1; await async f 1", 2));
@@ -1649,7 +1722,8 @@ describe("expressions", () => {
           m, n, f()
         `,
         { tuple: [2, 3, { tuple: [2, 2] }] }
-      ));
+      )
+    );
 
     it("multiple continuation calls with mutations", () =>
       testCase(

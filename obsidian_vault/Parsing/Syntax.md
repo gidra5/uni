@@ -20,3 +20,4 @@ Space is mostly insignificant, except delimited application. Delimited applicati
 
 https://craftinginterpreters.com/representing-code.html
 https://www.oilshell.org/blog/2016/10/20.html
+https://www.reddit.com/r/ProgrammingLanguages/s/y4K2RaPALI

@@ -33,6 +33,8 @@ The whole thing is probably turing complete. It can natively support loops (cycl
 https://en.wikipedia.org/wiki/Datalog
 Datalog is a system for "storing" facts and judgements on them. These can be reinterpreted as database table rows and materialized views
 
+materialized views and indexes allow to move cost from read queries to mutation queries. Without them it is practically costs nothing to insert/update/delete, but once we add views and indexes, we need to maintain them reactively and update periodically, or even on every query. But with that we optimize the reads by preparing everything beforehand and keeping it up to date
+
 We can define database/logic like scope, where we state initial facts and judgements.
 
 Following the logic interpretation, our judgements are derived from initial facts with logical operators and inductive variables:
@@ -116,3 +118,13 @@ Separate storage of facts from rules?
 Roman Храновський, [1/7/2026 11:29 PM]
 Or rows from tables
 https://www.reddit.com/r/Compilers/s/pcji5zcOt7
+
+https://www.google.com/search?q=coalgebraic+modal+logic&oq=coalgebraic+modal+logic&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIICAEQABgNGB4yCAgCEAAYFhgeMgwIAxAAGAgYChgNGB4yCggEEAAYgAQYogQyCggFEAAYgAQYogQyCggGEAAYgAQYogQyCggHEAAYgAQYogQyCggIEAAYgAQYogTSAQgxMDI4ajBqN6gCFLACAfEFYoBxS8lPsA8&client=ms-android-xiaomi-rvo3&sourceid=chrome-mobile&ie=UTF-8
+
+https://iccl.inf.tu-dresden.de/w/images/e/e1/The_Basics_of_Display_Calculi_%28PrePrint%29.pdf
+
+https://www.logic.at/staff/agata/surveyhypdispl.pdf?utm_source=chatgpt.com
+
+https://arxiv.org/pdf/1609.05343
+
+https://www.postgresql.org/docs/current/rules.html

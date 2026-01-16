@@ -480,6 +480,8 @@ describe("expressions", () => {
           `)
       );
     });
+
+    describe("indexes", () => {});
   });
 
   describe("logic programming", () => {
