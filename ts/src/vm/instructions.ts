@@ -45,6 +45,7 @@ export enum InstructionCode {
 
   Load = "Load",
   Store = "Store",
+  StoreLocal = "StoreLocal",
   // LoadAcquire = "LoadAcquire",
   // StoreRelease = "StoreRelease",
   // CompareAndSwap = "CompareAndSwap",
@@ -86,13 +87,11 @@ export type HandlerEntry =
       kind: "without";
       key: string;
     };
-export type HandlerRestore = { entry: HandlerEntry; index: number };
 export type ContinuationFrame = {
   ip: number;
   functionName: string;
   stack: Value[];
   env: ClosureEnv;
-  handlerRestore?: HandlerRestore;
   handlersStack?: HandlerEntry[];
   callStack?: ContinuationFrame[];
 };
@@ -103,7 +102,6 @@ export type ContinuationState = {
   callStack: ContinuationFrame[];
   env: ClosureEnv;
   handlersStack: HandlerEntry[];
-  handlerRestore?: HandlerRestore;
   blockedChannel?: string;
 };
 export type Value =
@@ -139,6 +137,7 @@ export type Instruction =
   | { code: InstructionCode.Free }
   | { code: InstructionCode.Load }
   | { code: InstructionCode.Store }
+  | { code: InstructionCode.StoreLocal }
   | { code: InstructionCode.Tuple; arg1: number }
   | { code: InstructionCode.Record; arg1: number }
   | { code: InstructionCode.In }

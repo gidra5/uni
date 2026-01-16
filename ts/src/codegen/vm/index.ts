@@ -206,7 +206,7 @@ class Vm2Generator {
         break;
       case NodeType.DECLARE:
       case NodeType.ASSIGN:
-        this.emitAssignment(node);
+        this.emitAssignment(node, { declare: node.type === NodeType.DECLARE });
         break;
       case NodeType.APPLICATION:
       case NodeType.DELIMITED_APPLICATION:
@@ -788,21 +788,21 @@ class Vm2Generator {
     throw new Error(`vm2 codegen: unsupported record key "${key.type}"`);
   }
 
-  private emitAssignment(node: Tree) {
+  private emitAssignment(node: Tree, options?: { declare?: boolean }) {
     const [pattern, value] = node.children;
     assert(pattern, "assignment missing pattern");
     assert(value, "assignment missing value");
 
     if (pattern.type === NodeType.MUTABLE) {
       assert(pattern.children[0], "mutable pattern missing name");
-      this.emitAssignment({ ...node, children: [pattern.children[0], value] });
+      this.emitAssignment({ ...node, children: [pattern.children[0], value] }, options);
       return;
     }
 
     if (pattern.type === NodeType.NAME) {
       this.emitNode(value);
       this.current.push({ code: InstructionCode.Const, arg1: { ref: pattern.data.value } });
-      this.current.push({ code: InstructionCode.Store });
+      this.current.push({ code: options?.declare ? InstructionCode.StoreLocal : InstructionCode.Store });
       this.current.push({ code: InstructionCode.Const, arg1: { ref: pattern.data.value } });
       this.current.push({ code: InstructionCode.Load });
       return;

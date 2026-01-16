@@ -153,9 +153,6 @@ const cloneContinuationState = (state: ContinuationState): ContinuationState => 
     functionName: frame.functionName,
     stack: frame.stack.map((value) => cloneValue(value, envMap)),
     env: cloneEnv(frame.env, envMap),
-    handlerRestore: frame.handlerRestore
-      ? { entry: cloneHandlerEntry(frame.handlerRestore.entry, envMap), index: frame.handlerRestore.index }
-      : undefined,
     handlersStack: frame.handlersStack
       ? frame.handlersStack.map((entry) => cloneHandlerEntry(entry, envMap))
       : undefined,
@@ -168,9 +165,6 @@ const cloneContinuationState = (state: ContinuationState): ContinuationState => 
     callStack: state.callStack.map(cloneFrame),
     env: cloneEnv(state.env, envMap),
     handlersStack: state.handlersStack.map((entry) => cloneHandlerEntry(entry, envMap)),
-    handlerRestore: state.handlerRestore
-      ? { entry: cloneHandlerEntry(state.handlerRestore.entry, envMap), index: state.handlerRestore.index }
-      : undefined,
     blockedChannel: state.blockedChannel,
   };
 };
@@ -182,9 +176,6 @@ export const captureContinuationState = (thread: Thread, ip: number): Continuati
     functionName: frame.functionName,
     stack: frame.stack.map((value) => cloneValue(value, envMap)),
     env: cloneEnv(frame.env, envMap),
-    handlerRestore: frame.handlerRestore
-      ? { entry: cloneHandlerEntry(frame.handlerRestore.entry, envMap), index: frame.handlerRestore.index }
-      : undefined,
     handlersStack: frame.handlersStack
       ? frame.handlersStack.map((entry) => cloneHandlerEntry(entry, envMap))
       : undefined,
@@ -322,6 +313,12 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
     const value = thread.pop();
     thread.storeRef(ref, value);
   },
+  [InstructionCode.StoreLocal]: (vm, thread, instr) => {
+    assert(instr.code === InstructionCode.StoreLocal);
+    const ref = getRef(thread.pop());
+    const value = thread.pop();
+    thread.storeRefLocal(ref, value);
+  },
   [InstructionCode.Tuple]: (_vm, thread, instr) => {
     assert(instr.code === InstructionCode.Tuple);
     const values: Value[] = [];
@@ -452,7 +449,6 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
     const effect = thread.pop();
     const key = normalizeKey(effect);
 
-    let matchedIndex = -1;
     let matchedEntry: HandlerEntry | undefined;
     let matchedHandler: Closure | undefined;
     let skipCount = 0;
@@ -477,7 +473,6 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
         skipCount--;
         continue;
       }
-      matchedIndex = i;
       matchedEntry = entry;
       matchedHandler = handlerValue;
       break;
@@ -500,10 +495,8 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
     }
 
     assert(matchedHandler && matchedEntry?.kind === "handlers", "vm2: expected handler closure");
-    const handlerEntry = matchedEntry;
+
     const continuation = captureContinuationState(thread, thread.ip + 1);
-    continuation.handlerRestore = { entry: continuation.handlersStack[matchedIndex], index: matchedIndex };
-    thread.handlersStack.splice(matchedIndex, 1);
 
     thread.push({ continuation });
     thread.push(arg);
@@ -515,7 +508,6 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
         functionName: thread.functionName,
         stack: thread.stack,
         env: thread.env,
-        handlerRestore: { entry: handlerEntry, index: matchedIndex },
       },
       matchedHandler.env
     );
@@ -554,8 +546,7 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
         callStack: thread.callStack,
       };
       const state = cloneContinuationState(callee.continuation);
-      const removedCount = state.handlerRestore ? 1 : 0;
-      const baseLength = Math.max(0, state.handlersStack.length - removedCount);
+      const baseLength = state.handlersStack.length;
       const extraHandlers = thread.handlersStack.slice(baseLength);
       thread.functionName = state.functionName;
       thread.ip = state.ip;

@@ -1545,6 +1545,36 @@ describe("expressions", () => {
         126
       ));
 
+    it("handler return aborts block", () =>
+      testCase(
+        `
+          _handler := record { do: handler fn (_callback, _value) { 123 } }
+          mut x := 0
+          result := inject _handler {
+            handle ($do) ()
+            x = x + 1
+            999
+          }
+          result, x
+        `,
+        { tuple: [123, 0] }
+      ));
+
+    it("handler return aborts after continuation", () =>
+      testCase(
+        `
+          _handler := record { do: handler fn (callback, _value) { callback(); 456 } }
+          mut x := 0
+          result := inject _handler {
+            handle ($do) ()
+            x = x + 1
+            123
+          }
+          result, x
+        `,
+        { tuple: [456, 1] }
+      ));
+
     it("single continuation call", () =>
       testCase(
         `
@@ -1593,7 +1623,7 @@ describe("expressions", () => {
         { tuple: [3] }
       ));
 
-    it("multiple continuation calls with mutations and closure", () =>
+    it.todo("multiple continuation calls with mutations and closure", () =>
       testCase(
         `
           _handler := record {

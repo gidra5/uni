@@ -89,6 +89,14 @@ export class Thread {
     env.values[ref] = value;
   }
 
+  storeRefLocal(ref: string, value: Value) {
+    if (isHeapRef(ref)) {
+      this.vm.heap[ref] = value;
+      return;
+    }
+    this.env.values[ref] = value;
+  }
+
   jump(address: number) {
     this.ip = address;
   }
@@ -134,11 +142,6 @@ export class Thread {
     if (returnValue !== undefined) this.push(returnValue);
 
     if (frame.handlersStack) this.handlersStack = frame.handlersStack;
-    if (frame.handlerRestore) {
-      const { entry, index } = frame.handlerRestore;
-      const insertIndex = Math.max(0, Math.min(index, this.handlersStack.length));
-      this.handlersStack.splice(insertIndex, 0, entry);
-    }
 
     this.env = frame.env;
     this.functionName = frame.functionName;

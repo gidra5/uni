@@ -358,7 +358,7 @@ exports[`expressions > boolean expressions > eq ref 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -385,7 +385,7 @@ exports[`expressions > boolean expressions > eq ref 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -865,7 +865,7 @@ exports[`expressions > effect handlers > all in one 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -897,7 +897,7 @@ exports[`expressions > effect handlers > all in one 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -949,21 +949,7 @@ exports[`expressions > effect handlers > all in one 1`] = `
       "code": "Const",
     },
     {
-      "arg1": {
-        "handlerControl": "mask",
-      },
-      "code": "Const",
-    },
-    {
-      "arg1": 1,
-      "code": "Record",
-    },
-    {
-      "arg1": "return_identity_221",
-      "code": "Closure",
-    },
-    {
-      "code": "SetHandle",
+      "code": "Mask",
     },
     {
       "arg1": {
@@ -973,21 +959,7 @@ exports[`expressions > effect handlers > all in one 1`] = `
       "code": "Const",
     },
     {
-      "arg1": {
-        "handlerControl": "block",
-      },
-      "code": "Const",
-    },
-    {
-      "arg1": 1,
-      "code": "Record",
-    },
-    {
-      "arg1": "return_identity_221",
-      "code": "Closure",
-    },
-    {
-      "code": "SetHandle",
+      "code": "Without",
     },
     {
       "arg1": {
@@ -1010,7 +982,7 @@ exports[`expressions > effect handlers > all in one 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -1038,10 +1010,10 @@ exports[`expressions > effect handlers > all in one 1`] = `
       "code": "Add",
     },
     {
-      "code": "ReturnHandler",
+      "code": "WithoutEnd",
     },
     {
-      "code": "ReturnHandler",
+      "code": "MaskEnd",
     },
     {
       "code": "ReturnHandler",
@@ -1139,7 +1111,7 @@ exports[`expressions > effect handlers > block-inject-fn-handle 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -1314,7 +1286,7 @@ exports[`expressions > effect handlers > block-inject-fn-handle twice 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -1586,7 +1558,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -1683,7 +1655,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -1721,7 +1693,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -1765,7 +1737,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -1787,7 +1759,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -1805,6 +1777,19 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
     {
       "arg1": {
         "ref": "_calltmp_413",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_414",
       },
       "code": "Const",
     },
@@ -1833,7 +1818,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Gt",
     },
     {
-      "arg1": 48,
+      "arg1": 51,
       "code": "JumpIfFalse",
     },
     {
@@ -1847,7 +1832,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_414",
+        "ref": "_calltmp_415",
       },
       "code": "Const",
     },
@@ -1860,7 +1845,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_414",
+        "ref": "_calltmp_415",
       },
       "code": "Const",
     },
@@ -1882,7 +1867,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_415",
+        "ref": "_calltmp_416",
       },
       "code": "Const",
     },
@@ -1895,7 +1880,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_415",
+        "ref": "_calltmp_416",
       },
       "code": "Const",
     },
@@ -1907,7 +1892,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Call",
     },
     {
-      "arg1": 62,
+      "arg1": 65,
       "code": "JumpIfFalse",
     },
     {
@@ -1929,7 +1914,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Store",
     },
     {
-      "arg1": 75,
+      "arg1": 82,
       "code": "Jump",
     },
     {
@@ -1943,7 +1928,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_416",
+        "ref": "_calltmp_417",
       },
       "code": "Const",
     },
@@ -1952,7 +1937,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_416",
+        "ref": "_calltmp_417",
       },
       "code": "Const",
     },
@@ -1977,7 +1962,25 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_416",
+        "ref": "_calltmp_417",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_414",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_414",
       },
       "code": "Const",
     },
@@ -2004,7 +2007,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -2035,7 +2038,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
       "code": "Not",
     },
     {
-      "arg1": 95,
+      "arg1": 102,
       "code": "JumpIfFalse",
     },
     {
@@ -2049,7 +2052,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_417",
+        "ref": "_calltmp_418",
       },
       "code": "Const",
     },
@@ -2062,7 +2065,7 @@ exports[`expressions > effect handlers > choose int loop 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_417",
+        "ref": "_calltmp_418",
       },
       "code": "Const",
     },
@@ -2228,7 +2231,7 @@ exports[`expressions > effect handlers > disjoint-level state backtracking 1`] =
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -2452,6 +2455,493 @@ exports[`expressions > effect handlers > disjoint-level state backtracking 1`] =
     },
   ],
   "return_identity_159": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > handler return aborts after continuation 1`] = `
+{
+  "fn_83": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_161",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_161",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "argCount": 1,
+      "code": "Call",
+    },
+    {
+      "arg1": 456,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": {
+        "name": "do",
+        "symbol": "atom:do",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_83",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": {
+        "ref": "_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "StoreLocal",
+    },
+    {
+      "arg1": {
+        "ref": "_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "StoreLocal",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": "return_identity_162",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "do",
+        "symbol": "atom:do",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 123,
+      "code": "Const",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "arg1": {
+        "ref": "result",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "StoreLocal",
+    },
+    {
+      "arg1": {
+        "ref": "result",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "result",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_162": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > effect handlers > handler return aborts block 1`] = `
+{
+  "fn_69": [
+    {
+      "arg1": {
+        "ref": "_value",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_callback",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": 123,
+      "code": "Const",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "main": [
+    {
+      "arg1": {
+        "name": "do",
+        "symbol": "atom:do",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": "fn_69",
+      "code": "Closure",
+    },
+    {
+      "arg1": 1,
+      "code": "Record",
+    },
+    {
+      "arg1": {
+        "ref": "_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "StoreLocal",
+    },
+    {
+      "arg1": {
+        "ref": "_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 0,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "StoreLocal",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "_handler",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": "return_identity_147",
+      "code": "Closure",
+    },
+    {
+      "code": "SetHandle",
+    },
+    {
+      "arg1": {
+        "name": "do",
+        "symbol": "atom:do",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "code": "EmitEffect",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "code": "Add",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 999,
+      "code": "Const",
+    },
+    {
+      "code": "ReturnHandler",
+    },
+    {
+      "arg1": {
+        "ref": "result",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "StoreLocal",
+    },
+    {
+      "arg1": {
+        "ref": "result",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "result",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": {
+        "ref": "x",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+  "return_identity_147": [
     {
       "arg1": {
         "ref": "_value",
@@ -2821,7 +3311,7 @@ exports[`expressions > effect handlers > inject shadowing 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -2853,7 +3343,7 @@ exports[`expressions > effect handlers > inject shadowing 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -3154,7 +3644,7 @@ exports[`expressions > effect handlers > mask 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -3186,7 +3676,7 @@ exports[`expressions > effect handlers > mask 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -3261,7 +3751,7 @@ exports[`expressions > effect handlers > mask 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -3293,7 +3783,7 @@ exports[`expressions > effect handlers > mask 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -3571,7 +4061,7 @@ exports[`expressions > effect handlers > mask 2 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -3714,7 +4204,7 @@ exports[`expressions > effect handlers > mask 2 1`] = `
 
 exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
 {
-  "emit_143": [
+  "emit_144": [
     {
       "arg1": {
         "ref": "_value",
@@ -3726,7 +4216,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_142",
+        "ref": "_calltmp_143",
       },
       "code": "Const",
     },
@@ -3779,7 +4269,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_137",
+        "ref": "_calltmp_138",
       },
       "code": "Const",
     },
@@ -3792,7 +4282,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_137",
+        "ref": "_calltmp_138",
       },
       "code": "Const",
     },
@@ -3814,7 +4304,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_138",
+        "ref": "_calltmp_139",
       },
       "code": "Const",
     },
@@ -3827,7 +4317,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_138",
+        "ref": "_calltmp_139",
       },
       "code": "Const",
     },
@@ -3859,7 +4349,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
       "code": "Record",
     },
     {
-      "arg1": "return_identity_139",
+      "arg1": "return_identity_140",
       "code": "Closure",
     },
     {
@@ -3876,7 +4366,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -3897,6 +4387,10 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
       "code": "Without",
     },
     {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
       "code": "WithoutEnd",
     },
     {
@@ -3908,7 +4402,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_142",
+        "ref": "_calltmp_143",
       },
       "code": "Const",
     },
@@ -3916,12 +4410,12 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
       "code": "Store",
     },
     {
-      "arg1": "emit_143",
+      "arg1": "emit_144",
       "code": "Closure",
     },
     {
       "arg1": {
-        "ref": "_calltmp_140",
+        "ref": "_calltmp_141",
       },
       "code": "Const",
     },
@@ -3934,7 +4428,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_140",
+        "ref": "_calltmp_141",
       },
       "code": "Const",
     },
@@ -3946,7 +4440,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
       "code": "Call",
     },
     {
-      "arg1": 27,
+      "arg1": 28,
       "code": "JumpIfFalse",
     },
     {
@@ -3959,7 +4453,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
       "code": "Load",
     },
     {
-      "arg1": 39,
+      "arg1": 40,
       "code": "Jump",
     },
     {
@@ -3973,7 +4467,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_144",
+        "ref": "_calltmp_145",
       },
       "code": "Const",
     },
@@ -3982,7 +4476,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_144",
+        "ref": "_calltmp_145",
       },
       "code": "Const",
     },
@@ -4007,7 +4501,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
     },
     {
       "arg1": {
-        "ref": "_calltmp_144",
+        "ref": "_calltmp_145",
       },
       "code": "Const",
     },
@@ -4021,7 +4515,7 @@ exports[`expressions > effect handlers > multi-level state backtracking 1`] = `
       "code": "Return",
     },
   ],
-  "return_identity_139": [
+  "return_identity_140": [
     {
       "arg1": {
         "ref": "_value",
@@ -4165,7 +4659,7 @@ exports[`expressions > effect handlers > multiple continuation calls with inner 
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -4203,7 +4697,7 @@ exports[`expressions > effect handlers > multiple continuation calls with inner 
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -4422,7 +4916,7 @@ exports[`expressions > effect handlers > multiple continuation calls with mutati
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -4444,7 +4938,7 @@ exports[`expressions > effect handlers > multiple continuation calls with mutati
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -4482,7 +4976,7 @@ exports[`expressions > effect handlers > multiple continuation calls with mutati
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -4795,7 +5289,7 @@ exports[`expressions > effect handlers > parallel inside 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -4827,7 +5321,7 @@ exports[`expressions > effect handlers > parallel inside 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -5010,7 +5504,7 @@ exports[`expressions > effect handlers > parallel inside 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -5096,7 +5590,7 @@ exports[`expressions > effect handlers > parallel inside 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -5121,7 +5615,7 @@ exports[`expressions > effect handlers > parallel inside 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -5146,7 +5640,7 @@ exports[`expressions > effect handlers > parallel inside 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -5289,7 +5783,7 @@ exports[`expressions > function expressions > fn increment 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -5311,7 +5805,7 @@ exports[`expressions > function expressions > fn increment 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -7592,7 +8086,7 @@ exports[`expressions > lambda calculus constructs > deeply nested closures captu
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -8902,7 +9396,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -8955,7 +9449,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -9008,7 +9502,7 @@ exports[`expressions > lambda calculus constructs > mutual recursion (even/odd) 
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -9263,7 +9757,7 @@ exports[`expressions > lambda calculus constructs > partial application keeps ca
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -9628,7 +10122,7 @@ exports[`expressions > structured programming > for loop 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -9652,7 +10146,7 @@ exports[`expressions > structured programming > for loop 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -9674,7 +10168,7 @@ exports[`expressions > structured programming > for loop 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -9928,7 +10422,7 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -9952,7 +10446,7 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -9974,7 +10468,7 @@ exports[`expressions > structured programming > for loop maps values 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -10478,7 +10972,7 @@ exports[`expressions > structured programming > label continue loops until break
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -10624,6 +11118,19 @@ exports[`expressions > structured programming > loop break yields value 1`] = `
       "code": "Store",
     },
     {
+      "arg1": null,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_21",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
       "arg1": 42,
       "code": "Const",
     },
@@ -10637,8 +11144,26 @@ exports[`expressions > structured programming > loop break yields value 1`] = `
       "code": "Store",
     },
     {
-      "arg1": 8,
+      "arg1": 15,
       "code": "Jump",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_21",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Store",
+    },
+    {
+      "arg1": {
+        "ref": "_calltmp_21",
+      },
+      "code": "Const",
+    },
+    {
+      "code": "Load",
     },
     {
       "arg1": 3,
@@ -10674,7 +11199,7 @@ exports[`expressions > structured programming > post increment returns old value
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -10744,7 +11269,7 @@ exports[`expressions > structured programming > post increment returns old value
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -10824,7 +11349,7 @@ exports[`expressions > structured programming > while loop continue skips iterat
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -10846,7 +11371,7 @@ exports[`expressions > structured programming > while loop continue skips iterat
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -11046,7 +11571,7 @@ exports[`expressions > structured programming > while loop with break returns va
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -11272,7 +11797,7 @@ exports[`expressions > symbols > symbol equality is by identity 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -11299,7 +11824,7 @@ exports[`expressions > symbols > symbol equality is by identity 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -11521,7 +12046,7 @@ exports[`scope > effect handlers inject scoping 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
@@ -11576,7 +12101,7 @@ exports[`scope > effect handlers inject scoping 1`] = `
       "code": "Const",
     },
     {
-      "code": "Store",
+      "code": "StoreLocal",
     },
     {
       "arg1": {
