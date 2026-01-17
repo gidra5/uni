@@ -13,3 +13,4 @@ Nevertheless we expect it to be true at all times and some guarantees or optimiz
 
 https://robbertkrebbers.nl/research/articles/logical_type_soundness.pdf
 https://blog.sigplan.org/2019/10/17/what-type-soundness-theorem-do-you-really-want-to-prove/
+https://logan.tw/posts/2014/11/12/soundness-and-completeness-of-the-type-system/

@@ -93,6 +93,8 @@ query reachable(1, x) where x!=2
 ```
 
 We can also inspire extension by other kinds of logic, like modal (temporal, dynamic, hybrid) logic, linear (substructural) logic, separation logic, graded variants, probabilistic logic, least and greatest fixed point.
+https://buttondown.com/hillelwayne/archive/formally-modeling-dreidel-the-sequel/
+https://buttondown.com/hillelwayne/archive/ergonomic-apis-channel-invariants-and-data-views/
 
 We may add/remove/update facts as we continue the program.
 

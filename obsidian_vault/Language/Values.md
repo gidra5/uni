@@ -44,3 +44,8 @@ common operations in current scope:
 ...
 
 https://stackoverflow.com/questions/71811886/ultra-fast-lookup-in-small-sized-container-of-64-bit-integer-values-using-dynami
+
+
+https://buttondown.com/hillelwayne/archive/if-you-work-on-a-big-language-id-like-to-talk/
+https://buttondown.com/hillelwayne/archive/unusual-basis-types-in-programming-languages/
+https://buttondown.com/hillelwayne/archive/a-list-of-ternary-operators/

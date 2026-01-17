@@ -20,6 +20,7 @@ Main language design principles:
 18. Do not enforce cluttering of syntax and semantics with what can be inferred.
 19. If there is a semantic design choice, you should delegate this choice to the user. Provide both options and allow user to choose/configure whichever is more suitable.
 20. The programs and algorithms should be expressed in domain specific languages. Most general DSL are the models of computation, all providing equal power, yet able to express things differently and optimally in their domain. Thus it is essential to allow expressing the computation in a different model naturally, without reimplementing it, providing a common, unifying ground for the maintainability and readability of code. Additional benefit of having multiple models in one language, is exposure to different paradigms, that can ultimately give. Note that new paradigms can arise, so it must be extensible.
+21. For every tradeoff, we must allow to choose/derive/enforce the best tradeoff.
 
 https://en.wikipedia.org/wiki/Zen_of_Python
 https://ceronman.com/2012/09/17/coffeescript-less-typing-bad-readabilityconcepr/
@@ -32,3 +33,19 @@ https://blog.flix.dev/
 https://chatgpt.com/c/6946aa7a-43c4-8331-acac-34f7f5602862
 https://www.youtube.com/watch?v=1iPWt1gvT_w
 https://youtu.be/qYEmJ8MYrs4?si=elNeB9SVwl2V-mFM
+https://buttondown.com/hillelwayne/archive/stroustrups-rule/
+https://buttondown.com/hillelwayne/archive/requirements-change-until-they-dont/
+https://buttondown.com/hillelwayne/archive/write-the-most-clever-code-you-possibly-can/
+https://buttondown.com/hillelwayne/archive/symmetric-properties/
+https://buttondown.com/hillelwayne/archive/in-defense-of-slow-feedback-loops/
+https://buttondown.com/hillelwayne/archive/when-to-prefer-inheritance-to-composition/
+https://buttondown.com/hillelwayne/archive/the-capability-tractability-tradeoff/
+https://www.hillelwayne.com/post/software-mimicry/
+https://buttondown.com/hillelwayne/archive/software-moves-6713/
+https://www.swyx.io/preemptive-pluralization
+https://buttondown.com/hillelwayne/archive/six-programming-languages-id-like-to-see/
+https://buttondown.com/hillelwayne/archive/edge-case-poisoning/
+https://buttondown.com/hillelwayne/archive/principles-of-software-evangelism/
+
+channeling constraints are what makes it better to have "both features" and allow user to choose, instead of having one feature and making it more complicated to express other problems.
+https://buttondown.com/hillelwayne/archive/ergonomic-apis-channel-invariants-and-data-views/

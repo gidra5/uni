@@ -1,1 +1,2 @@
 https://en.wikipedia.org/wiki/Tacit_programming
+https://www.reddit.com/r/ProgrammingLanguages/comments/1qein5b/are_arrays_functions/?share_id=99_7x_2JOfPorChuwT5BT&utm_medium=android_app&utm_name=androidcss&utm_source=share&utm_term=14

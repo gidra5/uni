@@ -48,52 +48,53 @@ Includes tools for:
   18. quaternions
   19. dual
   20. geometric algebra
-  21. derivatives
-  22. integrals
-  23. differential equations
-  24. interpolation and extrapolation
-  25. fft
-  26. statistics and probability sampling
-  27. [reference frames and geometry](https://www.cs.cornell.edu/~asampson/blog/gator.html)
-  28. rng 
+  21. [interval arithmetic](https://buttondown.com/hillelwayne/archive/a-brief-introduction-to-interval-arithmetic/)
+  22. derivatives
+  23. integrals
+  24. differential equations
+  25. interpolation and extrapolation
+  26. fft
+  27. statistics and probability sampling
+  28. [reference frames and geometry](https://www.cs.cornell.edu/~asampson/blog/gator.html)
+  29. rng 
     * [quasirandom number generators](https://extremelearning.com.au/unreasonable-effectiveness-of-quasirandom-sequences/)
     * fast prng
     * most statistically uniform prng
     * hardware rng
-29. styling
-30. cli parsing
-31. reflection 
-32. process env
-33. ffi
-34. asm
-35. localization and internationalization 
-36. file system and io
-37. time and timezones
-38. physics
-39. console
-40. structured logging 
+14. styling
+15. cli parsing
+16. reflection 
+17. process env
+18. ffi
+19. asm
+20. localization and internationalization 
+21. file system and io
+22. time and timezones
+23. physics
+24. console
+25. structured logging 
 	1. https://loggingsucks.com/ 
 	2. allow only enabling a subset of log hierarchy
 	3. allow log levels
-41. measures (kg, meters, etc)
-42. regexp
-43. functional stuff
-  44. monads
-  45. functors
-  46. [lenses](https://github.com/akheron/optics-ts)
-47. crypto
-48. compression
-49. encoding (json, yaml, base64, etc)
-50. hashing
-51. data structures
-52. algorithms
-53. caching
-54. concurrency
-55. primitive utilities
-56. plotting
-57. error correction codes
-58. generic device interface
-59. signals
+26. measures (kg, meters, etc)
+27. regexp
+28. functional stuff
+  29. monads
+  30. functors
+  31. [lenses](https://github.com/akheron/optics-ts)
+29. crypto
+30. compression
+31. encoding (json, yaml, base64, etc)
+32. hashing
+33. data structures
+34. algorithms
+35. caching
+36. concurrency
+37. primitive utilities
+38. plotting
+39. error correction codes
+40. generic device interface
+41. signals
   * value wrapper
   * derived computation
   * effectful computation
@@ -105,3 +106,5 @@ Signals (signal, derived, effect), generators (gen and yield), iterators and eve
 https://julesjacobs.com/2023/09/21/generalizing-itertools.html
 https://www.reddit.com/r/ProgrammingLanguages/s/f9EDIwWfFx
 https://rolph-recto.github.io/blog/introduction-to-tarjans-path-expressions-algorithm.html
+
+https://buttondown.com/hillelwayne/archive/microfeatures-id-like-to-see-in-more-languages/

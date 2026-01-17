@@ -10,3 +10,4 @@ Can be categorized by these criteria:
 
 http://conal.net/blog/posts/sequences-streams-and-segments#more-65
 https://chatgpt.com/c/69249a31-03ec-832e-8df6-12f13ecf47e6
+https://buttondown.com/hillelwayne/archive/whats-lives-between-a-set-and-a-sequence/

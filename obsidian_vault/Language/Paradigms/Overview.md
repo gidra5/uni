@@ -11,3 +11,4 @@ More granular classification can be based on a paradigm's core domain of applica
 
 
 https://en.wikipedia.org/wiki/Template:Programming_paradigms_navbox
+https://docs.scala-lang.org/scala3/reference/metaprogramming/index.html

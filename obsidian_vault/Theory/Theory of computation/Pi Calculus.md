@@ -149,6 +149,8 @@ https://epubs.siam.org/doi/epdf/10.1137/S0097539794275860
 parallel+nondet (concurrent) lambda calc - extends lambda with `+` and `|`, with them being distributive over application and eachother. These can be seen as disjunction and conjunction over lambda terms
 &/| separation - first is an actual product (multiset) of values, second is a sum (nondet union) of values.
 
+https://buttondown.com/hillelwayne/archive/the-angels-and-demons-of-nondeterminism/
+https://buttondown.com/hillelwayne/archive/adversarial-nondeterminism/
 https://parlab.eecs.berkeley.edu/sites/all/parlab/files/angelic-acm-dl.pdf
 Demonic and angelic nondeterminism are nondet choice and parallel composition.
 

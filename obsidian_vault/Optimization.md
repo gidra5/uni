@@ -9,3 +9,5 @@ Optimizations that can improve algorithmic complexity:
 * recursion through memoization
 * loops through tabulation?
 * caching in general
+
+https://youtu.be/WIZf-Doc8Bk?si=ry96QfDoHLkmbffB
