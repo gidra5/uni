@@ -1,7 +1,7 @@
 ## Project structure
 The structure of the project is as follows:
 
-1. `/bootstrap` - contains the implementation of language features and tools in the language itself.
+1. `bootstrap` - contains the implementation of language and tools in the language itself.
 2. `c` - the c implementation of the language. Supposed to provide the optimal performance.
 3. `examples` - contains examples of the language in action. Mini projects, solutions to simple problems, advent of code, euler project, etc. Anything that showcases usefulness of the language.
 4. `obsidian_vault` - contains the research, reference, getting started guides, other relevant theory. Everything about documentation of the project.
@@ -18,6 +18,8 @@ While working on the implementation, follow TDD approach. Write test cases first
 
 When designing test cases, try to follow the language's design principles, outlined in the readme and documentation.
 
-There are multiple kinds of tests we can write, described in `Quality Assurance.md` in the docs. Pick the most suitable one for your feature description and constraints.
+There are multiple kinds of tests we can write, described in `obsidian_vault/Language/Quality Assurance.md` in the docs. Pick the most suitable one for your feature description and constraints.
+
+Prefer property-based testing, when you have a choice for constants or need data/example generation.
 
 If there are questions, conflicts, ambiguities found, do not hesitate to ask and resolve them productively.

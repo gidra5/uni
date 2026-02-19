@@ -143,3 +143,5 @@ We can also define so called weak/strong modules:
 - **Strong** - A module can be compiled without its dependencies, and its dependencies can be provided later, even at runtime.
 
 To support strong modules we must have some kind of notion of module interface and that the interconnected modules agree on it. 
+
+Module resolution must be transparent. All dependencies can be inlined into a package (with a corresponding update of import paths) and the result will be the same
