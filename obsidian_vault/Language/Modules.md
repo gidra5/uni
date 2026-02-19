@@ -3,14 +3,14 @@ Package entry point is a package entry against which compiler is run.
 Dependency list is passed to compiler as a path to file, that contains mapping from dependency name to actual sources location on the machine that compiles package. 
 if compiler is passed a script, it is compiled into self-contained executable. Contains original script as an entry point, and all static dependencies of that script.
 If compiler is passed a module, it is compiled into reusable library, that can be imported statically or dynamically to dependent modules or scripts. Contains original module, and all static dependencies of that module.
-Dynamically imported modules and scripts are emitted as separate binaries, that are expected to be in the same location as dependent's file, unless specified otherwise during compilation. Statically referenced modules from the dynamic one are either bundled in, or expect a reference to the location of the module, depending on whether these dependencies are only reachable through this module or not.
+Dynamically imported modules and scripts are emitted as separate binaries, that are expected to be in the same location as dependent's file, unless specified otherwise during compilation. Statically referenced modules from the dynamic one are either bundled in, or expect a reference to the location of the module, depending on whether these dependencies are only reachable through this module or not. If is, then we can safely bundle it into a dynamic library, if not, then it must be shared, and it may be already bundled elsewhere.
 
 Module and script compilation stages are separate commands in the compiler, so that outside manager could cache results
 Cache entries are updated if stage inputs hash does not match cached hash.
 
 Interpreter's behavior is the same, except that all imports are interpreted only once they occur during execution.
 
-Foreign package entries represent the code written in other languages.
+Foreign package entries represent the code written in other languages. If it is dynamically imported, then it is interpreted as dynamically linked library, expected to be installed on the user machine.
 
 Every pre-built package entry contains:
 1. the binary source
@@ -25,7 +25,7 @@ import path resolution:
 4. If path refers to a script file - load as a script, 
 5. If path refers to any other type of file - load as a binary array.
 6. Otherwise resolve string as an external dependency using some kind of a table.
-7. Resolve rest of the path and relative to dependency's package.
+7. Resolve rest of the path relative to dependency's package.
 8. resulting path is memoized - if imported more than once use already evaluated/built module
 
 package import resolution:
@@ -71,6 +71,13 @@ export fully exposes an item to any importer. protected export exposes item only
 [modules stuff](https://thunderseethe.dev/posts/whats-in-a-module/)
 https://www.iecc.com/linker/
 
-module vilibility:
-1. Module items can be private or public
+module visibility:
+1. Module declarations can be private or public
 2. Modules in a folder can be private or public when named with postfix `.pub`
+
+Modules are collections of exports. They have a signature/schema.
+They must be independent from other modules up to an interface.
+Modules should provide namespaces. That means we still would like to have explicit file level syntax for modules.
+
+We already have other notions for collections of named things: records for data, schema for databases, interfaces, traits and effects. Each of them have unique features, but probably they can be unified. All of these are types. Schema is probably the most generic.
+We may declare operators in modules, but then its spec must be included as a part of the signature.
