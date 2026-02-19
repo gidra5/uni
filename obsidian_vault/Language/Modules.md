@@ -2,8 +2,8 @@ Package consists of package entries. Package entry is a script, module or a depe
 Package entry point is a package entry against which compiler is run.
 Dependency list is passed to compiler as a path to file, that contains mapping from dependency name to actual sources location on the machine that compiles package. 
 if compiler is passed a script, it is compiled into self-contained executable. Contains original script as an entry point, and all static dependencies of that script.
-If compiler is passed a module, it is compiled into reusable library, that can be imported statically or dynamically to dependant modules or scripts. Contains original module, and all static dependencies of that module.
-Dynamically imported modules and scripts are emitted as separate binaries, that are expected to be in the same location as dependant's file, unless specified otherwise during compilation.
+If compiler is passed a module, it is compiled into reusable library, that can be imported statically or dynamically to dependent modules or scripts. Contains original module, and all static dependencies of that module.
+Dynamically imported modules and scripts are emitted as separate binaries, that are expected to be in the same location as dependent's file, unless specified otherwise during compilation. Statically referenced modules from the dynamic one are either bundled in, or expect a reference to the location of the module, depending on whether these dependencies are only reachable through this module or not.
 
 Module and script compilation stages are separate commands in the compiler, so that outside manager could cache results
 Cache entries are updated if stage inputs hash does not match cached hash.
