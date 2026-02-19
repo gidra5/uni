@@ -128,3 +128,16 @@ https://en.wikipedia.org/wiki/Network_model
 
 Roman Храновський, [1/26/2026 8:44 AM]
 https://www.reddit.com/r/Compilers/s/cXEJZ7ynyR
+
+Modules are defined by two key concepts:
+1. Namespacing
+2. Packaging
+
+The first one defines core semantics of the modules - they are a collection of entities grouped under a common name. Some can be private, others are public.
+The second one defines low-level semantics - how do we split and combine the modules between themselves. How "self-contained" are they, and how do we combine them into larger pieces.
+
+In JS development we have ES modules to cover namespacing and bundlers to cover packaging.
+
+We can also define so called weak/strong modules:
+- **Weak** - A module must have all dependencies available before we can start compiling it
+- **Strong** - A module can be compiled without its dependencies, and its dependencies can be provided later, even at runtime.
