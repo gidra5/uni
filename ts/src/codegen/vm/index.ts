@@ -1,11 +1,22 @@
 import { NodeType, Tree } from "../../ast.js";
 import { desugar } from "../../analysis/desugar.js";
+import { liftEffectIrToAst, lowerAstToEffectIr, type EffectIrProgram } from "../../ir/effects.js";
 import { assert, nextId } from "../../utils/index.js";
 import { Instruction, InstructionCode, Program } from "../../vm/instructions.js";
 
-export const generateVm2Bytecode = (ast: Tree): Program => {
+export const generateVm2BytecodeFromAst = (ast: Tree): Program => {
   const generator = new Vm2Generator();
   return generator.generate(ast);
+};
+
+export const generateVm2BytecodeFromIr = (program: EffectIrProgram): Program => {
+  const ast = liftEffectIrToAst(program);
+  return generateVm2BytecodeFromAst(ast);
+};
+
+export const generateVm2Bytecode = (ast: Tree): Program => {
+  const ir = lowerAstToEffectIr(ast);
+  return generateVm2BytecodeFromIr(ir);
 };
 
 class Vm2Generator {

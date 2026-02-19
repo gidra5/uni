@@ -75,7 +75,21 @@ TL;DR математики изобрели dependency injection в фп.
 [effect systems](https://vhyrro.github.io/posts/effect-systems/)
 [koka](https://koka-lang.github.io/koka/doc/book.html#why)
 [examples](https://www.reddit.com/r/ProgrammingLanguages/s/Gn6Phys9eh)
+https://www.semanticscholar.org/reader/4b7c93c5820956b17b9e9e7d418bcdb853e2271e
+https://homepages.inf.ed.ac.uk/slindley/papers/leak-draft-november2018.pdf
+effect pollution
 
+integrate effect handlers with actual monads. So when we get a suitable monad instance as a result, we can "unwrap" it, maybe?
+Since applicatives and functors are special cases of monads, we can map any such instance into an effect of some sort.
+https://homepages.inf.ed.ac.uk/slindley/papers/aeia.pdf?utm_source=chatgpt.com
+https://dl.acm.org/doi/10.1145/3341694?utm_source=chatgpt.com
+https://en.wikipedia.org/wiki/Applicative_functor
+
+https://dl.acm.org/doi/pdf/10.1145/3290319
+effects can be abstract - we only state that the effect exists and is emitted by some functions, but do not expose the actual interface, so that the client cant just implement it and handle it by themselves. In that sense it really becomes a cabapility - you need to have a certain capability in scope so that you can use the methods that emit the effect.
+This is essential for strong modules.
+
+Evaluation effects are sets.
 ```
 logger :=
 	log: fn (callback, msg) {

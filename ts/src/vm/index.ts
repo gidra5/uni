@@ -1,4 +1,11 @@
-import { generateVm2Bytecode } from "../codegen/vm/index.js";
+import {
+  generateVm2Bytecode,
+  generateVm2BytecodeFromAst,
+  generateVm2BytecodeFromIr,
+} from "../codegen/vm/index.js";
+import { parseScript } from "../parser/parser.js";
+import { parseTokenGroups } from "../parser/tokenGroups.js";
+import { validateTokenGroups } from "../analysis/validate.js";
 import { handlers, resumeContinuation } from "./handlers.js";
 import { mergeNatives } from "./natives.js";
 import {
@@ -13,6 +20,7 @@ import {
   Program,
   Value,
 } from "./instructions.js";
+import type { EffectIrProgram } from "../ir/effects.js";
 import { assert, nextId } from "../utils/index.js";
 
 export type NativeHandler = (vm: VM, args: Value[]) => Value | void;
@@ -293,5 +301,13 @@ export class VM {
   }
 }
 
-export { InstructionCode, generateVm2Bytecode };
+export const compileSourceToVm2Bytecode = (source: string): Program => {
+  const tokens = parseTokenGroups(source);
+  const [, validatedTokens] = validateTokenGroups(tokens);
+  const ast = parseScript(validatedTokens);
+  return generateVm2Bytecode(ast);
+};
+
+export { InstructionCode, generateVm2Bytecode, generateVm2BytecodeFromAst, generateVm2BytecodeFromIr };
+export type { EffectIrProgram };
 export type { Instruction, Program, Value };

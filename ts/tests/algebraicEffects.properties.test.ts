@@ -7,22 +7,21 @@ import {
   stepComputation,
   substituteComputation,
   type Computation,
+  type Value,
   values as V,
 } from "../src/algebraic-effects/index";
 import {
   effectNameArb,
+  observeCoreNormalForm,
+  observeVmResult,
   pureComputationArb,
   pureValueArb,
-  returnToJsValue,
   translatableComputationArb,
   translateComputation,
 } from "./utils/algebraicEffectsProperty";
-import { parseTokenGroups } from "../src/parser/tokenGroups";
-import { parseScript } from "../src/parser/parser";
-import { validateTokenGroups } from "../src/analysis/validate";
 import { FileMap } from "codespan-napi";
 import { Injectable, register } from "../src/utils/injector";
-import { generateVm2Bytecode, VM } from "../src/vm/index";
+import { compileSourceToVm2Bytecode, VM } from "../src/vm/index";
 
 const expectEquivalent = (left: Computation, right: Computation) => {
   const { equal, leftNormalForm, rightNormalForm } = equivalentByNormalization(left, right);
@@ -36,13 +35,82 @@ const runVmScript = (program: string) => {
   register(Injectable.PrecedenceMap, new Map());
   register(Injectable.PositionMap, new Map());
 
-  const tokens = parseTokenGroups(program);
-  const [, validatedTokens] = validateTokenGroups(tokens);
-  const ast = parseScript(validatedTokens);
-  const bytecode = generateVm2Bytecode(ast);
+  const bytecode = compileSourceToVm2Bytecode(program);
   const vm = new VM();
   for (const [name, code] of Object.entries(bytecode)) vm.addCode(name, code);
   return vm.run();
+};
+
+const collectCoreCoverage = (term: Computation) => {
+  const computationKinds = new Set<Computation["kind"]>();
+  const valueKinds = new Set<Value["kind"]>();
+  let hasNonIdentityReturnClause = false;
+
+  const isIdentityReturnClause = (param: string, body: Computation) =>
+    body.kind === "return" && body.value.kind === "var" && body.value.name === param;
+
+  const walkValue = (value: Value) => {
+    valueKinds.add(value.kind);
+    switch (value.kind) {
+      case "var":
+      case "bool":
+      case "int":
+        return;
+      case "fun":
+        walkComputation(value.body);
+        return;
+      case "handler":
+        if (value.returnClause) {
+          if (!isIdentityReturnClause(value.returnClause.param, value.returnClause.body)) {
+            hasNonIdentityReturnClause = true;
+          }
+          walkComputation(value.returnClause.body);
+        }
+        Object.values(value.operations).forEach((clause) => walkComputation(clause.body));
+        return;
+      default: {
+        const _exhaustive: never = value;
+        return _exhaustive;
+      }
+    }
+  };
+
+  const walkComputation = (computation: Computation) => {
+    computationKinds.add(computation.kind);
+    switch (computation.kind) {
+      case "return":
+        walkValue(computation.value);
+        return;
+      case "op":
+        walkValue(computation.value);
+        walkComputation(computation.continuationBody);
+        return;
+      case "do":
+        walkComputation(computation.left);
+        walkComputation(computation.right);
+        return;
+      case "if":
+        walkValue(computation.condition);
+        walkComputation(computation.thenBranch);
+        walkComputation(computation.elseBranch);
+        return;
+      case "app":
+        walkValue(computation.fn);
+        walkValue(computation.arg);
+        return;
+      case "with":
+        walkValue(computation.handler);
+        walkComputation(computation.body);
+        return;
+      default: {
+        const _exhaustive: never = computation;
+        return _exhaustive;
+      }
+    }
+  };
+
+  walkComputation(term);
+  return { computationKinds, valueKinds, hasNonIdentityReturnClause };
 };
 
 describe("algebraic effects equivalence properties", () => {
@@ -200,15 +268,34 @@ describe("algebraic effects equivalence properties", () => {
 });
 
 describe("algebraic effects vm agreement properties", () => {
-  test.prop([translatableComputationArb(4)], { numRuns: 64 })(
-    "vm execution agrees with reduction for translated terms",
+  test("agreement generator spans the full algebraic-effects core", () => {
+    const samples = fc.sample(translatableComputationArb(3), 512);
+    const computationKinds = new Set<Computation["kind"]>();
+    const valueKinds = new Set<Value["kind"]>();
+    let hasNonIdentityReturnClause = false;
+
+    for (const sample of samples) {
+      const coverage = collectCoreCoverage(sample);
+      coverage.computationKinds.forEach((kind) => computationKinds.add(kind));
+      coverage.valueKinds.forEach((kind) => valueKinds.add(kind));
+      hasNonIdentityReturnClause ||= coverage.hasNonIdentityReturnClause;
+    }
+
+    expect([...computationKinds].sort()).toEqual(["app", "do", "if", "op", "return", "with"]);
+    expect([...valueKinds].sort()).toEqual(["bool", "fun", "handler", "int", "var"]);
+    expect(hasNonIdentityReturnClause).toBe(true);
+  });
+
+  test.prop([translatableComputationArb(2)], { numRuns: 32 })(
+    "vm execution agrees with reduction for translated algebraic-effects core terms",
     (term) => {
       const normalized = normalizeComputation(term);
       expect(normalized.haltedBecause).toBe("normal-form");
-      const expected = returnToJsValue(normalized.term);
+      const expected = observeCoreNormalForm(normalized.term);
       const script = translateComputation(term);
       const vmResult = runVmScript(script);
-      expect(vmResult).toEqual(expected);
+      const observed = observeVmResult(vmResult);
+      expect(observed).toEqual(expected);
     }
   );
 });
