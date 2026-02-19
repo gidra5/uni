@@ -6,6 +6,7 @@ import { Injectable, register } from "../src/utils/injector";
 import { FileMap } from "codespan-napi";
 import { generateVm2Bytecode, VM, type EffectHandle, type Program } from "../src/vm/index";
 import { validateTokenGroups } from "../src/analysis/validate";
+import { computations as AC, normalizeComputation, values as AV } from "../src/algebraic-effects/index";
 
 beforeEach(() => {
   register(Injectable.FileMap, new FileMap());
@@ -1573,6 +1574,35 @@ describe("expressions", () => {
       `,
         { tuple: [123, 456] }
       ));
+
+    it("agrees with algebraic-effects reduction on a semantically equivalent program", () => {
+      const calculusProgram = AC.withHandle(
+        AV.handler({
+          returnClause: { param: "x", body: AC.ret(AV.variable("x")) },
+          operations: {
+            decide: {
+              arg: "value",
+              k: "k",
+              body: AC.ret(AV.integer(123)),
+            },
+          },
+        }),
+        AC.op("decide", AV.bool(false), "y", AC.ifThenElse(AV.variable("y"), AC.ret(AV.integer(123)), AC.ret(AV.integer(456))))
+      );
+
+      const reduced = normalizeComputation(calculusProgram);
+      expect(reduced.haltedBecause).toBe("normal-form");
+      expect(reduced.term.kind).toBe("return");
+      expect(reduced.term.kind === "return" && reduced.term.value.kind === "int").toBe(true);
+      const reducedValue = reduced.term.kind === "return" && reduced.term.value.kind === "int" ? reduced.term.value.value : null;
+
+      const { result } = runProgram(`
+        inject record { decide: 123 } ->
+        handle ($decide) ()
+      `);
+
+      expect(result).toEqual(reducedValue);
+    });
 
     it("block-inject-fn-handle twice", () =>
       testCase(
