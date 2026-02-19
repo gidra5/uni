@@ -108,3 +108,40 @@ https://www.reddit.com/r/ProgrammingLanguages/s/f9EDIwWfFx
 https://rolph-recto.github.io/blog/introduction-to-tarjans-path-expressions-algorithm.html
 
 https://buttondown.com/hillelwayne/archive/microfeatures-id-like-to-see-in-more-languages/
+
+Roman Храновський, [2/16/2026 8:48 PM]
+Caching:
+1. Memo on functions,generics, macros, eval
+2. "Materialized view" on tables
+3. Indices
+4. Channels?
+5. Effects handling
+
+Invalidation, miss, eviction 
+
+ Virtualization:
+1. Lists, tables, maps, (multi)sets
+2. Threads, vectors, channels?
+3. Environments?
+4. Heap?
+5. Ast in macros
+6. Stacks for values, calls, handlers.
+7. arbitrary precision numbers (bigints and bigfloats? if it even makes sense)
+
+Swapping
+Is it a kind of caching?
+
+They are duals of each other, kinda. One trades space for time (we get result faster), other does the opposite, trades time for space (we can manipulate larger data transparently, but will hit delays on misses).
+
+Roman Храновський, [2/16/2026 8:56 PM]
+Probabilistic sampling or hashing. Can trade accuracy for time/space. Like we can compute small hashes and compare them instead - really fast but it does not make us 100% sure it is correct.
+
+caching directly impacts performance characterisitics of the program, thus the compiler shoould be aware of it.
+
+Roman Храновський, [2/3/2026 6:13 PM]
+https://www.reddit.com/r/ProgrammingLanguages/s/FQVrrzVqMt
+
+Roman Храновський, [2/3/2026 6:14 PM]
+Rust allows equal power through unsafe code, which is ok, but unrigorous and foregoes the benefits of safe rust.
+
+There is something called dx12 work graph

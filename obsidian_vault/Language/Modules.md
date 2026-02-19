@@ -81,3 +81,50 @@ Modules should provide namespaces. That means we still would like to have explic
 
 We already have other notions for collections of named things: records for data, schema for databases, interfaces, traits and effects. Each of them have unique features, but probably they can be unified. All of these are types. Schema is probably the most generic.
 We may declare operators in modules, but then its spec must be included as a part of the signature.
+
+Roman Храновський, [2/3/2026 6:05 PM]
+https://www.reddit.com/r/ProgrammingLanguages/s/hEqWYIqzpz
+
+Roman Храновський, [2/3/2026 6:07 PM]
+Must support some form of precompilation of modules and importing of them. We may precompile up to some step, like up to parsing, expanding, optimization, codegen, etc.
+
+Roman Храновський, [2/2/2026 6:14 PM]
+https://www.unison-lang.org/docs/the-big-idea/
+
+Roman Храновський, [2/2/2026 6:14 PM]
+https://github.com/fragnix/fragnix?tab=readme-ov-file#vision
+
+Structural modeling - Practical Alloy
+https://practicalalloy.github.io/chapters/structural-modeling/index.html
+
+Roman Храновський, [2/2/2026 7:34 AM]
+https://alloytools.org/alloy6.html
+
+Roman Храновський, [2/2/2026 7:44 AM]
+Haskell for all: Type-safe eval in Grace
+https://haskellforall.com/2026/01/typesafe-eval
+
+
+Roman Храновський, [1/28/2026 1:59 PM]
+adding methods to a particular combination of generics/parameters to generic
+
+Roman Храновський, [1/28/2026 3:37 PM]
+Disentangling unification and implicit coercion
+https://www.jonmsterling.com/01JQ/
+
+Roman Храновський, [1/19/2026 4:55 PM]
+Solving a math problem with planner programming • Buttondown
+https://buttondown.com/hillelwayne/archive/solving-a-math-problem-with-planner-programming/
+
+Roman Храновський, [1/19/2026 4:55 PM]
+Planning as a part of flow scope
+
+Roman Храновський, [1/21/2026 10:28 PM]
+https://www.reddit.com/r/ProgrammingLanguages/s/P415uTCoXY
+
+Roman Храновський, [1/24/2026 6:41 PM]
+Network model - Wikipedia
+https://en.wikipedia.org/wiki/Network_model
+
+Roman Храновський, [1/26/2026 8:44 AM]
+https://www.reddit.com/r/Compilers/s/cXEJZ7ynyR

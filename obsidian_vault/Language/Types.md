@@ -39,3 +39,12 @@ Subtyping `<:`:
 
 https://www.reddit.com/r/ProgrammingLanguages/comments/1q895ag/list_of_type_operators/
 https://yosefk.com/blog/can-your-static-type-system-handle-linear-algebra.html
+https://www.reddit.com/r/Compilers/s/LSUNly2dud
+
+typechecking should allow two specific workflows:
+- changing the types and "following the typechecker" to fix the code, possibly even automatically.
+- changing the code generating some result and seeing what other places need to be adjusted for this change. Can be fixed in a similar way to the first point
+
+The biggest damage to the programming languages development.
+Sum types 
+Checked Exceptions

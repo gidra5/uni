@@ -18,3 +18,9 @@ It also includes:
 2. type system
 3. constant folding
 4. decorators and annotations
+
+Allow targeting really small programs. Cpu cache is 32k data 32k code in modern cpu, and we must be able to work within these limits to leverage the most performance
+
+https://www.reddit.com/r/ProgrammingLanguages/s/u2cGou6B4j
+https://www.reddit.com/r/ProgrammingLanguages/s/UzCjUTWvEQ
+https://www.reddit.com/r/ProgrammingLanguages/s/QwbC2v4iHj
