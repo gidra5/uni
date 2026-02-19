@@ -141,3 +141,5 @@ In JS development we have ES modules to cover namespacing and bundlers to cover 
 We can also define so called weak/strong modules:
 - **Weak** - A module must have all dependencies available before we can start compiling it
 - **Strong** - A module can be compiled without its dependencies, and its dependencies can be provided later, even at runtime.
+
+To support strong modules we must have some kind of notion of module interface and that the interconnected modules agree on it. 
