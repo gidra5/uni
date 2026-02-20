@@ -130,3 +130,9 @@ https://www.logic.at/staff/agata/surveyhypdispl.pdf?utm_source=chatgpt.com
 https://arxiv.org/pdf/1609.05343
 
 https://www.postgresql.org/docs/current/rules.html
+
+https://learn.microsoft.com/en-us/dotnet/csharp/linq/
+
+https://learn.microsoft.com/en-us/dotnet/csharp/events-overview
+
+one of the things we would like to allow is patching of code we don't own. Lets say the is a defect in the library we use, then we might be able to patch it locally in our code, without having to wait for the library to be updated, potentially causing a breaking change.

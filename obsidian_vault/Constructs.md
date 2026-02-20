@@ -15,6 +15,8 @@ basic constructs of the language:
 8. Databases/Flows/Fixpoints/State-machines.
 9. Annotations
 10. Memory/Heap?
+11. Caching/Virtualiuzation/crosscutting concerns?
+12. Traits/extensions
 
 Each of the constructs has its own syntax and expression semantics. All of them must compose with every other construct.
 
@@ -43,7 +45,7 @@ We can also check value against a type, and get whether the value is of the give
 Otherwise they interact with expressions the same way as values.
 
 ## Environments
-environments define evaluation context of expressions. formally they are mappings from symbols to values.
+environments define evaluation context of expressions. formally they are mappings from symbols to values. They are described as a record-like value.
 
 that makes symbols and environments another kind of values.
 
@@ -82,3 +84,8 @@ in expression can be used to execute queries on it or as a value.
 in patterns?
 as envs?
 
+## Effects
+
+We can define effects as a collection of operations and a return. These are collected into a handler - a record-like value. They are typed with an effect type.
+
+We have an expression that accept handlers - "inject". Any other values are not valid handlers. But record-like values can be coerced to handlers.

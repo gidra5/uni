@@ -195,3 +195,15 @@ https://www.microsoft.com/en-us/research/wp-content/uploads/2017/06/algeff-in-c-
 https://typesanitizer.com/blog/effects-convo.html
 
 https://chatgpt.com/c/6929e5e0-9770-832e-89e3-c90b6fc2069e
+https://arxiv.org/pdf/2302.01415 higher order effects
+https://hal.science/hal-05428145/document higher order effects as algebraic effects
+https://www.semanticscholar.org/paper/Hefty-algebras%3A-Modular-elaboration-of-higher-order-Rest-Bach/85ad54110b1dba0095e958ac77a0e98e98f19d67 another one
+https://arxiv.org/pdf/2507.10301 Rows and Capabilities as Modal Effects
+https://arxiv.org/pdf/2510.07582 Type, Ability, and Effect Systems: Perspectives on
+Purity, Semantics, and Expressiveness
+https://www.jsigal.com/assets/pdf/ADVIEH.pdf automatic diff via effect handlers
+https://dl.acm.org/doi/epdf/10.1145/3571198 Sound Automatic Diﬀerentiation of Expected Values ofProbabilistic Programs
+https://dl.acm.org/doi/epdf/10.1145/3731678 Scoped Effects, Scoped Operations, and Parameterized Algebraic Theories
+
+When binding a handler, operations may be parametrized, as for example opening a certain file, or allocating memory of a certain size.
+Another thing is that effects may allocate resources that must be freed eventually, like file handles, allocated memory, etc. Thus there are also scoped effects. These can be modeled with parameterized effects as allocating and disposing the scope name resource.
