@@ -1449,6 +1449,72 @@ describe("expressions", () => {
         123, // or 456
       ),
     );
+
+    it.todo("wait", () =>
+      testCase(
+        `
+        import "std/concurrency" as { wait };
+        
+        wait 500;
+        123
+      `,
+        123,
+      ),
+    );
+
+    it.todo("force sync", () =>
+      testCase(
+        `
+        import "std/concurrency" as { creating_task };
+
+        without creating_task {
+          async 123 // throws, since creating tasks is not allowed
+        };
+      `,
+        expect.objectContaining({
+          effect: { symbol: "atom:creating_task", name: "creating_task" },
+        }),
+      ),
+    );
+
+    it.todo("event emitter", () =>
+      testCase(
+        `
+        emitter := event()
+        mut counter := ""
+        subscribe emitter fn x do counter += x + "1"
+        once emitter fn x do counter += x + "2"
+        
+        emit emitter "hello"
+
+        counter
+      `,
+        "hello1hello2",
+      ),
+    );
+
+    it.todo("chan collect to list", () =>
+      testCase(
+        `
+        import "std/concurrency" as { wait }
+  
+        mut list := ()
+        chan := channel()
+  
+        async {
+          x2 := <- chan
+          list = (x2,)
+          x1 := <- chan
+          list = (x2, x1)
+        }
+
+        chan <- 1
+        wait 0
+        list
+      `,
+        { tuple: [1] },
+      ),
+    );
   });
 
   describe("effect handlers", () => {
