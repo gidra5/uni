@@ -2,3 +2,6 @@ Interface abstractions must be complete - the should equivalent in power to the 
 Completness ensures that the implementation is never modified, only extended.
 Once an interface is complete, everything you may want to use it with is possible and need not be changed internally.
 Anything else can be added to define DSL for easier usage.
+
+TODO: find where to place this
+indexing a value/env as a function call

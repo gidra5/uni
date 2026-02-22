@@ -24,3 +24,18 @@ We may define trait implementations as private, so that it is not overlapping wi
 from [this paper](https://arxiv.org/pdf/1512.01895) it seems that once we only enforce local coherence, the type checking now depends on the order between the implementation resolution. And that means the program may behave differently depending on how we infer types or inline terms.
 
 Another approach is to define implementations as named values instead, which we need to explicitly apply.
+https://github.com/unisonweb/unison/issues/502?utm_source=chatgpt.com
+
+Besides coherence, another property that we may seek is stability of type substitutions. The issue is that
+the behavior of resolution for an expression can change if it gets a more specific type, leading to a different evaluation result. Due to that, overlapping implementations are problematic, since they apply to the same type but may have different semantics. When reasoning locally it makes sense to pick the most generic implementation, yet once we try inlining code, we will get a more specific type for a particular expression and now picking the the most generic one does not make sense, we would want to pick the best match for the type at hand, and that is actually the more specific one.
+
+Lets say out expression has type `T` and it resolves to a set of implementations `I`. Then if we change type to be `T'` such that `T > T'`, then the set of implementations `I'` for that type must be the same as `I`.
+
+https://i.cs.hku.hk/~bruno/papers/JFPImplicits.pdf
+
+The stability problem arises in a differet way as well. If we were to accept two instances of a type, how should we resolve implementations for each of the instances? Ideally the same implementation set should be used for both instances.
+
+Implicit Programming as a paradigm of abusing trait-like structures
+
+Besides subtyping or higher order types, traits allow us to constrain type parameters to have some specific properties available. These tools are complementary in some ways, by also contradictory in others. We can combine these constraints to get a more specific constraint, but also each of them separately allows for similar results.
+
