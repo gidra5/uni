@@ -7,14 +7,15 @@ basic constructs of the language:
 3. Environments
     1. Declarations
     2. Closures
-4. Modules
-5. Effects
-6. Threads?
-7. Patterns
-    8. lenses?
-8. Databases/Flows/Fixpoints/State-machines.
-9. Annotations
-10. Memory/Heap?
+4. Patterns
+    1. lenses?
+5. Databases/Flows/Fixpoints/State-machines.
+6. Annotations
+7. Effects
+8. Modules
+9. Threads?
+10. Traits?
+11. Memory/Heap?
 11. Caching/Virtualiuzation/crosscutting concerns?
 12. Traits/extensions
 
