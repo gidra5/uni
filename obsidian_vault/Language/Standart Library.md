@@ -82,7 +82,7 @@ Includes tools for:
   29. monads
   30. functors
   31. [lenses](https://github.com/akheron/optics-ts)
-29. crypto
+29. cryptography
 30. compression
 31. encoding (json, yaml, base64, etc)
 32. hashing
@@ -101,6 +101,8 @@ Includes tools for:
 42. event systems
 43. reactive streams
 44. [conflict free data types](https://github.com/HowProgrammingWorks/CRDT)
+45. formal methods
+  * [library of proofs](https://www.reddit.com/r/ProgrammingLanguages/s/oOnGsAhSM6)
 
 Signals (signal, derived, effect), generators (gen and yield), iterators and events through channels
 https://julesjacobs.com/2023/09/21/generalizing-itertools.html
@@ -138,6 +140,10 @@ Probabilistic sampling or hashing. Can trade accuracy for time/space. Like we ca
 
 caching directly impacts performance characterisitics of the program, thus the compiler shoould be aware of it.
 
+We must model a memory hierarchy, where the faster to access memory is smaller, and holds view into the slower, larger memory.
+
+https://github.com/taolson/Admiran/blob/main/doc/Lazy.md
+
 Roman Храновський, [2/3/2026 6:13 PM]
 https://www.reddit.com/r/ProgrammingLanguages/s/FQVrrzVqMt
 
@@ -145,3 +151,5 @@ Roman Храновський, [2/3/2026 6:14 PM]
 Rust allows equal power through unsafe code, which is ok, but unrigorous and foregoes the benefits of safe rust.
 
 There is something called dx12 work graph
+
+https://www.reddit.com/r/Compilers/s/wCrKkE9tDD

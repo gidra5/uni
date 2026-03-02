@@ -24,7 +24,7 @@ https://www.reddit.com/r/ProgrammingLanguages/comments/1fyxu4n/whats_the_coolest
 https://arxiv.org/pdf/2108.11155
 https://plasmalang.org/about.html
 https://effekt-lang.org/quickstart.html
-
+https://www.reddit.com/r/ProgrammingLanguages/comments/1r68cg2/comment/o5oo1cm/?share_id=z-PrZ6cdqApWJYRQxAl49&utm_medium=android_app&utm_name=androidcss&utm_source=share&utm_term=14
 
 https://cs.lmu.edu/~ray/notes/languagedesignnotes/
 

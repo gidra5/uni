@@ -24,3 +24,5 @@ Allow targeting really small programs. Cpu cache is 32k data 32k code in modern 
 https://www.reddit.com/r/ProgrammingLanguages/s/u2cGou6B4j
 https://www.reddit.com/r/ProgrammingLanguages/s/UzCjUTWvEQ
 https://www.reddit.com/r/ProgrammingLanguages/s/QwbC2v4iHj
+
+https://www.reddit.com/r/cpp/s/S9cYcSyAcf

@@ -28,3 +28,7 @@ https://monkeywritescode.blogspot.com/p/c-exceptions-under-hood.html?m=1
 https://www.reddit.com/r/Compilers/s/pcji5zcOt7
 https://tailrecursion.com/~alan/Lisp/DestinationDrivenCompilation.html
 https://www.reddit.com/r/ProgrammingLanguages/comments/1q8vg2q/iso_literature_on_efficient_representation_of/
+https://thunderseethe.dev/posts/compiler-education-deserves-a-revoluation/
+https://www.reddit.com/r/ProgrammingLanguages/s/GpTf2TVinB
+
+https://www.reddit.com/r/Compilers/s/bQU3YVKKKe

@@ -47,3 +47,5 @@ https://chatgpt.com/c/69492f94-9a50-8328-82de-7719e0739d59
 
 https://hackage.haskell.org/package/pipes
 https://thunderseethe.dev/posts/in-search-of-the-perfect-fold/
+
+Treat session types as foldable iterators and structured recursion
