@@ -460,11 +460,11 @@ describe("expressions", () => {
 
     it("in finds existing key", () => testCase("$key in (key: 1, key2: 2)", true));
 
-    it.todo("in not finds not existing key", () => testCase("$key3 in (key: 1, key2: 2)", false));
+    it("in not finds not existing key", () => testCase("$key3 in (key: 1, key2: 2)", false));
 
-    it.todo("in finds index holds value in tuple", () => testCase("1 in (1, 2)", true));
+    it("in finds index holds value in tuple", () => testCase("1 in (false, 2)", true));
 
-    it.todo("in finds index not holds value in tuple", () => testCase("5 in (1, 2)", false));
+    it("in finds index not holds value in tuple", () => testCase("5 in (1, 2)", false));
 
     it("eq", () => testCase("1 == 1", true));
 

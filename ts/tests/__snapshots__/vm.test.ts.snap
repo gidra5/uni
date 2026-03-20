@@ -507,6 +507,110 @@ exports[`expressions > boolean expressions > in finds existing key 1`] = `
 }
 `;
 
+exports[`expressions > boolean expressions > in finds index holds value in tuple 1`] = `
+{
+  "main": [
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": false,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "In",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > in finds index not holds value in tuple 1`] = `
+{
+  "main": [
+    {
+      "arg1": 5,
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Tuple",
+    },
+    {
+      "code": "In",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
+exports[`expressions > boolean expressions > in not finds not existing key 1`] = `
+{
+  "main": [
+    {
+      "arg1": {
+        "name": "key3",
+        "symbol": "atom:key3",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "name": "key",
+        "symbol": "atom:key",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": 1,
+      "code": "Const",
+    },
+    {
+      "arg1": {
+        "name": "key2",
+        "symbol": "atom:key2",
+      },
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Const",
+    },
+    {
+      "arg1": 2,
+      "code": "Record",
+    },
+    {
+      "code": "In",
+    },
+    {
+      "code": "Return",
+    },
+  ],
+}
+`;
+
 exports[`expressions > boolean expressions > not on boolean 1`] = `
 {
   "main": [

@@ -342,7 +342,11 @@ export const handlers: Record<InstructionCode, (vm: VM, thread: Thread, instr: I
     let result = false;
 
     if (isTuple(collection)) {
-      result = collection.tuple.some((x) => deepEqual(x, item));
+      result =
+        typeof item === "number" &&
+        Number.isInteger(item) &&
+        item >= 0 &&
+        Object.prototype.hasOwnProperty.call(collection.tuple, item);
     } else if (isRecord(collection)) {
       result = Object.prototype.hasOwnProperty.call(collection.record, normalizeKey(item));
     }
