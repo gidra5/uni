@@ -13,8 +13,8 @@ document := "
 
 lines := {
   mut lines := document.split("\n")
-  lines = map lines fn line do line.replace "\\s+" ""
-  filter lines fn line do line != ""
+  lines = map lines fn line: line.replace "\\s+" ""
+  filter lines fn line: line != ""
 }
 
 numbers := flat_map lines fn mut line {
@@ -23,7 +23,7 @@ numbers := flat_map lines fn mut line {
   while line != "" {
     if line.char_at(0).match("\\d") {
       digit := number(line.char_at(0))
-      if !(0 in digits) do digits[0] = digit 
+      if !(0 in digits): digits[0] = digit 
       digits[1] = digit
     }
     line = line.slice(1,)

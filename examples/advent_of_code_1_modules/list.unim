@@ -17,7 +17,7 @@ slice := fn (mut list, mut start = 0, mut end = (list.length)) {
 
 export reduce := fn list, reducer, merge, initial {
   len := list.length
-  if len == 0 do return initial
+  if len == 0: return initial
 
   midpoint := math.floor(len / 2)
   item := list[midpoint]
@@ -30,7 +30,7 @@ export reduce := fn list, reducer, merge, initial {
 }
 
 export filter := fn list, predicate {
-  reduce list (fn acc, item -> if predicate item do (...acc, item) else acc) (fn first, second -> (...first, ...second)) ()
+  reduce list (fn acc, item -> if predicate item: (...acc, item) else acc) (fn first, second -> (...first, ...second)) ()
 }
 
 export map := fn list, mapper {

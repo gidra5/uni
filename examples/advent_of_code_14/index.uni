@@ -23,7 +23,7 @@ for columnIndex in range 0 (matrix[0].length) {
       _handle = rowIndex
     }
 
-    if char == "O" do count++
+    if char == "O": count++
   }
 
   load := col_height - _handle - (1 + count)/2

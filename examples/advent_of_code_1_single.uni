@@ -17,7 +17,7 @@ slice := fn (mut list, mut start = 0, mut end = (list.length)) {
 
 reduce := fn list, reducer, merge, initial {
   len := list.length
-  if len == 0 do return initial
+  if len == 0: return initial
 
   midpoint := math.floor(len / 2)
   item := list[midpoint]
@@ -30,7 +30,7 @@ reduce := fn list, reducer, merge, initial {
 }
 
 filter := fn list, predicate {
-  reduce list (fn acc, item -> if predicate item do (...acc, item) else acc) (fn first, second -> (...first, ...second)) ()
+  reduce list (fn acc, item -> if predicate item: (...acc, item) else acc) (fn first, second -> (...first, ...second)) ()
 }
 
 map := fn list, mapper {
@@ -58,8 +58,8 @@ document := "
 
 lines := {
   mut lines := document.split("\n")
-  lines = map lines fn line do line.replace "\\s+" ""
-  filter lines fn line do line != ""
+  lines = map lines fn line: line.replace "\\s+" ""
+  filter lines fn line: line != ""
 }
 
 numbers := flat_map lines fn mut line {
@@ -68,7 +68,7 @@ numbers := flat_map lines fn mut line {
   while line != "" {
     if line.char_at(0).match("\\d") {
       digit := number(line.char_at(0))
-      if !(0 in digits) do digits[0] = digit
+      if !(0 in digits): digits[0] = digit
       digits[1] = digit
     }
     line = line.slice(1,)

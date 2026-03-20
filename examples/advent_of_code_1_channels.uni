@@ -16,7 +16,7 @@ lines := channel "lines"
 async {
   for mut line in document.split("\n") {
     line = line.replace "\\s+" ""
-    if line != "" do lines <- line
+    if line != "": lines <- line
   }
 
   close lines
@@ -26,15 +26,15 @@ numbers := channel "numbers"
 mut line_count := 0
 mut line_handled_count := 0
 mut lines_done := false
-inc := fn do line_handled_count++
+inc := fn: line_handled_count++
 
 async loop {
   mut line, status := <-?lines
-  if status == :closed {
+  if status == $closed {
     lines_done = true
     break()
   }
-  if status == :empty do continue()
+  if status == $empty: continue()
   line_count++
   
   async {
@@ -67,8 +67,8 @@ mut sum := 0
 
 while true {
   number, status := <-?numbers
-  if status == :closed do break()
-  if status == :empty do continue()
+  if status == $closed: break()
+  if status == $empty: continue()
   sum += number
 }
 
