@@ -1,10 +1,10 @@
 import { Iterator } from "iterator-js";
-import { NodeType, Tree } from "../../ast";
-import { assert, nextId, unreachable } from "../../utils";
-import { inject, Injectable } from "../../utils/injector";
-import { UnificationTable } from "./unification";
-import { PhysicalType, Type } from "./utils";
-import { Binding, resolve } from "../scope";
+import { NodeType, Tree } from "../../ast.js";
+import { assert, nextId, unreachable } from "../../utils/index.js";
+import { inject, Injectable } from "../../utils/injector.js";
+import { UnificationTable } from "./unification.js";
+import { PhysicalType, Type } from "./utils.js";
+import { Binding, resolve } from "../scope.js";
 
 export type TypeSchema = Map<number, Type>;
 export type PhysicalTypeSchema = Map<number, PhysicalType>;

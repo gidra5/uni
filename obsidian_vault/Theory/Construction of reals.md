@@ -7,3 +7,5 @@ Bit size
 type depending on size
 Exponent sign
 Arbitrary precision
+
+https://youtu.be/EVwQsvof7Hw?si=pPiiU1k66z1Ndm4m

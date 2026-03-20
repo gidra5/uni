@@ -1,4 +1,4 @@
-import { memoize } from ".";
+import { memoize } from "./index.js";
 
 export const editDistance = memoize((a: string, b: string): number => {
   if (a.length === 0) return b.length;

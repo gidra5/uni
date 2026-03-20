@@ -6,6 +6,7 @@ https://en.wikipedia.org/wiki/Extension_method#Naming_conflicts_in_extension_met
 https://en.wikipedia.org/wiki/Uniform_function_call_syntax
 https://chatgpt.com/c/69985880-5a48-8392-93cf-2d3558b6c7cc
 https://www.dhil.net/research/papers/effect_handlers_evidently-draft-march2020.pdf?utm_source=chatgpt.com
+https://www.reddit.com/r/ProgrammingLanguages/s/jpzu9L3sMM
 
 Traits (aka typeclasses, implicits, interfaces, extensions, mixins, protocols, etc.) are a way to define a set of behaviors that can be implemented by a type.
 

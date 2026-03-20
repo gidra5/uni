@@ -1,6 +1,6 @@
-import { Tree } from "../ast";
-import { SystemError } from "../error";
-import { TokenGroup, ValidatedTokenGroup } from "../parser/tokenGroups";
+import { Tree } from "../ast.js";
+import { SystemError } from "../error.js";
+import { TokenGroup, ValidatedTokenGroup } from "../parser/tokenGroups.js";
 
 const validateTokenGroup = (token: TokenGroup): [SystemError[], ValidatedTokenGroup[]] => {
   const errors: SystemError[] = [];

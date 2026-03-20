@@ -1,5 +1,5 @@
-import { NodeType, Tree, node } from "../ast";
-import { assert, getPos } from "../utils";
+import { NodeType, Tree, node } from "../ast.js";
+import { assert, getPos } from "../utils/index.js";
 import type { Position } from "../utils/position.js";
 
 const name = (value: string, position?: Position) => node(NodeType.NAME, { data: { value }, position });

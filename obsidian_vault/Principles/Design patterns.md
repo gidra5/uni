@@ -140,3 +140,7 @@ Also known as: CoR, Chain of Command
 
 Language feature: piping functions that return Result monad.
 
+
+
+A pattern language for microservices
+https://microservices.io/patterns/index.html

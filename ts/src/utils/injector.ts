@@ -1,7 +1,7 @@
 import { FileMap } from "codespan-napi";
-import type { Precedence } from "../ast";
-import type { Position } from "./position";
-import { PhysicalType, Type } from "../analysis/types/utils";
+import type { Precedence } from "../ast.js";
+import type { Position } from "./position.js";
+import { PhysicalType, Type } from "../analysis/types/utils.js";
 
 enum Injectable {
   FileMap = "FileMap",

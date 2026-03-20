@@ -1,8 +1,8 @@
 import { Diagnostic, primaryDiagnosticLabel } from "codespan-napi";
-import { inject, Injectable } from "../utils/injector";
-import { getPosition } from "../parser/parser";
-import { Tree } from "../ast";
-import { Position } from "../utils/position";
+import { inject, Injectable } from "../utils/injector.js";
+import { getPosition } from "../parser/parser.js";
+import { Tree } from "../ast.js";
+import { Position } from "../utils/position.js";
 
 type CompileContext = Readonly<{
   fileId: number;

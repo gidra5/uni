@@ -1,6 +1,6 @@
-import { NodeType, Tree } from "../ast";
-import { assert, exclude, unique, unreachable } from "../utils";
-import { inject, Injectable } from "../utils/injector";
+import { NodeType, Tree } from "../ast.js";
+import { assert, exclude, unique, unreachable } from "../utils/index.js";
+import { inject, Injectable } from "../utils/injector.js";
 
 export type Binding = [string, number];
 

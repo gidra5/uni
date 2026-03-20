@@ -1,5 +1,5 @@
 import fc from "fast-check";
-import { assert, clamp, unreachable } from "../../utils";
+import { assert, clamp, unreachable } from "../../utils/index.js";
 import { Iterator } from "iterator-js";
 
 export type PrimitiveType = "function" | "tuple" | "boolean" | "int" | "float" | "string" | "symbol";

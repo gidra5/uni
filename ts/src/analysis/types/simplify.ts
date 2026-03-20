@@ -1,5 +1,5 @@
 import { Iterator } from "iterator-js";
-import { isTypeEqual, Type } from "./utils";
+import { isTypeEqual, Type } from "./utils.js";
 
 // only reduces nesting, without losing information
 export const structuralSimplify = (type: Type): Type => {

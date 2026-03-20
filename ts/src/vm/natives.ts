@@ -1,5 +1,5 @@
-import type { NativeHandler } from ".";
-import { assert } from "../utils";
+import type { NativeHandler } from "./index.js";
+import { assert } from "../utils/index.js";
 
 export const defaultNatives: Record<string, NativeHandler> = {
   print: (_vm, [value]) => {

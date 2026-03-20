@@ -46,3 +46,5 @@ depencencies
 3. unoptimized enough
 
 Dependency quality rating?
+
+strict formatting option - force some of the conventions, like always placing semicolon.

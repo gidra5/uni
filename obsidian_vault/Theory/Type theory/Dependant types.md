@@ -5,6 +5,7 @@
 https://ncatlab.org/nlab/show/computational+trilogy
 https://www.reddit.com/r/ProgrammingLanguages/s/9IVwzErQys
 https://www.reddit.com/r/ProgrammingLanguages/s/D6yQ4FMuDo
+https://www.jonmsterling.com/01KF/
 
 Basis of type system is Calculus of Constructions:
 
