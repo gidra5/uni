@@ -248,8 +248,17 @@ export class VM {
 
   run(name = "main") {
     const mainThread = this.spawnThread(name, "main");
-
     return this.runUntilBlocked(mainThread);
+  }
+
+  runWithEnv(name = "main", parentEnv?: ClosureEnv) {
+    const mainThread = this.spawnThread(name, "main", parentEnv);
+    const env = mainThread.env;
+
+    return {
+      env,
+      result: this.runUntilBlocked(mainThread),
+    };
   }
 
   private activeThreads() {

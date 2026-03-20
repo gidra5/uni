@@ -3,12 +3,28 @@ import { program } from "commander";
 import fs from "fs";
 import readline from "readline";
 import { stdin as input, stdout as output } from "process";
+import { ReplSession, type ReplEvaluation } from "./repl.js";
 import { validate, validateTokenGroups } from "./analysis/validate.js";
 import { SystemError } from "./error.js";
 import { parseScript } from "./parser/parser.js";
 import { parseTokenGroups } from "./parser/tokenGroups.js";
 import { generateVm2Bytecode, VM } from "./vm/index.js";
 import { inject, Injectable } from "./utils/injector.js";
+
+const printEvaluation = (evaluation: ReplEvaluation) => {
+  switch (evaluation.kind) {
+    case "success":
+      if (evaluation.result !== undefined) console.dir(evaluation.result, { depth: null });
+      return;
+    case "diagnostic":
+      process.exitCode = 1;
+      evaluation.errors.forEach((error) => error.print(evaluation.fileMap));
+      return;
+    case "unexpected-error":
+      console.error(evaluation.error);
+      return;
+  }
+};
 
 const reportErrors = (errors: SystemError[], fileId: number, fileMap: FileMap) => {
   if (errors.length === 0) return false;
@@ -69,17 +85,12 @@ program
   .description("Run REPL in interpreter")
   .action((file) => {
     console.log("Starting REPL...");
-    const vm = new VM();
-
-    const runSnippet = (source: string, label: string) => {
-      const result = runInVm(source, label, vm);
-      if (result !== undefined) console.dir(result, { depth: null });
-    };
+    const repl = new ReplSession();
 
     if (file) {
       try {
         const code = fs.readFileSync(file, "utf-8");
-        runSnippet(code, file);
+        printEvaluation(repl.evaluate(code, file));
       } catch (error) {
         console.error(`Failed to read "${file}":`, error);
         return;
@@ -90,22 +101,14 @@ program
     const rl = readline.createInterface({ input, output, prompt: ">> " });
     rl.prompt();
 
-    let replLine = 0;
     rl.on("line", (_line) => {
-      const line = _line.trim();
-      switch (line) {
-        case "exit":
-          rl.close();
-          break;
-        default: {
-          try {
-            runSnippet(line, `<repl:${++replLine}>`);
-          } catch (e) {
-            console.error(e);
-          }
-          break;
-        }
+      const outcome = repl.handleLine(_line);
+      if (outcome.kind === "exit") {
+        rl.close();
+        return;
       }
+
+      if (outcome.kind === "evaluated") printEvaluation(outcome.evaluation);
 
       rl.prompt();
     }).on("close", () => {
