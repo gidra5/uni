@@ -1,0 +1,34 @@
+{
+  "name": "miniuni",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "bench": "vitest bench",
+    "test": "vitest run",
+    "build": "tsc || exit 0",
+    "start": "npm run build && node ./dist/index.js",
+    "watch": "vitest --ui",
+    "compile": "bun run compile-win && bun run compile-linux && bun run compile-highlight",
+    "compile-win": "bun build ./src/index.ts --compile --minify --target=bun-windows-x64 --sourcemap --outfile ./dist/miniUni.exe",
+    "compile-linux": "bun build ./src/index.ts --compile --minify --sourcemap --outfile ./dist/miniUni",
+    "compile-highlight": "cd miniuni-highlight && npx @vscode/vsce package && mv miniuni-highlight-0.0.1.vsix ../dist/miniuni-highlight.vsix"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@fast-check/vitest": "^0.1.2",
+    "@types/node": "^20.14.10",
+    "@vitest/coverage-istanbul": "^2.0.2",
+    "@vitest/ui": "^2.0.2",
+    "fast-check": "^3.21.0",
+    "typescript": "^5.5.3",
+    "vite-plugin-dts": "^3.9.1",
+    "vitest": "^2.0.2"
+  },
+  "dependencies": {
+    "codespan-napi": "^0.4.0",
+    "commander": "^12.1.0"
+  }
+}
