@@ -1,4 +1,4 @@
-import { test } from '@fast-check/vitest';
+import { test } from '../src/testing/fastCheck.js';
 import { editDistance } from '../src/utils';
 import { describe, expect } from 'vitest';
 import { string, tuple } from 'fast-check';

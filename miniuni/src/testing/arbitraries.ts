@@ -1,4 +1,4 @@
-import { parseToken, Token } from './tokens.js';
+import { parseToken, Token } from '../tokens.js';
 import fc from 'fast-check';
 
 const fcConst = <const T>(value: T): fc.Arbitrary<T> => fc.constant(value);

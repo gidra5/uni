@@ -1231,9 +1231,9 @@ export const parseModule = (src: TokenPos[]) => {
 
 if (import.meta.vitest) {
   const { expect } = import.meta.vitest;
-  const { it, fc } = await import('@fast-check/vitest');
+  const { it, fc } = await import('./testing/fastCheck.js');
   const { tokenArbitrary, tokenListArbitrary } = await import(
-    '../src/testing.js'
+    './testing/arbitraries.js'
   );
   const zeroPos = { start: 0, end: 0 };
   const arb1 = fc.oneof(

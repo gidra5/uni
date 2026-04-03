@@ -1,6 +1,6 @@
 import { parseToken, parseTokens, type Token } from '../src/tokens.js';
 import { describe, expect } from 'vitest';
-import { it, fc, test } from '@fast-check/vitest';
+import { it, fc, test } from '../src/testing/fastCheck.js';
 import { array, integer } from 'fast-check';
 
 // const anyStringArb = fc.string({ size: 'large', unit: 'binary' });
