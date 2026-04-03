@@ -10,6 +10,8 @@ The structure of the project is as follows:
 5. `playground` - contains web-based playground for the language. Allows writing uni programs and running them in the browser.
 6. `runtime` - contains lower level implementation of some of the language features, that are used during codegen of machine code.
 7. `ts` - the typescript implementation of the language. The proof of concept, comprehensive test suite, and the reference implementation. Outlines the language implementation without strict constraints on performance, but with emphasis on correctness.
+8. `miniuni-highlight` - the syntax highlighting extension for vscode.
+9. `miniuni` - a simple, stripped down PoC language implementation
 
 ## Development
 
@@ -20,6 +22,8 @@ Try estimating the size of your implementation first. If the feature is complex 
 While working on the implementation, follow TDD approach. Write test cases first, then implement the feature such that the test case passes. Before implementing a feature, allow me to review test cases and update them if necessary. 
 
 When designing test cases, try to follow the language's design principles, outlined in the readme and documentation.
+
+When implementing a feature, write the code with extensive assertions. If the interface of the feature is small enough, write a property-based test that verifies the implementation never throws assertion errors or generic runtime errors like "cannot read prop of undefined" on any input acceptable by the types. As an example, look at the `miniuni/src/tokens.ts`, `miniuni/tests/tokens.test.ts`, `miniuni/src/parser.ts` and `miniuni/tests/parser.test.ts` files.
 
 There are multiple kinds of tests we can write, described in `obsidian_vault/Language/Quality Assurance.md` in the docs. Pick the most suitable one for your feature description and constraints.
 

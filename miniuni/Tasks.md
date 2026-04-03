@@ -1,0 +1,513 @@
+- [] update all dependencies to latest version. Check for breaking changes and migrate so that we dont get regressions.
+- [] improve effect handlers performance
+  - the network example scales very badly due to the effect handler overhead
+  - narrow down the main cost centers in the network example and implement smallest examples of them as benchmarks
+  - investigation:
+    - the main cost is resumption machinery, not handler lookup itself
+    - `handleEffects` copies and restores environment chains for handled effects, which is expensive for deep scopes and multishot resumptions
+    - `mapEffect` / `flatMapEffect` append async continuation closures on propagation, causing allocation and promise churn
+    - `mask` currently wraps effects into a synthetic `MaskEffect`, adding another effect hop and extra continuation
+    - plain injected values like `inject a: 1` currently share too much of the resumable-handler path, so simple dependency injection pays avoidable overhead
+    - handler tables are heterogeneous (`value`, `handler fn`, `return_handler`) and are partially re-interpreted on each dispatch
+  - suggestions:
+    - add benchmarks besides the network example
+    - add focused microbenchmarks for:
+      - plain injected value lookup
+      - single-shot handler resume
+      - multishot handler resume
+      - deep nesting of `inject` / `mask` / `without`
+    - split plain injected values from resumable handlers in the runtime, so non-handler injection avoids continuation snapshot/restore work
+    - replace environment snapshotting by full `copyUpTo` / `replace` with rollback or journaling that scales with writes, not lexical depth
+    - replace continuation arrays of async closures with a cheaper continuation-frame representation plus iterative execution/trampoline
+    - remove the synthetic `MaskEffect` representation and encode masking in dispatch state instead
+    - normalize handler tables once per `inject` into a canonical internal form:
+      - dedicated cached `return_handler`
+      - effect entries tagged as plain injected values vs resumable handlers
+      - avoid repeated `recordHas` / `recordGet` / `isHandler` checks during dispatch
+  - suggested implementation order:
+    - benchmark current behavior first
+    - optimize plain injected values
+    - optimize environment rollback for resumable handlers
+    - optimize continuation representation
+    - optimize mask dispatch and handler table normalization
+- [] implement vm with feature parity
+  - investigation:
+    - this is feasible, but it is a medium-to-large execution engine rewrite rather than a local optimization
+    - there is currently no vm / bytecode scaffold in `miniuni`; the current evaluator already compiles ast nodes into async js closures
+    - most semantics are encoded in `src/evaluate/index.ts`, which currently mixes:
+      - expression lowering
+      - lexical scope creation and mutation
+      - control flow
+      - function closure construction
+      - effect propagation and resumption
+      - concurrency primitives integration
+    - pattern matching is not an isolated pass; `src/evaluate/patternMatching.ts` calls back into expression compilation for pins, defaults, dynamic keys, and indexed targets
+    - runtime semantics also depend on host objects in `src/values.ts` and `src/environment.ts`:
+      - channels, events, tasks
+      - effect values with continuation lists and captured environments
+      - nested lexical environments with copy / replace semantics
+    - parity therefore means more than arithmetic and function calls; the vm must preserve:
+      - closures and lexical scoping
+      - mutable / readonly bindings
+      - tuple / record construction and mutation
+      - control flow and labeled break / continue
+      - pattern matching and binding behavior
+      - modules and imports
+      - async tasks, channels, and structured concurrency
+      - effect handlers, masking, and resumptions
+    - the current interpreter baseline is broad enough to use as an oracle:
+      - `tests/evaluate.test.ts` passed locally with 168 tests
+      - `tests/examples.test.ts` passed locally with 9 example programs
+    - the highest-risk parity areas are:
+      - effect handlers and continuation semantics
+      - async / task cancellation and channel behavior
+      - closures that capture mutable environments
+      - pattern matching because it evaluates expressions during matching
+  - suggestions:
+    - do not replace the current interpreter in one step; add a second execution engine behind the existing parser and module loader
+    - keep `EvalValue`, stdlib modules, and most host runtime types initially, and make the first vm execute the same runtime values rather than inventing a second runtime at the same time
+    - make the vm async from day one; otherwise concurrency and effect handling will force a redesign later
+    - add a bytecode compiler and machine in a separate `src/vm/` area, for example:
+      - `src/vm/bytecode.ts`
+      - `src/vm/compiler.ts`
+      - `src/vm/machine.ts`
+    - treat the current evaluator as the reference implementation and add differential tests that run the same source through both engines and compare results
+    - use existing focused tests plus example programs for parity, and add vm-specific execution tests that assert:
+      - returned values
+      - observable mutation
+      - error / effect behavior where relevant
+      - example program outputs
+    - carry source positions through bytecode and frames from the start, so diagnostics do not become an afterthought
+    - prefer a staged parity plan instead of full parity immediately
+  - suggested implementation order:
+    - write a small vm design note first:
+      - instruction format
+      - stack vs register choice
+      - frame layout
+      - closure representation
+      - how effects / continuations suspend and resume
+    - add differential test helpers that can execute the same script via interpreter and vm
+    - implement a pure subset first:
+      - literals
+      - tuples / records
+      - arithmetic and comparison
+      - local bindings and assignment
+      - `if`, `block`, and sequencing
+    - then implement:
+      - functions, calls, closures, and modules
+    - then implement:
+      - pattern matching and destructuring
+    - then implement:
+      - channels, tasks, `async` / `await`, and structured concurrency
+    - finish with:
+      - effect handlers, `inject`, `mask`, `without`, and resumption semantics
+    - only switch examples or cli paths to the vm after the differential suite is stable on the full existing surface
+- [] update syntax to match changes in `ts`
+  - update record syntax
+    - Records require explicit keyword now, prev syntax is abandoned
+  - update atom syntax
+  - add delimited application syntax
+  - add multiline string syntax
+  - add template string syntax
+  - update full function syntax
+    - the most full and explicit syntax completely mirrors delimited application syntax
+    - simplified syntax mirrors regular application
+    - the shortest syntax also drops function name destructuring a single argument
+    - all application syntaxes are now reduced to the delimited application syntax during parsing/normalization
+  - investigation:
+    - the current `miniuni` parser still accepts the older surface syntax, so the copied `ts` parser cases had to be added as `it.todo` instead of replacing active snapshots
+    - concrete syntax mismatches currently blocking direct parser-test parity:
+      - atoms and effect names still use `:a` or string names instead of `$a`
+      - records still parse as implicit `a: 1, b: 2` instead of `record { a: 1, b: 2 }`
+      - immediate forms still use `do` instead of `:`
+      - `switch` is still used where `ts` now uses `match`
+      - record pattern rename / keyed rename / nested rename still use `:` instead of `@`
+      - channel try-send is still `?<-` instead of `<-?`
+      - missing newer frontend forms that already have parity TODOs:
+        - delimited / named / spread application
+        - multiline strings
+        - template strings
+        - typed params / typed returns
+        - `without ()`
+        - superposition `&`
+    - syntax-sensitive parity TODOs are now tracked directly in:
+      - `tests/ast.test.ts`
+      - `tests/tokens.test.ts`
+      - `tests/error.test.ts`
+  - suggestions:
+    - decide explicitly whether syntax migration is hard-cut or backwards-compatible
+    - land lexer changes first:
+      - `$` atoms / effect names
+      - multiline strings
+      - template strings
+      - invalid radix literal diagnostics
+    - then land parser surface normalization:
+      - explicit `record { ... }`
+      - `:` immediate forms
+      - `match`
+      - `@` pattern renames
+      - delimited application
+      - typed syntax
+    - once each syntax slice lands, flip the matching TODOs in `ast.test.ts`, `tokens.test.ts`, and `error.test.ts` to active cases instead of keeping separate legacy coverage
+- [] refactor parser to follow `ts` architecture
+  - use the generator trick but properly typed. Or try to use effect-ts to implement the necessary mechanisms.
+  - investigation:
+    - the largest parser parity gap is architectural, not just syntactic
+    - `ts` uses a staged frontend:
+      - tokenization
+      - token grouping
+      - token-group validation
+      - parsing
+    - `miniuni` still parses directly from a flat token stream, so it has no equivalent of:
+      - grouped `for` / `while` / `match` forms
+      - grouped template-string segments
+      - token-group structural recovery tests
+      - parser invariants like flat top-level sequences after validation
+    - missing parser coverage that now exists as TODO registries falls into two buckets:
+      - frontend parity:
+        - `tests/tokenGroups.todo.test.ts`
+        - `tests/parserParity.todo.test.ts`
+      - future-language grammar already sketched in `ts`:
+        - macros
+        - annotations
+        - database / logic / state-machine / dataflow syntaxes
+        - reactive / fold syntaxes
+        - first-class patterns and first-class types
+        - richer import / operator / namespace forms
+  - suggestions:
+    - add a token-group phase first, without changing evaluator semantics
+    - migrate existing parser tests to the grouped frontend before tackling future grammar
+    - activate token-group tests before deeper parser-feature TODOs
+    - implement parser-only future forms in batches after the grouped frontend is stable
+- [] implement commented test cases for errors.
+  - investigation:
+    - the old active error suite covered basic delimiter and infix failures, but `ts` also checks newer lexer / parser failures that `miniuni` still lacks
+    - the missing cases have now been copied into TODOs in `tests/error.test.ts`
+    - the concrete missing areas are:
+      - unclosed indexing in parens / braces
+      - doubled infix operators like `1 + + 2`
+      - nested template / string termination failures
+      - multiline string template termination failures
+      - extra closing parens after complete, infix, and unary expressions
+  - suggestions:
+    - implement lexer diagnostics for:
+      - unclosed string newline
+      - unclosed template interpolation
+      - missing closing quote in template / multiline string cases
+    - implement parser recovery for:
+      - unclosed indexing contexts
+      - extra closing delimiters after a completed expression
+      - doubled infix operators
+    - convert the TODO entries in `tests/error.test.ts` to active snapshots incrementally as diagnostics stabilize
+- [] add verification tests for the interpreters, similar to algebraic effects verification.
+  - investigation:
+    - the missing `ts` coverage is broader than interpreter result checks; there are whole suites with no active `miniuni` equivalent yet
+    - parity TODO registries now exist for:
+      - `tests/repl.todo.test.ts`
+      - `tests/effectIr.todo.test.ts`
+      - `tests/algebraicEffects.todo.test.ts`
+      - `tests/esmImports.todo.test.ts`
+      - `tests/vmParity.todo.test.ts`
+    - these suites imply several concrete parity targets:
+      - persistent repl session semantics
+      - effect-ir lowering pipeline
+      - algebraic-effects operational semantics / term equivalences / vm agreement properties
+      - import-specifier hygiene if `miniuni` moves to explicit runtime extensions
+      - runtime / vm differential coverage
+  - suggestions:
+    - use the TODO files as an activation checklist, not just as backlog notes
+    - activate parity in this order:
+      - lexer / parser cases
+      - repl session behavior
+      - algebraic-effects laws and properties
+      - vm/runtime differential tests
+    - if `miniuni` does not plan to mirror the `ts` effect-ir layer directly, replace those TODOs with equivalent observable-semantics tests rather than dropping the coverage entirely
+    - only add the esm-import hygiene test if the source layout is meant to follow the same runtime-module strategy as `ts`
+- [] burn down `ts` parity TODO registries
+  - investigation:
+    - the current parity investigation has already been codified into TODO-only test registries and syntax-specific TODO cases
+    - active parity TODO locations:
+      - `tests/ast.test.ts`
+      - `tests/tokens.test.ts`
+      - `tests/error.test.ts`
+      - `tests/parserParity.todo.test.ts`
+      - `tests/tokenGroups.todo.test.ts`
+      - `tests/repl.todo.test.ts`
+      - `tests/effectIr.todo.test.ts`
+      - `tests/algebraicEffects.todo.test.ts`
+      - `tests/esmImports.todo.test.ts`
+      - `tests/vmParity.todo.test.ts`
+    - these files now act as the concrete checklist for parity work; if a TODO remains, parity for that slice is still missing
+  - intended end state:
+    - the parity TODO files are temporary migration scaffolding, not a permanent parallel test suite
+    - once a parity slice is implemented, its coverage should be moved into:
+      - the existing `miniuni` test suites when there is a natural home
+      - or a normal non-parity test file if that area genuinely needs its own suite
+    - once the corresponding coverage has been promoted, the matching parity TODO entries or files should be removed
+    - if `miniuni` does not mirror a `ts` layer one-to-one, the parity file should still disappear, but its intent should be preserved by equivalent semantic tests instead of a literal copy
+  - suggested activation order:
+    - finish lexer and syntax parity first
+    - then activate parser / token-group parity
+    - then repl parity
+    - then effect / verification parity
+    - finish with vm/runtime parity
+- [] design staged analysis / IR pipeline for future feature growth
+  - assumptions:
+    - `miniuni` is expected to grow a much broader semantic surface, not just a type system
+    - planned or hinted future areas include:
+      - a richer type system and type annotations
+      - compile-time evaluation / staging
+      - dependent types
+      - elaboration-style rules that synthesize or lower richer surface forms into a smaller semantic core
+      - a more extensive export / import / module / namespace system
+      - traits and related resolution rules
+      - folds and generators
+      - reactive programming constructs
+      - database / logic / dataflow programming constructs
+      - state machines
+      - annotations / decorators
+      - macros
+    - more syntax and semantic features hinted by `ts` and `miniuni` parity TODOs are expected to land over time
+  - investigation:
+    - the current pipeline is still very short:
+      - tokenize
+      - parse directly from a flat token stream
+      - validate ast
+      - compile ast nodes into async js closures and execute them
+    - this keeps too much semantic work in the evaluator:
+      - syntax normalization
+      - import loading / resolution
+      - binding and scope behavior
+      - pattern semantics
+      - effect semantics
+      - execution strategy
+    - `miniuni` already has explicit pressure pointing toward more staged boundaries:
+      - parser architecture parity with `ts`
+      - token-group parity TODOs
+      - effect-ir parity TODOs
+      - vm parity TODOs
+      - future syntax sketches in parser parity TODOs
+    - the likely future feature set is broad enough that a single generic "typed ast" stage is not sufficient on its own
+    - elaboration-style rules likely deserve explicit ownership instead of being treated as a vague side effect of parsing, typing, or evaluation
+    - several planned features will likely need their own semantic analyses or dedicated IRs before execution:
+      - compile-time evaluation needs explicit phase separation, compile-time execution semantics, and probably caching / normalization boundaries
+      - dependent types need more than ordinary type checking:
+        - a smaller typed core or kernel after elaboration
+        - definitional equality / conversion checking
+        - type-level normalization or evaluation
+        - possibly relevance / erasure boundaries between proof-only and runtime-relevant terms
+      - module / export features need module graph, visibility, singleton, namespace, and import-shape analysis
+      - traits need conformance, lookup, overlap / coherence, and dispatch analysis
+      - elaboration rules may need to:
+        - insert implicit arguments or capabilities
+        - construct evidence / dictionaries / witnesses
+        - rewrite overloaded or context-sensitive surface forms
+        - lower typed or declarative syntax into a smaller semantic core
+      - generators and folds need staged lowering into resumable / accumulative control-flow forms
+      - reactive / dataflow / logic / database constructs need declarative dependency or query plans, not just ordinary expression lowering
+      - state machines need control-state analysis and dedicated lowering instead of being treated as plain expression sugar
+      - annotations / decorators and macros need expansion phases with explicit ordering and hygiene boundaries
+    - pattern compilation is currently especially coupled:
+      - pins, defaults, dynamic keys, and indexed targets call back into expression compilation during matching
+      - the problem is not that patterns may reference expressions at all; the problem is that pattern compilation currently depends directly on the general expression compiler and runtime scope machinery
+      - most pattern work is structural matching and access, but some pattern forms still need explicit expression-bearing nodes:
+        - pin expressions
+        - default expressions
+        - dynamic keys / names
+        - indexed assignment targets
+      - that suggests a small normalized match core, not necessarily a large standalone ir
+      - this will become harder to maintain once traits, typed patterns, annotations, macros, generators, or richer domain-specific forms are added
+  - suggested stage split:
+    - lexer / tokenizer
+    - token grouping / concrete syntax tree
+    - token-group validation and structural recovery
+    - raw ast parsing
+    - ast normalization / desugaring into canonical surface-independent forms
+    - module graph construction and import resolution
+    - export / visibility / namespace analysis
+    - binding and scope resolution
+    - annotation / decorator expansion
+    - macro expansion with explicit hygiene and phase-order boundaries
+    - phase / staging analysis for compile-time vs runtime constructs
+    - type-syntax resolution
+    - type checking / inference
+    - trait / impl / conformance resolution
+    - elaboration to typed semantic core / evidence-passing ir
+    - compile-time evaluation / normalization / partial evaluation
+    - dependent-type conversion checking / kernel validation
+    - erasure / relevance analysis for non-runtime terms
+    - pattern analysis and lowering to a normalized match core
+    - fold / generator / iterator lowering
+    - reactive / stream / incremental dependency analysis
+    - database / logic / query / dataflow planning and lowering
+    - state-machine analysis and lowering
+    - effect / capability analysis and effect ir normalization
+    - control-flow / execution ir lowering
+    - closure / capture / frame analysis
+    - vm lowering / bytecode generation / interpreter backend
+  - design constraints:
+    - later stages should depend on canonical ir shapes, not on surface syntax variants
+    - the execution engine should not remain the owner of early semantic work like name resolution or syntax normalization
+    - domain-specific features should lower through dedicated semantic IRs instead of being handled ad hoc inside the evaluator
+    - elaboration rules should target an explicit core representation, not leak implicitly across parser, checker, and evaluator code
+    - typing, traits, elaboration, compile-time evaluation, and dependent-type checking may be partially intertwined in implementation, but they should still produce clear intermediate artifacts and invariants
+    - compile-time evaluation should have explicit rules for:
+      - how the full language executes at compile time rather than through a restricted sublanguage
+      - how allowed compile-time effects are granted as explicit capabilities / permissions
+      - how those compile-time capabilities / permissions are passed in by the user to the compiler, likely via cli flags or compiler configuration
+      - what compile-time context / capabilities / inputs are available once those permissions are granted
+      - that compile-time evaluation may fully execute a program all the way to its result or exit when permissions, inputs, and compiler mode allow it
+      - which stopping / budgeting controls are operational compiler policies rather than semantic restrictions on the language
+      - how compile-time results are cached or shared
+    - dependent-type conversion should be checked against an explicit normalized core, not by reusing arbitrary runtime evaluation paths
+    - expansion phases need a clear order:
+      - decorators / annotations
+      - macros
+      - phase / staging resolution
+      - typing / traits / elaboration
+      - compile-time evaluation / normalization / kernel checks
+      - domain-specific lowerings
+    - if `miniuni` does not mirror every `ts` layer one-to-one, preserve the semantic boundaries anyway
+    - source positions and diagnostics should survive every lowering step
+  - maintainability constraints:
+    - most features should disappear early by lowering to existing core forms
+    - if a feature cannot disappear early, it should have one clear semantic owner stage
+    - touching nearly every stage for one feature should be treated as a design smell and trigger boundary review
+    - a feature that needs bespoke handling across many stages should be assumed to indicate either:
+      - a genuinely foundational feature
+      - or a poorly chosen stage boundary
+    - stage interfaces should stay small:
+      - one main input form
+      - one main output form
+      - explicit invariants
+    - prefer adding a new lowering into an existing core over teaching every later stage a new feature-specific case
+    - do not let surface syntax variants survive deep into the pipeline unless they are semantically essential
+  - implementation milestones and stages:
+    - [] milestone 1: frontend foundations
+      - goal:
+        - land the staged frontend first, without changing runtime semantics
+      - [] stage 0: architecture scaffolding and migration harness
+        - write a short architecture note that names every intermediate representation and who consumes it
+        - create phase-owned homes for new passes, for example `src/frontend/`, `src/semantic/`, execution/backend-owned areas, and later `src/vm/`, so new code does not leak back into `evaluate/`
+        - add debug printers / snapshots for every new intermediate form
+        - add differential helpers so old and new pipelines can be compared on the same source
+        - define invariants and property tests for each phase boundary before migrating behavior
+      - [] stage 1: token groups / concrete syntax tree
+        - implement token grouping without changing runtime semantics
+        - activate `tests/tokenGroups.todo.test.ts`
+        - route parser input through token groups while preserving current parser snapshots where intended
+        - make malformed grouping recover into structured error nodes instead of ad hoc parser behavior
+      - [] stage 2: raw ast / normalized ast split
+        - preserve surface syntax in a raw ast
+        - add a normalization pass that lowers syntax variants into canonical ast forms
+        - move parser invariants like flat top-level sequences out of parser internals and into normalization guarantees
+        - keep evaluator behavior unchanged by compiling from normalized ast
+    - [] milestone 2: semantic foundations
+      - goal:
+        - resolve meaning before execution for modules, names, and patterns
+      - [] stage 3: module graph / export / import / namespace analysis
+        - separate path resolution, module graph loading, and module evaluation concerns
+        - introduce explicit analysis results for import shape, visibility, namespace contents, and default/export semantics
+        - keep module singleton behavior explicit and testable
+        - stop treating import semantics as just another evaluator-side lazy operator
+      - [] stage 4: binding and scope resolution
+        - assign each name occurrence to a declaration identity before execution
+        - record shadowing, capture, mutability, export status, and scope boundaries explicitly
+        - replace ad hoc runtime name lookup assumptions with resolved binding metadata wherever possible
+        - add property tests for binding invariants and shadowing stability
+      - [] stage 5: pattern analysis / normalized match core
+        - lower patterns into a small dedicated structural match core instead of runtime closures
+        - do not force patterns all the way into arbitrary ordinary expressions
+        - represent embedded expression-dependent pattern parts explicitly:
+          - pin expressions
+          - default expressions
+          - dynamic keys / names
+          - indexed assignment targets
+        - treat ordinary structural matching as first-class instead of encoding it as ad hoc evaluator logic
+        - separate matching from binding application
+        - keep current evaluator semantics by interpreting the normalized match core first before further lowering
+    - [] milestone 3: expansion and staging
+      - goal:
+        - make rewrite order and compile-time phase semantics explicit before heavier type-system work
+      - [] stage 6: annotation / decorator / macro expansion boundaries
+        - define expansion order and observable semantics
+        - make hygiene / capture rules explicit
+        - distinguish parse-time rewrites from semantic-context-dependent rewrites
+        - keep expanded output inspectable and snapshot-testable
+      - [] stage 7: phase / staging analysis
+        - classify constructs as parse-time, compile-time, type-time, or runtime as needed
+        - define how ordinary language constructs are re-used at compile time rather than inventing a separate compile-time sublanguage
+        - define the capability / permission model for compile-time effects
+        - define how those compile-time permissions are supplied by the user to the compiler, likely through cli or compiler options
+        - define what compile-time capabilities, inputs, and effects are available once permissions are granted
+        - make cross-phase references explicit instead of implicit evaluator behavior
+        - add regression tests for phase leaks and compile-time capability boundaries
+    - [] milestone 4: typed core and compile-time semantics
+      - goal:
+        - introduce the semantic core needed for traits, elaboration, dependent typing, and compile-time execution
+      - [] stage 8: typed semantic ir and core / kernel boundary
+        - introduce a typed semantic ir that downstream stages can depend on
+        - decide what smaller core or kernel is needed for dependent types and conversion checking
+        - keep elaboration output explicit rather than hidden in type checking side effects
+        - define what information survives into runtime lowering vs what is erased
+      - [] stage 9: traits / elaboration / evidence passing
+        - add explicit trait / impl / conformance lookup results
+        - lower implicit arguments, witnesses, dictionaries, or capabilities through an elaboration pass
+        - ensure elaboration targets the typed core instead of the evaluator directly
+        - add coherence / overlap / dispatch tests before adding heavy surface syntax
+      - [] stage 10: compile-time evaluation / normalization / dependent conversion
+        - implement a compile-time evaluator or normalizer distinct from ordinary runtime execution
+        - support both local normalization and whole-program compile-time execution up to final result / exit when requested
+        - add caching and operational resource controls where needed, but keep them as compiler policies rather than hard semantic restrictions
+        - use normalized core terms for definitional equality and conversion checks
+        - keep proof-only / type-level reductions separate from runtime codegen concerns
+      - [] stage 11: erasure / relevance analysis
+        - mark runtime-relevant vs erased terms explicitly
+        - erase proofs, type-only arguments, and non-runtime artifacts before execution lowering
+        - test that erasure preserves runtime behavior on representative elaborated programs
+    - [] milestone 5: execution semantics and runtime lowering
+      - goal:
+        - make effects, control flow, and runtime representation explicit before introducing a new backend
+      - [] stage 12: effect ir
+        - lower `inject`, `mask`, `without`, handlers, and resumptions into an explicit effect ir
+        - separate plain injected values from resumable handlers in the ir
+        - keep current evaluator as the first interpreter of that ir
+        - activate `tests/effectIr.todo.test.ts` or replace them with equivalent semantic tests if the layer shape differs
+      - [] stage 13: control-flow / execution ir
+        - lower loops, branching, short-circuiting, pattern control flow, and sequencing into a simpler execution ir
+        - make resumable control flow, breaks, continues, and returns explicit in the ir
+        - keep source positions and diagnostics attached to ir nodes / instructions
+      - [] stage 14: closure / frame / environment analysis
+        - compute captures, mutable captures, frame slots, and environment layout ahead of execution
+        - stop using the evaluator as the primary owner of scope / closure shape
+        - prepare representation choices needed for vm lowering and effect resumption
+    - [] milestone 6: backends, domain lowerings, and cleanup
+      - goal:
+        - lower the stabilized semantic pipeline into new execution backends and retire the legacy path
+      - [] stage 15: vm / bytecode backend
+        - lower from normalized semantic ir, not directly from parser ast
+        - keep the interpreter as the oracle while bringing up vm slices
+        - activate `tests/vmParity.todo.test.ts` incrementally by semantic area
+        - only switch entry paths after differential coverage is stable
+      - [] stage 16: domain-specific semantic irs
+        - add dedicated lowerings for:
+          - generators / folds
+          - reactive / stream systems
+          - database / logic / query / dataflow systems
+          - state machines
+        - avoid implementing these features as direct evaluator special cases
+        - attach dedicated analysis and property tests to each domain-specific ir
+      - [] stage 17: cleanup and retirement of the legacy pipeline
+        - remove legacy compile paths only after parity / regression coverage is promoted out of TODO registries
+        - collapse transitional adapters once no stage depends on them
+        - keep the final architecture documented in one design note instead of scattered backlog comments
+  - expected benefits:
+    - new syntax mostly becomes parser + normalization work instead of evaluator surgery
+    - richer semantic features can be added without entangling every new construct with runtime execution details
+    - traits, modules, and macros get explicit semantic ownership instead of leaking into execution
+    - compile-time evaluation and dependent typing can be implemented against explicit core invariants instead of piggybacking on the runtime evaluator
+    - proof / type-level terms can be erased cleanly before runtime lowering
+    - database / logic / reactive / state-machine features can compile through purpose-built IRs instead of forcing everything into ordinary expression execution
+    - the vm can target a stable ir instead of the raw parser ast
+    - property tests and parity tests can be attached to explicit phase boundaries
+- [] add bootstrapped std library for features that can be implemented in the language itself

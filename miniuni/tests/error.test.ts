@@ -39,14 +39,15 @@ const testCase = (input, _?, _it: any = it) =>
 
 testCase(')');
 testCase('(');
+it.todo('single open parens with number', () => testCase('(1'));
 testCase('}');
 testCase('{');
 testCase(']');
 testCase('[');
 testCase('({ 1 )');
-// testCase('(x[1 )', [], it.todo);
+it.todo('unclosed indexing inside parens', () => testCase('(x[1 )'));
 testCase('{ (1 }');
-// testCase('{ x[1 }', [], it.todo);
+it.todo('unclosed indexing inside braces', () => testCase('{ x[1 }'));
 testCase('x[(1]');
 testCase('x[{ 1 ]');
 testCase('1 2');
@@ -62,8 +63,28 @@ testCase('1 + (2 + 3');
 testCase('1 * (5/3) (*4');
 testCase('send((1+2), 3+,4)');
 testCase('!');
-// testCase('f + !', [], it.todo);
-// testCase('"uwu\n 1', [], it.todo);
+it.todo('add add no middle operand', () => testCase('1 + + 2'));
+it.todo('string template nested string', () => testCase('"\\(")"'));
+it.todo('f + !', () => testCase('f + !'));
+it.todo('unclosed string newline', () => testCase('"uwu\n 1'));
+it.todo('unclosed string template', () => testCase('"uwu\\(\n 1'));
+it.todo('string template missing quote', () => testCase('"uwu\\()\n 1'));
+it.todo('multiline string template missing quote', () =>
+  testCase('"""\nuwu\\()\n 1')
+);
+it.todo('single closing parens after complete expression', () =>
+  testCase('1 + (2 + 3))')
+);
+it.todo(
+  'single closing parens after complete expression and operator',
+  () => testCase('1 + (2 + 3)) +')
+);
+it.todo('single closing parens after infix expression', () =>
+  testCase('q + )/')
+);
+it.todo('single closing parens after unary expression', () =>
+  testCase(' - )/q + )/')
+);
 // testCase(
 //   `
 //     quick_sort := xs -> {

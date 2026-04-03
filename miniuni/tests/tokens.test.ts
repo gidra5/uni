@@ -312,3 +312,33 @@ it.prop([anyStringArb])('parseTokens never throws', (src) => {
 //     }
 //   }
 // );
+
+describe('ts parity TODOs', () => {
+  describe('string token', () => {
+    test.todo('string token escapes');
+    test.todo('unclosed string token');
+    test.todo('unclosed string token escape');
+    test.todo('string token with newline escape');
+    test.todo('unclosed string token before newline');
+    test.todo('multiline strings');
+  });
+
+  describe('number token', () => {
+    test.todo('hex literals with error');
+    test.todo('octal literals with error');
+    test.todo('binary literals with error');
+  });
+
+  describe('comments', () => {
+    test.todo(
+      'adding line comments instead of newlines never changes the resulting token'
+    );
+    test.todo('adding block comments never changes the result');
+  });
+
+  describe('parser invariants', () => {
+    test.todo('parseToken never throws');
+    test.todo('parseStringToken never throws');
+    test.todo('parseMultilineStringToken never throws');
+  });
+});
