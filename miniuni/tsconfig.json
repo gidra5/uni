@@ -8,6 +8,7 @@
     "noErrorTruncation": true,
     "declaration": false,
     "emitDeclarationOnly": false,
+    "rootDir": "./src",
     "outDir": "dist",
     "noImplicitAny": false,
     "types": [

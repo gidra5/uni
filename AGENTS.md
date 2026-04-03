@@ -19,7 +19,7 @@ I can update your code at some point to fit my taste and you should try to run w
 
 Try estimating the size of your implementation first. If the feature is complex and requires large changes across multiple files, generate a plan for the changes and allow me to review it before implementing it. I may update the plan according to my own taste. You should also review the plan before implementing it and look for missing details or ambiguities. Once the plan is ready to be implemented, it will be marked as "approved" at the end. 
 
-While working on the implementation, follow TDD approach. Write test cases first, then implement the feature such that the test case passes. Before implementing a feature, allow me to review test cases and update them if necessary. 
+While working on the implementation of features, follow TDD approach. Write test cases first, then implement the feature such that the test case passes. Before implementing a feature, allow me to review test cases and update them if necessary. For other tasks not directly related to the project's source code implementation you may start working immediately if acceptance criteria are clear.
 
 When designing test cases, try to follow the language's design principles, outlined in the readme and documentation.
 
