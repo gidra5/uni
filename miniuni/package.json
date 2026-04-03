@@ -6,25 +6,29 @@
   "type": "module",
   "scripts": {
     "bench": "vitest bench",
+    "bench:ui": "vitest bench --ui --api 3000",
+    "coverage": "vitest run --coverage --ui false --api false",
+    "coverage:open": "node ./scripts/openCoverage.mjs",
     "test": "vitest run --ui false --api false",
-    "build": "tsc || exit 0",
+    "test:ui": "vitest --ui --api 3000",
+    "build": "tsc",
     "start": "npm run build && node ./dist/index.js",
-    "watch": "vitest --ui",
+    "watch": "vitest --ui --api 3000",
     "compile": "bun run compile-win && bun run compile-linux && bun run compile-highlight",
     "compile-win": "bun build ./src/index.ts --compile --minify --target=bun-windows-x64 --sourcemap --outfile ./dist/miniUni.exe",
     "compile-linux": "bun build ./src/index.ts --compile --minify --sourcemap --outfile ./dist/miniUni",
-    "compile-highlight": "cd miniuni-highlight && npx @vscode/vsce package && mv miniuni-highlight-0.0.1.vsix ../dist/miniuni-highlight.vsix"
+    "compile-highlight": "cd ../miniuni-highlight && npx @vscode/vsce package && mv miniuni-highlight-0.0.1.vsix ../miniuni/dist/miniuni-highlight.vsix"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@fast-check/vitest": "^0.1.2",
+    "@fast-check/vitest": "^0.3.0",
     "@types/node": "^25.5.2",
-    "@vitest/coverage-istanbul": "^2.0.2",
-    "@vitest/ui": "^2.0.2",
-    "fast-check": "^3.21.0",
+    "@vitest/coverage-istanbul": "^4.1.2",
+    "@vitest/ui": "^4.1.2",
+    "fast-check": "^4.6.0",
     "typescript": "^6.0.2",
-    "vitest": "^2.0.2"
+    "vitest": "^4.1.2"
   },
   "dependencies": {
     "codespan-napi": "^0.4.0",

@@ -104,8 +104,11 @@ const buildError = async (
 ) => {
   const message =
     (await fc.asyncDefaultReportMessage(result as any)) ?? 'Property failed';
+  const paramsWithErrorCause = params as
+    | (fc.Parameters<any> & { errorWithCause?: boolean })
+    | undefined;
 
-  if (!params?.errorWithCause) {
+  if (!paramsWithErrorCause?.errorWithCause) {
     return new Error(message);
   }
 

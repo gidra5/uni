@@ -3,8 +3,7 @@ import { describe, expect } from 'vitest';
 import { it, fc, test } from '../src/testing/fastCheck.js';
 import { array, integer } from 'fast-check';
 
-// const anyStringArb = fc.string({ size: 'large', unit: 'binary' });
-const anyStringArb = fc.fullUnicodeString({ size: 'large' });
+const anyStringArb = fc.string({ size: 'large', unit: 'binary' });
 // const anyStringArb = fc.string();
 const commentArb = anyStringArb.filter((s) => s.includes('\n'));
 const blockCommentArb = anyStringArb.filter(

@@ -1,4 +1,4 @@
-- [] update all dependencies to latest version. Check for breaking changes and migrate so that we dont get regressions.
+- [x] update all dependencies to latest version. Check for breaking changes and migrate so that we dont get regressions.
 - [] improve effect handlers performance
   - the network example scales very badly due to the effect handler overhead
   - narrow down the main cost centers in the network example and implement smallest examples of them as benchmarks
