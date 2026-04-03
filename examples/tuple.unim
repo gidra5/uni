@@ -1,3 +1,0 @@
-export tuple := fn x, y -> fn match -> match x y
-export first := fn tuple -> tuple (fn x, y -> x)
-export second := fn tuple -> tuple (fn x, y -> y)

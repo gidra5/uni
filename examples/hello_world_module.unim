@@ -1,3 +1,0 @@
-export fn args {
-  print("Hello, World!", args)
-}
