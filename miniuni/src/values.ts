@@ -1,4 +1,4 @@
-import type { CompileContext, EvalContext } from './evaluate/index.js';
+import type { CompileContext, EvalContext } from './evaluate/context.js';
 import { Position } from './position.js';
 import { assert, inspect } from './utils.js';
 import { SystemError } from './error.js';

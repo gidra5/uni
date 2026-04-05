@@ -23,6 +23,8 @@ If the node executable is not found or is too old, try using node v22 installed 
 
 If there are questions, conflicts, ambiguities found, do not hesitate to ask and resolve them productively.
 
+If you find unnatural behavior for the parser or interpreter, especially around formatting (newlines, whitespaces) and grouping with parens, braces, etc., make a minimal example and create a test with a snapshot that would make sense (what you would expect it to do). No need to fix it immediately, just mark it as todo and move on with the initial task.
+
 ### Testing
 
 While working on the implementation of features, follow TDD approach. Write test cases first, then implement the feature such that the test case passes. Before implementing a feature, allow me to review test cases and update them if necessary. For other tasks not directly related to the project's source code implementation you may start working immediately if acceptance criteria are clear.

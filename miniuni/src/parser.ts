@@ -28,7 +28,7 @@ import {
   atom,
 } from './ast.js';
 import { inject, Injectable } from './injector.js';
-import { CompileContext } from './evaluate/index.js';
+import type { CompileContext } from './evaluate/context.js';
 import { Diagnostic, primaryDiagnosticLabel } from 'codespan-napi';
 
 export const getExprPrecedence = (node: Tree): Precedence =>

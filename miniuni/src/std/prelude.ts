@@ -1,6 +1,7 @@
 import { Environment } from '../environment.js';
 import { SystemError } from '../error.js';
-import { EvalContext, handleEffects } from '../evaluate/index.js';
+import type { EvalContext } from '../evaluate/context.js';
+import { handleEffects, ReturnHandler } from '../evaluate/eval.js';
 import { assert, inspect } from '../utils.js';
 import {
   atom,
@@ -26,7 +27,6 @@ import {
 import { CreateTaskEffect } from './concurrency.js';
 import { createError, createOk, resultPrototype } from './result.js';
 
-export const ReturnHandler = Symbol('return_handler');
 export const IOEffect = Symbol('prelude io');
 export const ThrowEffect = Symbol('throw');
 export const prelude: EvalContext['env'] = new Environment({

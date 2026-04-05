@@ -11,7 +11,8 @@ import {
 } from '../values.js';
 import { assert, inspect, memoize } from '../utils.js';
 import { module } from '../module.js';
-import { compileScriptString, handleEffects } from '../evaluate/index.js';
+import { compileScriptString } from '../evaluate/index.js';
+import { handleEffects } from '../evaluate/eval.js';
 import { prelude, ThrowEffect } from './prelude.js';
 import { addFile } from '../files.js';
 import { Environment } from '../environment.js';

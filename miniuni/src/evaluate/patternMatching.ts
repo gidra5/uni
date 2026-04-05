@@ -13,11 +13,11 @@ import {
   recordOmit,
 } from '../values.js';
 import {
-  CompileContext,
-  compileExpr,
-  EvalContext,
   forkContext,
-} from './index.js';
+  type CompileContext,
+  type EvalContext,
+} from './context.js';
+import { compileExpr } from './compile.js';
 
 type PatternTestEnv = Map<symbol | EvalValue[], EvalValue>;
 export type PatternTestEnvs = {

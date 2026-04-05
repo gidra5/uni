@@ -19,11 +19,18 @@ const LOCAL_DEPENDENCIES_PATH = 'dependencies';
 const DIRECTORY_INDEX_FILE_NAME = 'index' + SCRIPT_FILE_EXTENSION;
 
 type Dictionary = Record<string, Module>;
+const fileSources = new Map<string, string>();
 
 export const addFile = (fileName: string, source: string) => {
+  fileSources.set(fileName, source);
   const fileMap = inject(Injectable.FileMap);
   fileMap.addFile(fileName, source);
   return fileMap.getFileId(fileName);
+};
+
+// TODO: isnt this already build into the codespan lib?
+export const getFileSource = (fileName: string) => {
+  return fileSources.get(fileName) ?? null;
 };
 
 export const modules = {
