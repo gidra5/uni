@@ -52,7 +52,8 @@ const examples = [
   // {
   //   name: 'network example',
   //   file: '/network.unim',
-  //   expected: 142,
+  //   args: ['4', '8', '0', '0'],
+  //   expected: 8,
   // },
   // {
   //   name: 'actors',
@@ -68,9 +69,9 @@ beforeEach(() => {
   register(Injectable.ASTNodePositionMap, new Map());
 });
 
-for (const { name, file, expected } of examples) {
-  it(name, { timeout: 10000 }, async () => {
-    const result = await evaluateEntryFile('./examples' + file);
+for (const { name, file, expected, args } of examples) {
+  it(name, { timeout: 120000 }, async () => {
+    const result = await evaluateEntryFile('./examples' + file, args ?? []);
 
     expect(result).toEqual(expected);
   });

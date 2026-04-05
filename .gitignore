@@ -1,6 +1,7 @@
 ml.code-workspace
 .vscode
 .obsidian
+.codex
 test-results
 coverage
 node_modules

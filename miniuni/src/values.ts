@@ -53,6 +53,15 @@ type Channel = {
   closed?: boolean;
   queue: Array<ChannelReceiver | ChannelMessage>;
 };
+export type RuntimeResourceStats = {
+  channels: number;
+  channelQueueEntries: number;
+  events: number;
+  eventListeners: number;
+  liveTasks: number;
+  pendingTasks: number;
+  settledTasks: number;
+};
 export enum ChannelStatus {
   Empty = 'empty',
   Pending = 'pending',
@@ -120,6 +129,12 @@ export function isPrototyped(value: EvalValue): value is EvalPrototype {
 
 const channels: Record<symbol, Channel> = {};
 
+const disposeChannel = (channelSymbol: symbol) => {
+  const channel = channels[channelSymbol];
+  if (!channel) return;
+  delete channels[channelSymbol];
+};
+
 export const channelStatus = (c: symbol): ChannelStatus => {
   const channel = channels[c];
   if (!channel) return ChannelStatus.Closed;
@@ -146,7 +161,15 @@ export const createChannel = (name = 'channel'): EvalChannel => {
 export const closeChannel = (c: symbol) => {
   const status = channelStatus(c);
   if (status === ChannelStatus.Closed) throw new Error('channel closed');
-  channels[c].closed = true;
+  const channel = channels[c]!;
+  channel.closed = true;
+
+  while (channel.queue.length > 0) {
+    const head = channel.queue[0]!;
+    if ('value' in head) break;
+    const receiver = channel.queue.shift()! as ChannelReceiver;
+    receiver.reject(new Error('channel closed'));
+  }
 };
 
 export const getChannel = (c: symbol) => {
@@ -204,16 +227,45 @@ export const tryReceive = (c: symbol): [EvalValue | Error, ChannelStatus] => {
 
 type _Event = {
   closed: boolean;
+  disposableWhenClosed: boolean;
+  listeners: EvalFunction[];
   emit: (cs: CallSite, value: EvalValue) => Promise<void>;
   subscribe: (listener: EvalFunction) => EvalFunction;
 };
 const events = new Map<symbol, _Event>();
+
+const cleanupEvent = (event: symbol) => {
+  const entry = events.get(event);
+  if (!entry) return;
+  if (!entry.closed) return;
+  if (entry.listeners.length !== 0) return;
+  if (!entry.disposableWhenClosed) return;
+  events.delete(event);
+};
+
+const setEventClosed = (event: symbol, dispose: boolean) => {
+  const entry = events.get(event);
+  if (!entry || entry.closed) throw new Error('event closed');
+  entry.closed = true;
+  entry.disposableWhenClosed = dispose;
+  entry.listeners.length = 0;
+  if (dispose) cleanupEvent(event);
+};
+
+const disposeEvent = (event: symbol) => {
+  const entry = events.get(event);
+  if (!entry) return;
+  entry.disposableWhenClosed = true;
+  cleanupEvent(event);
+};
 
 export const createEvent = (name: string = 'event'): EvalEvent => {
   const listeners: Array<EvalFunction> = [];
   const event = Symbol(name);
   events.set(event, {
     closed: false,
+    disposableWhenClosed: true,
+    listeners,
     async emit(cs, v) {
       for (const listener of listeners) await listener(cs, v);
     },
@@ -221,7 +273,9 @@ export const createEvent = (name: string = 'event'): EvalEvent => {
       assert(typeof listener === 'function', 'expected function');
       listeners.push(listener);
       return async () => {
-        listeners.filter((x) => x !== listener);
+        const index = listeners.indexOf(listener);
+        if (index !== -1) listeners.splice(index, 1);
+        cleanupEvent(event);
         return null;
       };
     },
@@ -234,14 +288,13 @@ export const isEvent = (event: EvalValue): event is EvalEvent => {
 };
 
 export const isEventClosed = (event: EvalValue): boolean => {
-  if (!isEvent(event)) throw new Error('expected event');
-  return events.get(event)!.closed;
+  if (!event || typeof event !== 'symbol') throw new Error('expected event');
+  return events.get(event)?.closed ?? true;
 };
 
 export const closeEvent = (event: EvalValue) => {
-  if (!isEvent(event)) throw new Error('expected event');
-  if (events.get(event)!.closed) throw new Error('event closed');
-  events.get(event)!.closed = true;
+  if (!event || typeof event !== 'symbol') throw new Error('expected event');
+  setEventClosed(event, true);
 };
 
 export const onceEvent = (event: EvalValue, f: EvalFunction) => {
@@ -258,15 +311,17 @@ export const emitEvent = async (
   event: EvalValue,
   value: EvalValue
 ) => {
-  if (!isEvent(event)) throw new Error('expected event');
-  if (events.get(event)!.closed) throw new Error('event closed');
-  await events.get(event)!.emit(cs, value);
+  if (!event || typeof event !== 'symbol') throw new Error('expected event');
+  const entry = events.get(event);
+  if (!entry || entry.closed) throw new Error('event closed');
+  await entry.emit(cs, value);
 };
 
 export const subscribeEvent = (event: EvalValue, listener: EvalFunction) => {
-  if (!isEvent(event)) throw new Error('expected event');
-  if (events.get(event)!.closed) throw new Error('event closed');
-  return events.get(event)!.subscribe(listener);
+  if (!event || typeof event !== 'symbol') throw new Error('expected event');
+  const entry = events.get(event);
+  if (!entry || entry.closed) throw new Error('event closed');
+  return entry.subscribe(listener);
 };
 
 export const nextEvent = (event: EvalValue) => {
@@ -279,6 +334,28 @@ export const nextEvent = (event: EvalValue) => {
 };
 
 export type EvalTask = [taskAwait: EvalChannel, taskCancel: EvalEvent];
+
+type TaskState = {
+  settled: boolean;
+  listeners: Set<() => void>;
+};
+
+const liveTasks = new Set<EvalTask>();
+const taskStates = new WeakMap<EvalTask, TaskState>();
+
+const getTaskState = (task: EvalTask): TaskState => {
+  const state = taskStates.get(task);
+  assert(state, 'task state missing');
+  return state;
+};
+
+const markTaskSettled = (task: EvalTask) => {
+  const state = getTaskState(task);
+  if (state.settled) return;
+  state.settled = true;
+  for (const listener of state.listeners) listener();
+  state.listeners.clear();
+};
 
 export const isTask = (task: EvalValue): task is EvalTask => {
   return (
@@ -296,6 +373,12 @@ export const createTask = (
 ): EvalTask => {
   const awaitChannel = createChannel('task await');
   const cancelEvent = createEvent('task cancel');
+  const task: EvalTask = [awaitChannel, cancelEvent];
+  taskStates.set(task, {
+    settled: false,
+    listeners: new Set(),
+  });
+  liveTasks.add(task);
   let status = 'pending';
 
   const unsub = onceEvent(cancelEvent, async (cs) => {
@@ -303,7 +386,8 @@ export const createTask = (
     status = 'cancelled';
     send(awaitChannel, null);
     closeChannel(awaitChannel);
-    closeEvent(cancelEvent);
+    setEventClosed(cancelEvent, false);
+    markTaskSettled(task);
     return null;
   });
 
@@ -314,6 +398,8 @@ export const createTask = (
       unsub(cs, null);
       send(awaitChannel, value);
       closeChannel(awaitChannel);
+      if (!isEventClosed(cancelEvent)) setEventClosed(cancelEvent, false);
+      markTaskSettled(task);
     },
     (e) => {
       if (status === 'cancelled') return;
@@ -321,13 +407,32 @@ export const createTask = (
       unsub(cs, null);
       send(awaitChannel, e);
       closeChannel(awaitChannel);
+      if (!isEventClosed(cancelEvent)) setEventClosed(cancelEvent, false);
+      markTaskSettled(task);
     }
   );
 
-  return [awaitChannel, cancelEvent];
+  return task;
+};
+
+export const isTaskSettled = (task: EvalTask): boolean => {
+  return getTaskState(task).settled;
+};
+
+export const onTaskSettled = (task: EvalTask, listener: () => void) => {
+  const state = getTaskState(task);
+  if (state.settled) {
+    listener();
+    return () => {};
+  }
+  state.listeners.add(listener);
+  return () => {
+    state.listeners.delete(listener);
+  };
 };
 
 export const cancelTask = async (cs: CallSite, task: EvalTask) => {
+  if (!isEvent(task[1]) || isEventClosed(task[1])) return null;
   await emitEvent(cs, task[1], null);
 
   return null;
@@ -335,7 +440,33 @@ export const cancelTask = async (cs: CallSite, task: EvalTask) => {
 
 export const awaitTask = async (task: EvalTask): Promise<EvalValue> => {
   const taskAwait = task[0];
-  return await receive(taskAwait);
+  const value = await receive(taskAwait);
+  disposeChannel(taskAwait);
+  disposeEvent(task[1]);
+  liveTasks.delete(task);
+  return value;
+};
+
+export const getRuntimeResourceStats = (): RuntimeResourceStats => {
+  const channelSymbols = Object.getOwnPropertySymbols(channels);
+  const eventEntries = [...events.values()];
+  let pendingTasks = 0;
+  for (const task of liveTasks) {
+    if (!isTaskSettled(task)) pendingTasks += 1;
+  }
+  return {
+    channels: channelSymbols.length,
+    channelQueueEntries: channelSymbols.reduce((total, channelSymbol) => {
+      return total + (channels[channelSymbol]?.queue.length ?? 0);
+    }, 0),
+    events: events.size,
+    eventListeners: eventEntries.reduce((total, event) => {
+      return total + event.listeners.length;
+    }, 0),
+    liveTasks: liveTasks.size,
+    pendingTasks,
+    settledTasks: liveTasks.size - pendingTasks,
+  };
 };
 
 export const fileHandle = (file: EvalRecord): EvalRecord => {

@@ -12,7 +12,7 @@ export default defineConfig({
       reportOnFailure: true,
     },
     benchmark: {
-      include: ['tests/**/*.bench.ts'],
+      include: ['bench/**/*.bench.ts'],
       reporters: ['default'],
       outputJson: 'test-results/bench/benchmark.json',
     },
